@@ -10,6 +10,8 @@ from ctypes import c_int
 from ctypes import c_double
 from ctypes import c_void_p
 
+from DimensionConvertor import get_dimension
+
 class Solution(pyclaw.solution.Solution):
     r"""
     This Solution class is just an extension of the normal pyclaw.Solution. It offers functionality for writing solutions
@@ -44,15 +46,30 @@ class Solution(pyclaw.solution.Solution):
         Creates a closure for the callback method to add a grid to the solution.
         """
         def callback_add_to_solution(q, qbc, ghostlayer_width, size_x, size_y, size_z, position_x, position_y, position_z, currentTime):
+            dim = get_dimension( q )
+
             #TODO 3D: Adjust subdivision_factor to 3D
             # Set up grid information for current patch
-            subdivision_factor_x = q.shape[1]
-            subdivision_factor_y = q.shape[2]
-            unknowns_per_subcell = q.shape[0]
-            dim_x = pyclaw.Dimension('x', position_x, position_x + size_x, subdivision_factor_x)
-            dim_y = pyclaw.Dimension('y', position_y, position_y + size_y, subdivision_factor_y)
+            if dim is 2:
+                subdivision_factor_x = q.shape[1]
+                subdivision_factor_y = q.shape[2]
+                unknowns_per_subcell = q.shape[0]
+                dim_x = pyclaw.Dimension('x', position_x, position_x + size_x, subdivision_factor_x)
+                dim_y = pyclaw.Dimension('y', position_y, position_y + size_y, subdivision_factor_y)
 
-            patch = pyclaw.geometry.Patch((dim_x, dim_y))
+                patch = pyclaw.geometry.Patch((dim_x, dim_y))
+
+            elif dim is 3:
+                subdivision_factor_x = q.shape[1]
+                subdivision_factor_y = q.shape[2]
+                subdivision_factor_z = q.shape[3]
+                unknowns_per_subcell = q.shape[0]
+                dim_x = pyclaw.Dimension('x', position_x, position_x + size_x, subdivision_factor_x)
+                dim_y = pyclaw.Dimension('y', position_y, position_y + size_y, subdivision_factor_y)
+                dim_z = pyclaw.Dimension('z', position_z, position_z + size_z, subdivision_factor_z)
+                
+                patch = pyclaw.geometry.Patch((dim_x, dim_y,dim_z))
+
             state = pyclaw.State(patch, unknowns_per_subcell)
             state.q[:] = q[:]
             state.t = currentTime

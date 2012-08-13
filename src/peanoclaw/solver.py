@@ -16,6 +16,8 @@ from ctypes import CFUNCTYPE
 from ctypes import py_object
 from ctypes import POINTER
 
+from DimensionConvertor import get_dimension
+
 class Solver(Solver):
     r"""
         This solver class wraps the AMR functionality of Peano. It holds a normal PyClaw-solver
@@ -68,6 +70,7 @@ class Solver(Solver):
          -  *initial_minimal_mesh_width* - The initial mesh width for the Peano mesh. I.e. Peano refines the mesh regularly
                                              until it is at least as fine as stated in this parameter.
         """
+        # self.dimension = get_dimension( q_initialization )
         self.solver = solver
         self.initial_minimal_mesh_width = initial_minimal_mesh_width
         self.q_initialization = q_initialization
@@ -86,10 +89,19 @@ class Solver(Solver):
         """
         def callback_initialization(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_subcell, aux_fields_per_subcell, size_x, size_y, size_z, position_x, position_y, position_z):
             import clawpack.pyclaw as pyclaw
-            self.dim_x = pyclaw.Dimension('x',position_x,position_x + size_x,subdivision_factor_x0)
-            self.dim_y = pyclaw.Dimension('y',position_y,position_y + size_y,subdivision_factor_x1)
-            #TODO 3D: use size_z and position_z
-            domain = pyclaw.Domain([self.dim_x,self.dim_y])
+
+            dim = get_dimension(q)
+            if dim is 2:
+                self.dim_x = pyclaw.Dimension('x',position_x,position_x + size_x,subdivision_factor_x0)
+                self.dim_y = pyclaw.Dimension('y',position_y,position_y + size_y,subdivision_factor_x1)
+                domain = pyclaw.Domain([self.dim_x,self.dim_y])
+
+            elif dim is 3:
+                self.dim_x = pyclaw.Dimension('x',position_x,position_x + size_x,subdivision_factor_x0)
+                self.dim_y = pyclaw.Dimension('y',position_y,position_y + size_y,subdivision_factor_x1)
+                self.dim_z = pyclaw.Dimension('z',position_z,position_z + size_z,subdivision_factor_x2)
+                domain = pyclaw.Domain([self.dim_x,self.dim_y,self.dim_z])
+
             subgrid_state = pyclaw.State(domain, unknowns_per_subcell, aux_fields_per_subcell)
             subgrid_state.q = q
             if(aux_fields_per_subcell > 0):
@@ -113,8 +125,8 @@ class Solver(Solver):
               
             #TODO 3D: Adjust position and size to 3D
             # Set up grid information for current patch
-            import clawpack.peanoclaw as peanoclaw            
-            subgridsolver = peanoclaw.SubgridSolver(self.solver, self.solution.state, q, qbc, aux, (position_x, position_y), (size_x, size_y), subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell)
+            import clawpack.peanoclaw as peanoclaw 
+            subgridsolver = peanoclaw.SubgridSolver(self.solver, self.solution.state, q, qbc, aux, (position_x, position_y,position_z), (size_x, size_y,size_z), subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell)
             
             new_q = subgridsolver.step(maximum_timestep_size, estimated_next_dt)
             # Copy back the array with new values
@@ -145,8 +157,10 @@ class Solver(Solver):
         
         See :class:`Solver` for full documentation
         """
+        dim = get_dimension( solution.q )
+
         logging.getLogger('peanoclaw').info("Loading Peano-library...")
-        self.libpeano = CDLL(self.get_lib_path())
+        self.libpeano = CDLL(self.get_lib_path(dim))
         logging.getLogger('peanoclaw').info("Peano loaded successfully.")
         self.libpeano.pyclaw_peano_new.restype = c_void_p
         self.libpeano.pyclaw_peano_destroy.argtypes = [c_void_p]
@@ -161,7 +175,12 @@ class Solver(Solver):
         dimensions = solution.state.grid.dimensions
         subdivision_factor_x0 = solution.state.grid.dimensions[0].num_cells
         subdivision_factor_x1 = solution.state.grid.dimensions[1].num_cells
-        subdivision_factor_x2 = 0 #solution.state.grid.dimensions[2].num_cells #TODO 3D
+
+        if dim is 3:
+            subdivision_factor_x2 = solution.state.grid.dimensions[2].num_cells 
+        else:
+            subdivision_factor_x2 = 0
+
         number_of_unknowns = solution.state.num_eqn 
         number_of_auxiliar_fields = solution.state.num_aux
         ghostlayer_width = self.num_ghost
@@ -171,6 +190,13 @@ class Solver(Solver):
         self.solver.setup(solution)
         self.solution = solution
         
+        if dim is 2:
+            domain_position_x2 = 0
+            domain_size_x2 = 0
+        else:
+            domain_position_x2 = dimensions[2].lower
+            domain_size_x2 = dimensions[2].upper - dimensions[2].lower
+
         self.libpeano.pyclaw_peano_new.argtypes = [ c_double, #Initial mesh width
                                                     c_double, #Domain position X0
                                                     c_double, #Domain position X1
@@ -193,10 +219,10 @@ class Solver(Solver):
         self.peano = self.libpeano.pyclaw_peano_new(c_double(self.initial_minimal_mesh_width),
                                                     c_double(dimensions[0].lower),
                                                     c_double(dimensions[1].lower),
-                                                    c_double(0.0), #Todo 3D
+                                                    c_double(domain_position_x2),
                                                     c_double(dimensions[0].upper - dimensions[0].lower),
                                                     c_double(dimensions[1].upper - dimensions[1].lower),
-                                                    c_double(0.0), #Todo 3D
+                                                    c_double(domain_size_x2),
                                                     subdivision_factor_x0,
                                                     subdivision_factor_x1,
                                                     subdivision_factor_x2,
@@ -245,7 +271,7 @@ class Solver(Solver):
         """ 
         self.solver.step(self.solution)
         
-    def get_lib_path(self):
+    def get_lib_path(self,dim):
         r"""
         Returns the path in which the shared library of Peano is located in.
         """
@@ -258,8 +284,9 @@ class Solver(Solver):
             shared_library_extension = 'dylib'
         else:
             raise("Unsupported operating system")    
+
         
-        print(os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-2d.' + shared_library_extension))
-        return os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-2d.' + shared_library_extension)
+        print(os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-'+ str(dim)+ 'd.' + shared_library_extension))
+        return os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-'+ str(dim)+ 'd.' + shared_library_extension)
         
 
