@@ -4,6 +4,7 @@ Created on Mar 18, 2012
 @author: kristof
 '''
 import clawpack.pyclaw as pyclaw
+from DimensionConvertor import get_dimension
 
 class SubgridSolver(object):
     r"""
@@ -37,9 +38,18 @@ class SubgridSolver(object):
         
         """
         self.solver = solver
-        self.dim_x = pyclaw.Dimension('x',position[0],position[0] + size[0],subdivision_factor_x0)
-        self.dim_y = pyclaw.Dimension('y',position[1],position[1] + size[1],subdivision_factor_x1)
-        domain = pyclaw.Domain([self.dim_x,self.dim_y])
+        self.dimension = get_dimension(q)
+
+        if self.dimension is 2:
+            self.dim_x = pyclaw.Dimension('x',position[0],position[0] + size[0],subdivision_factor_x0)
+            self.dim_y = pyclaw.Dimension('y',position[1],position[1] + size[1],subdivision_factor_x1)
+            domain = pyclaw.Domain([self.dim_x,self.dim_y])
+        elif self.dimension is 3:
+            self.dim_x = pyclaw.Dimension('x',position[0],position[0] + size[0],subdivision_factor_x0)
+            self.dim_y = pyclaw.Dimension('y',position[1],position[1] + size[1],subdivision_factor_x1)
+            self.dim_z = pyclaw.Dimension('z',position[2],position[2] + size[2],subdivision_factor_x2)
+            domain = pyclaw.Domain([self.dim_x,self.dim_y,self.dim_z])
+
         subgrid_state = pyclaw.State(domain, unknowns_per_cell, aux_fields_per_cell)
         subgrid_state.q = q
         subgrid_state.aux = aux
@@ -81,20 +91,41 @@ class SubgridSolver(object):
         
         
     def user_bc_lower(self, grid,dim,t,qbc,mbc):
-        #Todo 3D: Rewrite for arbitrary dimensions
-        if dim == self.dim_x:
-            for i in range(mbc):
-                qbc[:,:,i] = self.qbc[:,:,i]
-        else:
-            for i in range(mbc):
-                qbc[:,i,:] = self.qbc[:,i,:]
+
+        if self.dimension is 2:
+            if dim == self.dim_x:
+                qbc[:,0:mbc,:] = self.qbc[:,0:mbc,:]
+
+            else:
+                qbc[:,:,0:mbc] = self.qbc[:,:,0:mbc]                
+
+        elif self.dimension is 3:
+            if dim == self.dim_x:
+                qbc[:,0:mbc,:,:] = self.qbc[:,0:mbc,:,:]
+            elif dim == self.dim_y:
+                qbc[:,:,0:mbc,:] = self.qbc[:,:,0:mbc,:] 
+            elif dim == self.dim_z:
+                qbc[:,:,:,0:mbc] = self.qbc[:,:,:,0:mbc]
         
     def user_bc_upper(self, grid,dim,t,qbc,mbc):
-        #Todo 3D: Rewrite for arbitrary dimensions
-        if dim == self.dim_x:
-            for i in range(mbc):
-                qbc[:,:,self.dim_y.num_cells+mbc+i] = self.qbc[:,:,self.dim_y.num_cells+mbc+i]
-        else:
-            for i in range(mbc):
-                qbc[:,self.dim_x.num_cells+mbc+i,:] = self.qbc[:,self.dim_x.num_cells+mbc+i,:]
-        
+
+        if self.dimension is 2:
+            shiftx = self.dim_x.num_cells+mbc
+            shifty = self.dim_y.num_cells+mbc
+            if dim == self.dim_x:
+                qbc[:,shiftx+0:shiftx+mbc,:] = self.qbc[:,shiftx+0:shiftx+mbc,:]
+            else:
+                qbc[:,:,shifty+0:shifty+mbc] = self.qbc[:,:,shifty+0:shifty+mbc]
+
+        elif self.dimension is 3:
+
+            shiftx = self.dim_x.num_cells+mbc
+            shifty = self.dim_y.num_cells+mbc
+            shiftz = self.dim_z.num_cells+mbc
+
+            if dim == self.dim_x:
+                qbc[:,shiftx+0:shiftx+mbc,:,:] = self.qbc[:,shiftx+0:shiftx+mbc,:,:]
+            elif dim == self.dim_y:
+                qbc[:,:,shifty+0:shifty+mbc,:] = self.qbc[:,:,shifty+0:shifty+mbc,:]
+            elif dim == self.dim_z:
+                qbc[:,:,:,shiftz+0:shiftz+mbc] = self.qbc[:,:,:,shiftz+0:shiftz+mbc]
