@@ -2,7 +2,7 @@ UNAME := $(shell uname)
 
 # Default settings
 #------------------
-ifndef DIMENSIONS
+ifndef DIMENSION
 DIMENSION := 2
 endif
 ifndef BUILD_MODE
@@ -24,7 +24,7 @@ all:
 ifdef PEANOCLAW_SRC
 	echo Using Scons as build system
 	cd $(PEANOCLAW_SRC); scons target=peanoclaw build=$(BUILD_MODE) dim=$(DIMENSION) -j2
-	cp $(PEANOCLAW_SRC)/build/peanoclaw/$(BUILD_MODE)/dim$(DIMENSION)/multicore_no/parallel_no/gcc/libpeano-claw-2d.$(LIB_EXTENSION) .
+	cp $(PEANOCLAW_SRC)/build/peanoclaw/$(BUILD_MODE)/dim$(DIMENSION)/multicore_no/parallel_no/gcc/libpeano-claw-$(DIMENSION)d.$(LIB_EXTENSION) .
 endif
 
 clean:
