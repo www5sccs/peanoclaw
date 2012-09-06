@@ -24,8 +24,8 @@ def init(state):
     x0 = -0.5; y0 = 0.; z0 = 0.
 #    if app == 'test_homogeneous':
     r = np.sqrt((X-x0)**2)
-    width=0.2
-    state.q[0,:,:,:] = (np.abs(r)<=width)*(1.+np.cos(np.pi*(r)/width))
+    width=1.0
+    state.q[0,:,:,:] =  (np.abs(r)<=width)*(1.+np.cos(np.pi*(r)/width))
 
     # elif app == 'test_heterogeneous' or app == None:
     #     r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
@@ -55,7 +55,7 @@ def init(state):
     #     state.q[0,:,:] = hl*(r<=radDam) + hr*(r>radDam)
     #     state.q[1,:,:] = hl*ul*(r<=radDam) + hr*ur*(r>radDam)
     #     state.q[2,:,:] = hl*vl*(r<=radDam) + hr*vr*(r>radDam)
-
+    print state.q[0,:,:,:]
 
 def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',solver_type='classic',**kwargs):
     """
@@ -83,7 +83,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
 
 
     # Peano Solver
-    peanoSolver = peanoclaw.Solver(solver, (1./9.)/subdivisionFactor, init)
+    peanoSolver = peanoclaw.Solver(solver, (1./1.)/subdivisionFactor, init)
 
     solver.rp = riemann.rp3_vc_acoustics
     solver.num_waves = 2
@@ -114,7 +114,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
 
 #    if app == 'test_homogeneous':
     solver.dimensional_split=True
-    mx=256; my=4; mz=4
+#    mx=256; my=4; mz=4
     zr = 1.0  # Impedance in right half
     cr = 1.0  # Sound speed in right half
 
@@ -142,9 +142,9 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     mx = subdivisionFactor
     my = subdivisionFactor
     mz = subdivisionFactor
-    x = pyclaw.Dimension('x',-1.0,1.0,mx)
-    y = pyclaw.Dimension('y',-1.0,1.0,my)
-    z = pyclaw.Dimension('z',-1.0,1.0,mz)
+    x = pyclaw.Dimension('x',0,1.0,mx)
+    y = pyclaw.Dimension('y',0,1.0,my)
+    z = pyclaw.Dimension('z',0,1.0,mz)
     domain = pyclaw.Domain([x,y,z])
 
     num_eqn = 4
@@ -182,7 +182,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 2.0
+    claw.tfinal = 5.0
     claw.keep_copy = True
     claw.solution = peanoclaw.solution.Solution(state,domain) #pyclaw.Solution(state,domain)
     claw.solver = peanoSolver  #solver
@@ -199,32 +199,32 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     if htmlplot:  pyclaw.plot.html_plot(outdir=outdir,file_format=claw.output_format)
     if iplot:     pyclaw.plot.interactive_plot(outdir=outdir,file_format=claw.output_format)
 
-    pinitial=claw.frames[0].state.get_q_global()
-    pmiddle  =claw.frames[3].state.get_q_global()
-    pfinal  =claw.frames[claw.num_output_times].state.get_q_global()
+    # pinitial=claw.frames[0].state.get_q_global()
+    # pmiddle  =claw.frames[3].state.get_q_global()
+    # pfinal  =claw.frames[claw.num_output_times].state.get_q_global()
 
-    if pinitial != None and pmiddle != None and pfinal != None:
-        pinitial =pinitial[0,:,:,:].reshape(-1)
-        pmiddle  =pmiddle[0,:,:,:].reshape(-1)
-        pfinal   =pfinal[0,:,:,:].reshape(-1)
-        final_difference =np.prod(grid.delta)*np.linalg.norm(pfinal-pinitial,ord=1)
-        middle_difference=np.prod(grid.delta)*np.linalg.norm(pmiddle-pinitial,ord=1)
+    # if pinitial != None and pmiddle != None and pfinal != None:
+    #     pinitial =pinitial[0,:,:,:].reshape(-1)
+    #     pmiddle  =pmiddle[0,:,:,:].reshape(-1)
+    #     pfinal   =pfinal[0,:,:,:].reshape(-1)
+    #     final_difference =np.prod(grid.delta)*np.linalg.norm(pfinal-pinitial,ord=1)
+    #     middle_difference=np.prod(grid.delta)*np.linalg.norm(pmiddle-pinitial,ord=1)
 
-        if app == None:
-            print 'Final error: ', final_difference
-            print 'Middle error: ', middle_difference
+    #     if app == None:
+    #         print 'Final error: ', final_difference
+    #         print 'Middle error: ', middle_difference
 
-        #import matplotlib.pyplot as plt
-        #for i in range(claw.num_output_times):
-        #    plt.pcolor(claw.frames[i].state.q[0,:,:,mz/2])
-        #    plt.figure()
-        #plt.show()
+    #     #import matplotlib.pyplot as plt
+    #     #for i in range(claw.num_output_times):
+    #     #    plt.pcolor(claw.frames[i].state.q[0,:,:,mz/2])
+    #     #    plt.figure()
+    #     #plt.show()
 
-        return pfinal, final_difference
+    #     return pfinal, final_difference
 
-    else:
+    # else:
         
-        return
+    #     return
 
 if __name__=="__main__":
     import sys
