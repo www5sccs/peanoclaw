@@ -3,7 +3,7 @@ UNAME := $(shell uname)
 # Default settings
 #------------------
 ifndef DIMENSION
-DIMENSION := 2
+DIMENSION := 3
 endif
 ifndef BUILD_MODE
 # Options: debug, release
@@ -38,7 +38,7 @@ all-with-make:
 ifdef PEANOCLAW_SRC
 	echo Using Make as build system
 	cp $(PEANOCLAW_SRC)/peano/applications/peanoclaw/makefile $(PEANOCLAW_SRC)/makefile-peanoclaw
-	cd $(PEANOCLAW_SRC); make init; make build
+	cd $(PEANOCLAW_SRC); make -f makefile-peanoclaw init; make -f makefile-peanoclaw build
 	cp $(PEANOCLAW_SRC)/libpeano-claw-2d.$(LIB_EXTENSION) .
 endif
 
