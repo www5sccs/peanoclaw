@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+  <run-peanoclaw-on-spacetree-grid
+    plot-at-output-times="yes"
+    plot-substeps="yes"
+  >
+
+    <log-filter target="" component=""       switch="on" />
+    <log-filter target="info" component="peano::applications::peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner"   switch="off" />
+    <log-filter target="info" component="peano::applications::peanoclaw::SpacetreeGridState::plotTotalStatistics"   switch="on" />
+
+    <log-output log-output-file="" column-separator=" " log-time-stamp="no" log-time-stamp-human-readable="no" log-machine-name="no" log-message-type="no" log-trace="no" />
+
+
+  </run-peanoclaw-on-spacetree-grid>
+</peano-configuration>
