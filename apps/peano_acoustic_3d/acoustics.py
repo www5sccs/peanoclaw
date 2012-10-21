@@ -18,19 +18,19 @@ def init(state):
     grid.compute_c_centers()
     X,Y,Z = grid._c_centers
 
-    state.aux[0,:,:,:] = zl*(X<0.) + zr*(X>=0.) # Impedance
-    state.aux[1,:,:,:] = cl*(X<0.) + cr*(X>=0.) # Sound speed
+    state.aux[0,:,:,:] = zl*(Y<0.5) + zr*(Y>=0.5) # Impedance
+    state.aux[1,:,:,:] = cl*(Y<0.5) + cr*(Y>=0.5) # Sound speed
 
-    x0 = -0.5; y0 = 0.; z0 = 0.
+    x0 = 0.5; y0 = 0.5; z0 = 0.5
 #    if app == 'test_homogeneous':
-    r = np.sqrt((X-x0)**2)
-    width=1.0
-    state.q[0,:,:,:] =  (np.abs(r)<=width)*(1.+np.cos(np.pi*(r)/width))
+    #r = np.sqrt((X-x0)**2)
+    #width=1.0
+    #state.q[0,:,:,:] =  (np.abs(r) <= width) * (1. + np.cos(np.pi*(r)/width))
 
     # elif app == 'test_heterogeneous' or app == None:
-    #     r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
-    #     width=0.1
-    #     state.q[0,:,:,:] = (np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
+    r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
+    width=0.1
+    state.q[0,:,:,:] = (np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
 
     # else: raise Exception('Unexpected application')
         
@@ -73,7 +73,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     #===========================================================================
     # Setup solver and solver parameters
     #===========================================================================
-    subdivisionFactor = 6
+    subdivisionFactor = 18
     if solver_type=='classic':
         solver=pyclaw.ClawSolver3D()
     else:
@@ -83,25 +83,40 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
 
 
     # Peano Solver
-    peanoSolver = peanoclaw.Solver(solver, (1./1.)/subdivisionFactor, init)
+    peanoSolver = peanoclaw.Solver(solver, (1./1./subdivisionFactor), init)
 
     solver.rp = riemann.rp3_vc_acoustics
     solver.num_waves = 2
     solver.limiters = pyclaw.limiters.tvd.MC
 
-    solver.bc_lower[0]=pyclaw.BC.periodic
-    solver.bc_upper[0]=pyclaw.BC.periodic
-    solver.bc_lower[1]=pyclaw.BC.periodic
-    solver.bc_upper[1]=pyclaw.BC.periodic
-    solver.bc_lower[2]=pyclaw.BC.periodic
-    solver.bc_upper[2]=pyclaw.BC.periodic
+#    solver.bc_lower[0]=pyclaw.BC.periodic
+#    solver.bc_upper[0]=pyclaw.BC.periodic
+#    solver.bc_lower[1]=pyclaw.BC.periodic
+#    solver.bc_upper[1]=pyclaw.BC.periodic
+#    solver.bc_lower[2]=pyclaw.BC.periodic
+#    solver.bc_upper[2]=pyclaw.BC.periodic
 
-    solver.aux_bc_lower[0]=pyclaw.BC.periodic
-    solver.aux_bc_upper[0]=pyclaw.BC.periodic
-    solver.aux_bc_lower[1]=pyclaw.BC.periodic
-    solver.aux_bc_upper[1]=pyclaw.BC.periodic
-    solver.aux_bc_lower[2]=pyclaw.BC.periodic
-    solver.aux_bc_upper[2]=pyclaw.BC.periodic
+#    solver.aux_bc_lower[0]=pyclaw.BC.periodic
+#    solver.aux_bc_upper[0]=pyclaw.BC.periodic
+#    solver.aux_bc_lower[1]=pyclaw.BC.periodic
+#    solver.aux_bc_upper[1]=pyclaw.BC.periodic
+#    solver.aux_bc_lower[2]=pyclaw.BC.periodic
+#    solver.aux_bc_upper[2]=pyclaw.BC.periodic
+
+
+    solver.bc_lower[0]=pyclaw.BC.wall
+    solver.bc_upper[0]=pyclaw.BC.wall
+    solver.bc_lower[1]=pyclaw.BC.wall
+    solver.bc_upper[1]=pyclaw.BC.wall
+    solver.bc_lower[2]=pyclaw.BC.wall
+    solver.bc_upper[2]=pyclaw.BC.wall
+
+    solver.aux_bc_lower[0]=pyclaw.BC.wall
+    solver.aux_bc_upper[0]=pyclaw.BC.wall
+    solver.aux_bc_lower[1]=pyclaw.BC.wall
+    solver.aux_bc_upper[1]=pyclaw.BC.wall
+    solver.aux_bc_lower[2]=pyclaw.BC.wall
+    solver.aux_bc_upper[2]=pyclaw.BC.wall
 
     # app = None
     # if 'test' in kwargs:
