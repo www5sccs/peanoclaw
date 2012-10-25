@@ -673,10 +673,16 @@ class ClawSolver3D(ClawSolver):
                 self.qbc, cfl_x = self.fmod.step3ds(maxm,self.num_ghost,mx,my,mz, \
                       qold, self.qbc, self.auxbc,dx,dy,dz,self.dt,self._method,self._mthlim,\
                       self.aux1,self.aux2,self.aux3,self.work,1,rpn3,rpt3,rptt3)
+                
+                self.qbc[:, :, my + self.num_ghost:my + 2*self.num_ghost, :] = qold[:, :, my + self.num_ghost:my + 2*self.num_ghost, :]
+                self.qbc[:, :, 1:self.num_ghost, :] = qold[:, :, 1:self.num_ghost, :]
 
                 self.qbc, cfl_y = self.fmod.step3ds(maxm,self.num_ghost,mx,my,mz, \
                       self.qbc, self.qbc, self.auxbc,dx,dy,dz,self.dt,self._method,self._mthlim,\
                       self.aux1,self.aux2,self.aux3,self.work,2,rpn3,rpt3,rptt3)
+
+                self.qbc[:, :, :, mz + self.num_ghost:mz + 2*self.num_ghost] = qold[:, :, :, mz + self.num_ghost:mz + 2*self.num_ghost]
+                self.qbc[:, :, :, 1:self.num_ghost] = qold[:, :, :, 1:self.num_ghost]
 
                 self.qbc, cfl_z = self.fmod.step3ds(maxm,self.num_ghost,mx,my,mz, \
                       self.qbc, self.qbc, self.auxbc,dx,dy,dz,self.dt,self._method,self._mthlim,\
