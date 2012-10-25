@@ -17,7 +17,7 @@ def init(state):
     state.aux[0,:,:,:] = zl*(X<0.) + zr*(X>=0.) # Impedance
     state.aux[1,:,:,:] = cl*(X<0.) + cr*(X>=0.) # Sound speed
 
-    x0 = -0.5; y0 = 0.; z0 = 0.
+    x0 = 0.; y0 = 0.; z0 = 0.
     r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
     width=0.1
     state.q[0,:,:,:] = (np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
@@ -49,35 +49,34 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
 
     from clawpack import riemann
 
-
     # Peano Solver
-    peanoSolver = peanoclaw.Solver(solver, (1./1.)/subdivisionFactor, init)
+    peanoSolver = peanoclaw.Solver(solver, (2./3.)/subdivisionFactor, init)
 
     solver.rp = riemann.rp3_vc_acoustics
     solver.num_waves = 2
     solver.limiters = pyclaw.limiters.tvd.MC
 
-    solver.bc_lower[0]=pyclaw.BC.periodic
-    solver.bc_upper[0]=pyclaw.BC.periodic
-    solver.bc_lower[1]=pyclaw.BC.periodic
-    solver.bc_upper[1]=pyclaw.BC.periodic
-    solver.bc_lower[2]=pyclaw.BC.periodic
-    solver.bc_upper[2]=pyclaw.BC.periodic
+    solver.bc_lower[0]=pyclaw.BC.extrap
+    solver.bc_upper[0]=pyclaw.BC.extrap
+    solver.bc_lower[1]=pyclaw.BC.extrap
+    solver.bc_upper[1]=pyclaw.BC.extrap
+    solver.bc_lower[2]=pyclaw.BC.extrap
+    solver.bc_upper[2]=pyclaw.BC.extrap
 
-    solver.aux_bc_lower[0]=pyclaw.BC.periodic
-    solver.aux_bc_upper[0]=pyclaw.BC.periodic
-    solver.aux_bc_lower[1]=pyclaw.BC.periodic
-    solver.aux_bc_upper[1]=pyclaw.BC.periodic
-    solver.aux_bc_lower[2]=pyclaw.BC.periodic
-    solver.aux_bc_upper[2]=pyclaw.BC.periodic
+    solver.aux_bc_lower[0]=pyclaw.BC.extrap
+    solver.aux_bc_upper[0]=pyclaw.BC.extrap
+    solver.aux_bc_lower[1]=pyclaw.BC.extrap
+    solver.aux_bc_upper[1]=pyclaw.BC.extrap
+    solver.aux_bc_lower[2]=pyclaw.BC.extrap
+    solver.aux_bc_upper[2]=pyclaw.BC.extrap
 
     solver.dimensional_split=True
-    solver.bc_lower[0]    =pyclaw.BC.wall
-    solver.bc_lower[1]    =pyclaw.BC.wall
-    solver.bc_lower[2]    =pyclaw.BC.wall
-    solver.aux_bc_lower[0]=pyclaw.BC.wall
-    solver.aux_bc_lower[1]=pyclaw.BC.wall
-    solver.aux_bc_lower[2]=pyclaw.BC.wall
+    # solver.bc_lower[0]    =pyclaw.BC.wall
+    # solver.bc_lower[1]    =pyclaw.BC.wall
+    # solver.bc_lower[2]    =pyclaw.BC.wall
+    # solver.aux_bc_lower[0]=pyclaw.BC.wall
+    # solver.aux_bc_lower[1]=pyclaw.BC.wall
+    # solver.aux_bc_lower[2]=pyclaw.BC.wall
     mx=30; my=30; mz=30
 
     #===========================================================================
