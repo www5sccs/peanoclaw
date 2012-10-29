@@ -5,10 +5,10 @@ import numpy as np
 import clawpack.peanoclaw as peanoclaw
 
 def init(state):
-    zr = 2.0  # Impedance in right half
-    cr = 2.0  # Sound speed in right half
-    zl = 1.0  # Impedance in left half
-    cl = 1.0  # Sound speed in left half
+    zr = 200.0  # Impedance in right half
+    cr = 200.0  # Sound speed in right half
+    zl = 1  # Impedance in left half
+    cl = 1  # Sound speed in left half
 
     grid = state.grid
     grid.compute_c_centers()
@@ -41,7 +41,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     #===========================================================================
     # Setup solver and solver parameters
     #===========================================================================
-    subdivisionFactor = 6
+    subdivisionFactor = 16
     if solver_type=='classic':
         solver=pyclaw.ClawSolver3D()
     else:
@@ -101,15 +101,33 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 5.0
+    claw.tfinal = 1.0
     claw.keep_copy = True
     claw.solution = peanoclaw.solution.Solution(state,domain) #pyclaw.Solution(state,domain)
     claw.solver = peanoSolver  #solver
     claw.outdir=outdir
+    # claw.num_output_times = 2
 
     #===========================================================================
     # Solve the problem
     #===========================================================================
+    def _probe( solver , solution):
+
+        dim_x = solution.states[0].patch.dimensions[0]
+        dim_y = solution.states[0].patch.dimensions[1]
+        dim_z = solution.states[0].patch.dimensions[2]
+        
+        if abs( dim_x.lower + 1./3. ) < 1e-8 and abs(dim_y.lower + 1./3. ) < 1e-8 and abs( dim_z.lower - 1./3. ) < 1e-8:
+            print "PROBE"
+            print solver.qbc[0,:,3,:]
+
+        if abs( dim_x.lower - 1./3. ) < 1e-8 and abs(dim_y.lower + 1./3. ) < 1e-8 and abs( dim_z.lower + 1./3. ) < 1e-8:
+            print "PROBE1"
+            print solver.qbc[0,:,3,:]
+
+        
+
+    solver.before_step = _probe
     status = claw.run()
 
     #===========================================================================

@@ -147,6 +147,9 @@ class ClawSolver(Solver):
             # Godunov Splitting
             if self.source_split == 1:
                 self.step_source(self,solution.states[0],self.dt)
+
+        if self.before_step is not None:
+            self.before_step(self,solution)
                 
         return True
             
@@ -656,7 +659,7 @@ class ClawSolver3D(ClawSolver):
             mx,my,mz = grid.num_cells
             maxm = max(mx,my,mz)
             
-            self.apply_q_bcs(state)
+            self.apply_q_bcs(state) 
             if state.num_aux > 0:
                 self.apply_aux_bcs(state)
             qnew = self.qbc
@@ -670,10 +673,12 @@ class ClawSolver3D(ClawSolver):
                 #Right now only Godunov-dimensional-splitting is implemented.
                 #Strang-dimensional-splitting could be added following dimsp2.f in Clawpack.
 
+
                 self.qbc, cfl_x = self.fmod.step3ds(maxm,self.num_ghost,mx,my,mz, \
                       qold, self.qbc, self.auxbc,dx,dy,dz,self.dt,self._method,self._mthlim,\
                       self.aux1,self.aux2,self.aux3,self.work,1,rpn3,rpt3,rptt3)
-                
+
+
                 self.qbc[:, :, my + self.num_ghost:my + 2*self.num_ghost, :] = qold[:, :, my + self.num_ghost:my + 2*self.num_ghost, :]
                 self.qbc[:, :, 1:self.num_ghost, :] = qold[:, :, 1:self.num_ghost, :]
 
@@ -687,6 +692,7 @@ class ClawSolver3D(ClawSolver):
                 self.qbc, cfl_z = self.fmod.step3ds(maxm,self.num_ghost,mx,my,mz, \
                       self.qbc, self.qbc, self.auxbc,dx,dy,dz,self.dt,self._method,self._mthlim,\
                       self.aux1,self.aux2,self.aux3,self.work,3,rpn3,rpt3,rptt3)
+
 
                 cfl = max(cfl_x,cfl_y,cfl_z)
 
