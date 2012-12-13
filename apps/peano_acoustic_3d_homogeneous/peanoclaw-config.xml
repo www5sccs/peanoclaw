@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 
 <peano-configuration>
-  <run-peanoclaw-on-spacetree-grid
+ <run-peanoclaw-on-spacetree-grid
     plot-at-output-times="yes"
     plot-substeps="yes"
+    additional-levels-for-predefined-refinement="0"
   >
-
     <log-filter target="" component=""       switch="on" />
     <log-filter target="info" component="peano::applications::peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner"   switch="off" />
     <log-filter target="info" component="peano::applications::peanoclaw::SpacetreeGridState::plotTotalStatistics"   switch="on" />
