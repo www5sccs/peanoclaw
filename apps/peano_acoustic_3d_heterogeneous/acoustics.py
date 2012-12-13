@@ -5,10 +5,11 @@ import numpy as np
 import clawpack.peanoclaw as peanoclaw
 
 def init(state):
-    zr = 200.0  # Impedance in right half
-    cr = 200.0  # Sound speed in right half
-    zl = 1  # Impedance in left half
-    cl = 1  # Sound speed in left half
+    zr = 2.0  # Impedance in right half
+    cr = 2.0  # Sound speed in right half
+
+    zl = 1.0  # Impedance in left half
+    cl = 1.0  # Sound speed in left half
 
     grid = state.grid
     grid.compute_c_centers()
@@ -17,7 +18,7 @@ def init(state):
     state.aux[0,:,:,:] = zl*(X<0.) + zr*(X>=0.) # Impedance
     state.aux[1,:,:,:] = cl*(X<0.) + cr*(X>=0.) # Sound speed
 
-    x0 = 0.; y0 = 0.; z0 = 0.
+    x0 = 0.; y0 = 0.5; z0 = 0.5
     r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
     width=0.1
     state.q[0,:,:,:] = (np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
@@ -33,6 +34,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     #===========================================================================
     # Import libraries
     #===========================================================================
+
     if use_petsc:
         import clawpack.petclaw as pyclaw
     else:
@@ -41,7 +43,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     #===========================================================================
     # Setup solver and solver parameters
     #===========================================================================
-    subdivisionFactor = 16
+    subdivisionFactor = 6
     if solver_type=='classic':
         solver=pyclaw.ClawSolver3D()
     else:
@@ -71,13 +73,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     solver.aux_bc_upper[2]=pyclaw.BC.extrap
 
     solver.dimensional_split=True
-    # solver.bc_lower[0]    =pyclaw.BC.wall
-    # solver.bc_lower[1]    =pyclaw.BC.wall
-    # solver.bc_lower[2]    =pyclaw.BC.wall
-    # solver.aux_bc_lower[0]=pyclaw.BC.wall
-    # solver.aux_bc_lower[1]=pyclaw.BC.wall
-    # solver.aux_bc_lower[2]=pyclaw.BC.wall
-    mx=30; my=30; mz=30
+    solver.limiters = pyclaw.limiters.tvd.MC
 
     #===========================================================================
     # Initialize domain and state, then initialize the solution associated to the 
@@ -88,9 +84,9 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     mx = subdivisionFactor
     my = subdivisionFactor
     mz = subdivisionFactor
-    x = pyclaw.Dimension('x',-1.0,1.0,mx)
-    y = pyclaw.Dimension('y',-1.0,1.0,my)
-    z = pyclaw.Dimension('z',-1.0,1.0,mz)
+    x = pyclaw.Dimension('x', -1.0, 1.0, mx)
+    y = pyclaw.Dimension('y', -1.0, 1.0, my)
+    z = pyclaw.Dimension('z', -1.0, 1.0, mz)
     domain = pyclaw.Domain([x,y,z])
 
     num_eqn = 4
@@ -101,12 +97,12 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 1.0
+    claw.tfinal = 2.0
     claw.keep_copy = True
     claw.solution = peanoclaw.solution.Solution(state,domain) #pyclaw.Solution(state,domain)
     claw.solver = peanoSolver  #solver
     claw.outdir=outdir
-    # claw.num_output_times = 2
+    claw.num_output_times = 20
 
     #===========================================================================
     # Solve the problem
@@ -127,7 +123,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
 
         
 
-    solver.before_step = _probe
+#    solver.before_step = _probe
     status = claw.run()
 
     #===========================================================================
