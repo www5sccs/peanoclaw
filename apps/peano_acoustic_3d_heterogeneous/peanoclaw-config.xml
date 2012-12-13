@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 
 <peano-configuration>
-  <run-peanoclaw-on-spacetree-grid
+   <run-peanoclaw-on-spacetree-grid
     plot-at-output-times="yes"
     plot-substeps="yes"
+    additional-levels-for-predefined-refinement="1"
   >
 
     <log-filter target="" component=""       switch="on" />
