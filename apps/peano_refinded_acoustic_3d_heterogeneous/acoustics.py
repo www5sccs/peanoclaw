@@ -28,11 +28,20 @@ def init(state):
     state.q[3,:,:,:] = 0.
 
 def refinement_criterion(state):
+    # grid = state.grid;
+    # num_dim = grid.num_dim
+    # delta = grid.delta
+    # print "DELTA: ", delta
+    aux = state.aux    
+    # print "SHAPE OF AUX:" , aux.shape
     # if((state.q[0,:,:].max() - state.q[0,:,:].min()) > 0.2):
     # 	return 1.0/36.0
     # else:
     # 	return 1.0/18.0
-    return 1.0/18.0
+    if aux[0,:,:,:].max() > 1:
+        print "DOING REFINEMENT"
+        return 1.0 / 18.0
+    return 1.0 #/18.0
  
 def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',solver_type='classic',**kwargs):
     """
@@ -61,7 +70,7 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     # Peano Solver
     peanoSolver = peanoclaw.Solver(solver, (2./3.)/subdivisionFactor, 
                                    init, 
-                                   #refinement_criterion=refinement_criterion
+                                   refinement_criterion=refinement_criterion
                                    )
 
     solver.rp = riemann.rp3_vc_acoustics
