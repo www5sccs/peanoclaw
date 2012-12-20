@@ -147,7 +147,7 @@ class Solver(Solver):
               return_dt_and_estimated_next_dt[1] = maximum_timestep_size - return_dt_and_estimated_next_dt[0]
             else:
               return_dt_and_estimated_next_dt[1] = return_dt_and_estimated_next_dt[0] * self.solver.cfl_desired / cfl
-            print "TIMESTEP: " + str(return_dt_and_estimated_next_dt[0])
+            # print "TIMESTEP: " + str(return_dt_and_estimated_next_dt[0])
 
             #Steer refinement
             if not self.refinement_criterion == None:
