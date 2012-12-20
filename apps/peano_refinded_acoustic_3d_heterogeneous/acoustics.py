@@ -8,19 +8,20 @@ def init(state):
     zr = 2.0  # Impedance in right half
     cr = 2.0  # Sound speed in right half
 
-    zl = 1.0  # Impedance in left half
+     zl = 1.0  # Impedance in left half
     cl = 1.0  # Sound speed in left half
 
     grid = state.grid
     grid.compute_c_centers()
     X,Y,Z = grid._c_centers
 
-    state.aux[0,:,:,:] = zl*(X<0.) + zr*(X>=0.) # Impedance
-    state.aux[1,:,:,:] = cl*(X<0.) + cr*(X>=0.) # Sound speed
+    border = 0.35
+    state.aux[0,:,:,:] = zl*(X<border) + zr*(X>=border) # Impedance
+    state.aux[1,:,:,:] = cl*(X<border) + cr*(X>=border) # Sound speed
 
-    x0 = 0.; y0 = 0.5; z0 = 0.5
+    x0 = -0.5; y0 = 0.0; z0 = 0.0
     r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
-    width=0.1
+    width=0.07
     state.q[0,:,:,:] = (np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
 
     state.q[1,:,:,:] = 0.
@@ -28,20 +29,18 @@ def init(state):
     state.q[3,:,:,:] = 0.
 
 def refinement_criterion(state):
-    # grid = state.grid;
+    grid = state.grid;
     # num_dim = grid.num_dim
-    # delta = grid.delta
-    # print "DELTA: ", delta
+    delta = grid.delta
+    xwidth = delta[0]
+    print "DELTA: ", xwidth
     aux = state.aux    
-    # print "SHAPE OF AUX:" , aux.shape
-    # if((state.q[0,:,:].max() - state.q[0,:,:].min()) > 0.2):
-    # 	return 1.0/36.0
-    # else:
-    # 	return 1.0/18.0
     if aux[0,:,:,:].max() > 1:
-        print "DOING REFINEMENT"
-        return 1.0 / 18.0
-    return 1.0 #/18.0
+        print "REFINEMEN"
+        return 2/54.0
+ 
+    print "NO REFINEMENT"
+    return 2.0/18.0
  
 def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',solver_type='classic',**kwargs):
     """
@@ -68,7 +67,8 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     from clawpack import riemann
 
     # Peano Solver
-    peanoSolver = peanoclaw.Solver(solver, (2./3.)/subdivisionFactor, 
+    num_cells = 3.0
+    peanoSolver = peanoclaw.Solver(solver, (2./num_cells)/subdivisionFactor, 
                                    init, 
                                    refinement_criterion=refinement_criterion
                                    )
