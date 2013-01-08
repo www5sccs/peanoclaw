@@ -59,7 +59,9 @@ class Solver(Solver):
                                 c_double, c_double, c_double, #position
                                 c_double, #current time
                                 c_double, #maximum timestep size
-                                c_double) #estimated next timestep size
+                                c_double, #estimated next timestep size
+                                c_bool)
+
     CALLBACK_BOUNDARY_CONDITIONS = CFUNCTYPE(None, py_object, py_object, c_int, c_int)
     
     def __init__(self, solver, initial_minimal_mesh_width, q_initialization, aux_initialization=None, refinement_criterion=None):
@@ -90,6 +92,7 @@ class Solver(Solver):
         Creates a closure for initializing the grid
         """
         def callback_initialization(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_subcell, aux_fields_per_subcell, size_x, size_y, size_z, position_x, position_y, position_z):
+            print "DEBUG FROM PYTHOHN "
             import clawpack.pyclaw as pyclaw
 
             dim = get_dimension(q)
@@ -125,7 +128,7 @@ class Solver(Solver):
         r"""
         Creates a closure for the solver callback method.
         """
-        def callback_solver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt):
+        def callback_solver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt, use_dim_splitting):
             # Fix aux array
             if(aux_fields_per_cell == 0):
               aux = None
