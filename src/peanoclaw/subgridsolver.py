@@ -61,8 +61,9 @@ class SubgridSolver(object):
         self.solver.bc_upper[0] = pyclaw.BC.custom
         self.solver.bc_lower[1] = pyclaw.BC.custom
         self.solver.bc_upper[1] = pyclaw.BC.custom
-        self.solver.bc_lower[2] = pyclaw.BC.custom
-        self.solver.bc_upper[2] = pyclaw.BC.custom
+        if self.dimension is 3:
+            self.solver.bc_lower[2] = pyclaw.BC.custom
+            self.solver.bc_upper[2] = pyclaw.BC.custom
         
         self.qbc = qbc
         self.solver.user_bc_lower = self.user_bc_lower
