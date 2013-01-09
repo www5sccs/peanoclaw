@@ -6,7 +6,7 @@ Created on Feb 7, 2012
 from clawpack.pyclaw.solver import Solver
 import signal
 import logging
-from ctypes import CDLL
+from ctypes import CDLL, c_bool
 from ctypes import c_bool
 from ctypes import c_double
 from ctypes import c_int
@@ -59,7 +59,9 @@ class Solver(Solver):
                                 c_double, c_double, c_double, #position
                                 c_double, #current time
                                 c_double, #maximum timestep size
-                                c_double) #estimated next timestep size
+                                c_double, #estimated next timestep size
+                                c_bool)   #use dimensional splitting
+
     CALLBACK_BOUNDARY_CONDITIONS = CFUNCTYPE(None, py_object, py_object, c_int, c_int)
     
     def __init__(self, solver, initial_minimal_mesh_width, q_initialization, aux_initialization=None, refinement_criterion=None):
@@ -90,6 +92,7 @@ class Solver(Solver):
         Creates a closure for initializing the grid
         """
         def callback_initialization(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_subcell, aux_fields_per_subcell, size_x, size_y, size_z, position_x, position_y, position_z):
+            print "DEBUG FROM PYTHOHN "
             import clawpack.pyclaw as pyclaw
 
             dim = get_dimension(q)
@@ -125,10 +128,15 @@ class Solver(Solver):
         r"""
         Creates a closure for the solver callback method.
         """
-        def callback_solver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt):
+        def callback_solver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt, use_dimensional_splitting):
+
             # Fix aux array
             if(aux_fields_per_cell == 0):
               aux = None
+              
+            #Fix for switching dimensional splitting optimization on/off
+            global useDimensionalSplitting
+            useDimensionalSplitting=use_dimensional_splitting
               
             #TODO 3D: Adjust position and size to 3D
             # Set up grid information for current patch
@@ -204,8 +212,8 @@ class Solver(Solver):
         ghostlayer_width = self.num_ghost
         import os, sys
         configuration_file = os.path.join(sys.path[0], 'peanoclaw-config.xml')
-        use_dimensional_splitting = self.solver.dimensional_split
-        
+        use_dimensional_splitting_optimization = self.solver.dimensional_split
+          
         #self.solver.setup(solution)
         self.solution = solution
         
@@ -232,7 +240,6 @@ class Solver(Solver):
                                                     c_double, #Initial timestep size
                                                     c_char_p, #Config file
                                                     c_bool,   #Use dimensional splitting
-                                                    c_bool,   #Run tests
                                                     c_void_p, #q Initialization callback
                                                     c_void_p, #Boundary condition callback
                                                     c_void_p] #Solver callback
@@ -251,9 +258,7 @@ class Solver(Solver):
                                                     ghostlayer_width,
                                                     self.solver.dt_initial,
                                                     c_char_p(configuration_file),
-                                                    use_dimensional_splitting,
-                                                    #True,
-                                                    False,
+                                                    use_dimensional_splitting_optimization,
                                                     self.initialization_callback,
                                                     self.boundary_condition_callback,
                                                     self.solver_callback)
@@ -311,4 +316,3 @@ class Solver(Solver):
         print(os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-'+ str(dim)+ 'd.' + shared_library_extension))
         return os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-'+ str(dim)+ 'd.' + shared_library_extension)
         
-
