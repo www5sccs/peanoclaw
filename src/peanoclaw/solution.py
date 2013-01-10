@@ -91,7 +91,7 @@ class Solution(pyclaw.solution.Solution):
         
         #Assemble solution and write file
         self.domain = pyclaw.Domain(self.gathered_patches)
-        self.solution = pyclaw.Solution(self.gathered_states, domain)
+        self.solution = pyclaw.Solution(self.gathered_states, self.domain)
         
         self.t = solution.t      
             
