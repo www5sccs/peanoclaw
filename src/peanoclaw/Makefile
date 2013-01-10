@@ -11,7 +11,10 @@ ifndef BUILD_MODE
 BUILD_MODE := release
 endif
 ifndef PARALLEL
-PARALLEL := no
+PARALLEL := parallel_no
+endif
+ifndef MULTICORE
+MULTICORE := multicore_no
 endif
 
 # Get OS settings
@@ -27,8 +30,8 @@ endif
 all:
 ifdef PEANOCLAW_SRC
 	echo Using Scons as build system
-	cd $(PEANOCLAW_SRC); scons target=peanoclaw build=$(BUILD_MODE) dim=$(DIMENSION) parallel=$(PARALLEL) -j2
-	cp $(PEANOCLAW_SRC)/build/peanoclaw/$(BUILD_MODE)/dim$(DIMENSION)/multicore_no/parallel_no/gcc/libpeano-claw-2d.$(LIB_EXTENSION) .
+	cd $(PEANOCLAW_SRC); scons target=peanoclaw build=$(BUILD_MODE) dim=$(DIMENSION) parallel=$(PARALLEL) multicore=$(MULTICORE) -j2
+	cp $(PEANOCLAW_SRC)/build/peanoclaw/$(BUILD_MODE)/dim$(DIMENSION)/$(MULTICORE)/$(PARALLEL)/gcc/libpeano-claw-2d.$(LIB_EXTENSION) .
 endif
 
 clean:
