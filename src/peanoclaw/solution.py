@@ -62,9 +62,20 @@ class Solution(pyclaw.solution.Solution):
             
         return self.CALLBACK_ADD_PATCH_TO_SOLUTION(callback_add_to_solution)
 
+    def __deepcopy__(self,memo={}):
+        
+        self.gatherStates()
+        
+        return pyclaw.Solution.__deepcopy__(self, memo)
     
     def write(self,frame,path='./',file_format='ascii',file_prefix=None,
               write_aux=False,options={},write_p=False):
+
+        self.gatherStates()
+        
+        self.solution.write(frame, path, file_format,file_prefix,write_aux,options,write_p)
+            
+    def gatherStates(self):
         r"""
         Writes gathered solution to file.
         """
@@ -79,13 +90,9 @@ class Solution(pyclaw.solution.Solution):
         self.libpeano.pyclaw_peano_gatherSolution(self.peano, self.get_add_to_solution_callback())
         
         #Assemble solution and write file
-        domain = pyclaw.Domain(self.gathered_patches)
-        solution = pyclaw.Solution(self.gathered_states, domain)
+        self.domain = pyclaw.Domain(self.gathered_patches)
+        self.solution = pyclaw.Solution(self.gathered_states, domain)
         
-        self.t = solution.t
-        
-        solution.write(frame, path, file_format,file_prefix,write_aux,options,write_p)
-            
-            
+        self.t = solution.t      
             
             
