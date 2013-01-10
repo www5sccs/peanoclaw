@@ -92,7 +92,6 @@ class Solver(Solver):
         Creates a closure for initializing the grid
         """
         def callback_initialization(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_subcell, aux_fields_per_subcell, size_x, size_y, size_z, position_x, position_y, position_z):
-            print "DEBUG FROM PYTHOHN "
             import clawpack.pyclaw as pyclaw
 
             dim = get_dimension(q)

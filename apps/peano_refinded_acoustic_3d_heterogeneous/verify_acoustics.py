@@ -13,7 +13,7 @@ LENGTH = XF - XI
 SUBDIVISION_FACTOR = 6
 CELLS = 3
 INIT_MIN_MESH_WIDTH = LENGTH / CELLS / SUBDIVISION_FACTOR
-NUM_OUTPUT_TIMES = 2
+NUM_OUTPUT_TIMES = 10
 TEST_LEVEL = 5
 NUM_EQS = 4
 TFINAL = 1.0
@@ -301,29 +301,14 @@ def verify(claw1, claw2):
     global NUM_EQS
     global CELLS
     global SUBDIVISION_FACTOR
+
     import assembleState as AS
-
-    qinit1=claw1.frames[0].state.get_q_global()
-    qinit2=claw1.frames[0].state.get_q_global()
-
-    print 'LENGH1:', len(qinit1)
-    print 'LENGH2:', len(qinit2)
     import matplotlib.pyplot as plt
-    # for i in range(claw1.num_output_times):
-    #         qinit1=claw1.frames[i].state.get_q_global()
-    #         qinit2=claw1.frames[i].state.get_q_global()
-    #         pinit1 = qinit1[0,:,:,:].reshape(-1)
-    #         pinit2 = qinit2[0,:,:,:].reshape(-1)
-    #         import matplotlib.pyplot as plt
 
     for i in range(NUM_OUTPUT_TIMES):
-        print 'TYPE', type(claw1.frames[i])
         q_peano = AS.assemblePeanoClawState(claw1.frames[i], claw2.frames[i].domain, NUM_EQS, CELLS * SUBDIVISION_FACTOR)
         res1 = q_peano[:,:,TEST_LEVEL]
         res2 = claw2.frames[i].state.q[0,:,:,TEST_LEVEL]
-        if len(res1) != len(res2):
-            print "FAILED LOSER!"
-            return
         plt.pcolor(res2 - res1)
         plt.figure()
         plt.show()
