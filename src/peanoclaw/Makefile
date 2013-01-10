@@ -31,7 +31,7 @@ all:
 ifdef PEANOCLAW_SRC
 	echo Using Scons as build system
 	cd $(PEANOCLAW_SRC); scons target=peanoclaw build=$(BUILD_MODE) dim=$(DIMENSION) parallel=$(PARALLEL) multicore=$(MULTICORE) -j2
-	cp $(PEANOCLAW_SRC)/build/peanoclaw/$(BUILD_MODE)/dim$(DIMENSION)/$(MULTICORE)/$(PARALLEL)/gcc/libpeano-claw-2d.$(LIB_EXTENSION) .
+	cp $(PEANOCLAW_SRC)/build/peanoclaw/$(BUILD_MODE)/dim$(DIMENSION)/$(MULTICORE)/$(PARALLEL)/gcc/libpeano-claw-$(DIMENSION)d.$(LIB_EXTENSION) .
 endif
 
 clean:
