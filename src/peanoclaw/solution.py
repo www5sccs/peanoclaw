@@ -93,6 +93,6 @@ class Solution(pyclaw.solution.Solution):
         self.domain = pyclaw.Domain(self.gathered_patches)
         self.solution = pyclaw.Solution(self.gathered_states, self.domain)
         
-        self.t = solution.t      
+        self.t = self.solution.t      
             
             
