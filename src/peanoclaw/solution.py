@@ -80,10 +80,13 @@ class Solution(pyclaw.solution.Solution):
         return self.CALLBACK_ADD_PATCH_TO_SOLUTION(callback_add_to_solution)
 
     def __deepcopy__(self,memo={}):
-        
+        print "DEEP COMPY"
         self.gatherStates()
         
-        return pyclaw.Solution.__deepcopy__(self, memo)
+        var =  pyclaw.Solution.__deepcopy__(self, memo)
+        var.gathered_states = self.gathered_states
+        var.gathered_patches = self.gathered_patches
+        return var
     
     def write(self,frame,path='./',file_format='ascii',file_prefix=None,
               write_aux=False,options={},write_p=False):
@@ -110,6 +113,6 @@ class Solution(pyclaw.solution.Solution):
         self.domain = pyclaw.Domain(self.gathered_patches)
         self.solution = pyclaw.Solution(self.gathered_states, self.domain)
         
-        self.t = solution.t      
+        self.t = self.solution.t      
             
             
