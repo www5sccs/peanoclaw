@@ -17,6 +17,7 @@ NUM_OUTPUT_TIMES = 10
 TEST_LEVEL = 5
 NUM_EQS = 4
 TFINAL = 1.0
+
 def init_objects(filename):
     global OBJECTS
     OBJECTS = wf.read_obj(filename)
@@ -169,33 +170,9 @@ def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',so
     claw.outdir=outdir
     claw.num_output_times = NUM_OUTPUT_TIMES
 
-    #===========================================================================
-    # Solve the problem
-    #===========================================================================
-    # def _probe( solver , solution):
-
-    #     dim_x = solution.states[0].patch.dimensions[0]
-    #     dim_y = solution.states[0].patch.dimensions[1]
-    #     dim_z = solution.states[0].patch.dimensions[2]
-        
-    #     if abs( dim_x.lower + 1./3. ) < 1e-8 and abs(dim_y.lower + 1./3. ) < 1e-8 and abs( dim_z.lower - 1./3. ) < 1e-8:
-    #         print "PROBE"
-    #         print solver.qbc[0,:,3,:]
-
-    #     if abs( dim_x.lower - 1./3. ) < 1e-8 and abs(dim_y.lower + 1./3. ) < 1e-8 and abs( dim_z.lower + 1./3. ) < 1e-8:
-    #         print "PROBE1"
-    #         print solver.qbc[0,:,3,:]
-
-        
-
     #solver.before_step = _probe
     status = claw.run()
 
-    #===========================================================================
-    # Plot results
-    #===========================================================================
-    #if htmlplot:  pyclaw.plot.html_plot(outdir=outdir,file_format=claw.output_format)
-    #if iplot:     pyclaw.plot.interactive_plot(outdir=outdir,file_format=claw.output_format)
     return claw
 
 def pyclaw_acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',solver_type='classic',**kwargs):
@@ -263,37 +240,7 @@ def pyclaw_acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_out
     # Solve
     claw.tfinal = TFINAL
     status = claw.run()
-
-    # if htmlplot:  pyclaw.plot.html_plot(outdir=outdir,file_format=claw.output_format)
-    # if iplot:     pyclaw.plot.interactive_plot(outdir=outdir,file_format=claw.output_format)
-
-    # pinitial=claw.frames[0].state.get_q_global()
-    # pmiddle  =claw.frames[3].state.get_q_global()
-    # pfinal  =claw.frames[claw.num_output_times].state.get_q_global()
-
     return claw
-    # if pinitial != None and pmiddle != None and pfinal != None:
-    #     pinitial =pinitial[0,:,:,:].reshape(-1)
-    #     pmiddle  =pmiddle[0,:,:,:].reshape(-1)
-    #     pfinal   =pfinal[0,:,:,:].reshape(-1)
-    #     final_difference =np.prod(grid.delta)*np.linalg.norm(pfinal-pinitial,ord=1)
-    #     middle_difference=np.prod(grid.delta)*np.linalg.norm(pmiddle-pinitial,ord=1)
-
-    #     if app == None:
-    #         print 'Final error: ', final_difference
-    #         print 'Middle error: ', middle_difference
-
-    #     # import matplotlib.pyplot as plt
-    #     # for i in range(claw.num_output_times):
-    #     #    plt.pcolor(claw.frames[i].state.q[0,:,:,mz/2])
-    #     #    plt.figure()
-    #     # plt.show()
-
-    #     return pfinal, final_difference
-
-    # else:
-        
-    #     return
 
 def verify(claw1, claw2):
     global NUM_OUTPUT_TIMES
@@ -310,7 +257,7 @@ def verify(claw1, claw2):
         res1 = q_peano[:,:,TEST_LEVEL]
         res2 = claw2.frames[i].state.q[0,:,:,TEST_LEVEL]
         plt.pcolor(res2 - res1)
-        plt.figure()
+        plt.colorbar()
         plt.show()
             
 
