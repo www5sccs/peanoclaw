@@ -6,11 +6,10 @@ import clawpack.peanoclaw as peanoclaw
 import wavefront as wf
 from clawpack import pyclaw
 
-OBJECTS = None
 XI = -1.0
 XF = 1.0
 LENGTH = XF - XI
-SUBDIVISION_FACTOR = 6
+SUBDIVISION_FACTOR = 16
 CELLS = 3
 INIT_MIN_MESH_WIDTH = LENGTH / CELLS / SUBDIVISION_FACTOR
 NUM_OUTPUT_TIMES = 10
@@ -18,12 +17,7 @@ TEST_LEVEL = 5
 NUM_EQS = 4
 TFINAL = 1.0
 
-def init_objects(filename):
-    global OBJECTS
-    OBJECTS = wf.read_obj(filename)
-
 def init_aux(state):
-    global OBJECTS
     zr = 1.0  # Impedance in right half
     cr = 1.0  # Sound speed in right half
 
@@ -33,27 +27,9 @@ def init_aux(state):
     grid.compute_c_centers()
     X,Y,Z = grid._c_centers
 
-    if OBJECTS is not None:
-        vertices = OBJECTS[0].vertices
-        vert_x = [vert[0] for vert in vertices ]
-        vert_y = [vert[1] for vert in vertices ]
-        vert_z = [vert[2] for vert in vertices ]
-        XMAX = max(vert_x)
-        XMIN = min(vert_x)
-        YMAX = max(vert_y)
-        YMIN = min(vert_y)
-        ZMAX = max(vert_z)
-        ZMIN = min(vert_z)
-    
-        # print 'XMIN',  XMIN
-        # print 'XMAX',  XMAX
-        inside_the_object = np.logical_and(X > XMIN , X < XMAX )#, Y > YMIN, Y < YMAX, Z > ZMIN, Z < ZMAX)
-        state.aux[0,:,:,:] = zl*(np.logical_not(inside_the_object)) + zr*(inside_the_object) # Impedance
-        state.aux[1,:,:,:] = cl*(np.logical_not(inside_the_object)) + cr*(inside_the_object) # Sound speed
-    else:
-        border = 0.0#0.35
-        state.aux[0,:,:,:] = zl*(X<border) + zr*(X>=border) # Impedance
-        state.aux[1,:,:,:] = cl*(X<border) + cr*(X>=border) # Sound speed
+    border = 0.0#0.35
+    state.aux[0,:,:,:] = zl*(X<border) + zr*(X>=border) # Impedance
+    state.aux[1,:,:,:] = cl*(X<border) + cr*(X>=border) # Sound speed
 
 def init_q(state):
     grid = state.grid
@@ -256,6 +232,12 @@ def verify(claw1, claw2):
         q_peano = AS.assemblePeanoClawState(claw1.frames[i], claw2.frames[i].domain, NUM_EQS, CELLS * SUBDIVISION_FACTOR)
         res1 = q_peano[:,:,TEST_LEVEL]
         res2 = claw2.frames[i].state.q[0,:,:,TEST_LEVEL]
+        fig = plt.figure(1)
+        plt.subplot(131)
+        plt.pcolor(res1)
+        plt.subplot(132)
+        plt.pcolor(res2)
+        plt.subplot(133)
         plt.pcolor(res2 - res1)
         plt.colorbar()
         plt.show()
@@ -265,7 +247,6 @@ def verify(claw1, claw2):
 if __name__=="__main__":
     import sys
     from clawpack.pyclaw.util import run_app_from_main
-    #init_objects('cube.obj')
     pyclaw_output = run_app_from_main(pyclaw_acoustics3D)
     peanoclaw_output = run_app_from_main(acoustics3D)
     verify( peanoclaw_output, pyclaw_output)
