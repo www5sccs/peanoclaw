@@ -56,6 +56,8 @@ class SubgridSolver(object):
         self.solver.user_bc_lower = self.user_bc_lower
         self.solver.user_bc_upper = self.user_bc_upper
         
+        self.recover_ghostlayers = False
+        
     def step(self, maximum_timestep_size, estimated_next_dt):
         r"""
         Performs one timestep on the subgrid. This might result in several runs of the
@@ -75,6 +77,7 @@ class SubgridSolver(object):
         # Set qbc and timestep for the current patch
         self.solver.qbc = self.qbc
         self.solver.dt_max = maximum_timestep_size
+        
         self.solver.evolve_to_time(self.solution)
         
         return self.solution.state.q
@@ -89,12 +92,11 @@ class SubgridSolver(object):
       results during the next one.
       """
       #Todo 3D: Rewrite for arbitrary dimensions
+#      if self.recover_ghostlayers:
       if dim == self.dim_x:
-          for i in range(mbc):
-              qbc[:, :, i] = self.qbc[:, :, i]
+        qbc[:, :, 0:mbc] = self.qbc[:, :, 0:mbc]
       else:
-          for i in range(mbc):
-              qbc[:, i, :] = self.qbc[:, i, :]
+        qbc[:, 0:mbc, :] = self.qbc[:, 0:mbc, :]
         
     def user_bc_upper(self, grid, dim, t, qbc, mbc):
       r"""
@@ -105,9 +107,11 @@ class SubgridSolver(object):
       results during the next one.
       """
       #Todo 3D: Rewrite for arbitrary dimensions
+#      if self.recover_ghostlayers:
       if dim == self.dim_x:
-          for i in range(mbc):
-              qbc[:, :, self.dim_y.num_cells + mbc + i] = self.qbc[:, :, self.dim_y.num_cells + mbc + i]
+        qbc[:, :, self.dim_y.num_cells + mbc:self.dim_y.num_cells + 2*mbc] = self.qbc[:, :, self.dim_y.num_cells + mbc:self.dim_y.num_cells + 2*mbc]
       else:
-          for i in range(mbc):
-              qbc[:, self.dim_x.num_cells + mbc + i, :] = self.qbc[:, self.dim_x.num_cells + mbc + i, :]
+        qbc[:, self.dim_x.num_cells + mbc:self.dim_x.num_cells + 2*mbc, :] = self.qbc[:, self.dim_x.num_cells + mbc:self.dim_x.num_cells + 2*mbc, :]
+#      else:
+#        if dim == self.dim_y:
+#          self.recover_ghostlayers = True
