@@ -28,15 +28,18 @@ def init_aux(state):
     X,Y,Z = grid._c_centers
 
     border = 0.0#0.35
-    state.aux[0,:,:,:] = zl*(X<border) + zr*(X>=border) # Impedance
-    state.aux[1,:,:,:] = cl*(X<border) + cr*(X>=border) # Sound speed
+    # state.aux[0,:,:,:] = zl*(X<border) + zr*(X>=border) # Impedance
+    # state.aux[1,:,:,:] = cl*(X<border) + cr*(X>=border) # Sound speed
+    state.aux[0,:,:,:] = 1.0
+    state.aux[1,:,:,:] = 1.0
+
 
 def init_q(state):
     grid = state.grid
     grid.compute_c_centers()
     X,Y,Z = grid._c_centers
 
-    x0 = -0.5; y0 = 0.0; z0 = 0.0
+    x0 = 0.0; y0 = 0.0; z0 = 0.0
     r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
     width=0.07
     state.q[0,:,:,:] = (np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
