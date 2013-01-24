@@ -3,9 +3,11 @@ from pylab import *
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+import math
 
 def generate_landscape_layers(num_layers, XI, XF, size):
-    iters = int(np.log2(size - 1))
+    iters = int(math.ceil(np.log2(size - 1)))
+    #print iters
     width = np.fabs(XF - XI)
     layer_width = width / num_layers
     layers_data = []

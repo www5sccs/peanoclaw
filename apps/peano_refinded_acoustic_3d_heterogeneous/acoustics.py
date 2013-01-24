@@ -9,18 +9,52 @@ import benchmark as BM
 XI = -1.0
 XF = 1.0
 LENGTH = XF - XI
-SUBDIVISION_FACTOR = 8
-CELLS = 2
-INIT_MIN_MESH_WIDTH = LENGTH / CELLS / SUBDIVISION_FACTOR
-NUM_OUTPUT_TIMES = 2
-TFINAL = 0.0001
+SUBDIVISION_FACTOR = 16
+CELLS = 3
+INIT_MIN_MESH_WIDTH = (LENGTH / CELLS) / SUBDIVISION_FACTOR
+NUM_OUTPUT_TIMES = 30
+TFINAL = 1.0#0001
 
 # size should be equal to 2^n + 1 to generate the landscape with diamond-square algorithms
 # it means that CELLS * SUBDIVISION_FACTOR should be 2^n
-SIZE = CELLS * SUBDIVISION_FACTOR + 1  
-NUM_LAYERS = 1
-LANDSCAPE = BM.generate_landscape_layers( NUM_LAYERS, XI, XF, SIZE)
-BM.vis_landscape( LANDSCAPE, XI, XF,  SIZE, NUM_LAYERS)
+NUM_GRID_POINTS = CELLS * SUBDIVISION_FACTOR + 1  
+NUM_LAYERS = 3
+LAYERS_AUX_DATA = [1,2,1,2]#np.arange(NUM_LAYERS+1)
+
+print "Generating landscape! please be patient!"
+LANDSCAPE = BM.generate_landscape_layers( NUM_LAYERS, XI, XF, NUM_GRID_POINTS)
+LS_SIZE =  len(LANDSCAPE[0])
+BM.vis_landscape( LANDSCAPE, XI, XF, LS_SIZE, NUM_LAYERS)
+
+#cutting the landscape to the appropriate size
+SIZE = NUM_GRID_POINTS - 1
+RESIZED_LS = []
+for ls in LANDSCAPE:
+    ls = ls[:SIZE,:SIZE]
+    #print ls.shape
+    RESIZED_LS.append(ls)
+BM.vis_landscape( RESIZED_LS, XI, XF, SIZE, NUM_LAYERS)
+
+GLOBAL_AUX = np.zeros((SIZE,SIZE,SIZE))
+idx_to_length_map =  np.linspace( XI, XF, num=SIZE)
+
+for xidx in range(SIZE):
+    for yidx in range(SIZE):
+        for zidx in range(SIZE):
+            myheight = idx_to_length_map[zidx]
+            layers_heights = np.zeros((NUM_LAYERS))
+            for layer in range(NUM_LAYERS):
+                layers_heights[layer] = RESIZED_LS[layer][xidx,yidx]
+
+            bool_array = layers_heights < myheight
+            #print bool_array
+            found = np.where(bool_array == False )[0]
+            if len( found ) is 0:
+                layer_idx = NUM_LAYERS
+            else:
+                layer_idx = found[0]
+            #print layer_idx
+            GLOBAL_AUX[xidx,yidx,zidx] = LAYERS_AUX_DATA[layer_idx] #aux_val
 
 def init_aux_landscaple(state):
     global XI
@@ -29,22 +63,10 @@ def init_aux_landscaple(state):
     global SUBDIVISION_FACTOR
     global SIZE
     global NUM_LAYERS
-    global LANDSCAPE
+    global GLOBAL_AUX
 
-    ly = LANDSCAPE[0]
-    ls = ly[1:,1:]
-    
-    zr = 1.0  # Impedance in right half
-    cr = 1.0  # Sound speed in right half
-    zl = 1.0  # Impedance in left half
-    cl = 1.0  # Sound speed in left half
-
-    LU = np.linspace( XI, XF, num=SIZE)
-    LV = np.linspace( XI, XF, num=SIZE)
-    LX, LY = np.meshgrid(LU, LV)
-
-    LX = LX[1:,1:]
-    LY = LY[1:,1:]
+    idx_to_length_map =  np.linspace( XI, XF, num=CELLS+1)
+    #print idx_to_length_map
 
     grid = state.grid
     grid.compute_c_centers()
@@ -52,14 +74,38 @@ def init_aux_landscaple(state):
 
     XMIN = np.amin(X)
     YMIN = np.amin(Y)
+    ZMIN = np.amin(Z)
     XMAX = np.amax(X)
     YMAX = np.amax(Y)
-    print X.shape,ls.shape
+    ZMAX = np.amax(Z)
+    XAVG = ( XMIN + XMAX ) / 2.0
+    YAVG = ( YMIN + YMAX ) / 2.0
+    ZAVG = ( ZMIN + ZMAX ) / 2.0
+    xbool = idx_to_length_map < XAVG
+    ybool = idx_to_length_map < YAVG
+    zbool = idx_to_length_map < ZAVG
+    xfound = np.where(xbool == False )[0]
+    yfound = np.where(ybool == False )[0]
+    zfound = np.where(zbool == False )[0]
+    cxindex = xfound[0] - 1
+    cyindex = yfound[0] - 1
+    czindex = zfound[0] - 1
 
-    # print ls
-    border = 0.35
-    state.aux[0,:,:,:] = zl*(X<border) + zr*(X>=border) # Impedance
-    state.aux[1,:,:,:] = cl*(X<border) + cr*(X>=border) # Sound speed
+    # print idx_to_length_map
+    # print XAVG
+    # print xbool
+    # print xfound
+    # print cxindex
+
+    cell_index = [cxindex, cyindex, czindex]
+    print 'CELL INDEX:',cell_index
+
+    local_aux = GLOBAL_AUX[ cxindex*SUBDIVISION_FACTOR:(cxindex+1)*SUBDIVISION_FACTOR, \
+                       cyindex*SUBDIVISION_FACTOR:(cyindex+1)*SUBDIVISION_FACTOR, \
+                       czindex*SUBDIVISION_FACTOR:(czindex+1)*SUBDIVISION_FACTOR  \
+                           ]
+    state.aux[0,:,:,:] = local_aux
+    state.aux[1,:,:,:] = local_aux
     
 
 def init_aux1(state):
@@ -81,9 +127,9 @@ def init_field(state):
     grid.compute_c_centers()
     X,Y,Z = grid._c_centers
 
-    x0 = -0.5; y0 = 0.0; z0 = 0.0
+    x0 = -0.5; y0 = 0.0; z0 = -0.5
     r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
-    width=0.07
+    width=0.3
     state.q[0,:,:,:] = (np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
     state.q[1,:,:,:] = 0.
     state.q[2,:,:,:] = 0.
@@ -91,14 +137,14 @@ def init_field(state):
 
 
 def init(state):
-    init_aux1(state)
-    #init_aux_landscaple(state)
+    #init_aux1(state)
+    init_aux_landscaple(state)
     init_field(state)
 
 def refinement_criterion(state):
     global INIT_MIN_MESH_WIDTH
-    if state.aux[0,:,:,:].max() > 1:
-        return INIT_MIN_MESH_WIDTH / 2.0
+    # if state.aux[0,:,:,:].max() > 1:
+    #     return INIT_MIN_MESH_WIDTH / 2.0
     return INIT_MIN_MESH_WIDTH
  
 def acoustics3D(iplot=False,htmlplot=False,use_petsc=False,outdir='./_output',solver_type='classic',**kwargs):
