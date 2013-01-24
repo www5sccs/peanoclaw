@@ -9,11 +9,11 @@ from clawpack import pyclaw
 XI = -1.0
 XF = 1.0
 LENGTH = XF - XI
-SUBDIVISION_FACTOR = 16
-CELLS = 3
+SUBDIVISION_FACTOR = 30
+CELLS = 1
 INIT_MIN_MESH_WIDTH = LENGTH / CELLS / SUBDIVISION_FACTOR
 NUM_OUTPUT_TIMES = 10
-TEST_LEVEL = 5
+TEST_LEVEL = 15
 NUM_EQS = 4
 TFINAL = 1.0
 
@@ -233,13 +233,15 @@ def verify(claw1, claw2):
 
     for i in range(NUM_OUTPUT_TIMES):
         q_peano = AS.assemblePeanoClawState(claw1.frames[i], claw2.frames[i].domain, NUM_EQS, CELLS * SUBDIVISION_FACTOR)
-        res1 = q_peano[:,:,TEST_LEVEL]
-        res2 = claw2.frames[i].state.q[0,:,:,TEST_LEVEL]
+        res1 = q_peano[TEST_LEVEL,:,:]
+        res2 = claw2.frames[i].state.q[0,TEST_LEVEL,:,:]
         fig = plt.figure(1)
         plt.subplot(131)
         plt.pcolor(res1)
+        plt.colorbar()
         plt.subplot(132)
         plt.pcolor(res2)
+        plt.colorbar()
         plt.subplot(133)
         plt.pcolor(res2 - res1)
         plt.colorbar()
