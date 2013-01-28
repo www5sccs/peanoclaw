@@ -13,13 +13,13 @@ SUBDIVISION_FACTOR = 16
 CELLS = 3
 INIT_MIN_MESH_WIDTH = (LENGTH / CELLS) / SUBDIVISION_FACTOR
 NUM_OUTPUT_TIMES = 30
-TFINAL = 1.0#0001
+TFINAL = 2.0#0001
 
 # size should be equal to 2^n + 1 to generate the landscape with diamond-square algorithms
 # it means that CELLS * SUBDIVISION_FACTOR should be 2^n
 NUM_GRID_POINTS = CELLS * SUBDIVISION_FACTOR + 1  
 NUM_LAYERS = 3
-LAYERS_AUX_DATA = [1,2,1,2]#np.arange(NUM_LAYERS+1)
+LAYERS_AUX_DATA = [0.2,0.5,0.2,0.5] #np.arange(NUM_LAYERS+1)#
 
 print "Generating landscape! please be patient!"
 LANDSCAPE = BM.generate_landscape_layers( NUM_LAYERS, XI, XF, NUM_GRID_POINTS)
@@ -105,7 +105,7 @@ def init_aux_landscaple(state):
                        czindex*SUBDIVISION_FACTOR:(czindex+1)*SUBDIVISION_FACTOR  \
                            ]
     state.aux[0,:,:,:] = local_aux
-    state.aux[1,:,:,:] = local_aux
+    state.aux[1,:,:,:] = 1#local_aux
     
 
 def init_aux1(state):
@@ -130,7 +130,7 @@ def init_field(state):
     x0 = -0.5; y0 = 0.0; z0 = -0.5
     r = np.sqrt((X-x0)**2 + (Y-y0)**2 + (Z-z0)**2)
     width=0.3
-    state.q[0,:,:,:] = (np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
+    state.q[0,:,:,:] = 5*(np.abs(r-0.3)<=width)*(1.+np.cos(np.pi*(r-0.3)/width))
     state.q[1,:,:,:] = 0.
     state.q[2,:,:,:] = 0.
     state.q[3,:,:,:] = 0.
