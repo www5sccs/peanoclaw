@@ -74,13 +74,14 @@ class SubgridSolver(object):
                                  last timestep performed on this grid.
         """
         self.solver.dt = min(maximum_timestep_size, estimated_next_dt)
+        self.number_of_rollbacks = 0
         # Set qbc and timestep for the current patch
         self.solver.qbc = self.qbc
         self.solver.dt_max = maximum_timestep_size
         
         self.solver.evolve_to_time(self.solution)
         
-        return self.solution.state.q
+        return self.solution.state.q, self.number_of_rollbacks
         
         
     def user_bc_lower(self, grid, dim, t, qbc, mbc):
@@ -115,3 +116,8 @@ class SubgridSolver(object):
 #      else:
 #        if dim == self.dim_y:
 #          self.recover_ghostlayers = True
+      if self.recover_ghostlayers:
+        self.number_of_rollbacks = 1
+      else:
+        if dim == self.dim_y:
+          self.recover_ghostlayers = True
