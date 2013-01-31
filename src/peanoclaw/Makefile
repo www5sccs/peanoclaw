@@ -16,6 +16,9 @@ endif
 ifndef MULTICORE
 MULTICORE := multicore_no
 endif
+ifndef VALGRIND
+VALGRIND := no
+endif
 
 # Get OS settings
 #-----------------
@@ -30,7 +33,7 @@ endif
 all:
 ifdef PEANOCLAW_SRC
 	echo Using Scons as build system
-	cd $(PEANOCLAW_SRC); scons target=peanoclaw build=$(BUILD_MODE) dim=$(DIMENSION) parallel=$(PARALLEL) multicore=$(MULTICORE) -j2
+	cd $(PEANOCLAW_SRC); scons target=peanoclaw build=$(BUILD_MODE) dim=$(DIMENSION) parallel=$(PARALLEL) multicore=$(MULTICORE) valgrind=$(VALGRIND) -j2
 	cp $(PEANOCLAW_SRC)/build/peanoclaw/$(BUILD_MODE)/dim$(DIMENSION)/$(MULTICORE)/$(PARALLEL)/gcc/libpeano-claw-$(DIMENSION)d.$(LIB_EXTENSION) .
 endif
 
