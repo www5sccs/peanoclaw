@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<peano-configuration>
+
+  <run-tests>
+    <log-filter target="" component=""       switch="off" />
+    <log-filter target="info" component=""   switch="on" />
+    <log-filter target="debug" component="peano::applications::peanoclaw::GhostLayerCompositor::applyCoarseGridCorrection"   switch="on" />
+
+    <log-output log-output-file="" column-separator=" " log-time-stamp="yes" log-time-stamp-human-readable="yes" log-machine-name="no" log-message-type="yes" log-trace="yes" />
+  </run-tests>
+
+ <run-peanoclaw-on-spacetree-grid
+    plot-at-output-times="yes"
+  	plot-substeps="yes"
+  	additional-levels-for-predefined-refinement="1"
+    disable-dimensional-splitting-optimization="yes"
+  >
+  
+    <log-filter target="" component=""       switch="off" />
+    <log-filter target="info" component=""   switch="on" />
+    <log-filter target="debug" component="::pyclawBindings"   switch="off" />
+    <log-filter target="debug" component="peano::applications::peanoclaw::interpolate"   switch="off" />
+    <log-filter target="debug" component="peano::kernel::heap::Heap::getData"   switch="off" />
+    
+    <log-output log-output-file="" column-separator=" " log-time-stamp="no" log-time-stamp-human-readable="no" log-machine-name="no" log-message-type="no" log-trace="no" />
+
+    <probe name="probe0" unknown="0" position="0.5; 0.5; 0.5" />
+      
+  </run-peanoclaw-on-spacetree-grid>
+</peano-configuration>
