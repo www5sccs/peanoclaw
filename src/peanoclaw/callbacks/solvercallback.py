@@ -37,12 +37,13 @@ class SolverCallback(object):
                             c_bool)   #use dimensional splitting
 
 
-  def __init__(self, solver, refinement_criterion):
+  def __init__(self, solver, refinement_criterion, initial_minimal_mesh_width):
     '''
     Constructor
     '''
     self.solver = solver
     self.refinement_criterion = refinement_criterion
+    self.initial_minimal_mesh_width = initial_minimal_mesh_width
     
     #Statistics
     self.number_of_non_disposed_cells = 0

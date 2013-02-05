@@ -44,7 +44,7 @@ class Solver(Solver):
 
         #Create callbacks
         self.initialization_callback = InitializationCallback(self, refinement_criterion, q_initialization, aux_initialization)
-        self.solver_callback = SolverCallback(self, refinement_criterion)
+        self.solver_callback = SolverCallback(self, refinement_criterion, initial_minimal_mesh_width)
         self.boundary_condition_callback = BoundaryConditionCallback(self)
         
     def setup(self, solution):
