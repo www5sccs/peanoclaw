@@ -43,7 +43,7 @@ class Solver(Solver):
         self.rp = solver.rp
 
         #Create callbacks
-        self.initialization_callback = InitializationCallback(self, refinement_criterion, q_initialization, aux_initialization)
+        self.initialization_callback = InitializationCallback(self, refinement_criterion, q_initialization, aux_initialization, initial_minimal_mesh_width)
         self.solver_callback = SolverCallback(self, refinement_criterion, initial_minimal_mesh_width)
         self.boundary_condition_callback = BoundaryConditionCallback(self)
         

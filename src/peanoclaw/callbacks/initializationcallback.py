@@ -28,7 +28,7 @@ class InitializationCallback(object):
                                       c_double, c_double, c_double) #position
 
 
-  def __init__(self, solver, refinement_criterion, q_initialization, aux_initialization):
+  def __init__(self, solver, refinement_criterion, q_initialization, aux_initialization, initial_minimal_mesh_width):
     '''
     Constructor
     '''
@@ -36,6 +36,7 @@ class InitializationCallback(object):
     self.refinement_criterion = refinement_criterion
     self.q_initialization = q_initialization
     self.aux_initialization = aux_initialization
+    self.initial_minimal_mesh_width = initial_minimal_mesh_width
     
   def get_initialization_callback(self):
     r"""
@@ -52,12 +53,14 @@ class InitializationCallback(object):
         if(aux_fields_per_subcell > 0):
           subgrid_state.aux = aux
         subgrid_state.problem_data = self.solver.solution.state.problem_data
+        
         self.q_initialization(subgrid_state)
+
         if(self.aux_initialization != None and aux_fields_per_subcell > 0):
           self.aux_initialization(subgrid_state)
           
         #Steer refinement
-        if not self.refinement_criterion == None:
+        if self.refinement_criterion != None:
           return self.refinement_criterion(subgrid_state)
         else:
           return self.initial_minimal_mesh_width
