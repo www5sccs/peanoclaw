@@ -1,0 +1,63 @@
+component: PeanoClaw
+namespace: ::peanoclaw
+
+vertex: 
+  dastgen-file: Vertex.def
+  
+cell:
+  dastgen-file: Cell.def
+
+state:
+  dastgen-file: State.def
+
+event-mapping:
+  name: InitialiseGrid
+  
+event-mapping:
+  name: Plot
+  
+event-mapping:
+  name: SolveTimestep
+  
+event-mapping:
+  name: Remesh
+  
+event-mapping:
+  name: GatherCurrentSolution
+  
+event-mapping:
+  name: Cleanup
+  
+adapter:
+  name: InitialiseGrid
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: InitialiseGrid
+    
+adapter:
+  name: Plot
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: Plot
+  
+adapter:
+  name: Remesh
+  merge-with-user-defined-mapping: Remesh
+  
+adapter:
+  name: SolveTimestep
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: SolveTimestep
+  
+adapter:
+  name: SolveTimestepAndPlot
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: SolveTimestep
+  merge-with-user-defined-mapping: Plot
+  
+adapter:
+  name: GatherCurrentSolution
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: GatherCurrentSolution
+  
+adapter:
+  name: Cleanup
+  merge-with-user-defined-mapping: Cleanup

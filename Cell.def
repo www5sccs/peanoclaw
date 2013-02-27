@@ -1,0 +1,5 @@
+Packed-Type: short int;
+
+class peano::applications::peanoclaw::dastgen::Cell {
+  parallelise persistent int cellDescriptionIndex;
+};
