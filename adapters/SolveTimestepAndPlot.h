@@ -12,13 +12,13 @@
 
 #include "tarch/multicore/MulticoreDefinitions.h"
 
-#include "peanoclaw/Vertex.h"
-#include "peanoclaw/Cell.h"
-#include "peanoclaw/State.h"
+#include "Vertex.h"
+#include "Cell.h"
+#include "State.h"
 
- #include "peanoclaw/mappings/Remesh.h"
- #include "peanoclaw/mappings/SolveTimestep.h"
- #include "peanoclaw/mappings/Plot.h"
+ #include "mappings/Remesh.h"
+ #include "mappings/SolveTimestep.h"
+ #include "mappings/Plot.h"
 
 
 

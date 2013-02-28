@@ -1,4 +1,4 @@
-#include "peanoclaw/adapters/Remesh.h"
+#include "adapters/Remesh.h"
 
 
 

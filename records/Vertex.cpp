@@ -1,4 +1,4 @@
-#include "peanoclaw/records/Vertex.h"
+#include "records/Vertex.h"
 
 #if defined(Parallel) && defined(Asserts)
    peanoclaw::records::Vertex::PersistentRecords::PersistentRecords() {

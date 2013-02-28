@@ -12,11 +12,11 @@
 
 #include "tarch/multicore/MulticoreDefinitions.h"
 
-#include "peanoclaw/Vertex.h"
-#include "peanoclaw/Cell.h"
-#include "peanoclaw/State.h"
+#include "Vertex.h"
+#include "Cell.h"
+#include "State.h"
 
- #include "peanoclaw/mappings/Cleanup.h"
+ #include "mappings/Cleanup.h"
 
 
 

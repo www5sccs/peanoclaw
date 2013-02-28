@@ -14,15 +14,15 @@
 
 #include "tarch/multicore/MulticoreDefinitions.h"
 
-#include "peanoclaw/Vertex.h"
-#include "peanoclaw/Cell.h"
-#include "peanoclaw/State.h"
+#include "Vertex.h"
+#include "Cell.h"
+#include "State.h"
 
-#include "peanoclaw/records/CellDescription.h"
-#include "peanoclaw/records/VertexDescription.h"
-#include "peanoclaw/records/Data.h"
+#include "records/CellDescription.h"
+#include "records/VertexDescription.h"
+#include "records/Data.h"
 
-#include "peanoclaw/Patch.h"
+#include "Patch.h"
 
 #define DIMENSIONS_PLUS_ONE (DIMENSIONS+1)
 

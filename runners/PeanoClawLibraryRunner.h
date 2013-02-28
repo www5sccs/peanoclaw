@@ -11,8 +11,8 @@
 #include "peano/utils/Globals.h"
 #include "tarch/la/Vector.h"
 
-#include "peanoclaw/repositories/Repository.h"
-#include "peanoclaw/PyClaw.h"
+#include "repositories/Repository.h"
+#include "PyClaw.h"
 
 #include "tarch/logging/Log.h"
 #include "tarch/timing/Watch.h"

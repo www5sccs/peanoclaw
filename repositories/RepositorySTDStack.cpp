@@ -1,4 +1,4 @@
-#include "peanoclaw/repositories/RepositorySTDStack.h"
+#include "repositories/RepositorySTDStack.h"
 
 #include "tarch/Assertions.h"
 #include "tarch/timing/Watch.h"

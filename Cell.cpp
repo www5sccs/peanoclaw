@@ -1,4 +1,4 @@
-#include "peanoclaw/Cell.h"
+#include "Cell.h"
 
 
 peanoclaw::Cell::Cell():

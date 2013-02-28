@@ -11,3 +11,6 @@
 *.lai
 *.la
 *.a
+/files.mk
+/compiler-minutes.txt
+/makefile~

@@ -1,4 +1,4 @@
-#include "peanoclaw/mappings/Cleanup.h"
+#include "mappings/Cleanup.h"
 
 
 

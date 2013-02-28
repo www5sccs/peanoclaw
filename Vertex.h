@@ -4,14 +4,14 @@
 #define _PEANOCLAW_VERTEX_H_
 
 
-#include "peanoclaw/records/Vertex.h"
+#include "records/Vertex.h"
 #include "peano/grid/Vertex.h"
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/utils/Globals.h"
 
-#include "peanoclaw/PyClaw.h"
-#include "peanoclaw/records/CellDescription.h"
-#include "peanoclaw/records/Data.h"
+#include "PyClaw.h"
+#include "records/CellDescription.h"
+#include "records/Data.h"
 
 namespace peanoclaw { 
       class Vertex; 

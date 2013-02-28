@@ -5,7 +5,7 @@
 
 #include "peano/peano.h"
 
-#include "peanoclaw/runners/Runner.h"
+#include "runners/Runner.h"
 
 
 tarch::logging::Log _log("");

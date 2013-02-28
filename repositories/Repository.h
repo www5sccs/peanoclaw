@@ -10,7 +10,7 @@
 #include "tarch/logging/Log.h"
 #include "tarch/timing/Measurement.h"
 
-#include "peanoclaw/State.h"
+#include "State.h"
 
 #include "peano/grid/Checkpoint.h"
 

@@ -1,4 +1,4 @@
-#include "peanoclaw/records/VertexDescription.h"
+#include "records/VertexDescription.h"
 
 peanoclaw::records::VertexDescription::PersistentRecords::PersistentRecords() {
    

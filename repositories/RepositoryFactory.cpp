@@ -1,9 +1,9 @@
-#include "peanoclaw/repositories/RepositoryFactory.h"
+#include "repositories/RepositoryFactory.h"
 
-#include "peanoclaw/repositories/RepositoryArrayStack.h"
-#include "peanoclaw/repositories/RepositorySTDStack.h"
+#include "repositories/RepositoryArrayStack.h"
+#include "repositories/RepositorySTDStack.h"
 
-#include "peanoclaw/records/RepositoryState.h"
+#include "records/RepositoryState.h"
 
 #ifdef Parallel
 #include "tarch/parallel/NodePool.h"

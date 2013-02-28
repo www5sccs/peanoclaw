@@ -1,4 +1,4 @@
-#include "peanoclaw/adapters/GatherCurrentSolution.h"
+#include "adapters/GatherCurrentSolution.h"
 
 
 

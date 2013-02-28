@@ -9,8 +9,8 @@
 # ---------
 # Please adopt these directories to your Peano installation. The values are 
 # used by the compiler and linker calls.
-PEANO_HOME   = ../../src
-PROJECT_HOME = ..   # project home is the directory holding your project-specific subdirectory
+PEANO_HOME   = ../p3
+PROJECT_HOME = .   # project home is the directory holding your project-specific subdirectory
 
 
 # Set Dimension
@@ -22,10 +22,10 @@ DIM=-DDim2
 
 # Configure Peano
 #----------------
-PROJECT_CLFAGS = -DDebug -DAsserts 
-PROJECT_LFLAGS = 
-EXECUTABLE=peanoclaw-debug
-#EXECUTABLE=peano-PoissonWithJacobi-debug
+PROJECT_CFLAGS = -DDebug -DAsserts -fPIC -shared -Wno-long-long
+PROJECT_LFLAGS = -shared
+PYTHON_CFLAGS = $(shell python-config --cflags | sed "s/-Wstrict-prototypes //g")
+EXECUTABLE=libpeano-claw-2d.so
 
 
 # Configure System
@@ -46,7 +46,7 @@ LINK_MPI=
 
 # Assemble Compiler Flags
 # -----------------------
-SYSTEM_CFLAGS = $(INCLUDE_TBB) $(INCLUDE_MPI)
+SYSTEM_CFLAGS = $(INCLUDE_TBB) $(INCLUDE_MPI) 
 #SYSTEM_CFLAGS =  $(INCLUDE_OMP) $(INCLUDE_MPI)
 SYSTEM_LFLAGS = $(LINK_TBB)    $(LINK_MPI)
 #SYSTEM_LFLAGS =  $(LINK_OMP)    $(LINK_MPI)
@@ -56,7 +56,7 @@ SYSTEM_LFLAGS = $(LINK_TBB)    $(LINK_MPI)
 # Settings for the GNU Compiler (Debug Mode)
 # ------------------------------------------
 CC=g++
-COMPILER_CFLAGS=-O0 -pedantic -pedantic-errors -Wall -Werror -Wstrict-aliasing -fstrict-aliasing -ggdb
+COMPILER_CFLAGS=-O0 -pedantic -Wall -Wstrict-aliasing -fstrict-aliasing -ggdb
 COMPILER_LFLAGS=
 
 
@@ -122,7 +122,7 @@ header:
 
 
 build: files.mk $(OBJECTS)
-	$(CC) $(PROJECT_LFLAGS) $(COMPILER_LFLAGS) $(SYSTEM_LFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+	$(CC) $(PROJECT_LFLAGS) $(COMPILER_LFLAGS) $(shell python-config --ldflags) $(SYSTEM_LFLAGS) $(OBJECTS) -o $(EXECUTABLE)
 	@echo
 	@echo build of Peano with component PoissonWithJacobi successful
 	@echo visit Peano\'s homepage at http://www.peano-framework.org
@@ -136,4 +136,4 @@ clean:
 
 
 $(OBJECTS): %.o : %.cpp
-	$(CC) $(DIM) $(PROJECT_CFLAGS) $(COMPILER_CFLAGS) $(SYSTEM_CFLAGS) -I$(PROJECT_HOME) -I$(PEANO_HOME) -c $< -o $@
+	$(CC) $(DIM) $(PYTHON_CFLAGS) $(PROJECT_CFLAGS) $(COMPILER_CFLAGS) $(SYSTEM_CFLAGS) -I$(PROJECT_HOME) -I$(PEANO_HOME) -c $< -o $@

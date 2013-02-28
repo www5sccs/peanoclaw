@@ -1,6 +1,6 @@
-#include "peanoclaw/State.h"
-#include "peanoclaw/Cell.h"
-#include "peanoclaw/Vertex.h"
+#include "State.h"
+#include "Cell.h"
+#include "Vertex.h"
 
 #include "peano/grid/Checkpoint.h"
 

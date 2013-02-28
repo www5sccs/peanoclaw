@@ -1,5 +1,5 @@
-#include "peanoclaw/mappings/InitialiseGrid.h"
-#include "peanoclaw/Patch.h"
+#include "mappings/InitialiseGrid.h"
+#include "Patch.h"
 
 #include "peano/utils/Loop.h"
 #include "peano/heap/Heap.h"

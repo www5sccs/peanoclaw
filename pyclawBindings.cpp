@@ -15,12 +15,12 @@
 #include <list>
 #include <numpy/arrayobject.h>
 
-#include "peanoclaw/PyClaw.h"
-#include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
-#include "peanoclaw/runners/PeanoClawLibraryRunner.h"
+#include "PyClaw.h"
+#include "configurations/PeanoClawConfigurationForSpacetreeGrid.h"
+#include "runners/PeanoClawLibraryRunner.h"
 #include "tarch/tests/TestCaseRegistry.h"
 
-#include "peanoclaw/PyClawCallbacks.h"
+#include "PyClawCallbacks.h"
 
 #include "tarch/parallel/NodePool.h"
 

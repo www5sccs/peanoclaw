@@ -1,8 +1,8 @@
-#include "peanoclaw/mappings/Remesh.h"
+#include "mappings/Remesh.h"
 
-#include "peanoclaw/GridLevelTransfer.h"
-#include "peanoclaw/PyClaw.h"
-#include "peanoclaw/PatchOperations.h"
+#include "GridLevelTransfer.h"
+#include "PyClaw.h"
+#include "PatchOperations.h"
 
 #include "peano/heap/Heap.h"
 

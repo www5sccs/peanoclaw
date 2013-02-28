@@ -1,4 +1,4 @@
-#include "peanoclaw/tests/TestCase.h"
+#include "tests/TestCase.h"
 
 
 #include "tarch/compiler/CompilerSpecificSettings.h"

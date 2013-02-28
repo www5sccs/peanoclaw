@@ -5,14 +5,14 @@
  *      Author: Kristof Unterweger
  */
 
-#include "peanoclaw/runners/PeanoClawLibraryRunner.h"
+#include "runners/PeanoClawLibraryRunner.h"
 
-#include "peanoclaw/repositories/RepositoryFactory.h"
-#include "peanoclaw/State.h"
-#include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
-#include "peanoclaw/records/CellDescription.h"
-#include "peanoclaw/records/VertexDescription.h"
-#include "peanoclaw/records/Data.h"
+#include "repositories/RepositoryFactory.h"
+#include "State.h"
+#include "configurations/PeanoClawConfigurationForSpacetreeGrid.h"
+#include "records/CellDescription.h"
+#include "records/VertexDescription.h"
+#include "records/Data.h"
 #include "peano/heap/Heap.h"
 
 #include "peano/utils/UserInterface.h"
@@ -108,8 +108,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setDefaultGhostLayerWidth(defaultGhostLayerWidth);
   state.setUnknownsPerSubcell(unknownsPerSubcell);
   state.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
-  tarch::la::Vector<DIMENSIONS, double> initialMinimalSubcellSize;
-  tarch::la::multiplyComponents(initialMinimalMeshWidth, subdivisionFactor, initialMinimalSubcellSize);
+  tarch::la::Vector<DIMENSIONS, double> initialMinimalSubcellSize = tarch::la::multiplyComponents(initialMinimalMeshWidth, subdivisionFactor);
   state.setInitialMinimalMeshWidth(initialMinimalSubcellSize);
   state.setPyClaw(pyClaw);
   state.resetTotalNumberOfCellUpdates();

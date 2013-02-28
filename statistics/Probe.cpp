@@ -4,9 +4,9 @@
  *  Created on: Oct 19, 2012
  *      Author: unterweg
  */
-#include "peanoclaw/statistics/Probe.h"
+#include "statistics/Probe.h"
 
-#include "peanoclaw/Patch.h"
+#include "Patch.h"
 
 #include <sstream>
 

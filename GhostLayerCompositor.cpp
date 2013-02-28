@@ -5,9 +5,9 @@
  *      Author: Kristof Unterweger
  */
 
-#include "peanoclaw/GhostLayerCompositor.h"
-#include "peanoclaw/PatchOperations.h"
-#include "peanoclaw/Patch.h"
+#include "GhostLayerCompositor.h"
+#include "PatchOperations.h"
+#include "Patch.h"
 
 #include "peano/utils/Loop.h"
 

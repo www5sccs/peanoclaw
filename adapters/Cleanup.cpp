@@ -1,4 +1,4 @@
-#include "peanoclaw/adapters/Cleanup.h"
+#include "adapters/Cleanup.h"
 
 
 

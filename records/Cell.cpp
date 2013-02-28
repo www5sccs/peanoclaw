@@ -1,4 +1,4 @@
-#include "peanoclaw/records/Cell.h"
+#include "records/Cell.h"
 
 #if !defined(Debug) && !defined(Parallel) && defined(SharedMemoryParallelisation)
    peanoclaw::records::Cell::PersistentRecords::PersistentRecords() {

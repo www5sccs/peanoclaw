@@ -5,10 +5,10 @@
  *      Author: unterweg
  */
 
-#include "peanoclaw/PatchOperations.h"
+#include "PatchOperations.h"
 
-#include "peanoclaw/Patch.h"
-#include "peanoclaw/Area.h"
+#include "Patch.h"
+#include "Area.h"
 #include "peano/utils/Loop.h"
 
 //double peanoclaw::calculateOverlappingArea(
@@ -279,8 +279,7 @@ void peanoclaw::interpolateVersion2(
 //
 //  dfor(sourceSubcellIndexInArea, sourceArea._size) {
 //    tarch::la::Vector<DIMENSIONS, int> sourceSubcellIndex = sourceSubcellIndexInArea + sourceArea._offset;
-//    tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition;
-//    tarch::la::multiplyComponents(sourceSubcellIndex, source.getSubcellSize(), sourceSubcellPosition);
+//    tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition = tarch::la::multiplyComponents(sourceSubcellIndex, source.getSubcellSize());
 //    sourceSubcellPosition += source.getPosition();
 //
 //    assertion4(tarch::la::allGreaterEquals(sourceSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))
@@ -446,8 +445,7 @@ void peanoclaw::restrictArea (
   //Loop through area in destination
   dfor(destinationSubcellIndexInArea, destinationArea._size) {
     tarch::la::Vector<DIMENSIONS, int> destinationSubcellIndex = destinationSubcellIndexInArea + destinationArea._offset;
-    tarch::la::Vector<DIMENSIONS, double> destinationSubcellPosition;
-    tarch::la::multiplyComponents(destinationSubcellIndex, destinationSubcellSize, destinationSubcellPosition);
+    tarch::la::Vector<DIMENSIONS, double> destinationSubcellPosition = tarch::la::multiplyComponents(destinationSubcellIndex, destinationSubcellSize);
     destinationSubcellPosition += destinationPosition;
 
     assertion4(tarch::la::allGreaterEquals(destinationSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))
@@ -462,8 +460,7 @@ void peanoclaw::restrictArea (
     //Loop through area in source
     dfor(sourceSubcellIndexInArea, subcellArea._size) {
       tarch::la::Vector<DIMENSIONS, int> sourceSubcellIndex = sourceSubcellIndexInArea + subcellArea._offset;
-      tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition;
-      tarch::la::multiplyComponents(sourceSubcellIndex, sourceSubcellSize, sourceSubcellPosition);
+      tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition = tarch::la::multiplyComponents(sourceSubcellIndex, sourceSubcellSize);
       sourceSubcellPosition += sourcePosition;
 
       assertion6(tarch::la::allGreaterEquals(sourceSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))

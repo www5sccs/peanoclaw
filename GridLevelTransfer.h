@@ -8,8 +8,8 @@
 #ifndef PEANO_APPLICATIONS_PEANOCLAW_GRIDLEVELTRANSFER_H_
 #define PEANO_APPLICATIONS_PEANOCLAW_GRIDLEVELTRANSFER_H_
 
-#include "peanoclaw/records/CellDescription.h"
-#include "peanoclaw/records/Data.h"
+#include "records/CellDescription.h"
+#include "records/Data.h"
 
 #include <vector>
 #include "peano/utils/Globals.h"

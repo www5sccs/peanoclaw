@@ -3,9 +3,9 @@
  *
  *      Author: Kristof Unterweger
  */
-#include "peanoclaw/PatchPlotter.h"
+#include "PatchPlotter.h"
 
-#include "peanoclaw/Patch.h"
+#include "Patch.h"
 
 #include "peano/utils/Loop.h"
 
@@ -62,12 +62,11 @@ void peanoclaw::PatchPlotter::plotPatch(
   const peano::grid::VertexEnumerator&              enumerator
 ) {
   double localGap = _gap * patch.getLevel();
-  tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSize() / patch.getSubdivisionFactor() / (1.0 + localGap);
+  tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize() / (1.0 + localGap);
 
   // Plot vertices
   dfor( vertexIndex, patch.getSubdivisionFactor()+1) {
-    tarch::la::Vector<DIMENSIONS, double> offset;
-    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(vertexIndex, subcellSize, offset);;
+    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(vertexIndex, subcellSize);
     if ( _vertex2IndexMap.find(x) == _vertex2IndexMap.end() ) {
       assertion(_vertexWriter!=NULL);
       #if defined(Dim2) || defined(Dim3)
@@ -86,13 +85,12 @@ void peanoclaw::PatchPlotter::plotPatch(
 
   // Plot cells
   dfor(subcellIndex, patch.getSubdivisionFactor()) {
-    tarch::la::Vector<DIMENSIONS, double> offset;
-    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(subcellIndex, subcellSize, offset);
+    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(subcellIndex, subcellSize);
 
     //Retreive adjacent vertices.
     int vertexIndices[TWO_POWER_D];
     dfor2(vertexIndex)
-      tarch::la::Vector<DIMENSIONS,double> currentVertexPosition = x + tarch::la::multiplyComponents(vertexIndex, subcellSize, offset);
+      tarch::la::Vector<DIMENSIONS,double> currentVertexPosition = x + tarch::la::multiplyComponents(vertexIndex, subcellSize);
       assertion1 ( _vertex2IndexMap.find(currentVertexPosition) != _vertex2IndexMap.end(), currentVertexPosition );
       vertexIndices[vertexIndexScalar] = _vertex2IndexMap[currentVertexPosition];
     enddforx

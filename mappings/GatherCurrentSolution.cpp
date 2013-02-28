@@ -1,5 +1,5 @@
-#include "peanoclaw/mappings/GatherCurrentSolution.h"
-#include "peanoclaw/Patch.h"
+#include "mappings/GatherCurrentSolution.h"
+#include "Patch.h"
 
 
 /**

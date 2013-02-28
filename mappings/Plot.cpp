@@ -1,7 +1,7 @@
-#include "peanoclaw/mappings/Plot.h"
+#include "mappings/Plot.h"
 
-#include "peanoclaw/Patch.h"
-#include "peanoclaw/PatchPlotter.h"
+#include "Patch.h"
+#include "PatchPlotter.h"
 
 
 /**

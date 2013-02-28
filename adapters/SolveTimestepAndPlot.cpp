@@ -1,4 +1,4 @@
-#include "peanoclaw/adapters/SolveTimestepAndPlot.h"
+#include "adapters/SolveTimestepAndPlot.h"
 
 
 

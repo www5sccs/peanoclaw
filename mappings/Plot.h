@@ -12,17 +12,17 @@
 
 #include "tarch/multicore/MulticoreDefinitions.h"
 
-#include "peanoclaw/Vertex.h"
-#include "peanoclaw/Cell.h"
-#include "peanoclaw/State.h"
+#include "Vertex.h"
+#include "Cell.h"
+#include "State.h"
 
 #include "tarch/plotter/griddata/unstructured/vtk/VTKTextFileWriter.h"
 
-#include "peanoclaw/Cell.h"
-#include "peanoclaw/Vertex.h"
-#include "peanoclaw/State.h"
-#include "peanoclaw/records/CellDescription.h"
-#include "peanoclaw/records/Data.h"
+#include "Cell.h"
+#include "Vertex.h"
+#include "State.h"
+#include "records/CellDescription.h"
+#include "records/Data.h"
 
 
 namespace peanoclaw {

@@ -1,4 +1,4 @@
-#include "peanoclaw/adapters/Plot.h"
+#include "adapters/Plot.h"
 
 
 

@@ -1,7 +1,7 @@
 #include "peano/heap/Heap.h"
 
-#include "peanoclaw/mappings/SolveTimestep.h"
-#include "peanoclaw/Patch.h"
+#include "mappings/SolveTimestep.h"
+#include "Patch.h"
 
 
 /**

@@ -4,7 +4,7 @@
 #define _PEANOCLAW_CELL_H_
 
 
-#include "peanoclaw/records/Cell.h"
+#include "records/Cell.h"
 #include "peano/grid/Cell.h"
 
 

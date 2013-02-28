@@ -1,12 +1,11 @@
-#include "peanoclaw/Vertex.h"
+#include "Vertex.h"
 #include "peano/utils/Loop.h"
 #include "peano/grid/Checkpoint.h"
-#include "tarch/la/WrappedVector.h"
 #include "peano/heap/Heap.h"
 
-#include "peanoclaw/Patch.h"
-#include "peanoclaw/PyClaw.h"
-#include "peanoclaw/GhostLayerCompositor.h"
+#include "Patch.h"
+#include "PyClaw.h"
+#include "GhostLayerCompositor.h"
 
 peanoclaw::Vertex::Vertex():
   Base() { 

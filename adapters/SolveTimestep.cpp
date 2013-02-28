@@ -1,4 +1,4 @@
-#include "peanoclaw/adapters/SolveTimestep.h"
+#include "adapters/SolveTimestep.h"
 
 
 

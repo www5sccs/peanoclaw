@@ -4,25 +4,25 @@
 #define _PEANOCLAW_REPOSITORIES_REPOSITORY_ARRAY_STACK_H_ 
 
 
-#include "peanoclaw/repositories/Repository.h"
-#include "peanoclaw/records/RepositoryState.h"
+#include "repositories/Repository.h"
+#include "records/RepositoryState.h"
 
-#include "peanoclaw/State.h"
-#include "peanoclaw/Vertex.h"
-#include "peanoclaw/Cell.h"
+#include "State.h"
+#include "Vertex.h"
+#include "Cell.h"
 
 #include "peano/grid/Grid.h"
 #include "peano/stacks/CellArrayStack.h"
 #include "peano/stacks/VertexArrayStack.h"
 
 
- #include "peanoclaw/adapters/InitialiseGrid.h" 
- #include "peanoclaw/adapters/Plot.h" 
- #include "peanoclaw/adapters/Remesh.h" 
- #include "peanoclaw/adapters/SolveTimestep.h" 
- #include "peanoclaw/adapters/SolveTimestepAndPlot.h" 
- #include "peanoclaw/adapters/GatherCurrentSolution.h" 
- #include "peanoclaw/adapters/Cleanup.h" 
+ #include "adapters/InitialiseGrid.h" 
+ #include "adapters/Plot.h" 
+ #include "adapters/Remesh.h" 
+ #include "adapters/SolveTimestep.h" 
+ #include "adapters/SolveTimestepAndPlot.h" 
+ #include "adapters/GatherCurrentSolution.h" 
+ #include "adapters/Cleanup.h" 
 
 
 

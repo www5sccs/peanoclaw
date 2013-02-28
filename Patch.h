@@ -7,9 +7,10 @@
 #ifndef PEANOCLAW_PATCH_H_
 #define PEANOCLAW_PATCH_H_
 
-#include "peanoclaw/records/Data.h"
+#include <vector>
 
-#include "peanoclaw/records/CellDescription.h"
+#include "records/Data.h"
+#include "records/CellDescription.h"
 
 #include "peano/utils/Globals.h"
 #include "tarch/la/Vector.h"

@@ -4,9 +4,9 @@
  *  Created on: Jan 28, 2013
  *      Author: kristof
  */
-#include "peanoclaw/Area.h"
+#include "Area.h"
 
-#include "peanoclaw/Patch.h"
+#include "Patch.h"
 
 namespace peano {
   namespace applications {
@@ -24,16 +24,15 @@ peanoclaw::Area peanoclaw::Area::mapToPatch(
   Area destinationArea;
 
   //Offset
-  tarch::la::Vector<DIMENSIONS, double> position;
-  tarch::la::multiplyComponents(source.getSubcellSize(), _offset, position);
+  tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSubcellSize();
+  tarch::la::Vector<DIMENSIONS, double> position = tarch::la::multiplyComponents(sourceSubcellSize, _offset);
   position += source.getPosition() - destination.getPosition();
   destinationArea._offset = (position+epsilon) / destination.getSubcellSize();
 
   //Size
-  tarch::la::Vector<DIMENSIONS, double> size;
-  tarch::la::multiplyComponents(source.getSubcellSize(), _offset + _size, size);
-  size += source.getPosition() - destination.getPosition();
-  destinationArea._size = (size - epsilon) / destination.getSubcellSize() - destinationArea._offset + 1;
+  tarch::la::Vector<DIMENSIONS, double> size = tarch::la::multiplyComponents(sourceSubcellSize, _offset + _size);
+  size += (source.getPosition() - destination.getPosition());
+  destinationArea._size = (size - epsilon) / destination.getSubcellSize() - destinationArea._offset + 1.0;
 
   return destinationArea;
 }
@@ -49,7 +48,7 @@ peanoclaw::Area peanoclaw::Area::mapCellToPatch(
   Area cellArea;
 
   cellArea._offset = (coarseSubcellPosition - finePosition + epsilon) / fineSubcellSize;
-  cellArea._size = (coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon) / fineSubcellSize - cellArea._offset + 1;
+  cellArea._size = (coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon) / fineSubcellSize - cellArea._offset + 1.0;
 
   tarch::la::Vector<DIMENSIONS, int> cellAreaUpperBound = cellArea._offset + cellArea._size;
   tarch::la::Vector<DIMENSIONS, int> areaUpperBound = _offset + _size;

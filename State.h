@@ -3,15 +3,15 @@
 #ifndef _PEANOCLAW_STATE_H_ 
 #define _PEANOCLAW_STATE_H_
 
-#include "peanoclaw/records/State.h"
+#include "records/State.h"
 #include "peano/grid/State.h"
 
 #include "peano/grid/Checkpoint.h"
 
-#include "peanoclaw/PyClaw.h"
+#include "PyClaw.h"
 
-#include "peanoclaw/statistics/LevelInformation.h"
-#include "peanoclaw/statistics/Probe.h"
+#include "statistics/LevelInformation.h"
+#include "statistics/Probe.h"
 
 namespace peanoclaw { 
       class State;

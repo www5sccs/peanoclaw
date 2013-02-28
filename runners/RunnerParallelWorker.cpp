@@ -1,11 +1,11 @@
-#include "peanoclaw/runners/Runner.h"
+#include "runners/Runner.h"
 
 
 #ifdef Parallel
 #include "peano/utils/Globals.h"
 #include "tarch/parallel/NodePool.h"
 #include "peano/parallel/messages/ForkMessage.h"
-#include "peanoclaw/repositories/Repository.h"
+#include "repositories/Repository.h"
 
 
 int peanoclaw::runners::Runner::runAsClient(peanoclaw::repositories::Repository& repository) {

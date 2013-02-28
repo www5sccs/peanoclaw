@@ -1,8 +1,8 @@
-#include "peanoclaw/runners/Runner.h"
+#include "runners/Runner.h"
 
 
-#include "peanoclaw/repositories/Repository.h"
-#include "peanoclaw/repositories/RepositoryFactory.h"
+#include "repositories/Repository.h"
+#include "repositories/RepositoryFactory.h"
 
 #include "peano/utils/UserInterface.h"
 

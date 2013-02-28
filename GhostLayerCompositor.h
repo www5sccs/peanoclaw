@@ -8,8 +8,8 @@
 #ifndef PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_
 #define PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_
 
-#include "peanoclaw/PyClaw.h"
-#include "peanoclaw/records/CellDescription.h"
+#include "PyClaw.h"
+#include "records/CellDescription.h"
 
 #include "peano/utils/Globals.h"
 

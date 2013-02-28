@@ -1,4 +1,4 @@
-#include "peanoclaw/records/State.h"
+#include "records/State.h"
 
 #if defined(Parallel)
    peanoclaw::records::State::PersistentRecords::PersistentRecords() {

@@ -11,15 +11,16 @@
 #include "tarch/la/Vector.h"
 #include "tarch/multicore/BooleanSemaphore.h"
 
-#include "peanoclaw/records/CellDescription.h"
+#include "records/CellDescription.h"
 
-#include "peanoclaw/Vertex.h"
+#include "Vertex.h"
 
 #include "tarch/plotter/griddata/unstructured/vtk/VTKTextFileWriter.h"
 #include "tarch/la/VectorCompare.h"
 
 #include <memory>
 #include <map>
+#include <vector>
 
 #ifdef SharedTBB
 #include <tbb/spin_mutex.h>

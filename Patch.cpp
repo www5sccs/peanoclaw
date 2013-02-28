@@ -3,15 +3,15 @@
  *
  *      Author: Kristof Unterweger
  */
-#include "peanoclaw/Patch.h"
+#include "Patch.h"
 
 #include <sstream>
 #include <iomanip>
 #include <limits>
 
-#include "peanoclaw/Area.h"
-#include "peanoclaw/PatchOperations.h"
-#include "peanoclaw/Cell.h"
+#include "Area.h"
+#include "PatchOperations.h"
+#include "Cell.h"
 #include "peano/heap/Heap.h"
 #include "peano/utils/Loop.h"
 
@@ -569,14 +569,12 @@ double peanoclaw::Patch::getValueAux(tarch::la::Vector<DIMENSIONS, int> subcellI
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellCenter(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const {
   tarch::la::Vector<DIMENSIONS, double> subcellSize = getSubcellSize();
-  tarch::la::Vector<DIMENSIONS, double> result;
-  tarch::la::multiplyComponents(subcellSize, subcellIndex, result);
+  tarch::la::Vector<DIMENSIONS, double> result = tarch::la::multiplyComponents(subcellSize, subcellIndex);
   return _cellDescription->getPosition() + result + subcellSize * 0.5;
 }
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellPosition(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const {
-  tarch::la::Vector<DIMENSIONS, double> result;
-  tarch::la::multiplyComponents(getSubcellSize(), subcellIndex, result);
+  tarch::la::Vector<DIMENSIONS, double> result = tarch::la::multiplyComponents(getSubcellSize(), subcellIndex);
   return _cellDescription->getPosition() + result;
 }
 

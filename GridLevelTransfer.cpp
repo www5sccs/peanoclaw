@@ -4,14 +4,14 @@
  *  Created on: Mar 19, 2012
  *      Author: Kristof Unterweger
  */
-#include "peanoclaw/GridLevelTransfer.h"
+#include "GridLevelTransfer.h"
 
 #include <limits>
 
-#include "peanoclaw/Patch.h"
-#include "peanoclaw/PatchOperations.h"
-#include "peanoclaw/PyClaw.h"
-#include "peanoclaw/Vertex.h"
+#include "Patch.h"
+#include "PatchOperations.h"
+#include "PyClaw.h"
+#include "Vertex.h"
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/heap/Heap.h"
 #include "peano/grid/aspects/VertexStateAnalysis.h"

@@ -1,4 +1,4 @@
-#include "peanoclaw/records/RepositoryState.h"
+#include "records/RepositoryState.h"
 
 peanoclaw::records::RepositoryState::PersistentRecords::PersistentRecords() {
    

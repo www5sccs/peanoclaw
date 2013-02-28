@@ -1,4 +1,4 @@
-#include "peanoclaw/adapters/InitialiseGrid.h"
+#include "adapters/InitialiseGrid.h"
 
 
 
