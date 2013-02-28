@@ -66,7 +66,7 @@ void peanoclaw::PatchPlotter::plotPatch(
 
   // Plot vertices
   dfor( vertexIndex, patch.getSubdivisionFactor()+1) {
-    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(vertexIndex, subcellSize);
+    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(vertexIndex.convertScalar<double>(), subcellSize);
     if ( _vertex2IndexMap.find(x) == _vertex2IndexMap.end() ) {
       assertion(_vertexWriter!=NULL);
       #if defined(Dim2) || defined(Dim3)
@@ -85,12 +85,12 @@ void peanoclaw::PatchPlotter::plotPatch(
 
   // Plot cells
   dfor(subcellIndex, patch.getSubdivisionFactor()) {
-    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(subcellIndex, subcellSize);
+    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(subcellIndex.convertScalar<double>(), subcellSize);
 
     //Retreive adjacent vertices.
     int vertexIndices[TWO_POWER_D];
     dfor2(vertexIndex)
-      tarch::la::Vector<DIMENSIONS,double> currentVertexPosition = x + tarch::la::multiplyComponents(vertexIndex, subcellSize);
+      tarch::la::Vector<DIMENSIONS,double> currentVertexPosition = x + tarch::la::multiplyComponents(vertexIndex.convertScalar<double>(), subcellSize);
       assertion1 ( _vertex2IndexMap.find(currentVertexPosition) != _vertex2IndexMap.end(), currentVertexPosition );
       vertexIndices[vertexIndexScalar] = _vertex2IndexMap[currentVertexPosition];
     enddforx

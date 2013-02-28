@@ -72,7 +72,7 @@ int peanoclaw::Patch::linearizeWithGhostlayer(
 
 void peanoclaw::Patch::fillCaches() {
   int ghostlayerWidth = _cellDescription->getGhostLayerWidth();
-  tarch::la::Vector<DIMENSIONS, double> subdivisionFactor = _cellDescription->getSubdivisionFactor();
+  tarch::la::Vector<DIMENSIONS, double> subdivisionFactor = _cellDescription->getSubdivisionFactor().convertScalar<double>();
 
   //UOld
   int stride = 1;
@@ -91,7 +91,7 @@ void peanoclaw::Patch::fillCaches() {
   uNewStrideCache[0] = stride;
 
   //Precompute subcell size
-  _subcellSize = _cellDescription->getSize() / _cellDescription->getSubdivisionFactor();
+  _subcellSize = _cellDescription->getSize() / subdivisionFactor;
 }
 
 void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(
@@ -485,7 +485,7 @@ double peanoclaw::Patch::getValueUNew(
   tarch::la::Vector<DIMENSIONS, double> subcellPosition,
   int unknown
 ) const {
-  tarch::la::Vector<DIMENSIONS, int> subcellIndex = (subcellPosition - getPosition()) / getSubcellSize();
+  tarch::la::Vector<DIMENSIONS, int> subcellIndex = ((subcellPosition - getPosition()) / getSubcellSize()).convertScalar<int>();
   return getValueUNew(subcellIndex, unknown);
 }
 
@@ -569,12 +569,12 @@ double peanoclaw::Patch::getValueAux(tarch::la::Vector<DIMENSIONS, int> subcellI
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellCenter(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const {
   tarch::la::Vector<DIMENSIONS, double> subcellSize = getSubcellSize();
-  tarch::la::Vector<DIMENSIONS, double> result = tarch::la::multiplyComponents(subcellSize, subcellIndex);
+  tarch::la::Vector<DIMENSIONS, double> result = tarch::la::multiplyComponents(subcellSize, subcellIndex.convertScalar<double>());
   return _cellDescription->getPosition() + result + subcellSize * 0.5;
 }
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellPosition(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const {
-  tarch::la::Vector<DIMENSIONS, double> result = tarch::la::multiplyComponents(getSubcellSize(), subcellIndex);
+  tarch::la::Vector<DIMENSIONS, double> result = tarch::la::multiplyComponents(getSubcellSize(), subcellIndex.convertScalar<double>());
   return _cellDescription->getPosition() + result;
 }
 

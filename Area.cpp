@@ -25,14 +25,14 @@ peanoclaw::Area peanoclaw::Area::mapToPatch(
 
   //Offset
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSubcellSize();
-  tarch::la::Vector<DIMENSIONS, double> position = tarch::la::multiplyComponents(sourceSubcellSize, _offset);
+  tarch::la::Vector<DIMENSIONS, double> position = tarch::la::multiplyComponents(sourceSubcellSize, _offset.convertScalar<double>());
   position += source.getPosition() - destination.getPosition();
-  destinationArea._offset = (position+epsilon) / destination.getSubcellSize();
+  destinationArea._offset = ((position+epsilon).convertScalar<double>() / destination.getSubcellSize()).convertScalar<int>();
 
   //Size
-  tarch::la::Vector<DIMENSIONS, double> size = tarch::la::multiplyComponents(sourceSubcellSize, _offset + _size);
+  tarch::la::Vector<DIMENSIONS, double> size = tarch::la::multiplyComponents(sourceSubcellSize, (_offset + _size).convertScalar<double>());
   size += (source.getPosition() - destination.getPosition());
-  destinationArea._size = (size - epsilon) / destination.getSubcellSize() - destinationArea._offset + 1.0;
+  destinationArea._size = ((size - epsilon).convertScalar<double>() / destination.getSubcellSize() - destinationArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
 
   return destinationArea;
 }
@@ -47,8 +47,8 @@ peanoclaw::Area peanoclaw::Area::mapCellToPatch(
 ) const {
   Area cellArea;
 
-  cellArea._offset = (coarseSubcellPosition - finePosition + epsilon) / fineSubcellSize;
-  cellArea._size = (coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon) / fineSubcellSize - cellArea._offset + 1.0;
+  cellArea._offset = ((coarseSubcellPosition - finePosition + epsilon) / fineSubcellSize).convertScalar<int>();
+  cellArea._size = ((coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon) / fineSubcellSize - cellArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
 
   tarch::la::Vector<DIMENSIONS, int> cellAreaUpperBound = cellArea._offset + cellArea._size;
   tarch::la::Vector<DIMENSIONS, int> areaUpperBound = _offset + _size;

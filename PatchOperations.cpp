@@ -421,8 +421,8 @@ void peanoclaw::restrictArea (
   double destinationTimeUOld = 0.0;// destination.getTimeUOld();
   double destinationTimeUNew = 1.0;// destination.getTimeUNew();
 
-  const tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSize() / source.getSubdivisionFactor();
-  const tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = destination.getSize() / destination.getSubdivisionFactor();
+  const tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSize() / source.getSubdivisionFactor().convertScalar<double>();
+  const tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = destination.getSize() / destination.getSubdivisionFactor().convertScalar<double>();
   const double destinationSubcellArea = tarch::la::volume(destinationSubcellSize);
   const tarch::la::Vector<DIMENSIONS, double> sourcePosition = source.getPosition();
   const tarch::la::Vector<DIMENSIONS, double> destinationPosition = destination.getPosition();
@@ -445,7 +445,7 @@ void peanoclaw::restrictArea (
   //Loop through area in destination
   dfor(destinationSubcellIndexInArea, destinationArea._size) {
     tarch::la::Vector<DIMENSIONS, int> destinationSubcellIndex = destinationSubcellIndexInArea + destinationArea._offset;
-    tarch::la::Vector<DIMENSIONS, double> destinationSubcellPosition = tarch::la::multiplyComponents(destinationSubcellIndex, destinationSubcellSize);
+    tarch::la::Vector<DIMENSIONS, double> destinationSubcellPosition = tarch::la::multiplyComponents(destinationSubcellIndex.convertScalar<double>(), destinationSubcellSize);
     destinationSubcellPosition += destinationPosition;
 
     assertion4(tarch::la::allGreaterEquals(destinationSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))
@@ -460,7 +460,7 @@ void peanoclaw::restrictArea (
     //Loop through area in source
     dfor(sourceSubcellIndexInArea, subcellArea._size) {
       tarch::la::Vector<DIMENSIONS, int> sourceSubcellIndex = sourceSubcellIndexInArea + subcellArea._offset;
-      tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition = tarch::la::multiplyComponents(sourceSubcellIndex, sourceSubcellSize);
+      tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition = tarch::la::multiplyComponents(sourceSubcellIndex.convertScalar<double>(), sourceSubcellSize);
       sourceSubcellPosition += sourcePosition;
 
       assertion6(tarch::la::allGreaterEquals(sourceSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))
