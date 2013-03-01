@@ -10,15 +10,26 @@
 # Please adopt these directories to your Peano installation. The values are 
 # used by the compiler and linker calls.
 PEANO_HOME   = ../p3
-PROJECT_HOME = .   # project home is the directory holding your project-specific subdirectory
+PROJECT_HOME = $(PWD)
+PYCLAW_HOME = ../src/clawpack/pyclaw
 
+# Set build mode
+# -------------
+BUILD_MODE=debug
 
 # Set Dimension
 # -------------
 DIM=-DDim2
+DIMENSIONS=dim2
 #DIM=-DDim3
-#DIM=-DDim4
 
+# Set multicore
+# -------------
+MULTICORE=multicore_no
+
+# Set parallel
+# -------------
+PARALLEL=parallel_no
 
 # Configure Peano
 #----------------
@@ -96,21 +107,24 @@ COMPILER_LFLAGS=
 #EXECUTABLE=peano-PoissonWithJacobi-release
 
 
-OBJECTS=$(SOURCES:.cpp=.o)
+# Setup build path
+BUILD_PATH = build/$(BUILD_MODE)/$(DIMENSIONS)/$(MULTICORE)/$(PARALLEL)/$(CC)
 
+# Object files
+PEANOCLAW_OBJECTS=$(PEANOCLAW_SOURCES:%.cpp=$(BUILD_PATH)/peanoclaw/%.o)
+PEANO_OBJECTS=$(PEANO_SOURCES:%.cpp=$(BUILD_PATH)/%.o)
 
-
-all: header build
-
-
+all: header build copy
 
 files.mk:
 	touch files.mk
-	echo -n SOURCES= > files.mk
-	find $(PEANO_HOME) -name '*.cpp' -printf '%p ' >> files.mk
-	find $(PROJECT_HOME) -name '*.cpp' -printf '%p ' >> files.mk
-	find $(PEANO_HOME) -name '*.cpp' -printf 'COMPILE %p TO %p OBJECT FILE\n' >> compiler-minutes.txt
+	echo -n PEANOCLAW_SOURCES= > files.mk
+	cd $(PROJECT_HOME); find . -name '*.cpp' -printf '%p ' >> files.mk
+	echo >> files.mk
+	echo -n PEANO_SOURCES= >> files.mk
+	cd $(PEANO_HOME); find . -name '*.cpp' -printf '%p ' >> $(PROJECT_HOME)/files.mk
 	find $(PROJECT_HOME) -name '*.cpp' -printf 'COMPILE %p TO %p OBJECT FILE\n' >> compiler-minutes.txt
+	find $(PEANO_HOME) -name '*.cpp' -printf 'COMPILE %p TO %p OBJECT FILE\n' >> compiler-minutes.txt
 	echo -n '\n\nLINK ' >> compiler-minutes.txt
 	find $(PEANO_HOME) -name '*.cpp' -printf '%p ' >> compiler-minutes.txt
 	find $(PROJECT_HOME) -name '*.cpp' -printf '%p ' >> compiler-minutes.txt
@@ -118,13 +132,14 @@ files.mk:
 
 
 header:
-	@echo  --- This is Peano 3 ---
+	@echo $(BUILD_PATH)
+	@echo  --- This is PeanoClaw based on Peano 3 ---
 
 
-build: files.mk $(OBJECTS)
+build: files.mk $(PEANOCLAW_OBJECTS) $(PEANO_OBJECTS)
 	$(CC) $(PROJECT_LFLAGS) $(COMPILER_LFLAGS) $(shell python-config --ldflags) $(SYSTEM_LFLAGS) $(OBJECTS) -o $(EXECUTABLE)
 	@echo
-	@echo build of Peano with component PoissonWithJacobi successful
+	@echo build of PeanoClaw library successful
 	@echo visit Peano\'s homepage at http://www.peano-framework.org
 
 
@@ -134,6 +149,27 @@ clean:
 	rm -f files.mk
 	rm -f compiler-minutes.txt
 
+copy:
+	#cp $(EXECUTABLE) $(PYCLAW_HOME)/src/peanoclaw/
+	
+#$(BUILD_PATH)/peanoclaw/%.o : %.cpp
+#	@echo $@
+#	@echo DIR_NAME=$(shell dirname $@)
+#	@echo $(BUILD_PATH)
+#	mkdir -p $(shell dirname $@)
+#	$(CC) $(DIM) $(PYTHON_CFLAGS) $(PROJECT_CFLAGS) $(COMPILER_CFLAGS) $(SYSTEM_CFLAGS) -I$(PROJECT_HOME) -I$(PEANO_HOME) -c $< -o $@
 
-$(OBJECTS): %.o : %.cpp
+$(BUILD_PATH)/%/Lock.o: %.cpp
+	@echo "Build file"
+	@echo $<
+	@echo $@
+
+$(BUILD_PATH)/%.o: %.cpp
+	@echo $@
+	@echo DIR_NAME=$(shell dirname $@)
+	@echo $(BUILD_PATH)
+	mkdir -p $(shell dirname $@)
 	$(CC) $(DIM) $(PYTHON_CFLAGS) $(PROJECT_CFLAGS) $(COMPILER_CFLAGS) $(SYSTEM_CFLAGS) -I$(PROJECT_HOME) -I$(PEANO_HOME) -c $< -o $@
+	
+	
+	

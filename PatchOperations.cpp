@@ -411,7 +411,7 @@ void peanoclaw::restrictArea (
   const Area&                                  area
 ) {
   static tarch::logging::Log _log("peanoclaw");
-  logTraceInWith2Arguments("restrict", source.toString(), destination.toString());
+  logTraceInWith2Arguments("restrictArea", source.toString(), destination.toString());
   assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
   assertion(destination.isVirtual());
 
@@ -514,4 +514,6 @@ void peanoclaw::restrictArea (
       }
     }
   }
+
+  logTraceOut("restrictArea");
 }

@@ -53,7 +53,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _configuration(configuration),
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0) {
- 
+
   peano::utils::UserInterface userInterface;
   userInterface.writeHeader();
 
@@ -108,7 +108,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setDefaultGhostLayerWidth(defaultGhostLayerWidth);
   state.setUnknownsPerSubcell(unknownsPerSubcell);
   state.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
-  tarch::la::Vector<DIMENSIONS, double> initialMinimalSubcellSize = tarch::la::multiplyComponents(initialMinimalMeshWidth, subdivisionFactor);
+  tarch::la::Vector<DIMENSIONS, double> initialMinimalSubcellSize = tarch::la::multiplyComponents(initialMinimalMeshWidth, subdivisionFactor.convertScalar<double>());
   state.setInitialMinimalMeshWidth(initialMinimalSubcellSize);
   state.setPyClaw(pyClaw);
   state.resetTotalNumberOfCellUpdates();
@@ -119,7 +119,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);
-#if 1
   _repository->switchToInitialiseGrid(); _repository->iterate();
   do {
     state.setInitialRefinementTriggered(false);
@@ -131,8 +130,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
     _repository->switchToPlot(); _repository->iterate();
   }
-#endif
-
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
@@ -171,6 +168,10 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   peanoclaw::PyClaw& pyClaw
 ) {
   logTraceIn("evolveToTime");
+
+  //TODO unterweg debug
+  std::cout << _configuration.plotAtOutputTimes() << "plot" << std::endl;
+  throw "";
  
 #if defined(Parallel)
   if (!tarch::parallel::Node::getInstance().isGlobalMaster()) {
@@ -194,7 +195,6 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   bool plotSubsteps = _configuration.plotSubsteps()
       || (_configuration.plotSubstepsAfterOutputTime() != -1 && _configuration.plotSubstepsAfterOutputTime() <= _plotNumber);
 
-#if 1
   _repository->getState().setGlobalTimestepEndTime(time);
   _repository->getState().setPyClaw(pyClaw);
   _repository->getState().setPlotNumber(_plotNumber);
@@ -231,7 +231,6 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   } else if (!_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _plotNumber++;
   }
-#endif
   logTraceOut("evolveToTime");
 }
 
