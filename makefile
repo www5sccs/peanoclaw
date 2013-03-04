@@ -66,16 +66,15 @@ SYSTEM_LFLAGS = $(LINK_TBB)    $(LINK_MPI)
 
 # Settings for the GNU Compiler (Debug Mode)
 # ------------------------------------------
-CC=g++
-COMPILER_CFLAGS=-O0 -pedantic -Wall -Wstrict-aliasing -fstrict-aliasing -ggdb
-COMPILER_LFLAGS=
-
+#CC=g++
+#COMPILER_CFLAGS=-O2 -pedantic -Wall -Wstrict-aliasing -fstrict-aliasing -ggdb
+#COMPILER_LFLAGS=
 
 # Settings for the GNU Compiler (Release Mode)
 # --------------------------------------------
-#CC=g++
-#CFLAGS=-O3 -fstrict-aliasing -fno-rtti -fno-exceptions
-#LFLAGS=-
+CC=g++
+CFLAGS=-O3 -fstrict-aliasing -fno-rtti -fno-exceptions
+LFLAGS=
 
 
 # Settings for the Intel Compiler (Debug Mode)
@@ -158,7 +157,7 @@ clean:
 copy:
 	cp $(BUILD_PATH)/$(EXECUTABLE) $(PYCLAW_HOME)/src/peanoclaw/
 	
-$(BUILD_PATH)/peanoclaw/%.o : %.cpp
+$(BUILD_PATH)/peanoclaw/%.o: %.cpp
 	@echo $@
 	@echo DIR_NAME=$(shell dirname $@)
 	@echo $(BUILD_PATH)

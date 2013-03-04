@@ -71,7 +71,7 @@ void peanoclaw::interpolate(
   tarch::la::Vector<DIMENSIONS, double> sourcePosition = source.getPosition();
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor = source.getSubdivisionFactor();
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSubcellSize();
-  tarch::la::Vector<DIMENSIONS, double> inverseSourceSubcellSize = tarch::la::Vector<DIMENSIONS, double>(1.0) / sourceSubcellSize;
+  tarch::la::Vector<DIMENSIONS, double> inverseSourceSubcellSize = tarch::la::invertEntries(sourceSubcellSize);
   int unknownsPerSubcell = destination.getUnknownsPerSubcell();
 
   #ifdef Asserts
@@ -366,8 +366,8 @@ int peanoclaw::getAreasForRestriction (
     return 1;
   } else {
     double epsilon = 1e-12;
-    tarch::la::Vector<DIMENSIONS, double> doubleLowerBoundsInSourcePatch = (lowerNeighboringGhostlayerBounds - sourcePosition) / sourceSubcellSize + epsilon;
-    tarch::la::Vector<DIMENSIONS, double> doubleUpperBoundsInSourcePatch = (upperNeighboringGhostlayerBounds - sourcePosition) / sourceSubcellSize - epsilon;
+    tarch::la::Vector<DIMENSIONS, double> doubleLowerBoundsInSourcePatch = tarch::la::multiplyComponents((lowerNeighboringGhostlayerBounds - sourcePosition), tarch::la::invertEntries(sourceSubcellSize)) + epsilon;
+    tarch::la::Vector<DIMENSIONS, double> doubleUpperBoundsInSourcePatch = tarch::la::multiplyComponents((upperNeighboringGhostlayerBounds - sourcePosition), tarch::la::invertEntries(sourceSubcellSize)) - epsilon;
     tarch::la::Vector<DIMENSIONS, int> lowerBoundsInSourcePatch;
     tarch::la::Vector<DIMENSIONS, int> upperBoundsInSourcePatch;
 
@@ -421,8 +421,8 @@ void peanoclaw::restrictArea (
   double destinationTimeUOld = 0.0;// destination.getTimeUOld();
   double destinationTimeUNew = 1.0;// destination.getTimeUNew();
 
-  const tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSize() / source.getSubdivisionFactor().convertScalar<double>();
-  const tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = destination.getSize() / destination.getSubdivisionFactor().convertScalar<double>();
+  const tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = tarch::la::multiplyComponents(source.getSize(), tarch::la::invertEntries(source.getSubdivisionFactor().convertScalar<double>()));
+  const tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = tarch::la::multiplyComponents(destination.getSize(), tarch::la::invertEntries(destination.getSubdivisionFactor().convertScalar<double>()));
   const double destinationSubcellArea = tarch::la::volume(destinationSubcellSize);
   const tarch::la::Vector<DIMENSIONS, double> sourcePosition = source.getPosition();
   const tarch::la::Vector<DIMENSIONS, double> destinationPosition = destination.getPosition();

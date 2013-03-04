@@ -441,7 +441,7 @@ void peanoclaw::GhostLayerCompositor::applyCoarseGridCorrection(
     tarch::la::Vector<DIMENSIONS, double> neighboringSubcellPositionInCoarsePatch = subcellPositionInFinePatch;
     neighboringSubcellPositionInCoarsePatch(dimension) += fineSubcellSize(dimension) * direction;
     tarch::la::Vector<DIMENSIONS, int> neighboringSubcellIndexInCoarsePatch =
-      ((neighboringSubcellPositionInCoarsePatch.convertScalar<double>() -coarsePatch.getPosition()) / coarseSubcellSize).convertScalar<int>();
+      (tarch::la::multiplyComponents((neighboringSubcellPositionInCoarsePatch.convertScalar<double>() -coarsePatch.getPosition()), tarch::la::invertEntries(coarseSubcellSize))).convertScalar<int>();
 
     logDebug("applyCoarseGridCorrection", "Correcting from cell " << subcellIndexInFinePatch);
 

@@ -31,6 +31,8 @@
 #include "peano/datatraversal/autotuning/Oracle.h"
 #include "peano/datatraversal/autotuning/OracleForOnePhaseDummy.h"
 
+#include <ctime>
+
 // roland MARK
 // TODO: implement/port RunnerParallerWorker part
 
@@ -215,7 +217,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _repository->getState().plotStatisticsForLastGridIteration();
 
     _iterationTimer.stopTimer();
-    _totalRuntime += _iterationTimer.getCalendarTime();
+    _totalRuntime += _iterationTimer.getCPUTicks() / CLOCKS_PER_SEC;
     logInfo("evolveToTime", "Wallclock time for this grid iteration/Total runtime: " << _iterationTimer.getCalendarTime() << "s/" << _totalRuntime << "s");
     logInfo("evolveToTime", "Minimal timestep for this grid iteration: " << _repository->getState().getMinimalTimestep());
   } while(!_repository->getState().getAllPatchesEvolvedToGlobalTimestep());
