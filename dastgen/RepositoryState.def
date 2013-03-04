@@ -1,8 +1,0 @@
-// This file is part of the Peano project. For conditions of distribution and
-// use, please see the copyright notice at www.peano-framework.org
-class peanoclaw::records::RepositoryState { 
-  enum Action { WriteCheckpoint, ReadCheckpoint, Terminate,UseAdapterInitialiseGrid,UseAdapterPlot,UseAdapterRemesh,UseAdapterSolveTimestep,UseAdapterSolveTimestepAndPlot,UseAdapterGatherCurrentSolution,UseAdapterCleanup};
-  persistent parallelise Action action;
-
-  persistent parallelise bool reduceState;
-};
