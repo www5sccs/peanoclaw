@@ -169,10 +169,6 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 ) {
   logTraceIn("evolveToTime");
 
-  //TODO unterweg debug
-  std::cout << _configuration.plotAtOutputTimes() << "plot" << std::endl;
-  throw "";
- 
 #if defined(Parallel)
   if (!tarch::parallel::Node::getInstance().isGlobalMaster()) {
     if (!_repository->continueToIterate()) {
