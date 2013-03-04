@@ -123,7 +123,7 @@ print:
 files.mk:
 	touch files.mk
 	echo -n PEANOCLAW_SOURCES= > files.mk
-	cd $(PROJECT_HOME); find . -name '*.cpp' -printf '%p ' >> files.mk
+	cd $(PROJECT_HOME)/src; find . -name '*.cpp' -printf '%p ' >> $(PROJECT_HOME)/files.mk
 	echo >> files.mk
 	echo -n PEANO_SOURCES= >> files.mk
 	cd $(PEANO_HOME); find . -name '*.cpp' -printf '%p ' >> $(PROJECT_HOME)/files.mk
