@@ -9,7 +9,7 @@
 # ---------
 # Please adopt these directories to your Peano installation. The values are 
 # used by the compiler and linker calls.
-PEANO_HOME   = ../p3
+PEANO_HOME   = ../p3/src
 PROJECT_HOME = $(PWD)
 PYCLAW_HOME = ../src/clawpack/pyclaw
 
@@ -116,6 +116,11 @@ PEANO_OBJECTS=$(PEANO_SOURCES:%.cpp=$(BUILD_PATH)/%.o)
 
 all: header build copy
 
+print:
+	@echo $(PEANOCLAW_OBJECTS)
+	@echo $(PEANO_OBJECTS)
+	@echo $(BUILD_PATH)
+
 files.mk:
 	touch files.mk
 	echo -n PEANOCLAW_SOURCES= > files.mk
@@ -137,7 +142,7 @@ header:
 
 
 build: files.mk $(PEANOCLAW_OBJECTS) $(PEANO_OBJECTS)
-	$(CC) $(PROJECT_LFLAGS) $(COMPILER_LFLAGS) $(shell python-config --ldflags) $(SYSTEM_LFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+	$(CC) $(PROJECT_LFLAGS) $(COMPILER_LFLAGS) $(shell python-config --ldflags) $(SYSTEM_LFLAGS) $(PEANOCLAW_OBJECTS) $(PEANO_OBJECTS) -o $(BUILD_PATH)/$(EXECUTABLE)
 	@echo
 	@echo build of PeanoClaw library successful
 	@echo visit Peano\'s homepage at http://www.peano-framework.org
@@ -145,26 +150,22 @@ build: files.mk $(PEANOCLAW_OBJECTS) $(PEANO_OBJECTS)
 
 clean:
 	rm -f $(EXECUTABLE)
-	rm -f $(OBJECTS)
+	rm -f $(PEANOCLAW_OBJECTS)
+	rm -f $(PEANO_OBJECTS)
 	rm -f files.mk
 	rm -f compiler-minutes.txt
 
 copy:
-	#cp $(EXECUTABLE) $(PYCLAW_HOME)/src/peanoclaw/
+	cp $(BUILD_PATH)/$(EXECUTABLE) $(PYCLAW_HOME)/src/peanoclaw/
 	
-#$(BUILD_PATH)/peanoclaw/%.o : %.cpp
-#	@echo $@
-#	@echo DIR_NAME=$(shell dirname $@)
-#	@echo $(BUILD_PATH)
-#	mkdir -p $(shell dirname $@)
-#	$(CC) $(DIM) $(PYTHON_CFLAGS) $(PROJECT_CFLAGS) $(COMPILER_CFLAGS) $(SYSTEM_CFLAGS) -I$(PROJECT_HOME) -I$(PEANO_HOME) -c $< -o $@
-
-$(BUILD_PATH)/%/Lock.o: %.cpp
-	@echo "Build file"
-	@echo $<
+$(BUILD_PATH)/peanoclaw/%.o : %.cpp
 	@echo $@
+	@echo DIR_NAME=$(shell dirname $@)
+	@echo $(BUILD_PATH)
+	mkdir -p $(shell dirname $@)
+	$(CC) $(DIM) $(PYTHON_CFLAGS) $(PROJECT_CFLAGS) $(COMPILER_CFLAGS) $(SYSTEM_CFLAGS) -I$(PROJECT_HOME) -I$(PEANO_HOME) -c $< -o $@
 
-$(BUILD_PATH)/%.o: %.cpp
+$(BUILD_PATH)/%.o: $(PEANO_HOME)/%.cpp
 	@echo $@
 	@echo DIR_NAME=$(shell dirname $@)
 	@echo $(BUILD_PATH)
