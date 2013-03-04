@@ -12,7 +12,8 @@ def addPeanoClawFlags(libpath,libs,cpppath,cppdefines):
    ccflags.append('-g')
    ccflags.append('-march=native')
    
-   pythonVersion = '2.7'
+   import sys
+   pythonVersion = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
    #Determine python version from environment variable:
    peanoClawPythonVersion = os.getenv ( 'PEANOCLAW_PYTHONVERSION' )
    if ( peanoClawPythonVersion != None ):
