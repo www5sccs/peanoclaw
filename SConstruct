@@ -321,8 +321,8 @@ print "Options: build = " + str(build) + ", dim = " + str(dim) + ", build-offset
 print "Buildpath: " + buildpath
 print
 
-VariantDir (buildpath, './src', duplicate=0)  # Change build directory
-VariantDir (buildpath + 'kernel', p3Path, duplicate=0)
+VariantDir (buildpath, './src', duplicate=0)  # Set build directory for PeanoClaw sources
+VariantDir (buildpath + 'kernel', p3Path, duplicate=0) # Set build directory for Peano sources
 
 ##### Setup construction environment:
 #
@@ -575,14 +575,7 @@ library = env.SharedLibrary (
   
 ##### Copy library to Clawpack
 #
-#import shutil
-#if(environment['PLATFORM'] == 'darwin'):
-#  libExtension = '.dylib'
-#elif(environment['PLATFORM'] == 'posix'):
-#  libExtension = '.so'
-#else:
-#  raise "Only Linux and MacOS supported, yet!"
+installation = env.Alias('install', env.Install(clawpackPath + '/pyclaw/src/peanoclaw', library))
 
-env.Install(clawpackPath + '/pyclaw/src/peanoclaw', library)
-#shutil.copyfile(target + libExtension, clawpackPath + '/pyclaw/src/peanoclaw/' + targetfilename + libExtension)
+Default(installation)
 
