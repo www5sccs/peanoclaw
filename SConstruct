@@ -12,7 +12,6 @@ def addPeanoClawFlags(libpath,libs,cpppath,cppdefines):
    ccflags.append('-g')
    ccflags.append('-march=native')
    
-   import sys
    pythonVersion = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
    #Determine python version from environment variable:
    peanoClawPythonVersion = os.getenv ( 'PEANOCLAW_PYTHONVERSION' )
@@ -322,8 +321,8 @@ print "Options: build = " + str(build) + ", dim = " + str(dim) + ", build-offset
 print "Buildpath: " + buildpath
 print
 
-VariantDir (buildpath, './', duplicate=0)  # Change build directory
-
+VariantDir (buildpath, './src', duplicate=0)  # Change build directory
+VariantDir (buildpath + 'kernel', p3Path, duplicate=0)
 
 ##### Setup construction environment:
 #
@@ -347,54 +346,54 @@ env = Environment (
 ##### Sub T-components
 
 sourcesTLa = [
-   Glob(buildpath + p3Path + '/tarch/la/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/la/tests/*.cpp')
+   Glob(buildpath + 'kernel/tarch/la/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/la/tests/*.cpp')
    ]
 
 sourcesTCompiler = [
-   Glob(buildpath + p3Path + '/tarch/compiler/*.cpp')
+   Glob(buildpath + 'kernel/tarch/compiler/*.cpp')
    ]
 
 sourcesTConfiguration = [
-   Glob(buildpath + p3Path + '/tarch/configuration/*.cpp')
+   Glob(buildpath + 'kernel/tarch/configuration/*.cpp')
    ]
 
 sourcesTIrr = [
-   Glob(buildpath + p3Path + '/tarch/irr/*.cpp')
+   Glob(buildpath + 'kernel/tarch/irr/*.cpp')
  ]
 
 sourcesTLogging = [
-  Glob(buildpath + p3Path + '/tarch/logging/*.cpp'),
-  Glob(buildpath + p3Path + '/tarch/logging/configurations/*.cpp')
+  Glob(buildpath + 'kernel/tarch/logging/*.cpp'),
+  Glob(buildpath + 'kernel/tarch/logging/configurations/*.cpp')
 ]
 
 sourcesTServices = [
-  Glob(buildpath + p3Path + '/tarch/services/*.cpp')
+  Glob(buildpath + 'kernel/tarch/services/*.cpp')
 ]
 
 sourcesTTests = [
-  Glob(buildpath + p3Path + '/tarch/tests/*.cpp'),
-  Glob(buildpath + p3Path + '/tarch/tests/configurations/*.cpp')
+  Glob(buildpath + 'kernel/tarch/tests/*.cpp'),
+  Glob(buildpath + 'kernel/tarch/tests/configurations/*.cpp')
   ]
 
 sourcesTUtils = [
-  Glob(buildpath + p3Path + '/tarch/utils/*.cpp')
+  Glob(buildpath + 'kernel/tarch/utils/*.cpp')
 ]
 
 sourcesTTiming = [
-  Glob(buildpath + p3Path + '/tarch/timing/*.cpp')
+  Glob(buildpath + 'kernel/tarch/timing/*.cpp')
 ]
 
 sourcesTPlotter = [ 
-   Glob(buildpath + p3Path + '/tarch/plotter/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/plotter/globaldata/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/plotter/globaldata/tests/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/plotter/griddata/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/plotter/griddata/multiscale/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/plotter/griddata/unstructured/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/plotter/griddata/unstructured/configurations/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/plotter/griddata/unstructured/vtk/*.cpp'),
-   Glob(buildpath + p3Path + '/tarch/plotter/griddata/unstructured/vtk/tests/*.cpp')
+   Glob(buildpath + 'kernel/tarch/plotter/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/plotter/globaldata/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/plotter/globaldata/tests/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/plotter/griddata/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/plotter/griddata/multiscale/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/plotter/griddata/unstructured/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/plotter/griddata/unstructured/configurations/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/plotter/griddata/unstructured/vtk/*.cpp'),
+   Glob(buildpath + 'kernel/tarch/plotter/griddata/unstructured/vtk/tests/*.cpp')
    ]   
    
 ##### Define sources T-components
@@ -416,90 +415,85 @@ sourcesTComponents = [
 ##### Define sources for multicore support
 #    
 sourcesDatatraversal = [
-    Glob(buildpath + p3Path + '/peano/kernel/datatraversal/*.cpp'),
-    Glob(buildpath + p3Path + '/peano/kernel/datatraversal/configurations/*.cpp'),
-    Glob(buildpath + p3Path + '/peano/kernel/datatraversal/tests/*.cpp'),
-    Glob(buildpath + p3Path + '/peano/kernel/datatraversal/autotuning/*.cpp'),
-    Glob(buildpath + p3Path + '/tarch/multicore/configurations/*.cpp'),
-    Glob(buildpath + p3Path + '/tarch/multicore/*.cpp')
+    Glob(buildpath + 'kernel/peano/datatraversal/*.cpp'),
+    Glob(buildpath + 'kernel/peano/datatraversal/configurations/*.cpp'),
+    Glob(buildpath + 'kernel/peano/datatraversal/tests/*.cpp'),
+    Glob(buildpath + 'kernel/peano/datatraversal/autotuning/*.cpp'),
+    Glob(buildpath + 'kernel/tarch/multicore/configurations/*.cpp'),
+    Glob(buildpath + 'kernel/tarch/multicore/*.cpp')
   ]       
       
 if multicore == 'no' or multicore == 'multicore_no':
    pass
 elif multicore == 'openmp':
    sourcesDatatraversal = sourcesDatatraversal + [
-     Glob(buildpath + p3Path + '/tarch/multicore/openMP/*.cpp')
+     Glob(buildpath + 'kernel/tarch/multicore/openMP/*.cpp')
    ]
 elif multicore == 'tbb':
    sourcesDatatraversal = sourcesDatatraversal + [
-     Glob(buildpath + p3Path + '/tarch/multicore/tbb/*.cpp')
+     Glob(buildpath + 'kernel/tarch/multicore/tbb/*.cpp')
    ]
 
-
-if parallel == 'yes' or parallel == 'parallel_yes':
-   sourcesParallel = [
-     Glob(buildpath + p3Path + '/tarch/parallel/configuration/*.cpp'),
-     Glob(buildpath + p3Path + '/tarch/parallel/*.cpp'),
-     Glob(buildpath + p3Path + '/tarch/parallel/strategy/*.cpp'),
-     Glob(buildpath + p3Path + '/tarch/parallel/messages/*.cpp'),
-     Glob(buildpath + p3Path + '/tarch/parallel/dastgen/*.cpp'),
-     Glob(buildpath + p3Path + '/tarch/parallel/configurations/*.cpp'),
-     Glob(buildpath + p3Path + '/peano/kernel/parallel/*.cpp'),
-     Glob(buildpath + p3Path + '/peano/kernel/parallel/configurations/*.cpp'),
-     Glob(buildpath + p3Path + '/peano/kernel/parallel/loadbalancing/*.cpp'),
-     Glob(buildpath + p3Path + '/peano/kernel/parallel/messages/*.cpp'),
-     Glob(buildpath + p3Path + '/peano/kernel/parallel/tests/*.cpp')
-   ]
-   pass
-else:
-  sourcesParallel = []
+sourcesParallel = [
+ Glob(buildpath + 'kernel/tarch/parallel/configuration/*.cpp'),
+ Glob(buildpath + 'kernel/tarch/parallel/*.cpp'),
+ Glob(buildpath + 'kernel/tarch/parallel/strategy/*.cpp'),
+ Glob(buildpath + 'kernel/tarch/parallel/messages/*.cpp'),
+ Glob(buildpath + 'kernel/tarch/parallel/dastgen/*.cpp'),
+ Glob(buildpath + 'kernel/tarch/parallel/configurations/*.cpp'),
+ Glob(buildpath + 'kernel/peano/parallel/*.cpp'),
+ Glob(buildpath + 'kernel/peano/parallel/configurations/*.cpp'),
+ Glob(buildpath + 'kernel/peano/parallel/loadbalancing/*.cpp'),
+ Glob(buildpath + 'kernel/peano/parallel/messages/*.cpp'),
+ Glob(buildpath + 'kernel/peano/parallel/tests/*.cpp')
+]
 
 
 #### Peano Utils
 sourcesPeanoUtils = [
-  Glob(buildpath + p3Path + '/peano/utils/*.cpp')
+  Glob(buildpath + 'kernel/peano/utils/*.cpp')
 ]
 
 
 ### Peano partition coupling
 sourcesPartitionCoupling = [
-  Glob(buildpath + p3Path + '/peano/integration/partitioncoupling/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/integration/partitioncoupling/builtin/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/integration/partitioncoupling/builtin/configurations/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/integration/partitioncoupling/builtin/tests/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/integration/partitioncoupling/builtin/records/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/integration/partitioncoupling/services/*.cpp')
+  Glob(buildpath + 'kernel/peano/integration/partitioncoupling/*.cpp'),
+  Glob(buildpath + 'kernel/peano/integration/partitioncoupling/builtin/*.cpp'),
+  Glob(buildpath + 'kernel/peano/integration/partitioncoupling/builtin/configurations/*.cpp'),
+  Glob(buildpath + 'kernel/peano/integration/partitioncoupling/builtin/tests/*.cpp'),
+  Glob(buildpath + 'kernel/peano/integration/partitioncoupling/builtin/records/*.cpp'),
+  Glob(buildpath + 'kernel/peano/integration/partitioncoupling/services/*.cpp')
 ]
 
 ### Kernel
 sourcesKernelConfiguration = [
-   Glob(buildpath + p3Path + '/peano/kernel/configurations/*.cpp')
+   Glob(buildpath + 'kernel/peano/configurations/*.cpp')
    ]
 
 sourcesGridInterface = [
-   Glob(buildpath + p3Path + '/peano/kernel/gridinterface/*.cpp')
+   Glob(buildpath + 'kernel/peano/gridinterface/*.cpp')
    ]
    
-sourcesSpacetreeGrid = [
-   Glob(buildpath + p3Path + '/peano/kernel/spacetreegrid/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/kernel/spacetreegrid/aspects/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/kernel/spacetreegrid/nodes/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/kernel/spacetreegrid/tests/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/kernel/spacetreegrid/tests/records/*.cpp')
+sourcesGrid = [
+   Glob(buildpath + 'kernel/peano/grid/*.cpp'),
+   Glob(buildpath + 'kernel/peano/grid/aspects/*.cpp'),
+   Glob(buildpath + 'kernel/peano/grid/nodes/*.cpp'),
+   Glob(buildpath + 'kernel/peano/grid/nodes/loops/*.cpp'),
+   Glob(buildpath + 'kernel/peano/grid/nodes/tasks/*.cpp'),
+   Glob(buildpath + 'kernel/peano/grid/tests/*.cpp'),
+   Glob(buildpath + 'kernel/peano/grid/tests/records/*.cpp')
    ]
 sourcesStacks = [
-    Glob(buildpath + p3Path + '/peano/kernel/stacks/*.cpp'),
-    Glob(buildpath + p3Path + '/peano/kernel/stacks/implementation/*.cpp')
+    Glob(buildpath + 'kernel/peano/stacks/*.cpp'),
+    Glob(buildpath + 'kernel/peano/stacks/implementation/*.cpp')
     ]
 sourcesHeap = [
-    Glob(buildpath + p3Path + '/peano/kernel/heap/records/*.cpp')
+    Glob(buildpath + 'kernel/peano/heap/records/*.cpp')
     ]
 sourcesPeanoKernel = [
-   Glob(buildpath + p3Path + '/peano/kernel/*.cpp'),
    sourcesKernelConfiguration,
    sourcesGridInterface,
-   #sourcesRegularGrid,
-   sourcesSpacetreeGrid,
+   sourcesGrid,
    sourcesStacks,
    sourcesHeap
    ]
@@ -507,19 +501,19 @@ sourcesPeanoKernel = [
 #### Geometry
 ##### Builtin Geometry
 sourcesBuiltinGeometry = [
-   Glob(buildpath + p3Path + '/peano/geometry/builtin/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/geometry/builtin/services/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/geometry/extensions/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/geometry/builtin/configurations/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/geometry/builtin/tests/*.cpp')
+   Glob(buildpath + 'kernel/peano/geometry/builtin/*.cpp'),
+   Glob(buildpath + 'kernel/peano/geometry/builtin/services/*.cpp'),
+   Glob(buildpath + 'kernel/peano/geometry/extensions/*.cpp'),
+   Glob(buildpath + 'kernel/peano/geometry/builtin/configurations/*.cpp'),
+   Glob(buildpath + 'kernel/peano/geometry/builtin/tests/*.cpp')
    ]
 
 
 sourcesPeanoGeometry = [
-   Glob(buildpath + p3Path + '/peano/geometry/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/geometry/tests/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/geometry/configurations/*.cpp'),
-   Glob(buildpath + p3Path + '/peano/geometry/services/*.cpp'),
+   Glob(buildpath + 'kernel/peano/geometry/*.cpp'),
+   Glob(buildpath + 'kernel/peano/geometry/tests/*.cpp'),
+   Glob(buildpath + 'kernel/peano/geometry/configurations/*.cpp'),
+   Glob(buildpath + 'kernel/peano/geometry/services/*.cpp'),
    sourcesBuiltinGeometry
    ]
 
@@ -529,37 +523,38 @@ sourcesPeanoBase = [
   sourcesPeanoUtils,
   sourcesDatatraversal,
   #sourcesQueries,
-  Glob(buildpath + p3Path + '/peano/*.cpp'),
-  Glob(buildpath + p3Path + '/*.cpp')
+  Glob(buildpath + 'kernel/peano/*.cpp'),
+  Glob(buildpath + 'kernel/*.cpp')
 ]
 
 sourcesToolBox = [
-  Glob(buildpath + p3Path + '/peano/toolbox/solver/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/toolbox/solver/configurations/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/toolbox/solver/tests/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/toolbox/stencil/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/toolbox/refinement/*.cpp')
+  Glob(buildpath + 'kernel/peano/toolbox/solver/*.cpp'),
+  Glob(buildpath + 'kernel/peano/toolbox/solver/configurations/*.cpp'),
+  Glob(buildpath + 'kernel/peano/toolbox/solver/tests/*.cpp'),
+  Glob(buildpath + 'kernel/peano/toolbox/stencil/*.cpp'),
+  Glob(buildpath + 'kernel/peano/toolbox/refinement/*.cpp')
 ]
 
 sourcesToolBoxVHH = [
-  Glob(buildpath + p3Path + '/peano/toolbox/solver/vhh/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/toolbox/solver/vhh/tests/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/toolbox/solver/vhh/opencl/*.cpp'),
-  Glob(buildpath + p3Path + '/peano/toolbox/solver/vhh/opencl/tests/*.cpp')
+  Glob(buildpath + 'kernel/peano/toolbox/solver/vhh/*.cpp'),
+  Glob(buildpath + 'kernel/peano/toolbox/solver/vhh/tests/*.cpp'),
+  Glob(buildpath + 'kernel/peano/toolbox/solver/vhh/opencl/*.cpp'),
+  Glob(buildpath + 'kernel/peano/toolbox/solver/vhh/opencl/tests/*.cpp')
 ]
 
 ### Applications
 ##### Define sources of application peanoclaw
 sourcesPeanoClaw = [
-  Glob(buildpath + 'src/*.cpp'),
-	Glob(buildpath + 'src/adapters/*.cpp'),
-	Glob(buildpath + 'src/configurations/*.cpp'),
-	Glob(buildpath + 'src/mappings/*.cpp'),
-	Glob(buildpath + 'src/records/*.cpp'),
-	Glob(buildpath + 'src/repositories/*.cpp'),
-	Glob(buildpath + 'src/runners/*.cpp'),
-  Glob(buildpath + 'src/statistics/*.cpp'),
-  Glob(buildpath + 'src/tests/*.cpp')
+  Glob(buildpath + 'peanoclaw/*.cpp'),
+	Glob(buildpath + 'peanoclaw/adapters/*.cpp'),
+	Glob(buildpath + 'peanoclaw/configurations/*.cpp'),
+	Glob(buildpath + 'peanoclaw/interSubgridCommunication/*.cpp'),
+	Glob(buildpath + 'peanoclaw/mappings/*.cpp'),
+	Glob(buildpath + 'peanoclaw/records/*.cpp'),
+	Glob(buildpath + 'peanoclaw/repositories/*.cpp'),
+	Glob(buildpath + 'peanoclaw/runners/*.cpp'),
+  Glob(buildpath + 'peanoclaw/statistics/*.cpp'),
+  Glob(buildpath + 'peanoclaw/tests/*.cpp')
 	]
 ################################################################################
 
@@ -567,7 +562,7 @@ sourcesPeanoClaw = [
 #
 targetfilename = 'libpeano-claw-' + str(dim) + 'd'
 target = buildpath + targetfilename
-env.SharedLibrary (
+library = env.SharedLibrary (
 #env.Program (
   target = target,
   source = [
@@ -580,13 +575,14 @@ env.SharedLibrary (
   
 ##### Copy library to Clawpack
 #
-import shutil
-if(environment['PLATFORM'] == 'darwin'):
-  libExtension = '.dylib'
-elif(environment['PLATFORM'] == 'posix'):
-  libExtension = '.so'
-else:
-  raise "Only Linux and MacOS supported, yet!"
+#import shutil
+#if(environment['PLATFORM'] == 'darwin'):
+#  libExtension = '.dylib'
+#elif(environment['PLATFORM'] == 'posix'):
+#  libExtension = '.so'
+#else:
+#  raise "Only Linux and MacOS supported, yet!"
 
-shutil.copyfile(target + libExtension, clawpackPath + '/pyclaw/src/peanoclaw/' + targetfilename)
+env.Install(clawpackPath + '/pyclaw/src/peanoclaw', library)
+#shutil.copyfile(target + libExtension, clawpackPath + '/pyclaw/src/peanoclaw/' + targetfilename + libExtension)
 
