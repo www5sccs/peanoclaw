@@ -6,8 +6,8 @@
  */
 
 #include <Python.h>
-#include "PyClaw.h"
-#include "Patch.h"
+#include "peanoclaw/pyclaw/PyClaw.h"
+#include "peanoclaw/Patch.h"
 #include <numpy/arrayobject.h>
 #include "tarch/timing/Watch.h"
 

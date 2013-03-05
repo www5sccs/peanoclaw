@@ -16,11 +16,11 @@
 #include <numpy/arrayobject.h>
 
 #include "PyClaw.h"
-#include "configurations/PeanoClawConfigurationForSpacetreeGrid.h"
-#include "runners/PeanoClawLibraryRunner.h"
+#include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
+#include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 #include "tarch/tests/TestCaseRegistry.h"
 
-#include "PyClawCallbacks.h"
+#include "peanoclaw/pyclaw/PyClawCallbacks.h"
 
 #include "tarch/parallel/NodePool.h"
 
@@ -100,7 +100,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   logInfo("pyclaw_peano_new(...)", "Initializing Peano");
 
   //PyClaw - this object is copied to the runner and is stored there.
-  peanoclaw::PyClaw *pyClaw = new peanoclaw::PyClaw(
+  peanoclaw::pyclaw::PyClaw *pyClaw = new peanoclaw::pyclaw::PyClaw(
       initializationCallback,
       boundaryConditionCallback,
       solverCallback,
@@ -225,7 +225,7 @@ void pyclaw_peano_evolveToTime(
     _pythonState = PyGILState_Ensure();
   }
 
-  peanoclaw::PyClaw pyClaw(
+  peanoclaw::pyclaw::PyClaw pyClaw(
     0,
     boundaryConditionCallback,
     solverCallback,
@@ -259,7 +259,7 @@ void pyclaw_peano_gatherSolution(
   }
   assertion(addPatchToSolutionCallback != 0)
 
-  peanoclaw::PyClaw pyClaw(
+  peanoclaw::pyclaw::PyClaw pyClaw(
     0,
     0,
     0,

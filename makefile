@@ -33,7 +33,7 @@ PARALLEL=parallel_no
 
 # Configure Peano
 #----------------
-PROJECT_CFLAGS = -DDebug -DAsserts -fPIC -shared -Wno-long-long
+PROJECT_CFLAGS = -DDebug -DAsserts -fPIC -shared -Wno-long-long -Isrc
 PROJECT_LFLAGS = -shared
 PYTHON_CFLAGS = $(shell python-config --cflags | sed "s/-Wstrict-prototypes //g")
 EXECUTABLE=libpeano-claw-2d.so
@@ -157,7 +157,7 @@ clean:
 copy:
 	cp $(BUILD_PATH)/$(EXECUTABLE) $(PYCLAW_HOME)/src/peanoclaw/
 	
-$(BUILD_PATH)/peanoclaw/%.o: %.cpp
+$(BUILD_PATH)/peanoclaw/%.o: src/%.cpp
 	@echo $@
 	@echo DIR_NAME=$(shell dirname $@)
 	@echo $(BUILD_PATH)
