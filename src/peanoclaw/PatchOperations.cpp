@@ -309,6 +309,7 @@ void peanoclaw::restrict(
   bool restrictOnlyOverlappedAreas
 ) {
   static tarch::logging::Log _log("peanoclaw");
+
   if(restrictOnlyOverlappedAreas) {
     Area areas[DIMENSIONS_TIMES_TWO];
     int numberOfAreasToProcess = getAreasForRestriction(
@@ -408,7 +409,7 @@ int peanoclaw::getAreasForRestriction (
 void peanoclaw::restrictArea (
   const peanoclaw::Patch& source,
   peanoclaw::Patch&       destination,
-  const Area&                                  area
+  const Area&             area
 ) {
   static tarch::logging::Log _log("peanoclaw");
   logTraceInWith2Arguments("restrictArea", source.toString(), destination.toString());

@@ -550,6 +550,7 @@ sourcesPeanoClaw = [
 	Glob(buildpath + 'peanoclaw/configurations/*.cpp'),
 	Glob(buildpath + 'peanoclaw/interSubgridCommunication/*.cpp'),
 	Glob(buildpath + 'peanoclaw/mappings/*.cpp'),
+	Glob(buildpath + 'peanoclaw/pyclaw/*.cpp'),
 	Glob(buildpath + 'peanoclaw/records/*.cpp'),
 	Glob(buildpath + 'peanoclaw/repositories/*.cpp'),
 	Glob(buildpath + 'peanoclaw/runners/*.cpp'),

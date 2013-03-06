@@ -8,6 +8,8 @@
 #ifndef PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_
 #define PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_
 
+#include "peanoclaw/interSubgridCommunication/Interpolation.h"
+#include "peanoclaw/interSubgridCommunication/Restriction.h"
 #include "peanoclaw/pyclaw/PyClaw.h"
 #include "peanoclaw/records/CellDescription.h"
 
@@ -67,6 +69,10 @@ private:
 
   peanoclaw::pyclaw::PyClaw& _pyClaw;
 
+  peanoclaw::interSubgridCommunication::Interpolation _interpolation;
+
+  peanoclaw::interSubgridCommunication::Restriction _restriction;
+
   bool _useDimensionalSplitting;
 
   /**
@@ -90,14 +96,14 @@ private:
   /**
    * Proxy, can be removed when the interpolation is fixed.
    */
-  void interpolate(
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-    const peanoclaw::Patch& source,
-    peanoclaw::Patch&       destination,
-    bool interpolateToUOld,
-    bool interpolateToCurrentTime
-  );
+//  void interpolate(
+//    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
+//    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+//    const peanoclaw::Patch& source,
+//    peanoclaw::Patch&       destination,
+//    bool interpolateToUOld,
+//    bool interpolateToCurrentTime
+//  );
 
   //Ghost layers, i.e. copy from one patch to another.
   void fillLeftGhostLayer();

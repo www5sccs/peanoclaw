@@ -27,12 +27,12 @@ peanoclaw::Area peanoclaw::Area::mapToPatch(
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSubcellSize();
   tarch::la::Vector<DIMENSIONS, double> position = tarch::la::multiplyComponents(sourceSubcellSize, _offset.convertScalar<double>());
   position += source.getPosition() - destination.getPosition();
-  destinationArea._offset = tarch::la::multiplyComponents((position+epsilon).convertScalar<double>(), destination.getSubcellSize()).convertScalar<int>();
+  destinationArea._offset = tarch::la::multiplyComponents((position+epsilon).convertScalar<double>(), tarch::la::invertEntries(destination.getSubcellSize())).convertScalar<int>();
 
   //Size
   tarch::la::Vector<DIMENSIONS, double> size = tarch::la::multiplyComponents(sourceSubcellSize, (_offset + _size).convertScalar<double>());
   size += (source.getPosition() - destination.getPosition());
-  destinationArea._size = tarch::la::multiplyComponents((size - epsilon).convertScalar<double>(), destination.getSubcellSize() - destinationArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
+  destinationArea._size = (tarch::la::multiplyComponents((size - epsilon).convertScalar<double>(), tarch::la::invertEntries(destination.getSubcellSize())) - destinationArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
 
   return destinationArea;
 }

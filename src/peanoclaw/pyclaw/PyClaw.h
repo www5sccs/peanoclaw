@@ -73,7 +73,7 @@ private:
 
   double _totalSolverCallbackTime;
 
-  void fillBoundaryLayerInPyClaw(Patch& patch, int dimension, bool setUpper);
+  void fillBoundaryLayerInPyClaw(Patch& patch, int dimension, bool setUpper) const;
 
 public:
   PyClaw(InitializationCallback initializationCallback,
@@ -110,7 +110,7 @@ public:
   /**
    * States whether this PyClaw object provides an interpolation implementation.
    */
-  bool providesInterpolation();
+  bool providesInterpolation() const;
 
   /**
    * Performs the interpolation between the given source and destination
@@ -124,12 +124,12 @@ public:
     const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
     bool interpolateToUOld,
     bool interpolateToCurrentTime
-  );
+  ) const;
 
   /**
    * States whether this PyClaw object provides a restriction implementation.
    */
-  bool providesRestriction();
+  bool providesRestriction() const;
 
   /**
    * Performs the restriction between the given source and destination
@@ -139,7 +139,7 @@ public:
   void restrict (
     const peanoclaw::Patch& source,
     peanoclaw::Patch&       destination
-  );
+  ) const;
 
 #ifdef Dim2
   /**

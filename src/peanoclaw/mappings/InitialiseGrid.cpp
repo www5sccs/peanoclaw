@@ -221,7 +221,8 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
   if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(demandedMeshWidth))) {
     for(int i = 0; i < TWO_POWER_D; i++) {
         // roland MARK
-      if (fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined) {
+      if (fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined
+          && !fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
           fineGridVertices[fineGridVerticesEnumerator(i)].refine();
           _refinementTriggered = true;
       }

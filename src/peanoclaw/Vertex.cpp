@@ -47,7 +47,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
 
   //TODO unterweg Debug
   #ifdef Debug
-  bool plotVertex = //tarch::la::equals(getX()(0), 19.0/27.0) && tarch::la::equals(getX()(1), 16.0/27.0)
+  bool plotVertex = //tarch::la::equals(getX()(0), 7.0/27.0) && tarch::la::equals(getX()(1), 4.0/27.0)
       //|| tarch::la::equals(getX()(0), 1.0/3.0) && tarch::la::equals(getX()(1), 5.0/9.0)
       //|| tarch::la::equals(getX()(0), 1.0/3.0) && tarch::la::equals(getX()(1), 4.0/9.0)
       //|| tarch::la::equals(getX()(0), 4.0/9.0) && tarch::la::equals(getX()(1), 4.0/9.0)

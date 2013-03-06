@@ -152,7 +152,7 @@ double peanoclaw::pyclaw::PyClaw::initializePatch(Patch& patch) {
   return demandedMeshWidth;
 }
 
-void peanoclaw::pyclaw::PyClaw::fillBoundaryLayerInPyClaw(Patch& patch, int dimension, bool setUpper) {
+void peanoclaw::pyclaw::PyClaw::fillBoundaryLayerInPyClaw(Patch& patch, int dimension, bool setUpper) const {
   logTraceInWith3Arguments("fillBoundaryLayerInPyClaw", patch, dimension, setUpper);
 
   logDebug("fillBoundaryLayerInPyClaw", "Setting left boundary for " << patch.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);
@@ -274,11 +274,11 @@ void peanoclaw::pyclaw::PyClaw::addPatchToSolution(Patch& patch) {
   );
 }
 
-bool peanoclaw::pyclaw::PyClaw::providesInterpolation() {
+bool peanoclaw::pyclaw::PyClaw::providesInterpolation() const {
   return _interpolationCallback != 0;
 }
 
-bool peanoclaw::pyclaw::PyClaw::providesRestriction() {
+bool peanoclaw::pyclaw::PyClaw::providesRestriction() const {
   return _restrictionCallback != 0;
 }
 
