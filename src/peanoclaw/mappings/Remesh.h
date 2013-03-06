@@ -31,6 +31,7 @@ namespace peanoclaw {
 
   namespace interSubgridCommunication {
     class GridLevelTransfer;
+    class Interpolation;
   }
 
   namespace mappings {
@@ -100,6 +101,8 @@ class peanoclaw::mappings::Remesh {
     Patch   _minimalTimePatch;
 
     bool _useDimensionalSplitting;
+
+    peanoclaw::interSubgridCommunication::Interpolation* _interpolation;
 
   public:
     /**

@@ -10,6 +10,7 @@
 
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
+#include "peanoclaw/interSubgridCommunication/Restriction.h"
 
 #include <vector>
 #include "peano/utils/Globals.h"
@@ -132,6 +133,11 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      * algorithm only has to take care about the 2d direct neighbors.
      */
     bool _useDimensionalSplitting;
+
+    /**
+     * Object encapsualting the restriction implementation.
+     */
+    peanoclaw::interSubgridCommunication::Restriction _restriction;
 
     /**
      * Vetos the coarsening on adjacent vertices if necessary and

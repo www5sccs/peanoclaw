@@ -10,7 +10,6 @@
 #include <limits>
 
 #include "Area.h"
-#include "PatchOperations.h"
 #include "Cell.h"
 #include "peano/heap/Heap.h"
 #include "peano/utils/Loop.h"

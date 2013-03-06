@@ -9,7 +9,6 @@
 #include <limits>
 
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/PatchOperations.h"
 #include "peanoclaw/pyclaw/PyClaw.h"
 #include "peanoclaw/Vertex.h"
 #include "peano/grid/VertexEnumerator.h"
@@ -48,7 +47,12 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::vetoCoarseningIfNe
 peanoclaw::interSubgridCommunication::GridLevelTransfer::GridLevelTransfer(
   bool useDimensionalSplitting,
   peanoclaw::pyclaw::PyClaw& pyClaw
-) : _pyClaw(pyClaw), _maximumNumberOfSimultaneousVirtualPatches(0), _useDimensionalSplitting(useDimensionalSplitting) {
+) :
+  _pyClaw(pyClaw),
+  _maximumNumberOfSimultaneousVirtualPatches(0),
+  _useDimensionalSplitting(useDimensionalSplitting),
+  _restriction(peanoclaw::interSubgridCommunication::Restriction(pyClaw))
+{
 }
 
 peanoclaw::interSubgridCommunication::GridLevelTransfer::~GridLevelTransfer() {
@@ -217,7 +221,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
             && !tarch::la::oneGreater(finePatch.getPosition() + finePatch.getSize(), virtualPatch.getPosition() + virtualPatch.getSize()),
             finePatch.toString(), virtualPatch.toString());
 
-        peanoclaw::restrict(finePatch, virtualPatch, !virtualPatch.willCoarsen());
+        _restriction.restrict(finePatch, virtualPatch, !virtualPatch.willCoarsen());
 
         virtualPatch.setEstimatedNextTimestepSize(finePatch.getEstimatedNextTimestepSize());
       }

@@ -6,7 +6,6 @@
  */
 
 #include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
-#include "peanoclaw/PatchOperations.h"
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
@@ -142,7 +141,6 @@ peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor
   _level(level),
   _pyClaw(pyClaw),
   _interpolation(Interpolation(pyClaw)),
-  _restriction(Restriction(pyClaw)),
   _useDimensionalSplitting(useDimensionalSplitting)
 {
 }
@@ -187,11 +185,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillLowerLeftGh
     tarch::la::Vector<DIMENSIONS, int> sourceOffset;
     sourceOffset(0) = _patches[3].getSubdivisionFactor()(0) - _patches[0].getGhostLayerWidth();
     sourceOffset(1) = _patches[3].getSubdivisionFactor()(1) - _patches[0].getGhostLayerWidth();
-
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[3], _patches[0]);
   } else if(_patches[3].getLevel() < _patches[0].getLevel() && _patches[0].getLevel() == _level && _patches[3].isLeaf()) {
     assertion2(_patches[3].getLevel() < _patches[0].getLevel(), _patches[3].getLevel(), _patches[0].getLevel());
-    (cornerSize, destinationOffset, _patches[3], _patches[0], true, false);
+    _interpolation.interpolate(cornerSize, destinationOffset, _patches[3], _patches[0], true, false);
   } else if(_patches[3].getLevel() > _patches[0].getLevel() && _patches[3].getLevel() == _level){
     assertion2(_patches[3].getLevel() > _patches[0].getLevel(), _patches[3].getLevel(), _patches[0].getLevel());
   }
@@ -214,7 +211,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillLowerGhostL
     copyGhostLayerDataBlock(rowSize, sourceOffset, destinationOffset, _patches[2], _patches[0]);
   } else if(_patches[2].getLevel() < _patches[0].getLevel() && _patches[0].getLevel() == _level && _patches[2].isLeaf()) {
     assertion2(_patches[2].getLevel() < _patches[0].getLevel(), _patches[2].getLevel(), _patches[0].getLevel());
-    (rowSize, destinationOffset, _patches[2], _patches[0], true, false);
+    _interpolation.interpolate(rowSize, destinationOffset, _patches[2], _patches[0], true, false);
   } else if(_patches[2].getLevel() > _patches[0].getLevel() && _patches[2].getLevel() == _level){
     assertion2(_patches[2].getLevel() > _patches[0].getLevel(), _patches[2].getLevel(), _patches[0].getLevel());
     applyCoarseGridCorrection(_patches[2], _patches[0], 1, 1);
@@ -234,11 +231,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillUpperLeftGh
     tarch::la::Vector<DIMENSIONS, int> sourceOffset;
     sourceOffset(0) = subdivisionFactor(0) - ghostLayerWidth;
     sourceOffset(1) = 0;
-
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[1], _patches[2]);
   } else if(_patches[1].getLevel() < _patches[2].getLevel() && _patches[2].getLevel() == _level && _patches[1].isLeaf()) {
     assertion2(_patches[1].getLevel() < _patches[2].getLevel(), _patches[1].getLevel(), _patches[2].getLevel());
-    (cornerSize, destinationOffset, _patches[1], _patches[2], true, false);
+    _interpolation.interpolate(cornerSize, destinationOffset, _patches[1], _patches[2], true, false);
   } else if(_patches[1].getLevel() > _patches[2].getLevel() && _patches[1].getLevel() == _level){
     assertion2(_patches[1].getLevel() > _patches[2].getLevel(), _patches[1].getLevel(), _patches[2].getLevel());
   }
@@ -260,11 +256,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillUpperGhostL
     tarch::la::Vector<DIMENSIONS, int> sourceOffset;
     sourceOffset(0) = 0;
     sourceOffset(1) = 0;
-
     copyGhostLayerDataBlock(rowSize, sourceOffset, destinationOffset, _patches[0], _patches[2]);
   } else if(_patches[0].getLevel() < _patches[2].getLevel() && _patches[2].getLevel() == _level && _patches[0].isLeaf()) {
     assertion2(_patches[0].getLevel() < _patches[2].getLevel(), _patches[0].getLevel(), _patches[2].getLevel());
-    (rowSize, destinationOffset, _patches[0], _patches[2], true, false);
+    _interpolation.interpolate(rowSize, destinationOffset, _patches[0], _patches[2], true, false);
   } else if(_patches[0].getLevel() > _patches[2].getLevel() && _patches[0].getLevel() == _level){
     assertion2(_patches[0].getLevel() > _patches[2].getLevel(), _patches[0].getLevel(), _patches[2].getLevel());
     applyCoarseGridCorrection(_patches[0], _patches[2], 1, -1);
@@ -283,11 +278,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillUpperRightG
     tarch::la::Vector<DIMENSIONS, int> sourceOffset;
     sourceOffset(0) = 0;
     sourceOffset(1) = 0;
-
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[0], _patches[3]);
   } else if(_patches[0].getLevel() < _patches[3].getLevel() && _patches[3].getLevel() == _level && _patches[0].isLeaf()) {
     assertion2(_patches[0].getLevel() < _patches[3].getLevel(), _patches[0].getLevel(), _patches[3].getLevel());
-    (cornerSize, destinationOffset, _patches[0], _patches[3], true, false);
+    _interpolation.interpolate(cornerSize, destinationOffset, _patches[0], _patches[3], true, false);
   } else if(_patches[0].getLevel() > _patches[3].getLevel() && _patches[0].getLevel() == _level){
     assertion2(_patches[0].getLevel() > _patches[3].getLevel(), _patches[0].getLevel(), _patches[3].getLevel());
   }
@@ -307,11 +301,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillRightGhostL
     tarch::la::Vector<DIMENSIONS, int> sourceOffset;
     sourceOffset(0) = 0;
     sourceOffset(1) = 0;
-
     copyGhostLayerDataBlock(columnSize, sourceOffset, destinationOffset, _patches[2], _patches[3]);
   } else if(_patches[2].getLevel() < _patches[3].getLevel() && _patches[3].getLevel() == _level && _patches[2].isLeaf()) {
     assertion2(_patches[2].getLevel() < _patches[3].getLevel(), _patches[2].getLevel(), _patches[3].getLevel());
-    (columnSize, destinationOffset, _patches[2], _patches[3], true, false);
+    _interpolation.interpolate(columnSize, destinationOffset, _patches[2], _patches[3], true, false);
   } else if(_patches[2].getLevel() > _patches[3].getLevel() && _patches[2].getLevel() == _level) {
     assertion2(_patches[2].getLevel() > _patches[3].getLevel(), _patches[2].getLevel(), _patches[3].getLevel());
     applyCoarseGridCorrection(_patches[2], _patches[3], 0, -1);
@@ -332,11 +325,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillLowerRightG
     tarch::la::Vector<DIMENSIONS, int> sourceOffset;
     sourceOffset(0) = 0;
     sourceOffset(1) = subdivisionFactor(1) - ghostLayerWidth;
-
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[2], _patches[1]);
   } else if(_patches[2].getLevel() < _patches[1].getLevel() && _patches[1].getLevel() == _level && _patches[2].isLeaf()) {
     assertion2(_patches[2].getLevel() < _patches[1].getLevel(), _patches[2].getLevel(), _patches[1].getLevel());
-    (cornerSize, destinationOffset, _patches[2], _patches[1], true, false);
+    _interpolation.interpolate(cornerSize, destinationOffset, _patches[2], _patches[1], true, false);
   } else if(_patches[2].getLevel() > _patches[1].getLevel() && _patches[2].getLevel() == _level) {
     assertion2(_patches[2].getLevel() > _patches[1].getLevel(), _patches[2].getLevel(), _patches[1].getLevel());
   }

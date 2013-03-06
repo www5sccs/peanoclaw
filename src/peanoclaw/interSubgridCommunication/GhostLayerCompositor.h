@@ -9,7 +9,6 @@
 #define PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_
 
 #include "peanoclaw/interSubgridCommunication/Interpolation.h"
-#include "peanoclaw/interSubgridCommunication/Restriction.h"
 #include "peanoclaw/pyclaw/PyClaw.h"
 #include "peanoclaw/records/CellDescription.h"
 
@@ -70,8 +69,6 @@ private:
   peanoclaw::pyclaw::PyClaw& _pyClaw;
 
   peanoclaw::interSubgridCommunication::Interpolation _interpolation;
-
-  peanoclaw::interSubgridCommunication::Restriction _restriction;
 
   bool _useDimensionalSplitting;
 
