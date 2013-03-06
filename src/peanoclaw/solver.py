@@ -9,6 +9,8 @@ from clawpack.peanoclaw.callbacks.solvercallback import SolverCallback
 from clawpack.peanoclaw.callbacks.boundaryconditioncallback import BoundaryConditionCallback
 from clawpack.peanoclaw.peano import Peano
 
+from DimensionConverter import get_dimension
+
 class Solver(Solver):
     r"""
         This solver class wraps the AMR functionality of Peano. It holds a normal PyClaw-solver
@@ -71,7 +73,6 @@ class Solver(Solver):
                            self.boundary_condition_callback,
                            None,
                            None)
-        
                 
     def teardown(self):
         r"""
@@ -96,3 +97,4 @@ class Solver(Solver):
         r"""
         """
         self.solver.step(self.solution)
+        

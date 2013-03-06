@@ -12,6 +12,7 @@ from ctypes import c_int
 from ctypes import c_void_p
 from ctypes import c_char_p
 import signal
+from clawpack.peanoclaw.DimensionConverter import get_dimension
 
 class Peano(object):
   '''
@@ -23,8 +24,10 @@ class Peano(object):
     '''
     Constructor
     '''
+    dim = get_dimension( solution.q )
+    
     logging.getLogger('peanoclaw').info("Loading Peano-library...")
-    self.libpeano = CDLL(self.get_lib_path())
+    self.libpeano = CDLL(self.get_lib_path(dim))
     logging.getLogger('peanoclaw').info("Peano loaded successfully.")
     self.libpeano.pyclaw_peano_new.restype = c_void_p
     self.libpeano.pyclaw_peano_destroy.argtypes = [c_void_p]
@@ -37,11 +40,22 @@ class Peano(object):
     dimensions = solution.state.grid.dimensions
     subdivision_factor_x0 = solution.state.grid.dimensions[0].num_cells
     subdivision_factor_x1 = solution.state.grid.dimensions[1].num_cells
-    subdivision_factor_x2 = 0 #solution.state.grid.dimensions[2].num_cells #TODO 3D
+
+    if dim is 3:
+        subdivision_factor_x2 = solution.state.grid.dimensions[2].num_cells 
+    else:
+        subdivision_factor_x2 = 0
     number_of_unknowns = solution.state.num_eqn 
     number_of_auxiliar_fields = solution.state.num_aux
     import os, sys
     configuration_file = os.path.join(sys.path[0], 'peanoclaw-config.xml')
+    
+    if dim is 2:
+      domain_position_x2 = 0
+      domain_size_x2 = 0
+    else:
+      domain_position_x2 = dimensions[2].lower
+      domain_size_x2 = dimensions[2].upper - dimensions[2].lower
       
     self.libpeano.pyclaw_peano_new.argtypes = [ c_double, #Initial mesh width
                                                 c_double, #Domain position X0
@@ -67,10 +81,10 @@ class Peano(object):
     self.peano = self.libpeano.pyclaw_peano_new(c_double(initial_minimal_mesh_width),
                                                 c_double(dimensions[0].lower),
                                                 c_double(dimensions[1].lower),
-                                                c_double(0.0), #Todo 3D
+                                                c_double(domain_position_x2),
                                                 c_double(dimensions[0].upper - dimensions[0].lower),
                                                 c_double(dimensions[1].upper - dimensions[1].lower),
-                                                c_double(0.0), #Todo 3D
+                                                c_double(domain_size_x2),
                                                 subdivision_factor_x0,
                                                 subdivision_factor_x1,
                                                 subdivision_factor_x2,
@@ -99,7 +113,7 @@ class Peano(object):
 
     
             
-  def get_lib_path(self):
+  def get_lib_path(self, dim):
     r"""
     Returns the path in which the shared library of Peano is located in.
     """
@@ -113,8 +127,10 @@ class Peano(object):
     else:
         raise("Unsupported operating system. Only Linux and MacOS supported currently.")    
     
-    print(os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-2d.' + shared_library_extension))
-    return os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-2d.' + shared_library_extension)
+    libraryFileName = os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-'+ str(dim)+ 'd.' + shared_library_extension)
+    logging.getLogger('peanoclaw').info(libraryFileName)
+    return os.path.join(libraryFileName)
+        
   
   def evolve_to_time(self, tend):
     self.libpeano.pyclaw_peano_evolveToTime(tend, self.peano, self.boundary_condition_callback.get_boundary_condition_callback(), self.solver_callback.get_solver_callback())

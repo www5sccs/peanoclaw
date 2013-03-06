@@ -56,15 +56,6 @@ class SolverCallback(object):
     """
     def callback_solver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt, use_dimensional_splitting):
         return self.call_subgridsolver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt, use_dimensional_splitting)
-#          import cProfile, pstats
-#          parameters = locals().values()
-#          locals()['self'] = self
-#          print locals().keys()
-#          method = "self.call_subgridsolver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt, use_dimensional_splitting)"
-#          #method = "r=self.call_subgridsolver(" + " ".join([ str(x) for x in locals().values() ])
-#          cProfile.runctx(method, globals(), locals(), 'cProfile.dat')
-#          stats = pstats.Stats('cProfile.dat')
-#          stats.sort_stats('time').print_stats()
         
     return self.CALLBACK_SOLVER(callback_solver)
         
@@ -80,17 +71,10 @@ class SolverCallback(object):
       
     # Set up grid information for current patch
     import clawpack.peanoclaw as peanoclaw
-    subgridsolver = peanoclaw.SubgridSolver(self.solver.solver, self.solver.solution.state, q, qbc, aux, (position_x, position_y), (size_x, size_y), subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, current_time)
+    subgridsolver = peanoclaw.SubgridSolver(self.solver.solver, self.solver.solution.state, q, qbc, aux, (position_x, position_y,position_z), (size_x, size_y,size_z), subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, current_time)
     
     new_q, number_of_rollbacks = subgridsolver.step(maximum_timestep_size, estimated_next_dt)
     
-#            import numpy
-#            print "recovered:" + str(subgridsolver.number_of_rollbacks)
-#            if numpy.max(numpy.abs(q - new_q)) > 1e-12:
-#              print "!DISAGREE!"
-#            else:
-#              print "!AGREE!"
-
     # Copy back the array with new values    
     q[:]= new_q[:]
     self.solver.solution.t = subgridsolver.solution.t
