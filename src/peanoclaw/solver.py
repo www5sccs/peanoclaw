@@ -68,7 +68,9 @@ class Solver(Solver):
                            self.solver.dt_initial,
                            self.initialization_callback,
                            self.solver_callback,
-                           self.boundary_condition_callback)
+                           self.boundary_condition_callback,
+                           None,
+                           None)
         
                 
     def teardown(self):
@@ -78,7 +80,7 @@ class Solver(Solver):
         self.peano.teardown()
         self.solver.teardown()
     
-    def evolve_to_time(self,solution,tend=None):
+    def evolve_to_time(self, solution, tend=None):
         r"""
         Performs one global timestep until all patches in the mesh reach the given end time.
         
@@ -92,5 +94,5 @@ class Solver(Solver):
                 
     def solve_one_timestep(self, q, qbc):
         r"""
-        """         
+        """
         self.solver.step(self.solution)

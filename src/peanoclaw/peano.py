@@ -19,7 +19,7 @@ class Peano(object):
   '''
 
 
-  def __init__(self, solution, initial_minimal_mesh_width, use_dimensional_splitting_optimization, ghostlayer_width, dt_initial, initialization_callback, solver_callback, boundary_condition_callback):
+  def __init__(self, solution, initial_minimal_mesh_width, use_dimensional_splitting_optimization, ghostlayer_width, dt_initial, initialization_callback, solver_callback, boundary_condition_callback, interpolation_callback, restriction_callback):
     '''
     Constructor
     '''
@@ -61,7 +61,9 @@ class Peano(object):
                                                 c_bool,   #Use dimensional splitting
                                                 c_void_p, #q Initialization callback
                                                 c_void_p, #Boundary condition callback
-                                                c_void_p] #Solver callback
+                                                c_void_p, #Solver callback
+                                                c_void_p, #Interpolation callback
+                                                c_void_p] #Restriction callback
     self.peano = self.libpeano.pyclaw_peano_new(c_double(initial_minimal_mesh_width),
                                                 c_double(dimensions[0].lower),
                                                 c_double(dimensions[1].lower),
@@ -80,7 +82,9 @@ class Peano(object):
                                                 use_dimensional_splitting_optimization,
                                                 initialization_callback.get_initialization_callback(),
                                                 boundary_condition_callback.get_boundary_condition_callback(),
-                                                solver_callback.get_solver_callback())
+                                                solver_callback.get_solver_callback(),
+                                                None,
+                                                None)
     
     # Set PeanoSolution
     import clawpack.peanoclaw as peanoclaw
