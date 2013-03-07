@@ -57,9 +57,6 @@ peanoclaw::pyclaw::PyClawState::PyClawState(const Patch& patch) {
   }
 }
 
-peanoclaw::pyclaw::PyClawState::~PyClawState() {
-}
-
 peanoclaw::pyclaw::PyClaw::PyClaw(
     InitializationCallback initializationCallback,
     BoundaryConditionCallback boundaryConditionCallback,
@@ -76,6 +73,9 @@ _restrictionCallback(restrictionCallback),
 _totalSolverCallbackTime(0.0)
 {
   import_array();
+}
+
+peanoclaw::pyclaw::PyClawState::~PyClawState() {
 }
 
 double peanoclaw::pyclaw::PyClaw::initializePatch(Patch& patch) {
@@ -278,8 +278,141 @@ bool peanoclaw::pyclaw::PyClaw::providesInterpolation() const {
   return _interpolationCallback != 0;
 }
 
+void peanoclaw::pyclaw::PyClaw::interpolate(
+  const Patch& source,
+  Patch& destination
+) const {
+
+  PyClawState sourceState(source);
+  PyClawState destinationState(destination);
+
+  _interpolationCallback(
+    sourceState._q,
+    sourceState._qbc,
+    sourceState._aux,
+    source.getSubdivisionFactor()(0),
+    source.getSubdivisionFactor()(1),
+    #ifdef Dim3
+    source.getSubdivisionFactor()(2),
+    #else
+    0,
+    #endif
+    source.getSize()(0),
+    source.getSize()(1),
+    #ifdef Dim3
+    source.getSize()(2),
+    #else
+    0.0,
+    #endif
+    source.getPosition()(0),
+    source.getPosition()(1),
+    #ifdef Dim3
+    source.getPosition()(2),
+    #else
+    0.0,
+    #endif
+    source.getCurrentTime(),
+    source.getTimestepSize(),
+
+    destinationState._q,
+    destinationState._qbc,
+    destinationState._aux,
+    destination.getSubdivisionFactor()(0),
+    destination.getSubdivisionFactor()(1),
+    #ifdef Dim3
+    destination.getSubdivisionFactor()(2),
+    #else
+    0,
+    #endif
+    destination.getSize()(0),
+    destination.getSize()(1),
+    #ifdef Dim3
+    destination.getSize()(2),
+    #else
+    0.0,
+    #endif
+    destination.getPosition()(0),
+    destination.getPosition()(1),
+    #ifdef Dim3
+    destination.getPosition()(2),
+    #else
+    0.0,
+    #endif
+    destination.getCurrentTime(),
+    destination.getTimestepSize(),
+    source.getUnknownsPerSubcell(),
+    source.getAuxiliarFieldsPerSubcell()
+  );
+}
+
 bool peanoclaw::pyclaw::PyClaw::providesRestriction() const {
   return _restrictionCallback != 0;
+}
+
+void peanoclaw::pyclaw::PyClaw::restrict (
+  const peanoclaw::Patch& source,
+  peanoclaw::Patch&       destination
+) const {
+  PyClawState sourceState(source);
+  PyClawState destinationState(destination);
+
+  _restrictionCallback(
+    sourceState._q,
+    sourceState._qbc,
+    sourceState._aux,
+    source.getSubdivisionFactor()(0),
+    source.getSubdivisionFactor()(1),
+    #ifdef Dim3
+    source.getSubdivisionFactor()(2),
+    #else
+    0,
+    #endif
+    source.getSize()(0),
+    source.getSize()(1),
+    #ifdef Dim3
+    source.getSize()(2),
+    #else
+    0.0,
+    #endif
+    source.getPosition()(0),
+    source.getPosition()(1),
+    #ifdef Dim3
+    source.getPosition()(2),
+    #else
+    0.0,
+    #endif
+    source.getCurrentTime(),
+    source.getTimestepSize(),
+
+    destinationState._q,
+    destinationState._qbc,
+    destinationState._aux,
+    destination.getSubdivisionFactor()(0),
+    destination.getSubdivisionFactor()(1),
+    #ifdef Dim3
+    destination.getSubdivisionFactor()(2),
+    #else
+    0,
+    #endif
+    destination.getSize()(0),
+    destination.getSize()(1),
+    #ifdef Dim3
+    destination.getSize()(2),
+    #else
+    0.0,
+    #endif
+    destination.getPosition()(0),
+    destination.getPosition()(1),
+    #ifdef Dim3
+    destination.getPosition()(2),
+    #else
+    0.0,
+    #endif
+    destination.getCurrentTime(),
+    destination.getTimestepSize(),
+    source.getUnknownsPerSubcell(),
+    source.getAuxiliarFieldsPerSubcell()
+  );
 }
 
 #ifdef Dim2

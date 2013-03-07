@@ -137,32 +137,36 @@ void peanoclaw::interSubgridCommunication::Restriction::restrict(
   peanoclaw::Patch&       destination,
   bool restrictOnlyOverlappedAreas
 ) {
-  if(restrictOnlyOverlappedAreas) {
-    Area areas[DIMENSIONS_TIMES_TWO];
-    int numberOfAreasToProcess = getAreasForRestriction(
-      destination.getLowerNeighboringGhostlayerBounds(),
-      destination.getUpperNeighboringGhostlayerBounds(),
-      source.getPosition(),
-      source.getSize(),
-      source.getSubcellSize(),
-      source.getSubdivisionFactor(),
-      areas
-    );
-
-    logDebug("restrict", "Restriction from patch " << source << std::endl << " to patch " << destination);
-    for( int i = 0; i < numberOfAreasToProcess; i++ ) {
-
-      logDebug("restrict", "Restricting area [" << areas[i]._offset << "], [" << areas[i]._size << "]");
-      if(tarch::la::allGreater(areas[i]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
-        restrictArea(source, destination, areas[i]);
-      }
-    }
+  if(_pyClaw.providesRestriction()) {
+    _pyClaw.restrict(source, destination);
   } else {
-    //Restrict complete Patch
-    Area area;
-    area._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-    area._size = source.getSubdivisionFactor();
-    restrictArea(source, destination, area);
+    if(restrictOnlyOverlappedAreas) {
+      Area areas[DIMENSIONS_TIMES_TWO];
+      int numberOfAreasToProcess = getAreasForRestriction(
+          destination.getLowerNeighboringGhostlayerBounds(),
+          destination.getUpperNeighboringGhostlayerBounds(),
+          source.getPosition(),
+          source.getSize(),
+          source.getSubcellSize(),
+          source.getSubdivisionFactor(),
+          areas
+      );
+
+      logDebug("restrict", "Restriction from patch " << source << std::endl << " to patch " << destination);
+      for( int i = 0; i < numberOfAreasToProcess; i++ ) {
+
+        logDebug("restrict", "Restricting area [" << areas[i]._offset << "], [" << areas[i]._size << "]");
+        if(tarch::la::allGreater(areas[i]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
+          restrictArea(source, destination, areas[i]);
+        }
+      }
+    } else {
+      //Restrict complete Patch
+      Area area;
+      area._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+      area._size = source.getSubdivisionFactor();
+      restrictArea(source, destination, area);
+    }
   }
 }
 

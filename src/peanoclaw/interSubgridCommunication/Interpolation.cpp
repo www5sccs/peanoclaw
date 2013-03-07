@@ -287,10 +287,10 @@ void peanoclaw::interSubgridCommunication::Interpolation::interpolate (
 ) {
 
   if(_pyClaw.providesInterpolation()) {
-//    _pyClaw.interpolate(
-//      source,
-//      destination
-//    );
+    _pyClaw.interpolate(
+      source,
+      destination
+    );
   } else {
     //Use default interpolation
     interpolateDLinear(

@@ -119,11 +119,7 @@ public:
    */
   void interpolate(
     const Patch& source,
-    Patch& destination,
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-    bool interpolateToUOld,
-    bool interpolateToCurrentTime
+    Patch& destination
   ) const;
 
   /**
