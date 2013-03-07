@@ -51,6 +51,7 @@ class InterpolationCallback(object):
       '''
       self.interpolation = interpolation
       self.solver = solver
+      self.callback = None
       
     def get_interpolation_callback(self):
       r"""
@@ -122,7 +123,9 @@ class InterpolationCallback(object):
         self.interpolation(source_subgrid_state, source_qbc, destination_subgrid_state, destination_qbc)
         
       if(self.interpolation == None):
-        return None
+        self.callback = None
       else:
-        return self.CALLBACK_INTERPOLATION(callback_interpolation)
+        self.callback = self.CALLBACK_INTERPOLATION(callback_interpolation)
+
+      return self.callback
         

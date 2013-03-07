@@ -49,6 +49,8 @@ class SolverCallback(object):
     self.number_of_non_disposed_cells = 0
     self.number_of_rollbacks = 0
     self.total_solver_time = 0.0
+
+    self.callback = None
     
   def get_solver_callback(self):
     r"""
@@ -56,8 +58,11 @@ class SolverCallback(object):
     """
     def callback_solver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt, use_dimensional_splitting):
         return self.call_subgridsolver(return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt, use_dimensional_splitting)
-        
-    return self.CALLBACK_SOLVER(callback_solver)
+    
+    if not self.callback:
+        self.callback = self.CALLBACK_SOLVER(callback_solver)
+
+    return self.callback
         
   def call_subgridsolver(self, return_dt_and_estimated_next_dt, q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z, current_time, maximum_timestep_size, estimated_next_dt, use_dimensional_splitting):
     """

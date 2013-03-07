@@ -39,7 +39,8 @@ class InitializationCallback(object):
     self.q_initialization = q_initialization
     self.aux_initialization = aux_initialization
     self.initial_minimal_mesh_width = initial_minimal_mesh_width
-    
+    self.callback = None
+
   def get_initialization_callback(self):
     r"""
     Creates a closure for initializing the grid
@@ -76,5 +77,8 @@ class InitializationCallback(object):
           return self.refinement_criterion(subgrid_state)
         else:
           return self.initial_minimal_mesh_width
-        
-    return self.CALLBACK_INITIALIZATION(callback_initialization)
+   
+    if not self.callback:
+        self.callback = self.CALLBACK_INITIALIZATION(callback_initialization)
+
+    return self.callback

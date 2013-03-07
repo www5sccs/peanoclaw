@@ -40,6 +40,7 @@ class Solution(pyclaw.solution.Solution):
         pyclaw.Solution.__init__(self,*arg,**kargs)
         self.peano = None
         self.libpeano = None
+        self.callback = None
         
     def get_add_to_solution_callback(self):
         r"""
@@ -76,8 +77,11 @@ class Solution(pyclaw.solution.Solution):
             
             self.gathered_patches.append(patch)
             self.gathered_states.append(state)
-            
-        return self.CALLBACK_ADD_PATCH_TO_SOLUTION(callback_add_to_solution)
+        
+        if not self.callback:
+            self.callback = self.CALLBACK_ADD_PATCH_TO_SOLUTION(callback_add_to_solution)
+
+        return self.callback
 
     def __deepcopy__(self,memo={}):
         self.gatherStates()
@@ -104,8 +108,8 @@ class Solution(pyclaw.solution.Solution):
         self.gathered_patches = []
         self.gathered_states = []
         
-        self.libpeano.pyclaw_peano_gatherSolution.argtypes = [c_void_p, c_void_p]
-        self.libpeano.pyclaw_peano_gatherSolution(self.peano, self.get_add_to_solution_callback())
+        self.libpeano.pyclaw_peano_gatherSolution.argtypes = [c_void_p]
+        self.libpeano.pyclaw_peano_gatherSolution(self.peano)
         
         #Assemble solution and write file
         self.domain = pyclaw.Domain(self.gathered_patches)

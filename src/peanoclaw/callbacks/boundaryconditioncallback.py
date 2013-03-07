@@ -20,6 +20,7 @@ class BoundaryConditionCallback(object):
     Constructor
     '''
     self.solver = solver
+    self.callback = None
 
   def get_boundary_condition_callback(self):
     r"""
@@ -31,5 +32,9 @@ class BoundaryConditionCallback(object):
         self.solver.qbc_upper(self.solver.solution.state, self.solver.solution.state.grid.dimensions[dimension], self.solver.solution.state.t, numpy.rollaxis(qbc,dimension+1,1), dimension)
       else:
         self.solver.qbc_lower(self.solver.solution.state, self.solver.solution.state.grid.dimensions[dimension], self.solver.solution.state.t, numpy.rollaxis(qbc,dimension+1,1), dimension)
-    return self.CALLBACK_BOUNDARY_CONDITIONS(callback_boundary_conditions)
+ 
+    if not self.callback:
+        self.callback = self.CALLBACK_BOUNDARY_CONDITIONS(callback_boundary_conditions)
+    
+    return self.callback
         

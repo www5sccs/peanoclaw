@@ -48,7 +48,8 @@ class RestrictionCallback(object):
       '''
       self.restriction = restriction
       self.solver = solver
-      
+      self.callback = None
+
     def get_restriction_callback(self):
       r"""
       Creates a closure for the solver callback method.
@@ -119,7 +120,8 @@ class RestrictionCallback(object):
         self.restriction(source_subgrid_state, source_qbc, destination_subgrid_state, destination_qbc)
         
       if(self.restriction == None):
-        return None
+        self.callback = None
       else:
-        return self.CALLBACK_RESTRICTION(callback_restriction)
-        
+        self.callback = self.CALLBACK_RESTRICTION(callback_restriction)
+
+      return self.callback
