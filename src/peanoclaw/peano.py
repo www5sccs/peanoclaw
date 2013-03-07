@@ -12,6 +12,7 @@ from ctypes import c_int
 from ctypes import c_void_p
 from ctypes import c_char_p
 from ctypes import byref
+from ctypes import RTLD_GLOBAL
 import signal
 from clawpack.peanoclaw.converter import get_number_of_dimensions
 
@@ -37,7 +38,7 @@ class Peano(object):
     dim = get_number_of_dimensions( solution.q )
     
     logging.getLogger('peanoclaw').info("Loading Peano-library...")
-    self.libpeano = CDLL(self.get_lib_path(dim))
+    self.libpeano = CDLL(self.get_lib_path(dim),mode=RTLD_GLOBAL)
     logging.getLogger('peanoclaw').info("Peano loaded successfully.")
     self.libpeano.pyclaw_peano_new.restype = c_void_p
     self.libpeano.pyclaw_peano_destroy.argtypes = [c_void_p]
@@ -163,3 +164,9 @@ class Peano(object):
     
   def getRank(self):
       return self.rank
+
+  def runWorker(self):
+    self.libpeano.pyclaw_peano_runWorker.argtypes = [c_void_p]
+    self.libpeano.pyclaw_peano_runWorker(self.peano)
+
+    return 0

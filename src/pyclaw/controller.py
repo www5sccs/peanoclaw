@@ -13,6 +13,8 @@ import logging
 import sys
 import os
 import copy
+ 
+import numpy as np
 
 from .solver import Solver
 from .util import FrameCounter
@@ -189,6 +191,34 @@ class Controller(object):
  
     # ========== Plotting methods ============================================        
     # ========== Solver convenience methods ==================================
+    def run_prepare(self):
+        r"""
+        Convenience routine that will evolve solution based on the 
+        traditional clawpack output and run parameters.
+        
+        This function uses the run parameters and solver parameters to evolve
+        the solution to the end time specified in run_data, outputting at the
+        appropriate times.
+        
+        :Input:
+            None
+            
+        :Ouput:
+            (dict) - Return a dictionary of the status of the solver.
+            
+        :Version: 1.0 (2009-05-01)
+        """
+        
+        self.frame = FrameCounter()
+        self.frame.set_counter(self.start_frame)
+        if self.keep_copy:
+            self.frames = []
+                    
+        self.solver.setup(self.solution)
+        self.solver.dt = self.solver.dt_initial
+            
+        self.check_validity()
+
     def run(self):
         r"""
         Convenience routine that will evolve solution based on the 
@@ -207,17 +237,6 @@ class Controller(object):
         :Version: 1.0 (2009-05-01)
         """
         
-        import numpy as np
-
-        frame = FrameCounter()
-        frame.set_counter(self.start_frame)
-        if self.keep_copy:
-            self.frames = []
-                    
-        self.solver.setup(self.solution)
-        self.solver.dt = self.solver.dt_initial
-            
-        self.check_validity()
 
         # Write initial gauge values
         self.solver.write_gauge_values(self.solution)
@@ -242,14 +261,14 @@ class Controller(object):
                  \nEither delete/move the directory or set controller.overwrite=True.")
             if self.compute_p is not None:
                 self.compute_p(self.solution.state)
-                self.solution.write(frame,self.outdir_p,
+                self.solution.write(self.frame,self.outdir_p,
                                         self.output_format,
                                         self.file_prefix_p,
                                         write_aux = False,
                                         options = self.output_options,
                                         write_p = True) 
 
-            self.solution.write(frame,self.outdir,
+            self.solution.write(self.frame,self.outdir,
                                         self.output_format,
                                         self.output_file_prefix,
                                         self.write_aux_init,
@@ -258,7 +277,7 @@ class Controller(object):
         self.write_F('w')
 
         self.log_info("Solution %s computed for time t=%f" % 
-                        (frame,self.solution.t) )
+                        (self.frame,self.solution.t) )
 
         for t in output_times[1:]:                
             if self.output_style < 3:
@@ -267,21 +286,21 @@ class Controller(object):
                 # Take nstepout steps and output
                 for n in xrange(self.nstepout):
                     status = self.solver.evolve_to_time(self.solution)
-            frame.increment()
+            self.frame.increment()
             if self.keep_copy:
                 # Save current solution to dictionary with frame as key
                 self.frames.append(copy.deepcopy(self.solution))
             if self.output_format is not None:
                 if self.compute_p is not None:
                     self.compute_p(self.solution.state)
-                    self.solution.write(frame,self.outdir_p,
+                    self.solution.write(self.frame,self.outdir_p,
                                             self.output_format,
                                             self.file_prefix_p,
                                             write_aux = False, 
                                             options = self.output_options,
                                             write_p = True) 
                 
-                self.solution.write(frame,self.outdir,
+                self.solution.write(self.frame,self.outdir,
                                             self.output_format,
                                             self.output_file_prefix,
                                             self.write_aux_always,
@@ -289,7 +308,7 @@ class Controller(object):
             self.write_F()
 
             self.log_info("Solution %s computed for time t=%f"
-                % (frame,self.solution.t))
+                % (self.frame,self.solution.t))
             for gfile in self.solution.state.grid.gauge_files: 
                 gfile.flush()
             
