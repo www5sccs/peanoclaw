@@ -10,7 +10,7 @@ from ctypes import c_int
 from ctypes import c_double
 from ctypes import c_void_p
 
-from DimensionConverter import get_dimension
+from clawpack.peanoclaw.converter import get_number_of_dimensions
 
 class Solution(pyclaw.solution.Solution):
     r"""
@@ -46,7 +46,7 @@ class Solution(pyclaw.solution.Solution):
         Creates a closure for the callback method to add a grid to the solution.
         """
         def callback_add_to_solution(q, qbc, ghostlayer_width, size_x, size_y, size_z, position_x, position_y, position_z, currentTime):
-            dim = get_dimension( q )
+            dim = get_number_of_dimensions( q )
 
             #TODO 3D: Adjust subdivision_factor to 3D
             # Set up grid information for current patch

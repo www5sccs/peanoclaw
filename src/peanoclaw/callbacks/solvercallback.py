@@ -71,7 +71,7 @@ class SolverCallback(object):
       
     # Set up grid information for current patch
     import clawpack.peanoclaw as peanoclaw
-    subgridsolver = peanoclaw.SubgridSolver(self.solver.solver, self.solver.solution.state, q, qbc, aux, (position_x, position_y,position_z), (size_x, size_y,size_z), subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, current_time)
+    subgridsolver = peanoclaw.SubgridSolver(self.solver.solver, self.solver.solution.state, q, qbc, aux, (position_x, position_y,position_z), (size_x, size_y,size_z), (subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2), unknowns_per_cell, aux_fields_per_cell, current_time)
     
     new_q, number_of_rollbacks = subgridsolver.step(maximum_timestep_size, estimated_next_dt)
     
@@ -101,7 +101,9 @@ class SolverCallback(object):
 #            print "Time spent in solver callback (PyClaw): " + str(time.time() - starttime)
       
     #Steer refinement
-    if not self.refinement_criterion == None:
-      return self.refinement_criterion(subgridsolver.solution.state)
-    else:
+    if self.refinement_criterion == None:
       return self.initial_minimal_mesh_width
+    else:
+      return self.refinement_criterion(subgridsolver.solution.state)      
+    
+    

@@ -12,7 +12,7 @@ from ctypes import c_int
 from ctypes import c_void_p
 from ctypes import c_char_p
 import signal
-from clawpack.peanoclaw.DimensionConverter import get_dimension
+from clawpack.peanoclaw.converter import get_number_of_dimensions
 
 class Peano(object):
   '''
@@ -20,11 +20,20 @@ class Peano(object):
   '''
 
 
-  def __init__(self, solution, initial_minimal_mesh_width, use_dimensional_splitting_optimization, ghostlayer_width, dt_initial, initialization_callback, solver_callback, boundary_condition_callback, interpolation_callback, restriction_callback):
+  def __init__(self, 
+               solution, 
+               initial_minimal_mesh_width, 
+               use_dimensional_splitting_optimization, 
+               ghostlayer_width, dt_initial, 
+               initialization_callback, 
+               solver_callback, 
+               boundary_condition_callback, 
+               interpolation_callback, 
+               restriction_callback):
     '''
     Constructor
     '''
-    dim = get_dimension( solution.q )
+    dim = get_number_of_dimensions( solution.q )
     
     logging.getLogger('peanoclaw').info("Loading Peano-library...")
     self.libpeano = CDLL(self.get_lib_path(dim))
@@ -35,6 +44,8 @@ class Peano(object):
     
     self.boundary_condition_callback = boundary_condition_callback
     self.solver_callback = solver_callback
+    self.interpolation_callback = interpolation_callback
+    self.restriction_callback = restriction_callback
     
     # Get parameters for Peano
     dimensions = solution.state.grid.dimensions
@@ -97,8 +108,8 @@ class Peano(object):
                                                 initialization_callback.get_initialization_callback(),
                                                 boundary_condition_callback.get_boundary_condition_callback(),
                                                 solver_callback.get_solver_callback(),
-                                                None,
-                                                None)
+                                                interpolation_callback.get_interpolation_callback(),
+                                                restriction_callback.get_restriction_callback())
     
     # Set PeanoSolution
     import clawpack.peanoclaw as peanoclaw
@@ -133,7 +144,13 @@ class Peano(object):
         
   
   def evolve_to_time(self, tend):
-    self.libpeano.pyclaw_peano_evolveToTime(tend, self.peano, self.boundary_condition_callback.get_boundary_condition_callback(), self.solver_callback.get_solver_callback())
+    self.libpeano.pyclaw_peano_evolveToTime(
+      tend, 
+      self.peano, 
+      self.boundary_condition_callback.get_boundary_condition_callback(), 
+      self.solver_callback.get_solver_callback(),
+      self.interpolation_callback.get_interpolation_callback(),
+      self.restriction_callback.get_restriction_callback())
 
   def teardown(self):
     self.libpeano.pyclaw_peano_destroy(self.peano)

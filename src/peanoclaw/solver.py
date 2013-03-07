@@ -7,9 +7,9 @@ from clawpack.pyclaw.solver import Solver
 from clawpack.peanoclaw.callbacks.initializationcallback import InitializationCallback 
 from clawpack.peanoclaw.callbacks.solvercallback import SolverCallback
 from clawpack.peanoclaw.callbacks.boundaryconditioncallback import BoundaryConditionCallback
+from clawpack.peanoclaw.callbacks.interpolationcallback import InterpolationCallback
+from clawpack.peanoclaw.callbacks.restrictioncallback import RestrictionCallback
 from clawpack.peanoclaw.peano import Peano
-
-from DimensionConverter import get_dimension
 
 class Solver(Solver):
     r"""
@@ -25,7 +25,16 @@ class Solver(Solver):
         >>> peanoclaw_solver = peanoclaw.Solver(solver, 1.0/18.0)
     """
     
-    def __init__(self, solver, initial_minimal_mesh_width, q_initialization, aux_initialization=None, refinement_criterion=None):
+    def __init__(
+                 self, 
+                 solver, 
+                 initial_minimal_mesh_width, 
+                 q_initialization, 
+                 aux_initialization=None, 
+                 refinement_criterion=None,
+                 interpolation=None,
+                 restriction=None
+                 ):
         r"""
         Initializes the Peano-solver. This keeps the Peano-spacetree internally and wraps the given PyClaw-solver.
         
@@ -48,6 +57,8 @@ class Solver(Solver):
         self.initialization_callback = InitializationCallback(self, refinement_criterion, q_initialization, aux_initialization, initial_minimal_mesh_width)
         self.solver_callback = SolverCallback(self, refinement_criterion, initial_minimal_mesh_width)
         self.boundary_condition_callback = BoundaryConditionCallback(self)
+        self.interpolation_callback = InterpolationCallback(interpolation, self)
+        self.restriction_callback = RestrictionCallback(restriction, self)
         
     def setup(self, solution):
         r"""
@@ -71,8 +82,8 @@ class Solver(Solver):
                            self.initialization_callback,
                            self.solver_callback,
                            self.boundary_condition_callback,
-                           None,
-                           None)
+                           self.interpolation_callback,
+                           self.restriction_callback)
                 
     def teardown(self):
         r"""

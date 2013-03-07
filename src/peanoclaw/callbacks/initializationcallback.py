@@ -9,7 +9,7 @@ from ctypes import c_int
 from ctypes import CFUNCTYPE
 from ctypes import py_object
 
-from clawpack.peanoclaw.DimensionConverter import get_dimension
+from clawpack.peanoclaw.converter import get_number_of_dimensions
 
 class InitializationCallback(object):
   '''
@@ -47,7 +47,7 @@ class InitializationCallback(object):
     def callback_initialization(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_subcell, aux_fields_per_subcell, size_x, size_y, size_z, position_x, position_y, position_z):
         import clawpack.pyclaw as pyclaw
         
-        dim = get_dimension(q)
+        dim = get_number_of_dimensions(q)
         if dim is 2:
             self.dim_x = pyclaw.Dimension('x',position_x,position_x + size_x,subdivision_factor_x0)
             self.dim_y = pyclaw.Dimension('y',position_y,position_y + size_y,subdivision_factor_x1)
