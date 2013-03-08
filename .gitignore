@@ -1,16 +1,34 @@
-# Compiled Object files
+# git ls-files --others --exclude-from=.git/info/exclude
+
+# compiled object files and Python code
+*.[oa]
+*.so
+*.pyc
+*.mod
 *.slo
 *.lo
 *.o
 
-# Compiled Dynamic libraries
+# File system metadata
+.DS_Store
+
+# Temporary/swap files
+*~
+
+# PyClaw-specific files to ignore
+_output
+_plots
+petclaw.log
+pyclaw.log
+.noseids
+_build
+gallery
 *.so
 *.dylib
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
 /files.mk
 /compiler-minutes.txt
 /makefile~
+
