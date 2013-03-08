@@ -10,6 +10,11 @@
 #include "peanoclaw/Patch.h"
 #include "peano/utils/Loop.h"
 
+tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultInterpolation::_log("peanoclaw::interSubgridCommunication::DefaultInterpolation");
+
+peanoclaw::interSubgridCommunication::DefaultInterpolation::~DefaultInterpolation(){
+}
+
 void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
   const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
   const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,

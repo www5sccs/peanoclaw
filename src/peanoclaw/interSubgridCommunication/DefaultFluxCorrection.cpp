@@ -11,6 +11,8 @@
 
 #include "peano/utils/Loop.h"
 
+tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultFluxCorrection::_log("peanoclaw::interSubgridCommunication::DefaultFluxCorrection");
+
 double peanoclaw::interSubgridCommunication::DefaultFluxCorrection::calculateOverlappingArea(
     tarch::la::Vector<DIMENSIONS, double> position1,
     tarch::la::Vector<DIMENSIONS, double> size1,

@@ -12,6 +12,7 @@
 
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
+#include "tarch/logging/Log.h"
 
 namespace peanoclaw {
   namespace interSubgridCommunication {
@@ -25,6 +26,11 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
     : public peanoclaw::interSubgridCommunication::FluxCorrection {
 
   private:
+    /**
+     * Logging device.
+     */
+    static tarch::logging::Log _log;
+
     /**
      * Returns the area of the region where the two given
      * patches overlap.

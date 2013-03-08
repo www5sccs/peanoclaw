@@ -71,7 +71,12 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   bool useDimensionalSplitting,
   InitializationCallback initializationCallback,
   BoundaryConditionCallback boundaryConditionCallback,
-  SolverCallback solverCallback
+  SolverCallback solverCallback,
+  AddPatchToSolutionCallback addPatchToSolutionCallback,
+  InterPatchCommunicationCallback interpolationCallback,
+  InterPatchCommunicationCallback restrictionCallback,
+  InterPatchCommunicationCallback fluxCorrectionCallback,
+  int* rank
 ) {
     peano::fillLookupTables();
 
@@ -101,23 +106,15 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   logInfo("pyclaw_peano_new(...)", "Initializing Peano");
 
   //PyClaw - this object is copied to the runner and is stored there.
-//  peanoclaw::pyclaw::PyClaw *pyClaw = new peanoclaw::pyclaw::PyClaw(
-//      initializationCallback,
-//      boundaryConditionCallback,
-//      solverCallback,
-//      0,
-//      0,
-//      0,
-//      0);
   peanoclaw::pyclaw::NumericsFactory numericsFactory;
   peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
     initializationCallback,
     boundaryConditionCallback,
     solverCallback,
-    0,
-    0,
-    0,
-    0
+    addPatchToSolutionCallback,
+    interpolationCallback,
+    restrictionCallback,
+    fluxCorrectionCallback
   );
 
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
@@ -216,12 +213,7 @@ void pyclaw_peano_destroy(peanoclaw::runners::PeanoClawLibraryRunner* runner) {
 extern "C"
 void pyclaw_peano_evolveToTime(
   double time,
-  peanoclaw::runners::PeanoClawLibraryRunner* runner,
-  BoundaryConditionCallback boundaryConditionCallback,
-  SolverCallback solverCallback,
-  InterPatchCommunicationCallback interpolationCallback,
-  InterPatchCommunicationCallback restrictionCallback,
-  InterPatchCommunicationCallback fluxCorrectionCallback
+  peanoclaw::runners::PeanoClawLibraryRunner* runner
 ) {
   #ifdef USE_VALGRIND
   CALLGRIND_START_INSTRUMENTATION;
@@ -231,34 +223,12 @@ void pyclaw_peano_evolveToTime(
   static tarch::logging::Log _log("::pyclawBindings");
   logTraceInWith1Argument("pyclaw_peano_evolveToTime", time);
   assertionMsg(runner!=0, "call pyclaw_peano_new before calling pyclaw_peano_run.");
-  assertion(boundaryConditionCallback != 0);
-  assertion(solverCallback != 0);
 
   if(_calledFromPython) {
     _pythonState = PyGILState_Ensure();
   }
 
-//  peanoclaw::pyclaw::PyClaw pyClaw(
-//    0,
-//    boundaryConditionCallback,
-//    solverCallback,
-//    0,
-//    interpolationCallback,
-//    restrictionCallback,
-//    fluxCorrectionCallback
-//  );
-  peanoclaw::pyclaw::NumericsFactory numericsFactory;
-  peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
-    0,
-    boundaryConditionCallback,
-    solverCallback,
-    0,
-    interpolationCallback,
-    restrictionCallback,
-    fluxCorrectionCallback
-  );
-
-  runner->evolveToTime(time, *numerics);
+  runner->evolveToTime(time);
 
   if(_calledFromPython) {
     PyGILState_Release(_pythonState);
@@ -272,8 +242,7 @@ void pyclaw_peano_evolveToTime(
 
 extern "C"
 void pyclaw_peano_gatherSolution(
-  peanoclaw::runners::PeanoClawLibraryRunner* runner,
-  AddPatchToSolutionCallback addPatchToSolutionCallback
+  peanoclaw::runners::PeanoClawLibraryRunner* runner
 ) {
 
   static tarch::logging::Log _log("::pyclawBindings");
@@ -281,29 +250,8 @@ void pyclaw_peano_gatherSolution(
   if(_calledFromPython) {
     _pythonState = PyGILState_Ensure();
   }
-  assertion(addPatchToSolutionCallback != 0)
 
-//  peanoclaw::pyclaw::PyClaw pyClaw(
-//    0,
-//    0,
-//    0,
-//    addPatchToSolutionCallback,
-//    0,
-//    0,
-//    0
-//  );
-  peanoclaw::pyclaw::NumericsFactory numericsFactory;
-  peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
-    0,
-    0,
-    0,
-    addPatchToSolutionCallback,
-    0,
-    0,
-    0
-  );
-
-  runner->gatherCurrentSolution(*numerics);
+  runner->gatherCurrentSolution();
 
   if(_calledFromPython) {
     PyGILState_Release(_pythonState);

@@ -79,13 +79,13 @@ public:
    * Evolves the solution up to the given point in time.
    */
   void evolveToTime(
-    double time,
-    peanoclaw::Numerics& numerics
+    double time//,
+//    peanoclaw::Numerics& numerics
   );
 
   /**
    * Gathers the current solution, i.e. all patches.
    */
-  void gatherCurrentSolution(peanoclaw::Numerics& numerics);
+  void gatherCurrentSolution();
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_RUNNERS_PEANOCLAWLIBRARYRUNNER_H_ */

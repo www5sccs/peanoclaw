@@ -166,8 +166,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
-  double time,
-  peanoclaw::Numerics& numerics
+  double time//,
+//  peanoclaw::Numerics& numerics
 ) {
   logTraceIn("evolveToTime");
 
@@ -194,7 +194,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
       || (_configuration.plotSubstepsAfterOutputTime() != -1 && _configuration.plotSubstepsAfterOutputTime() <= _plotNumber);
 
   _repository->getState().setGlobalTimestepEndTime(time);
-  _repository->getState().setNumerics(numerics);
+//  _repository->getState().setNumerics(numerics);
   _repository->getState().setPlotNumber(_plotNumber);
   do {
     logInfo("evolveToTime", "Solving timestep " << (_plotNumber-1) << " with maximum global time interval ("
@@ -233,11 +233,11 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution(
-  peanoclaw::Numerics& numerics
+//  peanoclaw::Numerics& numerics
 ) {
   logTraceIn("gatherCurrentSolution");
   assertion(_repository != 0);
-  _repository->getState().setNumerics(numerics);
+//  _repository->getState().setNumerics(numerics);
 
   _repository->switchToGatherCurrentSolution();
   _repository->iterate();
