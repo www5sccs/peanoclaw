@@ -18,9 +18,11 @@
 
 
 namespace peanoclaw {
-      namespace mappings {
-        class InitialiseGrid;
-      } 
+  namespace mappings {
+    class InitialiseGrid;
+  }
+
+  class Numerics;
 }
 
 
@@ -46,7 +48,7 @@ class peanoclaw::mappings::InitialiseGrid {
 
     tarch::la::Vector<DIMENSIONS, double> _initialMinimalMeshWidth;
 
-    peanoclaw::pyclaw::PyClaw* _pyClaw;
+    peanoclaw::Numerics* _numerics;
 
     int _additionalLevelsForPredefinedRefinement;
 

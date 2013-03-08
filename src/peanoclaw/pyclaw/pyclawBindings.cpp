@@ -15,7 +15,8 @@
 #include <list>
 #include <numpy/arrayobject.h>
 
-#include "PyClaw.h"
+#include "peanoclaw/Numerics.h"
+#include "peanoclaw/pyclaw/NumericsFactory.h"
 #include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 #include "tarch/tests/TestCaseRegistry.h"
@@ -100,13 +101,24 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   logInfo("pyclaw_peano_new(...)", "Initializing Peano");
 
   //PyClaw - this object is copied to the runner and is stored there.
-  peanoclaw::pyclaw::PyClaw *pyClaw = new peanoclaw::pyclaw::PyClaw(
-      initializationCallback,
-      boundaryConditionCallback,
-      solverCallback,
-      0,
-      0,
-      0);
+//  peanoclaw::pyclaw::PyClaw *pyClaw = new peanoclaw::pyclaw::PyClaw(
+//      initializationCallback,
+//      boundaryConditionCallback,
+//      solverCallback,
+//      0,
+//      0,
+//      0,
+//      0);
+  peanoclaw::pyclaw::NumericsFactory numericsFactory;
+  peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
+    initializationCallback,
+    boundaryConditionCallback,
+    solverCallback,
+    0,
+    0,
+    0,
+    0
+  );
 
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
   // assertion1(_configuration->isValid(), _configuration);
@@ -158,7 +170,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   peanoclaw::runners::PeanoClawLibraryRunner* runner
     = new peanoclaw::runners::PeanoClawLibraryRunner(
     *_configuration,
-    *pyClaw,
+    *numerics,
     domainOffset,
     domainSize,
     initialMinimalMeshWidth,
@@ -208,7 +220,8 @@ void pyclaw_peano_evolveToTime(
   BoundaryConditionCallback boundaryConditionCallback,
   SolverCallback solverCallback,
   InterPatchCommunicationCallback interpolationCallback,
-  InterPatchCommunicationCallback restrictionCallback
+  InterPatchCommunicationCallback restrictionCallback,
+  InterPatchCommunicationCallback fluxCorrectionCallback
 ) {
   #ifdef USE_VALGRIND
   CALLGRIND_START_INSTRUMENTATION;
@@ -225,16 +238,27 @@ void pyclaw_peano_evolveToTime(
     _pythonState = PyGILState_Ensure();
   }
 
-  peanoclaw::pyclaw::PyClaw pyClaw(
+//  peanoclaw::pyclaw::PyClaw pyClaw(
+//    0,
+//    boundaryConditionCallback,
+//    solverCallback,
+//    0,
+//    interpolationCallback,
+//    restrictionCallback,
+//    fluxCorrectionCallback
+//  );
+  peanoclaw::pyclaw::NumericsFactory numericsFactory;
+  peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
     0,
     boundaryConditionCallback,
     solverCallback,
     0,
     interpolationCallback,
-    restrictionCallback
+    restrictionCallback,
+    fluxCorrectionCallback
   );
 
-  runner->evolveToTime(time, pyClaw);
+  runner->evolveToTime(time, *numerics);
 
   if(_calledFromPython) {
     PyGILState_Release(_pythonState);
@@ -259,16 +283,27 @@ void pyclaw_peano_gatherSolution(
   }
   assertion(addPatchToSolutionCallback != 0)
 
-  peanoclaw::pyclaw::PyClaw pyClaw(
+//  peanoclaw::pyclaw::PyClaw pyClaw(
+//    0,
+//    0,
+//    0,
+//    addPatchToSolutionCallback,
+//    0,
+//    0,
+//    0
+//  );
+  peanoclaw::pyclaw::NumericsFactory numericsFactory;
+  peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
     0,
     0,
     0,
     addPatchToSolutionCallback,
     0,
+    0,
     0
   );
 
-  runner->gatherCurrentSolution(pyClaw);
+  runner->gatherCurrentSolution(*numerics);
 
   if(_calledFromPython) {
     PyGILState_Release(_pythonState);

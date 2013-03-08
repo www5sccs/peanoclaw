@@ -381,7 +381,7 @@ void peanoclaw::mappings::GatherCurrentSolution::enterCell(
       fineGridCell
     );
 
-    _pyClaw->addPatchToSolution(patch);
+    _numerics->addPatchToSolution(patch);
   }
 
   logTraceOutWith1Argument( "enterCell(...)", fineGridCell );
@@ -408,7 +408,7 @@ void peanoclaw::mappings::GatherCurrentSolution::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
   
-  _pyClaw = &solverState.getPyClaw();
+  _numerics = &solverState.getNumerics();
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }

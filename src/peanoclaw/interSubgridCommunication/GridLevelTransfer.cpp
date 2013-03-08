@@ -9,7 +9,7 @@
 #include <limits>
 
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/pyclaw/PyClaw.h"
+#include "peanoclaw/Numerics.h"
 #include "peanoclaw/Vertex.h"
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/heap/Heap.h"
@@ -46,12 +46,11 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::vetoCoarseningIfNe
 
 peanoclaw::interSubgridCommunication::GridLevelTransfer::GridLevelTransfer(
   bool useDimensionalSplitting,
-  peanoclaw::pyclaw::PyClaw& pyClaw
+  peanoclaw::Numerics& numerics
 ) :
-  _pyClaw(pyClaw),
+  _numerics(numerics),
   _maximumNumberOfSimultaneousVirtualPatches(0),
-  _useDimensionalSplitting(useDimensionalSplitting),
-  _restriction(peanoclaw::interSubgridCommunication::Restriction(pyClaw))
+  _useDimensionalSplitting(useDimensionalSplitting)
 {
 }
 
@@ -84,7 +83,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
     fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
       fineGridVerticesEnumerator.getLevel(),
       _useDimensionalSplitting,
-      _pyClaw,
+      _numerics,
       i
     );
   }
@@ -221,7 +220,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
             && !tarch::la::oneGreater(finePatch.getPosition() + finePatch.getSize(), virtualPatch.getPosition() + virtualPatch.getSize()),
             finePatch.toString(), virtualPatch.toString());
 
-        _restriction.restrict(finePatch, virtualPatch, !virtualPatch.willCoarsen());
+        _numerics.restrict(finePatch, virtualPatch, !virtualPatch.willCoarsen());
 
         virtualPatch.setEstimatedNextTimestepSize(finePatch.getEstimatedNextTimestepSize());
       }
@@ -240,7 +239,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
         fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
           finePatch.getLevel(),
           _useDimensionalSplitting,
-          _pyClaw);
+          _numerics);
       }
 
       finePatch.switchToNonVirtual();
@@ -267,7 +266,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
       fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
         finePatch.getLevel(),
         _useDimensionalSplitting,
-        _pyClaw);
+        _numerics);
     }
 
     //Switch to leaf or non-virtual

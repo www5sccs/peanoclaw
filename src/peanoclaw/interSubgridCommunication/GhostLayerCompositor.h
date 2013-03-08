@@ -9,6 +9,7 @@
 #define PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_
 
 #include "peanoclaw/interSubgridCommunication/Interpolation.h"
+#include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
 #include "peanoclaw/pyclaw/PyClaw.h"
 #include "peanoclaw/records/CellDescription.h"
 
@@ -18,6 +19,7 @@
 
 namespace peanoclaw {
 
+  class Numerics;
   class Patch;
 
   namespace interSubgridCommunication {
@@ -66,9 +68,7 @@ private:
 
   int _level;
 
-  peanoclaw::pyclaw::PyClaw& _pyClaw;
-
-  peanoclaw::interSubgridCommunication::Interpolation _interpolation;
+  peanoclaw::Numerics& _numerics;
 
   bool _useDimensionalSplitting;
 
@@ -120,23 +120,6 @@ private:
   void fillLowerRightGhostLayer();
 
   /**
-   * Returns the area of the region where the two given
-   * patches overlap.
-   * This overload projects the patches along the given projection axis
-   * and just calculates the overlap in this projection.
-   *
-   * In 2d this refers to a projection to one-dimensional intervals and
-   * the intersection between these intervals.
-   */
-  double calculateOverlappingArea(
-    tarch::la::Vector<DIMENSIONS, double> position1,
-    tarch::la::Vector<DIMENSIONS, double> size1,
-    tarch::la::Vector<DIMENSIONS, double> position2,
-    tarch::la::Vector<DIMENSIONS, double> size2,
-    int projectionAxis
-  ) const;
-
-  /**
    * Updates the lower ghostlayer bound for the given pair of patches.
    */
   void updateLowerGhostlayerBound(int updatedPatchIndex, int neighborPatchIndex, int dimension);
@@ -157,12 +140,12 @@ private:
    * @param direction Either 1 or -1, depending wether the coarse patch is
    *                  located "higher" or "lower" with respect to the dimension.
    */
-  void applyCoarseGridCorrection(
-    const Patch& finePatch,
-    Patch& coarsePatch,
-    int dimension,
-    int direction
-  ) const;
+//  void applyCoarseGridCorrection(
+//    const Patch& finePatch,
+//    Patch& coarsePatch,
+//    int dimension,
+//    int direction
+//  ) const;
 
   /**
    * Estimates, whether ghostlayer data should be transfered
@@ -180,7 +163,7 @@ public:
   GhostLayerCompositor(
     peanoclaw::Patch patches[TWO_POWER_D],
     int level,
-    peanoclaw::pyclaw::PyClaw& pyClaw,
+    peanoclaw::Numerics& numerics,
     bool useDimensionalSplitting
   );
 

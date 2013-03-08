@@ -22,11 +22,8 @@ namespace peanoclaw {
     class SolveTimestep;
   }
 
+  class Numerics;
   class Patch;
-
-  namespace pyclaw {
-    class PyClaw;
-  }
 }
 
 
@@ -47,7 +44,7 @@ class peanoclaw::mappings::SolveTimestep {
     typedef peanoclaw::records::CellDescription CellDescription;
     typedef peanoclaw::records::Data Data;
 
-    peanoclaw::pyclaw::PyClaw* _pyClaw;
+    peanoclaw::Numerics* _numerics;
 
     double _globalTimestepEndTime;
 

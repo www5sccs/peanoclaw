@@ -476,32 +476,32 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       if((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()
               || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(0)))
               && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(1) == -1) {
-        _pyClaw->fillLeftBoundaryLayer(patch);
+        _numerics->fillBoundaryLayer(patch, 0, false);
       }
       if((fineGridVertices[fineGridVerticesEnumerator(2)].isBoundary()
           || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(2), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(2)))
           && fineGridVertices[fineGridVerticesEnumerator(2)].getAdjacentCellDescriptionIndex(0) == -1) {
-        _pyClaw->fillUpperBoundaryLayer(patch);
+        _numerics->fillBoundaryLayer(patch, 1, true);
       }
       if((fineGridVertices[fineGridVerticesEnumerator(1)].isBoundary()
           || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(1), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(1)))
           && fineGridVertices[fineGridVerticesEnumerator(1)].getAdjacentCellDescriptionIndex(0) == -1) {
-        _pyClaw->fillRightBoundaryLayer(patch);
+        _numerics->fillBoundaryLayer(patch, 0, true);
       }
       if((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()
           || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(0)))
           && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(2) == -1) {
-        _pyClaw->fillLowerBoundaryLayer(patch);
+        _numerics->fillBoundaryLayer(patch, 1, false);
       }
 
       //Do one timestep...
-      double requiredMeshWidth = _pyClaw->solveTimestep(patch, maximumTimestepSize, _useDimensionalSplitting);
+      double requiredMeshWidth = _numerics->solveTimestep(patch, maximumTimestepSize, _useDimensionalSplitting);
       patch.setDemandedMeshWidth(requiredMeshWidth);
 
       //Coarse grid correction
       for(int i = 0; i < TWO_POWER_D; i++) {
         if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-          fineGridVertices[fineGridVerticesEnumerator(i)].applyCoarseGridCorrection(*_pyClaw);
+          fineGridVertices[fineGridVerticesEnumerator(i)].applyCoarseGridCorrection(*_numerics);
         }
       }
 
@@ -625,7 +625,7 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
  
-  _pyClaw = &solverState.getPyClaw();
+  _numerics = &solverState.getNumerics();
   _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();
   _allPatchesEvolvedToGlobalTimestep = solverState.getAllPatchesEvolvedToGlobalTimestep();
   _startMaximumLocalTimeInterval = std::numeric_limits<double>::max();

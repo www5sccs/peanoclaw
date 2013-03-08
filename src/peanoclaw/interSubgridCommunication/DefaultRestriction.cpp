@@ -1,19 +1,18 @@
 /*
- * Restriction.cpp
+ * DefaultRestriction.cpp
  *
- *  Created on: Mar 6, 2013
+ *  Created on: Mar 7, 2013
  *      Author: kristof
  */
-#include "peanoclaw/interSubgridCommunication/Restriction.h"
+
+#include "peanoclaw/interSubgridCommunication/DefaultRestriction.h"
+
 #include "peanoclaw/Area.h"
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
-#include "tarch/la/Vector.h"
 
-tarch::logging::Log peanoclaw::interSubgridCommunication::Restriction::_log("peanoclaw::interSubgridCommunication::Restriction");
-
-void peanoclaw::interSubgridCommunication::Restriction::restrictArea (
+void peanoclaw::interSubgridCommunication::DefaultRestriction::restrictArea (
   const peanoclaw::Patch& source,
   peanoclaw::Patch&       destination,
   const Area&             area
@@ -126,51 +125,41 @@ void peanoclaw::interSubgridCommunication::Restriction::restrictArea (
 }
 
 
-
-peanoclaw::interSubgridCommunication::Restriction::Restriction(
-  const peanoclaw::pyclaw::PyClaw& pyClaw
-) : _pyClaw(pyClaw) {
-}
-
-void peanoclaw::interSubgridCommunication::Restriction::restrict(
+void peanoclaw::interSubgridCommunication::DefaultRestriction::restrict(
   const peanoclaw::Patch& source,
   peanoclaw::Patch&       destination,
   bool restrictOnlyOverlappedAreas
 ) {
-  if(_pyClaw.providesRestriction()) {
-    _pyClaw.restrict(source, destination);
-  } else {
-    if(restrictOnlyOverlappedAreas) {
-      Area areas[DIMENSIONS_TIMES_TWO];
-      int numberOfAreasToProcess = getAreasForRestriction(
-          destination.getLowerNeighboringGhostlayerBounds(),
-          destination.getUpperNeighboringGhostlayerBounds(),
-          source.getPosition(),
-          source.getSize(),
-          source.getSubcellSize(),
-          source.getSubdivisionFactor(),
-          areas
-      );
+  if(restrictOnlyOverlappedAreas) {
+    Area areas[DIMENSIONS_TIMES_TWO];
+    int numberOfAreasToProcess = getAreasForRestriction(
+        destination.getLowerNeighboringGhostlayerBounds(),
+        destination.getUpperNeighboringGhostlayerBounds(),
+        source.getPosition(),
+        source.getSize(),
+        source.getSubcellSize(),
+        source.getSubdivisionFactor(),
+        areas
+    );
 
-      logDebug("restrict", "Restriction from patch " << source << std::endl << " to patch " << destination);
-      for( int i = 0; i < numberOfAreasToProcess; i++ ) {
+    logDebug("restrict", "Restriction from patch " << source << std::endl << " to patch " << destination);
+    for( int i = 0; i < numberOfAreasToProcess; i++ ) {
 
-        logDebug("restrict", "Restricting area [" << areas[i]._offset << "], [" << areas[i]._size << "]");
-        if(tarch::la::allGreater(areas[i]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
-          restrictArea(source, destination, areas[i]);
-        }
+      logDebug("restrict", "Restricting area [" << areas[i]._offset << "], [" << areas[i]._size << "]");
+      if(tarch::la::allGreater(areas[i]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
+        restrictArea(source, destination, areas[i]);
       }
-    } else {
-      //Restrict complete Patch
-      Area area;
-      area._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-      area._size = source.getSubdivisionFactor();
-      restrictArea(source, destination, area);
     }
+  } else {
+    //Restrict complete Patch
+    Area area;
+    area._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+    area._size = source.getSubdivisionFactor();
+    restrictArea(source, destination, area);
   }
 }
 
-int peanoclaw::interSubgridCommunication::Restriction::getAreasForRestriction (
+int peanoclaw::interSubgridCommunication::DefaultRestriction::getAreasForRestriction (
   const tarch::la::Vector<DIMENSIONS, double>& lowerNeighboringGhostlayerBounds,
   const tarch::la::Vector<DIMENSIONS, double>& upperNeighboringGhostlayerBounds,
   const tarch::la::Vector<DIMENSIONS, double>& sourcePosition,
@@ -236,3 +225,7 @@ int peanoclaw::interSubgridCommunication::Restriction::getAreasForRestriction (
     return DIMENSIONS_TIMES_TWO;
   }
 }
+
+
+
+

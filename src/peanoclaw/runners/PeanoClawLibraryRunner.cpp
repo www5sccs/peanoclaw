@@ -40,7 +40,7 @@ tarch::logging::Log peanoclaw::runners::PeanoClawLibraryRunner::_log("peanoclaw:
 
 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid& configuration,
-  peanoclaw::pyclaw::PyClaw& pyClaw,
+  peanoclaw::Numerics& numerics,
   const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
   const tarch::la::Vector<DIMENSIONS, double>& domainSize,
   const tarch::la::Vector<DIMENSIONS, double>& initialMinimalMeshWidth,
@@ -112,7 +112,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
   tarch::la::Vector<DIMENSIONS, double> initialMinimalSubcellSize = tarch::la::multiplyComponents(initialMinimalMeshWidth, subdivisionFactor.convertScalar<double>());
   state.setInitialMinimalMeshWidth(initialMinimalSubcellSize);
-  state.setPyClaw(pyClaw);
+  state.setNumerics(numerics);
   state.resetTotalNumberOfCellUpdates();
   state.setInitialTimestepSize(initialTimestepSize);
   state.setDomain(domainOffset, domainSize);
@@ -167,7 +167,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
 
 void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   double time,
-  peanoclaw::pyclaw::PyClaw& pyClaw
+  peanoclaw::Numerics& numerics
 ) {
   logTraceIn("evolveToTime");
 
@@ -194,7 +194,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
       || (_configuration.plotSubstepsAfterOutputTime() != -1 && _configuration.plotSubstepsAfterOutputTime() <= _plotNumber);
 
   _repository->getState().setGlobalTimestepEndTime(time);
-  _repository->getState().setPyClaw(pyClaw);
+  _repository->getState().setNumerics(numerics);
   _repository->getState().setPlotNumber(_plotNumber);
   do {
     logInfo("evolveToTime", "Solving timestep " << (_plotNumber-1) << " with maximum global time interval ("
@@ -233,11 +233,11 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution(
-  peanoclaw::pyclaw::PyClaw& pyClaw
+  peanoclaw::Numerics& numerics
 ) {
   logTraceIn("gatherCurrentSolution");
   assertion(_repository != 0);
-  _repository->getState().setPyClaw(pyClaw);
+  _repository->getState().setNumerics(numerics);
 
   _repository->switchToGatherCurrentSolution();
   _repository->iterate();

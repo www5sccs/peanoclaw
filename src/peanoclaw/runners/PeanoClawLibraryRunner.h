@@ -12,7 +12,6 @@
 #include "tarch/la/Vector.h"
 
 #include "peanoclaw/repositories/Repository.h"
-#include "peanoclaw/pyclaw/PyClaw.h"
 
 #include "tarch/logging/Log.h"
 #include "tarch/timing/Watch.h"
@@ -20,6 +19,9 @@
 #include "peano/geometry/Hexahedron.h"
 
 namespace peanoclaw {
+
+  class Numerics;
+
   namespace configurations {
     class PeanoClawConfigurationForSpacetreeGrid;
   }
@@ -59,7 +61,7 @@ public:
    */
   PeanoClawLibraryRunner(
     peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid& configuration,
-    peanoclaw::pyclaw::PyClaw& pyClaw,
+    peanoclaw::Numerics& numerics,
     const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
     const tarch::la::Vector<DIMENSIONS, double>& domainSize,
     const tarch::la::Vector<DIMENSIONS, double>& minimalMeshWidth,
@@ -78,11 +80,12 @@ public:
    */
   void evolveToTime(
     double time,
-    peanoclaw::pyclaw::PyClaw& pyClaw);
+    peanoclaw::Numerics& numerics
+  );
 
   /**
-   * Gathers the current solution, i.e. all patches, in PyClaw.
+   * Gathers the current solution, i.e. all patches.
    */
-  void gatherCurrentSolution(peanoclaw::pyclaw::PyClaw& pyClaw);
+  void gatherCurrentSolution(peanoclaw::Numerics& numerics);
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_RUNNERS_PEANOCLAWLIBRARYRUNNER_H_ */

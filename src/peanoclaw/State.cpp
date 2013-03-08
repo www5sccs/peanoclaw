@@ -91,12 +91,12 @@ double peanoclaw::State::getInitialTimestepSize() const {
   return _stateData.getInitialTimestepSize();
 }
 
-void peanoclaw::State::setPyClaw(peanoclaw::pyclaw::PyClaw& pyClaw) {
-  _pyClaw = &pyClaw;
+void peanoclaw::State::setNumerics(peanoclaw::Numerics& numerics) {
+  _numerics = &numerics;
 }
 
-peanoclaw::pyclaw::PyClaw& peanoclaw::State::getPyClaw() const {
-  return *_pyClaw;
+peanoclaw::Numerics& peanoclaw::State::getNumerics() const {
+  return *_numerics;
 }
 
 void peanoclaw::State::setProbeList(std::vector<peanoclaw::statistics::Probe> probeList) {

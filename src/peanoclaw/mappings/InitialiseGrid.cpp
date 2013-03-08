@@ -1,4 +1,5 @@
 #include "peanoclaw/mappings/InitialiseGrid.h"
+#include "peanoclaw/Numerics.h"
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
@@ -194,7 +195,7 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
     fineGridVerticesEnumerator.getCellSize(),
     fineGridCell);
 
-  double demandedMeshWidth = _pyClaw->initializePatch(patch);
+  double demandedMeshWidth = _numerics->initializePatch(patch);
 
   patch.copyUNewToUOld();
   patch.setDemandedMeshWidth(demandedMeshWidth);
@@ -484,7 +485,7 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 
   _initialTimestepSize = solverState.getInitialTimestepSize();
 
-  _pyClaw = &solverState.getPyClaw();
+  _numerics = &solverState.getNumerics();
 
   _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
 

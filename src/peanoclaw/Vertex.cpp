@@ -4,7 +4,7 @@
 #include "peano/heap/Heap.h"
 
 #include "Patch.h"
-#include "pyclaw/PyClaw.h"
+#include "Numerics.h"
 #include "interSubgridCommunication/GhostLayerCompositor.h"
 
 peanoclaw::Vertex::Vertex():
@@ -41,7 +41,7 @@ int peanoclaw::Vertex::getAdjacentCellDescriptionIndex(int cellIndex) const {
 void peanoclaw::Vertex::fillAdjacentGhostLayers(
   int level,
   bool useDimensionalSplitting,
-  peanoclaw::pyclaw::PyClaw& pyClaw,
+  peanoclaw::Numerics& numerics,
   int destinationPatch
 ) const {
 
@@ -92,7 +92,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   }
   #endif
 
-  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, level, pyClaw, useDimensionalSplitting);
+  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, level, numerics, useDimensionalSplitting);
 
   ghostLayerCompositor.updateNeighborTimes();
   ghostLayerCompositor.fillGhostLayers(destinationPatch);
@@ -111,7 +111,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
 }
 
 void peanoclaw::Vertex::applyCoarseGridCorrection(
-  peanoclaw::pyclaw::PyClaw& pyClaw
+  peanoclaw::Numerics& numerics
 ) const {
   //Fill ghost layers of adjacent cells
   CellDescription* cellDescriptions[TWO_POWER_D];
@@ -132,7 +132,7 @@ void peanoclaw::Vertex::applyCoarseGridCorrection(
   enddforx
 
   //Apply coarse grid correction
-  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, pyClaw, false);
+  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, numerics, false);
   ghostLayerCompositor.applyCoarseGridCorrection();
 }
 

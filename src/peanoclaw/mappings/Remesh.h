@@ -31,18 +31,14 @@ namespace peanoclaw {
 
   namespace interSubgridCommunication {
     class GridLevelTransfer;
-    class Interpolation;
   }
 
   namespace mappings {
     class Remesh;
   }
 
+  class Numerics;
   class Patch;
-
-  namespace pyclaw {
-    class PyClaw;
-  }
 }
 
 
@@ -79,7 +75,7 @@ class peanoclaw::mappings::Remesh {
 
     double _initialTimestepSize;
 
-    peanoclaw::pyclaw::PyClaw* _pyClaw;
+    peanoclaw::Numerics* _numerics;
 
     tarch::la::Vector<DIMENSIONS, double> _domainOffset;
 
@@ -101,8 +97,6 @@ class peanoclaw::mappings::Remesh {
     Patch   _minimalTimePatch;
 
     bool _useDimensionalSplitting;
-
-    peanoclaw::interSubgridCommunication::Interpolation* _interpolation;
 
   public:
     /**

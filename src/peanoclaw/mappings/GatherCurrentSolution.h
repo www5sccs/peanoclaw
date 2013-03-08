@@ -16,7 +16,7 @@
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/State.h"
 
-#include "peanoclaw/pyclaw/PyClaw.h"
+#include "peanoclaw/Numerics.h"
 
 namespace peanoclaw {
       namespace mappings {
@@ -38,7 +38,7 @@ class peanoclaw::mappings::GatherCurrentSolution {
      */
     static tarch::logging::Log  _log;
 
-    peanoclaw::pyclaw::PyClaw* _pyClaw;
+    peanoclaw::Numerics* _numerics;
 
   public:
     /**

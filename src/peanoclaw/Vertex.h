@@ -9,12 +9,12 @@
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/utils/Globals.h"
 
-#include "pyclaw/PyClaw.h"
 #include "records/CellDescription.h"
 #include "records/Data.h"
 
-namespace peanoclaw { 
-      class Vertex; 
+namespace peanoclaw {
+  class Numerics;
+  class Vertex;
 }
 
 
@@ -84,7 +84,7 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
     void fillAdjacentGhostLayers(
       int level,
       bool useDimensionalSplitting,
-      peanoclaw::pyclaw::PyClaw& pyClaw,
+      peanoclaw::Numerics& numerics,
       int destinationPatch = -1
     ) const;
 
@@ -92,7 +92,7 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
      * Applies the coarse grid correction on all adjacent patches.
      */
     void applyCoarseGridCorrection(
-      peanoclaw::pyclaw::PyClaw& pyClaw
+      peanoclaw::Numerics& numerics
     ) const;
 
     void setShouldRefine(bool shouldRefine);

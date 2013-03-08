@@ -1,14 +1,20 @@
-#include "peanoclaw/interSubgridCommunication/Interpolation.h"
+/*
+ * DefaultInterpolation.cpp
+ *
+ *  Created on: Mar 7, 2013
+ *      Author: kristof
+ */
+
+#include "peanoclaw/interSubgridCommunication/DefaultInterpolation.h"
 
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/pyclaw/PyClaw.h"
 #include "peano/utils/Loop.h"
 
-void peanoclaw::interSubgridCommunication::Interpolation::interpolateDLinear(
+void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
   const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
   const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
   const peanoclaw::Patch& source,
-  peanoclaw::Patch&       destination,
+  peanoclaw::Patch&        destination,
   bool interpolateToUOld,
   bool interpolateToCurrentTime
 ) {
@@ -209,14 +215,15 @@ void peanoclaw::interSubgridCommunication::Interpolation::interpolateDLinear(
   logTraceOut("");
 }
 
-void peanoclaw::interSubgridCommunication::Interpolation::interpolateDLinearVersion2(
-  const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-  const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-  const peanoclaw::Patch& source,
-  peanoclaw::Patch&       destination,
-  bool interpolateToUOld,
-  bool interpolateToCurrentTime
-) {
+
+//void peanoclaw::interSubgridCommunication::Interpolation::interpolateDLinearVersion2(
+//  const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
+//  const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+//  const peanoclaw::Patch& source,
+//  peanoclaw::Patch&       destination,
+//  bool interpolateToUOld,
+//  bool interpolateToCurrentTime
+//) {
 //  logTraceInWith4Arguments("", destinationSize, destinationOffset, source.toString(), destination.toString());
 //  assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
 //
@@ -270,36 +277,4 @@ void peanoclaw::interSubgridCommunication::Interpolation::interpolateDLinearVers
 //  }
 //
 //  logTraceOut("");
-}
-
-peanoclaw::interSubgridCommunication::Interpolation::Interpolation(
-  const peanoclaw::pyclaw::PyClaw& pyClaw
-) : _pyClaw(pyClaw) {
-}
-
-void peanoclaw::interSubgridCommunication::Interpolation::interpolate (
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-    const peanoclaw::Patch& source,
-    peanoclaw::Patch&        destination,
-    bool interpolateToUOld,
-    bool interpolateToCurrentTime
-) {
-
-  if(_pyClaw.providesInterpolation()) {
-    _pyClaw.interpolate(
-      source,
-      destination
-    );
-  } else {
-    //Use default interpolation
-    interpolateDLinear(
-      destinationSize,
-      destinationOffset,
-      source,
-      destination,
-      interpolateToUOld,
-      interpolateToCurrentTime
-    );
-  }
-}
+//}

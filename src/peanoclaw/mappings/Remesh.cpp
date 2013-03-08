@@ -1,8 +1,7 @@
 #include "peanoclaw/mappings/Remesh.h"
 
 #include "peanoclaw/interSubgridCommunication/GridLevelTransfer.h"
-#include "peanoclaw/interSubgridCommunication/Interpolation.h"
-#include "peanoclaw/pyclaw/PyClaw.h"
+#include "peanoclaw/Numerics.h"
 
 #include "peano/heap/Heap.h"
 
@@ -429,14 +428,14 @@ void peanoclaw::mappings::Remesh::createCell(
       cellDescription.setEstimatedNextTimestepSize(coarseGridPatch.getEstimatedNextTimestepSize());
       cellDescription.setMinimalNeighborTimeConstraint(coarseGridPatch.getMinimalNeighborTimeConstraint());
 
-      _interpolation->interpolate(
+      _numerics->interpolate(
         fineGridPatch.getSubdivisionFactor(),
         0,
         coarseGridPatch,
         fineGridPatch,
         false
       );
-      _interpolation->interpolate(
+      _numerics->interpolate(
         fineGridPatch.getSubdivisionFactor(),
         0,
         coarseGridPatch,
@@ -833,7 +832,7 @@ void peanoclaw::mappings::Remesh::beginIteration(
 
   _initialTimestepSize      = solverState.getInitialTimestepSize();
 
-  _pyClaw                   = &solverState.getPyClaw();
+  _numerics                   = &solverState.getNumerics();
 
   _domainOffset             = solverState.getDomainOffset();
 
@@ -845,7 +844,7 @@ void peanoclaw::mappings::Remesh::beginIteration(
     _iterationParity = peanoclaw::records::VertexDescription::EVEN;
   }
 
-  _gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(solverState.useDimensionalSplitting(), *_pyClaw);
+  _gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(solverState.useDimensionalSplitting(), *_numerics);
 
   _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
 
@@ -857,8 +856,6 @@ void peanoclaw::mappings::Remesh::beginIteration(
   _minimalPatchTime = std::numeric_limits<double>::max();
 
   _useDimensionalSplitting = solverState.useDimensionalSplitting();
-
-  _interpolation = new peanoclaw::interSubgridCommunication::Interpolation(*_pyClaw);
 
   //Reset touched for all hanging vertex descriptions
   std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >::iterator i = _vertexPositionToIndexMap.begin();
@@ -881,7 +878,6 @@ void peanoclaw::mappings::Remesh::endIteration(
   logTraceInWith1Argument( "endIteration(State)", solverState );
  
   delete _gridLevelTransfer;
-  delete _interpolation;
 
   //Todo unterweg debug
   std::cout << "Minimal time patch: " << _minimalTimePatch.toString() << std::endl;

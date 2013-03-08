@@ -10,7 +10,6 @@
 
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
-#include "peanoclaw/interSubgridCommunication/Restriction.h"
 
 #include <vector>
 #include "peano/utils/Globals.h"
@@ -18,15 +17,12 @@
 #include "tarch/logging/Log.h"
 
 namespace peanoclaw {
+  class Numerics;
   class Patch;
   class Vertex;
 
   namespace interSubgridCommunication {
     class GridLevelTransfer;
-  }
-
-  namespace pyclaw {
-    class PyClaw;
   }
 
   namespace tests {
@@ -119,7 +115,7 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      */
     std::vector<double> _virtualPatchTimeConstraints;
 
-    peanoclaw::pyclaw::PyClaw& _pyClaw;
+    peanoclaw::Numerics& _numerics;
 
     /**
      * Stores the maximum number of virtual patches which were held by this GridLevelTransfer
@@ -135,11 +131,6 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
     bool _useDimensionalSplitting;
 
     /**
-     * Object encapsualting the restriction implementation.
-     */
-    peanoclaw::interSubgridCommunication::Restriction _restriction;
-
-    /**
      * Vetos the coarsening on adjacent vertices if necessary and
      * triggers the synchronization of subgrids.
      */
@@ -152,7 +143,7 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
   public:
     GridLevelTransfer(
       bool useDimensionalSplitting,
-      peanoclaw::pyclaw::PyClaw& pyClaw
+      peanoclaw::Numerics& numerics
     );
 
     virtual ~GridLevelTransfer();

@@ -12,32 +12,6 @@
 
 tarch::logging::Log peanoclaw::interSubgridCommunication::GhostLayerCompositor::_log("peanoclaw::interSubgridCommunication::GhostLayerCompositor");
 
-//void peanoclaw::interSubgridCommunication::GhostLayerCompositor::interpolate(
-//  const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-//  const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-//  const peanoclaw::Patch& source,
-//  peanoclaw::Patch&       destination,
-//  bool interpolateToUOld,
-//  bool interpolateToCurrentTime
-//) {
-//  peanoclaw::interpolate(
-//    destinationSize,
-//    destinationOffset,
-//    source,
-//    destination,
-//    interpolateToUOld,
-//    interpolateToCurrentTime
-//  );
-//
-////  peanoclaw::interpolateOldVersion(
-////    destinationSize,
-////    destinationOffset,
-////    source,
-////    destination,
-////    interpolateToUOld
-////  );
-//}
-
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerDataBlock(
     const tarch::la::Vector<DIMENSIONS, int>& size,
     const tarch::la::Vector<DIMENSIONS, int>& sourceOffset,
@@ -134,13 +108,12 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor(
   peanoclaw::Patch patches[TWO_POWER_D],
   int level,
-  peanoclaw::pyclaw::PyClaw& pyClaw,
+  peanoclaw::Numerics& numerics,
   bool useDimensionalSplitting
 ) :
   _patches(patches),
   _level(level),
-  _pyClaw(pyClaw),
-  _interpolation(Interpolation(pyClaw)),
+  _numerics(numerics),
   _useDimensionalSplitting(useDimensionalSplitting)
 {
 }
@@ -167,10 +140,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillLeftGhostLa
     copyGhostLayerDataBlock(columnSize, sourceOffset, destinationOffset, _patches[1], _patches[0]);
   } else if(_patches[1].getLevel() < _patches[0].getLevel() && _patches[0].getLevel() == _level && _patches[1].isLeaf()) {
     assertion2(_patches[1].getLevel() < _patches[0].getLevel(), _patches[1].getLevel(), _patches[0].getLevel());
-    _interpolation.interpolate(columnSize, destinationOffset, _patches[1], _patches[0], true, false);
+    _numerics.interpolate(columnSize, destinationOffset, _patches[1], _patches[0], true, false);
   } else if (_patches[1].getLevel() > _patches[0].getLevel() && _patches[1].getLevel() == _level) {
     assertion2(_patches[1].getLevel() > _patches[0].getLevel(), _patches[1].getLevel(), _patches[0].getLevel());
-    applyCoarseGridCorrection(_patches[1], _patches[0], 0, 1);
+    _numerics.applyFluxCorrection(_patches[1], _patches[0], 0, 1);
   }
 }
 
@@ -188,7 +161,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillLowerLeftGh
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[3], _patches[0]);
   } else if(_patches[3].getLevel() < _patches[0].getLevel() && _patches[0].getLevel() == _level && _patches[3].isLeaf()) {
     assertion2(_patches[3].getLevel() < _patches[0].getLevel(), _patches[3].getLevel(), _patches[0].getLevel());
-    _interpolation.interpolate(cornerSize, destinationOffset, _patches[3], _patches[0], true, false);
+    _numerics.interpolate(cornerSize, destinationOffset, _patches[3], _patches[0], true, false);
   } else if(_patches[3].getLevel() > _patches[0].getLevel() && _patches[3].getLevel() == _level){
     assertion2(_patches[3].getLevel() > _patches[0].getLevel(), _patches[3].getLevel(), _patches[0].getLevel());
   }
@@ -211,10 +184,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillLowerGhostL
     copyGhostLayerDataBlock(rowSize, sourceOffset, destinationOffset, _patches[2], _patches[0]);
   } else if(_patches[2].getLevel() < _patches[0].getLevel() && _patches[0].getLevel() == _level && _patches[2].isLeaf()) {
     assertion2(_patches[2].getLevel() < _patches[0].getLevel(), _patches[2].getLevel(), _patches[0].getLevel());
-    _interpolation.interpolate(rowSize, destinationOffset, _patches[2], _patches[0], true, false);
+    _numerics.interpolate(rowSize, destinationOffset, _patches[2], _patches[0], true, false);
   } else if(_patches[2].getLevel() > _patches[0].getLevel() && _patches[2].getLevel() == _level){
     assertion2(_patches[2].getLevel() > _patches[0].getLevel(), _patches[2].getLevel(), _patches[0].getLevel());
-    applyCoarseGridCorrection(_patches[2], _patches[0], 1, 1);
+    _numerics.applyFluxCorrection(_patches[2], _patches[0], 1, 1);
   }
 
 }
@@ -234,7 +207,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillUpperLeftGh
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[1], _patches[2]);
   } else if(_patches[1].getLevel() < _patches[2].getLevel() && _patches[2].getLevel() == _level && _patches[1].isLeaf()) {
     assertion2(_patches[1].getLevel() < _patches[2].getLevel(), _patches[1].getLevel(), _patches[2].getLevel());
-    _interpolation.interpolate(cornerSize, destinationOffset, _patches[1], _patches[2], true, false);
+    _numerics.interpolate(cornerSize, destinationOffset, _patches[1], _patches[2], true, false);
   } else if(_patches[1].getLevel() > _patches[2].getLevel() && _patches[1].getLevel() == _level){
     assertion2(_patches[1].getLevel() > _patches[2].getLevel(), _patches[1].getLevel(), _patches[2].getLevel());
   }
@@ -259,10 +232,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillUpperGhostL
     copyGhostLayerDataBlock(rowSize, sourceOffset, destinationOffset, _patches[0], _patches[2]);
   } else if(_patches[0].getLevel() < _patches[2].getLevel() && _patches[2].getLevel() == _level && _patches[0].isLeaf()) {
     assertion2(_patches[0].getLevel() < _patches[2].getLevel(), _patches[0].getLevel(), _patches[2].getLevel());
-    _interpolation.interpolate(rowSize, destinationOffset, _patches[0], _patches[2], true, false);
+    _numerics.interpolate(rowSize, destinationOffset, _patches[0], _patches[2], true, false);
   } else if(_patches[0].getLevel() > _patches[2].getLevel() && _patches[0].getLevel() == _level){
     assertion2(_patches[0].getLevel() > _patches[2].getLevel(), _patches[0].getLevel(), _patches[2].getLevel());
-    applyCoarseGridCorrection(_patches[0], _patches[2], 1, -1);
+    _numerics.applyFluxCorrection(_patches[0], _patches[2], 1, -1);
   }
 }
 
@@ -281,7 +254,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillUpperRightG
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[0], _patches[3]);
   } else if(_patches[0].getLevel() < _patches[3].getLevel() && _patches[3].getLevel() == _level && _patches[0].isLeaf()) {
     assertion2(_patches[0].getLevel() < _patches[3].getLevel(), _patches[0].getLevel(), _patches[3].getLevel());
-    _interpolation.interpolate(cornerSize, destinationOffset, _patches[0], _patches[3], true, false);
+    _numerics.interpolate(cornerSize, destinationOffset, _patches[0], _patches[3], true, false);
   } else if(_patches[0].getLevel() > _patches[3].getLevel() && _patches[0].getLevel() == _level){
     assertion2(_patches[0].getLevel() > _patches[3].getLevel(), _patches[0].getLevel(), _patches[3].getLevel());
   }
@@ -304,10 +277,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillRightGhostL
     copyGhostLayerDataBlock(columnSize, sourceOffset, destinationOffset, _patches[2], _patches[3]);
   } else if(_patches[2].getLevel() < _patches[3].getLevel() && _patches[3].getLevel() == _level && _patches[2].isLeaf()) {
     assertion2(_patches[2].getLevel() < _patches[3].getLevel(), _patches[2].getLevel(), _patches[3].getLevel());
-    _interpolation.interpolate(columnSize, destinationOffset, _patches[2], _patches[3], true, false);
+    _numerics.interpolate(columnSize, destinationOffset, _patches[2], _patches[3], true, false);
   } else if(_patches[2].getLevel() > _patches[3].getLevel() && _patches[2].getLevel() == _level) {
     assertion2(_patches[2].getLevel() > _patches[3].getLevel(), _patches[2].getLevel(), _patches[3].getLevel());
-    applyCoarseGridCorrection(_patches[2], _patches[3], 0, -1);
+    _numerics.applyFluxCorrection(_patches[2], _patches[3], 0, -1);
   }
 }
 
@@ -328,35 +301,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillLowerRightG
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[2], _patches[1]);
   } else if(_patches[2].getLevel() < _patches[1].getLevel() && _patches[1].getLevel() == _level && _patches[2].isLeaf()) {
     assertion2(_patches[2].getLevel() < _patches[1].getLevel(), _patches[2].getLevel(), _patches[1].getLevel());
-    _interpolation.interpolate(cornerSize, destinationOffset, _patches[2], _patches[1], true, false);
+    _numerics.interpolate(cornerSize, destinationOffset, _patches[2], _patches[1], true, false);
   } else if(_patches[2].getLevel() > _patches[1].getLevel() && _patches[2].getLevel() == _level) {
     assertion2(_patches[2].getLevel() > _patches[1].getLevel(), _patches[2].getLevel(), _patches[1].getLevel());
   }
-}
-
-double peanoclaw::interSubgridCommunication::GhostLayerCompositor::calculateOverlappingArea(
-  tarch::la::Vector<DIMENSIONS, double> position1,
-  tarch::la::Vector<DIMENSIONS, double> size1,
-  tarch::la::Vector<DIMENSIONS, double> position2,
-  tarch::la::Vector<DIMENSIONS, double> size2,
-  int projectionAxis
-) const {
-  double area = 1.0;
-
-  for(int d = 0; d < DIMENSIONS; d++) {
-    if(d != projectionAxis) {
-      double overlappingInterval =
-          std::min(position1(d)+size1(d), position2(d)+size2(d))
-            - std::max(position1(d), position2(d));
-      area *= overlappingInterval;
-
-      if(area < 0.0) {
-        area = 0.0;
-      }
-    }
-  }
-
-  return area;
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateLowerGhostlayerBound(
@@ -389,104 +337,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateUpperGhos
   logDebug("updateUpperGhostlayerBound", "Updating upper ghostlayer from patch " << _patches[neighborPatchIndex]
           << " to patch " << _patches[updatedPatchIndex] << ", new upper ghostlayer bound is "
           << _patches[updatedPatchIndex].getUpperNeighboringGhostlayerBounds()(dimension));
-}
-
-void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyCoarseGridCorrection(
-  const Patch& finePatch,
-  Patch& coarsePatch,
-  int dimension,
-  int direction
-) const {
-
-  logTraceInWith4Arguments("applyCoarseGridCorrection", finePatch.toString(), coarsePatch.toString(), dimension, direction);
-
-  //Create description of the fine patch's face to be traversed
-  tarch::la::Vector<DIMENSIONS, int> face = finePatch.getSubdivisionFactor();
-  face(dimension) = 1;
-  tarch::la::Vector<DIMENSIONS, int> offset(0);
-  if(direction == 1) {
-    offset(dimension) = finePatch.getSubdivisionFactor()(dimension) - 1;
-  }
-
-  //Create search area that needs to be considered around the neighboring cell in the coarse patch
-  tarch::la::Vector<DIMENSIONS, int> searchArea = tarch::la::Vector<DIMENSIONS, int>(2);
-  searchArea(dimension) = 1;
-
-  logDebug("applyCoarseGridCorrection", "face=" << face << ", offset=" << offset << ", searchArea=" << searchArea);
-
-  tarch::la::Vector<DIMENSIONS, double> fineSubcellSize = finePatch.getSubcellSize();
-  tarch::la::Vector<DIMENSIONS, double> coarseSubcellSize = coarsePatch.getSubcellSize();
-
-  double refinementFactor = 1.0;
-  for( int d = 0; d < DIMENSIONS; d++ ) {
-    if( d != dimension ) {
-      refinementFactor *= coarseSubcellSize(d) / fineSubcellSize(d);
-    }
-  }
-
-
-  dfor(subcellIndexInFace, face) {
-    tarch::la::Vector<DIMENSIONS, int> subcellIndexInFinePatch = subcellIndexInFace + offset;
-    tarch::la::Vector<DIMENSIONS, double> subcellPositionInFinePatch = finePatch.getSubcellPosition(subcellIndexInFinePatch);
-    tarch::la::Vector<DIMENSIONS, double> neighboringSubcellPositionInCoarsePatch = subcellPositionInFinePatch;
-    neighboringSubcellPositionInCoarsePatch(dimension) += fineSubcellSize(dimension) * direction;
-    tarch::la::Vector<DIMENSIONS, int> neighboringSubcellIndexInCoarsePatch =
-      (tarch::la::multiplyComponents((neighboringSubcellPositionInCoarsePatch.convertScalar<double>() -coarsePatch.getPosition()), tarch::la::invertEntries(coarseSubcellSize))).convertScalar<int>();
-
-    logDebug("applyCoarseGridCorrection", "Correcting from cell " << subcellIndexInFinePatch);
-
-    dfor(neighborOffset, searchArea) {
-      tarch::la::Vector<DIMENSIONS, int> adjacentSubcellIndexInCoarsePatch = neighboringSubcellIndexInCoarsePatch + neighborOffset;
-
-      logDebug("applyCoarseGridCorrection", "Correcting cell " << adjacentSubcellIndexInCoarsePatch);
-
-      if(
-        !tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(0), adjacentSubcellIndexInCoarsePatch)
-        && !tarch::la::oneGreaterEquals(adjacentSubcellIndexInCoarsePatch, coarsePatch.getSubdivisionFactor())
-      ) {
-        //Get interface area
-        double interfaceArea = calculateOverlappingArea(
-          finePatch.getSubcellPosition(subcellIndexInFinePatch),
-          fineSubcellSize,
-          coarsePatch.getSubcellPosition(adjacentSubcellIndexInCoarsePatch),
-          coarseSubcellSize,
-          dimension
-        );
-
-        //TODO This depends on the application, since we assume that variable 0 holds the height of the shallow water equation
-        //and variables 1 and 2 hold the velocity
-        //Estimate the flux through the interface from fine to coarse grid, once from the point of view of the fine subcell and
-        //once from the of the coarse subcell
-        double fineGridFlux = finePatch.getValueUNew(subcellIndexInFinePatch, 0) * finePatch.getValueUNew(subcellIndexInFinePatch, 1 + dimension) * interfaceArea;
-        double coarseGridFlux = coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) * coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 1 + dimension) * interfaceArea;
-
-        //Estimate the according transfered volume during the fine patch's timestep
-        double transferedVolumeFineGrid = fineGridFlux * finePatch.getTimestepSize();
-        double transferedVolumeCoarseGrid = coarseGridFlux * finePatch.getTimestepSize();
-
-//        double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / coarseSubcellSize(dimension) / refinementFactor;
-        double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / refinementFactor;
-
-        logDebug("applyCoarseGridCorrection", "Correcting neighbor cell " << adjacentSubcellIndexInCoarsePatch << " from cell " << subcellIndexInFinePatch << " with interfaceArea=" << interfaceArea << std::endl
-            << "\tu0=" << finePatch.getValueUNew(subcellIndexInFinePatch, 0) << " u1=" << finePatch.getValueUNew(subcellIndexInFinePatch, 1) << " u2=" << finePatch.getValueUNew(subcellIndexInFinePatch, 2) << std::endl
-            << "\tfineGridFlux=" << fineGridFlux << std::endl
-            << "\tcoarseGridFlux=" << coarseGridFlux << std::endl
-            << "\ttransferedVolumeFineGrid=" << transferedVolumeFineGrid << std::endl
-            << "\ttransferedVolumeCoarseGrid=" << transferedVolumeCoarseGrid << std::endl
-            << "\tdelta=" << delta << std::endl
-            << "\told u=" << coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) << std::endl
-            << "\tnew u=" << coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta);
-
-//        assertion(tarch::la::greater(coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta, 0.0));
-
-        //Scaled down due to inaccuracy
-        coarsePatch.setValueUNew(adjacentSubcellIndexInCoarsePatch, 0,
-          std::max(0.0, coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta * 10e-8));
-      }
-    }
-  }
-
-  logTraceOut("applyCoarseGridCorrection");
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborTime(int updatedPatchIndex, int neighborPatchIndex) {
@@ -719,12 +569,12 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyCoarseGrid
         && _patches[leftPatchIndex].isLeaf()) {
       //Correct from left to right
       if(_patches[leftPatchIndex].getLevel() > _patches[rightPatchIndex].getLevel()) {
-        applyCoarseGridCorrection(_patches[leftPatchIndex], _patches[rightPatchIndex], d, -1);
+        _numerics.applyFluxCorrection(_patches[leftPatchIndex], _patches[rightPatchIndex], d, -1);
       }
 
       //Correct from right to left
       if(_patches[rightPatchIndex].getLevel() > _patches[leftPatchIndex].getLevel()) {
-        applyCoarseGridCorrection(_patches[rightPatchIndex], _patches[leftPatchIndex], d, 1);
+        _numerics.applyFluxCorrection(_patches[rightPatchIndex], _patches[leftPatchIndex], d, 1);
       }
     }
   }

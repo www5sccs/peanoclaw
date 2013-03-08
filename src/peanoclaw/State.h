@@ -8,7 +8,7 @@
 
 #include "peano/grid/Checkpoint.h"
 
-#include "pyclaw/PyClaw.h"
+#include "Numerics.h"
 
 #include "statistics/LevelInformation.h"
 #include "statistics/Probe.h"
@@ -58,7 +58,7 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
    */
   static tarch::logging::Log _log;
 
-  pyclaw::PyClaw* _pyClaw;
+  Numerics* _numerics;
 
   std::vector<peanoclaw::statistics::Probe> _probeList;
 
@@ -119,9 +119,9 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       double getInitialTimestepSize() const;
 
-      void setPyClaw(peanoclaw::pyclaw::PyClaw& pyClaw);
+      void setNumerics(peanoclaw::Numerics& numerics);
 
-      peanoclaw::pyclaw::PyClaw& getPyClaw() const;
+      peanoclaw::Numerics& getNumerics() const;
 
       void setProbeList(std::vector<peanoclaw::statistics::Probe> probeList);
 
