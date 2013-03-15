@@ -23,39 +23,40 @@ class ParseTask(object):
     self.parseFile(self.inputFile, self.outputFile)
     print("Finished " + self.fileName)
     
-  def parseFile(self, inputFile, outputFile):
-    parsers = (HeapDataParser(),
-               LoadBalancingMessageParser(), 
-               StateMessageParser(), 
-               MasterWorkerCommunicationParser(), 
-               ForkJoinCommunicationParser(), 
-               NeighbourCommunicationParser())
     
-    rootMessage = RootMessage()
+def parseFile(inputFile, outputFile):
+  parsers = (HeapDataParser(),
+             LoadBalancingMessageParser(), 
+             StateMessageParser(), 
+             MasterWorkerCommunicationParser(), 
+             ForkJoinCommunicationParser(), 
+             NeighbourCommunicationParser())
+  
+  rootMessage = RootMessage()
+  
+  excludePatterns = (re.compile("tarch::parallel::NodePool::replyToRegistrationMessages"), 
+                     re.compile("tarch::parallel::NodePool::replyToWorkerRequestMessages"))
+  
+  #while True:
+  #  line = inputFile.readline()
+  #  if not line:
+  #    break
+  
+  lines = inputFile.readlines()
+  for line in lines:
     
-    excludePatterns = (re.compile("tarch::parallel::NodePool::replyToRegistrationMessages"), 
-                       re.compile("tarch::parallel::NodePool::replyToWorkerRequestMessages"))
-    
-    #while True:
-    #  line = inputFile.readline()
-    #  if not line:
+    #skip = False
+    #for excludePattern in excludePatterns:
+    #  if excludePattern.search(line):
+    #    skip = True
     #    break
     
-    lines = inputFile.readlines()
-    for line in lines:
-      
-      #skip = False
-      #for excludePattern in excludePatterns:
-      #  if excludePattern.search(line):
-      #    skip = True
-      #    break
-      
-      for parser in parsers:
-        message = parser.parseLine(line)
-        if message != None:
-          rootMessage.insertMessage(message)
-    
-    rootMessage.printXML(outputFile)
+    for parser in parsers:
+      message = parser.parseLine(line)
+      if message != None:
+        rootMessage.insertMessage(message)
+  
+  rootMessage.printXML(outputFile)
       
       
 if __name__ == "__main__":
@@ -96,9 +97,9 @@ if __name__ == "__main__":
       print inputFileName + " -> " + outputFileName
       outputFile = open(outputFileName, 'w')
       
-      #parseFile(inputFile, outputFile)
+      parseFile(inputFile, outputFile)
       
-      threadpool.add_task(ParseTask(outputFileName, inputFile, outputFile))
+      #threadpool.add_task(ParseTask(outputFileName, inputFile, outputFile))
       
       htmlFile.write('<iframe src="'+ outputFileName + '" ' + style + '></iframe>')
       
