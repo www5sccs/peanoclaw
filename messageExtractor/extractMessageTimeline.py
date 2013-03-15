@@ -107,8 +107,8 @@ if __name__ == "__main__":
     htmlFile.flush()
     iteration += 1
     
-    if iteration >= 4:
-      break
+    #if iteration >= 4:
+    #  break
   
   #threadpool.wait_completion()
   
