@@ -24,7 +24,7 @@ class ParseTask(object):
     print("Finished " + self.fileName)
     
     
-def parseFile(inputFile, outputFile):
+def parseFile(inputFile, outputFile, preserveTimeLine):
   parsers = (HeapDataParser(),
              LoadBalancingMessageParser(), 
              StateMessageParser(), 
@@ -54,7 +54,7 @@ def parseFile(inputFile, outputFile):
     for parser in parsers:
       message = parser.parseLine(line)
       if message != None:
-        rootMessage.insertMessage(message)
+        rootMessage.insertMessage(message, preserveTimeLine)
   
   rootMessage.printXML(outputFile)
       
@@ -97,7 +97,7 @@ if __name__ == "__main__":
       print inputFileName + " -> " + outputFileName
       outputFile = open(outputFileName, 'w')
       
-      parseFile(inputFile, outputFile)
+      parseFile(inputFile, outputFile, False)
       
       #threadpool.add_task(ParseTask(outputFileName, inputFile, outputFile))
       
