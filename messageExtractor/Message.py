@@ -46,7 +46,7 @@ class Message(object):
     self.childMessages.append(newChild)
     newChild.insertMessage(message)
     
-  def insertMessage(self, message):
+  def insertMessage(self, message, preserveTimeLine):
     """
     Inserts the given message into this message or recursively
     into a child message.
@@ -55,16 +55,18 @@ class Message(object):
       #print self.getName() + ": Rejected (Not same or child)"
       return False
     
-    #for childMessage in self.childMessages:
-    #  if childMessage.insertMessage(message):
-    #    #print self.getName() + ": Added in subtree"
-    #    self.number += 1
-    #    return True
-    if len(self.childMessages) > 0:
-      if self.childMessages[-1].insertMessage(message):
-        #print self.getName() + ": Added in subtree"
-        self.number += 1
-        return True
+    if preserveTimeLine:
+      if len(self.childMessages) > 0:
+        if self.childMessages[-1].insertMessage(message, preserveTimeLine):
+          #print self.getName() + ": Added in subtree"
+          self.number += 1
+          return True
+    else:
+      for childMessage in self.childMessages:
+        if childMessage.insertMessage(message):
+          #print self.getName() + ": Added in subtree"
+          self.number += 1
+          return True
 
     if len(message.getAttributes()) == len(self.getAttributes()):
       pass
