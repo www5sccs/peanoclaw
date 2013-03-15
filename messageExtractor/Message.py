@@ -91,9 +91,11 @@ class Message(object):
     if self.number > 1:
       startTag += "number=" + "\"" + str(self.number) + "\" "
     
-    for attribute in self.getAttributes():
-      if attribute.name != "messageType":
-        startTag += attribute.name + "=\"" + attribute.value + "\" "
+    #for attribute in self.getAttributes():
+    #  if attribute.name != "messageType":
+    #    startTag += attribute.name + "=\"" + attribute.value + "\" "
+    if len(self.getAttributes()) > 0:
+      startTag += self.getAttributes()[-1].name + "=\"" + self.getAttributes()[-1].value + "\" "
     
     if len(self.childMessages) == 0:
       startTag += "/>"

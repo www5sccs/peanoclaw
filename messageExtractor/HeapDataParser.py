@@ -5,7 +5,7 @@ from Message import Message
 class HeapDataParser(Parser):
   
   def __init__(self):
-    self.heapDataPattern = re.compile("rank:(\d+) peano::heap::Heap::sendData\s*Sending data at .* to Rank (\d+) with mpiTag: (\d+)")
+    self.heapDataPattern = re.compile("rank:(\d+) peano::heap::Heap::sendData\s*Sending data at (.*) on level (\d+) to Rank (\d+) with mpiTag: (\d+)")
     self.neighbourMPITagPattern = re.compile("assigned message heap\[neighbour\] the free tag (\d+)")
     self.masterWorkerMPITagPattern = re.compile("assigned message heap\[master-worker\] the free tag (\d+)")
     self.forkJoinMPITagPattern = re.compile("assigned message heap\[join/fork\] the free tag (\d+)")
@@ -17,8 +17,10 @@ class HeapDataParser(Parser):
     m = self.heapDataPattern.search(line)
     if m:
       fromRank = m.group(1)
-      toRank = m.group(2)
-      mpiTag = m.group(3)
+      position = m.group(2)
+      level = m.group(3)
+      toRank = m.group(4)
+      mpiTag = m.group(5)
       
       if mpiTag in self.neighbourMPITags:
         mpiTag = "neighbourCommunication"
@@ -31,6 +33,8 @@ class HeapDataParser(Parser):
       message.addAttribute("From", fromRank)
       message.addAttribute("To", toRank)
       message.addAttribute("Tag", mpiTag)
+      message.addAttribute("Level", level)
+      message.addAttribute("Position", position)
       
       #print "Found heap data message [" + fromRank + "," + toRank + "," + mpiTag + "]"
       
