@@ -44,7 +44,7 @@ class Message(object):
       newChild.addAttribute(message.getAttributes()[i].name, message.getAttributes()[i].value)
       
     self.childMessages.append(newChild)
-    newChild.insertMessage(message)
+    newChild.insertMessage(message, False)
     
   def insertMessage(self, message, preserveTimeLine):
     """
@@ -63,7 +63,7 @@ class Message(object):
           return True
     else:
       for childMessage in self.childMessages:
-        if childMessage.insertMessage(message):
+        if childMessage.insertMessage(message, preserveTimeLine):
           #print self.getName() + ": Added in subtree"
           self.number += 1
           return True
