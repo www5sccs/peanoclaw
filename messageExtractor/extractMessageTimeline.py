@@ -44,18 +44,16 @@ class ParseTask(object):
     lines = inputFile.readlines()
     for line in lines:
       
-      skip = False
+      #skip = False
+      #for excludePattern in excludePatterns:
+      #  if excludePattern.search(line):
+      #    skip = True
+      #    break
       
-      for excludePattern in excludePatterns:
-        if excludePattern.search(line):
-          skip = True
-          break
-      
-#      if not skip:
-        #for parser in parsers:
-        #  message = parser.parseLine(line)
-        #  if message != None:
-        #    rootMessage.insertMessage(message)
+      for parser in parsers:
+        message = parser.parseLine(line)
+        if message != None:
+          rootMessage.insertMessage(message)
     
     rootMessage.printXML(outputFile)
       
