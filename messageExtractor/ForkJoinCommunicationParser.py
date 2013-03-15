@@ -5,11 +5,11 @@ from Parser import Parser
 class ForkJoinCommunicationParser(Parser):
   
   def __init__(self):
-    self.prepareCopyToRemoteNodePattern = "rank:(\d+) peanoclaw::mappings::Remesh::prepareCopyToRemoteNode\(...\)                 in:local(Vertex|Cell).*toRank:(\d+)"
-    self.mergeWithRemoteDataDueToForkOrJoinPattern = "rank:(\d+) peanoclaw::mappings::SolveTimestep::mergeWithRemoteDataDueToForkOrJoin\(...\)             in:local(Vertex|Cell).*fromRank:(\d+)"
+    self.prepareCopyToRemoteNodePattern = re.compile("rank:(\d+) peanoclaw::mappings::Remesh::prepareCopyToRemoteNode\(...\)\s*in:local(Vertex|Cell).*toRank:(\d+)")
+    self.mergeWithRemoteDataDueToForkOrJoinPattern = re.compile("rank:(\d+) peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin\(...\)\s*in:local(Vertex|Cell).*fromRank:(\d+)")
 
   def parseLine(self, line):
-    m = re.search(self.prepareCopyToRemoteNodePattern, line)
+    m = self.prepareCopyToRemoteNodePattern.search(line)
     if m:
       fromRank = m.group(1)
       type = m.group(2)
@@ -20,7 +20,7 @@ class ForkJoinCommunicationParser(Parser):
       message.addAttribute("type", type)
       return message
     else:
-      m = re.search(self.mergeWithRemoteDataDueToForkOrJoinPattern, line)
+      m = self.mergeWithRemoteDataDueToForkOrJoinPattern.search(line)
       if m:
         toRank = m.group(1)
         type = m.group(2)
@@ -32,3 +32,5 @@ class ForkJoinCommunicationParser(Parser):
         return message        
       else:
         return None
+      
+      

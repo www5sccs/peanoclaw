@@ -5,21 +5,30 @@ from Message import Message
 class StateMessageParser(Parser):
   
   def __init__(self):
-    self.pattern =  "rank:(\d+) peano::grid::nodes::Node::updateCellsParallelStateAfterLoadForRootOfDeployedSubtree\(\)\s*"
-    self.pattern += "send state.*loadRebalancingState:(.*),reduceStateAndCell:\d+\) to rank (\d+)"
+    self.sendPattern =  re.compile("rank:(\d+) peano::grid::nodes::Node::updateCellsParallelStateAfterLoadForRootOfDeployedSubtree\(\)\s*send state.*loadRebalancingState:(.*),reduceStateAndCell:\d+\) to rank (\d+)")
+    self.receivePattern = re.compile("rank:(\d+) peano::grid::Grid::receiveStartupDataFromMaster\(\)\s*received state")
     
   def parseLine(self, line):
-    m = re.search(self.pattern, line)
+    m = self.sendPattern.search(line)
     if m:
       fromRank = m.group(1)
       toRank = m.group(3)
       
-      message = Message("State")
+      message = Message("SendState")
       message.addAttribute("From", fromRank)
       message.addAttribute("To", toRank)
       
       return message
     else:
-      return None
+      m = self.receivePattern.search(line)
+      if m:
+        toRank = m.group(1)
+        
+        message = Message("ReceivedState")
+        message.addAttribute("To", toRank)
+        
+        return message        
+      else:
+        return None
       
       

@@ -5,11 +5,11 @@ from Parser import Parser
 class NeighbourCommunicationParser(Parser):
   
   def __init__(self):
-    self.prepareSendToNeighbourPattern = "rank:(\d+) peanoclaw::mappings::InitialiseGrid::prepareSendToNeighbour\(...\).*toRank:(\d+)"
-    self.mergeWithNeighbourPattern = "rank:(\d+) peanoclaw::mappings::SolveTimestep::mergeWithNeighbour\(...\).*fromRank:(\d)"
+    self.prepareSendToNeighbourPattern = re.compile("rank:(\d+) peanoclaw::mappings::Remesh::prepareSendToNeighbour\(...\)\s*in:.*toRank:(\d+)")
+    self.mergeWithNeighbourPattern = re.compile("rank:(\d+) peanoclaw::mappings::Remesh::mergeWithNeighbour\(...\)\s*in:.*fromRank:(\d)")
     
   def parseLine(self, line):
-    m = re.search(self.prepareSendToNeighbourPattern, line)
+    m = self.prepareSendToNeighbourPattern.search(line)
     if m:
       fromRank = m.group(1)
       toRank = m.group(2)
@@ -18,7 +18,7 @@ class NeighbourCommunicationParser(Parser):
       message.addAttribute("To", toRank)
       return message
     else:
-      m = re.search(self.mergeWithNeighbourPattern, line)
+      m = self.mergeWithNeighbourPattern.search(line)
       if m:
         toRank = m.group(1)
         fromRank = m.group(2)

@@ -55,8 +55,13 @@ class Message(object):
       #print self.getName() + ": Rejected (Not same or child)"
       return False
     
-    for childMessage in self.childMessages:
-      if childMessage.insertMessage(message):
+    #for childMessage in self.childMessages:
+    #  if childMessage.insertMessage(message):
+    #    #print self.getName() + ": Added in subtree"
+    #    self.number += 1
+    #    return True
+    if len(self.childMessages) > 0:
+      if self.childMessages[-1].insertMessage(message):
         #print self.getName() + ": Added in subtree"
         self.number += 1
         return True
