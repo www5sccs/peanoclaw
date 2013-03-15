@@ -91,7 +91,7 @@ if __name__ == "__main__":
         inputFile = open(inputFileName, 'r')
       except IOError:
         print "No file for rank " + str(rank) + " in iteration " + str(iteration)
-        htmlFile.write('<iframe src="nomessages.html" ' + style + '></iframe>')
+        htmlFile.write('<iframe src="../nomessages.html" ' + style + '></iframe>')
         continue
       outputFileName = inputFileName.replace(".txt", ".xml")
       print inputFileName + " -> " + outputFileName
