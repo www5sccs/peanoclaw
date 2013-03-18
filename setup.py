@@ -122,8 +122,7 @@ def setup_package():
             # only egg information for downloading requirements
             from setuptools import setup
             setuptools_dict = dict(
-                install_requires = ['clawpack >= 0.1'
-                                    ]
+                install_requires = [] #'clawpack >= 0.1']
                 )
             setup_dict.update(setuptools_dict)
             setup(**setup_dict)
