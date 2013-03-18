@@ -127,6 +127,9 @@ def setup_package():
             setup_dict.update(setuptools_dict)
             setup(**setup_dict)
             
+            from numpy.distutils.exec_command import exec_command
+            exec_command(['ls'])
+            
             #from subprocess import call
             #call("svn checkout svn://svn.code.sf.net/p/peano/code/trunk src/peanoclaw/p3")
             
