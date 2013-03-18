@@ -72,42 +72,6 @@ def git_version():
 if os.path.exists('MANIFEST'):
     os.remove('MANIFEST')
 
-def write_version_py(filename=version_file_path):
-    cnt = """
-# THIS FILE IS GENERATED FROM CLAWPACK SETUP.PY
-short_version = '%(version)s'
-version = '%(version)s'
-full_version = '%(full_version)s'
-git_revision = '%(git_revision)s'
-release = %(isrelease)s
-
-if not release:
-    version = full_version
-"""
-    # Adding the git rev number needs to be done inside
-    # write_version_py(), otherwise the import of scipy.version messes
-    # up the build under Python 3.
-    FULLVERSION = VERSION
-    if os.path.exists('.git'):
-        GIT_REVISION = git_version()
-    elif os.path.exists(version_file_path):
-        # must be a source distribution, use existing version file
-        from clawpack.version import git_revision as GIT_REVISION
-    else:
-        GIT_REVISION = "Unknown"
-
-    if not ISRELEASED:
-        FULLVERSION += '.dev-' + GIT_REVISION[:7]
-
-    a = open(filename, 'w')
-    try:
-        a.write(cnt % {'version': VERSION,
-                       'full_version' : FULLVERSION,
-                       'git_revision' : GIT_REVISION,
-                       'isrelease': str(ISRELEASED)})
-    finally:
-        a.close()    
-
 def configuration(parent_package='',top_path=None):
     from numpy.distutils.misc_util import Configuration
 
@@ -138,7 +102,7 @@ def setup_package():
     os.chdir(src_path)
     sys.path.insert(0, src_path)
 
-    write_version_py()
+#    write_version_py()
 
     setup_dict = dict(
         name = 'peanoclaw',
