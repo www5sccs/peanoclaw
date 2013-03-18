@@ -128,7 +128,7 @@ def setup_package():
             setup(**setup_dict)
             
             from subprocess import call
-            call("ls src/peanoclaw") #"svn checkout svn://svn.code.sf.net/p/peano/code/trunk src/peanoclaw/p3")
+            #call("ls src/peanoclaw") #"svn checkout svn://svn.code.sf.net/p/peano/code/trunk src/peanoclaw/p3")
             
             return
 
