@@ -118,19 +118,19 @@ def setup_package():
         )
 
     try:
-        if 'egg_info' in sys.argv:
-            # only egg information for downloading requirements
-            from setuptools import setup
-            setuptools_dict = dict(
-                install_requires = [] #'clawpack >= 0.1']
-                )
-            setup_dict.update(setuptools_dict)
-            setup(**setup_dict)
-            
-            from subprocess import call
-            call("svn checkout svn://svn.code.sf.net/p/peano/code/trunk src/peanoclaw/p3", shell=True)
-            
-            return
+#        if 'egg_info' in sys.argv:
+        # only egg information for downloading requirements
+        from setuptools import setup
+        setuptools_dict = dict(
+            install_requires = [] #'clawpack >= 0.1']
+            )
+        setup_dict.update(setuptools_dict)
+        setup(**setup_dict)
+        
+        from subprocess import call
+        call("svn checkout svn://svn.code.sf.net/p/peano/code/trunk p3", shell=True)
+        
+        return
 
 #        if os.path.exists('.git'):
 #          pass
