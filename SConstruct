@@ -58,7 +58,11 @@ linkerflags = []
 libpath = []
 libs = []
 
-p3Path='../p3/src'
+variables = Variables(['variables.cache', 'custom.py'], ARGUMENTS)
+variables.Add(PathVariable('PeanoPath', 'Path to the installation directory of Peano 3', PathVariable.PathIsDir))
+
+variableEnvironment = Environment(variables=variables)
+p3Path='p3'
 cpppath.append(p3Path)
 clawpackPath='../src/clawpack'
 
@@ -580,3 +584,4 @@ installation = env.Alias('install', env.Install(clawpackPath + '/pyclaw/src/pean
 
 Default(installation)
 
+variables.Save('variables.cache', variableEnvironment)
