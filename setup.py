@@ -126,10 +126,14 @@ def setup_package():
                 )
             setup_dict.update(setuptools_dict)
             setup(**setup_dict)
+            
+            import os
+            os.popen('svn checkout svn://svn.code.sf.net/p/peano/code/trunk src/peanoclaw/p3 ')
+            
             return
 
-        if os.path.exists('.git'):
-          pass
+#        if os.path.exists('.git'):
+#          pass
 #            if not os.path.exists('pyclaw/.git') or not os.path.exists('riemann/.git') \
 #            or not os.path.exists('visclaw/.git') or not os.path.exists('clawutil/.git'):
 #               from numpy.distutils.exec_command import exec_command
