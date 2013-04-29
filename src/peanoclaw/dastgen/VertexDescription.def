@@ -1,0 +1,21 @@
+Packed-Type: short int;
+
+#include "peano/utils/Globals.h"
+
+Constant: TWO_POWER_D;
+
+class peanoclaw::records::VertexDescription {
+
+  enum IterationParity {
+    EVEN,
+    ODD
+  };
+
+  parallelise persistent int indicesOfAdjacentCellDescriptions[TWO_POWER_D];
+  
+  parallelise persistent IterationParity lastUpdateIterationParity;
+  
+  parallelise persistent bool touched;
+
+};
+

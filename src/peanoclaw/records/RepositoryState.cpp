@@ -173,9 +173,7 @@ peanoclaw::records::RepositoryStatePacked peanoclaw::records::RepositoryState::c
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      #ifdef Asserts
-      _senderRank = -1;
-      #endif
+      _senderDestinationRank = destination;
       
       if (exchangeOnlyAttributesMarkedWithParallelise) {
          result = MPI_Isend(
@@ -317,7 +315,7 @@ peanoclaw::records::RepositoryStatePacked peanoclaw::records::RepositoryState::c
       
       delete sendRequestHandle;
       
-      _senderRank = status.MPI_SOURCE;
+      _senderDestinationRank = status.MPI_SOURCE;
       #ifdef Debug
       _log.debug("receive(int,int)", "received " + toString() ); 
       #endif
@@ -348,8 +346,8 @@ peanoclaw::records::RepositoryStatePacked peanoclaw::records::RepositoryState::c
    }
    
    int peanoclaw::records::RepositoryState::getSenderRank() const {
-      assertion( _senderRank!=-1 );
-      return _senderRank;
+      assertion( _senderDestinationRank!=-1 );
+      return _senderDestinationRank;
       
    }
 #endif
@@ -517,9 +515,7 @@ peanoclaw::records::RepositoryState peanoclaw::records::RepositoryStatePacked::c
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      #ifdef Asserts
-      _senderRank = -1;
-      #endif
+      _senderDestinationRank = destination;
       
       if (exchangeOnlyAttributesMarkedWithParallelise) {
          result = MPI_Isend(
@@ -661,7 +657,7 @@ peanoclaw::records::RepositoryState peanoclaw::records::RepositoryStatePacked::c
       
       delete sendRequestHandle;
       
-      _senderRank = status.MPI_SOURCE;
+      _senderDestinationRank = status.MPI_SOURCE;
       #ifdef Debug
       _log.debug("receive(int,int)", "received " + toString() ); 
       #endif
@@ -692,8 +688,8 @@ peanoclaw::records::RepositoryState peanoclaw::records::RepositoryStatePacked::c
    }
    
    int peanoclaw::records::RepositoryStatePacked::getSenderRank() const {
-      assertion( _senderRank!=-1 );
-      return _senderRank;
+      assertion( _senderDestinationRank!=-1 );
+      return _senderDestinationRank;
       
    }
 #endif

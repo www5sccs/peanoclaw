@@ -297,9 +297,7 @@
          clock_t      timeOutShutdown  = -1;
          bool         triggeredTimeoutWarning = false;
          
-         #ifdef Asserts
-         _senderRank = -1;
-         #endif
+         _senderDestinationRank = destination;
          
          if (exchangeOnlyAttributesMarkedWithParallelise) {
             result = MPI_Isend(
@@ -441,7 +439,7 @@
          
          delete sendRequestHandle;
          
-         _senderRank = status.MPI_SOURCE;
+         _senderDestinationRank = status.MPI_SOURCE;
          #ifdef Debug
          _log.debug("receive(int,int)", "received " + toString() ); 
          #endif
@@ -472,15 +470,15 @@
       }
       
       int peanoclaw::records::Vertex::getSenderRank() const {
-         assertion( _senderRank!=-1 );
-         return _senderRank;
+         assertion( _senderDestinationRank!=-1 );
+         return _senderDestinationRank;
          
       }
    #endif
    
    
    peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
@@ -496,26 +494,26 @@
       setIsHangingNode(isHangingNode);
       setRefinementControl(refinementControl);
       setInsideOutsideDomain(insideOutsideDomain);
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
    peanoclaw::records::VertexPacked::VertexPacked() {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
    _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._x, persistentRecords._level, persistentRecords._adjacentRanks) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
    _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
@@ -523,7 +521,7 @@
    peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
    _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
    _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
@@ -636,7 +634,7 @@
                MPI_DOUBLE,		 //x
                MPI_INT,		 //level
                MPI_INT,		 //adjacentRanks
-               MPI_SHORT,		 //_packedRecords0
+               MPI_INT,		 //_packedRecords0
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
             };
@@ -683,7 +681,7 @@
                MPI_DOUBLE,		 //x
                MPI_INT,		 //level
                MPI_INT,		 //adjacentRanks
-               MPI_SHORT,		 //_packedRecords0
+               MPI_INT,		 //_packedRecords0
                MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
@@ -745,9 +743,7 @@
          clock_t      timeOutShutdown  = -1;
          bool         triggeredTimeoutWarning = false;
          
-         #ifdef Asserts
-         _senderRank = -1;
-         #endif
+         _senderDestinationRank = destination;
          
          if (exchangeOnlyAttributesMarkedWithParallelise) {
             result = MPI_Isend(
@@ -889,7 +885,7 @@
          
          delete sendRequestHandle;
          
-         _senderRank = status.MPI_SOURCE;
+         _senderDestinationRank = status.MPI_SOURCE;
          #ifdef Debug
          _log.debug("receive(int,int)", "received " + toString() ); 
          #endif
@@ -920,8 +916,8 @@
       }
       
       int peanoclaw::records::VertexPacked::getSenderRank() const {
-         assertion( _senderRank!=-1 );
-         return _senderRank;
+         assertion( _senderDestinationRank!=-1 );
+         return _senderDestinationRank;
          
       }
    #endif
@@ -1184,9 +1180,7 @@
          clock_t      timeOutShutdown  = -1;
          bool         triggeredTimeoutWarning = false;
          
-         #ifdef Asserts
-         _senderRank = -1;
-         #endif
+         _senderDestinationRank = destination;
          
          if (exchangeOnlyAttributesMarkedWithParallelise) {
             result = MPI_Isend(
@@ -1328,7 +1322,7 @@
          
          delete sendRequestHandle;
          
-         _senderRank = status.MPI_SOURCE;
+         _senderDestinationRank = status.MPI_SOURCE;
          #ifdef Debug
          _log.debug("receive(int,int)", "received " + toString() ); 
          #endif
@@ -1359,15 +1353,15 @@
       }
       
       int peanoclaw::records::Vertex::getSenderRank() const {
-         assertion( _senderRank!=-1 );
-         return _senderRank;
+         assertion( _senderDestinationRank!=-1 );
+         return _senderDestinationRank;
          
       }
    #endif
    
    
    peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
@@ -1380,26 +1374,26 @@
       setIsHangingNode(isHangingNode);
       setRefinementControl(refinementControl);
       setInsideOutsideDomain(insideOutsideDomain);
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
    peanoclaw::records::VertexPacked::VertexPacked() {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
    _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain()) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain):
    _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
@@ -1407,7 +1401,7 @@
    peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain):
    _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
    _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
       
    }
    
@@ -1500,7 +1494,7 @@
             const int Attributes = 4;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //indicesOfAdjacentCellDescriptions
-               MPI_SHORT,		 //_packedRecords0
+               MPI_INT,		 //_packedRecords0
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
             };
@@ -1538,7 +1532,7 @@
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //indicesOfAdjacentCellDescriptions
                MPI_INT,		 //adjacentCellsHeight
-               MPI_SHORT,		 //_packedRecords0
+               MPI_INT,		 //_packedRecords0
                MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
@@ -1594,9 +1588,7 @@
          clock_t      timeOutShutdown  = -1;
          bool         triggeredTimeoutWarning = false;
          
-         #ifdef Asserts
-         _senderRank = -1;
-         #endif
+         _senderDestinationRank = destination;
          
          if (exchangeOnlyAttributesMarkedWithParallelise) {
             result = MPI_Isend(
@@ -1738,7 +1730,7 @@
          
          delete sendRequestHandle;
          
-         _senderRank = status.MPI_SOURCE;
+         _senderDestinationRank = status.MPI_SOURCE;
          #ifdef Debug
          _log.debug("receive(int,int)", "received " + toString() ); 
          #endif
@@ -1769,8 +1761,8 @@
       }
       
       int peanoclaw::records::VertexPacked::getSenderRank() const {
-         assertion( _senderRank!=-1 );
-         return _senderRank;
+         assertion( _senderDestinationRank!=-1 );
+         return _senderDestinationRank;
          
       }
    #endif
@@ -2061,9 +2053,7 @@ peanoclaw::records::VertexPacked peanoclaw::records::Vertex::convert() const{
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      #ifdef Asserts
-      _senderRank = -1;
-      #endif
+      _senderDestinationRank = destination;
       
       if (exchangeOnlyAttributesMarkedWithParallelise) {
          result = MPI_Isend(
@@ -2205,7 +2195,7 @@ peanoclaw::records::VertexPacked peanoclaw::records::Vertex::convert() const{
       
       delete sendRequestHandle;
       
-      _senderRank = status.MPI_SOURCE;
+      _senderDestinationRank = status.MPI_SOURCE;
       #ifdef Debug
       _log.debug("receive(int,int)", "received " + toString() ); 
       #endif
@@ -2236,15 +2226,15 @@ peanoclaw::records::VertexPacked peanoclaw::records::Vertex::convert() const{
    }
    
    int peanoclaw::records::Vertex::getSenderRank() const {
-      assertion( _senderRank!=-1 );
-      return _senderRank;
+      assertion( _senderDestinationRank!=-1 );
+      return _senderDestinationRank;
       
    }
 #endif
 
 
 peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-   assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
    
 }
 
@@ -2259,26 +2249,26 @@ _level(level) {
    setIsHangingNode(isHangingNode);
    setRefinementControl(refinementControl);
    setInsideOutsideDomain(insideOutsideDomain);
-   assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
    
 }
 
 peanoclaw::records::VertexPacked::VertexPacked() {
-   assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
    
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
 _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._x, persistentRecords._level) {
-   assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
    
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level):
 _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level) {
-   assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
    
 }
 
@@ -2286,7 +2276,7 @@ _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto,
 peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level):
 _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
 _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-   assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
    
 }
 
@@ -2391,7 +2381,7 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
             MPI_INT,		 //indicesOfAdjacentCellDescriptions
             MPI_DOUBLE,		 //x
             MPI_INT,		 //level
-            MPI_SHORT,		 //_packedRecords0
+            MPI_INT,		 //_packedRecords0
             MPI_INT,		 //numberOfAdjacentRefinedCells
             MPI_UB		 // end/displacement flag
          };
@@ -2435,7 +2425,7 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
             MPI_INT,		 //adjacentCellsHeight
             MPI_DOUBLE,		 //x
             MPI_INT,		 //level
-            MPI_SHORT,		 //_packedRecords0
+            MPI_INT,		 //_packedRecords0
             MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
             MPI_INT,		 //numberOfAdjacentRefinedCells
             MPI_UB		 // end/displacement flag
@@ -2495,9 +2485,7 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      #ifdef Asserts
-      _senderRank = -1;
-      #endif
+      _senderDestinationRank = destination;
       
       if (exchangeOnlyAttributesMarkedWithParallelise) {
          result = MPI_Isend(
@@ -2639,7 +2627,7 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
       
       delete sendRequestHandle;
       
-      _senderRank = status.MPI_SOURCE;
+      _senderDestinationRank = status.MPI_SOURCE;
       #ifdef Debug
       _log.debug("receive(int,int)", "received " + toString() ); 
       #endif
@@ -2670,8 +2658,8 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
    }
    
    int peanoclaw::records::VertexPacked::getSenderRank() const {
-      assertion( _senderRank!=-1 );
-      return _senderRank;
+      assertion( _senderDestinationRank!=-1 );
+      return _senderDestinationRank;
       
    }
 #endif
@@ -2949,9 +2937,7 @@ void peanoclaw::records::Vertex::send(int destination, int tag, bool exchangeOnl
    clock_t      timeOutShutdown  = -1;
    bool         triggeredTimeoutWarning = false;
    
-   #ifdef Asserts
-   _senderRank = -1;
-   #endif
+   _senderDestinationRank = destination;
    
    if (exchangeOnlyAttributesMarkedWithParallelise) {
       result = MPI_Isend(
@@ -3093,7 +3079,7 @@ void peanoclaw::records::Vertex::receive(int source, int tag, bool exchangeOnlyA
    
    delete sendRequestHandle;
    
-   _senderRank = status.MPI_SOURCE;
+   _senderDestinationRank = status.MPI_SOURCE;
    #ifdef Debug
    _log.debug("receive(int,int)", "received " + toString() ); 
    #endif
@@ -3124,15 +3110,15 @@ bool peanoclaw::records::Vertex::isMessageInQueue(int tag, bool exchangeOnlyAttr
 }
 
 int peanoclaw::records::Vertex::getSenderRank() const {
-   assertion( _senderRank!=-1 );
-   return _senderRank;
+   assertion( _senderDestinationRank!=-1 );
+   return _senderDestinationRank;
    
 }
 #endif
 
 
 peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
 
 }
 
@@ -3146,26 +3132,26 @@ setShouldRefine(shouldRefine);
 setIsHangingNode(isHangingNode);
 setRefinementControl(refinementControl);
 setInsideOutsideDomain(insideOutsideDomain);
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
 
 }
 
 peanoclaw::records::VertexPacked::VertexPacked() {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
 
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
 _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._adjacentRanks) {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
 
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
 _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks) {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
 
 }
 
@@ -3173,7 +3159,7 @@ assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
 peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
 _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
 _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+7 < (8 * sizeof(int))));
 
 }
 
@@ -3274,7 +3260,7 @@ void peanoclaw::records::VertexPacked::initDatatype() {
       MPI_Datatype subtypes[Attributes] = {
          MPI_INT,		 //indicesOfAdjacentCellDescriptions
          MPI_INT,		 //adjacentRanks
-         MPI_SHORT,		 //_packedRecords0
+         MPI_INT,		 //_packedRecords0
          MPI_INT,		 //numberOfAdjacentRefinedCells
          MPI_UB		 // end/displacement flag
       };
@@ -3315,7 +3301,7 @@ void peanoclaw::records::VertexPacked::initDatatype() {
          MPI_INT,		 //indicesOfAdjacentCellDescriptions
          MPI_INT,		 //adjacentCellsHeight
          MPI_INT,		 //adjacentRanks
-         MPI_SHORT,		 //_packedRecords0
+         MPI_INT,		 //_packedRecords0
          MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
          MPI_INT,		 //numberOfAdjacentRefinedCells
          MPI_UB		 // end/displacement flag
@@ -3373,9 +3359,7 @@ void peanoclaw::records::VertexPacked::send(int destination, int tag, bool excha
    clock_t      timeOutShutdown  = -1;
    bool         triggeredTimeoutWarning = false;
    
-   #ifdef Asserts
-   _senderRank = -1;
-   #endif
+   _senderDestinationRank = destination;
    
    if (exchangeOnlyAttributesMarkedWithParallelise) {
       result = MPI_Isend(
@@ -3517,7 +3501,7 @@ void peanoclaw::records::VertexPacked::receive(int source, int tag, bool exchang
    
    delete sendRequestHandle;
    
-   _senderRank = status.MPI_SOURCE;
+   _senderDestinationRank = status.MPI_SOURCE;
    #ifdef Debug
    _log.debug("receive(int,int)", "received " + toString() ); 
    #endif
@@ -3548,8 +3532,8 @@ bool peanoclaw::records::VertexPacked::isMessageInQueue(int tag, bool exchangeOn
 }
 
 int peanoclaw::records::VertexPacked::getSenderRank() const {
-   assertion( _senderRank!=-1 );
-   return _senderRank;
+   assertion( _senderDestinationRank!=-1 );
+   return _senderDestinationRank;
    
 }
 #endif

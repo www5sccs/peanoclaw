@@ -32,19 +32,15 @@ namespace peanoclaw {
     * 		   2007-2009 Wolfgang Eckhardt
     * 		   2012      Tobias Weinzierl
     *
-    * 		   build date: 29-11-2012 08:46
+    * 		   build date: 12-04-2013 09:18
     *
-    * @date   10/02/2013 15:38
+    * @date   29/04/2013 12:57
     */
    class peanoclaw::records::State { 
       
       public:
          
          typedef peanoclaw::records::StatePacked Packed;
-         
-         enum LoadBalancingState {
-            NoRebalancing = 0, ForkTriggered = 1, Forking = 2, JoinTriggered = 3, Joining = 4, JoinWithMasterTriggered = 5, JoiningWithMaster = 6, HasJoinedWithMaster = 7, IsNewWorkerDueToForkOfExistingDomain = 8
-         };
          
          struct PersistentRecords {
             int _additionalLevelsForPredefinedRefinement;
@@ -100,6 +96,11 @@ namespace peanoclaw {
             double _numberOfOuterVertices;
             double _numberOfInnerCells;
             double _numberOfOuterCells;
+            double _numberOfInnerLeafVertices;
+            double _numberOfBoundaryLeafVertices;
+            double _numberOfOuterLeafVertices;
+            double _numberOfInnerLeafCells;
+            double _numberOfOuterLeafCells;
             int _maxLevel;
             bool _hasRefined;
             bool _hasTriggeredRefinementForNextIteration;
@@ -107,7 +108,6 @@ namespace peanoclaw {
             bool _hasTriggeredEraseForNextIteration;
             bool _hasChangedVertexOrCellState;
             bool _isTraversalInverted;
-            LoadBalancingState _loadRebalancingState;
             bool _reduceStateAndCell;
             /**
              * Generated
@@ -117,7 +117,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const LoadBalancingState& loadRebalancingState, const bool& reduceStateAndCell);
+            PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell);
             
             
             inline int getAdditionalLevelsForPredefinedRefinement() const 
@@ -928,6 +928,106 @@ namespace peanoclaw {
             
             
             
+            inline double getNumberOfInnerLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _numberOfInnerLeafVertices;
+            }
+            
+            
+            
+            inline void setNumberOfInnerLeafVertices(const double& numberOfInnerLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _numberOfInnerLeafVertices = numberOfInnerLeafVertices;
+            }
+            
+            
+            
+            inline double getNumberOfBoundaryLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _numberOfBoundaryLeafVertices;
+            }
+            
+            
+            
+            inline void setNumberOfBoundaryLeafVertices(const double& numberOfBoundaryLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _numberOfBoundaryLeafVertices = numberOfBoundaryLeafVertices;
+            }
+            
+            
+            
+            inline double getNumberOfOuterLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _numberOfOuterLeafVertices;
+            }
+            
+            
+            
+            inline void setNumberOfOuterLeafVertices(const double& numberOfOuterLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _numberOfOuterLeafVertices = numberOfOuterLeafVertices;
+            }
+            
+            
+            
+            inline double getNumberOfInnerLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _numberOfInnerLeafCells;
+            }
+            
+            
+            
+            inline void setNumberOfInnerLeafCells(const double& numberOfInnerLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _numberOfInnerLeafCells = numberOfInnerLeafCells;
+            }
+            
+            
+            
+            inline double getNumberOfOuterLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _numberOfOuterLeafCells;
+            }
+            
+            
+            
+            inline void setNumberOfOuterLeafCells(const double& numberOfOuterLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _numberOfOuterLeafCells = numberOfOuterLeafCells;
+            }
+            
+            
+            
             inline int getMaxLevel() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -1068,26 +1168,6 @@ namespace peanoclaw {
             
             
             
-            inline LoadBalancingState getLoadRebalancingState() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-               return _loadRebalancingState;
-            }
-            
-            
-            
-            inline void setLoadRebalancingState(const LoadBalancingState& loadRebalancingState) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-               _loadRebalancingState = loadRebalancingState;
-            }
-            
-            
-            
             inline bool getReduceStateAndCell() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -1112,7 +1192,6 @@ namespace peanoclaw {
          
       private: 
          PersistentRecords _persistentRecords;
-         bool _hasWorkerWithWorker;
          
       public:
          /**
@@ -1128,12 +1207,7 @@ namespace peanoclaw {
          /**
           * Generated
           */
-         State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const LoadBalancingState& loadRebalancingState, const bool& reduceStateAndCell);
-         
-         /**
-          * Generated
-          */
-         State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const LoadBalancingState& loadRebalancingState, const bool& reduceStateAndCell, const bool& hasWorkerWithWorker);
+         State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell);
          
          /**
           * Generated
@@ -2105,6 +2179,106 @@ namespace peanoclaw {
          
          
          
+         inline double getNumberOfInnerLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._numberOfInnerLeafVertices;
+         }
+         
+         
+         
+         inline void setNumberOfInnerLeafVertices(const double& numberOfInnerLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._numberOfInnerLeafVertices = numberOfInnerLeafVertices;
+         }
+         
+         
+         
+         inline double getNumberOfBoundaryLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._numberOfBoundaryLeafVertices;
+         }
+         
+         
+         
+         inline void setNumberOfBoundaryLeafVertices(const double& numberOfBoundaryLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._numberOfBoundaryLeafVertices = numberOfBoundaryLeafVertices;
+         }
+         
+         
+         
+         inline double getNumberOfOuterLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._numberOfOuterLeafVertices;
+         }
+         
+         
+         
+         inline void setNumberOfOuterLeafVertices(const double& numberOfOuterLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._numberOfOuterLeafVertices = numberOfOuterLeafVertices;
+         }
+         
+         
+         
+         inline double getNumberOfInnerLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._numberOfInnerLeafCells;
+         }
+         
+         
+         
+         inline void setNumberOfInnerLeafCells(const double& numberOfInnerLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._numberOfInnerLeafCells = numberOfInnerLeafCells;
+         }
+         
+         
+         
+         inline double getNumberOfOuterLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._numberOfOuterLeafCells;
+         }
+         
+         
+         
+         inline void setNumberOfOuterLeafCells(const double& numberOfOuterLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._numberOfOuterLeafCells = numberOfOuterLeafCells;
+         }
+         
+         
+         
          inline int getMaxLevel() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -2245,26 +2419,6 @@ namespace peanoclaw {
          
          
          
-         inline LoadBalancingState getLoadRebalancingState() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            return _persistentRecords._loadRebalancingState;
-         }
-         
-         
-         
-         inline void setLoadRebalancingState(const LoadBalancingState& loadRebalancingState) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            _persistentRecords._loadRebalancingState = loadRebalancingState;
-         }
-         
-         
-         
          inline bool getReduceStateAndCell() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -2283,36 +2437,6 @@ namespace peanoclaw {
             _persistentRecords._reduceStateAndCell = reduceStateAndCell;
          }
          
-         
-         
-         inline bool getHasWorkerWithWorker() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            return _hasWorkerWithWorker;
-         }
-         
-         
-         
-         inline void setHasWorkerWithWorker(const bool& hasWorkerWithWorker) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            _hasWorkerWithWorker = hasWorkerWithWorker;
-         }
-         
-         
-         /**
-          * Generated
-          */
-         static std::string toString(const LoadBalancingState& param);
-         
-         /**
-          * Generated
-          */
-         static std::string getLoadBalancingStateMapping();
          
          /**
           * Generated
@@ -2336,7 +2460,7 @@ namespace peanoclaw {
          protected:
             static tarch::logging::Log _log;
             
-            int _senderRank;
+            int _senderDestinationRank;
             
          public:
             
@@ -2384,15 +2508,13 @@ namespace peanoclaw {
        * 		   2007-2009 Wolfgang Eckhardt
        * 		   2012      Tobias Weinzierl
        *
-       * 		   build date: 29-11-2012 08:46
+       * 		   build date: 12-04-2013 09:18
        *
-       * @date   10/02/2013 15:38
+       * @date   29/04/2013 12:57
        */
       class peanoclaw::records::StatePacked { 
          
          public:
-            
-            typedef peanoclaw::records::State::LoadBalancingState LoadBalancingState;
             
             struct PersistentRecords {
                int _additionalLevelsForPredefinedRefinement;
@@ -2423,9 +2545,13 @@ namespace peanoclaw {
                double _numberOfOuterVertices;
                double _numberOfInnerCells;
                double _numberOfOuterCells;
+               double _numberOfInnerLeafVertices;
+               double _numberOfBoundaryLeafVertices;
+               double _numberOfOuterLeafVertices;
+               double _numberOfInnerLeafCells;
+               double _numberOfOuterLeafCells;
                int _maxLevel;
                bool _isTraversalInverted;
-               LoadBalancingState _loadRebalancingState;
                
                /** mapping of records:
                || Member 	|| startbit 	|| length
@@ -2447,7 +2573,7 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const LoadBalancingState& loadRebalancingState, const bool& reduceStateAndCell);
+               PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell);
                
                
                inline int getAdditionalLevelsForPredefinedRefinement() const 
@@ -3261,6 +3387,106 @@ namespace peanoclaw {
                
                
                
+               inline double getNumberOfInnerLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _numberOfInnerLeafVertices;
+               }
+               
+               
+               
+               inline void setNumberOfInnerLeafVertices(const double& numberOfInnerLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _numberOfInnerLeafVertices = numberOfInnerLeafVertices;
+               }
+               
+               
+               
+               inline double getNumberOfBoundaryLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _numberOfBoundaryLeafVertices;
+               }
+               
+               
+               
+               inline void setNumberOfBoundaryLeafVertices(const double& numberOfBoundaryLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _numberOfBoundaryLeafVertices = numberOfBoundaryLeafVertices;
+               }
+               
+               
+               
+               inline double getNumberOfOuterLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _numberOfOuterLeafVertices;
+               }
+               
+               
+               
+               inline void setNumberOfOuterLeafVertices(const double& numberOfOuterLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _numberOfOuterLeafVertices = numberOfOuterLeafVertices;
+               }
+               
+               
+               
+               inline double getNumberOfInnerLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _numberOfInnerLeafCells;
+               }
+               
+               
+               
+               inline void setNumberOfInnerLeafCells(const double& numberOfInnerLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _numberOfInnerLeafCells = numberOfInnerLeafCells;
+               }
+               
+               
+               
+               inline double getNumberOfOuterLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _numberOfOuterLeafCells;
+               }
+               
+               
+               
+               inline void setNumberOfOuterLeafCells(const double& numberOfOuterLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _numberOfOuterLeafCells = numberOfOuterLeafCells;
+               }
+               
+               
+               
                inline int getMaxLevel() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -3416,26 +3642,6 @@ namespace peanoclaw {
                
                
                
-               inline LoadBalancingState getLoadRebalancingState() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                  return _loadRebalancingState;
-               }
-               
-               
-               
-               inline void setLoadRebalancingState(const LoadBalancingState& loadRebalancingState) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                  _loadRebalancingState = loadRebalancingState;
-               }
-               
-               
-               
                inline bool getReduceStateAndCell() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -3464,13 +3670,6 @@ namespace peanoclaw {
          private: 
             PersistentRecords _persistentRecords;
             
-            /** mapping of records:
-            || Member 	|| startbit 	|| length
-             |  hasWorkerWithWorker	| startbit 0	| #bits 1
-             */
-            short int _packedRecords0;
-            
-            
          public:
             /**
              * Generated
@@ -3485,12 +3684,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const LoadBalancingState& loadRebalancingState, const bool& reduceStateAndCell);
-            
-            /**
-             * Generated
-             */
-            StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const LoadBalancingState& loadRebalancingState, const bool& reduceStateAndCell, const bool& hasWorkerWithWorker);
+            StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell);
             
             /**
              * Generated
@@ -4465,6 +4659,106 @@ namespace peanoclaw {
             
             
             
+            inline double getNumberOfInnerLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _persistentRecords._numberOfInnerLeafVertices;
+            }
+            
+            
+            
+            inline void setNumberOfInnerLeafVertices(const double& numberOfInnerLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _persistentRecords._numberOfInnerLeafVertices = numberOfInnerLeafVertices;
+            }
+            
+            
+            
+            inline double getNumberOfBoundaryLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _persistentRecords._numberOfBoundaryLeafVertices;
+            }
+            
+            
+            
+            inline void setNumberOfBoundaryLeafVertices(const double& numberOfBoundaryLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _persistentRecords._numberOfBoundaryLeafVertices = numberOfBoundaryLeafVertices;
+            }
+            
+            
+            
+            inline double getNumberOfOuterLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _persistentRecords._numberOfOuterLeafVertices;
+            }
+            
+            
+            
+            inline void setNumberOfOuterLeafVertices(const double& numberOfOuterLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _persistentRecords._numberOfOuterLeafVertices = numberOfOuterLeafVertices;
+            }
+            
+            
+            
+            inline double getNumberOfInnerLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _persistentRecords._numberOfInnerLeafCells;
+            }
+            
+            
+            
+            inline void setNumberOfInnerLeafCells(const double& numberOfInnerLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _persistentRecords._numberOfInnerLeafCells = numberOfInnerLeafCells;
+            }
+            
+            
+            
+            inline double getNumberOfOuterLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _persistentRecords._numberOfOuterLeafCells;
+            }
+            
+            
+            
+            inline void setNumberOfOuterLeafCells(const double& numberOfOuterLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _persistentRecords._numberOfOuterLeafCells = numberOfOuterLeafCells;
+            }
+            
+            
+            
             inline int getMaxLevel() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -4620,26 +4914,6 @@ namespace peanoclaw {
             
             
             
-            inline LoadBalancingState getLoadRebalancingState() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-               return _persistentRecords._loadRebalancingState;
-            }
-            
-            
-            
-            inline void setLoadRebalancingState(const LoadBalancingState& loadRebalancingState) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-               _persistentRecords._loadRebalancingState = loadRebalancingState;
-            }
-            
-            
-            
             inline bool getReduceStateAndCell() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -4661,39 +4935,6 @@ namespace peanoclaw {
    _persistentRecords._packedRecords0 = static_cast<short int>( reduceStateAndCell ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
             }
             
-            
-            
-            inline bool getHasWorkerWithWorker() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-               short int mask = 1 << (0);
-   short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   return (tmp != 0);
-            }
-            
-            
-            
-            inline void setHasWorkerWithWorker(const bool& hasWorkerWithWorker) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-               short int mask = 1 << (0);
-   _packedRecords0 = static_cast<short int>( hasWorkerWithWorker ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
-            }
-            
-            
-            /**
-             * Generated
-             */
-            static std::string toString(const LoadBalancingState& param);
-            
-            /**
-             * Generated
-             */
-            static std::string getLoadBalancingStateMapping();
             
             /**
              * Generated
@@ -4717,7 +4958,7 @@ namespace peanoclaw {
             protected:
                static tarch::logging::Log _log;
                
-               int _senderRank;
+               int _senderDestinationRank;
                
             public:
                
@@ -4762,9 +5003,9 @@ namespace peanoclaw {
           * 		   2007-2009 Wolfgang Eckhardt
           * 		   2012      Tobias Weinzierl
           *
-          * 		   build date: 29-11-2012 08:46
+          * 		   build date: 12-04-2013 09:18
           *
-          * @date   10/02/2013 15:38
+          * @date   29/04/2013 12:57
           */
          class peanoclaw::records::State { 
             
@@ -4826,6 +5067,11 @@ namespace peanoclaw {
                   double _numberOfOuterVertices;
                   double _numberOfInnerCells;
                   double _numberOfOuterCells;
+                  double _numberOfInnerLeafVertices;
+                  double _numberOfBoundaryLeafVertices;
+                  double _numberOfOuterLeafVertices;
+                  double _numberOfInnerLeafCells;
+                  double _numberOfOuterLeafCells;
                   int _maxLevel;
                   bool _hasRefined;
                   bool _hasTriggeredRefinementForNextIteration;
@@ -4841,7 +5087,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                  PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                   
                   
                   inline int getAdditionalLevelsForPredefinedRefinement() const 
@@ -5652,6 +5898,106 @@ namespace peanoclaw {
                   
                   
                   
+                  inline double getNumberOfInnerLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _numberOfInnerLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfInnerLeafVertices(const double& numberOfInnerLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _numberOfInnerLeafVertices = numberOfInnerLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline double getNumberOfBoundaryLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _numberOfBoundaryLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfBoundaryLeafVertices(const double& numberOfBoundaryLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _numberOfBoundaryLeafVertices = numberOfBoundaryLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline double getNumberOfOuterLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _numberOfOuterLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfOuterLeafVertices(const double& numberOfOuterLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _numberOfOuterLeafVertices = numberOfOuterLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline double getNumberOfInnerLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _numberOfInnerLeafCells;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfInnerLeafCells(const double& numberOfInnerLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _numberOfInnerLeafCells = numberOfInnerLeafCells;
+                  }
+                  
+                  
+                  
+                  inline double getNumberOfOuterLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _numberOfOuterLeafCells;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfOuterLeafCells(const double& numberOfOuterLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _numberOfOuterLeafCells = numberOfOuterLeafCells;
+                  }
+                  
+                  
+                  
                   inline int getMaxLevel() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -5811,7 +6157,7 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+               State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                
                /**
                 * Generated
@@ -6783,6 +7129,106 @@ namespace peanoclaw {
                
                
                
+               inline double getNumberOfInnerLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._numberOfInnerLeafVertices;
+               }
+               
+               
+               
+               inline void setNumberOfInnerLeafVertices(const double& numberOfInnerLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._numberOfInnerLeafVertices = numberOfInnerLeafVertices;
+               }
+               
+               
+               
+               inline double getNumberOfBoundaryLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._numberOfBoundaryLeafVertices;
+               }
+               
+               
+               
+               inline void setNumberOfBoundaryLeafVertices(const double& numberOfBoundaryLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._numberOfBoundaryLeafVertices = numberOfBoundaryLeafVertices;
+               }
+               
+               
+               
+               inline double getNumberOfOuterLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._numberOfOuterLeafVertices;
+               }
+               
+               
+               
+               inline void setNumberOfOuterLeafVertices(const double& numberOfOuterLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._numberOfOuterLeafVertices = numberOfOuterLeafVertices;
+               }
+               
+               
+               
+               inline double getNumberOfInnerLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._numberOfInnerLeafCells;
+               }
+               
+               
+               
+               inline void setNumberOfInnerLeafCells(const double& numberOfInnerLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._numberOfInnerLeafCells = numberOfInnerLeafCells;
+               }
+               
+               
+               
+               inline double getNumberOfOuterLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._numberOfOuterLeafCells;
+               }
+               
+               
+               
+               inline void setNumberOfOuterLeafCells(const double& numberOfOuterLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._numberOfOuterLeafCells = numberOfOuterLeafCells;
+               }
+               
+               
+               
                inline int getMaxLevel() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -6944,7 +7390,7 @@ namespace peanoclaw {
                protected:
                   static tarch::logging::Log _log;
                   
-                  int _senderRank;
+                  int _senderDestinationRank;
                   
                public:
                   
@@ -6992,9 +7438,9 @@ namespace peanoclaw {
              * 		   2007-2009 Wolfgang Eckhardt
              * 		   2012      Tobias Weinzierl
              *
-             * 		   build date: 29-11-2012 08:46
+             * 		   build date: 12-04-2013 09:18
              *
-             * @date   10/02/2013 15:38
+             * @date   29/04/2013 12:57
              */
             class peanoclaw::records::StatePacked { 
                
@@ -7029,6 +7475,11 @@ namespace peanoclaw {
                      double _numberOfOuterVertices;
                      double _numberOfInnerCells;
                      double _numberOfOuterCells;
+                     double _numberOfInnerLeafVertices;
+                     double _numberOfBoundaryLeafVertices;
+                     double _numberOfOuterLeafVertices;
+                     double _numberOfInnerLeafCells;
+                     double _numberOfOuterLeafCells;
                      int _maxLevel;
                      bool _isTraversalInverted;
                      
@@ -7051,7 +7502,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                     PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                      
                      
                      inline int getAdditionalLevelsForPredefinedRefinement() const 
@@ -7865,6 +8316,106 @@ namespace peanoclaw {
                      
                      
                      
+                     inline double getNumberOfInnerLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _numberOfInnerLeafVertices;
+                     }
+                     
+                     
+                     
+                     inline void setNumberOfInnerLeafVertices(const double& numberOfInnerLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _numberOfInnerLeafVertices = numberOfInnerLeafVertices;
+                     }
+                     
+                     
+                     
+                     inline double getNumberOfBoundaryLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _numberOfBoundaryLeafVertices;
+                     }
+                     
+                     
+                     
+                     inline void setNumberOfBoundaryLeafVertices(const double& numberOfBoundaryLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _numberOfBoundaryLeafVertices = numberOfBoundaryLeafVertices;
+                     }
+                     
+                     
+                     
+                     inline double getNumberOfOuterLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _numberOfOuterLeafVertices;
+                     }
+                     
+                     
+                     
+                     inline void setNumberOfOuterLeafVertices(const double& numberOfOuterLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _numberOfOuterLeafVertices = numberOfOuterLeafVertices;
+                     }
+                     
+                     
+                     
+                     inline double getNumberOfInnerLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _numberOfInnerLeafCells;
+                     }
+                     
+                     
+                     
+                     inline void setNumberOfInnerLeafCells(const double& numberOfInnerLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _numberOfInnerLeafCells = numberOfInnerLeafCells;
+                     }
+                     
+                     
+                     
+                     inline double getNumberOfOuterLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _numberOfOuterLeafCells;
+                     }
+                     
+                     
+                     
+                     inline void setNumberOfOuterLeafCells(const double& numberOfOuterLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _numberOfOuterLeafCells = numberOfOuterLeafCells;
+                     }
+                     
+                     
+                     
                      inline int getMaxLevel() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -8039,7 +8590,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                  StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplitting, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                   
                   /**
                    * Generated
@@ -9014,6 +9565,106 @@ namespace peanoclaw {
                   
                   
                   
+                  inline double getNumberOfInnerLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._numberOfInnerLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfInnerLeafVertices(const double& numberOfInnerLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._numberOfInnerLeafVertices = numberOfInnerLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline double getNumberOfBoundaryLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._numberOfBoundaryLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfBoundaryLeafVertices(const double& numberOfBoundaryLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._numberOfBoundaryLeafVertices = numberOfBoundaryLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline double getNumberOfOuterLeafVertices() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._numberOfOuterLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfOuterLeafVertices(const double& numberOfOuterLeafVertices) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._numberOfOuterLeafVertices = numberOfOuterLeafVertices;
+                  }
+                  
+                  
+                  
+                  inline double getNumberOfInnerLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._numberOfInnerLeafCells;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfInnerLeafCells(const double& numberOfInnerLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._numberOfInnerLeafCells = numberOfInnerLeafCells;
+                  }
+                  
+                  
+                  
+                  inline double getNumberOfOuterLeafCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._numberOfOuterLeafCells;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfOuterLeafCells(const double& numberOfOuterLeafCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._numberOfOuterLeafCells = numberOfOuterLeafCells;
+                  }
+                  
+                  
+                  
                   inline int getMaxLevel() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -9190,7 +9841,7 @@ namespace peanoclaw {
                   protected:
                      static tarch::logging::Log _log;
                      
-                     int _senderRank;
+                     int _senderDestinationRank;
                      
                   public:
                      
