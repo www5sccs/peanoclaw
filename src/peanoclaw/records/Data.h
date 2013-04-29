@@ -31,7 +31,7 @@ namespace peanoclaw {
  *
  * 		   build date: 12-04-2013 09:18
  *
- * @date   29/04/2013 12:57
+ * @date   29/04/2013 17:06
  */
 class peanoclaw::records::Data { 
    
@@ -160,7 +160,7 @@ class peanoclaw::records::Data {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   29/04/2013 12:57
+          * @date   29/04/2013 17:06
           */
          class peanoclaw::records::DataPacked { 
             

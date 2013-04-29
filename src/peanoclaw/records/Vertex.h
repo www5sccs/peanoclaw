@@ -34,7 +34,7 @@ namespace peanoclaw {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   29/04/2013 12:57
+    * @date   29/04/2013 17:06
     */
    class peanoclaw::records::Vertex { 
       
@@ -1073,7 +1073,7 @@ namespace peanoclaw {
        *
        * 		   build date: 12-04-2013 09:18
        *
-       * @date   29/04/2013 12:57
+       * @date   29/04/2013 17:06
        */
       class peanoclaw::records::VertexPacked { 
          
@@ -1098,7 +1098,7 @@ namespace peanoclaw {
                 |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
                 |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
                 */
-               int _packedRecords0;
+               short int _packedRecords0;
                
                /**
                 * Generated
@@ -1193,10 +1193,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                  mask = static_cast<int>(mask << (0));
-                  int tmp = static_cast<int>(_packedRecords0 & mask);
-                  tmp = static_cast<int>(tmp >> (0));
+                  short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                  mask = static_cast<short int>(mask << (0));
+                  short int tmp = static_cast<short int>(_packedRecords0 & mask);
+                  tmp = static_cast<short int>(tmp >> (0));
                   std::bitset<TWO_POWER_D> result = tmp;
                   return result;
                }
@@ -1227,10 +1227,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                  mask = static_cast<int>(mask << (0));
-                  _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-                  _packedRecords0 = static_cast<int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                  short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                  mask = static_cast<short int>(mask << (0));
+                  _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+                  _packedRecords0 = static_cast<short int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
                }
                
                
@@ -1240,8 +1240,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  int mask = 1 << (TWO_POWER_D);
-   int tmp = static_cast<int>(_packedRecords0 & mask);
+                  short int mask = 1 << (TWO_POWER_D);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                }
                
@@ -1252,8 +1252,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  int mask = 1 << (TWO_POWER_D);
-   _packedRecords0 = static_cast<int>( shouldRefine ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                  short int mask = 1 << (TWO_POWER_D);
+   _packedRecords0 = static_cast<short int>( shouldRefine ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                }
                
                
@@ -1263,8 +1263,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  int mask = 1 << (TWO_POWER_D + 1);
-   int tmp = static_cast<int>(_packedRecords0 & mask);
+                  short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                }
                
@@ -1275,8 +1275,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  int mask = 1 << (TWO_POWER_D + 1);
-   _packedRecords0 = static_cast<int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                  short int mask = 1 << (TWO_POWER_D + 1);
+   _packedRecords0 = static_cast<short int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                }
                
                
@@ -1286,10 +1286,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 2));
+                  short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                }
@@ -1302,10 +1302,10 @@ namespace peanoclaw {
  #endif 
  {
                   assertion((refinementControl >= 0 && refinementControl <= 6));
-   int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
                }
                
                
@@ -1335,10 +1335,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 5));
+                  short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                }
@@ -1351,10 +1351,10 @@ namespace peanoclaw {
  #endif 
  {
                   assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
-   int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
                }
                
                
@@ -1637,10 +1637,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-               mask = static_cast<int>(mask << (0));
-               int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-               tmp = static_cast<int>(tmp >> (0));
+               short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+               mask = static_cast<short int>(mask << (0));
+               short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+               tmp = static_cast<short int>(tmp >> (0));
                std::bitset<TWO_POWER_D> result = tmp;
                return result;
             }
@@ -1671,10 +1671,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-               mask = static_cast<int>(mask << (0));
-               _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-               _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+               short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+               mask = static_cast<short int>(mask << (0));
+               _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+               _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
             }
             
             
@@ -1729,8 +1729,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               int mask = 1 << (TWO_POWER_D);
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+               short int mask = 1 << (TWO_POWER_D);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
             }
             
@@ -1741,8 +1741,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               int mask = 1 << (TWO_POWER_D);
-   _persistentRecords._packedRecords0 = static_cast<int>( shouldRefine ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+               short int mask = 1 << (TWO_POWER_D);
+   _persistentRecords._packedRecords0 = static_cast<short int>( shouldRefine ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
             }
             
             
@@ -1752,8 +1752,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               int mask = 1 << (TWO_POWER_D + 1);
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+               short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
             }
             
@@ -1764,8 +1764,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               int mask = 1 << (TWO_POWER_D + 1);
-   _persistentRecords._packedRecords0 = static_cast<int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+               short int mask = 1 << (TWO_POWER_D + 1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
             }
             
             
@@ -1775,10 +1775,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 2));
+               short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
             }
@@ -1791,10 +1791,10 @@ namespace peanoclaw {
  #endif 
  {
                assertion((refinementControl >= 0 && refinementControl <= 6));
-   int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
             }
             
             
@@ -1864,10 +1864,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 5));
+               short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
             }
@@ -1880,10 +1880,10 @@ namespace peanoclaw {
  #endif 
  {
                assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
-   int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
             }
             
             
@@ -2164,7 +2164,7 @@ namespace peanoclaw {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   29/04/2013 12:57
+          * @date   29/04/2013 17:06
           */
          class peanoclaw::records::Vertex { 
             
@@ -2868,7 +2868,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   29/04/2013 12:57
+             * @date   29/04/2013 17:06
              */
             class peanoclaw::records::VertexPacked { 
                
@@ -2890,7 +2890,7 @@ namespace peanoclaw {
                       |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
                       |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
                       */
-                     int _packedRecords0;
+                     short int _packedRecords0;
                      
                      /**
                       * Generated
@@ -2985,10 +2985,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                        mask = static_cast<int>(mask << (0));
-                        int tmp = static_cast<int>(_packedRecords0 & mask);
-                        tmp = static_cast<int>(tmp >> (0));
+                        short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                        mask = static_cast<short int>(mask << (0));
+                        short int tmp = static_cast<short int>(_packedRecords0 & mask);
+                        tmp = static_cast<short int>(tmp >> (0));
                         std::bitset<TWO_POWER_D> result = tmp;
                         return result;
                      }
@@ -3019,10 +3019,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                        mask = static_cast<int>(mask << (0));
-                        _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-                        _packedRecords0 = static_cast<int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                        short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                        mask = static_cast<short int>(mask << (0));
+                        _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+                        _packedRecords0 = static_cast<short int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
                      }
                      
                      
@@ -3032,8 +3032,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = 1 << (TWO_POWER_D);
-   int tmp = static_cast<int>(_packedRecords0 & mask);
+                        short int mask = 1 << (TWO_POWER_D);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                      }
                      
@@ -3044,8 +3044,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = 1 << (TWO_POWER_D);
-   _packedRecords0 = static_cast<int>( shouldRefine ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                        short int mask = 1 << (TWO_POWER_D);
+   _packedRecords0 = static_cast<short int>( shouldRefine ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                      }
                      
                      
@@ -3055,8 +3055,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = 1 << (TWO_POWER_D + 1);
-   int tmp = static_cast<int>(_packedRecords0 & mask);
+                        short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                      }
                      
@@ -3067,8 +3067,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = 1 << (TWO_POWER_D + 1);
-   _packedRecords0 = static_cast<int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                        short int mask = 1 << (TWO_POWER_D + 1);
+   _packedRecords0 = static_cast<short int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                      }
                      
                      
@@ -3078,10 +3078,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 2));
+                        short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                      }
@@ -3094,10 +3094,10 @@ namespace peanoclaw {
  #endif 
  {
                         assertion((refinementControl >= 0 && refinementControl <= 6));
-   int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
                      }
                      
                      
@@ -3127,10 +3127,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 5));
+                        short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                      }
@@ -3143,10 +3143,10 @@ namespace peanoclaw {
  #endif 
  {
                         assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
-   int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
                      }
                      
                      
@@ -3293,10 +3293,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                     int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                     mask = static_cast<int>(mask << (0));
-                     int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-                     tmp = static_cast<int>(tmp >> (0));
+                     short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                     mask = static_cast<short int>(mask << (0));
+                     short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+                     tmp = static_cast<short int>(tmp >> (0));
                      std::bitset<TWO_POWER_D> result = tmp;
                      return result;
                   }
@@ -3327,10 +3327,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                     int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                     mask = static_cast<int>(mask << (0));
-                     _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-                     _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                     short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                     mask = static_cast<short int>(mask << (0));
+                     _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+                     _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
                   }
                   
                   
@@ -3385,8 +3385,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                     int mask = 1 << (TWO_POWER_D);
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+                     short int mask = 1 << (TWO_POWER_D);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
                   }
                   
@@ -3397,8 +3397,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                     int mask = 1 << (TWO_POWER_D);
-   _persistentRecords._packedRecords0 = static_cast<int>( shouldRefine ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                     short int mask = 1 << (TWO_POWER_D);
+   _persistentRecords._packedRecords0 = static_cast<short int>( shouldRefine ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                   }
                   
                   
@@ -3408,8 +3408,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                     int mask = 1 << (TWO_POWER_D + 1);
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+                     short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
                   }
                   
@@ -3420,8 +3420,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                     int mask = 1 << (TWO_POWER_D + 1);
-   _persistentRecords._packedRecords0 = static_cast<int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                     short int mask = 1 << (TWO_POWER_D + 1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                   }
                   
                   
@@ -3431,10 +3431,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                     int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 2));
+                     short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                   }
@@ -3447,10 +3447,10 @@ namespace peanoclaw {
  #endif 
  {
                      assertion((refinementControl >= 0 && refinementControl <= 6));
-   int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
                   }
                   
                   
@@ -3520,10 +3520,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                     int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 5));
+                     short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                   }
@@ -3536,10 +3536,10 @@ namespace peanoclaw {
  #endif 
  {
                      assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
-   int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
                   }
                   
                   
@@ -3633,7 +3633,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   29/04/2013 12:57
+             * @date   29/04/2013 17:06
              */
             class peanoclaw::records::Vertex { 
                
@@ -4525,7 +4525,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   29/04/2013 12:57
+                * @date   29/04/2013 17:06
                 */
                class peanoclaw::records::VertexPacked { 
                   
@@ -4549,7 +4549,7 @@ namespace peanoclaw {
                          |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
                          |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
                          */
-                        int _packedRecords0;
+                        short int _packedRecords0;
                         
                         /**
                          * Generated
@@ -4644,10 +4644,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                           mask = static_cast<int>(mask << (0));
-                           int tmp = static_cast<int>(_packedRecords0 & mask);
-                           tmp = static_cast<int>(tmp >> (0));
+                           short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                           mask = static_cast<short int>(mask << (0));
+                           short int tmp = static_cast<short int>(_packedRecords0 & mask);
+                           tmp = static_cast<short int>(tmp >> (0));
                            std::bitset<TWO_POWER_D> result = tmp;
                            return result;
                         }
@@ -4678,10 +4678,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                           mask = static_cast<int>(mask << (0));
-                           _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-                           _packedRecords0 = static_cast<int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                           short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                           mask = static_cast<short int>(mask << (0));
+                           _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+                           _packedRecords0 = static_cast<short int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
                         }
                         
                         
@@ -4691,8 +4691,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = 1 << (TWO_POWER_D);
-   int tmp = static_cast<int>(_packedRecords0 & mask);
+                           short int mask = 1 << (TWO_POWER_D);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                         }
                         
@@ -4703,8 +4703,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = 1 << (TWO_POWER_D);
-   _packedRecords0 = static_cast<int>( shouldRefine ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                           short int mask = 1 << (TWO_POWER_D);
+   _packedRecords0 = static_cast<short int>( shouldRefine ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                         }
                         
                         
@@ -4714,8 +4714,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = 1 << (TWO_POWER_D + 1);
-   int tmp = static_cast<int>(_packedRecords0 & mask);
+                           short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                         }
                         
@@ -4726,8 +4726,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = 1 << (TWO_POWER_D + 1);
-   _packedRecords0 = static_cast<int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                           short int mask = 1 << (TWO_POWER_D + 1);
+   _packedRecords0 = static_cast<short int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                         }
                         
                         
@@ -4737,10 +4737,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 2));
+                           short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                         }
@@ -4753,10 +4753,10 @@ namespace peanoclaw {
  #endif 
  {
                            assertion((refinementControl >= 0 && refinementControl <= 6));
-   int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
                         }
                         
                         
@@ -4786,10 +4786,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 5));
+                           short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                         }
@@ -4802,10 +4802,10 @@ namespace peanoclaw {
  #endif 
  {
                            assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
-   int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
                         }
                         
                         
@@ -5030,10 +5030,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                        mask = static_cast<int>(mask << (0));
-                        int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-                        tmp = static_cast<int>(tmp >> (0));
+                        short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                        mask = static_cast<short int>(mask << (0));
+                        short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+                        tmp = static_cast<short int>(tmp >> (0));
                         std::bitset<TWO_POWER_D> result = tmp;
                         return result;
                      }
@@ -5064,10 +5064,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                        mask = static_cast<int>(mask << (0));
-                        _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-                        _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                        short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                        mask = static_cast<short int>(mask << (0));
+                        _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+                        _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
                      }
                      
                      
@@ -5122,8 +5122,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = 1 << (TWO_POWER_D);
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+                        short int mask = 1 << (TWO_POWER_D);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
                      }
                      
@@ -5134,8 +5134,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = 1 << (TWO_POWER_D);
-   _persistentRecords._packedRecords0 = static_cast<int>( shouldRefine ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                        short int mask = 1 << (TWO_POWER_D);
+   _persistentRecords._packedRecords0 = static_cast<short int>( shouldRefine ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                      }
                      
                      
@@ -5145,8 +5145,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = 1 << (TWO_POWER_D + 1);
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+                        short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
                      }
                      
@@ -5157,8 +5157,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask = 1 << (TWO_POWER_D + 1);
-   _persistentRecords._packedRecords0 = static_cast<int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                        short int mask = 1 << (TWO_POWER_D + 1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                      }
                      
                      
@@ -5168,10 +5168,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 2));
+                        short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                      }
@@ -5184,10 +5184,10 @@ namespace peanoclaw {
  #endif 
  {
                         assertion((refinementControl >= 0 && refinementControl <= 6));
-   int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
                      }
                      
                      
@@ -5257,10 +5257,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                        int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 5));
+                        short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                      }
@@ -5273,10 +5273,10 @@ namespace peanoclaw {
  #endif 
  {
                         assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
-   int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
                      }
                      
                      
@@ -5474,7 +5474,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   29/04/2013 12:57
+                * @date   29/04/2013 17:06
                 */
                class peanoclaw::records::Vertex { 
                   
@@ -6325,7 +6325,7 @@ namespace peanoclaw {
                    *
                    * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   29/04/2013 12:57
+                   * @date   29/04/2013 17:06
                    */
                   class peanoclaw::records::VertexPacked { 
                      
@@ -6348,7 +6348,7 @@ namespace peanoclaw {
                             |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
                             |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
                             */
-                           int _packedRecords0;
+                           short int _packedRecords0;
                            
                            /**
                             * Generated
@@ -6443,10 +6443,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                              mask = static_cast<int>(mask << (0));
-                              int tmp = static_cast<int>(_packedRecords0 & mask);
-                              tmp = static_cast<int>(tmp >> (0));
+                              short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                              mask = static_cast<short int>(mask << (0));
+                              short int tmp = static_cast<short int>(_packedRecords0 & mask);
+                              tmp = static_cast<short int>(tmp >> (0));
                               std::bitset<TWO_POWER_D> result = tmp;
                               return result;
                            }
@@ -6477,10 +6477,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                              mask = static_cast<int>(mask << (0));
-                              _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-                              _packedRecords0 = static_cast<int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                              short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                              mask = static_cast<short int>(mask << (0));
+                              _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+                              _packedRecords0 = static_cast<short int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
                            }
                            
                            
@@ -6490,8 +6490,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              int mask = 1 << (TWO_POWER_D);
-   int tmp = static_cast<int>(_packedRecords0 & mask);
+                              short int mask = 1 << (TWO_POWER_D);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                            }
                            
@@ -6502,8 +6502,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              int mask = 1 << (TWO_POWER_D);
-   _packedRecords0 = static_cast<int>( shouldRefine ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                              short int mask = 1 << (TWO_POWER_D);
+   _packedRecords0 = static_cast<short int>( shouldRefine ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                            }
                            
                            
@@ -6513,8 +6513,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              int mask = 1 << (TWO_POWER_D + 1);
-   int tmp = static_cast<int>(_packedRecords0 & mask);
+                              short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                            }
                            
@@ -6525,8 +6525,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              int mask = 1 << (TWO_POWER_D + 1);
-   _packedRecords0 = static_cast<int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                              short int mask = 1 << (TWO_POWER_D + 1);
+   _packedRecords0 = static_cast<short int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                            }
                            
                            
@@ -6536,10 +6536,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 2));
+                              short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                            }
@@ -6552,10 +6552,10 @@ namespace peanoclaw {
  #endif 
  {
                               assertion((refinementControl >= 0 && refinementControl <= 6));
-   int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
                            }
                            
                            
@@ -6585,10 +6585,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 5));
+                              short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                            }
@@ -6601,10 +6601,10 @@ namespace peanoclaw {
  #endif 
  {
                               assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
-   int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
                            }
                            
                            
@@ -6809,10 +6809,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                           mask = static_cast<int>(mask << (0));
-                           int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-                           tmp = static_cast<int>(tmp >> (0));
+                           short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                           mask = static_cast<short int>(mask << (0));
+                           short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+                           tmp = static_cast<short int>(tmp >> (0));
                            std::bitset<TWO_POWER_D> result = tmp;
                            return result;
                         }
@@ -6843,10 +6843,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = (int) (1 << (TWO_POWER_D)) - 1 ;
-                           mask = static_cast<int>(mask << (0));
-                           _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-                           _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                           short int mask = (short int) (1 << (TWO_POWER_D)) - 1 ;
+                           mask = static_cast<short int>(mask << (0));
+                           _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+                           _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
                         }
                         
                         
@@ -6901,8 +6901,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = 1 << (TWO_POWER_D);
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+                           short int mask = 1 << (TWO_POWER_D);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
                         }
                         
@@ -6913,8 +6913,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = 1 << (TWO_POWER_D);
-   _persistentRecords._packedRecords0 = static_cast<int>( shouldRefine ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                           short int mask = 1 << (TWO_POWER_D);
+   _persistentRecords._packedRecords0 = static_cast<short int>( shouldRefine ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                         }
                         
                         
@@ -6924,8 +6924,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = 1 << (TWO_POWER_D + 1);
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+                           short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
                         }
                         
@@ -6936,8 +6936,8 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask = 1 << (TWO_POWER_D + 1);
-   _persistentRecords._packedRecords0 = static_cast<int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                           short int mask = 1 << (TWO_POWER_D + 1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                         }
                         
                         
@@ -6947,10 +6947,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 2));
+                           short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                         }
@@ -6963,10 +6963,10 @@ namespace peanoclaw {
  #endif 
  {
                            assertion((refinementControl >= 0 && refinementControl <= 6));
-   int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 2));
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   short int mask =  (1 << (3)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
                         }
                         
                         
@@ -7036,10 +7036,10 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (TWO_POWER_D + 5));
+                           short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                         }
@@ -7052,10 +7052,10 @@ namespace peanoclaw {
  #endif 
  {
                            assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
-   int mask =  (1 << (2)) - 1;
-   mask = static_cast<int>(mask << (TWO_POWER_D + 5));
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   short int mask =  (1 << (2)) - 1;
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
                         }
                         
                         
