@@ -58,9 +58,6 @@ linkerflags = []
 libpath = []
 libs = []
 
-variables = Variables(['variables.cache', 'custom.py'], ARGUMENTS)
-variables.Add(PathVariable('PeanoPath', 'Path to the installation directory of Peano 3', PathVariable.PathIsDir))
-
 p3Path='p3'
 cpppath.append(p3Path)
 clawpackPath='../src/clawpack'
