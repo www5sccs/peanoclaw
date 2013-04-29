@@ -124,7 +124,8 @@ class peanoclaw::repositories::Repository {
     virtual void restart(
       const tarch::la::Vector<DIMENSIONS,double>&  domainSize,
       const tarch::la::Vector<DIMENSIONS,double>&  domainOffset,
-      int                                          domainLevel
+      int                                          domainLevel,
+      const tarch::la::Vector<DIMENSIONS,int>&     positionOfCentralElementWithRespectToCoarserRemoteLevel
     ) = 0;     
     
     /**

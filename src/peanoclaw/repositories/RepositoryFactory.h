@@ -10,10 +10,10 @@
 
 
 namespace peanoclaw {
-  namespace repositories {
-    class RepositoryFactory;
-    class Repository;
-  }
+      namespace repositories {
+        class RepositoryFactory;
+        class Repository;
+      } 
 }
 
 

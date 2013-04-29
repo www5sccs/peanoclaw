@@ -6,7 +6,7 @@
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Cleanup::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -14,7 +14,7 @@ peano::MappingSpecification   peanoclaw::mappings::Cleanup::touchVertexLastTimeS
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Cleanup::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -22,7 +22,7 @@ peano::MappingSpecification   peanoclaw::mappings::Cleanup::touchVertexFirstTime
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Cleanup::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -30,7 +30,7 @@ peano::MappingSpecification   peanoclaw::mappings::Cleanup::enterCellSpecificati
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Cleanup::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -38,7 +38,7 @@ peano::MappingSpecification   peanoclaw::mappings::Cleanup::leaveCellSpecificati
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Cleanup::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -46,7 +46,7 @@ peano::MappingSpecification   peanoclaw::mappings::Cleanup::ascendSpecification(
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Cleanup::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 

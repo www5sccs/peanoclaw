@@ -14,7 +14,7 @@ std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , peanoclaw::mappings::Re
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -22,7 +22,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexLastTimeSp
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -30,7 +30,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexFirstTimeS
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -38,7 +38,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::enterCellSpecificatio
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -46,7 +46,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::leaveCellSpecificatio
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -54,7 +54,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::ascendSpecification()
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -398,8 +398,6 @@ void peanoclaw::mappings::Remesh::createCell(
   cellDescription.setRestrictionUpperBounds(-std::numeric_limits<double>::max());
 
   Patch fineGridPatch(
-    fineGridVerticesEnumerator.getVertexPosition(0),
-    fineGridVerticesEnumerator.getCellSize(),
     fineGridCell
   );
 
@@ -413,8 +411,6 @@ void peanoclaw::mappings::Remesh::createCell(
   //TODO Kann man die Root-Zelle richtig setzen? Dann kann man diese Abfrage rausschmeißen.
   if(coarseGridVerticesEnumerator.getLevel() > 0) {
     Patch coarseGridPatch(
-      coarseGridVerticesEnumerator.getVertexPosition(0),
-      coarseGridVerticesEnumerator.getCellSize(),
       coarseGridCell
     );
 
@@ -469,8 +465,6 @@ void peanoclaw::mappings::Remesh::destroyCell(
   if(coarseGridVerticesEnumerator.getLevel() > 0) {
     CellDescription& coarseCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0);
     Patch finePatch(
-      fineGridVerticesEnumerator.getVertexPosition(0),
-      fineGridVerticesEnumerator.getCellSize(),
       fineGridCell
     );
 
@@ -724,8 +718,6 @@ void peanoclaw::mappings::Remesh::enterCell(
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
   
   Patch patch(
-    fineGridVerticesEnumerator.getVertexPosition(0),
-    fineGridVerticesEnumerator.getCellSize(),
     fineGridCell
   );
 
@@ -758,8 +750,6 @@ void peanoclaw::mappings::Remesh::leaveCell(
   assertion(coarseGridCell.getCellDescriptionIndex() != -1);
 
   Patch finePatch(
-    fineGridVerticesEnumerator.getVertexPosition(0),
-    fineGridVerticesEnumerator.getCellSize(),
     fineGridCell
   );
 
@@ -768,7 +758,9 @@ void peanoclaw::mappings::Remesh::leaveCell(
 //  }
 
   if(coarseGridVerticesEnumerator.getLevel() > 0) {
-    Patch coarsePatch(coarseGridVerticesEnumerator.getVertexPosition(0), coarseGridVerticesEnumerator.getCellSize(), coarseGridCell);
+    Patch coarsePatch(
+      coarseGridCell
+    );
 
     //Copy vertices
     peanoclaw::Vertex vertices[TWO_POWER_D];

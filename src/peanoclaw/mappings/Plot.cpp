@@ -8,7 +8,7 @@
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -16,7 +16,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexLastTimeSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -24,7 +24,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexFirstTimeSpe
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -32,7 +32,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::enterCellSpecification(
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -40,7 +40,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::leaveCellSpecification(
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -48,7 +48,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::ascendSpecification() {
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -392,8 +392,6 @@ void peanoclaw::mappings::Plot::leaveCell(
   logTraceInWith4Arguments( "leaveCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
     if(fineGridCell.isLeaf()) {
       Patch patch(
-        fineGridVerticesEnumerator.getVertexPosition(0),
-        fineGridVerticesEnumerator.getCellSize(),
         fineGridCell
       );
 

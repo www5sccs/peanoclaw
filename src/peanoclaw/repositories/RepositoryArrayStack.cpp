@@ -91,9 +91,10 @@ peanoclaw::repositories::RepositoryArrayStack::~RepositoryArrayStack() {
 void peanoclaw::repositories::RepositoryArrayStack::restart(
   const tarch::la::Vector<DIMENSIONS,double>&  domainSize,
   const tarch::la::Vector<DIMENSIONS,double>&  domainOffset,
-  int                                          domainLevel
+  int                                          domainLevel,
+  const tarch::la::Vector<DIMENSIONS,int>&     positionOfCentralElementWithRespectToCoarserRemoteLevel
 ) {
-  logTraceInWith3Arguments( "restart(...)", domainSize, domainOffset, domainLevel );
+  logTraceInWith4Arguments( "restart(...)", domainSize, domainOffset, domainLevel, positionOfCentralElementWithRespectToCoarserRemoteLevel );
   #ifdef Parallel
   assertion( !tarch::parallel::Node::getInstance().isGlobalMaster());
   #endif
@@ -105,13 +106,13 @@ void peanoclaw::repositories::RepositoryArrayStack::restart(
   _vertexStack.clear();
   _cellStack.clear();
 
-  _gridWithInitialiseGrid.restart(domainSize,domainOffset,domainLevel);
-  _gridWithPlot.restart(domainSize,domainOffset,domainLevel);
-  _gridWithRemesh.restart(domainSize,domainOffset,domainLevel);
-  _gridWithSolveTimestep.restart(domainSize,domainOffset,domainLevel);
-  _gridWithSolveTimestepAndPlot.restart(domainSize,domainOffset,domainLevel);
-  _gridWithGatherCurrentSolution.restart(domainSize,domainOffset,domainLevel);
-  _gridWithCleanup.restart(domainSize,domainOffset,domainLevel);
+  _gridWithInitialiseGrid.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
+  _gridWithPlot.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
+  _gridWithRemesh.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
+  _gridWithSolveTimestep.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
+  _gridWithSolveTimestepAndPlot.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
+  _gridWithGatherCurrentSolution.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
+  _gridWithCleanup.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
 
  
    _solverState.restart();

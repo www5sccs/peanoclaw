@@ -25,7 +25,8 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
   double timeFactor;
   if(source.isVirtual()) {
     //TODO unterweg: Restricting to interval [0, 1]
-    timeFactor = (destination.getTimeUNew() - 0.0) / (1.0 - source.getTimeUOld());
+    //timeFactor = (destination.getTimeUNew() - 0.0) / (1.0 - source.getTimeUOld());
+    timeFactor = (destination.getTimeUNew() - 0.0) / 1.0;
   } else {
     if(tarch::la::greater(source.getTimeUNew() - source.getTimeUOld(), 0.0)) {
       timeFactor = (destination.getTimeUNew() - source.getTimeUOld()) / (source.getTimeUNew() - source.getTimeUOld());

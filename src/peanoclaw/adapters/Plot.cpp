@@ -227,34 +227,42 @@ void peanoclaw::adapters::Plot::mergeWithNeighbour(
 
 void peanoclaw::adapters::Plot::prepareSendToNeighbour(
   peanoclaw::Vertex&  vertex,
-  int  toRank,
-  int  level
+  int                                           toRank,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
 
-   _map2Remesh.prepareSendToNeighbour( vertex, toRank, level );
-   _map2Plot.prepareSendToNeighbour( vertex, toRank, level );
+   _map2Remesh.prepareSendToNeighbour( vertex, toRank, x, h, level );
+   _map2Plot.prepareSendToNeighbour( vertex, toRank, x, h, level );
 
 
 }
 
 void peanoclaw::adapters::Plot::prepareCopyToRemoteNode(
   peanoclaw::Vertex&  localVertex,
-  int  toRank
+  int                                           toRank,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
 
-   _map2Remesh.prepareCopyToRemoteNode( localVertex, toRank );
-   _map2Plot.prepareCopyToRemoteNode( localVertex, toRank );
+   _map2Remesh.prepareCopyToRemoteNode( localVertex, toRank, x, h, level );
+   _map2Plot.prepareCopyToRemoteNode( localVertex, toRank, x, h, level );
 
 
 }
 
 void peanoclaw::adapters::Plot::prepareCopyToRemoteNode(
   peanoclaw::Cell&  localCell,
-  int  toRank
+      int                                           toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
 ) {
 
-   _map2Remesh.prepareCopyToRemoteNode( localCell, toRank );
-   _map2Plot.prepareCopyToRemoteNode( localCell, toRank );
+   _map2Remesh.prepareCopyToRemoteNode( localCell, toRank, x, h, level );
+   _map2Plot.prepareCopyToRemoteNode( localCell, toRank, x, h, level );
 
 
 }
@@ -307,13 +315,17 @@ void peanoclaw::adapters::Plot::prepareSendToWorker(
 }
 
 void peanoclaw::adapters::Plot::prepareSendToMaster(
-  peanoclaw::Cell&     localCell,
-  peanoclaw::Vertex *  vertices,
-  const peano::grid::VertexEnumerator&  verticesEnumerator
+  peanoclaw::Cell&                       localCell,
+  peanoclaw::Vertex *                    vertices,
+  const peano::grid::VertexEnumerator&       verticesEnumerator, 
+  const peanoclaw::Vertex * const        coarseGridVertices,
+  const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
+  const peanoclaw::Cell&                 coarseGridCell,
+  const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
 ) {
 
-   _map2Remesh.prepareSendToMaster( localCell, vertices, verticesEnumerator );
-   _map2Plot.prepareSendToMaster( localCell, vertices, verticesEnumerator );
+   _map2Remesh.prepareSendToMaster( localCell, vertices, verticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
+   _map2Plot.prepareSendToMaster( localCell, vertices, verticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
 
 
 }
@@ -341,13 +353,20 @@ void peanoclaw::adapters::Plot::mergeWithMaster(
 }
 
 void peanoclaw::adapters::Plot::receiveDataFromMaster(
-  peanoclaw::Cell&                    receivedCell, 
-  peanoclaw::Vertex *                 receivedVertices,
-  const peano::grid::VertexEnumerator&    verticesEnumerator
+      peanoclaw::Cell&                        receivedCell, 
+      peanoclaw::Vertex *                     receivedVertices,
+      const peano::grid::VertexEnumerator&        receivedVerticesEnumerator,
+      peanoclaw::Vertex * const               receivedCoarseGridVertices,
+      const peano::grid::VertexEnumerator&        receivedCoarseGridVerticesEnumerator,
+      peanoclaw::Cell&                        receivedCoarseGridCell,
+      peanoclaw::Vertex * const               workersCoarseGridVertices,
+      const peano::grid::VertexEnumerator&        workersCoarseGridVerticesEnumerator,
+      peanoclaw::Cell&                        workersCoarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
 
-   _map2Remesh.receiveDataFromMaster( receivedCell, receivedVertices, verticesEnumerator );
-   _map2Plot.receiveDataFromMaster( receivedCell, receivedVertices, verticesEnumerator );
+   _map2Remesh.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
+   _map2Plot.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
 
 
 }
@@ -355,22 +374,28 @@ void peanoclaw::adapters::Plot::receiveDataFromMaster(
 
 void peanoclaw::adapters::Plot::mergeWithWorker(
   peanoclaw::Cell&           localCell, 
-  const peanoclaw::Cell&     receivedMasterCell
+  const peanoclaw::Cell&     receivedMasterCell,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+  int                                          level
 ) {
 
-   _map2Remesh.mergeWithWorker( localCell, receivedMasterCell );
-   _map2Plot.mergeWithWorker( localCell, receivedMasterCell );
+   _map2Remesh.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
+   _map2Plot.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
 
 
 }
 
 void peanoclaw::adapters::Plot::mergeWithWorker(
   peanoclaw::Vertex&        localVertex,
-  const peanoclaw::Vertex&  receivedMasterVertex
+  const peanoclaw::Vertex&  receivedMasterVertex,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
 
-   _map2Remesh.mergeWithWorker( localVertex, receivedMasterVertex );
-   _map2Plot.mergeWithWorker( localVertex, receivedMasterVertex );
+   _map2Remesh.mergeWithWorker( localVertex, receivedMasterVertex, x, h, level );
+   _map2Plot.mergeWithWorker( localVertex, receivedMasterVertex, x, h, level );
 
 
 }

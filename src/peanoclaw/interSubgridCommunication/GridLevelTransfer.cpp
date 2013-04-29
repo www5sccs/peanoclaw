@@ -27,11 +27,11 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::vetoCoarseningIfNe
   assertion(!finePatch.isLeaf());
 
   if(tarch::la::smaller(finePatch.getTimestepSize(), 0.0)) {
-    bool patchBlocksErasing = true;
+    bool patchBlocksErasing = false;
     for( int i = 0; i < TWO_POWER_D; i++ ) {
       peanoclaw::Vertex& vertex = fineGridVertices[fineGridVerticesEnumerator(i)];
       if(vertex.shouldErase()) {
-        patchBlocksErasing = false;
+        patchBlocksErasing = true;
       }
       vertex.setSubcellEraseVeto(i);
     }
@@ -271,9 +271,9 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
 
     //Switch to leaf or non-virtual
     if(isPeanoCellLeaf) {
-      virtualPatch.switchToLeaf();
+      finePatch.switchToLeaf();
     } else {
-      virtualPatch.switchToNonVirtual();
+      finePatch.switchToNonVirtual();
     }
     assertion(!virtualPatchDescription.getIsVirtual());
   }

@@ -3,12 +3,13 @@
 #include "peanoclaw/mappings/SolveTimestep.h"
 #include "peanoclaw/Patch.h"
 
+#include "peano/grid/aspects/VertexStateAnalysis.h"
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -16,7 +17,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexLas
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -24,7 +25,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexFir
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -32,7 +33,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::enterCellSpeci
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -40,7 +41,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::leaveCellSpeci
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -48,7 +49,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::ascendSpecific
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -376,8 +377,7 @@ void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
   // Application driven refinement control
   if(
       fineGridVertex.shouldRefine()
-      //&& fineGridVertex.getRefinementControl() != peanoclaw::Vertex::Records::Refined // MARK roland
-      && fineGridVertex.getRefinementControl() == peanoclaw::Vertex::Records::Unrefined // MARK roland
+      && fineGridVertex.getRefinementControl() == peanoclaw::Vertex::Records::Unrefined
     ) {
     fineGridVertex.refine();
   } else if (
@@ -432,8 +432,6 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
  
   //Create patch
   Patch patch = Patch(
-    fineGridVerticesEnumerator.getVertexPosition(0),
-    fineGridVerticesEnumerator.getCellSize(),
     fineGridCell
   );
 
@@ -461,16 +459,25 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
     assertion(patch.isLeaf() || patch.isVirtual());
 
+    //Does Patch coarsen?
+    bool patchCoarsening = peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Erasing
+                            );
+
     //Perform timestep
     double maximumTimestepSize = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
     if (
          tarch::la::greater(maximumTimestepSize, 0.0)
          && patch.isAllowedToAdvanceInTime()
          && !patch.shouldSkipNextGridIteration()
+         && !patchCoarsening
        ) {
 
       // Copy uNew to uOld
-//      patch.copyUNewToUOld();
+      patch.copyUNewToUOld();
 
       // Set boundary conditions (For hanging nodes the isBoundary() is not valid. Therefore, we simulate it by checking for the domainoffset and -size.)
       if((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()

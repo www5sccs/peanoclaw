@@ -6,7 +6,7 @@
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -14,7 +14,7 @@ peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::touchV
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -22,7 +22,7 @@ peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::touchV
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -30,7 +30,7 @@ peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::enterC
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -38,7 +38,7 @@ peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::leaveC
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -46,7 +46,7 @@ peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::ascend
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::GatherCurrentSolution::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -376,8 +376,6 @@ void peanoclaw::mappings::GatherCurrentSolution::enterCell(
  
   if(fineGridCell.isLeaf()) {
     Patch patch(
-      fineGridVerticesEnumerator.getVertexPosition(0),
-      fineGridVerticesEnumerator.getCellSize(),
       fineGridCell
     );
 

@@ -16,7 +16,7 @@
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/State.h"
 
-#include "peanoclaw/mappings/Cleanup.h"
+ #include "peanoclaw/mappings/Cleanup.h"
 
 
 
@@ -141,25 +141,33 @@ class peanoclaw::adapters::Cleanup {
       peanoclaw::Vertex&  vertex,
       const peanoclaw::Vertex&  neighbour,
       int                                           fromRank,
-      const tarch::la::Vector<DIMENSIONS,double>&   fineGridX,
-      const tarch::la::Vector<DIMENSIONS,double>&   fineGridH,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
       int                                           level
     );
 
     void prepareSendToNeighbour(
       peanoclaw::Vertex&  vertex,
-      int  toRank,
-      int  level
+      int                                           toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
     );
 
     void prepareCopyToRemoteNode(
       peanoclaw::Vertex&  localVertex,
-      int  toRank
+      int                                           toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
     );
 
     void prepareCopyToRemoteNode(
       peanoclaw::Cell&  localCell,
-      int  toRank
+      int  toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   cellCentre,
+      const tarch::la::Vector<DIMENSIONS,double>&   cellSize,
+      int                                           level
     );
 
     void mergeWithRemoteDataDueToForkOrJoin(
@@ -192,9 +200,13 @@ class peanoclaw::adapters::Cleanup {
     );
 
     void prepareSendToMaster(
-      peanoclaw::Cell&     localCell,
-      peanoclaw::Vertex *  vertices,
-      const peano::grid::VertexEnumerator&  verticesEnumerator
+      peanoclaw::Cell&                       localCell,
+      peanoclaw::Vertex *                    vertices,
+      const peano::grid::VertexEnumerator&       verticesEnumerator, 
+      const peanoclaw::Vertex * const        coarseGridVertices,
+      const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
+      const peanoclaw::Cell&                 coarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
     );
 
     void mergeWithMaster(
@@ -215,21 +227,34 @@ class peanoclaw::adapters::Cleanup {
 
 
     void receiveDataFromMaster(
-      peanoclaw::Cell&                    receivedCell, 
-      peanoclaw::Vertex *                 receivedVertices,
-      const peano::grid::VertexEnumerator&    verticesEnumerator
+      peanoclaw::Cell&                        receivedCell, 
+      peanoclaw::Vertex *                     receivedVertices,
+      const peano::grid::VertexEnumerator&        receivedVerticesEnumerator,
+      peanoclaw::Vertex * const               receivedCoarseGridVertices,
+      const peano::grid::VertexEnumerator&        receivedCoarseGridVerticesEnumerator,
+      peanoclaw::Cell&                        receivedCoarseGridCell,
+      peanoclaw::Vertex * const               workersCoarseGridVertices,
+      const peano::grid::VertexEnumerator&        workersCoarseGridVerticesEnumerator,
+      peanoclaw::Cell&                        workersCoarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
     );
 
 
     void mergeWithWorker(
       peanoclaw::Cell&           localCell, 
-      const peanoclaw::Cell&     receivedMasterCell
+      const peanoclaw::Cell&     receivedMasterCell,
+      const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+      const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+      int                                          level
     );
 
 
     void mergeWithWorker(
       peanoclaw::Vertex&        localVertex,
-      const peanoclaw::Vertex&  receivedMasterVertex
+      const peanoclaw::Vertex&  receivedMasterVertex,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
     );
     #endif
 

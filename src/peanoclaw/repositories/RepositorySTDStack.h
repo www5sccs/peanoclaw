@@ -16,13 +16,13 @@
 #include "peano/stacks/VertexSTDStack.h"
 
 
- #include "peanoclaw/adapters/InitialiseGrid.h"
- #include "peanoclaw/adapters/Plot.h"
- #include "peanoclaw/adapters/Remesh.h"
- #include "peanoclaw/adapters/SolveTimestep.h"
- #include "peanoclaw/adapters/SolveTimestepAndPlot.h"
- #include "peanoclaw/adapters/GatherCurrentSolution.h"
- #include "peanoclaw/adapters/Cleanup.h"
+ #include "peanoclaw/adapters/InitialiseGrid.h" 
+ #include "peanoclaw/adapters/Plot.h" 
+ #include "peanoclaw/adapters/Remesh.h" 
+ #include "peanoclaw/adapters/SolveTimestep.h" 
+ #include "peanoclaw/adapters/SolveTimestepAndPlot.h" 
+ #include "peanoclaw/adapters/GatherCurrentSolution.h" 
+ #include "peanoclaw/adapters/Cleanup.h" 
 
 
 
@@ -98,7 +98,8 @@ class peanoclaw::repositories::RepositorySTDStack: public peanoclaw::repositorie
     virtual void restart(
       const tarch::la::Vector<DIMENSIONS,double>&  domainSize,
       const tarch::la::Vector<DIMENSIONS,double>&  domainOffset,
-      int                                          domainLevel
+      int                                          domainLevel,
+      const tarch::la::Vector<DIMENSIONS,int>&     positionOfCentralElementWithRespectToCoarserRemoteLevel
     );
          
     virtual void terminate();
