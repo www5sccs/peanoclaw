@@ -2,13 +2,13 @@ component: PeanoClaw
 namespace: ::peanoclaw
 
 vertex: 
-  dastgen-file: Vertex.def
+  dastgen-file: dastgen/PeanoClawVertex.def
   
 cell:
-  dastgen-file: Cell.def
+  dastgen-file: dastgen/PeanoClawCell.def
 
 state:
-  dastgen-file: State.def
+  dastgen-file: dastgen/PeanoClawState.def
 
 event-mapping:
   name: InitialiseGrid

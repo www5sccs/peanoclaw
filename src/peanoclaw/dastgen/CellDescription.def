@@ -65,6 +65,12 @@ class peanoclaw::records::CellDescription {
    * The constraining time for a patch to perform a timestep.
    */
   parallelise persistent double minimalNeighborTimeConstraint;
+  
+  /**
+   * Holds the index of the neighbor patch constraining this
+   * patch.
+   */
+  persistent int constrainingNeighborIndex;
 
   /**
    * The constraining time for a patch to perform a timestep,
@@ -126,8 +132,8 @@ class peanoclaw::records::CellDescription {
   /*
    * Heap data indices
    */
-  parallelise persistent int cellDescriptionIndex;
-  parallelise persistent int uOldIndex;
-  parallelise persistent int uNewIndex;
-  parallelise persistent int auxIndex;
+  persistent int cellDescriptionIndex;
+  persistent int uOldIndex;
+  persistent int uNewIndex;
+  persistent int auxIndex;
 };
