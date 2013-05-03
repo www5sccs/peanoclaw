@@ -27,12 +27,26 @@ peanoclaw::Area peanoclaw::Area::mapToPatch(
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSubcellSize();
   tarch::la::Vector<DIMENSIONS, double> position = tarch::la::multiplyComponents(sourceSubcellSize, _offset.convertScalar<double>());
   position += source.getPosition() - destination.getPosition();
-  destinationArea._offset = tarch::la::multiplyComponents((position+epsilon).convertScalar<double>(), tarch::la::invertEntries(destination.getSubcellSize())).convertScalar<int>();
+
+  //destinationArea._offset = ((position+epsilon).convertScalar<double>() / destination.getSubcellSize()).convertScalar<int>();
+  tarch::la::Vector<DIMENSIONS, double> offsetTemp = (position+epsilon).convertScalar<double>();
+  for (int i=0; i < DIMENSIONS; i++) {
+    offsetTemp[i] /= destination.getSubcellSize()[i];
+  }
+  destinationArea._offset = offsetTemp.convertScalar<int>();
 
   //Size
   tarch::la::Vector<DIMENSIONS, double> size = tarch::la::multiplyComponents(sourceSubcellSize, (_offset + _size).convertScalar<double>());
   size += (source.getPosition() - destination.getPosition());
-  destinationArea._size = (tarch::la::multiplyComponents((size - epsilon).convertScalar<double>(), tarch::la::invertEntries(destination.getSubcellSize())) - destinationArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
+  //destinationArea._size = ((size - epsilon).convertScalar<double>() / destination.getSubcellSize() - destinationArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
+  
+  tarch::la::Vector<DIMENSIONS, double> sizeTemp = (size - epsilon).convertScalar<double>();
+  for (int i=0; i < DIMENSIONS; i++) {
+    sizeTemp[i] /= destination.getSubcellSize()[i];
+  }
+  sizeTemp -= offsetTemp;
+  sizeTemp += 1.0;
+  destinationArea._size = sizeTemp.convertScalar<int>();
 
   return destinationArea;
 }
@@ -47,8 +61,22 @@ peanoclaw::Area peanoclaw::Area::mapCellToPatch(
 ) const {
   Area cellArea;
 
-  cellArea._offset = tarch::la::multiplyComponents((coarseSubcellPosition - finePosition + epsilon), tarch::la::invertEntries(fineSubcellSize)).convertScalar<int>();
-  cellArea._size = (tarch::la::multiplyComponents((coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon), tarch::la::invertEntries(fineSubcellSize)) - cellArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
+  //cellArea._offset = ((coarseSubcellPosition - finePosition + epsilon) / fineSubcellSize).convertScalar<int>();
+  tarch::la::Vector<DIMENSIONS, double> offsetTemp = (coarseSubcellPosition - finePosition + epsilon);
+  for (int d=0; d < DIMENSIONS; d++) {
+    offsetTemp[d] /= fineSubcellSize[d];
+  }
+  cellArea._offset = offsetTemp.convertScalar<int>();
+
+ 
+  //cellArea._size = ((coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon) / fineSubcellSize - cellArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
+  tarch::la::Vector<DIMENSIONS, double> sizeTemp = coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon;
+  for (int d=0; d < DIMENSIONS; d++) {
+    sizeTemp[d] /= fineSubcellSize[d];
+  }
+  sizeTemp -= offsetTemp;
+  sizeTemp += 1.0;
+  cellArea._size = sizeTemp.convertScalar<int>();
 
   tarch::la::Vector<DIMENSIONS, int> cellAreaUpperBound = cellArea._offset + cellArea._size;
   tarch::la::Vector<DIMENSIONS, int> areaUpperBound = _offset + _size;
