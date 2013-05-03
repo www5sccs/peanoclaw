@@ -76,7 +76,33 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
       int cellDescriptionIndex
     );
 
+    /**
+     * @see getAdjacentCellDescriptionIndexInPeanoOrder
+     */
+    void setAdjacentCellDescriptionIndexInPeanoOrder(
+      int cellIndex,
+      int cellDescriptionIndex
+    );
+
     int getAdjacentCellDescriptionIndex(int cellIndex) const;
+
+    /**
+     * PeanoClaw stores the adjacent cells in inverse-z-order, i.e.
+     *
+     * 1          0
+     *    vertex
+     * 3          2
+     *
+     * while Peano stores in z-order, i.e.
+     * 2          3
+     *    vertex
+     * 0          1
+     *
+     * This method grants access to the adjacent cell descriptions while
+     * iterating through the adjacent cells in the same way like for the
+     * adjacent ranks.
+     */
+    int getAdjacentCellDescriptionIndexInPeanoOrder(int cellIndex) const;
 
     /**
      * Fills the ghostlayers of all adjacent patches.

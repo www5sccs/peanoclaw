@@ -25,17 +25,22 @@ peanoclaw::Vertex::Vertex(const Base::PersistentVertex& argument):
 }
 
 void peanoclaw::Vertex::setAdjacentCellDescriptionIndex(int cellIndex, int cellDescriptionIndex) {
-//  logInfo("", __LINE__ << "Accessing index " << _vertexData.getVertexDescriptionIndex());
-//  assertionMsg(!isHangingNode(), "Storing adjacent indices on hanging nodes is not allowed.");
-//  peano::heap::Heap<VertexDescription>::getInstance().getData(_vertexData.getVertexDescriptionIndex())[0].setIndicesOfAdjacentCellDescriptions(cellIndex, cellDescriptionIndex);
   _vertexData.setIndicesOfAdjacentCellDescriptions(cellIndex, cellDescriptionIndex);
 }
 
+void peanoclaw::Vertex::setAdjacentCellDescriptionIndexInPeanoOrder(
+  int cellIndex,
+  int cellDescriptionIndex
+) {
+  setAdjacentCellDescriptionIndex(TWO_POWER_D - cellIndex - 1, cellDescriptionIndex);
+}
+
 int peanoclaw::Vertex::getAdjacentCellDescriptionIndex(int cellIndex) const {
-//  logInfo("", __LINE__ << "Accessing index " << _vertexData.getVertexDescriptionIndex());
-//  assertionMsg(!isHangingNode(), "Storing adjacent indices on hanging nodes is not allowed.");
-//  return peano::heap::Heap<VertexDescription>::getInstance().getData(_vertexData.getVertexDescriptionIndex())[0].getIndicesOfAdjacentCellDescriptions(cellIndex);
   return _vertexData.getIndicesOfAdjacentCellDescriptions(cellIndex);
+}
+
+int peanoclaw::Vertex::getAdjacentCellDescriptionIndexInPeanoOrder(int cellIndex) const {
+  return getAdjacentCellDescriptionIndex(TWO_POWER_D - cellIndex - 1);
 }
 
 void peanoclaw::Vertex::fillAdjacentGhostLayers(
@@ -48,12 +53,13 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   //TODO unterweg Debug
   #ifdef Debug
   bool plotVertex = //tarch::la::equals(getX()(0), 7.0/27.0) && tarch::la::equals(getX()(1), 4.0/27.0)
-      //|| tarch::la::equals(getX()(0), 1.0/3.0) && tarch::la::equals(getX()(1), 5.0/9.0)
+//       tarch::la::equals(getX()(0), 2.0/3.0) && tarch::la::equals(getX()(1), 8.0/9.0)
       //|| tarch::la::equals(getX()(0), 1.0/3.0) && tarch::la::equals(getX()(1), 4.0/9.0)
       //|| tarch::la::equals(getX()(0), 4.0/9.0) && tarch::la::equals(getX()(1), 4.0/9.0)
       //||tarch::la::equals(getX()(0), 1.0/3.0) && tarch::la::equals(getX()(1), 14.0/27.0)
 //      tarch::la::equals(getX()(0), 3.0/9.0) && tarch::la::equals(getX()(1), 7.0/9.0)
       false
+//    && level == 4
   ;
   #endif
 
@@ -70,6 +76,10 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   Patch patches[TWO_POWER_D];
   dfor2(cellIndex)
     if(getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
+
+//      assertion4(peano::heap::Heap<Data>::getInstance().isValidIndex(cellDescriptions[cellIndexScalar]->getUNewIndex()), cellIndexScalar, getX(), level, cellDescriptions[cellIndexScalar]->getUNewIndex());
+//      assertion4(peano::heap::Heap<Data>::getInstance().isValidIndex(cellDescriptions[cellIndexScalar]->getUOldIndex()), cellIndexScalar, getX(), level, cellDescriptions[cellIndexScalar]->getUOldIndex());
+
       patches[cellIndexScalar] = Patch(
         *cellDescriptions[cellIndexScalar]
       );
@@ -78,7 +88,11 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
 
   #ifdef Debug
   if(plotVertex) {
-    std::cout << "Filling vertex (hanging=" << isHangingNode() << ") at " << getX() << " on level " << getLevel() << std::endl;
+    std::cout << "Filling vertex ("
+        #ifdef Parallel
+        << "rank=" << tarch::parallel::Node::getInstance().getRank() << ","
+        #endif
+        <<"hanging=" << isHangingNode() << ") at " << getX() << " on level " << getLevel() << std::endl;
 
     for (int i = 0; i < TWO_POWER_D; i++) {
       std::cout << " cellDescription(" << i << ")=" << getAdjacentCellDescriptionIndex(i);
@@ -103,8 +117,10 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   if(plotVertex
   ) {
     for (int i = 0; i < TWO_POWER_D; i++) {
-      std::cout << "Patch " << i << " at " << patches[i].getPosition() << " of size " << patches[i].getSize() << ": "
-          << std::endl << patches[i].toStringUNew() << std::endl << patches[i].toStringUOldWithGhostLayer();
+      if(patches[i].isValid()) {
+        std::cout << "Patch " << i << " at " << patches[i].getPosition() << " of size " << patches[i].getSize() << ": "
+            << std::endl << patches[i].toStringUNew() << std::endl << patches[i].toStringUOldWithGhostLayer();
+      }
     }
   }
   #endif
