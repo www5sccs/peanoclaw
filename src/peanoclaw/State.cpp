@@ -95,8 +95,8 @@ void peanoclaw::State::setNumerics(peanoclaw::Numerics& numerics) {
   _numerics = &numerics;
 }
 
-peanoclaw::Numerics& peanoclaw::State::getNumerics() const {
-  return *_numerics;
+peanoclaw::Numerics* peanoclaw::State::getNumerics() const {
+  return _numerics;
 }
 
 void peanoclaw::State::setProbeList(std::vector<peanoclaw::statistics::Probe> probeList) {

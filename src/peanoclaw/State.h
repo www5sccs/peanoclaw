@@ -121,7 +121,7 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       void setNumerics(peanoclaw::Numerics& numerics);
 
-      peanoclaw::Numerics& getNumerics() const;
+      peanoclaw::Numerics* getNumerics() const;
 
       void setProbeList(std::vector<peanoclaw::statistics::Probe> probeList);
 
