@@ -55,6 +55,8 @@ private:
 
   double _totalRuntime;
 
+  peanoclaw::Numerics& _numerics;
+
 public:
   /**
    * Sets everything up but does not start any grid-traversal, yet.
@@ -75,17 +77,17 @@ public:
 
   virtual ~PeanoClawLibraryRunner();
 
+  peanoclaw::Numerics& getNumerics() { return _numerics; }
+
   /**
    * Evolves the solution up to the given point in time.
    */
-  void evolveToTime(
-    double time//,
-//    peanoclaw::Numerics& numerics
-  );
+  void evolveToTime( double time  );
 
   /**
    * Gathers the current solution, i.e. all patches.
    */
   void gatherCurrentSolution();
+  int runWorker();
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_RUNNERS_PEANOCLAWLIBRARYRUNNER_H_ */
