@@ -1,5 +1,5 @@
 /*
- * GridLevelTransfer.h
+w * GridLevelTransfer.h
  *
  *  Created on: Feb 29, 2012
  *      Author: Kristof Unterweger
@@ -135,9 +135,9 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      * triggers the synchronization of subgrids.
      */
     void vetoCoarseningIfNecessary (
-      Patch&                                                      finePatch,
-      peanoclaw::Vertex * const fineGridVertices,
-      const peano::grid::VertexEnumerator&       fineGridVerticesEnumerator
+      Patch&                               patch,
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
     );
 
   public:
@@ -149,14 +149,47 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
     virtual ~GridLevelTransfer();
 
     /**
+     * Called when a patch is transfered during a fork or a join operation.
+     */
+//    void updatePatchStateDuringForkOrJoin(
+//      Patch& finePatch,
+//      bool   needsToHoldGridData
+//    );
+
+    /**
+     * Called at least once before stepDown is called for the according patch.
      *
+     * Used for switching the patch to a virtual state if necessary.
+     *
+     * @param needsToHoldGridData Indicates wether this patch is supposed to
+     * hold grid data. Either as a leaf patch of as a virtual patch.
+     */
+//    void updatePatchStateBeforeStepDown(
+//      Patch& finePatch,
+//      bool   needsToHoldGridData
+//    );
+
+    /**
+     * Called at least once before stepDown is called for the according patch.
+     *
+     * Used for switching the patch to a virtual state if necessary.
+     */
+    void updatePatchStateBeforeStepDown(
+      Patch&                               finePatch,
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
+      bool                                 isInitializing,
+      bool                                 isInvolvedInFork
+    );
+
+    /**
+     * Performs the operations necessary when stepping into a cell.
      */
     void stepDown(
       int                                                         coarseCellDescriptionIndex,
       Patch&                                                      finePatch,
-      peanoclaw::Vertex * const fineGridVertices,
-      const peano::grid::VertexEnumerator&       fineGridVerticesEnumerator,
-      bool                                                        isInitializing
+      peanoclaw::Vertex * const                                   fineGridVertices,
+      const peano::grid::VertexEnumerator&                        fineGridVerticesEnumerator
     );
 
     /**
@@ -167,12 +200,21 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      * state of the containing Peano cell.
      */
     void stepUp(
-      int                                                         coarseCellDescriptionIndex,
-      Patch&                                                      finePatch,
-      bool                                                        isPeanoCellLeaf,
-      peanoclaw::Vertex * const fineGridVertices,
-      const peano::grid::VertexEnumerator&       fineGridVerticesEnumerator
+      int                                  coarseCellDescriptionIndex,
+      Patch&                               finePatch,
+      bool                                 isPeanoCellLeaf,
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
     );
+
+    /**
+     * Called after calling stepUp the same number of times as updatePatchStateBeforeStepDown was
+     * called in the same iteration for the same patch.
+     */
+//    void updatePatchStateAfterStepUp(
+//      Patch& finePatch,
+//      bool   isPeanoCellLeaf
+//    );
 
     /**
      * In an adaptive grid, not all of the $2^d$ adjacent cells exist for hanging

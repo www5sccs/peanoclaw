@@ -12,7 +12,6 @@
 
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
-#include "tarch/logging/Log.h"
 
 namespace peanoclaw {
   namespace interSubgridCommunication {
@@ -29,13 +28,11 @@ class peanoclaw::interSubgridCommunication::DefaultInterpolation
 
   private:
     /**
-     * Logging device.
+     * Logging device for the trace macros.
      */
-    static tarch::logging::Log _log;
+    static tarch::logging::Log  _log;
 
   public:
-    virtual ~DefaultInterpolation();
-
     /**
      * @see peanoclaw::interSubgridCommunication::Interpolation
      */

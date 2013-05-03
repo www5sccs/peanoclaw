@@ -27,9 +27,9 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
 
   private:
     /**
-     * Logging device.
+     * Logging device for the trace macros.
      */
-    static tarch::logging::Log _log;
+    static tarch::logging::Log  _log;
 
     /**
      * Returns the area of the region where the two given

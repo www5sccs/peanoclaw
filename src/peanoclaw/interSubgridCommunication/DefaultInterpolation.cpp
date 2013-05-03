@@ -10,10 +10,11 @@
 #include "peanoclaw/Patch.h"
 #include "peano/utils/Loop.h"
 
-tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultInterpolation::_log("peanoclaw::interSubgridCommunication::DefaultInterpolation");
+#ifdef Parallel
+#include "tarch/parallel/Node.h"
+#endif
 
-peanoclaw::interSubgridCommunication::DefaultInterpolation::~DefaultInterpolation(){
-}
+tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultInterpolation::_log( "peanoclaw::interSubgridCommunication::DefaultInterpolation" ); 
 
 void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
   const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
@@ -160,11 +161,15 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
   }
 
   //TODO unterweg debug
-  #ifdef Asserts
+  #if defined(Asserts)
   if(destination.containsNaN()) {
-    std::cout << "Invalid interpolation from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
+    std::cout << "Invalid interpolation "
+        #ifdef Parallel
+        << "on rank " << tarch::parallel::Node::getInstance().getRank() << " "
+        #endif
+        << "from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
               << std::endl << "to patch" << std::endl << destination.toString() << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer() << std::endl;
-    throw "";
+    assertion(false);
   }
 
   dfor(subcellIndex, destinationSize) {
@@ -172,49 +177,53 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
     double checkedValue
       = interpolateToUOld ? destination.getValueUOld(subcellIndexInDestinationPatch, 0): destination.getValueUNew(subcellIndexInDestinationPatch, 0);
     if(checkedValue<= 0.0) {
-      std::cout << "Invalid interpolation from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
+      std::cout << "Invalid interpolation "
+          #ifdef Parallel
+          << "on rank " << tarch::parallel::Node::getInstance().getRank() << " "
+          #endif
+          << "from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
           << std::endl << "to patch" << std::endl << destination.toString() << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer()
           << std::endl << "value=" << destination.getValueUOld(subcellIndexInDestinationPatch, 0) << std::endl;
-      throw "";
+      assertion(false);
     }
   }
 
   //Find max and min values to check correctness of the interpolation
-  double* min = new double[source.getUnknownsPerSubcell()];
-  double* max = new double[source.getUnknownsPerSubcell()];
-  for (int d = 0; d < DIMENSIONS; d++) {
-    for (int unknown = 0; unknown < source.getUnknownsPerSubcell(); unknown++) {
-      min[unknown] = std::numeric_limits<double>::max();
-      max[unknown] = -std::numeric_limits<double>::max();
-    }
-  }
-  dfor(subcellIndex, source.getSubdivisionFactor() - 1) {
-    for (int unknown = 0; unknown < source.getUnknownsPerSubcell(); unknown++) {
-      double difference = 0.0;
-      double minUValue = std::numeric_limits<double>::max();
-      double maxUValue = -std::numeric_limits<double>::max();
-      for(int d = 0; d < DIMENSIONS; d++) {
-        tarch::la::Vector<DIMENSIONS, int> offset(0.0);
-        offset(d) = 1;
-
-        minUValue = std::min(minUValue, std::min(source.getValueUOld(subcellIndex, unknown), source.getValueUOld(subcellIndex + offset, unknown)));
-        maxUValue = std::max(maxUValue, std::max(source.getValueUOld(subcellIndex, unknown), source.getValueUOld(subcellIndex + offset, unknown)));
-
-        double differenceUOld = std::abs(source.getValueUOld(subcellIndex, unknown) - source.getValueUOld(subcellIndex + offset, unknown));
-        double differenceUNew = std::abs(source.getValueUNew(subcellIndex, unknown) - source.getValueUNew(subcellIndex + offset, unknown));
-        difference += differenceUOld * (1.0 - timeFactor) + differenceUNew * timeFactor;
-      }
-
-      double localMin = minUValue - difference / 2.0;
-      double localMax = maxUValue + difference / 2.0;
-
-      min[unknown] = std::min(localMin, min[unknown]);
-      max[unknown] = std::max(localMax, max[unknown]);
-    }
-  }
-
-  delete[] min;
-  delete[] max;
+//  double* min = new double[source.getUnknownsPerSubcell()];
+//  double* max = new double[source.getUnknownsPerSubcell()];
+//  for (int d = 0; d < DIMENSIONS; d++) {
+//    for (int unknown = 0; unknown < source.getUnknownsPerSubcell(); unknown++) {
+//      min[unknown] = std::numeric_limits<double>::max();
+//      max[unknown] = -std::numeric_limits<double>::max();
+//    }
+//  }
+//  dfor(subcellIndex, source.getSubdivisionFactor() - 1) {
+//    for (int unknown = 0; unknown < source.getUnknownsPerSubcell(); unknown++) {
+//      double difference = 0.0;
+//      double minUValue = std::numeric_limits<double>::max();
+//      double maxUValue = -std::numeric_limits<double>::max();
+//      for(int d = 0; d < DIMENSIONS; d++) {
+//        tarch::la::Vector<DIMENSIONS, int> offset(0.0);
+//        offset(d) = 1;
+//
+//        minUValue = std::min(minUValue, std::min(source.getValueUOld(subcellIndex, unknown), source.getValueUOld(subcellIndex + offset, unknown)));
+//        maxUValue = std::max(maxUValue, std::max(source.getValueUOld(subcellIndex, unknown), source.getValueUOld(subcellIndex + offset, unknown)));
+//
+//        double differenceUOld = std::abs(source.getValueUOld(subcellIndex, unknown) - source.getValueUOld(subcellIndex + offset, unknown));
+//        double differenceUNew = std::abs(source.getValueUNew(subcellIndex, unknown) - source.getValueUNew(subcellIndex + offset, unknown));
+//        difference += differenceUOld * (1.0 - timeFactor) + differenceUNew * timeFactor;
+//      }
+//
+//      double localMin = minUValue - difference / 2.0;
+//      double localMax = maxUValue + difference / 2.0;
+//
+//      min[unknown] = std::min(localMin, min[unknown]);
+//      max[unknown] = std::max(localMax, max[unknown]);
+//    }
+//  }
+//
+//  delete[] min;
+//  delete[] max;
   #endif
 
   logTraceOut("");

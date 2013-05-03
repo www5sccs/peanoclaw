@@ -10,6 +10,8 @@
 
 #include "peano/utils/Loop.h"
 
+#include "tarch/parallel/Node.h"
+
 tarch::logging::Log peanoclaw::interSubgridCommunication::GhostLayerCompositor::_log("peanoclaw::interSubgridCommunication::GhostLayerCompositor");
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerDataBlock(
@@ -341,8 +343,14 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateUpperGhos
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborTime(int updatedPatchIndex, int neighborPatchIndex) {
-  _patches[updatedPatchIndex].updateMinimalNeighborTimeConstraint(_patches[neighborPatchIndex].getTimeConstraint());
-  _patches[updatedPatchIndex].updateMaximalNeighborTimeInterval(_patches[neighborPatchIndex].getCurrentTime(), _patches[neighborPatchIndex].getTimestepSize());
+  _patches[updatedPatchIndex].updateMinimalNeighborTimeConstraint(
+    _patches[neighborPatchIndex].getTimeConstraint(),
+    _patches[neighborPatchIndex].getCellDescriptionIndex()
+  );
+  _patches[updatedPatchIndex].updateMaximalNeighborTimeInterval(
+    _patches[neighborPatchIndex].getCurrentTime(),
+    _patches[neighborPatchIndex].getTimestepSize()
+  );
 
   if(_patches[neighborPatchIndex].isLeaf()) {
     _patches[updatedPatchIndex].updateMinimalLeafNeighborTimeConstraint(_patches[neighborPatchIndex].getTimeConstraint());
