@@ -55,12 +55,79 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::descendSpecifi
 
 tarch::logging::Log                peanoclaw::mappings::SolveTimestep::_log( "peanoclaw::mappings::SolveTimestep" );
 
-bool shouldAdvanceInTime(
-  const peanoclaw::Patch&              patch,
-  peanoclaw::Vertex * const            coarseGridVertices,
-  const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
+bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
+  const peanoclaw::Patch&                  patch,
+  double                                   maximumTimestepDueToGlobalTimestep,
+  peanoclaw::Vertex * const                coarseGridVertices,
+  const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator,
+  peanoclaw::statistics::LevelInformation& levelInformation
 ) {
-  return true;
+  //Does Patch coarsen?
+  bool patchCoarsening = peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                          (
+                            coarseGridVertices,
+                            coarseGridVerticesEnumerator,
+                            peanoclaw::records::Vertex::Erasing
+                          )
+                          &&
+                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                          (
+                            coarseGridVertices,
+                            coarseGridVerticesEnumerator,
+                            peanoclaw::records::Vertex::Refined
+                          )
+                          &&
+                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                          (
+                            coarseGridVertices,
+                            coarseGridVerticesEnumerator,
+                            peanoclaw::records::Vertex::Refining
+                          );
+
+  //Statistics
+  if(!tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)) {
+    levelInformation._patchesBlockedDueToGlobalTimestep++;
+  } else if (!patch.isAllowedToAdvanceInTime()) {
+    levelInformation._patchesBlockedDueToNeighbors++;
+  } else if (patch.shouldSkipNextGridIteration()) {
+    levelInformation._patchesSkippingIteration++;
+  } else if (patchCoarsening) {
+    levelInformation._patchesCoarsening++;
+  }
+
+  return
+    tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)
+    && patch.isAllowedToAdvanceInTime()
+    && !patch.shouldSkipNextGridIteration()
+    && !patchCoarsening;
+}
+
+void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
+  peanoclaw::Patch& patch,
+  peanoclaw::Vertex * const                fineGridVertices,
+  const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator
+) {
+  // Set boundary conditions (For hanging nodes the isBoundary() is not valid. Therefore, we simulate it by checking for the domainoffset and -size.)
+  if((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()
+          || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(0)))
+          && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(1) == -1) {
+    _numerics->fillBoundaryLayer(patch, 0, false);
+  }
+  if((fineGridVertices[fineGridVerticesEnumerator(2)].isBoundary()
+      || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(2), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(2)))
+      && fineGridVertices[fineGridVerticesEnumerator(2)].getAdjacentCellDescriptionIndex(0) == -1) {
+    _numerics->fillBoundaryLayer(patch, 1, true);
+  }
+  if((fineGridVertices[fineGridVerticesEnumerator(1)].isBoundary()
+      || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(1), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(1)))
+      && fineGridVertices[fineGridVerticesEnumerator(1)].getAdjacentCellDescriptionIndex(0) == -1) {
+    _numerics->fillBoundaryLayer(patch, 0, true);
+  }
+  if((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()
+      || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(0)))
+      && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(2) == -1) {
+    _numerics->fillBoundaryLayer(patch, 1, false);
+  }
 }
 
 
@@ -488,70 +555,33 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     assertionEquals1(patch.getCurrentTime(), startTime, patch.toString());
     assertionEquals1(patch.getCurrentTime() + patch.getTimestepSize(), endTime, patch.toString());
 //    assertion1(startTime <= endTime, patch);
+    assertion(patch.isLeaf() || patch.isVirtual());
     #endif
 
-    assertion(patch.isLeaf() || patch.isVirtual());
-    
-    //Does Patch coarsen?
-    bool patchCoarsening = peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::Erasing
-                            )
-                            &&
-                            !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::Refined
-                            )
-                            &&
-                            !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::Refining
-                            );
-
     //Perform timestep
-    double maximumTimestepSize = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
-    if (
-      tarch::la::greater(maximumTimestepSize, 0.0)
-      && patch.isAllowedToAdvanceInTime()
-      && !patch.shouldSkipNextGridIteration()
-      && !patchCoarsening
-    ) {
+    double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
+    if(shouldAdvanceInTime(
+      patch,
+      maximumTimestepDueToGlobalTimestep,
+      coarseGridVertices,
+      coarseGridVerticesEnumerator,
+      levelInformation
+    )) {
       // Copy uNew to uOld
       patch.copyUNewToUOld();
 
-      // Set boundary conditions (For hanging nodes the isBoundary() is not valid. Therefore, we simulate it by checking for the domainoffset and -size.)
-      if((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()
-              || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(0)))
-              && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(1) == -1) {
-        _numerics->fillBoundaryLayer(patch, 0, false);
-      }
-      if((fineGridVertices[fineGridVerticesEnumerator(2)].isBoundary()
-          || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(2), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(2)))
-          && fineGridVertices[fineGridVerticesEnumerator(2)].getAdjacentCellDescriptionIndex(0) == -1) {
-        _numerics->fillBoundaryLayer(patch, 1, true);
-      }
-      if((fineGridVertices[fineGridVerticesEnumerator(1)].isBoundary()
-          || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(1), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(1)))
-          && fineGridVertices[fineGridVerticesEnumerator(1)].getAdjacentCellDescriptionIndex(0) == -1) {
-        _numerics->fillBoundaryLayer(patch, 0, true);
-      }
-      if((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()
-          || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(0)))
-          && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(2) == -1) {
-        _numerics->fillBoundaryLayer(patch, 1, false);
-      }
+      // Filling boundary layers for the given patch...
+      fillBoundaryLayers(
+        patch,
+        fineGridVertices,
+        fineGridVerticesEnumerator
+      );
 
-      //Do one timestep...
-      double requiredMeshWidth = _numerics->solveTimestep(patch, maximumTimestepSize, _useDimensionalSplitting);
+      // Do one timestep...
+      double requiredMeshWidth = _numerics->solveTimestep(patch, maximumTimestepDueToGlobalTimestep, _useDimensionalSplitting);
       patch.setDemandedMeshWidth(requiredMeshWidth);
 
-      //Coarse grid correction
+      // Coarse grid correction
       for(int i = 0; i < TWO_POWER_D; i++) {
         if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
           fineGridVertices[fineGridVerticesEnumerator(i)].applyCoarseGridCorrection(*_numerics);
@@ -573,6 +603,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
     } else {
       logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
+
       patch.reduceGridIterationsToBeSkipped();
     }
 

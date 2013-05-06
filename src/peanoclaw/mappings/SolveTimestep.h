@@ -80,9 +80,20 @@ class peanoclaw::mappings::SolveTimestep {
      * Determines whether the given patch should be advanced in time.
      */
     bool shouldAdvanceInTime(
-      const peanoclaw::Patch&              patch,
-      peanoclaw::Vertex * const            coarseGridVertices,
-      const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
+      const peanoclaw::Patch&                  patch,
+      double                                   maximumTimestepDueToGlobalTimestep,
+      peanoclaw::Vertex * const                coarseGridVertices,
+      const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator,
+      peanoclaw::statistics::LevelInformation& levelInformation
+    );
+
+    /**
+     * Fills the boundary layers of the given patch.
+     */
+    void fillBoundaryLayers(
+      peanoclaw::Patch& patch,
+      peanoclaw::Vertex * const                fineGridVertices,
+      const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator
     );
 
   public:
