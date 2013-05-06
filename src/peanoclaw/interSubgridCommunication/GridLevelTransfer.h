@@ -211,10 +211,10 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      * Called after calling stepUp the same number of times as updatePatchStateBeforeStepDown was
      * called in the same iteration for the same patch.
      */
-//    void updatePatchStateAfterStepUp(
-//      Patch& finePatch,
-//      bool   isPeanoCellLeaf
-//    );
+    void updatePatchStateAfterStepUp(
+      Patch& finePatch,
+      bool   isPeanoCellLeaf
+    );
 
     /**
      * In an adaptive grid, not all of the $2^d$ adjacent cells exist for hanging

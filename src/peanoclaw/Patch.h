@@ -434,7 +434,7 @@ public:
    * Returns wether this patch should be skipped during the next grid
    * iterations with regard to the adaptive timestepping.
    */
-  bool shouldSkipNextGridIteration();
+  bool shouldSkipNextGridIteration() const;
 
   /**
    * Reduces the number of grid iterations that should be skipped.

@@ -1326,11 +1326,10 @@ void peanoclaw::mappings::Remesh::leaveCell(
     fineGridVerticesEnumerator
   );
 
-  //TODO unterweg debug
-//  _gridLevelTransfer->updatePatchStateAfterStepUp(
-//    finePatch,
-//    fineGridCell.isLeaf()
-//  );
+  _gridLevelTransfer->updatePatchStateAfterStepUp(
+    finePatch,
+    fineGridCell.isLeaf()
+  );
 
   assertionEquals1(finePatch.isLeaf(), fineGridCell.isLeaf(), finePatch);
   assertionEquals1(finePatch.getLevel(), fineGridVerticesEnumerator.getLevel(), finePatch.toString());

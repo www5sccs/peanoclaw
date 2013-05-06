@@ -486,7 +486,7 @@ void peanoclaw::Patch::setSkipNextGridIteration(int numberOfIterationsToSkip) {
   _cellDescription->setSkipGridIterations(numberOfIterationsToSkip);
 }
 
-bool peanoclaw::Patch::shouldSkipNextGridIteration() {
+bool peanoclaw::Patch::shouldSkipNextGridIteration() const {
   return _cellDescription->getSkipGridIterations() > 0;
 }
 
