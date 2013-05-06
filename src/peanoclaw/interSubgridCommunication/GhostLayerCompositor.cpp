@@ -37,41 +37,41 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
     }
   }
 
-  bool copyFromUOld = tarch::la::equals(timeFactor, 0.0);
-  bool copyFromUNew = tarch::la::equals(timeFactor, 1.0);
+//  bool copyFromUOld = tarch::la::equals(timeFactor, 0.0);
+//  bool copyFromUNew = tarch::la::equals(timeFactor, 1.0);
 
   //TODO unterweg As soon as the virtual patches work correctly, the time interpolation can be activated
 //  timeFactor = 1.0;
 
   int sourceUnknownsPerSubcell = source.getUnknownsPerSubcell();
 
-  if(copyFromUOld) {
-    dfor(subcellindex, size) {
-      int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
-      int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
-
-      for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
-        double valueUOld = source.getValueUOld(linearSourceUOldIndex, unknown);
-
-        destination.setValueUOld(linearDestinationUOldIndex, unknown, valueUOld);
-
-        logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << valueUOld << " to " << (subcellindex+destinationOffset));
-      }
-    }
-  } else if (copyFromUNew) {
-    dfor(subcellindex, size) {
-      int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
-      int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
-
-      for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
-        double valueUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
-
-        destination.setValueUOld(linearDestinationUOldIndex, unknown, valueUNew);
-
-        logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << valueUNew << " to " << (subcellindex+destinationOffset));
-      }
-    }
-  } else {
+//  if(copyFromUOld) {
+//    dfor(subcellindex, size) {
+//      int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
+//      int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
+//
+//      for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
+//        double valueUOld = source.getValueUOld(linearSourceUOldIndex, unknown);
+//
+//        destination.setValueUOld(linearDestinationUOldIndex, unknown, valueUOld);
+//
+//        logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << valueUOld << " to " << (subcellindex+destinationOffset));
+//      }
+//    }
+//  } else if (copyFromUNew) {
+//    dfor(subcellindex, size) {
+//      int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
+//      int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
+//
+//      for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
+//        double valueUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
+//
+//        destination.setValueUOld(linearDestinationUOldIndex, unknown, valueUNew);
+//
+//        logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << valueUNew << " to " << (subcellindex+destinationOffset));
+//      }
+//    }
+//  } else {
     dfor(subcellindex, size) {
       int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
       int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
@@ -83,29 +83,42 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 
         double value = valueUNew * timeFactor + valueUOld * (1.0 - timeFactor);
 
-        #ifdef Asserts
-        if(unknown == 0) {
-          assertion8(tarch::la::greaterEquals(value, 0.0),
-              value,
-              valueUNew,
-              valueUOld,
-              timeFactor,
-              source,
-              destination,
-              source.toStringUNew() << source.toStringUOldWithGhostLayer(),
-              destination.toStringUNew() << destination.toStringUOldWithGhostLayer()
-              );
-        }
-        #endif
-
         destination.setValueUOld(linearDestinationUOldIndex, unknown, value);
 
         logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << value << " to " << (subcellindex+destinationOffset));
       }
     }
+//  }
+
+
+  #ifdef Asserts
+  dfor(subcellIndex, destination.getSubdivisionFactor() + 2*destination.getGhostLayerWidth()) {
+    tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex + destinationOffset;
+    if(destination.getValueUOld(subcellIndex-destination.getGhostLayerWidth(), 0) < 0.0) {
+      std::cout << "Invalid copy "
+          #ifdef Parallel
+          << "on rank " << tarch::parallel::Node::getInstance().getRank() << " "
+          #endif
+          << "from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
+          << std::endl << "to patch" << std::endl << destination.toString() << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer()
+          << std::endl << "value=" << destination.getValueUOld(subcellIndexInDestinationPatch, 0) << std::endl;
+      assertion(false);
+      throw "";
+    }
   }
+  #endif
 
   logTraceOut("copyGhostLayerDataBlock");
+}
+
+bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferGhostlayerData(Patch& source, Patch& destination) {
+  bool sourceHoldsGridData = (source.isVirtual() || source.isLeaf());
+
+  //TODO source.isAllowedToAdvanceInTime in der letzten Zeile müsste eigentlich destination.isAllowed... heissen, oder?
+  return destination.isLeaf()
+            && (( sourceHoldsGridData
+                && !tarch::la::greater(destination.getCurrentTime() + destination.getTimestepSize(), source.getCurrentTime() + source.getTimestepSize()))
+            || (source.isLeaf() && source.isAllowedToAdvanceInTime()));
 }
 
 peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor(
@@ -300,6 +313,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillLowerRightG
   if(_patches[1].getLevel() == _patches[2].getLevel() && _patches[1].getLevel() == _level) {
     tarch::la::Vector<DIMENSIONS, int> sourceOffset;
     sourceOffset(0) = 0;
+    //TODO Hier sollte source.subdivisionFactor verwendet werden. Ebenso in den anderen Füllmethoden.
     sourceOffset(1) = subdivisionFactor(1) - ghostLayerWidth;
     copyGhostLayerDataBlock(cornerSize, sourceOffset, destinationOffset, _patches[2], _patches[1]);
   } else if(_patches[2].getLevel() < _patches[1].getLevel() && _patches[1].getLevel() == _level && _patches[2].isLeaf()) {
@@ -436,6 +450,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborTimes() {
+
   //Check cell 0 and 1
   if(_patches[0].isValid()
       && _patches[1].isValid()) {
@@ -587,11 +602,4 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyCoarseGrid
       }
     }
   }
-}
-
-bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferGhostlayerData(Patch& source, Patch& destination) {
-  return destination.isLeaf()
-            && (((source.isVirtual() || source.isLeaf()) && !tarch::la::greater(destination.getCurrentTime() + destination.getTimestepSize(),
-                                  source.getCurrentTime() + source.getTimestepSize()))
-            || (source.isLeaf() && source.isAllowedToAdvanceInTime()));
 }

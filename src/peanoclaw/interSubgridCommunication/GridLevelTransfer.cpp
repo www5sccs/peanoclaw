@@ -143,9 +143,9 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateBe
         createVirtualPatch = true;
       }
   //      TODO unterweg debug
-  //      if(finePatch.getLevel() > 1) {
-  //        createVirtualPatch = true;
-  //      }
+//        if(finePatch.getLevel() > 1) {
+//          createVirtualPatch = true;
+//        }
 
       finePatch.setWillCoarsen(peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
                               (
@@ -198,6 +198,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
       fineGridVerticesEnumerator.getLevel(),
       _useDimensionalSplitting,
       _numerics,
+      fineGridVerticesEnumerator.getVertexPosition(i),
       i
     );
   }
@@ -289,7 +290,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
     //Thus, the patch was not turned to a virtual patch to avoid
     //restriction to this patch, which would lead to invalid data, since
     //the patch is not initialized with zeros. So, the patch needs to
-    //be switched to refined here...
+    //be switched to refined (i.e. non-virtual) here...
     if(!isPeanoCellLeaf) {
       finePatch.switchToVirtual();
 
@@ -298,7 +299,8 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
         fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
           finePatch.getLevel(),
           _useDimensionalSplitting,
-          _numerics);
+          _numerics,
+          fineGridVerticesEnumerator.getVertexPosition(i));
       }
 
       finePatch.switchToNonVirtual();
@@ -325,7 +327,8 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
       fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
         finePatch.getLevel(),
         _useDimensionalSplitting,
-        _numerics);
+        _numerics,
+        fineGridVerticesEnumerator.getVertexPosition(i));
     }
 
     //Switch to leaf or non-virtual
@@ -341,6 +344,8 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
 
   //Reset time constraint for optimization of ghostlayer filling
   finePatch.resetMinimalNeighborTimeConstraint();
+
+  assertion(!finePatch.isVirtual());
 }
 
 //void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateAfterStepUp(

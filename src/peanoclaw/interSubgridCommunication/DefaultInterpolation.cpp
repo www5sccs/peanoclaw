@@ -161,7 +161,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
   }
 
   //TODO unterweg debug
-  #if defined(Asserts)
+  #ifdef Asserts
   if(destination.containsNaN()) {
     std::cout << "Invalid interpolation "
         #ifdef Parallel
@@ -185,6 +185,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
           << std::endl << "to patch" << std::endl << destination.toString() << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer()
           << std::endl << "value=" << destination.getValueUOld(subcellIndexInDestinationPatch, 0) << std::endl;
       assertion(false);
+      throw "";
     }
   }
 
