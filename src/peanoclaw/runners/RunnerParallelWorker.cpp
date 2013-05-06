@@ -5,10 +5,10 @@
 #include "peano/utils/Globals.h"
 #include "tarch/parallel/NodePool.h"
 #include "peano/parallel/messages/ForkMessage.h"
-#include "repositories/Repository.h"
+#include "peanoclaw/repositories/Repository.h"
 
 
-int peanoclaw::runners::Runner::runAsClient(peanoclaw::repositories::Repository& repository) {
+int peanoclaw::runners::Runner::runAsWorker(peanoclaw::repositories::Repository& repository) {
   while ( tarch::parallel::NodePool::getInstance().waitForJob() >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
     peano::parallel::messages::ForkMessage forkMessage;
     forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
@@ -16,7 +16,8 @@ int peanoclaw::runners::Runner::runAsClient(peanoclaw::repositories::Repository&
     repository.restart(
       forkMessage.getH(),
       forkMessage.getDomainOffset(),
-      forkMessage.getLevel()
+      forkMessage.getLevel(),
+      forkMessage.getPositionOfFineGridCellRelativeToCoarseGridCell()
     );
   
     while (repository.continueToIterate()) {

@@ -237,7 +237,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _repository->getState().plotStatisticsForLastGridIteration();
 
     _iterationTimer.stopTimer();
-    _totalRuntime += _iterationTimer.getCPUTicks() / CLOCKS_PER_SEC;
+    _totalRuntime += (double)_iterationTimer.getCPUTicks() / (double)CLOCKS_PER_SEC;
     logInfo("evolveToTime", "Wallclock time for this grid iteration/Total runtime: " << _iterationTimer.getCalendarTime() << "s/" << _totalRuntime << "s");
     logInfo("evolveToTime", "Minimal timestep for this grid iteration: " << _repository->getState().getMinimalTimestep());
     assertion(_repository->getState().getMinimalTimestep() < std::numeric_limits<double>::infinity());

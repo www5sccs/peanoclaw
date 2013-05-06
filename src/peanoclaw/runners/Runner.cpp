@@ -49,11 +49,10 @@ int peanoclaw::runners::Runner::run() {
   int result = 0;
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
     result = runAsMaster( *repository );
-    tarch::parallel::NodePool::getInstance().terminate();
   }
   #ifdef Parallel
   else {
-    result = runAsClient( *repository );
+    result = runAsWorker( *repository );
   }
   #endif
   
