@@ -129,8 +129,6 @@ private:
    */
   static tarch::logging::Log _log;
 
-  static std::vector<Data> _nullData;
-
   CellDescription* _cellDescription;
 
   std::vector<Data>* _uNew;
@@ -321,7 +319,7 @@ public:
    * larger than the current minimum this method doesn't change
    * anything.
    */
-  void updateMinimalNeighborTimeConstraint(double neighborTime);
+  void updateMinimalNeighborTimeConstraint(double neighborTime, int neighborIndex);
 
   /**
    * Updates the minimum of the points in time on which all (also
@@ -336,6 +334,8 @@ public:
    * search.
    */
   void resetMinimalNeighborTimeConstraint();
+
+  int getConstrainingNeighborIndex() const;
 
   /**
    * Resets the maximal time interval that is overlapped by
@@ -428,13 +428,18 @@ public:
    * Sets, wether this patch should be skipped during the next grid
    * iteration with regard to the adaptive timestepping.
    */
-  void setSkipNextGridIteration(bool skipNextGridIteration);
+  void setSkipNextGridIteration(int numberOfIterationsToSkip);
 
   /**
    * Returns wether this patch should be skipped during the next grid
-   * iteration with regard to the adaptive timestepping.
+   * iterations with regard to the adaptive timestepping.
    */
   bool shouldSkipNextGridIteration();
+
+  /**
+   * Reduces the number of grid iterations that should be skipped.
+   */
+  void reduceGridIterationsToBeSkipped();
 
   //GETTER/SETTER for grid values
   void setValueUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown, double value)

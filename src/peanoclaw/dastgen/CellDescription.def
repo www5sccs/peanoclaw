@@ -100,10 +100,10 @@ class peanoclaw::records::CellDescription {
   
   /**
    * Indicates that this patch should not be advanced during the next
-   * grid iteration. This is due to the fact that the ghostlayer has
+   * grid iterations. This is due to the fact that the ghostlayer has
    * to be filled correctly first.
    */
-  parallelise persistent bool skipNextGridIteration;
+  parallelise persistent int skipGridIterations;
   
   /**
    * The age of this patch in terms of grid iterations. This means

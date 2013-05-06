@@ -18,8 +18,6 @@ int peanoclaw::Patch::counter = 0;
 
 tarch::logging::Log peanoclaw::Patch::_log("peanoclaw::Patch");
 
-std::vector<peanoclaw::Patch::Data> peanoclaw::Patch::_nullData;
-
 int peanoclaw::Patch::linearize(
   int unknown,
   const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
@@ -102,9 +100,6 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(
     double factorForUOld,
     double factorForUNew
 ) {
-  //TODO unterweg debug
-//  std::cout << "Switched cells:" << tarch::la::volume(area._size) << std::endl;
-
   dfor(subcellIndex, area._size) {
     int linearIndexUOld = getLinearIndexUOld(subcellIndex + area._offset);
     int linearIndexUNew = getLinearIndexUNew(subcellIndex + area._offset);
@@ -113,21 +108,21 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(
       double valueUOld = getValueUOld(linearIndexUOld, unknown);
       double valueUNew = getValueUNew(linearIndexUNew, unknown);
 
-      #ifdef Asserts
-      if(unknown == 0) {
-        assertion9(tarch::la::greaterEquals(valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld, 0.0)
-        && tarch::la::greaterEquals(valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew, 0.0),
-        toString(),
-        getCurrentTime(),
-        getTimestepSize(),
-        factorForUOld,
-        factorForUNew,
-        valueUOld,
-        valueUNew,
-        valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld,
-        valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew);
-      }
-      #endif
+//      #ifdef Asserts
+//      if(unknown == 0) {
+//        assertion9(tarch::la::greaterEquals(valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld, 0.0)
+//        && tarch::la::greaterEquals(valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew, 0.0),
+//        toString(),
+//        getCurrentTime(),
+//        getTimestepSize(),
+//        factorForUOld,
+//        factorForUNew,
+//        valueUOld,
+//        valueUNew,
+//        valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld,
+//        valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew);
+//      }
+//      #endif
 
       //UOld
       setValueUOld(linearIndexUOld, unknown, valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld);
@@ -202,11 +197,12 @@ peanoclaw::Patch::Patch(
   cellDescription.setEstimatedNextTimestepSize(initialTimestepSize);
   cellDescription.setMinimalNeighborTime(std::numeric_limits<double>::max());
   cellDescription.setMinimalNeighborTimeConstraint(std::numeric_limits<double>::max());
+  cellDescription.setConstrainingNeighborIndex(-1);
   cellDescription.setLevel(level);
   cellDescription.setPosition(position);
   cellDescription.setSize(size);
   cellDescription.setIsVirtual(false);
-  cellDescription.setSkipNextGridIteration(false);
+  cellDescription.setSkipGridIterations(0);
   cellDescription.setDemandedMeshWidth(size(0) / subdivisionFactor(0) * 3.0);
   cellDescription.setAgeInGridIterations(0);
   cellDescription.setUOldIndex(-1);
@@ -263,7 +259,9 @@ void peanoclaw::Patch::loadCellDescription(
 }
 
 void peanoclaw::Patch::reloadCellDescription() {
-  loadCellDescription(getCellDescriptionIndex());
+  if(isValid()) {
+    loadCellDescription(getCellDescriptionIndex());
+  }
 }
 
 const tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSize() const {
@@ -344,9 +342,10 @@ double peanoclaw::Patch::getMinimalLeafNeighborTimeConstraint() const {
   return _cellDescription->getMinimalLeafNeighborTimeConstraint();
 }
 
-void peanoclaw::Patch::updateMinimalNeighborTimeConstraint(double neighborTimeConstraint) {
+void peanoclaw::Patch::updateMinimalNeighborTimeConstraint(double neighborTimeConstraint, int neighborIndex) {
   if(tarch::la::smaller(neighborTimeConstraint, _cellDescription->getMinimalNeighborTimeConstraint())) {
     _cellDescription->setMinimalNeighborTimeConstraint(neighborTimeConstraint);
+    _cellDescription->setConstrainingNeighborIndex(neighborIndex);
   }
 }
 
@@ -359,6 +358,11 @@ void peanoclaw::Patch::updateMinimalLeafNeighborTimeConstraint(double leafNeighb
 void peanoclaw::Patch::resetMinimalNeighborTimeConstraint() {
   _cellDescription->setMinimalNeighborTimeConstraint(std::numeric_limits<double>::max());
   _cellDescription->setMinimalLeafNeighborTimeConstraint(std::numeric_limits<double>::max());
+  _cellDescription->setConstrainingNeighborIndex(-1);
+}
+
+int peanoclaw::Patch::getConstrainingNeighborIndex() const {
+  return _cellDescription->getConstrainingNeighborIndex();
 }
 
 void peanoclaw::Patch::resetMaximalNeighborTimeInterval() {
@@ -478,12 +482,18 @@ void peanoclaw::Patch::switchValuesAndTimeIntervalToMinimalFineGridTimeInterval(
 //  }
 }
 
-void peanoclaw::Patch::setSkipNextGridIteration(bool skipNextGridIteration) {
-  _cellDescription->setSkipNextGridIteration(skipNextGridIteration);
+void peanoclaw::Patch::setSkipNextGridIteration(int numberOfIterationsToSkip) {
+  _cellDescription->setSkipGridIterations(numberOfIterationsToSkip);
 }
 
 bool peanoclaw::Patch::shouldSkipNextGridIteration() {
-  return _cellDescription->getSkipNextGridIteration();
+  return _cellDescription->getSkipGridIterations() > 0;
+}
+
+void peanoclaw::Patch::reduceGridIterationsToBeSkipped() {
+  _cellDescription->setSkipGridIterations(std::max(_cellDescription->getSkipGridIterations() - 1, 0));
+
+  assertion1(_cellDescription->getSkipGridIterations() > 2 || _cellDescription < 0, toString());
 }
 
 #ifndef PATCH_INLINE_GETTERS_AND_SETTERS
@@ -769,7 +779,7 @@ std::string peanoclaw::Patch::toString() const {
         << ",cellDescriptionIndex=" << getCellDescriptionIndex() << ",uNewIndex=" << getUNewIndex() << ",uOldIndex=" << getUOldIndex()
         << ",elements in uNew=" << ((_uNew==0) ? 0 : (int)_uNew->size()) << ",elements in uOld=" << ((_uOldWithGhostlayer==0) ? 0 : (int)_uOldWithGhostlayer->size())
         << ",age=" << _cellDescription->getAgeInGridIterations() << ",currentTime=" << _cellDescription->getTime() << ",timestepSize=" << _cellDescription->getTimestepSize()
-        << ",minimalNeighborTimeConstraint=" << _cellDescription->getMinimalNeighborTimeConstraint() << ",skipNextGridIteration=" << _cellDescription->getSkipNextGridIteration()
+        << ",minimalNeighborTimeConstraint=" << _cellDescription->getMinimalNeighborTimeConstraint() << ",skipNextGridIteration=" << _cellDescription->getSkipGridIterations()
         << ",minimalNeighborTime=" << _cellDescription->getMinimalNeighborTime() << ",maximalNeighborTimestepSize=" << _cellDescription->getMaximalNeighborTimestep()
         << ",maximalFineGridTime=" << _cellDescription->getMaximumFineGridTime() << ",minimalFineGridTimestepSize=" << _cellDescription->getMinimumFineGridTimestep()
         << ",estimatedNextTimestepSize=" << _cellDescription->getEstimatedNextTimestepSize() << ",demandedMeshWidth=" << _cellDescription->getDemandedMeshWidth()

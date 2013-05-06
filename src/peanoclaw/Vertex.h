@@ -111,6 +111,7 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
       int level,
       bool useDimensionalSplitting,
       peanoclaw::Numerics& numerics,
+      const tarch::la::Vector<DIMENSIONS, double>& position,
       int destinationPatch = -1
     ) const;
 

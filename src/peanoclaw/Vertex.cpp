@@ -47,21 +47,9 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   int level,
   bool useDimensionalSplitting,
   peanoclaw::Numerics& numerics,
+  const tarch::la::Vector<DIMENSIONS, double>& position,
   int destinationPatch
 ) const {
-
-  //TODO unterweg Debug
-  #ifdef Debug
-  bool plotVertex = //tarch::la::equals(getX()(0), 7.0/27.0) && tarch::la::equals(getX()(1), 4.0/27.0)
-//       tarch::la::equals(getX()(0), 2.0/3.0) && tarch::la::equals(getX()(1), 8.0/9.0)
-      //|| tarch::la::equals(getX()(0), 1.0/3.0) && tarch::la::equals(getX()(1), 4.0/9.0)
-      //|| tarch::la::equals(getX()(0), 4.0/9.0) && tarch::la::equals(getX()(1), 4.0/9.0)
-      //||tarch::la::equals(getX()(0), 1.0/3.0) && tarch::la::equals(getX()(1), 14.0/27.0)
-//      tarch::la::equals(getX()(0), 3.0/9.0) && tarch::la::equals(getX()(1), 7.0/9.0)
-      false
-//    && level == 4
-  ;
-  #endif
 
   //Fill ghost layers of adjacent cells
   //Get adjacent cell descriptions
@@ -86,13 +74,25 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
     }
   enddforx
 
+  //TODO unterweg Debug
   #ifdef Debug
+//  tarch::la::Vector<DIMENSIONS, double> position;
+  bool plotVertex = false;
+  if(patches[0].isValid()) {
+//    position = patches[0].getPosition();
+    plotVertex =
+//        tarch::la::equals(position(0), 4.0/9.0) && tarch::la::equals(position(1), 8.0/9.0)
+//      && level == 4
+      false
+    ;
+  }
+
   if(plotVertex) {
     std::cout << "Filling vertex ("
         #ifdef Parallel
         << "rank=" << tarch::parallel::Node::getInstance().getRank() << ","
         #endif
-        <<"hanging=" << isHangingNode() << ") at " << getX() << " on level " << getLevel() << std::endl;
+        <<"hanging=" << isHangingNode() << ") at " << position << " on level " << level << std::endl;
 
     for (int i = 0; i < TWO_POWER_D; i++) {
       std::cout << " cellDescription(" << i << ")=" << getAdjacentCellDescriptionIndex(i);
