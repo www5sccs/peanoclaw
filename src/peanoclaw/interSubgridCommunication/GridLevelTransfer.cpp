@@ -345,7 +345,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateAf
     }
   }
 
-  assertion1(!finePatch.isVirtual, finePatch);
+  assertion1(!finePatch.isVirtual(), finePatch);
 }
 
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::fillAdjacentPatchIndicesFromCoarseVertices(
