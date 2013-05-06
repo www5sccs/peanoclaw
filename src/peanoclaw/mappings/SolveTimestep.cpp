@@ -53,7 +53,15 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::descendSpecifi
 }
 
 
-tarch::logging::Log                peanoclaw::mappings::SolveTimestep::_log( "peanoclaw::mappings::SolveTimestep" ); 
+tarch::logging::Log                peanoclaw::mappings::SolveTimestep::_log( "peanoclaw::mappings::SolveTimestep" );
+
+bool shouldAdvanceInTime(
+  const peanoclaw::Patch&              patch,
+  peanoclaw::Vertex * const            coarseGridVertices,
+  const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
+) {
+  return true;
+}
 
 
 peanoclaw::mappings::SolveTimestep::SolveTimestep() {
@@ -171,12 +179,12 @@ void peanoclaw::mappings::SolveTimestep::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
- 
+
   if(static_cast<int>(_levelStatistics.size()) < fineGridVerticesEnumerator.getLevel()) {
     _levelStatistics.push_back(peanoclaw::statistics::LevelInformation());
   }
-  peanoclaw::statistics::LevelInformation& levelInformation = _levelStatistics.at(fineGridVerticesEnumerator.getLevel()-1);
-  levelInformation._createdPatches++;
+  //peanoclaw::statistics::LevelInformation& levelInformation = _levelStatistics.at(fineGridVerticesEnumerator.getLevel()-1);
+  //levelInformation._createdPatches++;
 
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
@@ -196,8 +204,8 @@ void peanoclaw::mappings::SolveTimestep::destroyCell(
   if(static_cast<int>(_levelStatistics.size()) < fineGridVerticesEnumerator.getLevel()) {
     _levelStatistics.push_back(peanoclaw::statistics::LevelInformation());
   }
-  peanoclaw::statistics::LevelInformation& levelInformation = _levelStatistics.at(fineGridVerticesEnumerator.getLevel()-1);
-  levelInformation._destroyedPatches++;
+  //peanoclaw::statistics::LevelInformation& levelInformation = _levelStatistics.at(fineGridVerticesEnumerator.getLevel()-1);
+  //levelInformation._destroyedPatches++;
 
   logTraceOutWith1Argument( "destroyCell(...)", fineGridCell );
 }
@@ -218,8 +226,10 @@ void peanoclaw::mappings::SolveTimestep::mergeWithNeighbour(
 
 void peanoclaw::mappings::SolveTimestep::prepareSendToNeighbour(
   peanoclaw::Vertex&  vertex,
-  int  toRank,
-  int  level
+  int                                           toRank,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
   // @todo Insert your code here
@@ -228,7 +238,10 @@ void peanoclaw::mappings::SolveTimestep::prepareSendToNeighbour(
 
 void peanoclaw::mappings::SolveTimestep::prepareCopyToRemoteNode(
   peanoclaw::Vertex&  localVertex,
-  int  toRank
+  int                                           toRank,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
   logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank );
   // @todo Insert your code here
@@ -237,9 +250,12 @@ void peanoclaw::mappings::SolveTimestep::prepareCopyToRemoteNode(
 
 void peanoclaw::mappings::SolveTimestep::prepareCopyToRemoteNode(
   peanoclaw::Cell&  localCell,
-  int  toRank
+  int  toRank,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+  int                                       level
 ) {
-  logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank );
+  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
   // @todo Insert your code here
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -286,9 +302,13 @@ void peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
 }
 
 void peanoclaw::mappings::SolveTimestep::prepareSendToMaster(
-  peanoclaw::Cell&     localCell,
-  peanoclaw::Vertex *  vertices,
-  const peano::grid::VertexEnumerator&  verticesEnumerator
+  peanoclaw::Cell&                       localCell,
+  peanoclaw::Vertex *                    vertices,
+  const peano::grid::VertexEnumerator&       verticesEnumerator,
+  const peanoclaw::Vertex * const        coarseGridVertices,
+  const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
+  const peanoclaw::Cell&                 coarseGridCell,
+  const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
 ) {
   logTraceInWith2Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString() );
   // @todo Insert your code here
@@ -318,11 +338,18 @@ void peanoclaw::mappings::SolveTimestep::mergeWithMaster(
 
 
 void peanoclaw::mappings::SolveTimestep::receiveDataFromMaster(
-  peanoclaw::Cell&                    receivedCell, 
-  peanoclaw::Vertex *                 receivedVertices,
-  const peano::grid::VertexEnumerator&    verticesEnumerator
+  peanoclaw::Cell&                        receivedCell,
+  peanoclaw::Vertex *                     receivedVertices,
+  const peano::grid::VertexEnumerator&        receivedVerticesEnumerator,
+  peanoclaw::Vertex * const               receivedCoarseGridVertices,
+  const peano::grid::VertexEnumerator&        receivedCoarseGridVerticesEnumerator,
+  peanoclaw::Cell&                        receivedCoarseGridCell,
+  peanoclaw::Vertex * const               workersCoarseGridVertices,
+  const peano::grid::VertexEnumerator&        workersCoarseGridVerticesEnumerator,
+  peanoclaw::Cell&                        workersCoarseGridCell,
+  const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
-  logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), verticesEnumerator.toString() );
+  logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), receivedVerticesEnumerator.toString() );
   // @todo Insert your code here
   logTraceOut( "receiveDataFromMaster(...)" );
 }
@@ -330,7 +357,10 @@ void peanoclaw::mappings::SolveTimestep::receiveDataFromMaster(
 
 void peanoclaw::mappings::SolveTimestep::mergeWithWorker(
   peanoclaw::Cell&           localCell, 
-  const peanoclaw::Cell&     receivedMasterCell
+  const peanoclaw::Cell&     receivedMasterCell,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+  int                                          level
 ) {
   logTraceInWith2Arguments( "mergeWithWorker(...)", localCell.toString(), receivedMasterCell.toString() );
   // @todo Insert your code here
@@ -340,7 +370,10 @@ void peanoclaw::mappings::SolveTimestep::mergeWithWorker(
 
 void peanoclaw::mappings::SolveTimestep::mergeWithWorker(
   peanoclaw::Vertex&        localVertex,
-  const peanoclaw::Vertex&  receivedMasterVertex
+  const peanoclaw::Vertex&  receivedMasterVertex,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
   logTraceInWith2Arguments( "mergeWithWorker(...)", localVertex.toString(), receivedMasterVertex.toString() );
   // @todo Insert your code here
@@ -429,15 +462,14 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
- 
+
   //Create patch
-  Patch patch = Patch(
+  Patch patch (
     fineGridCell
   );
 
   //Histogram
-  assertion(static_cast<int>(_levelStatistics.size()) >= coarseGridVerticesEnumerator.getLevel());
-  if(static_cast<int>(_levelStatistics.size()) < fineGridVerticesEnumerator.getLevel()) {
+  while(static_cast<int>(_levelStatistics.size()) < fineGridVerticesEnumerator.getLevel()) {
     _levelStatistics.push_back(peanoclaw::statistics::LevelInformation());
   }
   peanoclaw::statistics::LevelInformation& levelInformation = _levelStatistics.at(fineGridVerticesEnumerator.getLevel()-1);
@@ -453,29 +485,43 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0);
     double startTime = cellDescription.getTime();
     double endTime = cellDescription.getTime() + cellDescription.getTimestepSize();
-    assertionEquals2(patch.getCurrentTime(), startTime, startTime, patch.toString());
-    assertionEquals2(patch.getCurrentTime() + patch.getTimestepSize(), endTime, endTime, patch.toString());
+    assertionEquals1(patch.getCurrentTime(), startTime, patch.toString());
+    assertionEquals1(patch.getCurrentTime() + patch.getTimestepSize(), endTime, patch.toString());
+//    assertion1(startTime <= endTime, patch);
     #endif
 
     assertion(patch.isLeaf() || patch.isVirtual());
-
+    
     //Does Patch coarsen?
     bool patchCoarsening = peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
                             (
                               coarseGridVertices,
                               coarseGridVerticesEnumerator,
                               peanoclaw::records::Vertex::Erasing
+                            )
+                            &&
+                            !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Refined
+                            )
+                            &&
+                            !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Refining
                             );
 
     //Perform timestep
     double maximumTimestepSize = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
     if (
-         tarch::la::greater(maximumTimestepSize, 0.0)
-         && patch.isAllowedToAdvanceInTime()
-         && !patch.shouldSkipNextGridIteration()
-         && !patchCoarsening
-       ) {
-
+      tarch::la::greater(maximumTimestepSize, 0.0)
+      && patch.isAllowedToAdvanceInTime()
+      && !patch.shouldSkipNextGridIteration()
+      && !patchCoarsening
+    ) {
       // Copy uNew to uOld
       patch.copyUNewToUOld();
 
@@ -513,10 +559,10 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       }
 
       //Statistics
-      if(tarch::la::greater(patch.getTimestepSize(), 0.0)) {
-        levelInformation._numberOfCellUpdates += (patch.getSubdivisionFactor() * patch.getSubdivisionFactor());
-        _minimalTimestep = std::min(_minimalTimestep, patch.getTimestepSize());
-      }
+      assertion1(tarch::la::greater(patch.getTimestepSize(), 0.0), patch);
+      assertion1(patch.getTimestepSize() != std::numeric_limits<double>::infinity(), patch);
+      levelInformation._numberOfCellUpdates += (patch.getSubdivisionFactor() * patch.getSubdivisionFactor());
+      _minimalTimestep = std::min(_minimalTimestep, patch.getTimestepSize());
 
       //Probes
       for(std::vector<peanoclaw::statistics::Probe>::iterator i = _probeList.begin();
@@ -524,16 +570,10 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
           i++) {
         i->plotDataIfContainedInPatch(patch);
       }
-
       logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
     } else {
-      //TODO unterweg debug
-//      std::cout << "Not advancing in time due to _globalTimestepEndTime=" << _globalTimestepEndTime
-//          << " currenttime=" << patch.getCurrentTime() << " timestepsize=" << patch.getTimestepSize()
-//          << " maximumTimestep=" << maximumTimestepSize << " isAllowedToAdvance=" << patch.isAllowedToAdvanceInTime()
-//          << " minimalNeighborTime=" << patch.getMinimalNeighborTime() << std::endl;
       logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
-      patch.setSkipNextGridIteration(false);
+      patch.reduceGridIterationsToBeSkipped();
     }
 
     //Refinement criterion
@@ -565,13 +605,14 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     assertion2(!tarch::la::smaller(patch.getCurrentTime(), startTime), patch, startTime);
     assertion2(!tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), endTime), patch.getCurrentTime() + patch.getTimestepSize(), endTime);
 
-    #ifdef Asserts
-
-    // roland MARK
+//    #ifdef Asserts
     if(patch.containsNaN()) {
-      logError("", "Invalid solution in patch " << patch.toString()
+      logError("", "Invalid solution"
+//          #ifdef Parallel
+//          << " on rank " << tarch::parallel::Node::getInstance().getRank()
+//          #endif
+          << " in patch " << patch.toString()
           << std::endl << patch.toStringUNew() << std::endl << patch.toStringUOldWithGhostLayer());
-      //TODO unterweg
       Patch coarsePatch(peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
       std::cout << "Coarse Patch:" << std::endl << coarsePatch.toString() << std::endl << coarsePatch.toStringUNew() << std::endl;
 
@@ -595,7 +636,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       assertion(false);
       throw "";
     }
-    #endif
+//    #endif
 
     logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimestepSize(), cellDescription.getTime() + cellDescription.getTimestepSize() );
   } else {
@@ -632,7 +673,7 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
  
-  _numerics = &solverState.getNumerics();
+  _numerics = solverState.getNumerics();
   _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();
   _allPatchesEvolvedToGlobalTimestep = solverState.getAllPatchesEvolvedToGlobalTimestep();
   _startMaximumLocalTimeInterval = std::numeric_limits<double>::max();
@@ -647,7 +688,7 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
   _probeList = solverState.getProbeList();
   _useDimensionalSplitting = solverState.useDimensionalSplitting();
-
+ 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
 
@@ -677,7 +718,7 @@ void peanoclaw::mappings::SolveTimestep::endIteration(
   _levelStatistics.clear();
 
   _averageGlobalTimeInterval = (solverState.getStartMaximumGlobalTimeInterval() + solverState.getEndMaximumGlobalTimeInterval()) / 2.0;
-
+ 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }
 
