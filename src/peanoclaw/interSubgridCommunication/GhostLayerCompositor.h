@@ -130,24 +130,6 @@ private:
   void updateUpperGhostlayerBound(int updatedPatchIndex, int neighborPatchIndex, int dimension);
 
   /**
-   * Applies the correction depending on the fine grid fluxes on the
-   * coarse grid.
-   *
-   * @param finePatch
-   * @param coarsePatch
-   * @param dimension Dimensions that is perpendicular to the interface between
-   *                  the patches.
-   * @param direction Either 1 or -1, depending wether the coarse patch is
-   *                  located "higher" or "lower" with respect to the dimension.
-   */
-//  void applyCoarseGridCorrection(
-//    const Patch& finePatch,
-//    Patch& coarsePatch,
-//    int dimension,
-//    int direction
-//  ) const;
-
-  /**
    * Estimates, whether ghostlayer data should be transfered
    * from the source to the destination patch.
    */

@@ -3,7 +3,7 @@
 
 peanoclaw::Cell::Cell():
   Base() { 
-  // @todo Insert your code here
+  _cellData.setCellDescriptionIndex(-2);
 }
 
 

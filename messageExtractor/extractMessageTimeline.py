@@ -86,7 +86,7 @@ if __name__ == "__main__":
     for rank in xrange(0, numberOfRanks):
       inputFileName = "it-" + "%05d" % iteration + "-rank-" + str(rank) + "-trace.txt"
       #style = 'style="width:' + str(100/numberOfRanks - 3) + '%; height:75%;"'
-      style = 'style="width: 450px; height:75%;"'
+      style = 'style="width: 400px; height:75%;"'
       try:
         inputFile = open(inputFileName, 'r')
       except IOError:

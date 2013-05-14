@@ -32,9 +32,9 @@ namespace peanoclaw {
     * 		   2007-2009 Wolfgang Eckhardt
     * 		   2012      Tobias Weinzierl
     *
-    * 		   build date: 29-11-2012 08:46
+    * 		   build date: 12-04-2013 09:18
     *
-    * @date   10/02/2013 15:38
+    * @date   06/05/2013 09:15
     */
    class peanoclaw::records::Vertex { 
       
@@ -1023,7 +1023,7 @@ namespace peanoclaw {
          protected:
             static tarch::logging::Log _log;
             
-            int _senderRank;
+            int _senderDestinationRank;
             
          public:
             
@@ -1071,9 +1071,9 @@ namespace peanoclaw {
        * 		   2007-2009 Wolfgang Eckhardt
        * 		   2012      Tobias Weinzierl
        *
-       * 		   build date: 29-11-2012 08:46
+       * 		   build date: 12-04-2013 09:18
        *
-       * @date   10/02/2013 15:38
+       * @date   06/05/2013 09:15
        */
       class peanoclaw::records::VertexPacked { 
          
@@ -2117,7 +2117,7 @@ namespace peanoclaw {
             protected:
                static tarch::logging::Log _log;
                
-               int _senderRank;
+               int _senderDestinationRank;
                
             public:
                
@@ -2162,9 +2162,9 @@ namespace peanoclaw {
           * 		   2007-2009 Wolfgang Eckhardt
           * 		   2012      Tobias Weinzierl
           *
-          * 		   build date: 29-11-2012 08:46
+          * 		   build date: 12-04-2013 09:18
           *
-          * @date   10/02/2013 15:38
+          * @date   06/05/2013 09:15
           */
          class peanoclaw::records::Vertex { 
             
@@ -2818,7 +2818,7 @@ namespace peanoclaw {
                protected:
                   static tarch::logging::Log _log;
                   
-                  int _senderRank;
+                  int _senderDestinationRank;
                   
                public:
                   
@@ -2866,9 +2866,9 @@ namespace peanoclaw {
              * 		   2007-2009 Wolfgang Eckhardt
              * 		   2012      Tobias Weinzierl
              *
-             * 		   build date: 29-11-2012 08:46
+             * 		   build date: 12-04-2013 09:18
              *
-             * @date   10/02/2013 15:38
+             * @date   06/05/2013 09:15
              */
             class peanoclaw::records::VertexPacked { 
                
@@ -3585,7 +3585,7 @@ namespace peanoclaw {
                   protected:
                      static tarch::logging::Log _log;
                      
-                     int _senderRank;
+                     int _senderDestinationRank;
                      
                   public:
                      
@@ -3631,9 +3631,9 @@ namespace peanoclaw {
              * 		   2007-2009 Wolfgang Eckhardt
              * 		   2012      Tobias Weinzierl
              *
-             * 		   build date: 29-11-2012 08:46
+             * 		   build date: 12-04-2013 09:18
              *
-             * @date   10/02/2013 15:38
+             * @date   06/05/2013 09:15
              */
             class peanoclaw::records::Vertex { 
                
@@ -4475,7 +4475,7 @@ namespace peanoclaw {
                   protected:
                      static tarch::logging::Log _log;
                      
-                     int _senderRank;
+                     int _senderDestinationRank;
                      
                   public:
                      
@@ -4523,9 +4523,9 @@ namespace peanoclaw {
                 * 		   2007-2009 Wolfgang Eckhardt
                 * 		   2012      Tobias Weinzierl
                 *
-                * 		   build date: 29-11-2012 08:46
+                * 		   build date: 12-04-2013 09:18
                 *
-                * @date   10/02/2013 15:38
+                * @date   06/05/2013 09:15
                 */
                class peanoclaw::records::VertexPacked { 
                   
@@ -5426,7 +5426,7 @@ namespace peanoclaw {
                      protected:
                         static tarch::logging::Log _log;
                         
-                        int _senderRank;
+                        int _senderDestinationRank;
                         
                      public:
                         
@@ -5472,9 +5472,9 @@ namespace peanoclaw {
                 * 		   2007-2009 Wolfgang Eckhardt
                 * 		   2012      Tobias Weinzierl
                 *
-                * 		   build date: 29-11-2012 08:46
+                * 		   build date: 12-04-2013 09:18
                 *
-                * @date   10/02/2013 15:38
+                * @date   06/05/2013 09:15
                 */
                class peanoclaw::records::Vertex { 
                   
@@ -6275,7 +6275,7 @@ namespace peanoclaw {
                      protected:
                         static tarch::logging::Log _log;
                         
-                        int _senderRank;
+                        int _senderDestinationRank;
                         
                      public:
                         
@@ -6323,9 +6323,9 @@ namespace peanoclaw {
                    * 		   2007-2009 Wolfgang Eckhardt
                    * 		   2012      Tobias Weinzierl
                    *
-                   * 		   build date: 29-11-2012 08:46
+                   * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   10/02/2013 15:38
+                   * @date   06/05/2013 09:15
                    */
                   class peanoclaw::records::VertexPacked { 
                      
@@ -7185,7 +7185,7 @@ namespace peanoclaw {
                         protected:
                            static tarch::logging::Log _log;
                            
-                           int _senderRank;
+                           int _senderDestinationRank;
                            
                         public:
                            

@@ -18,8 +18,6 @@ int peanoclaw::Patch::counter = 0;
 
 tarch::logging::Log peanoclaw::Patch::_log("peanoclaw::Patch");
 
-std::vector<peanoclaw::Patch::Data> peanoclaw::Patch::_nullData;
-
 int peanoclaw::Patch::linearize(
   int unknown,
   const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
@@ -70,6 +68,8 @@ int peanoclaw::Patch::linearizeWithGhostlayer(
 #endif
 
 void peanoclaw::Patch::fillCaches() {
+  assertionEquals(sizeof(Data), sizeof(double));
+
   int ghostlayerWidth = _cellDescription->getGhostLayerWidth();
   tarch::la::Vector<DIMENSIONS, double> subdivisionFactor = _cellDescription->getSubdivisionFactor().convertScalar<double>();
 
@@ -90,7 +90,9 @@ void peanoclaw::Patch::fillCaches() {
   uNewStrideCache[0] = stride;
 
   //Precompute subcell size
-  _subcellSize = tarch::la::multiplyComponents(_cellDescription->getSize(), tarch::la::invertEntries(subdivisionFactor));
+  for (int d=0; d<DIMENSIONS;d++) {
+      _subcellSize[d] = _cellDescription->getSize()[d] / subdivisionFactor[d];
+  }
 }
 
 void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(
@@ -98,9 +100,6 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(
     double factorForUOld,
     double factorForUNew
 ) {
-  //TODO unterweg debug
-//  std::cout << "Switched cells:" << tarch::la::volume(area._size) << std::endl;
-
   dfor(subcellIndex, area._size) {
     int linearIndexUOld = getLinearIndexUOld(subcellIndex + area._offset);
     int linearIndexUNew = getLinearIndexUNew(subcellIndex + area._offset);
@@ -109,21 +108,21 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(
       double valueUOld = getValueUOld(linearIndexUOld, unknown);
       double valueUNew = getValueUNew(linearIndexUNew, unknown);
 
-      #ifdef Asserts
-      if(unknown == 0) {
-        assertion9(tarch::la::greaterEquals(valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld, 0.0)
-        && tarch::la::greaterEquals(valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew, 0.0),
-        toString(),
-        getCurrentTime(),
-        getTimestepSize(),
-        factorForUOld,
-        factorForUNew,
-        valueUOld,
-        valueUNew,
-        valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld,
-        valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew);
-      }
-      #endif
+//      #ifdef Asserts
+//      if(unknown == 0) {
+//        assertion9(tarch::la::greaterEquals(valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld, 0.0)
+//        && tarch::la::greaterEquals(valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew, 0.0),
+//        toString(),
+//        getCurrentTime(),
+//        getTimestepSize(),
+//        factorForUOld,
+//        factorForUNew,
+//        valueUOld,
+//        valueUNew,
+//        valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld,
+//        valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew);
+//      }
+//      #endif
 
       //UOld
       setValueUOld(linearIndexUOld, unknown, valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld);
@@ -143,24 +142,108 @@ peanoclaw::Patch::Patch()
 }
 
 peanoclaw::Patch::Patch(
-  const tarch::la::Vector<DIMENSIONS, double>& position,
-  const tarch::la::Vector<DIMENSIONS, double>& size,
   const Cell& cell
 ) : _cellDescription(0)
 {
+  logTraceInWith1Argument("Patch(...)", cell);
+
   _cellDescription = &peano::heap::Heap<CellDescription>::getInstance().getData(cell.getCellDescriptionIndex()).at(0);
-  _cellDescription->setPosition(position);
-  _cellDescription->setSize(size);
+
+  loadCellDescription(cell.getCellDescriptionIndex());
+
+  fillCaches();
+
+  logTraceOutWith1Argument("Patch(...)", _cellDescription);
+}
+
+peanoclaw::Patch::Patch(
+    CellDescription& cellDescription
+) : _cellDescription(&cellDescription)
+   {
+  logTraceInWith2Arguments("Patch(CellDescription,int)", cellDescription.getPosition(), cellDescription.getLevel());
 
   assertion1(tarch::la::allGreater(getSize(), tarch::la::Vector<DIMENSIONS,double>(0.0)), toString());
 
+  loadCellDescription(cellDescription.getCellDescriptionIndex());
+
+  fillCaches();
+
+  logTraceOut("Patch(CellDescription,int)");
+}
+
+peanoclaw::Patch::Patch(
+  const tarch::la::Vector<DIMENSIONS, double>& position,
+  const tarch::la::Vector<DIMENSIONS, double>& size,
+  int    unknownsPerSubcell,
+  int    auxiliarFieldsPerSubcell,
+  const tarch::la::Vector<DIMENSIONS, int>&    subdivisionFactor,
+  int    ghostLayerWidth,
+  double initialTimestepSize,
+  int    level
+) {
+  //Initialise Cell Description
+  int cellDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+
+  std::vector<CellDescription>& cellDescriptions = peano::heap::Heap<CellDescription>::getInstance().getData(cellDescriptionIndex);
+
+  CellDescription cellDescription;
+  cellDescription.setCellDescriptionIndex(cellDescriptionIndex);
+  cellDescription.setGhostLayerWidth(ghostLayerWidth);
+  cellDescription.setSubdivisionFactor(subdivisionFactor);
+  cellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
+  cellDescription.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
+  cellDescription.setTime(0.0);
+  cellDescription.setTimestepSize(0.0);
+  cellDescription.setEstimatedNextTimestepSize(initialTimestepSize);
+  cellDescription.setMinimalNeighborTime(std::numeric_limits<double>::max());
+  cellDescription.setMinimalNeighborTimeConstraint(std::numeric_limits<double>::max());
+  cellDescription.setConstrainingNeighborIndex(-1);
+  cellDescription.setLevel(level);
+  cellDescription.setPosition(position);
+  cellDescription.setSize(size);
+  cellDescription.setIsVirtual(false);
+  cellDescription.setSkipGridIterations(0);
+  cellDescription.setDemandedMeshWidth(size(0) / subdivisionFactor(0) * 3.0);
+  cellDescription.setAgeInGridIterations(0);
+  cellDescription.setUOldIndex(-1);
+  cellDescription.setUNewIndex(-1);
+  cellDescription.setAuxIndex(-1);
+  cellDescription.setRestrictionLowerBounds(std::numeric_limits<double>::max());
+  cellDescription.setRestrictionUpperBounds(-std::numeric_limits<double>::max());
+  cellDescription.setNumberOfPatchStateUpdates(0);
+
+  cellDescriptions.push_back(cellDescription);
+
+  loadCellDescription(cellDescriptionIndex);
+
+  fillCaches();
+
+  assertionEquals(cellDescription.getNumberOfPatchStateUpdates(), 0);
+  assertionEquals(peano::heap::Heap<CellDescription>::getInstance().getData(cellDescriptionIndex).size(), 1);
+}
+
+peanoclaw::Patch::~Patch() {
+}
+
+void peanoclaw::Patch::loadCellDescription(
+  int cellDescriptionIndex
+) {
+
+  _cellDescription = &peano::heap::Heap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+
   //Retrieve patch data
-  assertion2((_cellDescription->getUNewIndex() == -1 && _cellDescription->getUOldIndex() == -1) || (_cellDescription->getUNewIndex() != -1 && _cellDescription->getUOldIndex() != -1) || (_cellDescription->getUNewIndex() != -1  && _cellDescription->getUOldIndex() == -1), _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex());
+  assertion2(
+    (_cellDescription->getUNewIndex() == -1 && _cellDescription->getUOldIndex() == -1)
+    || (_cellDescription->getUNewIndex() != -1 && _cellDescription->getUOldIndex() != -1)
+    || (_cellDescription->getUNewIndex() != -1  && _cellDescription->getUOldIndex() == -1),
+    _cellDescription->getUNewIndex(),
+    _cellDescription->getUOldIndex()
+  );
   if(_cellDescription->getUNewIndex() != -1) {
-      _uNew = &peano::heap::Heap<Data>::getInstance().getData(_cellDescription->getUNewIndex());
-    } else {
-      _uNew = 0;
-    }
+    _uNew = &peano::heap::Heap<Data>::getInstance().getData(_cellDescription->getUNewIndex());
+  } else {
+    _uNew = 0;
+  }
 
   if(_cellDescription->getUOldIndex() != -1) {
     _uOldWithGhostlayer = &peano::heap::Heap<Data>::getInstance().getData(_cellDescription->getUOldIndex());
@@ -173,44 +256,12 @@ peanoclaw::Patch::Patch(
   } else {
     _auxArray = 0;
   }
-
-  fillCaches();
 }
 
-peanoclaw::Patch::Patch(
-    CellDescription& cellDescription
-) : _cellDescription(&cellDescription)
-   {
-  logTraceInWith2Arguments("Patch(CellDescription,int)", cellDescription.getPosition(), cellDescription.getLevel());
-
-  assertion1(tarch::la::allGreater(getSize(), tarch::la::Vector<DIMENSIONS,double>(0.0)), toString());
-
-  //Retrieve patch data
-  assertion2((cellDescription.getUNewIndex() == -1 && cellDescription.getUOldIndex() == -1) || (cellDescription.getUNewIndex() != -1 && cellDescription.getUOldIndex() != -1) || (cellDescription.getUNewIndex() != -1  && cellDescription.getUOldIndex() == -1), cellDescription.getUNewIndex(), cellDescription.getUOldIndex());
-  if(cellDescription.getUNewIndex() != -1) {
-    _uNew = &peano::heap::Heap<Data>::getInstance().getData(cellDescription.getUNewIndex());
-  } else {
-    _uNew = 0;
+void peanoclaw::Patch::reloadCellDescription() {
+  if(isValid()) {
+    loadCellDescription(getCellDescriptionIndex());
   }
-
-  if(cellDescription.getUOldIndex() != -1) {
-    _uOldWithGhostlayer = &peano::heap::Heap<Data>::getInstance().getData(cellDescription.getUOldIndex());
-  } else {
-    _uOldWithGhostlayer = 0;
-  }
-
-  if(cellDescription.getAuxIndex() != -1) {
-    _auxArray = &peano::heap::Heap<Data>::getInstance().getData(cellDescription.getAuxIndex());
-  } else {
-    _auxArray = 0;
-  }
-
-  fillCaches();
-
-  logTraceOut("Patch(CellDescription,int)");
-}
-
-peanoclaw::Patch::~Patch() {
 }
 
 const tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSize() const {
@@ -246,7 +297,7 @@ void peanoclaw::Patch::setCurrentTime(double currentTime) {
 }
 
 double peanoclaw::Patch::getTimeUOld() const {
-  assertion(isLeaf() || isVirtual());
+  assertion1(isLeaf() || isVirtual(), toString());
   if(isLeaf()) {
     return _cellDescription->getTime();
   } else {
@@ -291,14 +342,15 @@ double peanoclaw::Patch::getMinimalLeafNeighborTimeConstraint() const {
   return _cellDescription->getMinimalLeafNeighborTimeConstraint();
 }
 
-void peanoclaw::Patch::updateMinimalNeighborTimeConstraint(double neighborTimeConstraint) {
-  if(neighborTimeConstraint < _cellDescription->getMinimalNeighborTimeConstraint()) {
+void peanoclaw::Patch::updateMinimalNeighborTimeConstraint(double neighborTimeConstraint, int neighborIndex) {
+  if(tarch::la::smaller(neighborTimeConstraint, _cellDescription->getMinimalNeighborTimeConstraint())) {
     _cellDescription->setMinimalNeighborTimeConstraint(neighborTimeConstraint);
+    _cellDescription->setConstrainingNeighborIndex(neighborIndex);
   }
 }
 
 void peanoclaw::Patch::updateMinimalLeafNeighborTimeConstraint(double leafNeighborTime) {
-  if(leafNeighborTime < _cellDescription->getMinimalLeafNeighborTimeConstraint()) {
+  if(tarch::la::smaller(leafNeighborTime, _cellDescription->getMinimalLeafNeighborTimeConstraint())) {
     _cellDescription->setMinimalLeafNeighborTimeConstraint(leafNeighborTime);
   }
 }
@@ -306,6 +358,11 @@ void peanoclaw::Patch::updateMinimalLeafNeighborTimeConstraint(double leafNeighb
 void peanoclaw::Patch::resetMinimalNeighborTimeConstraint() {
   _cellDescription->setMinimalNeighborTimeConstraint(std::numeric_limits<double>::max());
   _cellDescription->setMinimalLeafNeighborTimeConstraint(std::numeric_limits<double>::max());
+  _cellDescription->setConstrainingNeighborIndex(-1);
+}
+
+int peanoclaw::Patch::getConstrainingNeighborIndex() const {
+  return _cellDescription->getConstrainingNeighborIndex();
 }
 
 void peanoclaw::Patch::resetMaximalNeighborTimeInterval() {
@@ -325,11 +382,6 @@ void peanoclaw::Patch::updateMaximalNeighborTimeInterval(
     _cellDescription->setMinimalNeighborTime(neighborTime);
   }
 }
-
-//void peanoclaw::Patch::setTimeIntervalToMaximalNeighborTimeInterval() {
-//  setCurrentTime(_cellDescription->getMinimalNeighborTime());
-//  setTimestepSize(_cellDescription->getMaximalNeighborTimestep());
-//}
 
 bool peanoclaw::Patch::isAllowedToAdvanceInTime() const {
   return !tarch::la::greater(_cellDescription->getTime() + _cellDescription->getTimestepSize(), _cellDescription->getMinimalNeighborTimeConstraint());
@@ -430,12 +482,18 @@ void peanoclaw::Patch::switchValuesAndTimeIntervalToMinimalFineGridTimeInterval(
 //  }
 }
 
-void peanoclaw::Patch::setSkipNextGridIteration(bool skipNextGridIteration) {
-  _cellDescription->setSkipNextGridIteration(skipNextGridIteration);
+void peanoclaw::Patch::setSkipNextGridIteration(int numberOfIterationsToSkip) {
+  _cellDescription->setSkipGridIterations(numberOfIterationsToSkip);
 }
 
-bool peanoclaw::Patch::shouldSkipNextGridIteration() {
-  return _cellDescription->getSkipNextGridIteration();
+bool peanoclaw::Patch::shouldSkipNextGridIteration() const {
+  return _cellDescription->getSkipGridIterations() > 0;
+}
+
+void peanoclaw::Patch::reduceGridIterationsToBeSkipped() {
+  _cellDescription->setSkipGridIterations(std::max(_cellDescription->getSkipGridIterations() - 1, 0));
+
+  assertion1(_cellDescription->getSkipGridIterations() > 2 || _cellDescription < 0, toString());
 }
 
 #ifndef PATCH_INLINE_GETTERS_AND_SETTERS
@@ -484,7 +542,13 @@ double peanoclaw::Patch::getValueUNew(
   tarch::la::Vector<DIMENSIONS, double> subcellPosition,
   int unknown
 ) const {
-  tarch::la::Vector<DIMENSIONS, int> subcellIndex = tarch::la::multiplyComponents((subcellPosition - getPosition()), tarch::la::invertEntries(getSubcellSize())).convertScalar<int>();
+  
+  //tarch::la::Vector<DIMENSIONS, int> subcellIndex = ((subcellPosition - getPosition()) / getSubcellSize()).convertScalar<int>();
+  tarch::la::Vector<DIMENSIONS, double> temp = subcellPosition - getPosition();
+  for (int d=0; d < DIMENSIONS; d++) {
+      temp[d] /= getSubcellSize()[d];
+  }
+  tarch::la::Vector<DIMENSIONS, int> subcellIndex = temp.convertScalar<int>();
   return getValueUNew(subcellIndex, unknown);
 }
 
@@ -582,7 +646,7 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellSize() const {
 }
 
 void peanoclaw::Patch::copyUNewToUOld() {
-  assertion(isLeaf() || isVirtual());
+  assertion1(isLeaf() || isVirtual(), toString());
   for(int unknown = 0; unknown < _cellDescription->getUnknownsPerSubcell(); unknown++) {
     dfor(subcellIndex, _cellDescription->getSubdivisionFactor()) {
       setValueUOld(subcellIndex, unknown, getValueUNew(subcellIndex, unknown));
@@ -715,11 +779,12 @@ std::string peanoclaw::Patch::toString() const {
         << ",cellDescriptionIndex=" << getCellDescriptionIndex() << ",uNewIndex=" << getUNewIndex() << ",uOldIndex=" << getUOldIndex()
         << ",elements in uNew=" << ((_uNew==0) ? 0 : (int)_uNew->size()) << ",elements in uOld=" << ((_uOldWithGhostlayer==0) ? 0 : (int)_uOldWithGhostlayer->size())
         << ",age=" << _cellDescription->getAgeInGridIterations() << ",currentTime=" << _cellDescription->getTime() << ",timestepSize=" << _cellDescription->getTimestepSize()
-        << ",minimalNeighborTimeConstraint=" << _cellDescription->getMinimalNeighborTimeConstraint() << ",skipNextGridIteration=" << _cellDescription->getSkipNextGridIteration()
+        << ",minimalNeighborTimeConstraint=" << _cellDescription->getMinimalNeighborTimeConstraint() << ",skipNextGridIteration=" << _cellDescription->getSkipGridIterations()
         << ",minimalNeighborTime=" << _cellDescription->getMinimalNeighborTime() << ",maximalNeighborTimestepSize=" << _cellDescription->getMaximalNeighborTimestep()
         << ",maximalFineGridTime=" << _cellDescription->getMaximumFineGridTime() << ",minimalFineGridTimestepSize=" << _cellDescription->getMinimumFineGridTimestep()
         << ",estimatedNextTimestepSize=" << _cellDescription->getEstimatedNextTimestepSize() << ",demandedMeshWidth=" << _cellDescription->getDemandedMeshWidth()
-        << ",lowerGhostlayerBounds=[" << _cellDescription->getRestrictionLowerBounds() << "],upperGhostlayerBounds=[" << _cellDescription->getRestrictionUpperBounds() << "]";
+        << ",lowerGhostlayerBounds=[" << _cellDescription->getRestrictionLowerBounds() << "],upperGhostlayerBounds=[" << _cellDescription->getRestrictionUpperBounds() << "]"
+        << ",numberOfPatchStateUpdates=" << _cellDescription->getNumberOfPatchStateUpdates();
   } else {
     str << "null";
   }
@@ -731,6 +796,9 @@ bool peanoclaw::Patch::isValid() const {
 }
 
 bool peanoclaw::Patch::isLeaf() const {
+  if(isValid()) {
+    assertionEquals2((_uNew==0), (_cellDescription->getUNewIndex()==-1), _uNew, _cellDescription->getUNewIndex());
+  }
   return (_cellDescription != 0) && !_cellDescription->getIsVirtual() && (_uNew != 0 && _uOldWithGhostlayer != 0);
 }
 
@@ -784,6 +852,9 @@ void peanoclaw::Patch::switchToVirtual() {
     }
   }
 
+  assertion1(_uNew != 0 && _cellDescription->getUNewIndex() != -1, toString());
+  assertion1(_uOldWithGhostlayer != 0 && _cellDescription->getUOldIndex() != -1, toString());
+
   //TODO unterweg debug
 //  std::cout << "Allocated Cells: " << counter << std::endl;
 //  std::cout << "Allocated Memory: " << (sizeof(Data) * counter) << std::endl;
@@ -793,35 +864,35 @@ void peanoclaw::Patch::switchToNonVirtual() {
   assertion(!isLeaf())
   _cellDescription->setIsVirtual(false);
   if(_cellDescription->getUNewIndex() != -1) {
-
     counter -= _uNew->capacity();
-
     peano::heap::Heap<Data>::getInstance().deleteData(getUNewIndex());
     _cellDescription->setUNewIndex(-1);
     _uNew = 0;
   }
 
   if(_cellDescription->getUOldIndex() != -1) {
-
     counter -= _uOldWithGhostlayer->capacity();
-
     peano::heap::Heap<Data>::getInstance().deleteData(getUOldIndex());
     _cellDescription->setUOldIndex(-1);
     _uOldWithGhostlayer = 0;
   }
 
   if(_cellDescription->getAuxIndex() != -1) {
-
     counter -= _auxArray->capacity();
     peano::heap::Heap<Data>::getInstance().deleteData(getAuxIndex());
     _cellDescription->setAuxIndex(-1);
     _auxArray = 0;
   }
+
+  assertionEquals1(_uNew, 0, toString());
+  assertionEquals1(_uOldWithGhostlayer, 0, toString());
+  assertionEquals1(_auxArray, 0, toString());
   assertion(!isLeaf() && !isVirtual());
 }
 
 void peanoclaw::Patch::switchToLeaf() {
   assertion(isVirtual() || isLeaf());
+  assertion1(!tarch::la::smaller(_cellDescription->getTimestepSize(), 0.0), toString());
   _cellDescription->setIsVirtual(false);
 
   //TODO unterweg restricting to interval [0, 1]
@@ -854,6 +925,18 @@ void peanoclaw::Patch::switchToLeaf() {
   #endif
 
   assertion(isLeaf());
+}
+
+void peanoclaw::Patch::increaseNumberOfPatchStateUpdate() {
+  _cellDescription->setNumberOfPatchStateUpdates(_cellDescription->getNumberOfPatchStateUpdates()+1);
+}
+
+void peanoclaw::Patch::decreaseNumberOfPatchStateUpdate() {
+  _cellDescription->setNumberOfPatchStateUpdates(_cellDescription->getNumberOfPatchStateUpdates()-1);
+}
+
+int peanoclaw::Patch::getNumberOfPatchStateUpdates() {
+  return _cellDescription->getNumberOfPatchStateUpdates();
 }
 
 bool peanoclaw::Patch::shouldRestrict() {

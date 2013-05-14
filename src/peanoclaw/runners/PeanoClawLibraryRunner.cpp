@@ -13,28 +13,25 @@
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/VertexDescription.h"
 #include "peanoclaw/records/Data.h"
+#include "peanoclaw/records/Cell.h"
+#include "peanoclaw/records/Vertex.h"
 #include "peano/heap/Heap.h"
 
 #include "peano/utils/UserInterface.h"
+#include "peano/peano.h"
 
 #if defined(Parallel)
+#include "tarch/parallel/NodePool.h"
+#include "peano/parallel/SendReceiveBufferPool.h"
+#include "peano/parallel/JoinDataBufferPool.h"
 #include "peano/parallel/messages/ForkMessage.h"
-#endif
-
 #include "tarch/parallel/FCFSNodePoolStrategy.h"
 #include "peano/parallel/loadbalancing/Oracle.h"
 #include "peano/parallel/loadbalancing/OracleForOnePhaseWithGreedyPartitioning.h"
-#include "peano/parallel/SendReceiveBufferPool.h"
-#include "peano/parallel/JoinDataBufferPool.h"
-
+#endif
 
 #include "peano/datatraversal/autotuning/Oracle.h"
 #include "peano/datatraversal/autotuning/OracleForOnePhaseDummy.h"
-
-#include <ctime>
-
-// roland MARK
-// TODO: implement/port RunnerParallerWorker part
 
 tarch::logging::Log peanoclaw::runners::PeanoClawLibraryRunner::_log("peanoclaw::runners::PeanoClawLibraryRunner");
 
@@ -54,7 +51,14 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _plotNumber(1),
   _configuration(configuration),
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
-  _totalRuntime(0.0) {
+  _totalRuntime(0.0),
+  _numerics(numerics)
+{
+  //Parallel configuration
+  #ifdef Parallel
+  tarch::parallel::Node::getInstance().setTimeOutWarning(30);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(60);
+  #endif
 
   peano::utils::UserInterface userInterface;
   userInterface.writeHeader();
@@ -121,6 +125,13 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);
+
+#ifdef Parallel
+  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
+     tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();  
+#endif
+
+
   _repository->switchToInitialiseGrid(); _repository->iterate();
   do {
     state.setInitialRefinementTriggered(false);
@@ -132,6 +143,10 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
     _repository->switchToPlot(); _repository->iterate();
   }
+
+#ifdef Parallel
+  }
+#endif
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
@@ -156,45 +171,50 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   dataHeap.deleteAllData();
   vertexDescriptionHeap.deleteAllData();
 
-  _repository->getState().plotTotalStatistics();
+  #ifdef Parallel
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+  #endif
+    _repository->getState().plotTotalStatistics();
 
-  _repository->logIterationStatistics();
-  _repository->terminate();
+    _repository->logIterationStatistics();
+    _repository->terminate();
+  #ifdef Parallel
+  }
+  #endif
   delete _repository;
   delete _geometry;
+
+  #ifdef Parallel
+  tarch::parallel::NodePool::getInstance().terminate();
+  #endif
+  peano::shutdownParallelEnvironment();
+  peano::shutdownSharedMemoryEnvironment();
+
   logTraceOut("~PeanoClawLibraryRunner");
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
-  double time//,
-//  peanoclaw::Numerics& numerics
+  double time
 ) {
   logTraceIn("evolveToTime");
-
-#if defined(Parallel)
-  if (!tarch::parallel::Node::getInstance().isGlobalMaster()) {
-    if (!_repository->continueToIterate()) {
-        _repository->terminate();
-
-        if ( tarch::parallel::NodePool::getInstance().waitForJob() >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
-            peano::parallel::messages::ForkMessage forkMessage;
-            forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
-
-             _repository->restart(
-              forkMessage.getH(),
-              forkMessage.getDomainOffset(),
-              forkMessage.getLevel()
-           );
-        }
-    }
-  }
-#endif
   
   bool plotSubsteps = _configuration.plotSubsteps()
       || (_configuration.plotSubstepsAfterOutputTime() != -1 && _configuration.plotSubstepsAfterOutputTime() <= _plotNumber);
+ 
+  _repository->getState().setNumerics(_numerics);
+
+  /*if (!_repository->getState().isGridBalanced()) {
+      _repository->getState().setIsInitializing(true);
+      _repository->switchToInitialiseGrid();
+      do {
+        std::cout << "AWWWWWWW YEAH!" << std::endl;
+        _repository->iterate();
+      } while(!_repository->getState().isGridBalanced());
+      _repository->getState().setIsInitializing(false);
+  }*/
 
   _repository->getState().setGlobalTimestepEndTime(time);
-//  _repository->getState().setNumerics(numerics);
+  _repository->getState().setNumerics(_numerics);
   _repository->getState().setPlotNumber(_plotNumber);
   do {
     logInfo("evolveToTime", "Solving timestep " << (_plotNumber-1) << " with maximum global time interval ("
@@ -217,9 +237,10 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _repository->getState().plotStatisticsForLastGridIteration();
 
     _iterationTimer.stopTimer();
-    _totalRuntime += _iterationTimer.getCPUTicks() / CLOCKS_PER_SEC;
+    _totalRuntime += (double)_iterationTimer.getCPUTicks() / (double)CLOCKS_PER_SEC;
     logInfo("evolveToTime", "Wallclock time for this grid iteration/Total runtime: " << _iterationTimer.getCalendarTime() << "s/" << _totalRuntime << "s");
     logInfo("evolveToTime", "Minimal timestep for this grid iteration: " << _repository->getState().getMinimalTimestep());
+    assertion(_repository->getState().getMinimalTimestep() < std::numeric_limits<double>::infinity());
   } while(!_repository->getState().getAllPatchesEvolvedToGlobalTimestep());
 
   if(_configuration.plotAtOutputTimes() && !plotSubsteps) {
@@ -232,14 +253,34 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   logTraceOut("evolveToTime");
 }
 
-void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution(
-//  peanoclaw::Numerics& numerics
-) {
+void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution() {
   logTraceIn("gatherCurrentSolution");
   assertion(_repository != 0);
-//  _repository->getState().setNumerics(numerics);
 
   _repository->switchToGatherCurrentSolution();
   _repository->iterate();
   logTraceOut("gatherCurrentSolution");
+}
+
+int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
+  #if defined(Parallel)
+  while ( tarch::parallel::NodePool::getInstance().waitForJob() >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
+    peano::parallel::messages::ForkMessage forkMessage;
+    forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
+
+    _repository->restart(
+        forkMessage.getH(),
+        forkMessage.getDomainOffset(),
+        forkMessage.getLevel(),
+        forkMessage.getPositionOfFineGridCellRelativeToCoarseGridCell()
+    );
+
+    _repository->getState().setNumerics(_numerics);
+    while (_repository->continueToIterate()) {
+      _repository->iterate();
+    }
+    _repository->terminate();
+  }
+  #endif
+  return 0;
 }

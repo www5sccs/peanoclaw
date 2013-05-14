@@ -11,6 +11,7 @@
 #include "peanoclaw/pyclaw/PyClawState.h"
 #include "peanoclaw/Patch.h"
 #include "tarch/timing/Watch.h"
+#include "tarch/parallel/Node.h"
 
 tarch::logging::Log peanoclaw::pyclaw::PyClaw::_log("peanoclaw::pyclaw::PyClaw");
 
@@ -75,42 +76,7 @@ double peanoclaw::pyclaw::PyClaw::initializePatch(
     #else
       0
     #endif
-
   );
-
-#if 0
-  patch.copyUNewToUOld(); // roland MARK: Y U CAUSE FAIL and Y U SO IMPORTANT!!
- 
-  demandedMeshWidth = _initializationCallback(
-    state._q,
-    state._qbc,
-    state._aux,
-    patch.getSubdivisionFactor()(0),
-    patch.getSubdivisionFactor()(1),
-    #ifdef Dim3
-    patch.getSubdivisionFactor()(2),
-    #else
-      0,
-    #endif
-    patch.getUnknownsPerSubcell(),
-    patch.getAuxiliarFieldsPerSubcell(),
-    patch.getSize()(0),
-    patch.getSize()(1),
-    #ifdef Dim3
-    patch.getSize()(2),
-    #else
-      0,
-    #endif
-    patch.getPosition()(0),
-    patch.getPosition()(1),
-    #ifdef Dim3
-    patch.getPosition()(2)
-    #else
-      0
-    #endif
-
-  );
-#endif
 
   logTraceOutWith1Argument( "initializePatch(...)", demandedMeshWidth);
   return demandedMeshWidth;
@@ -120,8 +86,6 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
 
   assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getMinimalNeighborTimeConstraint());
-
-  //logInfo("solveTimestep(..)", "patch before call: " << patch);
 
   PyClawState state(patch);
 
@@ -163,27 +127,16 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
       useDimensionalSplitting
     );
 
-  // requiredMeshWidth =
-  //    [Steer refinement]
-  //        if not self.refinement_criterion == None:
-  //          return self.refinement_criterion(subgridsolver.solution.state)
-  //        else:
- //           return self.initial_minimal_mesh_width
-  
-
-
   pyclawWatch.stopTimer();
   _totalSolverCallbackTime += pyclawWatch.getCalendarTime();
-//  logInfo("solveTimestep", "Time for PyClaw solver: " << pyclawWatch.getCalendarTime());
- 
-  //logInfo("solveTimestep(..)", "patch after call: " << patch << " maximumTimestepSize " << maximumTimestepSize << " dtAndEstimatedNextDt[0] " << dtAndEstimatedNextDt[0] << " dtAndEstimatedNextDt[1] " << dtAndEstimatedNextDt[1]);
 
-  assertion3(
+  assertion4(
       tarch::la::greater(patch.getTimestepSize(), 0.0)
       || tarch::la::greater(dtAndEstimatedNextDt[1], 0.0)
       || tarch::la::equals(maximumTimestepSize, 0.0)
       || tarch::la::equals(patch.getEstimatedNextTimestepSize(), 0.0),
-      patch, maximumTimestepSize, dtAndEstimatedNextDt[1]);
+      patch, maximumTimestepSize, dtAndEstimatedNextDt[1], patch.toStringUNew());
+  assertion(patch.getTimestepSize() < std::numeric_limits<double>::infinity());
 
   if (tarch::la::greater(dtAndEstimatedNextDt[0], 0.0)) {
     patch.advanceInTime();
@@ -278,48 +231,3 @@ void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, b
   logTraceOut("fillBoundaryLayerInPyClaw");
 }
 
-
-//#ifdef Dim2
-//void peanoclaw::pyclaw::PyClaw::fillLeftBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 0, false);
-//}
-//
-//void peanoclaw::pyclaw::PyClaw::fillUpperBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 1, true);
-//}
-//
-//void peanoclaw::pyclaw::PyClaw::fillRightBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 0, true);
-//}
-//
-//void peanoclaw::pyclaw::PyClaw::fillLowerBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 1, false);
-//}
-//#endif
-
-
-//#ifdef Dim3
-//void peanoclaw::pyclaw::PyClaw::fillLeftBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 0, false);
-//}
-//
-//void peanoclaw::pyclaw::PyClaw::fillBehindBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 1, true);
-//}
-//
-//void peanoclaw::pyclaw::PyClaw::fillRightBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 0, true);
-//}
-//
-//void peanoclaw::pyclaw::PyClaw::fillFrontBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 1, false);
-//}
-//
-//void peanoclaw::pyclaw::PyClaw::fillUpperBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 2, true);
-//}
-//
-//void peanoclaw::pyclaw::PyClaw::fillLowerBoundaryLayer(Patch& patch) {
-//  fillBoundaryLayerInPyClaw(patch, 2, false);
-//}
-//#endif

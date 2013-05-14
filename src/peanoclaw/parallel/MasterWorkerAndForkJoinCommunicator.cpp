@@ -55,9 +55,6 @@ int peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receiveDataArray()
   localArray.assign(it, remoteArray.end());
   assertionEquals2(remoteArray.size(), localArray.size(), _position, _level);
 
-  //TODO unterweg debug
-  std::cout << "On rank " << tarch::parallel::Node::getInstance().getRank() << " copied " << localArray.size() << " elements from master/worker." << std::endl;
-
   logTraceOut("receiveDataArray");
   return localIndex;
 }

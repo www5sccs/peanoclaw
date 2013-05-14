@@ -32,9 +32,9 @@ namespace peanoclaw {
     * 		   2007-2009 Wolfgang Eckhardt
     * 		   2012      Tobias Weinzierl
     *
-    * 		   build date: 29-11-2012 08:46
+    * 		   build date: 12-04-2013 09:18
     *
-    * @date   10/02/2013 15:38
+    * @date   06/05/2013 09:15
     */
    class peanoclaw::records::Cell { 
       
@@ -627,7 +627,7 @@ namespace peanoclaw {
          protected:
             static tarch::logging::Log _log;
             
-            int _senderRank;
+            int _senderDestinationRank;
             
          public:
             
@@ -675,9 +675,9 @@ namespace peanoclaw {
        * 		   2007-2009 Wolfgang Eckhardt
        * 		   2012      Tobias Weinzierl
        *
-       * 		   build date: 29-11-2012 08:46
+       * 		   build date: 12-04-2013 09:18
        *
-       * @date   10/02/2013 15:38
+       * @date   06/05/2013 09:15
        */
       class peanoclaw::records::CellPacked { 
          
@@ -1311,7 +1311,7 @@ namespace peanoclaw {
             protected:
                static tarch::logging::Log _log;
                
-               int _senderRank;
+               int _senderDestinationRank;
                
             public:
                
@@ -1356,9 +1356,9 @@ namespace peanoclaw {
           * 		   2007-2009 Wolfgang Eckhardt
           * 		   2012      Tobias Weinzierl
           *
-          * 		   build date: 29-11-2012 08:46
+          * 		   build date: 12-04-2013 09:18
           *
-          * @date   10/02/2013 15:38
+          * @date   06/05/2013 09:15
           */
          class peanoclaw::records::Cell { 
             
@@ -1910,7 +1910,7 @@ namespace peanoclaw {
                protected:
                   static tarch::logging::Log _log;
                   
-                  int _senderRank;
+                  int _senderDestinationRank;
                   
                public:
                   
@@ -1958,9 +1958,9 @@ namespace peanoclaw {
              * 		   2007-2009 Wolfgang Eckhardt
              * 		   2012      Tobias Weinzierl
              *
-             * 		   build date: 29-11-2012 08:46
+             * 		   build date: 12-04-2013 09:18
              *
-             * @date   10/02/2013 15:38
+             * @date   06/05/2013 09:15
              */
             class peanoclaw::records::CellPacked { 
                
@@ -2553,7 +2553,7 @@ namespace peanoclaw {
                   protected:
                      static tarch::logging::Log _log;
                      
-                     int _senderRank;
+                     int _senderDestinationRank;
                      
                   public:
                      
@@ -2599,9 +2599,9 @@ namespace peanoclaw {
              * 		   2007-2009 Wolfgang Eckhardt
              * 		   2012      Tobias Weinzierl
              *
-             * 		   build date: 29-11-2012 08:46
+             * 		   build date: 12-04-2013 09:18
              *
-             * @date   10/02/2013 15:38
+             * @date   06/05/2013 09:15
              */
             class peanoclaw::records::Cell { 
                
@@ -2628,6 +2628,7 @@ namespace peanoclaw {
                      tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int> _accessNumber;
                      #endif
                      int _responsibleRank;
+                     bool _subtreeHoldsWorker;
                      double _nodeWorkload;
                      double _localWorkload;
                      double _totalWorkload;
@@ -2639,7 +2640,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                     PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
                      
                      
                      inline int getCellDescriptionIndex() const 
@@ -2838,6 +2839,26 @@ namespace peanoclaw {
                      
                      
                      
+                     inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _subtreeHoldsWorker;
+                     }
+                     
+                     
+                     
+                     inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _subtreeHoldsWorker = subtreeHoldsWorker;
+                     }
+                     
+                     
+                     
                      inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -2917,7 +2938,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                  Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
                   
                   /**
                    * Generated
@@ -3185,6 +3206,26 @@ namespace peanoclaw {
                   
                   
                   
+                  inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._subtreeHoldsWorker;
+                  }
+                  
+                  
+                  
+                  inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._subtreeHoldsWorker = subtreeHoldsWorker;
+                  }
+                  
+                  
+                  
                   inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -3276,7 +3317,7 @@ namespace peanoclaw {
                   protected:
                      static tarch::logging::Log _log;
                      
-                     int _senderRank;
+                     int _senderDestinationRank;
                      
                   public:
                      
@@ -3324,9 +3365,9 @@ namespace peanoclaw {
                 * 		   2007-2009 Wolfgang Eckhardt
                 * 		   2012      Tobias Weinzierl
                 *
-                * 		   build date: 29-11-2012 08:46
+                * 		   build date: 12-04-2013 09:18
                 *
-                * @date   10/02/2013 15:38
+                * @date   06/05/2013 09:15
                 */
                class peanoclaw::records::CellPacked { 
                   
@@ -3338,6 +3379,7 @@ namespace peanoclaw {
                         int _cellDescriptionIndex;
                         tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int> _accessNumber;
                         int _responsibleRank;
+                        bool _subtreeHoldsWorker;
                         double _nodeWorkload;
                         double _localWorkload;
                         double _totalWorkload;
@@ -3358,7 +3400,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                        PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
                         
                         
                         inline int getCellDescriptionIndex() const 
@@ -3577,6 +3619,26 @@ namespace peanoclaw {
                         
                         
                         
+                        inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           return _subtreeHoldsWorker;
+                        }
+                        
+                        
+                        
+                        inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           _subtreeHoldsWorker = subtreeHoldsWorker;
+                        }
+                        
+                        
+                        
                         inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -3656,7 +3718,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                     CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
                      
                      /**
                       * Generated
@@ -3951,6 +4013,26 @@ namespace peanoclaw {
                      
                      
                      
+                     inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _persistentRecords._subtreeHoldsWorker;
+                     }
+                     
+                     
+                     
+                     inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _persistentRecords._subtreeHoldsWorker = subtreeHoldsWorker;
+                     }
+                     
+                     
+                     
                      inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -4042,7 +4124,7 @@ namespace peanoclaw {
                      protected:
                         static tarch::logging::Log _log;
                         
-                        int _senderRank;
+                        int _senderDestinationRank;
                         
                      public:
                         
@@ -4088,9 +4170,9 @@ namespace peanoclaw {
                 * 		   2007-2009 Wolfgang Eckhardt
                 * 		   2012      Tobias Weinzierl
                 *
-                * 		   build date: 29-11-2012 08:46
+                * 		   build date: 12-04-2013 09:18
                 *
-                * @date   10/02/2013 15:38
+                * @date   06/05/2013 09:15
                 */
                class peanoclaw::records::Cell { 
                   
@@ -4601,7 +4683,7 @@ namespace peanoclaw {
                      protected:
                         static tarch::logging::Log _log;
                         
-                        int _senderRank;
+                        int _senderDestinationRank;
                         
                      public:
                         
@@ -4649,9 +4731,9 @@ namespace peanoclaw {
                    * 		   2007-2009 Wolfgang Eckhardt
                    * 		   2012      Tobias Weinzierl
                    *
-                   * 		   build date: 29-11-2012 08:46
+                   * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   10/02/2013 15:38
+                   * @date   06/05/2013 09:15
                    */
                   class peanoclaw::records::CellPacked { 
                      
@@ -5203,7 +5285,7 @@ namespace peanoclaw {
                         protected:
                            static tarch::logging::Log _log;
                            
-                           int _senderRank;
+                           int _senderDestinationRank;
                            
                         public:
                            
@@ -5249,9 +5331,9 @@ namespace peanoclaw {
                    * 		   2007-2009 Wolfgang Eckhardt
                    * 		   2012      Tobias Weinzierl
                    *
-                   * 		   build date: 29-11-2012 08:46
+                   * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   10/02/2013 15:38
+                   * @date   06/05/2013 09:15
                    */
                   class peanoclaw::records::Cell { 
                      
@@ -5279,6 +5361,7 @@ namespace peanoclaw {
                            tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int> _accessNumber;
                            #endif
                            int _responsibleRank;
+                           bool _subtreeHoldsWorker;
                            double _nodeWorkload;
                            double _localWorkload;
                            double _totalWorkload;
@@ -5292,7 +5375,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                           PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                            
                            
                            inline int getCellDescriptionIndex() const 
@@ -5511,6 +5594,26 @@ namespace peanoclaw {
                            
                            
                            
+                           inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _subtreeHoldsWorker;
+                           }
+                           
+                           
+                           
+                           inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _subtreeHoldsWorker = subtreeHoldsWorker;
+                           }
+                           
+                           
+                           
                            inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -5630,7 +5733,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                        Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                         
                         /**
                          * Generated
@@ -5918,6 +6021,26 @@ namespace peanoclaw {
                         
                         
                         
+                        inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           return _persistentRecords._subtreeHoldsWorker;
+                        }
+                        
+                        
+                        
+                        inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           _persistentRecords._subtreeHoldsWorker = subtreeHoldsWorker;
+                        }
+                        
+                        
+                        
                         inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -6049,7 +6172,7 @@ namespace peanoclaw {
                         protected:
                            static tarch::logging::Log _log;
                            
-                           int _senderRank;
+                           int _senderDestinationRank;
                            
                         public:
                            
@@ -6097,9 +6220,9 @@ namespace peanoclaw {
                       * 		   2007-2009 Wolfgang Eckhardt
                       * 		   2012      Tobias Weinzierl
                       *
-                      * 		   build date: 29-11-2012 08:46
+                      * 		   build date: 12-04-2013 09:18
                       *
-                      * @date   10/02/2013 15:38
+                      * @date   06/05/2013 09:15
                       */
                      class peanoclaw::records::CellPacked { 
                         
@@ -6112,6 +6235,7 @@ namespace peanoclaw {
                               int _level;
                               tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int> _accessNumber;
                               int _responsibleRank;
+                              bool _subtreeHoldsWorker;
                               double _nodeWorkload;
                               double _localWorkload;
                               double _totalWorkload;
@@ -6134,7 +6258,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                               
                               
                               inline int getCellDescriptionIndex() const 
@@ -6373,6 +6497,26 @@ namespace peanoclaw {
                               
                               
                               
+                              inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _subtreeHoldsWorker;
+                              }
+                              
+                              
+                              
+                              inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _subtreeHoldsWorker = subtreeHoldsWorker;
+                              }
+                              
+                              
+                              
                               inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -6492,7 +6636,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                           CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                            
                            /**
                             * Generated
@@ -6807,6 +6951,26 @@ namespace peanoclaw {
                            
                            
                            
+                           inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._subtreeHoldsWorker;
+                           }
+                           
+                           
+                           
+                           inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._subtreeHoldsWorker = subtreeHoldsWorker;
+                           }
+                           
+                           
+                           
                            inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -6938,7 +7102,7 @@ namespace peanoclaw {
                            protected:
                               static tarch::logging::Log _log;
                               
-                              int _senderRank;
+                              int _senderDestinationRank;
                               
                            public:
                               
@@ -6984,9 +7148,9 @@ namespace peanoclaw {
                       * 		   2007-2009 Wolfgang Eckhardt
                       * 		   2012      Tobias Weinzierl
                       *
-                      * 		   build date: 29-11-2012 08:46
+                      * 		   build date: 12-04-2013 09:18
                       *
-                      * @date   10/02/2013 15:38
+                      * @date   06/05/2013 09:15
                       */
                      class peanoclaw::records::Cell { 
                         
@@ -7014,6 +7178,7 @@ namespace peanoclaw {
                               tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int> _accessNumber;
                               #endif
                               int _responsibleRank;
+                              bool _subtreeHoldsWorker;
                               double _nodeWorkload;
                               double _localWorkload;
                               double _totalWorkload;
@@ -7025,7 +7190,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
                               
                               
                               inline int getCellDescriptionIndex() const 
@@ -7244,6 +7409,26 @@ namespace peanoclaw {
                               
                               
                               
+                              inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _subtreeHoldsWorker;
+                              }
+                              
+                              
+                              
+                              inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _subtreeHoldsWorker = subtreeHoldsWorker;
+                              }
+                              
+                              
+                              
                               inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -7323,7 +7508,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                           Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
                            
                            /**
                             * Generated
@@ -7611,6 +7796,26 @@ namespace peanoclaw {
                            
                            
                            
+                           inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._subtreeHoldsWorker;
+                           }
+                           
+                           
+                           
+                           inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._subtreeHoldsWorker = subtreeHoldsWorker;
+                           }
+                           
+                           
+                           
                            inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -7702,7 +7907,7 @@ namespace peanoclaw {
                            protected:
                               static tarch::logging::Log _log;
                               
-                              int _senderRank;
+                              int _senderDestinationRank;
                               
                            public:
                               
@@ -7750,9 +7955,9 @@ namespace peanoclaw {
                          * 		   2007-2009 Wolfgang Eckhardt
                          * 		   2012      Tobias Weinzierl
                          *
-                         * 		   build date: 29-11-2012 08:46
+                         * 		   build date: 12-04-2013 09:18
                          *
-                         * @date   10/02/2013 15:38
+                         * @date   06/05/2013 09:15
                          */
                         class peanoclaw::records::CellPacked { 
                            
@@ -7765,6 +7970,7 @@ namespace peanoclaw {
                                  int _level;
                                  tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int> _accessNumber;
                                  int _responsibleRank;
+                                 bool _subtreeHoldsWorker;
                                  double _nodeWorkload;
                                  double _localWorkload;
                                  double _totalWorkload;
@@ -7785,7 +7991,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
                                  
                                  
                                  inline int getCellDescriptionIndex() const 
@@ -8024,6 +8230,26 @@ namespace peanoclaw {
                                  
                                  
                                  
+                                 inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    return _subtreeHoldsWorker;
+                                 }
+                                 
+                                 
+                                 
+                                 inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    _subtreeHoldsWorker = subtreeHoldsWorker;
+                                 }
+                                 
+                                 
+                                 
                                  inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -8103,7 +8329,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                              CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
                               
                               /**
                                * Generated
@@ -8418,6 +8644,26 @@ namespace peanoclaw {
                               
                               
                               
+                              inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _persistentRecords._subtreeHoldsWorker;
+                              }
+                              
+                              
+                              
+                              inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _persistentRecords._subtreeHoldsWorker = subtreeHoldsWorker;
+                              }
+                              
+                              
+                              
                               inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -8509,7 +8755,7 @@ namespace peanoclaw {
                               protected:
                                  static tarch::logging::Log _log;
                                  
-                                 int _senderRank;
+                                 int _senderDestinationRank;
                                  
                               public:
                                  
@@ -8555,9 +8801,9 @@ namespace peanoclaw {
                          * 		   2007-2009 Wolfgang Eckhardt
                          * 		   2012      Tobias Weinzierl
                          *
-                         * 		   build date: 29-11-2012 08:46
+                         * 		   build date: 12-04-2013 09:18
                          *
-                         * @date   10/02/2013 15:38
+                         * @date   06/05/2013 09:15
                          */
                         class peanoclaw::records::Cell { 
                            
@@ -8584,6 +8830,7 @@ namespace peanoclaw {
                                  tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int> _accessNumber;
                                  #endif
                                  int _responsibleRank;
+                                 bool _subtreeHoldsWorker;
                                  double _nodeWorkload;
                                  double _localWorkload;
                                  double _totalWorkload;
@@ -8597,7 +8844,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                  
                                  
                                  inline int getCellDescriptionIndex() const 
@@ -8796,6 +9043,26 @@ namespace peanoclaw {
                                  
                                  
                                  
+                                 inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    return _subtreeHoldsWorker;
+                                 }
+                                 
+                                 
+                                 
+                                 inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    _subtreeHoldsWorker = subtreeHoldsWorker;
+                                 }
+                                 
+                                 
+                                 
                                  inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -8915,7 +9182,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                              Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                               
                               /**
                                * Generated
@@ -9183,6 +9450,26 @@ namespace peanoclaw {
                               
                               
                               
+                              inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _persistentRecords._subtreeHoldsWorker;
+                              }
+                              
+                              
+                              
+                              inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _persistentRecords._subtreeHoldsWorker = subtreeHoldsWorker;
+                              }
+                              
+                              
+                              
                               inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -9314,7 +9601,7 @@ namespace peanoclaw {
                               protected:
                                  static tarch::logging::Log _log;
                                  
-                                 int _senderRank;
+                                 int _senderDestinationRank;
                                  
                               public:
                                  
@@ -9362,9 +9649,9 @@ namespace peanoclaw {
                             * 		   2007-2009 Wolfgang Eckhardt
                             * 		   2012      Tobias Weinzierl
                             *
-                            * 		   build date: 29-11-2012 08:46
+                            * 		   build date: 12-04-2013 09:18
                             *
-                            * @date   10/02/2013 15:38
+                            * @date   06/05/2013 09:15
                             */
                            class peanoclaw::records::CellPacked { 
                               
@@ -9376,6 +9663,7 @@ namespace peanoclaw {
                                     int _cellDescriptionIndex;
                                     tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int> _accessNumber;
                                     int _responsibleRank;
+                                    bool _subtreeHoldsWorker;
                                     double _nodeWorkload;
                                     double _localWorkload;
                                     double _totalWorkload;
@@ -9398,7 +9686,7 @@ namespace peanoclaw {
                                     /**
                                      * Generated
                                      */
-                                    PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                    PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                     
                                     
                                     inline int getCellDescriptionIndex() const 
@@ -9617,6 +9905,26 @@ namespace peanoclaw {
                                     
                                     
                                     
+                                    inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _subtreeHoldsWorker;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _subtreeHoldsWorker = subtreeHoldsWorker;
+                                    }
+                                    
+                                    
+                                    
                                     inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -9736,7 +10044,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                 CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                  
                                  /**
                                   * Generated
@@ -10031,6 +10339,26 @@ namespace peanoclaw {
                                  
                                  
                                  
+                                 inline bool getSubtreeHoldsWorker() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    return _persistentRecords._subtreeHoldsWorker;
+                                 }
+                                 
+                                 
+                                 
+                                 inline void setSubtreeHoldsWorker(const bool& subtreeHoldsWorker) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    _persistentRecords._subtreeHoldsWorker = subtreeHoldsWorker;
+                                 }
+                                 
+                                 
+                                 
                                  inline double getNodeWorkload() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -10162,7 +10490,7 @@ namespace peanoclaw {
                                  protected:
                                     static tarch::logging::Log _log;
                                     
-                                    int _senderRank;
+                                    int _senderDestinationRank;
                                     
                                  public:
                                     
@@ -10208,9 +10536,9 @@ namespace peanoclaw {
                             * 		   2007-2009 Wolfgang Eckhardt
                             * 		   2012      Tobias Weinzierl
                             *
-                            * 		   build date: 29-11-2012 08:46
+                            * 		   build date: 12-04-2013 09:18
                             *
-                            * @date   10/02/2013 15:38
+                            * @date   06/05/2013 09:15
                             */
                            class peanoclaw::records::Cell { 
                               
@@ -10844,7 +11172,7 @@ namespace peanoclaw {
                                  protected:
                                     static tarch::logging::Log _log;
                                     
-                                    int _senderRank;
+                                    int _senderDestinationRank;
                                     
                                  public:
                                     
@@ -10892,9 +11220,9 @@ namespace peanoclaw {
                                * 		   2007-2009 Wolfgang Eckhardt
                                * 		   2012      Tobias Weinzierl
                                *
-                               * 		   build date: 29-11-2012 08:46
+                               * 		   build date: 12-04-2013 09:18
                                *
-                               * @date   10/02/2013 15:38
+                               * @date   06/05/2013 09:15
                                */
                               class peanoclaw::records::CellPacked { 
                                  
@@ -11569,7 +11897,7 @@ namespace peanoclaw {
                                     protected:
                                        static tarch::logging::Log _log;
                                        
-                                       int _senderRank;
+                                       int _senderDestinationRank;
                                        
                                     public:
                                        

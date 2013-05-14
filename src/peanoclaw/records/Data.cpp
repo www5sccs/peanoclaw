@@ -11,13 +11,13 @@ _u(u) {
 }
 
 
-double peanoclaw::records::Data::PersistentRecords::getU() const {
+ double peanoclaw::records::Data::PersistentRecords::getU() const  {
    return _u;
 }
 
 
 
-void peanoclaw::records::Data::PersistentRecords::setU(const double& u) {
+ void peanoclaw::records::Data::PersistentRecords::setU(const double& u)  {
    _u = u;
 }
 
@@ -39,18 +39,18 @@ _persistentRecords(u) {
 }
 
 
-//peanoclaw::records::Data::~Data() { }
+peanoclaw::records::Data::~Data() { }
 
 
-//double peanoclaw::records::Data::getU() const {
-//   return _persistentRecords._u;
-//}
+ double peanoclaw::records::Data::getU() const  {
+   return _persistentRecords._u;
+}
 
 
 
-//void peanoclaw::records::Data::setU(const double& u) {
-//  _persistentRecords._u = u;
-//}
+ void peanoclaw::records::Data::setU(const double& u)  {
+   _persistentRecords._u = u;
+}
 
 
 
@@ -77,54 +77,88 @@ peanoclaw::records::DataPacked peanoclaw::records::Data::convert() const{
       getU()
    );
 }
- 
-tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" );
 
-#if 0
 #ifdef Parallel
-   #include "tarch/parallel/Node.h" 
+   tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" );
    
    MPI_Datatype peanoclaw::records::Data::Datatype = 0;
+   MPI_Datatype peanoclaw::records::Data::FullDatatype = 0;
    
    
    void peanoclaw::records::Data::initDatatype() {
-      const int Attributes = 2;
-      MPI_Datatype subtypes[Attributes] = {
-         MPI_DOUBLE,		 //u
-         MPI_UB		 // end/displacement flag
-      };
-      
-      int blocklen[Attributes] = {
-         1,		 //u
-         1		 // end/displacement flag
-      };
-      
-      MPI_Aint     disp[Attributes];
-      Data dummyData[2];
-      
-      MPI_Aint base;
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[0]))), &base);
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[0]._persistentRecords._u))), 		&disp[0] );
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[1]._persistentRecords._u))), 		&disp[1] );
-      
-      for (int i=1; i<Attributes; i++) {
-         assertion1( disp[i] > disp[i-1], i );
+      {
+         Data dummyData[2];
+         
+         const int Attributes = 2;
+         MPI_Datatype subtypes[Attributes] = {
+            MPI_DOUBLE,		 //u
+            MPI_UB		 // end/displacement flag
+         };
+         
+         int blocklen[Attributes] = {
+            1,		 //u
+            1		 // end/displacement flag
+         };
+         
+         MPI_Aint     disp[Attributes];
+         
+         MPI_Aint base;
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[0]))), &base);
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[0]._persistentRecords._u))), 		&disp[0] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[1]._persistentRecords._u))), 		&disp[1] );
+         
+         for (int i=1; i<Attributes; i++) {
+            assertion1( disp[i] > disp[i-1], i );
+         }
+         for (int i=0; i<Attributes; i++) {
+            disp[i] -= base;
+         }
+         MPI_Type_struct( Attributes, blocklen, disp, subtypes, &Data::Datatype );
+         MPI_Type_commit( &Data::Datatype );
+         
       }
-      for (int i=0; i<Attributes; i++) {
-         disp[i] -= base;
+      {
+         Data dummyData[2];
+         
+         const int Attributes = 2;
+         MPI_Datatype subtypes[Attributes] = {
+            MPI_DOUBLE,		 //u
+            MPI_UB		 // end/displacement flag
+         };
+         
+         int blocklen[Attributes] = {
+            1,		 //u
+            1		 // end/displacement flag
+         };
+         
+         MPI_Aint     disp[Attributes];
+         
+         MPI_Aint base;
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[0]))), &base);
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[0]._persistentRecords._u))), 		&disp[0] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyData[1]._persistentRecords._u))), 		&disp[1] );
+         
+         for (int i=1; i<Attributes; i++) {
+            assertion1( disp[i] > disp[i-1], i );
+         }
+         for (int i=0; i<Attributes; i++) {
+            disp[i] -= base;
+         }
+         MPI_Type_struct( Attributes, blocklen, disp, subtypes, &Data::FullDatatype );
+         MPI_Type_commit( &Data::FullDatatype );
+         
       }
-      MPI_Type_struct( Attributes, blocklen, disp, subtypes, &Data::Datatype );
-      MPI_Type_commit( &Data::Datatype );
       
    }
    
    
    void peanoclaw::records::Data::shutdownDatatype() {
       MPI_Type_free( &Data::Datatype );
+      MPI_Type_free( &Data::FullDatatype );
       
    }
    
-   void peanoclaw::records::Data::send(int destination, int tag) {
+   void peanoclaw::records::Data::send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
       MPI_Request* sendRequestHandle = new MPI_Request();
       MPI_Status   status;
       int          flag = 0;
@@ -134,15 +168,22 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      #ifdef Asserts
-      _senderRank = -1;
-      #endif
-      
-      result = MPI_Isend(
-         this, 1, Datatype, destination,
-         tag, tarch::parallel::Node::getInstance().getCommunicator(),
-         sendRequestHandle
-      );
+      if (exchangeOnlyAttributesMarkedWithParallelise) {
+         result = MPI_Isend(
+            this, 1, Datatype, destination,
+            tag, tarch::parallel::Node::getInstance().getCommunicator(),
+            sendRequestHandle
+         );
+         
+      }
+      else {
+         result = MPI_Isend(
+            this, 1, FullDatatype, destination,
+            tag, tarch::parallel::Node::getInstance().getCommunicator(),
+            sendRequestHandle
+         );
+         
+      }
       if  (result!=MPI_SUCCESS) {
          std::ostringstream msg;
          msg << "was not able to send message peanoclaw::records::Data "
@@ -173,7 +214,7 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
          ) {
             tarch::parallel::Node::getInstance().writeTimeOutWarning(
             "peanoclaw::records::Data",
-            "send(int)", destination, tag, 1
+            "send(int)", destination,tag,1
             );
             triggeredTimeoutWarning = true;
          }
@@ -183,7 +224,7 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
          ) {
             tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
             "peanoclaw::records::Data",
-            "send(int)", destination, tag, 1
+            "send(int)", destination,tag,1
             );
          }
          tarch::parallel::Node::getInstance().receiveDanglingMessages();
@@ -198,7 +239,7 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
    
    
    
-   void peanoclaw::records::Data::receive(int source, int tag) {
+   void peanoclaw::records::Data::receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
       MPI_Request* sendRequestHandle = new MPI_Request();
       MPI_Status   status;
       int          flag = 0;
@@ -208,10 +249,20 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      result = MPI_Irecv(
-         this, 1, Datatype, source, tag,
-         tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
-      );
+      if (exchangeOnlyAttributesMarkedWithParallelise) {
+         result = MPI_Irecv(
+            this, 1, Datatype, source, tag,
+            tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
+         );
+         
+      }
+      else {
+         result = MPI_Irecv(
+            this, 1, FullDatatype, source, tag,
+            tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
+         );
+         
+      }
       if ( result != MPI_SUCCESS ) {
          std::ostringstream msg;
          msg << "failed to start to receive peanoclaw::records::Data from node "
@@ -239,7 +290,7 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
          ) {
             tarch::parallel::Node::getInstance().writeTimeOutWarning(
             "peanoclaw::records::Data",
-            "receive(int)", source, tag, 1
+            "receive(int)", source,tag,1
             );
             triggeredTimeoutWarning = true;
          }
@@ -249,7 +300,7 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
          ) {
             tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
             "peanoclaw::records::Data",
-            "receive(int)", source, tag, 1
+            "receive(int)", source,tag,1
             );
          }
          tarch::parallel::Node::getInstance().receiveDanglingMessages();
@@ -257,7 +308,6 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
       
       delete sendRequestHandle;
       
-      _senderRank = status.MPI_SOURCE;
       #ifdef Debug
       _log.debug("receive(int,int)", "received " + toString() ); 
       #endif
@@ -266,7 +316,7 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
    
    
    
-   bool peanoclaw::records::Data::isMessageInQueue(int tag) {
+   bool peanoclaw::records::Data::isMessageInQueue(int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
       MPI_Status status;
       int  flag        = 0;
       MPI_Iprobe(
@@ -275,19 +325,19 @@ tarch::logging::Log peanoclaw::records::Data::_log( "peanoclaw::records::Data" )
       );
       if (flag) {
          int  messageCounter;
-         MPI_Get_count(&status, Datatype, &messageCounter);
+         if (exchangeOnlyAttributesMarkedWithParallelise) {
+            MPI_Get_count(&status, Datatype, &messageCounter);
+         }
+         else {
+            MPI_Get_count(&status, FullDatatype, &messageCounter);
+         }
          return messageCounter > 0;
       }
       else return false;
       
    }
    
-   int peanoclaw::records::Data::getSenderRank() const {
-      assertion( _senderRank!=-1 );
-      return _senderRank;
-      
-   }
-#endif
+   
 #endif
 
 
@@ -302,13 +352,13 @@ _u(u) {
 }
 
 
-double peanoclaw::records::DataPacked::PersistentRecords::getU() const {
+ double peanoclaw::records::DataPacked::PersistentRecords::getU() const  {
    return _u;
 }
 
 
 
-void peanoclaw::records::DataPacked::PersistentRecords::setU(const double& u) {
+ void peanoclaw::records::DataPacked::PersistentRecords::setU(const double& u)  {
    _u = u;
 }
 
@@ -333,13 +383,13 @@ _persistentRecords(u) {
 peanoclaw::records::DataPacked::~DataPacked() { }
 
 
-double peanoclaw::records::DataPacked::getU() const {
+ double peanoclaw::records::DataPacked::getU() const  {
    return _persistentRecords._u;
 }
 
 
 
-void peanoclaw::records::DataPacked::setU(const double& u) {
+ void peanoclaw::records::DataPacked::setU(const double& u)  {
    _persistentRecords._u = u;
 }
 
@@ -370,51 +420,86 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
 }
 
 #ifdef Parallel
-   #include "tarch/parallel/Node.h" 
-   
    tarch::logging::Log peanoclaw::records::DataPacked::_log( "peanoclaw::records::DataPacked" );
    
    MPI_Datatype peanoclaw::records::DataPacked::Datatype = 0;
+   MPI_Datatype peanoclaw::records::DataPacked::FullDatatype = 0;
    
    
    void peanoclaw::records::DataPacked::initDatatype() {
-      const int Attributes = 2;
-      MPI_Datatype subtypes[Attributes] = {
-         MPI_DOUBLE,		 //u
-         MPI_UB		 // end/displacement flag
-      };
-      
-      int blocklen[Attributes] = {
-         1,		 //u
-         1		 // end/displacement flag
-      };
-      
-      MPI_Aint     disp[Attributes];
-      DataPacked dummyDataPacked[2];
-      
-      MPI_Aint base;
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[0]))), &base);
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[0]._persistentRecords._u))), 		&disp[0] );
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[1]._persistentRecords._u))), 		&disp[1] );
-      
-      for (int i=1; i<Attributes; i++) {
-         assertion1( disp[i] > disp[i-1], i );
+      {
+         DataPacked dummyDataPacked[2];
+         
+         const int Attributes = 2;
+         MPI_Datatype subtypes[Attributes] = {
+            MPI_DOUBLE,		 //u
+            MPI_UB		 // end/displacement flag
+         };
+         
+         int blocklen[Attributes] = {
+            1,		 //u
+            1		 // end/displacement flag
+         };
+         
+         MPI_Aint     disp[Attributes];
+         
+         MPI_Aint base;
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[0]))), &base);
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[0]._persistentRecords._u))), 		&disp[0] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[1]._persistentRecords._u))), 		&disp[1] );
+         
+         for (int i=1; i<Attributes; i++) {
+            assertion1( disp[i] > disp[i-1], i );
+         }
+         for (int i=0; i<Attributes; i++) {
+            disp[i] -= base;
+         }
+         MPI_Type_struct( Attributes, blocklen, disp, subtypes, &DataPacked::Datatype );
+         MPI_Type_commit( &DataPacked::Datatype );
+         
       }
-      for (int i=0; i<Attributes; i++) {
-         disp[i] -= base;
+      {
+         DataPacked dummyDataPacked[2];
+         
+         const int Attributes = 2;
+         MPI_Datatype subtypes[Attributes] = {
+            MPI_DOUBLE,		 //u
+            MPI_UB		 // end/displacement flag
+         };
+         
+         int blocklen[Attributes] = {
+            1,		 //u
+            1		 // end/displacement flag
+         };
+         
+         MPI_Aint     disp[Attributes];
+         
+         MPI_Aint base;
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[0]))), &base);
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[0]._persistentRecords._u))), 		&disp[0] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyDataPacked[1]._persistentRecords._u))), 		&disp[1] );
+         
+         for (int i=1; i<Attributes; i++) {
+            assertion1( disp[i] > disp[i-1], i );
+         }
+         for (int i=0; i<Attributes; i++) {
+            disp[i] -= base;
+         }
+         MPI_Type_struct( Attributes, blocklen, disp, subtypes, &DataPacked::FullDatatype );
+         MPI_Type_commit( &DataPacked::FullDatatype );
+         
       }
-      MPI_Type_struct( Attributes, blocklen, disp, subtypes, &DataPacked::Datatype );
-      MPI_Type_commit( &DataPacked::Datatype );
       
    }
    
    
    void peanoclaw::records::DataPacked::shutdownDatatype() {
       MPI_Type_free( &DataPacked::Datatype );
+      MPI_Type_free( &DataPacked::FullDatatype );
       
    }
    
-   void peanoclaw::records::DataPacked::send(int destination, int tag) {
+   void peanoclaw::records::DataPacked::send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
       MPI_Request* sendRequestHandle = new MPI_Request();
       MPI_Status   status;
       int          flag = 0;
@@ -424,15 +509,22 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      #ifdef Asserts
-      _senderRank = -1;
-      #endif
-      
-      result = MPI_Isend(
-         this, 1, Datatype, destination,
-         tag, tarch::parallel::Node::getInstance().getCommunicator(),
-         sendRequestHandle
-      );
+      if (exchangeOnlyAttributesMarkedWithParallelise) {
+         result = MPI_Isend(
+            this, 1, Datatype, destination,
+            tag, tarch::parallel::Node::getInstance().getCommunicator(),
+            sendRequestHandle
+         );
+         
+      }
+      else {
+         result = MPI_Isend(
+            this, 1, FullDatatype, destination,
+            tag, tarch::parallel::Node::getInstance().getCommunicator(),
+            sendRequestHandle
+         );
+         
+      }
       if  (result!=MPI_SUCCESS) {
          std::ostringstream msg;
          msg << "was not able to send message peanoclaw::records::DataPacked "
@@ -463,7 +555,7 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
          ) {
             tarch::parallel::Node::getInstance().writeTimeOutWarning(
             "peanoclaw::records::DataPacked",
-            "send(int)", destination, tag, 1
+            "send(int)", destination,tag,1
             );
             triggeredTimeoutWarning = true;
          }
@@ -473,7 +565,7 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
          ) {
             tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
             "peanoclaw::records::DataPacked",
-            "send(int)", destination, tag, 1
+            "send(int)", destination,tag,1
             );
          }
          tarch::parallel::Node::getInstance().receiveDanglingMessages();
@@ -488,7 +580,7 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
    
    
    
-   void peanoclaw::records::DataPacked::receive(int source, int tag) {
+   void peanoclaw::records::DataPacked::receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
       MPI_Request* sendRequestHandle = new MPI_Request();
       MPI_Status   status;
       int          flag = 0;
@@ -498,10 +590,20 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      result = MPI_Irecv(
-         this, 1, Datatype, source, tag,
-         tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
-      );
+      if (exchangeOnlyAttributesMarkedWithParallelise) {
+         result = MPI_Irecv(
+            this, 1, Datatype, source, tag,
+            tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
+         );
+         
+      }
+      else {
+         result = MPI_Irecv(
+            this, 1, FullDatatype, source, tag,
+            tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
+         );
+         
+      }
       if ( result != MPI_SUCCESS ) {
          std::ostringstream msg;
          msg << "failed to start to receive peanoclaw::records::DataPacked from node "
@@ -529,7 +631,7 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
          ) {
             tarch::parallel::Node::getInstance().writeTimeOutWarning(
             "peanoclaw::records::DataPacked",
-            "receive(int)", source, tag, 1
+            "receive(int)", source,tag,1
             );
             triggeredTimeoutWarning = true;
          }
@@ -539,7 +641,7 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
          ) {
             tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
             "peanoclaw::records::DataPacked",
-            "receive(int)", source, tag, 1
+            "receive(int)", source,tag,1
             );
          }
          tarch::parallel::Node::getInstance().receiveDanglingMessages();
@@ -547,7 +649,6 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
       
       delete sendRequestHandle;
       
-      _senderRank = status.MPI_SOURCE;
       #ifdef Debug
       _log.debug("receive(int,int)", "received " + toString() ); 
       #endif
@@ -556,7 +657,7 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
    
    
    
-   bool peanoclaw::records::DataPacked::isMessageInQueue(int tag) {
+   bool peanoclaw::records::DataPacked::isMessageInQueue(int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
       MPI_Status status;
       int  flag        = 0;
       MPI_Iprobe(
@@ -565,18 +666,19 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
       );
       if (flag) {
          int  messageCounter;
-         MPI_Get_count(&status, Datatype, &messageCounter);
+         if (exchangeOnlyAttributesMarkedWithParallelise) {
+            MPI_Get_count(&status, Datatype, &messageCounter);
+         }
+         else {
+            MPI_Get_count(&status, FullDatatype, &messageCounter);
+         }
          return messageCounter > 0;
       }
       else return false;
       
    }
    
-   int peanoclaw::records::DataPacked::getSenderRank() const {
-      assertion( _senderRank!=-1 );
-      return _senderRank;
-      
-   }
+   
 #endif
 
 

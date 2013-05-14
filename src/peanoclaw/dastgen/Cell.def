@@ -1,6 +1,6 @@
 // This file is part of the Peano project. For conditions of distribution and
 // use, please see the copyright notice at www.peano-framework.org
-Extends: ../Cell.def;
+Extends: ../dastgen/PeanoClawCell.def;
 
 
 #include "peano/utils/Globals.h"
@@ -40,7 +40,7 @@ class peanoclaw::records::Cell {
    * computational domain. If the computational domain boundary cuts the cell, 
    * it is outside. 
    */
-  persistent packed bool  isInside;
+  persistent parallelise packed bool  isInside;
 
 
   /**
@@ -80,10 +80,12 @@ class peanoclaw::records::Cell {
    * Identifies who's in charge of this cell.   
    */
   persistent int  responsibleRank;
+
+  persistent parallelise bool    subtreeHoldsWorker;
   
-  persistent double  nodeWorkload;
-  persistent double  localWorkload;
-  persistent double  totalWorkload;
+  persistent parallelise double  nodeWorkload;
+  persistent parallelise double  localWorkload;
+  persistent parallelise double  totalWorkload;
   #endif
   
   #ifdef SharedMemoryParallelisation

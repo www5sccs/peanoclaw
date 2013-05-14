@@ -297,9 +297,7 @@
          clock_t      timeOutShutdown  = -1;
          bool         triggeredTimeoutWarning = false;
          
-         #ifdef Asserts
-         _senderRank = -1;
-         #endif
+         _senderDestinationRank = destination;
          
          if (exchangeOnlyAttributesMarkedWithParallelise) {
             result = MPI_Isend(
@@ -441,7 +439,7 @@
          
          delete sendRequestHandle;
          
-         _senderRank = status.MPI_SOURCE;
+         _senderDestinationRank = status.MPI_SOURCE;
          #ifdef Debug
          _log.debug("receive(int,int)", "received " + toString() ); 
          #endif
@@ -472,8 +470,8 @@
       }
       
       int peanoclaw::records::Vertex::getSenderRank() const {
-         assertion( _senderRank!=-1 );
-         return _senderRank;
+         assertion( _senderDestinationRank!=-1 );
+         return _senderDestinationRank;
          
       }
    #endif
@@ -745,9 +743,7 @@
          clock_t      timeOutShutdown  = -1;
          bool         triggeredTimeoutWarning = false;
          
-         #ifdef Asserts
-         _senderRank = -1;
-         #endif
+         _senderDestinationRank = destination;
          
          if (exchangeOnlyAttributesMarkedWithParallelise) {
             result = MPI_Isend(
@@ -889,7 +885,7 @@
          
          delete sendRequestHandle;
          
-         _senderRank = status.MPI_SOURCE;
+         _senderDestinationRank = status.MPI_SOURCE;
          #ifdef Debug
          _log.debug("receive(int,int)", "received " + toString() ); 
          #endif
@@ -920,8 +916,8 @@
       }
       
       int peanoclaw::records::VertexPacked::getSenderRank() const {
-         assertion( _senderRank!=-1 );
-         return _senderRank;
+         assertion( _senderDestinationRank!=-1 );
+         return _senderDestinationRank;
          
       }
    #endif
@@ -1184,9 +1180,7 @@
          clock_t      timeOutShutdown  = -1;
          bool         triggeredTimeoutWarning = false;
          
-         #ifdef Asserts
-         _senderRank = -1;
-         #endif
+         _senderDestinationRank = destination;
          
          if (exchangeOnlyAttributesMarkedWithParallelise) {
             result = MPI_Isend(
@@ -1328,7 +1322,7 @@
          
          delete sendRequestHandle;
          
-         _senderRank = status.MPI_SOURCE;
+         _senderDestinationRank = status.MPI_SOURCE;
          #ifdef Debug
          _log.debug("receive(int,int)", "received " + toString() ); 
          #endif
@@ -1359,8 +1353,8 @@
       }
       
       int peanoclaw::records::Vertex::getSenderRank() const {
-         assertion( _senderRank!=-1 );
-         return _senderRank;
+         assertion( _senderDestinationRank!=-1 );
+         return _senderDestinationRank;
          
       }
    #endif
@@ -1594,9 +1588,7 @@
          clock_t      timeOutShutdown  = -1;
          bool         triggeredTimeoutWarning = false;
          
-         #ifdef Asserts
-         _senderRank = -1;
-         #endif
+         _senderDestinationRank = destination;
          
          if (exchangeOnlyAttributesMarkedWithParallelise) {
             result = MPI_Isend(
@@ -1738,7 +1730,7 @@
          
          delete sendRequestHandle;
          
-         _senderRank = status.MPI_SOURCE;
+         _senderDestinationRank = status.MPI_SOURCE;
          #ifdef Debug
          _log.debug("receive(int,int)", "received " + toString() ); 
          #endif
@@ -1769,8 +1761,8 @@
       }
       
       int peanoclaw::records::VertexPacked::getSenderRank() const {
-         assertion( _senderRank!=-1 );
-         return _senderRank;
+         assertion( _senderDestinationRank!=-1 );
+         return _senderDestinationRank;
          
       }
    #endif
@@ -2061,9 +2053,7 @@ peanoclaw::records::VertexPacked peanoclaw::records::Vertex::convert() const{
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      #ifdef Asserts
-      _senderRank = -1;
-      #endif
+      _senderDestinationRank = destination;
       
       if (exchangeOnlyAttributesMarkedWithParallelise) {
          result = MPI_Isend(
@@ -2205,7 +2195,7 @@ peanoclaw::records::VertexPacked peanoclaw::records::Vertex::convert() const{
       
       delete sendRequestHandle;
       
-      _senderRank = status.MPI_SOURCE;
+      _senderDestinationRank = status.MPI_SOURCE;
       #ifdef Debug
       _log.debug("receive(int,int)", "received " + toString() ); 
       #endif
@@ -2236,8 +2226,8 @@ peanoclaw::records::VertexPacked peanoclaw::records::Vertex::convert() const{
    }
    
    int peanoclaw::records::Vertex::getSenderRank() const {
-      assertion( _senderRank!=-1 );
-      return _senderRank;
+      assertion( _senderDestinationRank!=-1 );
+      return _senderDestinationRank;
       
    }
 #endif
@@ -2495,9 +2485,7 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
       clock_t      timeOutShutdown  = -1;
       bool         triggeredTimeoutWarning = false;
       
-      #ifdef Asserts
-      _senderRank = -1;
-      #endif
+      _senderDestinationRank = destination;
       
       if (exchangeOnlyAttributesMarkedWithParallelise) {
          result = MPI_Isend(
@@ -2639,7 +2627,7 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
       
       delete sendRequestHandle;
       
-      _senderRank = status.MPI_SOURCE;
+      _senderDestinationRank = status.MPI_SOURCE;
       #ifdef Debug
       _log.debug("receive(int,int)", "received " + toString() ); 
       #endif
@@ -2670,8 +2658,8 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
    }
    
    int peanoclaw::records::VertexPacked::getSenderRank() const {
-      assertion( _senderRank!=-1 );
-      return _senderRank;
+      assertion( _senderDestinationRank!=-1 );
+      return _senderDestinationRank;
       
    }
 #endif
@@ -2949,9 +2937,7 @@ void peanoclaw::records::Vertex::send(int destination, int tag, bool exchangeOnl
    clock_t      timeOutShutdown  = -1;
    bool         triggeredTimeoutWarning = false;
    
-   #ifdef Asserts
-   _senderRank = -1;
-   #endif
+   _senderDestinationRank = destination;
    
    if (exchangeOnlyAttributesMarkedWithParallelise) {
       result = MPI_Isend(
@@ -3093,7 +3079,7 @@ void peanoclaw::records::Vertex::receive(int source, int tag, bool exchangeOnlyA
    
    delete sendRequestHandle;
    
-   _senderRank = status.MPI_SOURCE;
+   _senderDestinationRank = status.MPI_SOURCE;
    #ifdef Debug
    _log.debug("receive(int,int)", "received " + toString() ); 
    #endif
@@ -3124,8 +3110,8 @@ bool peanoclaw::records::Vertex::isMessageInQueue(int tag, bool exchangeOnlyAttr
 }
 
 int peanoclaw::records::Vertex::getSenderRank() const {
-   assertion( _senderRank!=-1 );
-   return _senderRank;
+   assertion( _senderDestinationRank!=-1 );
+   return _senderDestinationRank;
    
 }
 #endif
@@ -3373,9 +3359,7 @@ void peanoclaw::records::VertexPacked::send(int destination, int tag, bool excha
    clock_t      timeOutShutdown  = -1;
    bool         triggeredTimeoutWarning = false;
    
-   #ifdef Asserts
-   _senderRank = -1;
-   #endif
+   _senderDestinationRank = destination;
    
    if (exchangeOnlyAttributesMarkedWithParallelise) {
       result = MPI_Isend(
@@ -3517,7 +3501,7 @@ void peanoclaw::records::VertexPacked::receive(int source, int tag, bool exchang
    
    delete sendRequestHandle;
    
-   _senderRank = status.MPI_SOURCE;
+   _senderDestinationRank = status.MPI_SOURCE;
    #ifdef Debug
    _log.debug("receive(int,int)", "received " + toString() ); 
    #endif
@@ -3548,8 +3532,8 @@ bool peanoclaw::records::VertexPacked::isMessageInQueue(int tag, bool exchangeOn
 }
 
 int peanoclaw::records::VertexPacked::getSenderRank() const {
-   assertion( _senderRank!=-1 );
-   return _senderRank;
+   assertion( _senderDestinationRank!=-1 );
+   return _senderDestinationRank;
    
 }
 #endif

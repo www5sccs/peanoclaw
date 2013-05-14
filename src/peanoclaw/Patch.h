@@ -129,8 +129,6 @@ private:
    */
   static tarch::logging::Log _log;
 
-  static std::vector<Data> _nullData;
-
   CellDescription* _cellDescription;
 
   std::vector<Data>* _uNew;
@@ -199,8 +197,8 @@ public:
   Patch();
 
   Patch(
-    const tarch::la::Vector<DIMENSIONS, double>& position,
-    const tarch::la::Vector<DIMENSIONS, double>& size,
+//    const tarch::la::Vector<DIMENSIONS, double>& position,
+//    const tarch::la::Vector<DIMENSIONS, double>& size,
     const peanoclaw::Cell& cell
   );
 
@@ -208,27 +206,35 @@ public:
     CellDescription& cellDescription
   );
 
-//  Patch(
-//    const tarch::la::Vector<DIMENSIONS, double>& position,
-//    const tarch::la::Vector<DIMENSIONS, double>& size,
-//    int unknownsPerCell,
-//    int subdivisionFactor,
-//    int ghostLayerWidth,
-//    double currentTime,
-//    double timestepSize,
-//    double cfl,
-//    double minimalNeighborTime,
-//    int level,
-//    std::vector<Data>* uNew,
-//    std::vector<Data>* uOldWithGhostLayer);
+  /**
+   * Creates a new patch by allocating the necessary resources
+   * on the heap.
+   */
+  Patch(
+    const tarch::la::Vector<DIMENSIONS, double>& position,
+    const tarch::la::Vector<DIMENSIONS, double>& size,
+    int    unknownsPerCell,
+    int    auxiliarFieldsPerSubcell,
+    const tarch::la::Vector<DIMENSIONS, int>&    subdivisionFactor,
+    int    ghostLayerWidth,
+    double initialTimestepSize,
+    int    level
+  );
 
   ~Patch();
 
   /**
-   * Copies all needed information back to the cell description of the given
-   * cell.
+   * Loads data from the given cell description object. This has
+   * to be done after data got changed in the cell description
+   * or when a different cell description is now describing this
+   * patch than when constructing the patch.
+   *
+   * @todo: Remove this method and do all manipulation of
+   * cell descriptions within the patch class.
    */
-//  void copyToCell(peanoclaw::SpacetreeGridCell& cell);
+  void loadCellDescription(int cellDescriptionIndex);
+
+  void reloadCellDescription();
 
   const tarch::la::Vector<DIMENSIONS, double> getSize() const;
 
@@ -313,7 +319,7 @@ public:
    * larger than the current minimum this method doesn't change
    * anything.
    */
-  void updateMinimalNeighborTimeConstraint(double neighborTime);
+  void updateMinimalNeighborTimeConstraint(double neighborTime, int neighborIndex);
 
   /**
    * Updates the minimum of the points in time on which all (also
@@ -328,6 +334,8 @@ public:
    * search.
    */
   void resetMinimalNeighborTimeConstraint();
+
+  int getConstrainingNeighborIndex() const;
 
   /**
    * Resets the maximal time interval that is overlapped by
@@ -420,13 +428,18 @@ public:
    * Sets, wether this patch should be skipped during the next grid
    * iteration with regard to the adaptive timestepping.
    */
-  void setSkipNextGridIteration(bool skipNextGridIteration);
+  void setSkipNextGridIteration(int numberOfIterationsToSkip);
 
   /**
    * Returns wether this patch should be skipped during the next grid
-   * iteration with regard to the adaptive timestepping.
+   * iterations with regard to the adaptive timestepping.
    */
-  bool shouldSkipNextGridIteration();
+  bool shouldSkipNextGridIteration() const;
+
+  /**
+   * Reduces the number of grid iterations that should be skipped.
+   */
+  void reduceGridIterationsToBeSkipped();
 
   //GETTER/SETTER for grid values
   void setValueUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown, double value)
@@ -469,7 +482,7 @@ public:
     assertion1(isLeaf() || isVirtual(), toString());
     int index = linearize(unknown, subcellIndex);
     assertion3(index >= 0, index, subcellIndex, unknown);
-    assertion4(index < static_cast<int>(_uNew->size()), index, subcellIndex, unknown, toString());
+    assertion5(index < static_cast<int>(_uNew->size()), index, subcellIndex, unknown, static_cast<int>(_uNew->size()), toString());
     #ifdef PATCH_RANGE_CHECK
     return _uNew->at(index).getU();
     #else
@@ -728,6 +741,16 @@ public:
    * Switches a virtual patch to a leaf patch.
    */
   void switchToLeaf();
+
+  /**
+   * Increases the number of performed updates of the patch state (i.e.
+   * virtual, non-virtual, leaf) within this grid iteration.
+   */
+  void increaseNumberOfPatchStateUpdate();
+
+  void decreaseNumberOfPatchStateUpdate();
+
+  int getNumberOfPatchStateUpdates();
 
   /**
    * Returns whether this patch should restrict to virtual patches.

@@ -15,6 +15,10 @@ struct peanoclaw::statistics::LevelInformation {
   double _numberOfCellUpdates;
   double _createdPatches;
   double _destroyedPatches;
+  double _patchesBlockedDueToNeighbors;
+  double _patchesBlockedDueToGlobalTimestep;
+  double _patchesSkippingIteration;
+  double _patchesCoarsening;
 
   LevelInformation();
 };

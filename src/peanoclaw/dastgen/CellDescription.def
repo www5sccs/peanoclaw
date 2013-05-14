@@ -5,13 +5,18 @@ Packed-Type: short int;
 Constant: DIMENSIONS;
 Constant: DIMENSIONS_TIMES_TWO;
 
-class peano::applications::peanoclaw::records::CellDescription {
-  parallelise persistent int subdivisionFactor[DIMENSIONS];
-  parallelise persistent int ghostLayerWidth;
-  persistent parallelise int unknownsPerSubcell;
-  persistent parallelise int auxiliarFieldsPerSubcell;
-  parallelise persistent int level;
+class peanoclaw::records::CellDescription {
+  parallelise persistent int  subdivisionFactor[DIMENSIONS];
+  parallelise persistent int  ghostLayerWidth;
+  parallelise persistent int  unknownsPerSubcell;
+  parallelise persistent int  auxiliarFieldsPerSubcell;
+  parallelise persistent int  level;
   parallelise persistent bool isVirtual;
+  parallelise persistent int  numberOfPatchStateUpdates;
+  
+  #ifdef Parallel
+  persistent bool isRemote;
+  #endif
 
   parallelise persistent double position[DIMENSIONS];
 
@@ -49,6 +54,7 @@ class peano::applications::peanoclaw::records::CellDescription {
    * grid should synchronize in time to be coarsened.
    */
   parallelise persistent bool synchronizeFineGrids;
+  
   /**
    * This field indicates whether this patch will coarsen
    * in this iteration.
@@ -59,6 +65,12 @@ class peano::applications::peanoclaw::records::CellDescription {
    * The constraining time for a patch to perform a timestep.
    */
   parallelise persistent double minimalNeighborTimeConstraint;
+  
+  /**
+   * Holds the index of the neighbor patch constraining this
+   * patch.
+   */
+  persistent int constrainingNeighborIndex;
 
   /**
    * The constraining time for a patch to perform a timestep,
@@ -88,10 +100,10 @@ class peano::applications::peanoclaw::records::CellDescription {
   
   /**
    * Indicates that this patch should not be advanced during the next
-   * grid iteration. This is due to the fact that the ghostlayer has
+   * grid iterations. This is due to the fact that the ghostlayer has
    * to be filled correctly first.
    */
-  parallelise persistent bool skipNextGridIteration;
+  parallelise persistent int skipGridIterations;
   
   /**
    * The age of this patch in terms of grid iterations. This means
@@ -120,8 +132,8 @@ class peano::applications::peanoclaw::records::CellDescription {
   /*
    * Heap data indices
    */
-  parallelise persistent int cellDescriptionIndex;
-  parallelise persistent int uOldIndex;
-  parallelise persistent int uNewIndex;
-  parallelise persistent int auxIndex;
+  persistent int cellDescriptionIndex;
+  persistent int uOldIndex;
+  persistent int uNewIndex;
+  persistent int auxIndex;
 };

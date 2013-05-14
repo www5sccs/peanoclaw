@@ -9,7 +9,7 @@
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -17,7 +17,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexLa
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -25,7 +25,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexFi
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -33,7 +33,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -41,7 +41,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -49,7 +49,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecifi
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WHOLE_TREE,false,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
 
@@ -190,59 +190,61 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
+
   Patch patch(
-    fineGridVerticesEnumerator.getVertexPosition(0),
-    fineGridVerticesEnumerator.getCellSize(),
-    fineGridCell);
+    fineGridCell
+  );
 
-  double demandedMeshWidth = _numerics->initializePatch(patch);
+  if(fineGridCell.isLeaf()) {
+    double demandedMeshWidth = _numerics->initializePatch(patch);
 
-  patch.copyUNewToUOld();
-  patch.setDemandedMeshWidth(demandedMeshWidth);
+    patch.copyUNewToUOld();
+    patch.setDemandedMeshWidth(demandedMeshWidth);
 
-  //logInfo("createCell(...)", ";;" << ";;" <<  demandedMeshWidth << ";;" << patch.getSubdivisionFactor() << patch);
+    //logInfo("createCell(...)", ";;" << ";;" <<  demandedMeshWidth << ";;" << patch.getSubdivisionFactor() << patch);
 
-  #ifdef Asserts
-  dfor(subcellIndex, patch.getSubdivisionFactor()) {
-    tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex;
-    assertion3(patch.getValueUOld(subcellIndexInDestinationPatch, 0) > 0.0, 
-            patch.getValueUOld(subcellIndexInDestinationPatch, 0),
-            subcellIndex,
-            subcellIndexInDestinationPatch);
-  }
-  #endif
+    #ifdef Asserts
+    dfor(subcellIndex, patch.getSubdivisionFactor()) {
+      tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex;
+      assertion3(patch.getValueUOld(subcellIndexInDestinationPatch, 0) > 0.0,
+              patch.getValueUOld(subcellIndexInDestinationPatch, 0),
+              subcellIndex,
+              subcellIndexInDestinationPatch);
+    }
+    #endif
 
-  //Check for error in refinement criterion
-  if(!tarch::la::greater(demandedMeshWidth, 0.0)) {
-    logWarning("createCell(...)", "A demanded mesh width of 0.0 leads to an infinite refinement. Is the refinement criterion correct?");
-  }
-  assertion(tarch::la::greater(demandedMeshWidth, 0.0));
+    //Check for error in refinement criterion
+    if(!tarch::la::greater(demandedMeshWidth, 0.0)) {
+      logWarning("createCell(...)", "A demanded mesh width of 0.0 leads to an infinite refinement. Is the refinement criterion correct?");
+    }
+    assertion(tarch::la::greater(demandedMeshWidth, 0.0));
 
-  //Refine if necessary
-  if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(demandedMeshWidth))) {
-    for(int i = 0; i < TWO_POWER_D; i++) {
-        // roland MARK
-      if (fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined
-          && !fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-          fineGridVertices[fineGridVerticesEnumerator(i)].refine();
-          _refinementTriggered = true;
+    //Refine if necessary
+    if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(demandedMeshWidth))) {
+      for(int i = 0; i < TWO_POWER_D; i++) {
+          // roland MARK
+        if (fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined
+            && !fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
+            fineGridVertices[fineGridVerticesEnumerator(i)].refine();
+            _refinementTriggered = true;
+        }
       }
     }
-  }
 
-  //Switch to refined patch if necessary
-  bool refinementTriggered = false;
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    if(fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl()
-        == Vertex::Records::Refining) {
-      refinementTriggered = true;
+    //Switch to refined patch if necessary
+    bool refinementTriggered = false;
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      if(fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl()
+          == Vertex::Records::Refining) {
+        refinementTriggered = true;
+      }
     }
-  }
-  if(refinementTriggered) {
-    assertion1(patch.isLeaf(), patch.toString());
-    patch.switchToVirtual();
-    patch.switchToNonVirtual();
-    assertion1(!patch.isLeaf() && !patch.isVirtual(), patch);
+    if(refinementTriggered) {
+      assertion1(patch.isLeaf(), patch.toString());
+      patch.switchToVirtual();
+      patch.switchToNonVirtual();
+      assertion1(!patch.isLeaf() && !patch.isVirtual(), patch);
+    }
   }
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
@@ -278,8 +280,10 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithNeighbour(
 
 void peanoclaw::mappings::InitialiseGrid::prepareSendToNeighbour(
   peanoclaw::Vertex&  vertex,
-  int  toRank,
-  int  level
+  int                                           toRank,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
   // @todo Insert your code here
@@ -288,7 +292,10 @@ void peanoclaw::mappings::InitialiseGrid::prepareSendToNeighbour(
 
 void peanoclaw::mappings::InitialiseGrid::prepareCopyToRemoteNode(
   peanoclaw::Vertex&  localVertex,
-  int  toRank
+  int                                           toRank,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
   logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank );
   // @todo Insert your code here
@@ -297,9 +304,12 @@ void peanoclaw::mappings::InitialiseGrid::prepareCopyToRemoteNode(
 
 void peanoclaw::mappings::InitialiseGrid::prepareCopyToRemoteNode(
   peanoclaw::Cell&  localCell,
-  int  toRank
+  int  toRank,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+  int                                       level
 ) {
-  logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank );
+  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level);
   // @todo Insert your code here
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -346,9 +356,13 @@ void peanoclaw::mappings::InitialiseGrid::prepareSendToWorker(
 }
 
 void peanoclaw::mappings::InitialiseGrid::prepareSendToMaster(
-  peanoclaw::Cell&     localCell,
-  peanoclaw::Vertex *  vertices,
-  const peano::grid::VertexEnumerator&  verticesEnumerator
+  peanoclaw::Cell&                       localCell,
+  peanoclaw::Vertex *                    vertices,
+  const peano::grid::VertexEnumerator&       verticesEnumerator,
+  const peanoclaw::Vertex * const        coarseGridVertices,
+  const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
+  const peanoclaw::Cell&                 coarseGridCell,
+  const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
 ) {
   logTraceInWith2Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString() );
   // @todo Insert your code here
@@ -378,11 +392,18 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithMaster(
 
 
 void peanoclaw::mappings::InitialiseGrid::receiveDataFromMaster(
-  peanoclaw::Cell&                    receivedCell, 
-  peanoclaw::Vertex *                 receivedVertices,
-  const peano::grid::VertexEnumerator&    verticesEnumerator
+  peanoclaw::Cell&                        receivedCell,
+  peanoclaw::Vertex *                     receivedVertices,
+  const peano::grid::VertexEnumerator&        receivedVerticesEnumerator,
+  peanoclaw::Vertex * const               receivedCoarseGridVertices,
+  const peano::grid::VertexEnumerator&        receivedCoarseGridVerticesEnumerator,
+  peanoclaw::Cell&                        receivedCoarseGridCell,
+  peanoclaw::Vertex * const               workersCoarseGridVertices,
+  const peano::grid::VertexEnumerator&        workersCoarseGridVerticesEnumerator,
+  peanoclaw::Cell&                        workersCoarseGridCell,
+  const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
-  logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), verticesEnumerator.toString() );
+  logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), receivedVerticesEnumerator.toString() );
   // @todo Insert your code here
   logTraceOut( "receiveDataFromMaster(...)" );
 }
@@ -390,7 +411,10 @@ void peanoclaw::mappings::InitialiseGrid::receiveDataFromMaster(
 
 void peanoclaw::mappings::InitialiseGrid::mergeWithWorker(
   peanoclaw::Cell&           localCell, 
-  const peanoclaw::Cell&     receivedMasterCell
+  const peanoclaw::Cell&     receivedMasterCell,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+  int                                          level
 ) {
   logTraceInWith2Arguments( "mergeWithWorker(...)", localCell.toString(), receivedMasterCell.toString() );
   // @todo Insert your code here
@@ -400,7 +424,10 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithWorker(
 
 void peanoclaw::mappings::InitialiseGrid::mergeWithWorker(
   peanoclaw::Vertex&        localVertex,
-  const peanoclaw::Vertex&  receivedMasterVertex
+  const peanoclaw::Vertex&  receivedMasterVertex,
+  const tarch::la::Vector<DIMENSIONS,double>&   x,
+  const tarch::la::Vector<DIMENSIONS,double>&   h,
+  int                                           level
 ) {
   logTraceInWith2Arguments( "mergeWithWorker(...)", localVertex.toString(), receivedMasterVertex.toString() );
   // @todo Insert your code here
@@ -475,7 +502,7 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
   
-  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().startToSendOrReceiveHeapData (solverState.isTraversalInverted());
+//  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().startToSendOrReceiveHeapData (solverState.isTraversalInverted());
 
   _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
 
@@ -485,7 +512,7 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 
   _initialTimestepSize = solverState.getInitialTimestepSize();
 
-  _numerics = &solverState.getNumerics();
+  _numerics = solverState.getNumerics();
 
   _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
 
@@ -503,7 +530,7 @@ void peanoclaw::mappings::InitialiseGrid::endIteration(
 
   solverState.setInitialRefinementTriggered(solverState.getInitialRefinementTriggered() || _refinementTriggered);
 
-  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().finishedToSendOrReceiveHeapData();
+//  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().finishedToSendOrReceiveHeapData();
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }

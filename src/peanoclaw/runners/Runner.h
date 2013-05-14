@@ -5,13 +5,13 @@
 
 
 namespace peanoclaw {
-  namespace runners {
-    class Runner;
-  }
+    namespace runners {
+      class Runner;
+    }
 
-  namespace repositories {
-    class Repository;
-  }
+    namespace repositories {
+      class Repository;
+    }
 }
 
 
@@ -25,7 +25,7 @@ class peanoclaw::runners::Runner {
     int runAsMaster(peanoclaw::repositories::Repository& repository);
     
     #ifdef Parallel
-    int runAsClient(peanoclaw::repositories::Repository& repository);
+    int runAsWorker(peanoclaw::repositories::Repository& repository);
     #endif
   public:
     Runner();

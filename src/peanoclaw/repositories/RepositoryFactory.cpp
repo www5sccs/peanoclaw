@@ -62,10 +62,6 @@ peanoclaw::repositories::RepositoryFactory::createWithArrayStackImplementation(
   int                                          maxTemporaryVertexStackSize    
 ) {
   #ifdef Parallel
-  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-      tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();
-  }
-    
   if (!tarch::parallel::Node::getInstance().isGlobalMaster()) {
     return new peanoclaw::repositories::RepositoryArrayStack(geometry, domainSize, computationalDomainOffset,maxCellStackSize,maxVertexStackSize,maxTemporaryVertexStackSize);
   }
@@ -82,10 +78,6 @@ peanoclaw::repositories::RepositoryFactory::createWithSTDStackImplementation(
   const tarch::la::Vector<DIMENSIONS,double>&  computationalDomainOffset
 ) {
   #ifdef Parallel
-    if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-      tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();
-  }
-    
   if (!tarch::parallel::Node::getInstance().isGlobalMaster()) {
     return new peanoclaw::repositories::RepositorySTDStack(geometry);
   }

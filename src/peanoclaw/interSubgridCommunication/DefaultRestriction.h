@@ -11,7 +11,6 @@
 #include "peanoclaw/interSubgridCommunication/Restriction.h"
 
 #include "tarch/la/Vector.h"
-#include "tarch/logging/Log.h"
 
 namespace peanoclaw {
   namespace interSubgridCommunication {
@@ -24,9 +23,9 @@ class peanoclaw::interSubgridCommunication::DefaultRestriction
 
   private:
     /**
-     * Logging device.
+     * Logging device for the trace macros.
      */
-    static tarch::logging::Log _log;
+    static tarch::logging::Log  _log;
 
     /**
      * Returns the area of the region where the two given patches overlap.
@@ -83,8 +82,6 @@ class peanoclaw::interSubgridCommunication::DefaultRestriction
     );
 
   public:
-    virtual ~DefaultRestriction();
-
     void restrict (
       const peanoclaw::Patch& source,
       peanoclaw::Patch&       destination,

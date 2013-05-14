@@ -440,6 +440,7 @@ sourcesParallel = [
  Glob(buildpath + 'kernel/tarch/parallel/messages/*.cpp'),
  Glob(buildpath + 'kernel/tarch/parallel/dastgen/*.cpp'),
  Glob(buildpath + 'kernel/tarch/parallel/configurations/*.cpp'),
+ Glob(buildpath + 'kernel/tarch/mpianalysis/*.cpp'),
  Glob(buildpath + 'kernel/peano/parallel/*.cpp'),
  Glob(buildpath + 'kernel/peano/parallel/configurations/*.cpp'),
  Glob(buildpath + 'kernel/peano/parallel/loadbalancing/*.cpp'),

@@ -5,7 +5,7 @@
 
 #include "peano/peano.h"
 
-#include "runners/Runner.h"
+#include "peanoclaw/runners/Runner.h"
 
 
 tarch::logging::Log _log("");
@@ -44,8 +44,8 @@ int main(int argc, char** argv) {
 //  tarch::logging::CommandLineLogger::getInstance().setLogFormat( ... please consult source code documentation );
 
   // Runs the unit tests
-  //tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();  
-  //programExitCode = tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().getNumberOfErrors();
+  tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();  
+  programExitCode = tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().getNumberOfErrors();
 
   // Runs the integration tests
   //if (programExitCode==0) {

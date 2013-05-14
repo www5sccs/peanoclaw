@@ -121,7 +121,7 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       void setNumerics(peanoclaw::Numerics& numerics);
 
-      peanoclaw::Numerics& getNumerics() const;
+      peanoclaw::Numerics* getNumerics() const;
 
       void setProbeList(std::vector<peanoclaw::statistics::Probe> probeList);
 
@@ -183,11 +183,6 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        * number can be accumulated.
        */
       void resetTotalNumberOfCellUpdates();
-
-      /**
-       * Adds the given amount of cell updates to the total number of updates.
-       */
-    //  void addToTotalNumberOfCellUpdates(int cellUpdates);
 
       double getTotalNumberOfCellUpdates() const;
 

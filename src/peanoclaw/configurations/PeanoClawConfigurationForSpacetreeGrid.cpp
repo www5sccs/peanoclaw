@@ -1,5 +1,4 @@
 #include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
-#include "peanoclaw/runners/Runner.h"
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 
 #include "tarch/logging/CommandLineLogger.h"

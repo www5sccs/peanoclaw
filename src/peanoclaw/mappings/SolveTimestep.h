@@ -76,6 +76,26 @@ class peanoclaw::mappings::SolveTimestep {
 
     bool _useDimensionalSplitting;
 
+    /**
+     * Determines whether the given patch should be advanced in time.
+     */
+    bool shouldAdvanceInTime(
+      const peanoclaw::Patch&                  patch,
+      double                                   maximumTimestepDueToGlobalTimestep,
+      peanoclaw::Vertex * const                coarseGridVertices,
+      const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator,
+      peanoclaw::statistics::LevelInformation& levelInformation
+    );
+
+    /**
+     * Fills the boundary layers of the given patch.
+     */
+    void fillBoundaryLayers(
+      peanoclaw::Patch& patch,
+      peanoclaw::Vertex * const                fineGridVertices,
+      const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator
+    );
+
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 
@@ -581,8 +601,10 @@ class peanoclaw::mappings::SolveTimestep {
      */
     void prepareSendToNeighbour(
       peanoclaw::Vertex&  vertex,
-      int  toRank,
-      int  level
+      int                                           toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
     );
 
 
@@ -606,7 +628,10 @@ class peanoclaw::mappings::SolveTimestep {
      */
     void prepareCopyToRemoteNode(
       peanoclaw::Vertex&  localVertex,
-      int  toRank
+      int                                           toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
     );
     
 
@@ -615,7 +640,10 @@ class peanoclaw::mappings::SolveTimestep {
      */
     void prepareCopyToRemoteNode(
       peanoclaw::Cell&  localCell,
-      int  toRank
+      int  toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   cellCentre,
+      const tarch::la::Vector<DIMENSIONS,double>&   cellSize,
+      int                                           level
     );
 
 
@@ -706,9 +734,13 @@ class peanoclaw::mappings::SolveTimestep {
      * records with the master's data, as the master always rules.  
      */
     void prepareSendToMaster(
-      peanoclaw::Cell&     localCell,
-      peanoclaw::Vertex *  vertices,
-      const peano::grid::VertexEnumerator&  verticesEnumerator
+      peanoclaw::Cell&                       localCell,
+      peanoclaw::Vertex *                    vertices,
+      const peano::grid::VertexEnumerator&       verticesEnumerator,
+      const peanoclaw::Vertex * const        coarseGridVertices,
+      const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
+      const peanoclaw::Cell&                 coarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
     );
 
 
@@ -792,9 +824,16 @@ class peanoclaw::mappings::SolveTimestep {
      * - Remove the heap entries created in this operation within mergeWithWorker(). 
      */
     void receiveDataFromMaster(
-      peanoclaw::Cell&                    receivedCell, 
-      peanoclaw::Vertex *                 receivedVertices,
-      const peano::grid::VertexEnumerator&    verticesEnumerator
+      peanoclaw::Cell&                        receivedCell,
+      peanoclaw::Vertex *                     receivedVertices,
+      const peano::grid::VertexEnumerator&        receivedVerticesEnumerator,
+      peanoclaw::Vertex * const               receivedCoarseGridVertices,
+      const peano::grid::VertexEnumerator&        receivedCoarseGridVerticesEnumerator,
+      peanoclaw::Cell&                        receivedCoarseGridCell,
+      peanoclaw::Vertex * const               workersCoarseGridVertices,
+      const peano::grid::VertexEnumerator&        workersCoarseGridVerticesEnumerator,
+      peanoclaw::Cell&                        workersCoarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
     );
 
 
@@ -803,7 +842,10 @@ class peanoclaw::mappings::SolveTimestep {
      */
     void mergeWithWorker(
       peanoclaw::Cell&           localCell, 
-      const peanoclaw::Cell&     receivedMasterCell
+      const peanoclaw::Cell&     receivedMasterCell,
+      const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+      const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+      int                                          level
     );
 
 
@@ -812,7 +854,10 @@ class peanoclaw::mappings::SolveTimestep {
      */
     void mergeWithWorker(
       peanoclaw::Vertex&        localVertex,
-      const peanoclaw::Vertex&  receivedMasterVertex
+      const peanoclaw::Vertex&  receivedMasterVertex,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
     );
     #endif
 

@@ -69,9 +69,6 @@ int peanoclaw::parallel::NeighbourCommunicator::receiveDataArray() {
   std::vector<Data>::iterator it = remoteArray.begin();
   localArray.assign(it, remoteArray.end());
 
-  //TODO unterweg debug
-  std::cout << "On rank " << tarch::parallel::Node::getInstance().getRank() << " copied " << localArray.size() << " elements from neighbour." << std::endl;
-
   logTraceOut("receiveDataArray");
   return localIndex;
 }
