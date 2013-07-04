@@ -75,36 +75,35 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   enddforx
 
   //TODO unterweg Debug
-  #ifdef Debug
-//  tarch::la::Vector<DIMENSIONS, double> position;
+//  #ifdef Debug
   bool plotVertex = false;
-  if(patches[0].isValid()) {
 //    position = patches[0].getPosition();
-    plotVertex =
-//        tarch::la::equals(position(0), 4.0/9.0) && tarch::la::equals(position(1), 8.0/9.0)
-//      && level == 4
-      false
-    ;
-  }
+  plotVertex =
+      //tarch::la::equals(position(0), 2.0/9.0) && tarch::la::equals(position(1), 16.0/27.0)
+      tarch::la::equals(position(0), 32.0/81.0)
+      && tarch::la::equals(position(1), 1.0/3.0)
+      && level == 5
+//      false
+  ;
 
   if(plotVertex) {
-    std::cout << "Filling vertex ("
+    std::cerr << "Filling vertex ("
         #ifdef Parallel
         << "rank=" << tarch::parallel::Node::getInstance().getRank() << ","
         #endif
         <<"hanging=" << isHangingNode() << ") at " << position << " on level " << level << std::endl;
 
     for (int i = 0; i < TWO_POWER_D; i++) {
-      std::cout << " cellDescription(" << i << ")=" << getAdjacentCellDescriptionIndex(i);
+      std::cerr << " cellDescription(" << i << ")=" << getAdjacentCellDescriptionIndex(i);
     }
-    std::cout << std::endl;
+    std::cerr << std::endl;
 
     for (int i = 0; i < TWO_POWER_D; i++) {
-      std::cout << "Patch " << i << " " << patches[i].toString() << ": "
+      std::cerr << "Patch " << i << " " << patches[i].toString() << ": "
           << std::endl << patches[i].toStringUNew() << std::endl << patches[i].toStringUOldWithGhostLayer();
     }
   }
-  #endif
+//  #endif
 
   interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, level, numerics, useDimensionalSplitting);
 
@@ -118,7 +117,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   ) {
     for (int i = 0; i < TWO_POWER_D; i++) {
       if(patches[i].isValid()) {
-        std::cout << "Patch " << i << " at " << patches[i].getPosition() << " of size " << patches[i].getSize() << ": "
+        std::cerr << "Patch " << i << " at " << patches[i].getPosition() << " of size " << patches[i].getSize() << ": "
             << std::endl << patches[i].toStringUNew() << std::endl << patches[i].toStringUOldWithGhostLayer();
       }
     }

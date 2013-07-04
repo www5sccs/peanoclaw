@@ -29,6 +29,7 @@ def addPeanoClawFlags(libpath,libs,cpppath,cppdefines):
    else:
       print('Environment variables PYTHONHOME and PEANOCLAW_PYTHONHOME not defined. Using default \'/usr\'')
       pythonHome = '/usr'
+   cppdefines.append('NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION')
       
    # Add paths and lib
    libpath.append(pythonHome + '/lib')
@@ -58,7 +59,8 @@ linkerflags = []
 libpath = []
 libs = []
 
-p3Path='p3'
+p3Path='../p3/src'
+
 cpppath.append(p3Path)
 clawpackPath='../src/clawpack'
 
@@ -107,9 +109,9 @@ else:
 parallel = ARGUMENTS.get('parallel', 'parallel_no') # Read command line parameter
 if parallel == 'yes' or parallel == 'parallel_yes':
    cppdefines.append('Parallel')
-   cpppath.append(mpiIncludePath)
-   libpath.append(mpiLibraryPath)
-   libs.append (mpiLibrary)
+   cpppath.append('/usr/lib/openmpi/include')
+   libpath.append('/usr/lib/openmpi/lib')
+   libs.append ('mpi')
    libs.append ('pthread')
    cxx = 'mpicxx'
 elif parallel == 'no' or parallel == 'parallel_no':
@@ -194,7 +196,7 @@ if compiler == 'gcc':
    #if(cca=='cca_no' or cca=='no'):
    #ccflags.append('-Werror')
    #	ccflags.append('-pedantic')
-   ccflags.append('-pedantic-errors')
+   #ccflags.append('-pedantic-errors')
    ccflags.append('-Wstrict-aliasing')
    ccflags.append('-fstrict-aliasing')
    #ccflags.append('-fno-exceptions')
@@ -551,6 +553,8 @@ sourcesPeanoClaw = [
 	Glob(buildpath + 'peanoclaw/configurations/*.cpp'),
 	Glob(buildpath + 'peanoclaw/interSubgridCommunication/*.cpp'),
 	Glob(buildpath + 'peanoclaw/mappings/*.cpp'),
+    Glob(buildpath + 'peanoclaw/native/*.cpp'),
+	Glob(buildpath + 'peanoclaw/parallel/*.cpp'),
 	Glob(buildpath + 'peanoclaw/pyclaw/*.cpp'),
 	Glob(buildpath + 'peanoclaw/records/*.cpp'),
 	Glob(buildpath + 'peanoclaw/repositories/*.cpp'),
