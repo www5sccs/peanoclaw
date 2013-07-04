@@ -484,7 +484,7 @@ void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
       fineGridVertex.shouldErase()
       && fineGridVertex.getCurrentAdjacentCellsHeight() == 1
     ) {
-    fineGridVertex.erase();
+//    fineGridVertex.erase();
   }
   fineGridVertex.setShouldRefine(false);
   fineGridVertex.resetSubcellsEraseVeto();

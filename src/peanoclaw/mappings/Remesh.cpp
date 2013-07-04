@@ -65,151 +65,151 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::descendSpecification(
 tarch::logging::Log                peanoclaw::mappings::Remesh::_log( "peanoclaw::mappings::Remesh" ); 
 
 
-void peanoclaw::mappings::Remesh::dataExchange_receive(
-  peanoclaw::Cell&  localCell,
-  const peanoclaw::Cell&  masterOrWorkerCell,
-  int                                       fromRank,
-  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
-  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-  int                                       level,
-  bool                                      forkOrJoin
-) {
-      std::cout << "receiving from: " << fromRank << " for " << cellCentre << " and " << cellSize << " on level " << level << std::endl;
-
-      peano::heap::MessageType messageType = forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication;
-
-      std::vector<peanoclaw::records::CellDescription> remoteCellDescriptionVector = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().receiveData(fromRank, cellCentre, level, messageType);
-      CellDescription& remoteCellDescription = remoteCellDescriptionVector.at(0);
- 
-      if (!peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().isValidIndex(localCell.getCellDescriptionIndex())) {
-        // clone existing remote cell Description
-        int localCellDescriptionIndex = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().createData();
-        std::vector<CellDescription>& localCellDescriptionVector = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().getData(localCellDescriptionIndex);
-
-        // copy modified remote CellDescription to local slot
-        localCellDescriptionVector.push_back(remoteCellDescription);
- 
-        localCell.setCellDescriptionIndex(localCellDescriptionIndex);
-
-        CellDescription& localCellDescription = localCellDescriptionVector.at(0);
-
-        // erase array indices from remote Cell to force array allocation
-        localCellDescription.setUNewIndex(-1);
-        localCellDescription.setUOldIndex(-1);
-        localCellDescription.setAuxIndex(-1);
-        std::cout << "cloned cell description" << std::endl;
-      }
-
-      std::vector<peanoclaw::records::CellDescription>& localCellDescriptionVector = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex());
-      CellDescription& localCellDescription = localCellDescriptionVector.at(0);
-      
-      // receive data parts if indices != -1
-      if (remoteCellDescription.getUNewIndex() != -1) {
-        assertion(remoteCellDescription.getUNewIndex() > 0);
-        std::vector<Data> remoteMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().receiveData(fromRank, cellCentre, level, messageType);
-        
-        //create local Vector if needed
-        int localIndex = localCellDescription.getUNewIndex();
-        if (!peano::heap::Heap<peanoclaw::records::Data>::getInstance().isValidIndex(localIndex)) {
-            localIndex = peano::heap::Heap<peanoclaw::records::Data>::getInstance().createData();
-            localCellDescription.setUNewIndex(localIndex);
-            std::cout << "created uNew vector" << std::endl;
-        }
-
-        // get local vector reference
-        std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
-
-        // copy contents:
-        std::vector<Data>::iterator it = remoteMatrix.begin();
-        localMatrix.assign(it, remoteMatrix.end());
-
-        std::cout << "uNew: copied " << remoteMatrix.size() << " elements" << std::endl;
-      }
-
-      if (remoteCellDescription.getUOldIndex() != -1) {
-        std::vector<Data> remoteMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().receiveData(fromRank, cellCentre, level, messageType);
-        
-        //create local Vector if needed
-        int localIndex = localCellDescription.getUOldIndex();
-        if (!peano::heap::Heap<peanoclaw::records::Data>::getInstance().isValidIndex(localIndex)) {
-            localIndex = peano::heap::Heap<peanoclaw::records::Data>::getInstance().createData();
-            localCellDescription.setUOldIndex(localIndex);
-            std::cout << "created uOld vector" << std::endl;
-        }
-
-        // get local vector reference
-        std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
-
-        // copy contents: (TODO: this is wrong most of the time! use assign)
-        std::vector<Data>::iterator it = remoteMatrix.begin();
-        localMatrix.assign(it, remoteMatrix.end());
-
-        std::cout << "uOld: copied " << remoteMatrix.size() << " elements" << std::endl;
-      }
-
-      if (remoteCellDescription.getAuxIndex() != -1) {
-        std::vector<Data> remoteMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().receiveData(fromRank, cellCentre, level, messageType);
-        
-        //create local Vector if needed
-        int localIndex = localCellDescription.getAuxIndex();
-        if (!peano::heap::Heap<peanoclaw::records::Data>::getInstance().isValidIndex(localIndex)) {
-            localIndex = peano::heap::Heap<peanoclaw::records::Data>::getInstance().createData();
-            localCellDescription.setAuxIndex(localIndex);
-            std::cout << "created Aux vector" << std::endl;
-        }
-
-        // get local vector reference
-        std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
-
-        // copy contents: (TODO: this is wrong most of the time! use assign)
-        std::vector<Data>::iterator it = remoteMatrix.begin();
-        localMatrix.assign(it, remoteMatrix.end());
-        
-        std::cout << "Aux: copied " << remoteMatrix.size() << " elements" << std::endl;
-      }
-}
-
-void peanoclaw::mappings::Remesh::dataExchange_send(
-  peanoclaw::Cell&  localCell,
-  int  toRank,
-  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
-  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-  int                                          level,
-  bool                                         forkOrJoin
-) {
-  peano::heap::MessageType messageType = forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication;
-
-  // get local Cell Description
-  assertion3(localCell.getCellDescriptionIndex() > 0, cellCentre, level, toRank);
-  CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex()).at(0);
-
-  // send Cell description
-  std::cout << "sending index to " << toRank << " and position=" << cellCentre << " on level " << level << std::endl;
-  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().sendData(localCell.getCellDescriptionIndex(), toRank, cellCentre, level, messageType);
-
-  Patch localPatch(cellDescription);
-
-  if (cellDescription.getUNewIndex() != -1) {
-    int localIndex = cellDescription.getUNewIndex();
-    std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
-    std::cout << "sending new data with elements: " << localMatrix.size() << std::endl;
-    peano::heap::Heap<peanoclaw::records::Data>::getInstance().sendData(localIndex, toRank, cellCentre, level, messageType);
-  }
-
-  if (cellDescription.getUOldIndex() != -1) {
-    int localIndex = cellDescription.getUOldIndex();
-    std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
-    std::cout << "sending old data with elements: " << localMatrix.size() << std::endl;
-    peano::heap::Heap<peanoclaw::records::Data>::getInstance().sendData(localIndex, toRank, cellCentre, level, messageType);
-  }
-
-  if (cellDescription.getAuxIndex() != -1) {
-    int localIndex = cellDescription.getAuxIndex();
-    std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
-    std::cout << "sending aux data with elements: " << localMatrix.size() << std::endl;
-    peano::heap::Heap<peanoclaw::records::Data>::getInstance().sendData(localIndex, toRank, cellCentre, level, messageType);
-  }
-}
+//void peanoclaw::mappings::Remesh::dataExchange_receive(
+//  peanoclaw::Cell&  localCell,
+//  const peanoclaw::Cell&  masterOrWorkerCell,
+//  int                                       fromRank,
+//  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+//  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+//  int                                       level,
+//  bool                                      forkOrJoin
+//) {
+//      std::cout << "receiving from: " << fromRank << " for " << cellCentre << " and " << cellSize << " on level " << level << std::endl;
+//
+//      peano::heap::MessageType messageType = forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication;
+//
+//      std::vector<peanoclaw::records::CellDescription> remoteCellDescriptionVector = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().receiveData(fromRank, cellCentre, level, messageType);
+//      CellDescription& remoteCellDescription = remoteCellDescriptionVector.at(0);
+//
+//      if (!peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().isValidIndex(localCell.getCellDescriptionIndex())) {
+//        // clone existing remote cell Description
+//        int localCellDescriptionIndex = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().createData();
+//        std::vector<CellDescription>& localCellDescriptionVector = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().getData(localCellDescriptionIndex);
+//
+//        // copy modified remote CellDescription to local slot
+//        localCellDescriptionVector.push_back(remoteCellDescription);
+//
+//        localCell.setCellDescriptionIndex(localCellDescriptionIndex);
+//
+//        CellDescription& localCellDescription = localCellDescriptionVector.at(0);
+//
+//        // erase array indices from remote Cell to force array allocation
+//        localCellDescription.setUNewIndex(-1);
+//        localCellDescription.setUOldIndex(-1);
+//        localCellDescription.setAuxIndex(-1);
+//        std::cout << "cloned cell description" << std::endl;
+//      }
+//
+//      std::vector<peanoclaw::records::CellDescription>& localCellDescriptionVector = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex());
+//      CellDescription& localCellDescription = localCellDescriptionVector.at(0);
+//
+//      // receive data parts if indices != -1
+//      if (remoteCellDescription.getUNewIndex() != -1) {
+//        assertion(remoteCellDescription.getUNewIndex() > 0);
+//        std::vector<Data> remoteMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().receiveData(fromRank, cellCentre, level, messageType);
+//
+//        //create local Vector if needed
+//        int localIndex = localCellDescription.getUNewIndex();
+//        if (!peano::heap::Heap<peanoclaw::records::Data>::getInstance().isValidIndex(localIndex)) {
+//            localIndex = peano::heap::Heap<peanoclaw::records::Data>::getInstance().createData();
+//            localCellDescription.setUNewIndex(localIndex);
+//            std::cout << "created uNew vector" << std::endl;
+//        }
+//
+//        // get local vector reference
+//        std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
+//
+//        // copy contents:
+//        std::vector<Data>::iterator it = remoteMatrix.begin();
+//        localMatrix.assign(it, remoteMatrix.end());
+//
+//        std::cout << "uNew: copied " << remoteMatrix.size() << " elements" << std::endl;
+//      }
+//
+//      if (remoteCellDescription.getUOldIndex() != -1) {
+//        std::vector<Data> remoteMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().receiveData(fromRank, cellCentre, level, messageType);
+//
+//        //create local Vector if needed
+//        int localIndex = localCellDescription.getUOldIndex();
+//        if (!peano::heap::Heap<peanoclaw::records::Data>::getInstance().isValidIndex(localIndex)) {
+//            localIndex = peano::heap::Heap<peanoclaw::records::Data>::getInstance().createData();
+//            localCellDescription.setUOldIndex(localIndex);
+//            std::cout << "created uOld vector" << std::endl;
+//        }
+//
+//        // get local vector reference
+//        std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
+//
+//        // copy contents: (TODO: this is wrong most of the time! use assign)
+//        std::vector<Data>::iterator it = remoteMatrix.begin();
+//        localMatrix.assign(it, remoteMatrix.end());
+//
+//        std::cout << "uOld: copied " << remoteMatrix.size() << " elements" << std::endl;
+//      }
+//
+//      if (remoteCellDescription.getAuxIndex() != -1) {
+//        std::vector<Data> remoteMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().receiveData(fromRank, cellCentre, level, messageType);
+//
+//        //create local Vector if needed
+//        int localIndex = localCellDescription.getAuxIndex();
+//        if (!peano::heap::Heap<peanoclaw::records::Data>::getInstance().isValidIndex(localIndex)) {
+//            localIndex = peano::heap::Heap<peanoclaw::records::Data>::getInstance().createData();
+//            localCellDescription.setAuxIndex(localIndex);
+//            std::cout << "created Aux vector" << std::endl;
+//        }
+//
+//        // get local vector reference
+//        std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
+//
+//        // copy contents: (TODO: this is wrong most of the time! use assign)
+//        std::vector<Data>::iterator it = remoteMatrix.begin();
+//        localMatrix.assign(it, remoteMatrix.end());
+//
+//        std::cout << "Aux: copied " << remoteMatrix.size() << " elements" << std::endl;
+//      }
+//}
+//
+//void peanoclaw::mappings::Remesh::dataExchange_send(
+//  peanoclaw::Cell&  localCell,
+//  int  toRank,
+//  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+//  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
+//  int                                          level,
+//  bool                                         forkOrJoin
+//) {
+//  peano::heap::MessageType messageType = forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication;
+//
+//  // get local Cell Description
+//  assertion3(localCell.getCellDescriptionIndex() > 0, cellCentre, level, toRank);
+//  CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex()).at(0);
+//
+//  // send Cell description
+//  std::cout << "sending index to " << toRank << " and position=" << cellCentre << " on level " << level << std::endl;
+//  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().sendData(localCell.getCellDescriptionIndex(), toRank, cellCentre, level, messageType);
+//
+//  Patch localPatch(cellDescription);
+//
+//  if (cellDescription.getUNewIndex() != -1) {
+//    int localIndex = cellDescription.getUNewIndex();
+//    std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
+//    std::cout << "sending new data with elements: " << localMatrix.size() << std::endl;
+//    peano::heap::Heap<peanoclaw::records::Data>::getInstance().sendData(localIndex, toRank, cellCentre, level, messageType);
+//  }
+//
+//  if (cellDescription.getUOldIndex() != -1) {
+//    int localIndex = cellDescription.getUOldIndex();
+//    std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
+//    std::cout << "sending old data with elements: " << localMatrix.size() << std::endl;
+//    peano::heap::Heap<peanoclaw::records::Data>::getInstance().sendData(localIndex, toRank, cellCentre, level, messageType);
+//  }
+//
+//  if (cellDescription.getAuxIndex() != -1) {
+//    int localIndex = cellDescription.getAuxIndex();
+//    std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(localIndex);
+//    std::cout << "sending aux data with elements: " << localMatrix.size() << std::endl;
+//    peano::heap::Heap<peanoclaw::records::Data>::getInstance().sendData(localIndex, toRank, cellCentre, level, messageType);
+//  }
+//}
 
 
 peanoclaw::mappings::Remesh::Remesh() {
@@ -518,18 +518,21 @@ void peanoclaw::mappings::Remesh::createCell(
 ) {
   logTraceInWith6Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, fineGridVerticesEnumerator.getCellCenter() );
 
-  //TODO unterweg debug
-  #ifdef Parallel
-//  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0)(0), 2.0/3.0)
-//    && tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0)(1), 23.0/27.0)
-//  ) {
-    std::cout << "Creating cell at " << fineGridVerticesEnumerator.getVertexPosition(0) << " on level " << fineGridVerticesEnumerator.getLevel() << " with size " << fineGridVerticesEnumerator.getCellSize() << " on rank " << tarch::parallel::Node::getInstance().getRank()
-        << " " << fineGridCell.isInside() << std::endl;
+//  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS,double>(2.0/3.0))
+//    && tarch::la::equals(fineGridVerticesEnumerator.getCellSize(), tarch::la::Vector<DIMENSIONS,double>(1.0/3.0))) {
+    std::cout << "Creating cell on rank "
+        #ifdef Parallel
+        << tarch::parallel::Node::getInstance().getRank() << ": "
+        #endif
+        << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+        << fineGridVerticesEnumerator.getCellSize()
+        << ", index=" << fineGridCell.getCellDescriptionIndex()
+        << ", level=" << fineGridVerticesEnumerator.getLevel()
+        << std::endl;
 //  }
-  #endif
  
   //Initialise new Patch
-  Patch fineGridPatch(
+  Patch fineGridPatch = Patch(
     fineGridVerticesEnumerator.getVertexPosition(),
     fineGridVerticesEnumerator.getCellSize(),
     _unknownsPerSubcell,
@@ -541,20 +544,22 @@ void peanoclaw::mappings::Remesh::createCell(
   );
   fineGridCell.setCellDescriptionIndex(fineGridPatch.getCellDescriptionIndex());
 
-  if(fineGridCell.isLeaf()) {
+  if(fineGridCell.isLeaf() && !fineGridPatch.isLeaf()) {
     fineGridPatch.switchToVirtual();
     fineGridPatch.switchToLeaf();
   }
 
   //Transfer data from coarse to fine patch
   if(!coarseGridCell.isRoot()) {
-    assertion4(coarseGridCell.getCellDescriptionIndex() > 0, coarseGridCell.getCellDescriptionIndex(), fineGridVerticesEnumerator.getCellSize(), fineGridVerticesEnumerator.getLevel(), fineGridVerticesEnumerator.getVertexPosition());
+    assertion4(coarseGridCell.getCellDescriptionIndex() > -1, coarseGridCell.getCellDescriptionIndex(), fineGridVerticesEnumerator.getCellSize(), fineGridVerticesEnumerator.getLevel(), fineGridVerticesEnumerator.getVertexPosition());
     Patch coarseGridPatch(
       coarseGridCell
     );
-    assertion1(coarseGridPatch.getTimestepSize() >= 0.0, coarseGridPatch);
+    assertion1(coarseGridPatch.getTimestepSize() >= 0.0 || coarseGridPatch.isVirtual(), coarseGridPatch);
 
     if(!_isInitializing && (coarseGridPatch.isVirtual() || coarseGridPatch.isLeaf())) {
+      //TODO unterweg dissertation: The grid is skipped directly after the creation in enterCell.
+      //Therefore, we need to skip at least two iterations to ensure that all ghostlayers have been set.
       fineGridPatch.setSkipNextGridIteration(2);
 
       fineGridPatch.setCurrentTime(coarseGridPatch.getCurrentTime());
@@ -565,25 +570,29 @@ void peanoclaw::mappings::Remesh::createCell(
         coarseGridPatch.getCellDescriptionIndex()
       );
 
-      //TODO unterweg debug
-      #ifdef Parallel
-      std::cout << "Interpolating: rank" << tarch::parallel::Node::getInstance().getRank() << " "   << coarseGridCell.isRemote(*_state, true, true) << " " << fineGridCell.isRemote(*_state, true, true) << " level:" << (fineGridVerticesEnumerator.getLevel()-1) << std::endl;
-      #endif
-
-      _numerics->interpolate(
-        fineGridPatch.getSubdivisionFactor(),
-        0,
-        coarseGridPatch,
-        fineGridPatch,
-        false
-      );
-      _numerics->interpolate(
-        fineGridPatch.getSubdivisionFactor(),
-        0,
-        coarseGridPatch,
-        fineGridPatch,
+      //Only interpolate if not forking
+      if(
+        #ifdef Parallel
+        !_state->isNewWorkerDueToForkOfExistingDomain()
+        #else
         true
-      );
+        #endif
+      ) {
+        _numerics->interpolate(
+          fineGridPatch.getSubdivisionFactor(),
+          0,
+          coarseGridPatch,
+          fineGridPatch,
+          false
+        );
+        _numerics->interpolate(
+          fineGridPatch.getSubdivisionFactor(),
+          0,
+          coarseGridPatch,
+          fineGridPatch,
+          true
+        );
+      }
     }
   }
 
@@ -592,25 +601,21 @@ void peanoclaw::mappings::Remesh::createCell(
     fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, fineGridCell.getCellDescriptionIndex());
   }
 
-
   //TODO unterweg debug
-  #ifdef Parallel
-  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0)(0), 2.0/3.0)
-    && tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0)(1), 23.0/27.0)
-  ) {
-    std::cout << "Created cell on rank " << tarch::parallel::Node::getInstance().getRank() << ": " << fineGridPatch
-        << " isInitializing: " << _isInitializing << std::endl;
-    std::cout << fineGridPatch.toStringUNew() << std::endl;
-    std::cout << fineGridPatch.toStringUOldWithGhostLayer() << std::endl;
-
-    Patch coarseGridPatch(
-      coarseGridCell
-    );
-    std::cout << "Coarse patch: " << coarseGridPatch << std::endl;
-    std::cout << coarseGridPatch.toStringUNew() << std::endl;
-    std::cout << coarseGridPatch.toStringUOldWithGhostLayer() << std::endl;
+  {
+    Patch patch(fineGridCell);
+    std::cout << "Created cell on rank "
+      #ifdef Parallel
+      << tarch::parallel::Node::getInstance().getRank() << ": "
+      #endif
+      << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+      << fineGridVerticesEnumerator.getCellSize()
+      << ", index=" << fineGridCell.getCellDescriptionIndex()
+      << ", level=" << fineGridVerticesEnumerator.getLevel()
+      << ", leaf=" << patch.isLeaf()
+      << ", unew=" << patch.getUNewIndex()
+      << std::endl;
   }
-  #endif
 
   logTraceOutWith2Arguments( "createCell(...)", fineGridCell, fineGridPatch );
 }
@@ -629,77 +634,98 @@ void peanoclaw::mappings::Remesh::destroyCell(
 
   //TODO unterweg debug
   #ifdef Parallel
-  std::cout << "Destroying cell at " << fineGridVerticesEnumerator.getVertexPosition(0) << " on level " << fineGridVerticesEnumerator.getLevel() << " with size " << fineGridVerticesEnumerator.getCellSize() << " on rank " << tarch::parallel::Node::getInstance().getRank()
-      << " " << fineGridCell.isInside() << std::endl;
+  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS,double>(2.0/3.0))
+    && tarch::la::equals(fineGridVerticesEnumerator.getCellSize(), tarch::la::Vector<DIMENSIONS,double>(1.0/3.0))) {
+    std::cout << "Destroying cell on rank " << tarch::parallel::Node::getInstance().getRank() << ": " << fineGridVerticesEnumerator.getVertexPosition(0) << ", " << fineGridVerticesEnumerator.getCellSize() << std::endl;
+  }
   #endif
 
   Patch finePatch(
     fineGridCell
   );
 
-  //Fix minimal time patch
-  if(_minimalTimePatch.isValid()
-      && tarch::la::equals(finePatch.getPosition(), _minimalTimePatch.getPosition())
-      && finePatch.getLevel() == _minimalTimePatch.getLevel()) {
-    _minimalTimePatch = Patch();
-  }
-  if(_minimalTimePatchParent.isValid()
-      && tarch::la::equals(finePatch.getPosition(), _minimalTimePatchParent.getPosition())
-      && finePatch.getLevel() == _minimalTimePatchParent.getLevel()) {
-    _minimalTimePatchParent = Patch();
-  }
+  bool isDestroyedDueToForkOrJoin = fineGridCell.isAssignedToRemoteRank();
+  bool isRootOfNewWorker = isDestroyedDueToForkOrJoin && !coarseGridCell.isAssignedToRemoteRank();
 
-  //Create patch in parent cell if it doesn't exist
-//  if(coarseGridVerticesEnumerator.getLevel() > 0) {
-  if(!coarseGridCell.isRoot()) {
-    CellDescription& coarseCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0);
+  if(fineGridCell.isInside() && !isRootOfNewWorker && !fineGridCell.isAssignedToRemoteRank()) {
+	  //TODO unterweg debug
+	  #ifdef Parallel
+	  std::cout << "Destroying cell at " << fineGridVerticesEnumerator.getVertexPosition(0) << " on level " << fineGridVerticesEnumerator.getLevel() << " with size " << fineGridVerticesEnumerator.getCellSize() << " on rank " << tarch::parallel::Node::getInstance().getRank()
+		  << " " << fineGridCell.isInside() << std::endl;
+	  #endif
 
-    //Fix timestep size
-    coarseCellDescription.setTimestepSize(std::max(0.0, coarseCellDescription.getTimestepSize()));
+      //Delete patch data and description from this cell
+      assertion3(fineGridCell.getCellDescriptionIndex() > -1,
+        fineGridCell,
+        fineGridVerticesEnumerator.getVertexPosition(0),
+        fineGridVerticesEnumerator.getCellSize()
+      );
 
-    assertion2(coarseCellDescription.getUNewIndex() != -1, coarseGridCell, finePatch);
-    assertion2(coarseCellDescription.getUOldIndex() != -1, coarseGridCell, finePatch);
- 
-    //Set indices on coarse adjacent vertices and fill adjacent ghostlayers
+	  //Fix minimal time patch
+	  if(_minimalTimePatch.isValid()
+		  && tarch::la::equals(finePatch.getPosition(), _minimalTimePatch.getPosition())
+		  && finePatch.getLevel() == _minimalTimePatch.getLevel()) {
+		_minimalTimePatch = Patch();
+	  }
+	  if(_minimalTimePatchParent.isValid()
+		  && tarch::la::equals(finePatch.getPosition(), _minimalTimePatchParent.getPosition())
+		  && finePatch.getLevel() == _minimalTimePatchParent.getLevel()) {
+		_minimalTimePatchParent = Patch();
+	  }
+
+	  //Create patch in parent cell if it doesn't exist
+	  if(!coarseGridCell.isRoot() && coarseGridCell.isInside()) {
+		CellDescription& coarseCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0);
+
+		//Fix timestep size
+		coarseCellDescription.setTimestepSize(std::max(0.0, coarseCellDescription.getTimestepSize()));
+
+		//Set indices on coarse adjacent vertices and fill adjacent ghostlayers
+		for(int i = 0; i < TWO_POWER_D; i++) {
+		  fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, coarseGridCell.getCellDescriptionIndex());
+		}
+
+		//Skip update for coarse patch in next grid iteration
+		coarseCellDescription.setSkipGridIterations(1);
+
+		//Set demanded mesh width for coarse cell to coarse cell size. Otherwise
+		//the coarse patch might get refined immediately.
+		coarseCellDescription.setDemandedMeshWidth(coarseGridVerticesEnumerator.getCellSize()(0) / coarseCellDescription.getSubdivisionFactor()(0));
+	  } else {
+		for(int i = 0; i < TWO_POWER_D; i++) {
+			fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, -1);
+		}
+	  }
+
+	  finePatch.deleteData();
+  } else if(fineGridCell.isAssignedToRemoteRank()) {
+    //Patch got moved to other rank, check whether it is now adjacent to the local domain.
+    bool adjacentToLocalDomain = !coarseGridCell.isAssignedToRemoteRank();
+    #ifdef Parallel
     for(int i = 0; i < TWO_POWER_D; i++) {
-      fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, coarseGridCell.getCellDescriptionIndex());
+      adjacentToLocalDomain |= fineGridVertices[fineGridVerticesEnumerator(i)].isAdjacentToDomainOf(
+          tarch::parallel::Node::getInstance().getRank()
+        );
     }
+    #endif
 
-    //Skip update for coarse patch in next grid iteration
-    coarseCellDescription.setSkipGridIterations(1);
-
-    //Set demanded mesh width for coarse cell to coarse cell size. Otherwise
-    //the coarse patch might get refined immediately.
-    coarseCellDescription.setDemandedMeshWidth(coarseGridVerticesEnumerator.getCellSize()(0) / coarseCellDescription.getSubdivisionFactor()(0));
-  } else {
-    for(int i = 0; i < TWO_POWER_D; i++) {
+    //If it is adjacent -> Now remote
+    //If not -> Delete it
+    if(adjacentToLocalDomain) {
+      #ifdef Parallel
+      finePatch.setIsRemote(true);
+      #endif
+    } else {
+      finePatch.deleteData();
+      for(int i = 0; i < TWO_POWER_D; i++) {
         fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, -1);
+      }
     }
-  }
 
-  //Delete patch data and description from this cell
-  assertion(fineGridCell.getCellDescriptionIndex() != -1);
-  CellDescription& fineCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0);
-  if(fineCellDescription.getUNewIndex() != -1) {
-    //TODO unterweg debug
-    peano::heap::Heap<Data>::getInstance().deleteData(fineCellDescription.getUNewIndex());
-    fineCellDescription.setUNewIndex(-1);
+    #ifdef Parallel
+    assertion1(!finePatch.isValid() || finePatch.isRemote(), finePatch);
+    #endif
   }
-  if(fineCellDescription.getUOldIndex() != -1) {
-    //TODO unterweg debug
-    peano::heap::Heap<Data>::getInstance().deleteData(fineCellDescription.getUOldIndex());
-    fineCellDescription.setUOldIndex(-1);
-  }
-  if(fineCellDescription.getAuxIndex() != -1) {
-    //TODO unterweg debug
-    peano::heap::Heap<Data>::getInstance().deleteData(fineCellDescription.getAuxIndex());
-    fineCellDescription.setAuxIndex(-1);
-  }
-  int cellDescriptionIndex = fineGridCell.getCellDescriptionIndex();
-  fineCellDescription.setCellDescriptionIndex(-1);
-  //TODO unterweg debug
-  assertion(cellDescriptionIndex > 1);
-  peano::heap::Heap<CellDescription>::getInstance().deleteData(cellDescriptionIndex);
 
   logTraceOutWith1Argument( "destroyCell(...)", fineGridCell );
 }
@@ -738,7 +764,6 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
     );
 
     if(neighbourVertexRanks(i) == fromRank && remoteAdjacentCellDescriptionIndex != -1) {
-
       if(localAdjacentCellDescriptionIndex == -1) {
         //Create outside patch
         Patch outsidePatch(
@@ -754,30 +779,16 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
         localAdjacentCellDescriptionIndex = outsidePatch.getCellDescriptionIndex();
         vertex.setAdjacentCellDescriptionIndexInPeanoOrder(i, localAdjacentCellDescriptionIndex);
       }
+      assertion(localAdjacentCellDescriptionIndex != -1);
 
       communicator.receivePatch(localAdjacentCellDescriptionIndex);
     } else {
       //Receive dummy message
       communicator.receivePaddingPatch();
     }
-  }
 
-//  if(tarch::la::equals(fineGridX, 1.0/3.0)
-//    && level == 3) {
-//    std::cout << "Merged vertex on rank " << tarch::parallel::Node::getInstance().getRank() << " from rank " << fromRank << std::endl;
-//    for (int i = 0; i < TWO_POWER_D; i++) {
-//      std::cout << " cellDescription(" << i << ")=" << vertex.getAdjacentCellDescriptionIndex(i);
-//    }
-//    std::cout << std::endl;
-//    for (int i = 0; i < TWO_POWER_D; i++) {
-//      std::cout << " n.cellDescription(" << i << ")=" << neighbour.getAdjacentCellDescriptionIndex(i);
-//    }
-//    std::cout << std::endl;
-//    for (int i = 0; i < TWO_POWER_D; i++) {
-//      std::cout << " n.adjacency(" << i << ")=" << neighbourVertexRanks(i);
-//    }
-//    std::cout << std::endl;
-//  }
+    _receivedNeighborData++;
+  }
 
   logTraceOut( "mergeWithNeighbour(...)" );
 }
@@ -804,10 +815,14 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
     int adjacentCellDescriptionIndex = vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i);
     if(localVertexRanks(i) == localRank && adjacentCellDescriptionIndex != -1) {
       communicator.sendPatch(adjacentCellDescriptionIndex);
+
+      Patch patch(peano::heap::Heap<CellDescription>::getInstance().getData(adjacentCellDescriptionIndex).at(0));
     } else {
       //Send dummy message to avoid problems with heap
       communicator.sendPaddingPatch();
     }
+
+    _sentNeighborData++;
   }
 
   logTraceOut( "prepareSendToNeighbour(...)" );
@@ -822,6 +837,14 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
 ) {
   logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank);
   // @todo Insert your code here
+
+  std::cout << "Copying vertex to remote from " << tarch::parallel::Node::getInstance().getRank()
+      << " to " << toRank
+      << " at " << (x)
+      << " on level " << level
+      << " adjacentRanks=" << localVertex.getAdjacentRanks()
+      << std::endl;
+
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
 
@@ -845,9 +868,24 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
         << " isInside " << localCell.isInside() << std::endl;
 //  }
 
-  if(localCell.isInside()) {
+  if(localCell.isInside() && localCell.getRankOfRemoteNode() == toRank) {
+   assertion7(
+     localCell.getCellDescriptionIndex() >= 0,
+     localCell.getCellDescriptionIndex(),
+     cellCentre - cellSize / 2.0,
+     cellSize,
+     level,
+     localCell.isInside(),
+     localCell.getRankOfRemoteNode(),
+     localCell.isAssignedToRemoteRank()
+   );
+
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, cellCentre, level, true);
     communicator.sendPatch(localCell.getCellDescriptionIndex());
+
+    //Switch to remote after having sent the patch away...
+    Patch patch(localCell);
+    patch.setIsRemote(true);
   }
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -876,20 +914,24 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
   logTraceInWith6Arguments( "mergeWithRemoteDataDueToForkOrJoin(...)", localCell, masterOrWorkerCell, fromRank, cellCentre, cellSize, level );
   logInfo("", "[mergeWithRemoteDataDueToForkOrJoin] receiving next item @ " << cellCentre << " on level " << level << " localCell.isRemote: " << localCell.isRemote(*_state, false, false));
 
-  //TODO unterweg debug
-//  if(tarch::la::equals(cellSize, 1.0/3.0)
-//    && tarch::la::equals(cellCentre(0) - cellSize(0)*0.5, 0.0/9.0)
-//    && tarch::la::equals(cellCentre(1) - cellSize(1)*0.5, 0.0/9.0)) {
-    std::cout << "Merged during fork on rank " << tarch::parallel::Node::getInstance().getRank()
-        << " at " << (cellCentre - cellSize*0.5) << " on level " << level << " "
-        << " inside:"<< localCell.isInside() << ", remote:" << localCell.isRemote(*_state, false, false) << std::endl;
-//  }
+  assertion3(localCell.isAssignedToRemoteRank() || localCell.getCellDescriptionIndex() != -2, localCell.toString(), cellCentre, cellSize);
 
-  if(localCell.isInside()) {
+  //TODO unterweg debug
+  std::cout << "Merging with remote data localIndex=" << localCell.getCellDescriptionIndex()
+      << " remoteIndex=" << masterOrWorkerCell.getCellDescriptionIndex()
+      << " position=" << (cellCentre-0.5*cellSize) << " size=" << cellSize
+      << std::endl;
+
+  //TODO unterweg debug Workaraound for cells outside the current worker's domain as inside cells.
+  if(localCell.isInside() && !masterOrWorkerCell.isAssignedToRemoteRank()) {
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(fromRank, cellCentre, level, true);
 
-    if(localCell.isRemote(*_state, false, false)) {
-      assertionEquals2(localCell.getCellDescriptionIndex(), 0, cellCentre, level);
+    //TODO unterweg debug Workaraound since the global master doesn't create cells at the moment but copies them
+    //uninitialized to the first worker
+    if(localCell.isRemote(*_state, false, false) || tarch::parallel::NodePool::getInstance().getMasterRank() == 0) {
+      if(tarch::parallel::NodePool::getInstance().getMasterRank() != 0) {
+        assertionEquals2(localCell.getCellDescriptionIndex(), -2, cellCentre, level);
+      }
       Patch temporaryPatch(
         cellCentre - cellSize * 0.5,
         cellSize,
@@ -902,6 +944,7 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
       );
 
       communicator.receivePatch(temporaryPatch.getCellDescriptionIndex());
+      temporaryPatch.reloadCellDescription();
 
       if(temporaryPatch.isLeaf()) {
         temporaryPatch.switchToVirtual();
@@ -911,17 +954,16 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
       }
       peano::heap::Heap<CellDescription>::getInstance().deleteData(temporaryPatch.getCellDescriptionIndex());
     } else {
-      assertion(localCell.getCellDescriptionIndex() != -1);
-      assertion2(localCell.getCellDescriptionIndex() != 0, cellCentre, level);
+      assertion2(localCell.getCellDescriptionIndex() != -1, cellCentre, level);
 
-      Patch localPatch(peano::heap::Heap<CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex()).at(0));
-      //TODO unterweg: May virtual patches be received during a fork/join
-//      _gridLevelTransfer->updatePatchStateDuringForkOrJoin(
-//        localPatch,
-//        masterOrWorkerCell.getCellDescriptionIndex() != -1
-//      );
+      Patch localPatch(localCell);
 
-      assertion2((!localPatch.isLeaf() && !localPatch.isVirtual()) || localPatch.getUNewIndex() > 0, cellCentre, level);
+      assertion2(
+        (!localPatch.isLeaf() && !localPatch.isVirtual())
+        || localPatch.getUNewIndex() >= 0,
+        cellCentre,
+        level
+      );
 
       if(tarch::la::equals(cellSize, 1.0/3.0)
         && tarch::la::equals(cellCentre(0) - cellSize(0)*0.5, 0.0)
@@ -932,16 +974,22 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
       communicator.receivePatch(localPatch.getCellDescriptionIndex());
       localPatch.loadCellDescription(localCell.getCellDescriptionIndex());
 
-      assertionMsg(!localPatch.isVirtual(), "Receiving virtual patches during a fork is currently not supported!");
+      assertion1(!localPatch.isRemote(), localPatch);
+
+      //TODO unterweg dissertation: Wenn auf dem neuen Knoten die Adjazenzinformationen auf den
+      // Vertices noch nicht richtig gesetzt sind können wir nicht gleich voranschreiten.
+      // U.U. brauchen wir sogar 2 Iterationen ohne Aktion... (Wegen hin- und herlaufen).
+      localPatch.setSkipNextGridIteration(2);
 
       //TODO unterweg debug
-      localPatch = Patch(peano::heap::Heap<CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex()).at(0));
+      localPatch = Patch(localCell);
       if(tarch::la::equals(cellSize, 1.0/3.0)
         && tarch::la::equals(cellCentre(0) - cellSize(0)*0.5, 0.0)
         && tarch::la::equals(cellCentre(1) - cellSize(1)*0.5, 0.0)) {
         std::cout << "Merged during fork on rank " << tarch::parallel::Node::getInstance().getRank() << ": " << localPatch << std::endl;
-        std::cout << localPatch.toStringUNew() << std::endl;
       }
+
+      assertionEquals1(localPatch.getLevel(), level, localPatch);
     }
   }
 
@@ -958,16 +1006,31 @@ void peanoclaw::mappings::Remesh::prepareSendToWorker(
   const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell,
   int                                                                  worker
 ) {
-  logTraceInWith7Arguments( "prepareSendToWorker(...)", fineGridCell, fineGridVerticesEnumerator.toString(), fineGridVerticesEnumerator.getVertexPosition(0), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, worker );
+  logTraceInWith7Arguments( "prepareSendToWorker(...)",
+    fineGridCell,
+    fineGridVerticesEnumerator.toString(),
+    fineGridVerticesEnumerator.getVertexPosition(0),
+    coarseGridCell,
+    coarseGridVerticesEnumerator.toString(),
+    fineGridPositionOfCell,
+    worker
+  );
  
   std::cout << "[prepareSendToWorker] sending to worker " << worker << ": next item @ " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " size " << fineGridVerticesEnumerator.getCellSize() << " inside:" << fineGridCell.isInside() << std::endl;
+
+  //TODO unterweg debug
+  assertion4(
+    peano::heap::Heap<CellDescription>::getInstance().isValidIndex(fineGridCell.getCellDescriptionIndex()),
+    fineGridVerticesEnumerator.getVertexPosition(0),
+    fineGridVerticesEnumerator.getCellSize(),
+    fineGridCell.getCellDescriptionIndex(),
+    worker
+  );
+  std::cout << "Sending " << peano::heap::Heap<CellDescription>::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0).toString() << std::endl;
 
   if(fineGridCell.isInside()){
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(worker, fineGridVerticesEnumerator.getCellCenter(), fineGridVerticesEnumerator.getLevel(), false);
     communicator.sendPatch(fineGridCell.getCellDescriptionIndex());
-
-//    dataExchange_send(fineGridCell, worker, fineGridVerticesEnumerator.getCellCenter(), fineGridVerticesEnumerator.getCellSize(), fineGridVerticesEnumerator.getLevel(), false);
-
   }
 
   logTraceOut( "prepareSendToWorker(...)" );
@@ -984,7 +1047,7 @@ void peanoclaw::mappings::Remesh::prepareSendToMaster(
 ) {
   logTraceInWith3Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString(), verticesEnumerator.getVertexPosition(0) );
   
-  std::cout << "[prepareSendToMaster] sending to master: next item @ " << verticesEnumerator.getCellCenter() << " on level " << verticesEnumerator.getLevel() << std::endl;
+  std::cout << "[prepareSendToMaster] sending to master on rank " << tarch::parallel::Node::getInstance().getRank() << ": next item @ " << verticesEnumerator.getCellCenter() << " on level " << verticesEnumerator.getLevel() << std::endl;
 
   //TODO unterweg debug
   if(tarch::la::equals(verticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS, double>(0.0))
@@ -1001,11 +1064,6 @@ void peanoclaw::mappings::Remesh::prepareSendToMaster(
   Patch localPatch(
     localCell
   );
-  //TODO unterweg debug
-//  _gridLevelTransfer->updatePatchStateAfterStepUp(
-//    localPatch,
-//    localCell.isLeaf()
-//  );
 
   logTraceOut( "prepareSendToMaster(...)" );
 }
@@ -1042,8 +1100,6 @@ void peanoclaw::mappings::Remesh::mergeWithMaster(
 
   masterState.setAllPatchesEvolvedToGlobalTimestep(allPatchesEvolvedToGlobalTimestep);
 
-  std::cout << "merging with Master" << std::endl;
-
   tarch::la::Vector<DIMENSIONS,double>  cellCenter = workerEnumerator.getCellCenter();
   tarch::la::Vector<DIMENSIONS,double>  cellSize = workerEnumerator.getCellSize();
   int level = workerEnumerator.getLevel();
@@ -1057,7 +1113,11 @@ void peanoclaw::mappings::Remesh::mergeWithMaster(
     );
     communicator.receivePatch(fineGridCell.getCellDescriptionIndex());
 
-//    dataExchange_receive(fineGridCell, workerGridCell, worker, cellCenter, cellSize, level, false);
+    assertionEquals1(
+      fineGridCell.getCellDescriptionIndex(),
+      peano::heap::Heap<CellDescription>::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0).getCellDescriptionIndex(),
+      fineGridCell
+    );
   }
 
   logTraceOut( "mergeWithMaster(...)" );
@@ -1079,12 +1139,9 @@ void peanoclaw::mappings::Remesh::receiveDataFromMaster(
   logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), receivedVerticesEnumerator.toString() );
   
   //TODO unterweg debug
-  std::cout << "Receiving on " << tarch::parallel::Node::getInstance().getRank() << " at remote: " << receivedVerticesEnumerator.getVertexPosition(tarch::la::Vector<DIMENSIONS,int>(0))
+  std::cout << "Receiving data from master: " << receivedVerticesEnumerator.getVertexPosition(tarch::la::Vector<DIMENSIONS, int>(0)) << " " << receivedVerticesEnumerator.getLevel()
       << " size " << receivedVerticesEnumerator.getCellSize()
-      << " local: " << workersCoarseGridVerticesEnumerator.getVertexPosition(tarch::la::Vector<DIMENSIONS,int>(0))
-      << " size " << workersCoarseGridVerticesEnumerator.getCellSize()
-      << " finePosition " << fineGridPositionOfCell
-      << std::endl;
+      << " on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
 
   if(receivedCell.isInside()) {
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(
@@ -1099,10 +1156,17 @@ void peanoclaw::mappings::Remesh::receiveDataFromMaster(
     temporaryCellDescription.setUNewIndex(-1);
     temporaryCellDescription.setUOldIndex(-1);
     temporaryCellDescription.setAuxIndex(-1);
+    temporaryCellDescription.setPosition(
+      receivedVerticesEnumerator.getVertexPosition(tarch::la::Vector<DIMENSIONS, int>(0))
+    );
+    temporaryCellDescription.setSize(receivedVerticesEnumerator.getCellSize());
+    temporaryCellDescription.setLevel(receivedVerticesEnumerator.getLevel());
     peano::heap::Heap<CellDescription>::getInstance().getData(temporaryCellDescriptionIndex).push_back(temporaryCellDescription);
     receivedCell.setCellDescriptionIndex(temporaryCellDescriptionIndex);
 
     communicator.receivePatch(temporaryCellDescriptionIndex);
+  } else {
+    receivedCell.setCellDescriptionIndex(-1);
   }
 
   logTraceOut( "receiveDataFromMaster(...)" );
@@ -1119,45 +1183,25 @@ void peanoclaw::mappings::Remesh::mergeWithWorker(
   logTraceInWith2Arguments( "mergeWithWorker(...)", localCell.toString(), receivedMasterCell.toString() );
 
   //TODO unterweg debug
-  if(tarch::la::equals(cellCentre, tarch::la::Vector<DIMENSIONS, double>(0.5)) && level == 1) {
-    std::cout << "Merging with Worker: Updating Patchstate on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
+  std::cout << "Merging with Worker: Updating Patchstate on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
+
+  if(!_state->isNewWorkerDueToForkOfExistingDomain()) {
+    //Avoid this in first iteration for new worker, since
+    //prepareSendToMaster is not called in such an
+    //iteration.
+    _gridLevelTransfer->updatePatchStateDuringMergeWithWorker(
+      localCell.getCellDescriptionIndex(),
+      receivedMasterCell.getCellDescriptionIndex()
+    );
   }
 
-  if(receivedMasterCell.isInside()) {
-    CellDescription& localCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex()).at(0);
-    CellDescription& masterCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(receivedMasterCell.getCellDescriptionIndex()).at(0);
-
-    Patch localPatch(localCellDescription);
-    //TODO unterweg debug
-//    _gridLevelTransfer->updatePatchStateBeforeStepDown(
-//      localPatch,
-//      masterCellDescription.getUNewIndex() != -1
-//    );
-
-    //Delete current content of patch
-    if(masterCellDescription.getUNewIndex() != -1) {
-      assertion(localPatch.isVirtual() || localPatch.isLeaf());
-      peano::heap::Heap<Data>::getInstance().deleteData(localCellDescription.getUNewIndex());
-      peano::heap::Heap<Data>::getInstance().deleteData(localCellDescription.getUOldIndex());
-      if(localCellDescription.getAuxIndex() != -1) {
-        peano::heap::Heap<Data>::getInstance().deleteData(localCellDescription.getAuxIndex());
-      }
-
-      localCellDescription.setUNewIndex(masterCellDescription.getUNewIndex());
-      localCellDescription.setUOldIndex(masterCellDescription.getUOldIndex());
-      localCellDescription.setAuxIndex(masterCellDescription.getAuxIndex());
-    }
-
-    peano::heap::Heap<CellDescription>::getInstance().deleteData(receivedMasterCell.getCellDescriptionIndex());
-  } else {
-    CellDescription& localCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex()).at(0);
-    Patch localPatch(localCellDescription);
-    //TODO unterweg debug
-//    _gridLevelTransfer->updatePatchStateBeforeStepDown(
-//      localPatch,
-//      false
-//    );
+  #ifdef Asserts
+  {
+  CellDescription& localCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex()).at(0);
+  Patch localPatch(localCellDescription);
+  assertionEquals1(localPatch.getLevel(), level, localPatch);
   }
+  #endif
 
   logTraceOutWith1Argument( "mergeWithWorker(...)", localCell.toString() );
 }
@@ -1246,7 +1290,41 @@ void peanoclaw::mappings::Remesh::enterCell(
     fineGridCell
   );
 
-  assertionEquals1(patch.getLevel(), fineGridVerticesEnumerator.getLevel(), patch.toString());
+  #ifdef Parallel
+  assertionEquals4(patch.getLevel(),
+    fineGridVerticesEnumerator.getLevel(),
+    patch,
+    fineGridVerticesEnumerator.getVertexPosition(0),
+    fineGridVerticesEnumerator.getCellSize(),
+    tarch::parallel::Node::getInstance().getRank()
+  );
+  #endif
+
+  #if defined(Parallel)
+  if(!fineGridCell.isRemote(*_state, true, true)) {
+    int numberOfAdjacentRemoteVertices = 0;
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      if(fineGridVertices[fineGridVerticesEnumerator(i)].isAdjacentToRemoteRank()
+          && !fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()
+      ) {
+        numberOfAdjacentRemoteVertices += fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentRemoteRanks().size();
+      }
+    }
+    if(coarseGridCell.isRoot() && !_state->isNewWorkerDueToForkOfExistingDomain()) {
+      //Due to the increase in mergeWithWorker
+      numberOfAdjacentRemoteVertices++;
+    }
+    //TODO unterweg debug
+//    patch.increaseNumberOfPatchStateUpdates(numberOfAdjacentRemoteVertices);
+
+    //TODO unterweg debug
+    if(tarch::la::equals(patch.getPosition()(0), 1.0/9.0)
+       && tarch::la::equals(patch.getPosition()(1), 3.0/9.0)
+       && patch.getLevel() == 3) {
+      std::cout << "Adding " << numberOfAdjacentRemoteVertices << " updates. Result: " << patch.getNumberOfPatchStateUpdates() << std::endl;
+    }
+  }
+  #endif
 
   _gridLevelTransfer->updatePatchStateBeforeStepDown(
     patch,
@@ -1263,17 +1341,17 @@ void peanoclaw::mappings::Remesh::enterCell(
     fineGridVerticesEnumerator
   );
 
-#ifdef Asserts
-if(patch.isLeaf() && !fineGridCell.isLeaf()) {
-  bool isRefining = false;
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    if(fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == peanoclaw::records::Vertex::Refining) {
-      isRefining = true;
+  #ifdef Asserts
+  if(patch.isLeaf() && !fineGridCell.isLeaf()) {
+    bool isRefining = false;
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      if(fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == peanoclaw::records::Vertex::Refining) {
+        isRefining = true;
+      }
     }
+    assertion1(isRefining, patch);
   }
-  assertion1(isRefining, patch);
-}
-#endif
+  #endif
 
   logTraceOutWith2Arguments( "enterCell(...)", fineGridCell, patch );
 }
@@ -1328,6 +1406,8 @@ void peanoclaw::mappings::Remesh::leaveCell(
 
   _gridLevelTransfer->updatePatchStateAfterStepUp(
     finePatch,
+    fineGridVertices,
+    fineGridVerticesEnumerator,
     fineGridCell.isLeaf()
   );
 
@@ -1365,7 +1445,17 @@ void peanoclaw::mappings::Remesh::beginIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
- 
+
+  //TODO unterweg debug
+  std::cout << "Sizeof:" << sizeof(CellDescription) << std::endl;
+
+  //TODO unterweg debug
+  #ifdef Parallel
+  if(tarch::parallel::Node::getInstance().getRank() == 1) {
+    std::cout << "Begin isForkTriggered Result: " << solverState.isForkTriggered() << std::endl;
+  }
+  #endif
+
   _unknownsPerSubcell       = solverState.getUnknownsPerSubcell();
 
   _auxiliarFieldsPerSubcell = solverState.getAuxiliarFieldsPerSubcell();
@@ -1403,6 +1493,9 @@ void peanoclaw::mappings::Remesh::beginIteration(
 
   _useDimensionalSplitting = solverState.useDimensionalSplitting();
 
+  _sentNeighborData = 0;
+  _receivedNeighborData = 0;
+
   //Reset touched for all hanging vertex descriptions
   std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >::iterator i = _vertexPositionToIndexMap.begin();
   while(i != _vertexPositionToIndexMap.end()) {
@@ -1427,7 +1520,7 @@ void peanoclaw::mappings::Remesh::endIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
- 
+
   delete _gridLevelTransfer;
 
   //Todo unterweg debug
@@ -1442,6 +1535,8 @@ void peanoclaw::mappings::Remesh::endIteration(
 //      std::cout << "Contrained by " << constrainingPatch << std::endl;
 //    }
   }
+
+  logInfo("endIteration(State)", "Sent neighbor data: " << _sentNeighborData << " Received neighbor data: " << _receivedNeighborData);
 
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().finishedToSendOrReceiveHeapData();
   peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().finishedToSendOrReceiveHeapData();

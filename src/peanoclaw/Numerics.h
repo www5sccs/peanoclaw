@@ -8,6 +8,10 @@
 #ifndef PEANOCLAW_NUMERICS_H_
 #define PEANOCLAW_NUMERICS_H_
 
+#include "peanoclaw/interSubgridCommunication/Interpolation.h"
+#include "peanoclaw/interSubgridCommunication/Restriction.h"
+#include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
+
 #include "tarch/la/Vector.h"
 
 namespace peanoclaw {
@@ -21,7 +25,20 @@ namespace peanoclaw {
  */
 class peanoclaw::Numerics {
 
+private:
+  peanoclaw::interSubgridCommunication::Interpolation*  _interpolation;
+  peanoclaw::interSubgridCommunication::Restriction*    _restriction;
+  peanoclaw::interSubgridCommunication::FluxCorrection* _fluxCorrection;
+
   public:
+    Numerics(
+      peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
+      peanoclaw::interSubgridCommunication::Restriction*    restriction,
+      peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
+    );
+
+    virtual ~Numerics();
+
     /**
      * Adds a patch to the solution which is hold in PyClaw. This method is used for gathering a solution
      * holding the complete grid in PyClaw to plot it via VisClaw.
@@ -47,7 +64,7 @@ class peanoclaw::Numerics {
       peanoclaw::Patch&        destination,
       bool interpolateToUOld = true,
       bool interpolateToCurrentTime = true
-    ) const = 0;
+    ) const;
 
     /**
      * Performs the restriction between the given source and destination
@@ -58,7 +75,7 @@ class peanoclaw::Numerics {
       const peanoclaw::Patch& source,
       peanoclaw::Patch&       destination,
       bool restrictOnlyOverlappedAreas
-    ) const = 0;
+    ) const;
 
     /**
      * Performs the flux correction between the given source and destination
@@ -70,7 +87,7 @@ class peanoclaw::Numerics {
       Patch& coarsePatch,
       int dimension,
       int direction
-    ) const = 0;
+    ) const;
 
     /**
      * Fills the specified boundary layer.

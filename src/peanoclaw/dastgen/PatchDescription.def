@@ -1,0 +1,147 @@
+Packed-Type: short int;
+
+#include "peano/utils/Globals.h"
+
+Constant: DIMENSIONS;
+Constant: DIMENSIONS_TIMES_TWO;
+Constant: THREE_POWER_D;
+
+class peanoclaw::records::PatchDescription {
+  
+  //Status
+  parallelise persistent bool isReferenced;
+  parallelise persistent int adjacentRanks[THREE_POWER_D];
+  parallelise persistent int rank;
+
+  //
+  parallelise persistent int  subdivisionFactor[DIMENSIONS];
+  parallelise persistent int  ghostLayerWidth;
+  //parallelise persistent int  unknownsPerSubcell;
+  //parallelise persistent int  auxiliarFieldsPerSubcell;
+  parallelise persistent int  level;
+  parallelise persistent bool isVirtual;
+  //parallelise persistent int  numberOfPatchStateUpdates;
+  
+  #ifdef Parallel
+  parallelise persistent bool isRemote;
+  #endif
+
+  parallelise persistent double position[DIMENSIONS];
+
+  parallelise persistent double size[DIMENSIONS];
+
+  /**
+   * This member stores the time of the last timestep. Usually
+   * one would expect that this stores the time of the current
+   * timestep, but a patch always stores a time interval
+   * between the last and the current timestep. Due to this
+   * scheme the patch basically stores the time interval
+   * [time, time+timestepSize].
+   */
+  parallelise persistent double time;
+  /**
+   * This is the timestep size that was taken from the last
+   * to the current timestep.
+   */
+  parallelise persistent double timestepSize;
+  
+  /**
+   * The maximum time of all child-patches.
+   */
+  //parallelise persistent double maximumFineGridTime;
+  
+  /**
+   * The minimum timestep size so the 
+   * [maximumFineGridTime, minimumFineGridTimestepSize] spans
+   * the minimum time interval of the overlapped fine grids.
+   */
+  //parallelise persistent double minimumFineGridTimestep;
+  
+  /**
+   * This field indicates whether the fine grids of this
+   * grid should synchronize in time to be coarsened.
+   */
+  //parallelise persistent bool synchronizeFineGrids;
+  
+  /**
+   * This field indicates whether this patch will coarsen
+   * in this iteration.
+   */
+  //parallelise persistent bool willCoarsen;  
+  
+  /**
+   * The constraining time for a patch to perform a timestep.
+   */
+  //parallelise persistent double minimalNeighborTimeConstraint;
+  
+  /**
+   * Holds the index of the neighbor patch constraining this
+   * patch.
+   */
+  //persistent int constrainingNeighborIndex;
+
+  /**
+   * The constraining time for a patch to perform a timestep,
+   * if only taking into account the leaf neighbors.
+   */  
+  //parallelise persistent double minimalLeafNeighborTimeConstraint;
+
+  /**
+   * The minimal neighbor time is the minimum of the points in time
+   * on which at least one neighbor patch resides. 
+   */
+  //parallelise persistent double minimalNeighborTime;
+  
+  /**
+   * The maximal neighbor timestep is the timestep so that the interval
+   * [minimalNeighborTime; minimalNeighborTime + maximalNeighborTimestep]
+   * spans the maximum time interval, i.e. the time interval that is at
+   * least covered by one neighbor.
+   */
+  //parallelise persistent double maximalNeighborTimestep;
+
+  /**
+   * The estimated timestep size for the next timestep is derived
+   * from the cfl number of the current timestep.
+   */
+  //parallelise persistent double estimatedNextTimestepSize;
+  
+  /**
+   * Indicates that this patch should not be advanced during the next
+   * grid iterations. This is due to the fact that the ghostlayer has
+   * to be filled correctly first.
+   */
+  //parallelise persistent int skipGridIterations;
+  
+  /**
+   * The age of this patch in terms of grid iterations. This means
+   * total number of grid iterations and not just the ones where
+   * the patch got updated.
+   */
+  //parallelise persistent int ageInGridIterations;
+  
+  /**
+   * The mesh width that is demanded by the application.
+   */
+  parallelise persistent double demandedMeshWidth;
+  
+  /**
+   * Lower bounds for area overlapped by coarser ghostlayer. I.e. defining
+   * the area to be restricted.
+   */
+  //parallelise persistent double restrictionLowerBounds[DIMENSIONS];
+  
+  /**
+   * Upper bounds for area overlapped by coarser ghostlayer. I.e. defining
+   * the area to be restricted.
+   */
+  //parallelise persistent double restrictionUpperBounds[DIMENSIONS];
+  
+  /*
+   * Heap data indices
+   */
+  parallelise persistent int cellDescriptionIndex;
+  //parallelise persistent int uOldIndex;
+  //parallelise persistent int uNewIndex;
+  //parallelise persistent int auxIndex;
+};

@@ -1,13 +1,12 @@
 // This file is part of the Peano project. For conditions of distribution and 
 // use, please see the copyright notice at www.peano-framework.org
-#ifndef PEANOCLAW_MAPPINGS_Remesh_H_
-#define PEANOCLAW_MAPPINGS_Remesh_H_
+#ifndef PEANOCLAW_MAPPINGS_ValidateGrid_H_
+#define PEANOCLAW_MAPPINGS_ValidateGrid_H_
 
-#include <map>
+#include "peanoclaw/statistics/ParallelGridValidator.h"
 
 #include "tarch/logging/Log.h"
 #include "tarch/la/Vector.h"
-#include "tarch/la/VectorCompare.h"
 
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/MappingSpecification.h"
@@ -18,29 +17,19 @@
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/State.h"
 
+#include "peanoclaw/records/PatchDescription.h"
 #include "peanoclaw/records/CellDescription.h"
-#include "peanoclaw/records/VertexDescription.h"
-#include "peanoclaw/records/Data.h"
 
-#include "peanoclaw/Patch.h"
-
-#define DIMENSIONS_PLUS_ONE (DIMENSIONS+1)
-
+#include "peano/heap/Heap.h"
+#include "tarch/la/VectorCompare.h"
+#include <map>
 
 namespace peanoclaw {
-
-  namespace interSubgridCommunication {
-    class GridLevelTransfer;
-  }
-
   namespace mappings {
-    class Remesh;
+    class PatchDatabase;
+    class ValidateGrid;
   }
-
-  class Numerics;
-  class Patch;
 }
-
 
 /**
  * This is a mapping from the spacetree traversal events to your user-defined activities.
@@ -49,82 +38,21 @@ namespace peanoclaw {
  * @author Peano Development Toolkit (PDT) by  Tobias Weinzierl
  * @version $Revision: 1.10 $
  */
-class peanoclaw::mappings::Remesh {
+class peanoclaw::mappings::ValidateGrid {
   private:
     /**
      * Logging device for the trace macros.
      */
     static tarch::logging::Log  _log;
 
+    typedef peanoclaw::records::PatchDescription PatchDescription;
     typedef peanoclaw::records::CellDescription CellDescription;
-    typedef peanoclaw::records::VertexDescription VertexDescription;
-    typedef peanoclaw::records::Data Data;
 
-    /**
-     * Map from a hanging node's position and level to
-     */
-    static std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >   _vertexPositionToIndexMap;
-
-    int _unknownsPerSubcell;
-
-    int _auxiliarFieldsPerSubcell;
-
-    tarch::la::Vector<DIMENSIONS, int> _defaultSubdivisionFactor;
-
-    int _defaultGhostLayerWidth;
-
-    double _initialTimestepSize;
-
-    peanoclaw::Numerics* _numerics;
-
-    tarch::la::Vector<DIMENSIONS, double> _domainOffset;
-
-    tarch::la::Vector<DIMENSIONS, double> _domainSize;
-
-    static peanoclaw::records::VertexDescription::IterationParity _iterationParity;
-
-    peanoclaw::interSubgridCommunication::GridLevelTransfer* _gridLevelTransfer;
-
-    tarch::la::Vector<DIMENSIONS, double> _initialMinimalMeshWidth;
-
-    int _additionalLevelsForPredefinedRefinement;
-
-    bool _isInitializing;
-
-    double _averageGlobalTimeInterval;
-
-    double _minimalPatchTime;
-    Patch  _minimalTimePatch;
-    Patch  _minimalTimePatchParent;
-    bool   _minimalPatchCoarsening;
-    bool   _minimalPatchIsAllowedToAdvanceInTime;
-    bool   _minimalPatchShouldSkipGridIteration;
-
-    bool _useDimensionalSplitting;
-
-    int _sentNeighborData;
-    int _receivedNeighborData;
-
-    peanoclaw::State* _state;
-
-//    void dataExchange_receive(
-//      peanoclaw::Cell&  localCell,
-//      const peanoclaw::Cell&  masterOrWorkerCell,
-//      int                                       fromRank,
-//      const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
-//      const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-//      int                                       level,
-//      bool                                      forkOrJoin
-//    );
-//
-//    void dataExchange_send(
-//      peanoclaw::Cell&  localCell,
-//      int  toRank,
-//      const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
-//      const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-//      int                                       level,
-//      bool                                      forkOrJoin
-//    );
+    tarch::la::Vector<DIMENSIONS, double>           _domainOffset;
+    tarch::la::Vector<DIMENSIONS, double>           _domainSize;
+    int                                             _patchDescriptionsIndex;
+    peano::heap::Heap<PatchDescription>&            _heap;
+    peanoclaw::statistics::ParallelGridValidator    _validator;
 
   public:
     /**
@@ -133,6 +61,8 @@ class peanoclaw::mappings::Remesh {
      * spacetree leaves, whether the operation can restart if the thread 
      * crashes (resiliency), and so forth. This information allows Peano to
      * optimise the code.
+     *
+     * @see peano::MappingSpecification for information on thread safety.
      */
     static peano::MappingSpecification   touchVertexLastTimeSpecification();
     static peano::MappingSpecification   touchVertexFirstTimeSpecification();
@@ -172,7 +102,7 @@ class peanoclaw::mappings::Remesh {
      * that your code works on a parallel machine and for any mapping/algorithm 
      * modification.
      */
-    Remesh();
+    ValidateGrid();
 
     #if defined(SharedMemoryParallelisation)
     /**
@@ -185,13 +115,13 @@ class peanoclaw::mappings::Remesh {
      *
      * @see mergeWithWorkerThread()
      */
-    Remesh(const Remesh& masterThread);
+    ValidateGrid(const ValidateGrid& masterThread);
     #endif
 
     /**
      * Destructor. Typically does not implement any operation.
      */
-    virtual ~Remesh();
+    virtual ~ValidateGrid();
   
     #if defined(SharedMemoryParallelisation)
     /**
@@ -222,7 +152,7 @@ class peanoclaw::mappings::Remesh {
      * on the heap. However, you should protect this object by a BooleanSemaphore 
      * and a lock to serialise all accesses to the plotter.    
      */   
-    void mergeWithWorkerThread(const Remesh& workerThread);
+    void mergeWithWorkerThread(const ValidateGrid& workerThread);
     #endif
 
     /**
@@ -267,16 +197,53 @@ class peanoclaw::mappings::Remesh {
      * vertices and cells. However, only the initialisation of fineGridVertex
      * is mandatory.
      *
-     * !!! Thread-safety
-     *
-     * This operation is not thread safe with respect to the coarse grid 
-     * vertices and the coarse grid cell. With respect to the fine grid 
-     * vertices, it is thread safe.
-     *
      * !!! Vertex and cell lifecycle
      * 
      * Please consult peano/grid/vertex-lifecycle.doxys for details on the 
      * vertex and cell lifecycle.
+     *
+     * !!! Addendum to fine grid vertex position and vertex event order
+     *
+     * One fundamental principle of Peano is that you don't know exact event 
+     * orders. It is up to Peano to decide in which order it triggers the 
+     * operations of your mappings as long as certain partial orders are 
+     * preserved (enterCell() after touchVertexFirstTime(), e.g.). For a 
+     * discussion of the partial orders, please confer the page vertex 
+     * lifecycle of the peano::grid component.
+     *
+     * If a patch is created, you consequently don't know in which order the 
+     * vertices are created. Neither do you know later in which order touch 
+     * first or last is called. There are many reasons for this besides the 
+     * fact that there is no need to expose traversal orders. The most 
+     * important reason is that the freedom for the Peano kernel allows the 
+     * latter to reorder events as long as logical constraints represented by 
+     * the partial order are preserved. Reordering might yield a speedup. More 
+     * important is that the kernel even might decide to trigger events in 
+     * parallel in shared memory environments. The parallel execution however 
+     * is disabled for creational events and works only for touch first/last.
+     *
+     * We know that all vertices adjacent to a cell are created 
+     * before the cell itself is created. We also know that all vertices and 
+     * cells in the spacetree that are coarser than the current vertex have 
+     * been created before. Again, there are nondeterministic effects: Study
+     * a @f$ 6\times 3 @f$ grid in 2d, i.e. a grid with 18 fine grid cells 
+     * and two coarse cells. We refer to the coarse grid as left and right 
+     * cell. When the vertex (3,1) in the patch is created (we start to count 
+     * with zero), you do not know a priori whether the corresponding coarse 
+     * cell is the left one or the right one.
+     *
+     * However, Peano passes the integer array fineGridPositionOfVertex to 
+     * the events (same holds for touch first/last and destroy). That one 
+     * tells you within the current patch the position of the vertex. If this 
+     * argument in the previous example is (3,1), then the code currently is 
+     * descending in the left coarse grid cell. If the argument is (0,1) it 
+     * has been descending in the right. You can access all @f$ 2^d @f$ coarse 
+     * grid vertices and you can be sure that they have been initialised 
+     * before. With fineGridPositionOfVertex you can interpolate data from 
+     * the coarse grid as you know where the vertex is located relative to the 
+     * coarse grid vertices.
+     *
+     * @see peano::MappingSpecification for information on thread safety.
      *
      * @param fineGridVertex  Vertex that is to be initialised. This is the 
      *                        central object you should set values to.
@@ -351,16 +318,28 @@ class peanoclaw::mappings::Remesh {
      * vertices and cells. However, only the initialisation of fineGridVertex
      * is mandatory.
      *
-     * !!! Thread-safety
-     *
-     * This operation is not thread safe with respect to the coarse grid 
-     * vertices and the coarse grid cell. With respect to the fine grid 
-     * vertices, it is thread safe.
-     *
      * !!! Vertex and cell lifecycle
      * 
      * Please consult peano/grid/vertex-lifecycle.doxys for details on the 
      * vertex and cell lifecycle.
+     *
+     * !!! Boundary points on the unit square
+     *
+     * If your computational domain is the unit square coinciding with the 
+     * Peano root, then the @f$ 2^d @f$ vertices of the coarsest level are 
+     * boundary vertices. As a consequence, the first adapter specified in 
+     * the specification is asked to create this boundary vertex. Usually 
+     * this is totally irrelevant, as there will be finer grids anyway. 
+     * However, you have to call refine(). As a consequence, I recommend to 
+     * add a statement such as
+     * \code
+       if ( tarch::la::volume(fineGridH)>0.5) {
+         fineGridVertex.refine();
+       }
+     \endcode
+     * to the event in any case.
+     *
+     * @see peano::MappingSpecification for information on thread safety.
      * 
      * @param fineGridVertex  Vertex that is to be initialised. This is the 
      *                        central object you should set values to.
@@ -397,16 +376,29 @@ class peanoclaw::mappings::Remesh {
      * have been initialised before, i.e. for each adjacent vertex either 
      * touchVertexFirstTime() or createHangingVertex() has been called. 
      *
-     * !!! Thread-safety
-     *
-     * This operation is not thread safe with respect to the coarse grid 
-     * vertices and the coarse grid cell. With respect to the fine grid 
-     * vertices, it is thread safe.
-     *
      * !!! Vertex and cell lifecycle
      * 
      * Please consult peano/grid/vertex-lifecycle.doxys for details on the 
      * vertex and cell lifecycle.
+     *
+     * !!! Hanging nodes outside the computational domain
+     *
+     * For performance reasons, Peano does not check whether a hanging node 
+     * is outside of the computational domain or (in the parallel case) does 
+     * not belong to the current rank's subdomain: Peano calls the create 
+     * method for each hanging node independent of its state. If you have to 
+     * filter out outer and remote hanging vertices, you have to do this 
+     * manually.
+     *
+     * To check the geometric property, you have to add the corresponding 
+     * if checks in your mapping. If you run your code with mpi, you have to 
+     * wrap your code into 
+     * \code
+ if ( fineGridVertex.isAdjacentToDomainOf( tarch::parallel::Node::getInstance().getRank() ) ) {
+   ...
+     \endcode  
+     *  
+     * @see peano::MappingSpecification for information on thread safety.
      */
     void createHangingVertex(
       peanoclaw::Vertex&               fineGridVertex,
@@ -611,8 +603,8 @@ class peanoclaw::mappings::Remesh {
       peanoclaw::Vertex&  vertex,
       const peanoclaw::Vertex&  neighbour,
       int                                           fromRank,
-      const tarch::la::Vector<DIMENSIONS,double>&   fineGridX,
-      const tarch::la::Vector<DIMENSIONS,double>&   fineGridH,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
       int                                           level
     );
 
@@ -670,7 +662,7 @@ class peanoclaw::mappings::Remesh {
      */
     void prepareCopyToRemoteNode(
       peanoclaw::Cell&  localCell,
-      int  toRank,
+      int                                           toRank,
       const tarch::la::Vector<DIMENSIONS,double>&   cellCentre,
       const tarch::la::Vector<DIMENSIONS,double>&   cellSize,
       int                                           level
@@ -693,10 +685,10 @@ class peanoclaw::mappings::Remesh {
     void mergeWithRemoteDataDueToForkOrJoin(
       peanoclaw::Vertex&  localVertex,
       const peanoclaw::Vertex&  masterOrWorkerVertex,
-      int                                       fromRank,
+      int                                          fromRank,
       const tarch::la::Vector<DIMENSIONS,double>&  x,
       const tarch::la::Vector<DIMENSIONS,double>&  h,
-      int                                       level
+      int                                          level
     );
 
 
@@ -716,10 +708,10 @@ class peanoclaw::mappings::Remesh {
     void mergeWithRemoteDataDueToForkOrJoin(
       peanoclaw::Cell&  localCell,
       const peanoclaw::Cell&  masterOrWorkerCell,
-      int                                       fromRank,
+      int                                          fromRank,
       const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
       const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-      int                                       level
+      int                                          level
     );
 
 
@@ -727,19 +719,52 @@ class peanoclaw::mappings::Remesh {
      * Perpare startup send to worker
      *
      * This operation is called always when we send data to a worker. It is not 
-     * called when we are right in a join or fork.
+     * called when we are right in a join or fork. The operation is kind of the 
+     * replacement of enterCell() on the master, i.e. called for this one instead 
+     * of.
      *
      * @see peano::kernel::spacetreegrid::nodes::Node::updateCellsParallelStateAfterLoad()
      */
     void prepareSendToWorker(
-      peanoclaw::Cell&                 fineGridCell,
-      peanoclaw::Vertex * const        fineGridVertices,
-      const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
-      peanoclaw::Vertex * const        coarseGridVertices,
-      const peano::grid::VertexEnumerator&                coarseGridVerticesEnumerator,
-      peanoclaw::Cell&                 coarseGridCell,
-      const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell,
-      int                                                                  worker
+      peanoclaw::Cell&                       fineGridCell,
+      peanoclaw::Vertex * const              fineGridVertices,
+      const peano::grid::VertexEnumerator&       fineGridVerticesEnumerator,
+      peanoclaw::Vertex * const              coarseGridVertices,
+      const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
+      peanoclaw::Cell&                       coarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell,
+      int                                        worker
+    );
+    
+    
+    /**
+     * Merge data from the worker into the master records. This operation is 
+     * called on the master, i.e. the const arguments are received copies from 
+     * the worker.
+     *
+     * !!! Heap data
+     *
+     * If you are working with a heap data structure, your vertices or cells, 
+     * respectively, hold pointers to the heap. The received records hold 
+     * pointer indices as well. However, these pointers are copies from the 
+     * remote ranks, i.e. the pointers are invalid though seem to be set.
+     * Receive heap data instead separately without taking the pointers in 
+     * the arguments into account.      
+     */
+    void mergeWithMaster(
+      const peanoclaw::Cell&                       workerGridCell,
+      peanoclaw::Vertex * const                    workerGridVertices,
+      const peano::grid::VertexEnumerator&             workerEnumerator,
+      peanoclaw::Cell&                             fineGridCell,
+      peanoclaw::Vertex * const                    fineGridVertices,
+      const peano::grid::VertexEnumerator&             fineGridVerticesEnumerator,
+      peanoclaw::Vertex * const                    coarseGridVertices,
+      const peano::grid::VertexEnumerator&             coarseGridVerticesEnumerator,
+      peanoclaw::Cell&                             coarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&         fineGridPositionOfCell,
+      int                                              worker,
+      const peanoclaw::State&                      workerState,
+      peanoclaw::State&                            masterState
     );
 
 
@@ -759,49 +784,20 @@ class peanoclaw::mappings::Remesh {
      * introduce a rigorous master-owns pattern. In this case, always the 
      * vertex and cell state on the master is valid, i.e. prepareSendToMaster() 
      * informs the master about state changes. In return, prepareSendToWorker() 
-     * feeds the worker with the new valid state of vertices and cells.
+     * feeds the worker withe the new valid state of vertices and cells. 
      * Receive from master operations thus overwrite the worker's local 
      * records with the master's data, as the master always rules.  
+     *
+     * The coarse data is a copy from the master and may not be modified. 
      */
     void prepareSendToMaster(
       peanoclaw::Cell&                       localCell,
       peanoclaw::Vertex *                    vertices,
-      const peano::grid::VertexEnumerator&       verticesEnumerator,
+      const peano::grid::VertexEnumerator&       verticesEnumerator, 
       const peanoclaw::Vertex * const        coarseGridVertices,
       const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
       const peanoclaw::Cell&                 coarseGridCell,
       const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
-    );
-
-
-    /**
-     * Merge data from the worker into the master records. This operation is 
-     * called on the master, i.e. the const arguments are received copies from 
-     * the worker.
-     *
-     * !!! Heap data
-     *
-     * If you are working with a heap data structure, your vertices or cells, 
-     * respectively, hold pointers to the heap. The received records hold 
-     * pointer indices as well. However, these pointers are copies from the 
-     * remote ranks, i.e. the pointers are invalid though seem to be set.
-     * Receive heap data instead separately without taking the pointers in 
-     * the arguments into account.      
-     */
-    void mergeWithMaster(
-      const peanoclaw::Cell&           workerGridCell,
-      peanoclaw::Vertex * const        workerGridVertices,
-      const peano::grid::VertexEnumerator& workerEnumerator,
-      peanoclaw::Cell&                 fineGridCell,
-      peanoclaw::Vertex * const        fineGridVertices,
-      const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
-      peanoclaw::Vertex * const        coarseGridVertices,
-      const peano::grid::VertexEnumerator&                coarseGridVerticesEnumerator,
-      peanoclaw::Cell&                 coarseGridCell,
-      const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell,
-      int                                                                  worker,
-      const peanoclaw::State&          workerState,
-      peanoclaw::State&                masterState
     );
 
 
@@ -851,10 +847,24 @@ class peanoclaw::mappings::Remesh {
      * - Create an entry on the heap here for each vertex.
      * - Store the received data within these heap entries.
      * - Merge the heap data within mergeWithWorker().
-     * - Remove the heap entries created in this operation within mergeWithWorker(). 
+     *
+     * - Remove the heap entries created in this operation within mergeWithWorker().
+     * @param coarseGridVertices  Copy of the coarse vertices of the master 
+     *                            node as well worker's records. As you receive 
+     *                            the copy, you can alter the local ones, but 
+     *                            any change to this data will remain local on this 
+     *                            worker, i.e. changes are not committed back to the 
+     *                            master. Also, the changes might be lost from adapter
+     *                            run to adapter run, i.e. if you switch the adapter
+     *                            you wanna use, Peano might come up with different
+     *                            coarse vertices and you have to reset data there 
+     *                            again. 
+     * @param coarseGridCell      Copy fo the coarse cell of the master.
+     * @param fineGridPositionOfCell Position of receivedCell relative to coarse 
+     *                            cell on master.
      */
     void receiveDataFromMaster(
-      peanoclaw::Cell&                        receivedCell,
+      peanoclaw::Cell&                        receivedCell, 
       peanoclaw::Vertex *                     receivedVertices,
       const peano::grid::VertexEnumerator&        receivedVerticesEnumerator,
       peanoclaw::Vertex * const               receivedCoarseGridVertices,
@@ -921,13 +931,6 @@ class peanoclaw::mappings::Remesh {
      * this operation is the right place to initialise the non-persistent 
      * attributes of a vertex.
      *
-     * !!! Thread-safety
-     *
-     * This operation is not thread safe with respect to the coarse grid 
-     * vertices and the coarse grid cell. With respect to the fine grid 
-     * vertices, it is thread safe. It is not thread safe with respect to the 
-     * fine grid cell. 
-     * 
      * !!! Optimisation
      * 
      * This operation is invoked if and only if the corresponding specification 
@@ -942,6 +945,8 @@ class peanoclaw::mappings::Remesh {
      * does not enforce that the operation is not called under certain 
      * circumstances.
      *
+     *
+     * @see peano::MappingSpecification for information on thread safety.
      * @see createInnerVertex() for a description of the arguments. 
      */
     void touchVertexFirstTime(
@@ -983,13 +988,6 @@ class peanoclaw::mappings::Remesh {
      * attributes. As soon as this operation terminates, these attributes are 
      * lost.
      *
-     * !!! Thread-safety
-     *
-     * This operation is not thread safe with respect to the coarse grid 
-     * vertices and the coarse grid cell. With respect to the fine grid 
-     * vertices, it is thread safe. It is not thread safe with respect to the 
-     * fine grid cell. 
-     * 
      * !!! Optimisation
      * 
      * This operation is invoked if and only if the corresponding specification 
@@ -1003,6 +1001,8 @@ class peanoclaw::mappings::Remesh {
      * sometimes implies that this specification induces and optimisation - it 
      * does not enforce that the operation is not called under certain 
      * circumstances.
+     *
+     * @see peano::MappingSpecification for information on thread safety.
      *
      * @see createInnerVertex() for a description of the arguments. 
      */
@@ -1037,12 +1037,6 @@ class peanoclaw::mappings::Remesh {
      * If you need the position of the vertices of the cell or its size, use the 
      * enumerator.
      *
-     * !!! Thread-safety
-     *
-     * This operation is not thread safe with respect to the coarse grid 
-     * vertices and the coarse grid cell. With respect to the fine grid 
-     * vertices and the fine grid cell, it is thread safe.
-     * 
      * !!! Optimisation
      * 
      * This operation is invoked if and only if the corresponding specification 
@@ -1052,6 +1046,8 @@ class peanoclaw::mappings::Remesh {
      * can at least be called multiple times if a thread crashes.
      *     
      * @see createCell() for a description of the arguments. 
+     *
+     * @see peano::MappingSpecification for information on thread safety.
      */
     void enterCell(
       peanoclaw::Cell&                 fineGridCell,
@@ -1102,7 +1098,7 @@ class peanoclaw::mappings::Remesh {
      * - endIteration()
      * - Send the state to the master if there is a master.
      *
-     * @see Remesh()
+     * @see ValidateGrid()
      */
     void beginIteration(
       peanoclaw::State&  solverState
@@ -1130,7 +1126,7 @@ class peanoclaw::mappings::Remesh {
      * - endIteration()
      * - Send the state to the master if there is a master.
      *
-     * @see Remesh()
+     * @see ValidateGrid()
      */
     void endIteration(
       peanoclaw::State&  solverState
@@ -1156,10 +1152,6 @@ class peanoclaw::mappings::Remesh {
      * To access the fine grid cells, please use the enumerator as you do for 
      * the vertices in any case.   
      *
-     * !!! Thread safety
-     *
-     * Descend is thread-safe with respect to all arguments.
-     *
      * !!! Optimisation
      * 
      * This operation is invoked if and only if the corresponding specification 
@@ -1174,6 +1166,8 @@ class peanoclaw::mappings::Remesh {
      * or precondition on the input arguments. 
      *     
      * @pre coarseGridCell.isInside()
+     *
+     * @see peano::MappingSpecification for information on thread safety.
      */
     void descend(
       peanoclaw::Cell * const          fineGridCells,
@@ -1190,6 +1184,10 @@ class peanoclaw::mappings::Remesh {
      *
      * Counterpart of descend(). Is called as soon as all leaveCell() events 
      * have terminated.
+     *
+     * There is always one ascend per descend call. Usually ascend is the last 
+     * operation called for a cell. However, if a cell is gonna be destroyed, 
+     * destroyCell is called afterwards.
      */
     void ascend(
       peanoclaw::Cell * const    fineGridCells,
@@ -1198,8 +1196,7 @@ class peanoclaw::mappings::Remesh {
       peanoclaw::Vertex * const  coarseGridVertices,
       const peano::grid::VertexEnumerator&          coarseGridVerticesEnumerator,
       peanoclaw::Cell&           coarseGridCell
-    );
-
+    );    
 };
 
 

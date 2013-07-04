@@ -1,92 +1,95 @@
-#include "peanoclaw/mappings/InitialiseGrid.h"
-#include "peanoclaw/Numerics.h"
+#include "peanoclaw/mappings/ValidateGrid.h"
+
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
-#include "peano/heap/Heap.h"
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
-peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexLastTimeSpecification() {
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
-peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexFirstTimeSpecification() { 
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
-peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::enterCellSpecification() {
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
-peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::leaveCellSpecification() {
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
-peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::ascendSpecification() {
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
-peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::descendSpecification() {
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
-tarch::logging::Log                peanoclaw::mappings::InitialiseGrid::_log( "peanoclaw::mappings::InitialiseGrid" ); 
+tarch::logging::Log                peanoclaw::mappings::ValidateGrid::_log( "peanoclaw::mappings::ValidateGrid" ); 
+
+peanoclaw::mappings::ValidateGrid::ValidateGrid()
+ : _heap(peano::heap::Heap<PatchDescription>::getInstance()),
+   _validator(0, 0)
+{
+  logTraceIn( "ValidateGrid()" );
+
+  _patchDescriptionsIndex = peano::heap::Heap<PatchDescription>::getInstance().createData();
+
+  logTraceOut( "ValidateGrid()" );
+}
 
 
-peanoclaw::mappings::InitialiseGrid::InitialiseGrid() {
-  logTraceIn( "InitialiseGrid()" );
+peanoclaw::mappings::ValidateGrid::~ValidateGrid() {
+  logTraceIn( "~ValidateGrid()" );
   // @todo Insert your code here
-  logTraceOut( "InitialiseGrid()" );
-}
-
-
-peanoclaw::mappings::InitialiseGrid::~InitialiseGrid() {
-  logTraceIn( "~InitialiseGrid()" );
-  // @todo Insert your code here
-  logTraceOut( "~InitialiseGrid()" );
+  logTraceOut( "~ValidateGrid()" );
 }
 
 
 #if defined(SharedMemoryParallelisation)
-peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  masterThread) {
-  logTraceIn( "InitialiseGrid(InitialiseGrid)" );
+peanoclaw::mappings::ValidateGrid::ValidateGrid(const ValidateGrid&  masterThread) {
+  logTraceIn( "ValidateGrid(ValidateGrid)" );
   // @todo Insert your code here
-  logTraceOut( "InitialiseGrid(InitialiseGrid)" );
+  logTraceOut( "ValidateGrid(ValidateGrid)" );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::mergeWithWorkerThread(const InitialiseGrid& workerThread) {
-  logTraceIn( "mergeWithWorkerThread(InitialiseGrid)" );
+void peanoclaw::mappings::ValidateGrid::mergeWithWorkerThread(const ValidateGrid& workerThread) {
+  logTraceIn( "mergeWithWorkerThread(ValidateGrid)" );
   // @todo Insert your code here
-  logTraceOut( "mergeWithWorkerThread(InitialiseGrid)" );
+  logTraceOut( "mergeWithWorkerThread(ValidateGrid)" );
 }
 #endif
 
 
-void peanoclaw::mappings::InitialiseGrid::createHangingVertex(
+void peanoclaw::mappings::ValidateGrid::createHangingVertex(
       peanoclaw::Vertex&     fineGridVertex,
       const tarch::la::Vector<DIMENSIONS,double>&                fineGridX,
       const tarch::la::Vector<DIMENSIONS,double>&                fineGridH,
@@ -101,7 +104,7 @@ void peanoclaw::mappings::InitialiseGrid::createHangingVertex(
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::destroyHangingVertex(
+void peanoclaw::mappings::ValidateGrid::destroyHangingVertex(
       const peanoclaw::Vertex&   fineGridVertex,
       const tarch::la::Vector<DIMENSIONS,double>&                    fineGridX,
       const tarch::la::Vector<DIMENSIONS,double>&                    fineGridH,
@@ -111,12 +114,31 @@ void peanoclaw::mappings::InitialiseGrid::destroyHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "destroyHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-  // @todo Insert your code here
+
+  //TODO unterweg debug
+  std::cout<< "Destroy hanging vertex " << fineGridX << ", "
+       << fineGridH
+        << std::endl;
+
+  if(tarch::la::allGreaterEquals(fineGridX, _domainOffset)
+    && tarch::la::allGreaterEquals(_domainOffset+_domainSize, fineGridX)) {
+    _validator.findAdjacentPatches(
+      fineGridVertex,
+      fineGridX,
+      coarseGridVerticesEnumerator.getLevel() + 1,
+      #ifdef Parallel
+      tarch::parallel::Node::getInstance().getRank()
+      #else
+      0
+      #endif
+    );
+  }
+
   logTraceOutWith1Argument( "destroyHangingVertex(...)", fineGridVertex );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::createInnerVertex(
+void peanoclaw::mappings::ValidateGrid::createInnerVertex(
       peanoclaw::Vertex&               fineGridVertex,
       const tarch::la::Vector<DIMENSIONS,double>&                          fineGridX,
       const tarch::la::Vector<DIMENSIONS,double>&                          fineGridH,
@@ -126,31 +148,20 @@ void peanoclaw::mappings::InitialiseGrid::createInnerVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "createInnerVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
- 
-  assertion(!fineGridVertex.isHangingNode());
 
-  //Normal refinement
-  if(
-          tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth) 
-          && (fineGridVertex.getRefinementControl() == Vertex::Records::Unrefined) // roland MARK
-    ) {
-    fineGridVertex.refine();
-  }
+  //TODO unterweg debug
+  std::cout<< "Create inner vertex " << fineGridX << ", "
+      << fineGridH
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << std::endl;
 
-  //Predefined adaptive refinement
-//  double radius = 0.15;
-//  if((tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth)) ||
-//    ((std::abs(tarch::la::norm2(fineGridX-0.5)-radius) < fineGridH(0) / 2.0)
-//        && (tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth / (std::pow(3.0, (double)_additionalLevelsForPredefinedRefinement)))))) {
-//
-//    fineGridVertex.refine();
-//  }
-//
   logTraceOutWith1Argument( "createInnerVertex(...)", fineGridVertex );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::createBoundaryVertex(
+void peanoclaw::mappings::ValidateGrid::createBoundaryVertex(
       peanoclaw::Vertex&               fineGridVertex,
       const tarch::la::Vector<DIMENSIONS,double>&                          fineGridX,
       const tarch::la::Vector<DIMENSIONS,double>&                          fineGridH,
@@ -165,7 +176,7 @@ void peanoclaw::mappings::InitialiseGrid::createBoundaryVertex(
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::destroyVertex(
+void peanoclaw::mappings::ValidateGrid::destroyVertex(
       const peanoclaw::Vertex&   fineGridVertex,
       const tarch::la::Vector<DIMENSIONS,double>&                    fineGridX,
       const tarch::la::Vector<DIMENSIONS,double>&                    fineGridH,
@@ -175,12 +186,32 @@ void peanoclaw::mappings::InitialiseGrid::destroyVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "destroyVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-  // @todo Insert your code here
+
+  //TODO unterweg debug
+  std::cout<< "Destroying vertex " << fineGridX << ", "
+      << fineGridH
+      << ", level=" << (coarseGridVerticesEnumerator.getLevel()+1)
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << std::endl;
+
+  _validator.deleteAdjacentPatches(
+    fineGridVertex,
+    fineGridX,
+    coarseGridVerticesEnumerator.getLevel() + 1,
+    #ifdef Parallel
+    tarch::parallel::Node::getInstance().getRank()
+    #else
+    0
+    #endif
+  );
+
   logTraceOutWith1Argument( "destroyVertex(...)", fineGridVertex );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::createCell(
+void peanoclaw::mappings::ValidateGrid::createCell(
       peanoclaw::Cell&                 fineGridCell,
       peanoclaw::Vertex * const        fineGridVertices,
       const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -191,75 +222,20 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
 ) {
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
-  Patch patch(
-    fineGridCell
-  );
-
-  if(fineGridCell.isLeaf()) {
-    assertion1(patch.isLeaf(), patch);
-    double demandedMeshWidth = _numerics->initializePatch(patch);
-
-    patch.copyUNewToUOld();
-    patch.setDemandedMeshWidth(demandedMeshWidth);
-
-    #ifdef Asserts
-    dfor(subcellIndex, patch.getSubdivisionFactor()) {
-      tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex;
-      assertion3(patch.getValueUOld(subcellIndexInDestinationPatch, 0) > 0.0,
-              patch.getValueUOld(subcellIndexInDestinationPatch, 0),
-              subcellIndex,
-              subcellIndexInDestinationPatch);
-    }
-    #endif
-
-    //Check for error in refinement criterion
-    if(!tarch::la::greater(demandedMeshWidth, 0.0)) {
-      logWarning("createCell(...)", "A demanded mesh width of 0.0 leads to an infinite refinement. Is the refinement criterion correct?");
-    }
-    assertion(tarch::la::greater(demandedMeshWidth, 0.0));
-
-    //Refine if necessary
-    if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(demandedMeshWidth))) {
-      for(int i = 0; i < TWO_POWER_D; i++) {
-          // roland MARK
-        if (fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined
-            && !fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-            fineGridVertices[fineGridVerticesEnumerator(i)].refine();
-            _refinementTriggered = true;
-        }
-      }
-    }
-
-    //Switch to refined patch if necessary
-    bool refinementTriggered = false;
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      if(fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl()
-          == Vertex::Records::Refining) {
-        refinementTriggered = true;
-      }
-    }
-    if(refinementTriggered) {
-      assertion1(patch.isLeaf(), patch.toString());
-      patch.switchToVirtual();
-      patch.switchToNonVirtual();
-      assertion1(!patch.isLeaf() && !patch.isVirtual(), patch);
-    }
-  }
-
-  #ifdef Parallel
-//  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS,double>(2.0/3.0))
-//    && tarch::la::equals(fineGridVerticesEnumerator.getCellSize(), tarch::la::Vector<DIMENSIONS,double>(1.0/3.0))) {
-    std::cout << "Initialized cell on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-        << fineGridVerticesEnumerator.getVertexPosition(0) << ", " << fineGridVerticesEnumerator.getCellSize()
-        << patch.toString() << std::endl << patch.toStringUNew() << std::endl;
-//  }
-  #endif
+  //TODO unterweg debug
+  std::cout<< "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+      << fineGridVerticesEnumerator.getCellSize()
+      << ", index=" << fineGridCell.getCellDescriptionIndex()
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << std::endl;
 
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::destroyCell(
+void peanoclaw::mappings::ValidateGrid::destroyCell(
       const peanoclaw::Cell&           fineGridCell,
       peanoclaw::Vertex * const        fineGridVertices,
       const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -269,12 +245,21 @@ void peanoclaw::mappings::InitialiseGrid::destroyCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "destroyCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-  // @todo Insert your code here
+
+  //TODO unterweg debug
+  std::cout<< "Destroying cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+      << fineGridVerticesEnumerator.getCellSize()
+      << ", index=" << fineGridCell.getCellDescriptionIndex()
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << std::endl;
+
   logTraceOutWith1Argument( "destroyCell(...)", fineGridCell );
 }
 
 #ifdef Parallel
-void peanoclaw::mappings::InitialiseGrid::mergeWithNeighbour(
+void peanoclaw::mappings::ValidateGrid::mergeWithNeighbour(
   peanoclaw::Vertex&  vertex,
   const peanoclaw::Vertex&  neighbour,
   int                                           fromRank,
@@ -287,43 +272,50 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithNeighbour(
   logTraceOut( "mergeWithNeighbour(...)" );
 }
 
-void peanoclaw::mappings::InitialiseGrid::prepareSendToNeighbour(
+void peanoclaw::mappings::ValidateGrid::prepareSendToNeighbour(
   peanoclaw::Vertex&  vertex,
-  int                                           toRank,
-  const tarch::la::Vector<DIMENSIONS,double>&   x,
-  const tarch::la::Vector<DIMENSIONS,double>&   h,
-  int                                           level
+      int                                           toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
   // @todo Insert your code here
   logTraceOut( "prepareSendToNeighbour(...)" );
 }
 
-void peanoclaw::mappings::InitialiseGrid::prepareCopyToRemoteNode(
+void peanoclaw::mappings::ValidateGrid::prepareCopyToRemoteNode(
   peanoclaw::Vertex&  localVertex,
-  int                                           toRank,
-  const tarch::la::Vector<DIMENSIONS,double>&   x,
-  const tarch::la::Vector<DIMENSIONS,double>&   h,
-  int                                           level
+      int                                           toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   x,
+      const tarch::la::Vector<DIMENSIONS,double>&   h,
+      int                                           level
 ) {
-  logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank );
-  // @todo Insert your code here
+  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank, x, h, level );
+
+  _validator.findAdjacentPatches(
+    localVertex,
+    x,
+    level,
+    toRank
+  );
+
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
 
-void peanoclaw::mappings::InitialiseGrid::prepareCopyToRemoteNode(
+void peanoclaw::mappings::ValidateGrid::prepareCopyToRemoteNode(
   peanoclaw::Cell&  localCell,
-  int  toRank,
-  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
-  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-  int                                       level
+      int                                           toRank,
+      const tarch::la::Vector<DIMENSIONS,double>&   cellCentre,
+      const tarch::la::Vector<DIMENSIONS,double>&   cellSize,
+      int                                           level
 ) {
-  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level);
+  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
   // @todo Insert your code here
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
 
-void peanoclaw::mappings::InitialiseGrid::mergeWithRemoteDataDueToForkOrJoin(
+void peanoclaw::mappings::ValidateGrid::mergeWithRemoteDataDueToForkOrJoin(
   peanoclaw::Vertex&  localVertex,
   const peanoclaw::Vertex&  masterOrWorkerVertex,
   int                                       fromRank,
@@ -336,12 +328,12 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithRemoteDataDueToForkOrJoin(
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
 
-void peanoclaw::mappings::InitialiseGrid::mergeWithRemoteDataDueToForkOrJoin(
+void peanoclaw::mappings::ValidateGrid::mergeWithRemoteDataDueToForkOrJoin(
   peanoclaw::Cell&  localCell,
   const peanoclaw::Cell&  masterOrWorkerCell,
   int                                       fromRank,
-  const tarch::la::Vector<DIMENSIONS,double>&  x,
-  const tarch::la::Vector<DIMENSIONS,double>&  h,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
   int                                       level
 ) {
   logTraceInWith3Arguments( "mergeWithRemoteDataDueToForkOrJoin(...)", localCell, masterOrWorkerCell, fromRank );
@@ -349,7 +341,7 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithRemoteDataDueToForkOrJoin(
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
 
-void peanoclaw::mappings::InitialiseGrid::prepareSendToWorker(
+void peanoclaw::mappings::ValidateGrid::prepareSendToWorker(
   peanoclaw::Cell&                 fineGridCell,
   peanoclaw::Vertex * const        fineGridVertices,
   const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -364,22 +356,64 @@ void peanoclaw::mappings::InitialiseGrid::prepareSendToWorker(
   logTraceOut( "prepareSendToWorker(...)" );
 }
 
-void peanoclaw::mappings::InitialiseGrid::prepareSendToMaster(
+void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
   peanoclaw::Cell&                       localCell,
   peanoclaw::Vertex *                    vertices,
-  const peano::grid::VertexEnumerator&       verticesEnumerator,
+  const peano::grid::VertexEnumerator&       verticesEnumerator, 
   const peanoclaw::Vertex * const        coarseGridVertices,
   const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
   const peanoclaw::Cell&                 coarseGridCell,
   const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
 ) {
   logTraceInWith2Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString() );
-  // @todo Insert your code here
+
+  //Assemble vector to send to master
+  std::vector<PatchDescription>& workerAndLocalData = _heap.getData(_patchDescriptionsIndex);
+  std::vector<PatchDescription> localData = _validator.getAllPatches();
+  for(int i = 0; i < localData.size(); i++) {
+    workerAndLocalData.push_back(localData[i]);
+  }
+
+  //Add non-referenced patches
+  int index = 0;
+  int numberOfEntries = 0;
+  while(numberOfEntries < peano::heap::Heap<CellDescription>::getInstance().getNumberOfAllocatedEntries()) {
+    if(peano::heap::Heap<CellDescription>::getInstance().isValidIndex(index)) {
+//      if(_descriptions.find(index) == _descriptions.end()) {
+//        //Found non-referenced patch
+//        CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(index).at(0);
+//        PatchDescription patchDescription;
+//        patchDescription.setPosition(cellDescription.getPosition());
+//        patchDescription.setSize(cellDescription.getSize());
+//        patchDescription.setLevel(cellDescription.getLevel());
+//        patchDescription.setIsRemote(cellDescription.getIsRemote());
+//        patchDescription.setIsReferenced(false);
+//        patchDescription.setCellDescriptionIndex(index);
+//        patchDescription.setRank(tarch::parallel::Node::getInstance().getRank());
+//        descriptionVector.push_back(patchDescription);
+//      }
+      numberOfEntries++;
+    }
+    index++;
+  }
+
+  //Send
+  _heap.sendData(
+    _patchDescriptionsIndex,
+    tarch::parallel::NodePool::getInstance().getMasterRank(),
+    verticesEnumerator.getVertexPosition(0),
+    verticesEnumerator.getLevel(),
+    peano::heap::MasterWorkerCommunication
+  );
+
+  //TODO unterweg debug
+  std::cout << "ValidateGrid Sent " << _heap.getData(_patchDescriptionsIndex).size() << " Data on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
+
   logTraceOut( "prepareSendToMaster(...)" );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::mergeWithMaster(
+void peanoclaw::mappings::ValidateGrid::mergeWithMaster(
   const peanoclaw::Cell&           workerGridCell,
   peanoclaw::Vertex * const        workerGridVertices,
  const peano::grid::VertexEnumerator& workerEnumerator,
@@ -396,35 +430,43 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithMaster(
 ) {
   logTraceIn( "mergeWithMaster(...)" );
 
-  //Merge state
-  masterState.setInitialRefinementTriggered(
-    masterState.getInitialRefinementTriggered()
-    || workerState.getInitialRefinementTriggered()
+  std::vector<PatchDescription> remoteData = _heap.receiveData(
+    worker,
+    fineGridVerticesEnumerator.getVertexPosition(0),
+    fineGridVerticesEnumerator.getLevel(),
+    peano::heap::MasterWorkerCommunication
   );
+
+  std::vector<PatchDescription>& localData = _heap.getData(_patchDescriptionsIndex);
+  for(int i = 0; i < (int)remoteData.size(); i++) {
+    localData.push_back(remoteData[i]);
+  }
+
+  logInfo("mergeWithMaster(...)", "Merged " << remoteData.size() << " patches: " << _heap.getData(_patchDescriptionsIndex).size() << " entries.");
 
   logTraceOut( "mergeWithMaster(...)" );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::receiveDataFromMaster(
-  peanoclaw::Cell&                        receivedCell,
-  peanoclaw::Vertex *                     receivedVertices,
-  const peano::grid::VertexEnumerator&        receivedVerticesEnumerator,
-  peanoclaw::Vertex * const               receivedCoarseGridVertices,
-  const peano::grid::VertexEnumerator&        receivedCoarseGridVerticesEnumerator,
-  peanoclaw::Cell&                        receivedCoarseGridCell,
-  peanoclaw::Vertex * const               workersCoarseGridVertices,
-  const peano::grid::VertexEnumerator&        workersCoarseGridVerticesEnumerator,
-  peanoclaw::Cell&                        workersCoarseGridCell,
-  const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
+void peanoclaw::mappings::ValidateGrid::receiveDataFromMaster(
+      peanoclaw::Cell&                        receivedCell, 
+      peanoclaw::Vertex *                     receivedVertices,
+      const peano::grid::VertexEnumerator&        receivedVerticesEnumerator,
+      peanoclaw::Vertex * const               receivedCoarseGridVertices,
+      const peano::grid::VertexEnumerator&        receivedCoarseGridVerticesEnumerator,
+      peanoclaw::Cell&                        receivedCoarseGridCell,
+      peanoclaw::Vertex * const               workersCoarseGridVertices,
+      const peano::grid::VertexEnumerator&        workersCoarseGridVerticesEnumerator,
+      peanoclaw::Cell&                        workersCoarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
-  logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), receivedVerticesEnumerator.toString() );
+  logTraceIn( "receiveDataFromMaster(...)" );
   // @todo Insert your code here
   logTraceOut( "receiveDataFromMaster(...)" );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::mergeWithWorker(
+void peanoclaw::mappings::ValidateGrid::mergeWithWorker(
   peanoclaw::Cell&           localCell, 
   const peanoclaw::Cell&     receivedMasterCell,
   const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
@@ -433,11 +475,14 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithWorker(
 ) {
   logTraceInWith2Arguments( "mergeWithWorker(...)", localCell.toString(), receivedMasterCell.toString() );
   // @todo Insert your code here
+
+  std::cout << "ValidateGrid Receive on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
+
   logTraceOutWith1Argument( "mergeWithWorker(...)", localCell.toString() );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::mergeWithWorker(
+void peanoclaw::mappings::ValidateGrid::mergeWithWorker(
   peanoclaw::Vertex&        localVertex,
   const peanoclaw::Vertex&  receivedMasterVertex,
   const tarch::la::Vector<DIMENSIONS,double>&   x,
@@ -450,7 +495,7 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithWorker(
 }
 #endif
 
-void peanoclaw::mappings::InitialiseGrid::touchVertexFirstTime(
+void peanoclaw::mappings::ValidateGrid::touchVertexFirstTime(
       peanoclaw::Vertex&               fineGridVertex,
       const tarch::la::Vector<DIMENSIONS,double>&                          fineGridX,
       const tarch::la::Vector<DIMENSIONS,double>&                          fineGridH,
@@ -460,14 +505,12 @@ void peanoclaw::mappings::InitialiseGrid::touchVertexFirstTime(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "touchVertexFirstTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-
-  fineGridVertex.resetSubcellsEraseVeto();
-
+  // @todo Insert your code here
   logTraceOutWith1Argument( "touchVertexFirstTime(...)", fineGridVertex );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::touchVertexLastTime(
+void peanoclaw::mappings::ValidateGrid::touchVertexLastTime(
       peanoclaw::Vertex&         fineGridVertex,
       const tarch::la::Vector<DIMENSIONS,double>&                    fineGridX,
       const tarch::la::Vector<DIMENSIONS,double>&                    fineGridH,
@@ -477,12 +520,31 @@ void peanoclaw::mappings::InitialiseGrid::touchVertexLastTime(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-  // @todo Insert your code here
+
+  //TODO unterweg debug
+  std::cout<< "Touching vertex " << fineGridX << ", "
+      << fineGridH
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << std::endl;
+
+  _validator.findAdjacentPatches(
+    fineGridVertex,
+    fineGridX,
+    coarseGridVerticesEnumerator.getLevel() + 1,
+    #ifdef Parallel
+    tarch::parallel::Node::getInstance().getRank()
+    #else
+    0
+    #endif
+  );
+
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::enterCell(
+void peanoclaw::mappings::ValidateGrid::enterCell(
       peanoclaw::Cell&                 fineGridCell,
       peanoclaw::Vertex * const        fineGridVertices,
       const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -497,7 +559,7 @@ void peanoclaw::mappings::InitialiseGrid::enterCell(
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::leaveCell(
+void peanoclaw::mappings::ValidateGrid::leaveCell(
       peanoclaw::Cell&           fineGridCell,
       peanoclaw::Vertex * const  fineGridVertices,
       const peano::grid::VertexEnumerator&          fineGridVerticesEnumerator,
@@ -512,47 +574,89 @@ void peanoclaw::mappings::InitialiseGrid::leaveCell(
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::beginIteration(
+void peanoclaw::mappings::ValidateGrid::beginIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
-  
-//  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().startToSendOrReceiveHeapData (solverState.isTraversalInverted());
 
-  _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
-
-  _defaultSubdivisionFactor = solverState.getDefaultSubdivisionFactor();
-
-  _defaultGhostLayerWidth = solverState.getDefaultGhostLayerWidth();
-
-  _initialTimestepSize = solverState.getInitialTimestepSize();
-
-  _numerics = solverState.getNumerics();
-
-  _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
-
-  _refinementTriggered = solverState.getInitialRefinementTriggered();
-
+  _validator = peanoclaw::statistics::ParallelGridValidator(
+    solverState.getDomainOffset(),
+    solverState.getDomainSize()
+  );
+  assertionEquals(_validator.getAllPatches().size(), 0);
+  _domainOffset = solverState.getDomainOffset();
+  _domainSize = solverState.getDomainSize();
+  _heap.getData(_patchDescriptionsIndex).clear();
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::endIteration(
+void peanoclaw::mappings::ValidateGrid::endIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
 
-  solverState.setInitialRefinementTriggered(solverState.getInitialRefinementTriggered() || _refinementTriggered);
+  if(
+    #ifdef Parallel
+    tarch::parallel::Node::getInstance().isGlobalMaster()
+    #else
+    true
+    #endif
+  ) {
 
-//  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().finishedToSendOrReceiveHeapData();
+    //TODO unterweg debug
+    std::cout << "END ITERATION!"
+         << std::endl;
+
+    //Copy collected patches
+    std::vector<PatchDescription>& receivedDescriptions = _heap.getData(_patchDescriptionsIndex);
+    logInfo("endIteration(State)", "Received patches: " << receivedDescriptions.size());
+    std::vector<PatchDescription> localDescriptions = _validator.getAllPatches();
+    for(std::vector<PatchDescription>::iterator i = receivedDescriptions.begin();
+        i != receivedDescriptions.end();
+        i++) {
+      localDescriptions.push_back(*i);
+    }
+    logInfo("endIteration(State)", "Total patches: " << localDescriptions.size());
+
+    //Construct database
+    peanoclaw::statistics::PatchDescriptionDatabase database;
+    for(int i = 0; i < (int)localDescriptions.size(); i++) {
+      database.insertPatch(localDescriptions[i]);
+    }
+
+    //Check for unreferenced patches
+    for(int i = 0; i < (int)localDescriptions.size(); i++) {
+      if(!localDescriptions[i].getIsReferenced()) {
+        logError("endIteration", "Unreferenced Patch found: " << localDescriptions[i].toString() <<
+            ", isUnreferenced=" << database.containsPatch(localDescriptions[i].getPosition(), localDescriptions[i].getLevel(), localDescriptions[i].getRank()));
+        assertionFail("");
+      }
+    }
+
+    //Check adjacency information
+    for(int i = 0; i < (int)localDescriptions.size(); i++) {
+      for(int neighborIndex = 0; neighborIndex < THREE_POWER_D; neighborIndex++) {
+        if(neighborIndex != (THREE_POWER_D-1)/2) {
+          _validator.validateNeighborPatch(
+            database,
+            localDescriptions[i],
+            peano::utils::dDelinearised(neighborIndex, 3) - 1
+          );
+        }
+      }
+    }
+
+    logInfo("endIteration", "Validated " << localDescriptions.size() << " subgrids.");
+  }
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }
 
 
 
-void peanoclaw::mappings::InitialiseGrid::descend(
+void peanoclaw::mappings::ValidateGrid::descend(
   peanoclaw::Cell * const          fineGridCells,
   peanoclaw::Vertex * const        fineGridVertices,
   const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -566,7 +670,7 @@ void peanoclaw::mappings::InitialiseGrid::descend(
 }
 
 
-void peanoclaw::mappings::InitialiseGrid::ascend(
+void peanoclaw::mappings::ValidateGrid::ascend(
   peanoclaw::Cell * const    fineGridCells,
   peanoclaw::Vertex * const  fineGridVertices,
   const peano::grid::VertexEnumerator&          fineGridVerticesEnumerator,
