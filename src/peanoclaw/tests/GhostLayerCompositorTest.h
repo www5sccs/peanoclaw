@@ -15,19 +15,15 @@
 #include "tarch/la/Vector.h"
 #include "tarch/logging/Log.h"
 
-namespace peano {
-  namespace applications {
-    namespace peanoclaw {
-      class Patch;
+namespace peanoclaw {
+  class Patch;
 
-      namespace tests {
-        class GhostLayerCompositorTest;
-      }
-    }
+  namespace tests {
+    class GhostLayerCompositorTest;
   }
 }
 
-class peano::applications::peanoclaw::tests::GhostLayerCompositorTest : public tarch::tests::TestCase {
+class peanoclaw::tests::GhostLayerCompositorTest : public tarch::tests::TestCase {
 private:
   /**
    * Logging device.

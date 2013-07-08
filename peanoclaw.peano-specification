@@ -28,10 +28,19 @@ event-mapping:
 event-mapping:
   name: Cleanup
   
+event-mapping:
+  name: ValidateGrid
+  
 adapter:
   name: InitialiseGrid
   merge-with-user-defined-mapping: Remesh
   merge-with-user-defined-mapping: InitialiseGrid
+  
+adapter:
+  name: InitialiseAndValidateGrid
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: InitialiseGrid
+  merge-with-user-defined-mapping: ValidateGrid
     
 adapter:
   name: Plot
@@ -48,10 +57,23 @@ adapter:
   merge-with-user-defined-mapping: SolveTimestep
   
 adapter:
+  name: SolveTimestepAndValidateGrid
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: SolveTimestep
+  merge-with-user-defined-mapping: ValidateGrid
+  
+adapter:
   name: SolveTimestepAndPlot
   merge-with-user-defined-mapping: Remesh
   merge-with-user-defined-mapping: SolveTimestep
   merge-with-user-defined-mapping: Plot
+  
+adapter:
+  name: SolveTimestepAndPlotAndValidateGrid
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: SolveTimestep
+  merge-with-user-defined-mapping: Plot
+  merge-with-user-defined-mapping: ValidateGrid
   
 adapter:
   name: GatherCurrentSolution
@@ -61,3 +83,4 @@ adapter:
 adapter:
   name: Cleanup
   merge-with-user-defined-mapping: Cleanup
+  

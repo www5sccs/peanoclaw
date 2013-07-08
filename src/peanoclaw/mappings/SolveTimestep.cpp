@@ -558,6 +558,14 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     assertion(patch.isLeaf() || patch.isVirtual());
     #endif
 
+    //TODO unterweg debug
+//    if(tarch::la::equals(patch.getPosition()(0), 48.0/81.0)
+//      && tarch::la::equals(patch.getPosition()(1), 1.0/3.0)
+//      && patch.getLevel() == 5) {
+      std::cout << "Trying to advance minimal patch: " << patch
+          <<", allowed=" << patch.isAllowedToAdvanceInTime() << std::endl;
+//    }
+
     //Perform timestep
     double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
     if(shouldAdvanceInTime(

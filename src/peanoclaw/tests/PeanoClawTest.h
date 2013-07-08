@@ -9,14 +9,10 @@
 #include "tarch/tests/TestCase.h"
 
 
-namespace peano { 
-  namespace applications { 
-    namespace peanoclaw {
-      namespace tests {
-      class PeanoClawTest;
-      } 
-}
-}
+namespace peanoclaw {
+  namespace tests {
+  class PeanoClawTest;
+  }
 }
  
 
@@ -25,7 +21,7 @@ namespace peano {
  * in Peano. Feel free to rename, remove, or duplicate it. It is not required 
  * by the project but often useful if you wanna write unit tests.
  */ 
-class peano::applications::peanoclaw::tests::PeanoClawTest: public tarch::tests::TestCase {
+class peanoclaw::tests::PeanoClawTest: public tarch::tests::TestCase {
   private:
     /**
      * Test wether the getters and setters for the adjacent patch indices in the

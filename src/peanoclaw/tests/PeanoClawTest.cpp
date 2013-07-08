@@ -1,12 +1,12 @@
-#include "peano/applications/peanoclaw/tests/PeanoClawTest.h"
+#include "peanoclaw/tests/PeanoClawTest.h"
 
 #include "peano/utils/Globals.h"
 
-#include "peano/applications/peanoclaw/SpacetreeGridVertex.h"
-#include "peano/applications/peanoclaw/SpacetreeGridCell.h"
+#include "peanoclaw/Vertex.h"
+#include "peanoclaw/Cell.h"
 
 #include "tarch/tests/TestCaseFactory.h"
-registerTest(peano::applications::peanoclaw::tests::PeanoClawTest)
+registerTest(peanoclaw::tests::PeanoClawTest)
 
 
 #ifdef UseTestSpecificCompilerSettings
@@ -14,30 +14,30 @@ registerTest(peano::applications::peanoclaw::tests::PeanoClawTest)
 #endif
 
  
-peano::applications::peanoclaw::tests::PeanoClawTest::PeanoClawTest():
-  tarch::tests::TestCase( "peano::applications::peanoclaw::tests::PeanoClawTest" ) {
+peanoclaw::tests::PeanoClawTest::PeanoClawTest():
+  tarch::tests::TestCase( "peanoclaw::tests::PeanoClawTest" ) {
 }
 
 
-peano::applications::peanoclaw::tests::PeanoClawTest::~PeanoClawTest() {
+peanoclaw::tests::PeanoClawTest::~PeanoClawTest() {
 }
 
 
-void peano::applications::peanoclaw::tests::PeanoClawTest::setUp() {
+void peanoclaw::tests::PeanoClawTest::setUp() {
   // @todo If you have to configure your global test object, please do this 
   //       here. Typically this operation remains empty.
 }
 
 
-void peano::applications::peanoclaw::tests::PeanoClawTest::run() {
+void peanoclaw::tests::PeanoClawTest::run() {
   testMethod( testVertexAdjacentIndices );
   testMethod( testCellIndices );
 }
 
 
-void peano::applications::peanoclaw::tests::PeanoClawTest::testVertexAdjacentIndices() {
+void peanoclaw::tests::PeanoClawTest::testVertexAdjacentIndices() {
 
-  SpacetreeGridVertex vertex;
+  Vertex vertex;
   for(int i = 0; i < TWO_POWER_D; i++) {
     vertex.setAdjacentCellDescriptionIndex(i, 100 + i);
 //    vertex.setAdjacentUNewIndex(i, 200 + i);
@@ -51,9 +51,9 @@ void peano::applications::peanoclaw::tests::PeanoClawTest::testVertexAdjacentInd
   }
 }
 
-void peano::applications::peanoclaw::tests::PeanoClawTest::testCellIndices() {
+void peanoclaw::tests::PeanoClawTest::testCellIndices() {
 
-  SpacetreeGridCell cell;
+  Cell cell;
   cell.setCellDescriptionIndex(100);
 //  cell.setUNewIndex(200);
 //  cell.setUOldIndex(300);

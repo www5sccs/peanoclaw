@@ -4,15 +4,15 @@
  *  Created on: Jun 10, 2012
  *      Author: kristof
  */
-#include "peano/applications/peanoclaw/tests/Helper.h"
+#include "peanoclaw/tests/Helper.h"
 
-#include "peano/applications/peanoclaw/Patch.h"
-#include "peano/applications/peanoclaw/records/CellDescription.h"
-#include "peano/applications/peanoclaw/records/Data.h"
+#include "peanoclaw/Patch.h"
+#include "peanoclaw/records/CellDescription.h"
+#include "peanoclaw/records/Data.h"
 
-#include "peano/kernel/heap/Heap.h"
+#include "peano/heap/Heap.h"
 
-peano::applications::peanoclaw::Patch peano::applications::peanoclaw::tests::createPatch(
+peanoclaw::Patch peanoclaw::tests::createPatch(
   int unknownsPerSubcell,
   int auxFieldsPerSubcell,
   int subdivisionFactor,
@@ -25,10 +25,10 @@ peano::applications::peanoclaw::Patch peano::applications::peanoclaw::tests::cre
   double minimalNeighborTime,
   bool virtualPatch
 ) {
-  int cellDescriptionIndex = peano::kernel::heap::Heap<peano::applications::peanoclaw::records::CellDescription>::getInstance().createData();
-  std::vector<peano::applications::peanoclaw::records::CellDescription>& cellDescriptions = peano::kernel::heap::Heap<peano::applications::peanoclaw::records::CellDescription>::getInstance().getData(cellDescriptionIndex);
-  cellDescriptions.push_back(peano::applications::peanoclaw::records::CellDescription());
-  peano::applications::peanoclaw::records::CellDescription& cellDescription = peano::kernel::heap::Heap<peano::applications::peanoclaw::records::CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+  int cellDescriptionIndex = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().createData();
+  std::vector<peanoclaw::records::CellDescription>& cellDescriptions = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().getData(cellDescriptionIndex);
+  cellDescriptions.push_back(peanoclaw::records::CellDescription());
+  peanoclaw::records::CellDescription& cellDescription = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
   cellDescription.setSubdivisionFactor(subdivisionFactor);
   cellDescription.setGhostLayerWidth(ghostlayerWidth);
   cellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
@@ -41,22 +41,22 @@ peano::applications::peanoclaw::Patch peano::applications::peanoclaw::tests::cre
   cellDescription.setCellDescriptionIndex(cellDescriptionIndex);
   cellDescription.setIsVirtual(false);
 
-  peano::kernel::heap::Heap<peano::applications::peanoclaw::records::Data>& heap = peano::kernel::heap::Heap<peano::applications::peanoclaw::records::Data>::getInstance();
+  peano::heap::Heap<peanoclaw::records::Data>& heap = peano::heap::Heap<peanoclaw::records::Data>::getInstance();
 
   //uNew array
   int uNewIndex = heap.createData();
-  std::vector<peano::applications::peanoclaw::records::Data>& uNew = heap.getData(uNewIndex);
+  std::vector<peanoclaw::records::Data>& uNew = heap.getData(uNewIndex);
   for(int i = 0; i < tarch::la::aPowI(DIMENSIONS, subdivisionFactor)*unknownsPerSubcell; i++) {
-    uNew.push_back(peano::applications::peanoclaw::records::Data());
+    uNew.push_back(peanoclaw::records::Data());
   }
   cellDescription.setUNewIndex(uNewIndex);
 
   //uOld array
   if(!virtualPatch) {
     int uOldIndex = heap.createData();
-    std::vector<peano::applications::peanoclaw::records::Data>& uOld = heap.getData(uOldIndex);
+    std::vector<peanoclaw::records::Data>& uOld = heap.getData(uOldIndex);
     for(int i = 0; i < tarch::la::aPowI(DIMENSIONS, (subdivisionFactor+2*ghostlayerWidth)) * unknownsPerSubcell; i++) {
-      uOld.push_back(peano::applications::peanoclaw::records::Data());
+      uOld.push_back(peanoclaw::records::Data());
     }
     cellDescription.setUOldIndex(uOldIndex);
   } else {
@@ -65,9 +65,9 @@ peano::applications::peanoclaw::Patch peano::applications::peanoclaw::tests::cre
 
   //Initialise aux array
   if(auxFieldsPerSubcell > 0) {
-    cellDescription.setAuxIndex(peano::kernel::heap::Heap<peano::applications::peanoclaw::records::Data>::getInstance().createData());
-    std::vector<peano::applications::peanoclaw::records::Data>& auxArray =
-        peano::kernel::heap::Heap<peano::applications::peanoclaw::records::Data>::getInstance().getData(cellDescription.getAuxIndex());
+    cellDescription.setAuxIndex(peano::heap::Heap<peanoclaw::records::Data>::getInstance().createData());
+    std::vector<peanoclaw::records::Data>& auxArray =
+        peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getAuxIndex());
     for(int i = 0; i < tarch::la::aPowI(DIMENSIONS, subdivisionFactor + 2*ghostlayerWidth) * auxFieldsPerSubcell; i++) {
       auxArray.push_back(-1.0);
     }

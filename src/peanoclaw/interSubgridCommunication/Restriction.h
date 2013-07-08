@@ -23,6 +23,9 @@ namespace peanoclaw {
 
 class peanoclaw::interSubgridCommunication::Restriction {
   public:
+
+    virtual ~Restriction(){};
+
     /**
      * Restricts data from a fine patch to a coarse patch.
      */

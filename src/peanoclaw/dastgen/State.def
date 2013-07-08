@@ -43,5 +43,7 @@ class peanoclaw::records::State {
    * the repository state.
    */  
   persistent packed bool             reduceStateAndCell;
+
+  persistent packed bool             couldNotEraseDueToDecompositionFlag;
   #endif
 };

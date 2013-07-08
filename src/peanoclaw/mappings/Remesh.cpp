@@ -395,7 +395,7 @@ void peanoclaw::mappings::Remesh::createInnerVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "createInnerVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
- 
+
   fineGridVertex.setShouldRefine(false);
   fineGridVertex.resetSubcellsEraseVeto();
 
@@ -812,8 +812,23 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
     #endif
     peanoclaw::parallel::NeighbourCommunicator communicator(toRank, patchPosition, level);
 
+    //TODO unterweg debug
+    std::cout << "prepareSending from " << localRank
+        << " to " << toRank << " " << i << ": localVertexRank=" << localVertexRanks(i)
+        << ", adjacentCellDescriptionIndex=" << vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i)
+        << ", position:" << x << ", level:" << level
+        << std::endl;
+
     int adjacentCellDescriptionIndex = vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i);
     if(localVertexRanks(i) == localRank && adjacentCellDescriptionIndex != -1) {
+
+      //TODO unterweg debug
+      std::cout << "prepareSending patch from " << localRank
+          << " to " << toRank << " " << i << ": localVertexRank=" << localVertexRanks(i)
+          << ", adjacentCellDescriptionIndex=" << vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i)
+          << ", position:" << x << ", level:" << level
+          << std::endl;
+
       communicator.sendPatch(adjacentCellDescriptionIndex);
 
       Patch patch(peano::heap::Heap<CellDescription>::getInstance().getData(adjacentCellDescriptionIndex).at(0));
@@ -853,7 +868,7 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
   int  toRank,
   const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
   const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-  int                                       level
+  int                                          level
 ) {
   logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
   std::cout << "[prepareCopyToRemoteNode] sending to " << toRank << " next item @ " << cellCentre << " on level " << level << std::endl;
@@ -926,9 +941,7 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
   if(localCell.isInside() && !masterOrWorkerCell.isAssignedToRemoteRank()) {
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(fromRank, cellCentre, level, true);
 
-    //TODO unterweg debug Workaraound since the global master doesn't create cells at the moment but copies them
-    //uninitialized to the first worker
-    if(localCell.isRemote(*_state, false, false) || tarch::parallel::NodePool::getInstance().getMasterRank() == 0) {
+    if(localCell.isRemote(*_state, false, false)) {
       if(tarch::parallel::NodePool::getInstance().getMasterRank() != 0) {
         assertionEquals2(localCell.getCellDescriptionIndex(), -2, cellCentre, level);
       }
@@ -1048,12 +1061,6 @@ void peanoclaw::mappings::Remesh::prepareSendToMaster(
   logTraceInWith3Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString(), verticesEnumerator.getVertexPosition(0) );
   
   std::cout << "[prepareSendToMaster] sending to master on rank " << tarch::parallel::Node::getInstance().getRank() << ": next item @ " << verticesEnumerator.getCellCenter() << " on level " << verticesEnumerator.getLevel() << std::endl;
-
-  //TODO unterweg debug
-  if(tarch::la::equals(verticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS, double>(0.0))
-    && verticesEnumerator.getLevel() == 1) {
-    std::cout << "Send to Master: Updating Patchstate on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
-  }
 
   int toRank = tarch::parallel::NodePool::getInstance().getMasterRank();
   if(localCell.isInside()){
@@ -1182,9 +1189,6 @@ void peanoclaw::mappings::Remesh::mergeWithWorker(
 ) {
   logTraceInWith2Arguments( "mergeWithWorker(...)", localCell.toString(), receivedMasterCell.toString() );
 
-  //TODO unterweg debug
-  std::cout << "Merging with Worker: Updating Patchstate on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
-
   if(!_state->isNewWorkerDueToForkOfExistingDomain()) {
     //Avoid this in first iteration for new worker, since
     //prepareSendToMaster is not called in such an
@@ -1278,14 +1282,6 @@ void peanoclaw::mappings::Remesh::enterCell(
 ) {
   logTraceInWith5Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell );
 
-  //TODO unterweg debug
-  #ifdef Parallel
-  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS, double>(0.0))
-    && fineGridVerticesEnumerator.getLevel() == 1) {
-    std::cout << "enterCell: Updating Patchstate on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
-  }
-  #endif
-
   Patch patch(
     fineGridCell
   );
@@ -1313,15 +1309,6 @@ void peanoclaw::mappings::Remesh::enterCell(
     if(coarseGridCell.isRoot() && !_state->isNewWorkerDueToForkOfExistingDomain()) {
       //Due to the increase in mergeWithWorker
       numberOfAdjacentRemoteVertices++;
-    }
-    //TODO unterweg debug
-//    patch.increaseNumberOfPatchStateUpdates(numberOfAdjacentRemoteVertices);
-
-    //TODO unterweg debug
-    if(tarch::la::equals(patch.getPosition()(0), 1.0/9.0)
-       && tarch::la::equals(patch.getPosition()(1), 3.0/9.0)
-       && patch.getLevel() == 3) {
-      std::cout << "Adding " << numberOfAdjacentRemoteVertices << " updates. Result: " << patch.getNumberOfPatchStateUpdates() << std::endl;
     }
   }
   #endif
@@ -1367,14 +1354,6 @@ void peanoclaw::mappings::Remesh::leaveCell(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "leaveCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-
-  //TODO unterweg debug
-  #ifdef Parallel
-  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS, double>(0.0))
-    && fineGridVerticesEnumerator.getLevel() == 1) {
-    std::cout << "leaveCell: Updating Patchstate on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
-  }
-  #endif
 
   assertion(fineGridCell.isInside());
   assertion(fineGridCell.getCellDescriptionIndex() != -1);
@@ -1527,13 +1506,17 @@ void peanoclaw::mappings::Remesh::endIteration(
   _minimalTimePatch.reloadCellDescription();
   _minimalTimePatchParent.reloadCellDescription();
   if(_minimalTimePatch.isValid()) {
-//    std::cout << "Minimal time patch: " << _minimalTimePatch << std::endl;
-  //  std::cout << "Minimal time patch parent: " << _minimalTimePatchParent << std::endl;
+    std::cout << "Minimal time patch"
+        #ifdef Parallel
+        << " on rank " << tarch::parallel::Node::getInstance().getRank()
+        #endif
+        << ": " << _minimalTimePatch << std::endl;
+    std::cout << "Minimal time patch parent: " << _minimalTimePatchParent << std::endl;
 
-//    if(_minimalTimePatch.getConstrainingNeighborIndex() != -1) {
-//      Patch constrainingPatch(peano::heap::Heap<CellDescription>::getInstance().getData(_minimalTimePatch.getConstrainingNeighborIndex()).at(0));
-//      std::cout << "Contrained by " << constrainingPatch << std::endl;
-//    }
+    if(_minimalTimePatch.getConstrainingNeighborIndex() != -1) {
+      Patch constrainingPatch(peano::heap::Heap<CellDescription>::getInstance().getData(_minimalTimePatch.getConstrainingNeighborIndex()).at(0));
+      std::cout << "Constrained by " << constrainingPatch << std::endl;
+    }
   }
 
   logInfo("endIteration(State)", "Sent neighbor data: " << _sentNeighborData << " Received neighbor data: " << _receivedNeighborData);

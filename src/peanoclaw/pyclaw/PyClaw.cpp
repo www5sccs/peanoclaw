@@ -23,13 +23,11 @@ peanoclaw::pyclaw::PyClaw::PyClaw(
   peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
   peanoclaw::interSubgridCommunication::Restriction*    restriction,
   peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
-) : _initializationCallback(initializationCallback),
+) : Numerics(interpolation, restriction, fluxCorrection),
+_initializationCallback(initializationCallback),
 _boundaryConditionCallback(boundaryConditionCallback),
 _solverCallback(solverCallback),
 _addPatchToSolutionCallback(addPatchToSolutionCallback),
-_interpolation(interpolation),
-_restriction(restriction),
-_fluxCorrection(fluxCorrection),
 _totalSolverCallbackTime(0.0)
 {
   import_array();
@@ -37,9 +35,6 @@ _totalSolverCallbackTime(0.0)
 
 peanoclaw::pyclaw::PyClaw::~PyClaw()
 {
-  delete _interpolation;
-  delete _restriction;
-  delete _fluxCorrection;
 }
 
 
@@ -172,50 +167,6 @@ void peanoclaw::pyclaw::PyClaw::addPatchToSolution(Patch& patch) {
     0,
     #endif
     patch.getCurrentTime()+patch.getTimestepSize()
-  );
-}
-
-void peanoclaw::pyclaw::PyClaw::interpolate(
-  const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-  const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-  const peanoclaw::Patch& source,
-  peanoclaw::Patch&        destination,
-  bool interpolateToUOld,
-  bool interpolateToCurrentTime
-) const {
-  _interpolation->interpolate(
-    destinationSize,
-    destinationOffset,
-    source,
-    destination,
-    interpolateToUOld,
-    interpolateToCurrentTime
-  );
-}
-
-void peanoclaw::pyclaw::PyClaw::restrict (
-  const peanoclaw::Patch& source,
-  peanoclaw::Patch&       destination,
-  bool restrictOnlyOverlappedAreas
-) const {
-  _restriction->restrict(
-    source,
-    destination,
-    restrictOnlyOverlappedAreas
-  );
-}
-
-void peanoclaw::pyclaw::PyClaw::applyFluxCorrection (
-  const Patch& finePatch,
-  Patch& coarsePatch,
-  int dimension,
-  int direction
-) const {
-  _fluxCorrection->applyCorrection(
-    finePatch,
-    coarsePatch,
-    dimension,
-    direction
   );
 }
 

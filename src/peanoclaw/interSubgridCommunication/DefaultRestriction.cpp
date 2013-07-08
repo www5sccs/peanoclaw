@@ -126,7 +126,6 @@ void peanoclaw::interSubgridCommunication::DefaultRestriction::restrictArea (
   logTraceOut("restrictArea");
 }
 
-
 void peanoclaw::interSubgridCommunication::DefaultRestriction::restrict(
   const peanoclaw::Patch& source,
   peanoclaw::Patch&       destination,

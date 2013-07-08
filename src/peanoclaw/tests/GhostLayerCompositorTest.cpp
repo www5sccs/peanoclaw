@@ -4,41 +4,42 @@
  *  Created on: Mar 6, 2012
  *      Author: Kristof Unterweger
  */
-#include "peano/applications/peanoclaw/tests/GhostLayerCompositorTest.h"
+#include "peanoclaw/tests/GhostLayerCompositorTest.h"
 
-#include "peano/applications/peanoclaw/tests/PyClawTestStump.h"
-#include "peano/applications/peanoclaw/tests/Helper.h"
+#include "peanoclaw/tests/PyClawTestStump.h"
+#include "peanoclaw/tests/Helper.h"
 
-#include "peano/applications/peanoclaw/Area.h"
-#include "peano/applications/peanoclaw/Patch.h"
-#include "peano/applications/peanoclaw/PyClaw.h"
-#include "peano/applications/peanoclaw/PatchOperations.h"
-#include "peano/applications/peanoclaw/GhostLayerCompositor.h"
-#include "peano/applications/peanoclaw/records/CellDescription.h"
+#include "peanoclaw/Area.h"
+#include "peanoclaw/Patch.h"
+#include "peanoclaw/pyclaw/PyClaw.h"
+#include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
+#include "peanoclaw/interSubgridCommunication/DefaultFluxCorrection.h"
+#include "peanoclaw/interSubgridCommunication/DefaultRestriction.h"
+#include "peanoclaw/records/CellDescription.h"
 
-#include "peano/kernel/heap/Heap.h"
+#include "peano/heap/Heap.h"
 #include "peano/utils/Loop.h"
 
 #include "tarch/tests/TestCaseFactory.h"
-registerTest(peano::applications::peanoclaw::tests::GhostLayerCompositorTest)
+registerTest(peanoclaw::tests::GhostLayerCompositorTest)
 
 
 #ifdef UseTestSpecificCompilerSettings
 #pragma optimize("",off)
 #endif
 
-tarch::logging::Log peano::applications::peanoclaw::tests::GhostLayerCompositorTest::_log("peano::applications::peanoclaw::tests::GhostLayerCompositorTest");
+tarch::logging::Log peanoclaw::tests::GhostLayerCompositorTest::_log("peanoclaw::tests::GhostLayerCompositorTest");
 
-peano::applications::peanoclaw::tests::GhostLayerCompositorTest::GhostLayerCompositorTest() {
+peanoclaw::tests::GhostLayerCompositorTest::GhostLayerCompositorTest() {
 }
 
-peano::applications::peanoclaw::tests::GhostLayerCompositorTest::~GhostLayerCompositorTest() {
+peanoclaw::tests::GhostLayerCompositorTest::~GhostLayerCompositorTest() {
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::setUp() {
+void peanoclaw::tests::GhostLayerCompositorTest::setUp() {
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::run() {
+void peanoclaw::tests::GhostLayerCompositorTest::run() {
   //TODO unterweg debug
 //  testMethod( testTimesteppingVeto2D );
 //  testMethod( testInterpolationFromCoarseToFinePatchLeftGhostLayer2D );
@@ -50,14 +51,14 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::run() {
   testMethod( testPartialRestrictionAreasWithInfiniteLowerBounds );
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
+void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
   #ifdef Dim2
 
   for(int vetoIndex = 0; vetoIndex < TWO_POWER_D; vetoIndex++) {
 
     logDebug("testTimesteppingVeto2D", "testing vetoIndex=" << vetoIndex);
 
-    peano::applications::peanoclaw::Patch patches[TWO_POWER_D];
+    peanoclaw::Patch patches[TWO_POWER_D];
 
     for(int i = 0; i < TWO_POWER_D; i++) {
       patches[i] = createPatch(
@@ -92,9 +93,9 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testTimest
       validate(patches[i].isValid());
     }
 
-    peano::applications::peanoclaw::PyClaw pyClaw(0, 0, 0, 0);
-    peano::applications::peanoclaw::GhostLayerCompositor ghostLayerCompositor
-      = peano::applications::peanoclaw::GhostLayerCompositor(
+    peanoclaw::pyclaw::PyClaw pyClaw(0, 0, 0, 0, 0, 0, 0);
+    peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor
+      = peanoclaw::interSubgridCommunication::GhostLayerCompositor(
           patches,
           0,
           pyClaw,
@@ -116,10 +117,10 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testTimest
   #endif
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFinePatchLeftGhostLayer2D() {
+void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFinePatchLeftGhostLayer2D() {
   #ifdef Dim2
   //Patch-array for lower-left vertex in fine patch
-  peano::applications::peanoclaw::Patch patches[TWO_POWER_D];
+  peanoclaw::Patch patches[TWO_POWER_D];
 
   //Settings
   int coarseSubdivisionFactor = 2;
@@ -186,8 +187,8 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterp
   patches[1].setValueUOld(subcellIndex, 0, 11.0);
 
   //Fill left ghostlayer
-  peano::applications::peanoclaw::tests::PyClawTestStump pyClaw;
-  peano::applications::peanoclaw::GhostLayerCompositor ghostLayerCompositor(
+  peanoclaw::tests::PyClawTestStump pyClaw;
+  peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(
     patches,
     1,
     pyClaw,
@@ -206,10 +207,10 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterp
   #endif
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFinePatchRightGhostLayer2D() {
+void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFinePatchRightGhostLayer2D() {
   #ifdef Dim2
   //Patch-array for lower-left vertex in fine patch
-  peano::applications::peanoclaw::Patch patches[TWO_POWER_D];
+  peanoclaw::Patch patches[TWO_POWER_D];
 
   //Settings
   int coarseSubdivisionFactor = 2;
@@ -275,8 +276,8 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterp
   patches[2].setValueUOld(subcellIndex, 0, 11.0);
 
   //Fill left ghostlayer
-  peano::applications::peanoclaw::tests::PyClawTestStump pyClaw;
-  peano::applications::peanoclaw::GhostLayerCompositor ghostLayerCompositor(
+  peanoclaw::tests::PyClawTestStump pyClaw;
+  peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(
     patches,
     1,
     pyClaw,
@@ -295,26 +296,26 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterp
   #endif
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testProjectionFromCoarseToFinePatchRightGhostLayer2D() {
+void peanoclaw::tests::GhostLayerCompositorTest::testProjectionFromCoarseToFinePatchRightGhostLayer2D() {
   #ifdef Dim2
 
 //  //Patch-array for upper-right vertex in fine patch
-//  peano::applications::peanoclaw::Patch patches[TWO_POWER_D];
+//  peanoclaw::Patch patches[TWO_POWER_D];
 //
 //  //Setup coarse patch
 //  tarch::la::Vector<DIMENSIONS, double> coarsePosition;
 //  assignList(coarsePosition) = 1.0, 2.0;
-//  std::vector<peano::applications::peanoclaw::records::Data> uNewCoarse;
+//  std::vector<peanoclaw::records::Data> uNewCoarse;
 //  for(int i = 0; i < 4*4*3; i++) {
-//    uNewCoarse.push_back(peano::applications::peanoclaw::records::Data());
+//    uNewCoarse.push_back(peanoclaw::records::Data());
 //    uNewCoarse[i].setU(i);
 //  }
-//  std::vector<peano::applications::peanoclaw::records::Data> uOldCoarse;
+//  std::vector<peanoclaw::records::Data> uOldCoarse;
 //  for(int i = 0; i < (4+4) * (4+4) * 3; i++) {
-//    uOldCoarse.push_back(peano::applications::peanoclaw::records::Data());
+//    uOldCoarse.push_back(peanoclaw::records::Data());
 //    uOldCoarse[i] = -1.0;
 //  }
-//  patches[0] = peano::applications::peanoclaw::Patch(
+//  patches[0] = peanoclaw::Patch(
 //    coarsePosition, //Position
 //    0.3,            //Size
 //    3,              //Unknows per subcell
@@ -333,18 +334,18 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testProjec
 //  //Setup fine patch
 //  tarch::la::Vector<DIMENSIONS, double> finePosition;
 //  assignList(finePosition) = 0.9, 2.0;
-//  std::vector<peano::applications::peanoclaw::records::Data> uNewFine;
+//  std::vector<peanoclaw::records::Data> uNewFine;
 //  for(int i = 0; i < 4*4*3; i++) {
-//    uNewFine.push_back(peano::applications::peanoclaw::records::Data());
+//    uNewFine.push_back(peanoclaw::records::Data());
 //    uNewFine[i].setU(-2.0);
 //  }
-//  std::vector<peano::applications::peanoclaw::records::Data> uOldFine;
+//  std::vector<peanoclaw::records::Data> uOldFine;
 //  for(int i = 0; i < (4+4) * (4+4) * 3; i++) {
-//    uOldFine.push_back(peano::applications::peanoclaw::records::Data());
+//    uOldFine.push_back(peanoclaw::records::Data());
 //    uOldFine[i].setU(-1.0);
 //  }
 //
-//  patches[3] = peano::applications::peanoclaw::Patch(
+//  patches[3] = peanoclaw::Patch(
 //    finePosition,   //Position
 //    0.1,            //Size
 //    3,              //Unknows per subcell
@@ -360,8 +361,8 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testProjec
 //  );
 //
 //  //Fill right ghostlayer
-//  peano::applications::peanoclaw::PyClaw pyClaw(0, 0, 0, 0);
-//  peano::applications::peanoclaw::GhostLayerCompositor ghostLayerCompositor(
+//  peanoclaw::pyclaw::PyClaw pyClaw(0, 0, 0, 0);
+//  peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(
 //    patches,
 //    1,
 //    pyClaw
@@ -388,7 +389,7 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testProjec
   #endif
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testCoarseGridCorrection() {
+void peanoclaw::tests::GhostLayerCompositorTest::testCoarseGridCorrection() {
   int unknownsPerSubcell = 3;
   int coarseSubdivisionFactor = 2;
   int fineSubdivisionFactor = 3;
@@ -411,22 +412,22 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testCoarse
   );
 
   //Fill coarse patch
-  std::vector<peano::applications::peanoclaw::records::Data>& uNewCoarse
-    = peano::kernel::heap::Heap<peano::applications::peanoclaw::records::Data>::getInstance()
+  std::vector<peanoclaw::records::Data>& uNewCoarse
+    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
     .getData(coarsePatch.getUNewIndex());
   for(int i = 0; i < coarseSubdivisionFactor*coarseSubdivisionFactor*unknownsPerSubcell; i++) {
-    uNewCoarse.push_back(peano::applications::peanoclaw::records::Data());
+    uNewCoarse.push_back(peanoclaw::records::Data());
     if(i < coarseSubdivisionFactor*coarseSubdivisionFactor) {
       uNewCoarse.at(i).setU(1.0);
     } else {
       uNewCoarse.at(i).setU(0.5);
     }
   }
-  std::vector<peano::applications::peanoclaw::records::Data>& uOldCoarse
-    = peano::kernel::heap::Heap<peano::applications::peanoclaw::records::Data>::getInstance()
+  std::vector<peanoclaw::records::Data>& uOldCoarse
+    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
     .getData(coarsePatch.getUOldIndex());
   for(int i = 0; i < (coarseSubdivisionFactor+2*ghostlayerWidth) * (coarseSubdivisionFactor+2*ghostlayerWidth) * unknownsPerSubcell; i++) {
-    uOldCoarse.push_back(peano::applications::peanoclaw::records::Data());
+    uOldCoarse.push_back(peanoclaw::records::Data());
     if(i < (coarseSubdivisionFactor+2*ghostlayerWidth) * (coarseSubdivisionFactor+2*ghostlayerWidth)) {
       uOldCoarse.at(i).setU(1.0);
     } else {
@@ -451,22 +452,22 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testCoarse
   );
 
   //Fine patch
-  std::vector<peano::applications::peanoclaw::records::Data>& uNewFine
-    = peano::kernel::heap::Heap<peano::applications::peanoclaw::records::Data>::getInstance()
+  std::vector<peanoclaw::records::Data>& uNewFine
+    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
     .getData(finePatch.getUNewIndex());
   for(int i = 0; i < fineSubdivisionFactor*fineSubdivisionFactor*unknownsPerSubcell; i++) {
-    uNewFine.push_back(peano::applications::peanoclaw::records::Data());
+    uNewFine.push_back(peanoclaw::records::Data());
     if(i < fineSubdivisionFactor*fineSubdivisionFactor) {
       uNewFine.at(i).setU(1.0);
     } else {
       uNewFine.at(i).setU(0.5);
     }
   }
-  std::vector<peano::applications::peanoclaw::records::Data>& uOldFine
-    = peano::kernel::heap::Heap<peano::applications::peanoclaw::records::Data>::getInstance()
+  std::vector<peanoclaw::records::Data>& uOldFine
+    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
     .getData(finePatch.getUOldIndex());
   for(int i = 0; i < (fineSubdivisionFactor+2*ghostlayerWidth) * (fineSubdivisionFactor+2*ghostlayerWidth) * unknownsPerSubcell; i++) {
-    uOldFine.push_back(peano::applications::peanoclaw::records::Data());
+    uOldFine.push_back(peanoclaw::records::Data());
     if(i < (fineSubdivisionFactor+2*ghostlayerWidth) * (fineSubdivisionFactor+2*ghostlayerWidth)) {
       uOldFine.at(i).setU(1.0);
     } else {
@@ -479,13 +480,16 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testCoarse
 
   //GhostLayerCompositor
   PyClawTestStump pyClaw;
-  peano::applications::peanoclaw::Patch patches[TWO_POWER_D];
-  GhostLayerCompositor ghostLayerCompositor(patches, 0, pyClaw, false);
+  peanoclaw::Patch patches[TWO_POWER_D];
+  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, pyClaw, false);
+  peanoclaw::interSubgridCommunication::DefaultFluxCorrection fluxCorrection;
 
 //  tarch::la::Vector<DIMENSIONS, double> normal;
 //  assignList(normal) = 1.0, 0.0;
 
-  ghostLayerCompositor.applyCoarseGridCorrection(finePatch, coarsePatch, 0, 1);
+  //ghostLayerCompositor.applyCoarseGridCorrection(finePatch, coarsePatch, 0, 1);
+  fluxCorrection.applyCorrection(finePatch, coarsePatch, 0, 1);
+
 
   tarch::la::Vector<DIMENSIONS, int> subcellIndex;
   assignList(subcellIndex) = 0, 0;
@@ -498,7 +502,7 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testCoarse
   validateNumericalEquals(coarsePatch.getValueUNew(subcellIndex, 0), 1.0);
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
+void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
   Patch sourcePatch
     = createPatch(
       1,       //Unknowns per subcell
@@ -549,13 +553,13 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterp
   assignList(subcellIndex) = 1, 1;
   sourcePatch.setValueUNew(subcellIndex, 0, 40.0);
 
-  peano::applications::peanoclaw::Patch patches[TWO_POWER_D];
+  peanoclaw::Patch patches[TWO_POWER_D];
   patches[3] = sourcePatch;
   patches[2] = destinationPatch;
 
-  peano::applications::peanoclaw::PyClaw pyClaw(0, 0, 0, 0);
-  peano::applications::peanoclaw::GhostLayerCompositor ghostLayerCompositor
-    = peano::applications::peanoclaw::GhostLayerCompositor(
+  peanoclaw::pyclaw::PyClaw pyClaw(0, 0, 0, 0, 0, 0, 0);
+  peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor
+    = peanoclaw::interSubgridCommunication::GhostLayerCompositor(
         patches,
         0,
         pyClaw,
@@ -570,7 +574,7 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testInterp
   validateNumericalEquals(destinationPatch.getValueUOld(subcellIndex, 0), 80.0/3.0);
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testRestrictionWithOverlappingBounds() {
+void peanoclaw::tests::GhostLayerCompositorTest::testRestrictionWithOverlappingBounds() {
   tarch::la::Vector<DIMENSIONS, double> lowerNeighboringGhostlayerBounds(1.0);
   tarch::la::Vector<DIMENSIONS, double> upperNeighboringGhostlayerBounds(1.1);
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(0.11);
@@ -578,8 +582,9 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testRestri
   tarch::la::Vector<DIMENSIONS, double> sourceSize(2.2);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(20);
 
-  peano::applications::peanoclaw::Area areas[TWO_POWER_D];
-  peano::applications::peanoclaw::getAreasForRestriction(
+  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
+  peanoclaw::Area areas[TWO_POWER_D];
+  defaultRestriction.getAreasForRestriction(
     lowerNeighboringGhostlayerBounds,
     upperNeighboringGhostlayerBounds,
     sourcePosition,
@@ -605,7 +610,7 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testRestri
   }
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreas() {
+void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreas() {
   #ifdef Dim2
   tarch::la::Vector<DIMENSIONS, double> lowerNeighboringGhostlayerBounds(1.8 + 1e-13);
   tarch::la::Vector<DIMENSIONS, double> upperNeighboringGhostlayerBounds(1.2);
@@ -614,8 +619,9 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testPartia
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(0.1);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(10);
 
-  peano::applications::peanoclaw::Area areas[TWO_POWER_D];
-  peano::applications::peanoclaw::getAreasForRestriction(
+  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
+  peanoclaw::Area areas[TWO_POWER_D];
+  defaultRestriction.getAreasForRestriction(
     lowerNeighboringGhostlayerBounds,
     upperNeighboringGhostlayerBounds,
     sourcePosition,
@@ -648,7 +654,7 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testPartia
   #endif
 }
 
-void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreasWithInfiniteLowerBounds() {
+void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreasWithInfiniteLowerBounds() {
   #ifdef Dim2
   tarch::la::Vector<DIMENSIONS, double> lowerNeighboringGhostlayerBounds(std::numeric_limits<double>::max());
   tarch::la::Vector<DIMENSIONS, double> upperNeighboringGhostlayerBounds;
@@ -659,8 +665,9 @@ void peano::applications::peanoclaw::tests::GhostLayerCompositorTest::testPartia
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(1.0/27.0/6.0);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(6);
 
-  peano::applications::peanoclaw::Area areas[TWO_POWER_D];
-  peano::applications::peanoclaw::getAreasForRestriction(
+  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
+  peanoclaw::Area areas[TWO_POWER_D];
+  defaultRestriction.getAreasForRestriction(
       lowerNeighboringGhostlayerBounds,
       upperNeighboringGhostlayerBounds,
       sourcePosition,

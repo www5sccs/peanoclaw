@@ -10,16 +10,12 @@
 
 #include "tarch/tests/TestCase.h"
 
-#include "peano/applications/peanoclaw/records/CellDescription.h"
-#include "peano/applications/peanoclaw/records/Data.h"
+#include "peanoclaw/records/CellDescription.h"
+#include "peanoclaw/records/Data.h"
 
-namespace peano {
-  namespace applications {
-    namespace peanoclaw {
-      namespace tests {
-      class GridLevelTransferTest;
-      }
-    }
+namespace peanoclaw {
+  namespace tests {
+  class GridLevelTransferTest;
   }
 }
 
@@ -28,11 +24,11 @@ namespace peano {
  * parts of the grid. One important part is the determination of the indices of
  * adjacent patches on hanging nodes.
  */
-class peano::applications::peanoclaw::tests::GridLevelTransferTest: public tarch::tests::TestCase {
+class peanoclaw::tests::GridLevelTransferTest: public tarch::tests::TestCase {
 
   private:
-    typedef peano::applications::peanoclaw::records::CellDescription CellDescription;
-    typedef peano::applications::peanoclaw::records::Data Data;
+    typedef peanoclaw::records::CellDescription CellDescription;
+    typedef peanoclaw::records::Data Data;
 
     /**
      * Tests the setting of the adjacent patch indices on a single refined cell

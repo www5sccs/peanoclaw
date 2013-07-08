@@ -80,7 +80,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
 //    position = patches[0].getPosition();
   plotVertex =
       //tarch::la::equals(position(0), 2.0/9.0) && tarch::la::equals(position(1), 16.0/27.0)
-      tarch::la::equals(position(0), 32.0/81.0)
+      tarch::la::equals(position(0), 33.0/81.0)
       && tarch::la::equals(position(1), 1.0/3.0)
       && level == 5
 //      false
@@ -148,7 +148,7 @@ void peanoclaw::Vertex::applyCoarseGridCorrection(
 
   //Apply coarse grid correction
   interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, numerics, false);
-  ghostLayerCompositor.applyFluxCorrection();
+  ghostLayerCompositor.applyCoarseGridCorrection();
 }
 
 void peanoclaw::Vertex::setShouldRefine(bool shouldRefine) {

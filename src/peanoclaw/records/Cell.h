@@ -34,7 +34,7 @@ namespace peanoclaw {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   06/05/2013 09:15
+    * @date   02/07/2013 18:34
     */
    class peanoclaw::records::Cell { 
       
@@ -677,7 +677,7 @@ namespace peanoclaw {
        *
        * 		   build date: 12-04-2013 09:18
        *
-       * @date   06/05/2013 09:15
+       * @date   02/07/2013 18:34
        */
       class peanoclaw::records::CellPacked { 
          
@@ -1358,7 +1358,7 @@ namespace peanoclaw {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   06/05/2013 09:15
+          * @date   02/07/2013 18:34
           */
          class peanoclaw::records::Cell { 
             
@@ -1960,7 +1960,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   06/05/2013 09:15
+             * @date   02/07/2013 18:34
              */
             class peanoclaw::records::CellPacked { 
                
@@ -2601,7 +2601,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   06/05/2013 09:15
+             * @date   02/07/2013 18:34
              */
             class peanoclaw::records::Cell { 
                
@@ -2632,6 +2632,7 @@ namespace peanoclaw {
                      double _nodeWorkload;
                      double _localWorkload;
                      double _totalWorkload;
+                     bool _cellIsAForkCandidate;
                      /**
                       * Generated
                       */
@@ -2640,7 +2641,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                     PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                      
                      
                      inline int getCellDescriptionIndex() const 
@@ -2919,6 +2920,26 @@ namespace peanoclaw {
                      
                      
                      
+                     inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _cellIsAForkCandidate;
+                     }
+                     
+                     
+                     
+                     inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _cellIsAForkCandidate = cellIsAForkCandidate;
+                     }
+                     
+                     
+                     
                   };
                   
                private: 
@@ -2938,7 +2959,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                  Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                   
                   /**
                    * Generated
@@ -3285,6 +3306,26 @@ namespace peanoclaw {
                   }
                   
                   
+                  
+                  inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._cellIsAForkCandidate;
+                  }
+                  
+                  
+                  
+                  inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._cellIsAForkCandidate = cellIsAForkCandidate;
+                  }
+                  
+                  
                   /**
                    * Generated
                    */
@@ -3367,7 +3408,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   06/05/2013 09:15
+                * @date   02/07/2013 18:34
                 */
                class peanoclaw::records::CellPacked { 
                   
@@ -3389,6 +3430,7 @@ namespace peanoclaw {
                          |  isInside	| startbit 0	| #bits 1
                          |  state	| startbit 1	| #bits 2
                          |  evenFlags	| startbit 3	| #bits DIMENSIONS
+                         |  cellIsAForkCandidate	| startbit DIMENSIONS + 3	| #bits 1
                          */
                         short int _packedRecords0;
                         
@@ -3400,7 +3442,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                        PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                         
                         
                         inline int getCellDescriptionIndex() const 
@@ -3699,6 +3741,29 @@ namespace peanoclaw {
                         
                         
                         
+                        inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           short int mask = 1 << (DIMENSIONS + 3);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                        }
+                        
+                        
+                        
+                        inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           short int mask = 1 << (DIMENSIONS + 3);
+   _packedRecords0 = static_cast<short int>( cellIsAForkCandidate ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                        }
+                        
+                        
+                        
                      };
                      
                   private: 
@@ -3718,7 +3783,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                     CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                      
                      /**
                       * Generated
@@ -4092,6 +4157,29 @@ namespace peanoclaw {
                      }
                      
                      
+                     
+                     inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        short int mask = 1 << (DIMENSIONS + 3);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+                     }
+                     
+                     
+                     
+                     inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        short int mask = 1 << (DIMENSIONS + 3);
+   _persistentRecords._packedRecords0 = static_cast<short int>( cellIsAForkCandidate ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                     }
+                     
+                     
                      /**
                       * Generated
                       */
@@ -4172,7 +4260,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   06/05/2013 09:15
+                * @date   02/07/2013 18:34
                 */
                class peanoclaw::records::Cell { 
                   
@@ -4733,7 +4821,7 @@ namespace peanoclaw {
                    *
                    * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   06/05/2013 09:15
+                   * @date   02/07/2013 18:34
                    */
                   class peanoclaw::records::CellPacked { 
                      
@@ -5333,7 +5421,7 @@ namespace peanoclaw {
                    *
                    * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   06/05/2013 09:15
+                   * @date   02/07/2013 18:34
                    */
                   class peanoclaw::records::Cell { 
                      
@@ -5365,6 +5453,7 @@ namespace peanoclaw {
                            double _nodeWorkload;
                            double _localWorkload;
                            double _totalWorkload;
+                           bool _cellIsAForkCandidate;
                            int _numberOfLoadsFromInputStream;
                            int _numberOfStoresToOutputStream;
                            /**
@@ -5375,7 +5464,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                           PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                            
                            
                            inline int getCellDescriptionIndex() const 
@@ -5674,6 +5763,26 @@ namespace peanoclaw {
                            
                            
                            
+                           inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _cellIsAForkCandidate;
+                           }
+                           
+                           
+                           
+                           inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _cellIsAForkCandidate = cellIsAForkCandidate;
+                           }
+                           
+                           
+                           
                            inline int getNumberOfLoadsFromInputStream() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -5733,7 +5842,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                        Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                         
                         /**
                          * Generated
@@ -6101,6 +6210,26 @@ namespace peanoclaw {
                         
                         
                         
+                        inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           return _persistentRecords._cellIsAForkCandidate;
+                        }
+                        
+                        
+                        
+                        inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           _persistentRecords._cellIsAForkCandidate = cellIsAForkCandidate;
+                        }
+                        
+                        
+                        
                         inline int getNumberOfLoadsFromInputStream() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -6222,7 +6351,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 12-04-2013 09:18
                       *
-                      * @date   06/05/2013 09:15
+                      * @date   02/07/2013 18:34
                       */
                      class peanoclaw::records::CellPacked { 
                         
@@ -6247,6 +6376,7 @@ namespace peanoclaw {
                                |  isInside	| startbit 0	| #bits 1
                                |  state	| startbit 1	| #bits 2
                                |  evenFlags	| startbit 3	| #bits DIMENSIONS
+                               |  cellIsAForkCandidate	| startbit DIMENSIONS + 3	| #bits 1
                                */
                               short int _packedRecords0;
                               
@@ -6258,7 +6388,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                               
                               
                               inline int getCellDescriptionIndex() const 
@@ -6577,6 +6707,29 @@ namespace peanoclaw {
                               
                               
                               
+                              inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 short int mask = 1 << (DIMENSIONS + 3);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                              }
+                              
+                              
+                              
+                              inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 short int mask = 1 << (DIMENSIONS + 3);
+   _packedRecords0 = static_cast<short int>( cellIsAForkCandidate ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                              }
+                              
+                              
+                              
                               inline int getNumberOfLoadsFromInputStream() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -6636,7 +6789,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                           CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                            
                            /**
                             * Generated
@@ -7031,6 +7184,29 @@ namespace peanoclaw {
                            
                            
                            
+                           inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              short int mask = 1 << (DIMENSIONS + 3);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+                           }
+                           
+                           
+                           
+                           inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              short int mask = 1 << (DIMENSIONS + 3);
+   _persistentRecords._packedRecords0 = static_cast<short int>( cellIsAForkCandidate ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                           }
+                           
+                           
+                           
                            inline int getNumberOfLoadsFromInputStream() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -7150,7 +7326,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 12-04-2013 09:18
                       *
-                      * @date   06/05/2013 09:15
+                      * @date   02/07/2013 18:34
                       */
                      class peanoclaw::records::Cell { 
                         
@@ -7182,6 +7358,7 @@ namespace peanoclaw {
                               double _nodeWorkload;
                               double _localWorkload;
                               double _totalWorkload;
+                              bool _cellIsAForkCandidate;
                               /**
                                * Generated
                                */
@@ -7190,7 +7367,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                               
                               
                               inline int getCellDescriptionIndex() const 
@@ -7489,6 +7666,26 @@ namespace peanoclaw {
                               
                               
                               
+                              inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _cellIsAForkCandidate;
+                              }
+                              
+                              
+                              
+                              inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _cellIsAForkCandidate = cellIsAForkCandidate;
+                              }
+                              
+                              
+                              
                            };
                            
                         private: 
@@ -7508,7 +7705,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                           Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                            
                            /**
                             * Generated
@@ -7875,6 +8072,26 @@ namespace peanoclaw {
                            }
                            
                            
+                           
+                           inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._cellIsAForkCandidate;
+                           }
+                           
+                           
+                           
+                           inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._cellIsAForkCandidate = cellIsAForkCandidate;
+                           }
+                           
+                           
                            /**
                             * Generated
                             */
@@ -7957,7 +8174,7 @@ namespace peanoclaw {
                          *
                          * 		   build date: 12-04-2013 09:18
                          *
-                         * @date   06/05/2013 09:15
+                         * @date   02/07/2013 18:34
                          */
                         class peanoclaw::records::CellPacked { 
                            
@@ -7980,6 +8197,7 @@ namespace peanoclaw {
                                   |  isInside	| startbit 0	| #bits 1
                                   |  state	| startbit 1	| #bits 2
                                   |  evenFlags	| startbit 3	| #bits DIMENSIONS
+                                  |  cellIsAForkCandidate	| startbit DIMENSIONS + 3	| #bits 1
                                   */
                                  short int _packedRecords0;
                                  
@@ -7991,7 +8209,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                                  
                                  
                                  inline int getCellDescriptionIndex() const 
@@ -8310,6 +8528,29 @@ namespace peanoclaw {
                                  
                                  
                                  
+                                 inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    short int mask = 1 << (DIMENSIONS + 3);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                                 }
+                                 
+                                 
+                                 
+                                 inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    short int mask = 1 << (DIMENSIONS + 3);
+   _packedRecords0 = static_cast<short int>( cellIsAForkCandidate ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                                 }
+                                 
+                                 
+                                 
                               };
                               
                            private: 
@@ -8329,7 +8570,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload);
+                              CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                               
                               /**
                                * Generated
@@ -8723,6 +8964,29 @@ namespace peanoclaw {
                               }
                               
                               
+                              
+                              inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 short int mask = 1 << (DIMENSIONS + 3);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+                              }
+                              
+                              
+                              
+                              inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 short int mask = 1 << (DIMENSIONS + 3);
+   _persistentRecords._packedRecords0 = static_cast<short int>( cellIsAForkCandidate ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                              }
+                              
+                              
                               /**
                                * Generated
                                */
@@ -8803,7 +9067,7 @@ namespace peanoclaw {
                          *
                          * 		   build date: 12-04-2013 09:18
                          *
-                         * @date   06/05/2013 09:15
+                         * @date   02/07/2013 18:34
                          */
                         class peanoclaw::records::Cell { 
                            
@@ -8834,6 +9098,7 @@ namespace peanoclaw {
                                  double _nodeWorkload;
                                  double _localWorkload;
                                  double _totalWorkload;
+                                 bool _cellIsAForkCandidate;
                                  int _numberOfLoadsFromInputStream;
                                  int _numberOfStoresToOutputStream;
                                  /**
@@ -8844,7 +9109,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                  
                                  
                                  inline int getCellDescriptionIndex() const 
@@ -9123,6 +9388,26 @@ namespace peanoclaw {
                                  
                                  
                                  
+                                 inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    return _cellIsAForkCandidate;
+                                 }
+                                 
+                                 
+                                 
+                                 inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    _cellIsAForkCandidate = cellIsAForkCandidate;
+                                 }
+                                 
+                                 
+                                 
                                  inline int getNumberOfLoadsFromInputStream() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -9182,7 +9467,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                              Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                               
                               /**
                                * Generated
@@ -9530,6 +9815,26 @@ namespace peanoclaw {
                               
                               
                               
+                              inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _persistentRecords._cellIsAForkCandidate;
+                              }
+                              
+                              
+                              
+                              inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _persistentRecords._cellIsAForkCandidate = cellIsAForkCandidate;
+                              }
+                              
+                              
+                              
                               inline int getNumberOfLoadsFromInputStream() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -9651,7 +9956,7 @@ namespace peanoclaw {
                             *
                             * 		   build date: 12-04-2013 09:18
                             *
-                            * @date   06/05/2013 09:15
+                            * @date   02/07/2013 18:34
                             */
                            class peanoclaw::records::CellPacked { 
                               
@@ -9675,6 +9980,7 @@ namespace peanoclaw {
                                      |  isInside	| startbit 0	| #bits 1
                                      |  state	| startbit 1	| #bits 2
                                      |  evenFlags	| startbit 3	| #bits DIMENSIONS
+                                     |  cellIsAForkCandidate	| startbit DIMENSIONS + 3	| #bits 1
                                      */
                                     short int _packedRecords0;
                                     
@@ -9686,7 +9992,7 @@ namespace peanoclaw {
                                     /**
                                      * Generated
                                      */
-                                    PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                    PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                     
                                     
                                     inline int getCellDescriptionIndex() const 
@@ -9985,6 +10291,29 @@ namespace peanoclaw {
                                     
                                     
                                     
+                                    inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       short int mask = 1 << (DIMENSIONS + 3);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       short int mask = 1 << (DIMENSIONS + 3);
+   _packedRecords0 = static_cast<short int>( cellIsAForkCandidate ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                                    }
+                                    
+                                    
+                                    
                                     inline int getNumberOfLoadsFromInputStream() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -10044,7 +10373,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                 CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                  
                                  /**
                                   * Generated
@@ -10419,6 +10748,29 @@ namespace peanoclaw {
                                  
                                  
                                  
+                                 inline bool getCellIsAForkCandidate() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    short int mask = 1 << (DIMENSIONS + 3);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+                                 }
+                                 
+                                 
+                                 
+                                 inline void setCellIsAForkCandidate(const bool& cellIsAForkCandidate) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                    short int mask = 1 << (DIMENSIONS + 3);
+   _persistentRecords._packedRecords0 = static_cast<short int>( cellIsAForkCandidate ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                                 }
+                                 
+                                 
+                                 
                                  inline int getNumberOfLoadsFromInputStream() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -10538,7 +10890,7 @@ namespace peanoclaw {
                             *
                             * 		   build date: 12-04-2013 09:18
                             *
-                            * @date   06/05/2013 09:15
+                            * @date   02/07/2013 18:34
                             */
                            class peanoclaw::records::Cell { 
                               
@@ -11222,7 +11574,7 @@ namespace peanoclaw {
                                *
                                * 		   build date: 12-04-2013 09:18
                                *
-                               * @date   06/05/2013 09:15
+                               * @date   02/07/2013 18:34
                                */
                               class peanoclaw::records::CellPacked { 
                                  

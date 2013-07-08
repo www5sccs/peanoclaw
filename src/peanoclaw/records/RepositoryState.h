@@ -31,7 +31,7 @@ namespace peanoclaw {
  *
  * 		   build date: 12-04-2013 09:18
  *
- * @date   06/05/2013 09:15
+ * @date   02/07/2013 18:34
  */
 class peanoclaw::records::RepositoryState { 
    
@@ -40,7 +40,7 @@ class peanoclaw::records::RepositoryState {
       typedef peanoclaw::records::RepositoryStatePacked Packed;
       
       enum Action {
-         WriteCheckpoint = 0, ReadCheckpoint = 1, Terminate = 2, UseAdapterInitialiseGrid = 3, UseAdapterPlot = 4, UseAdapterRemesh = 5, UseAdapterSolveTimestep = 6, UseAdapterSolveTimestepAndPlot = 7, UseAdapterGatherCurrentSolution = 8, UseAdapterCleanup = 9
+         WriteCheckpoint = 0, ReadCheckpoint = 1, Terminate = 2, UseAdapterInitialiseGrid = 3, UseAdapterInitialiseAndValidateGrid = 4, UseAdapterPlot = 5, UseAdapterRemesh = 6, UseAdapterSolveTimestep = 7, UseAdapterSolveTimestepAndValidateGrid = 8, UseAdapterSolveTimestepAndPlot = 9, UseAdapterSolveTimestepAndPlotAndValidateGrid = 10, UseAdapterGatherCurrentSolution = 11, UseAdapterCleanup = 12
       };
       
       struct PersistentRecords {
@@ -245,7 +245,7 @@ class peanoclaw::records::RepositoryState {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   06/05/2013 09:15
+    * @date   02/07/2013 18:34
     */
    class peanoclaw::records::RepositoryStatePacked { 
       

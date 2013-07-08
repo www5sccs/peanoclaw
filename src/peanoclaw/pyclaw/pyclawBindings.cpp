@@ -16,7 +16,7 @@
 #include <numpy/arrayobject.h>
 
 #include "peanoclaw/Numerics.h"
-#include "peanoclaw/pyclaw/NumericsFactory.h"
+#include "peanoclaw/NumericsFactory.h"
 #include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 #include "tarch/tests/TestCaseRegistry.h"
@@ -89,8 +89,15 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   static tarch::logging::Log _log("::pyclawBindings");
   logInfo("pyclaw_peano_new(...)", "Initializing Peano");
 
+  //Tests
+  if(true) {
+    tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
+
+//    tarch::tests::TestCaseRegistry::getInstance().getIntegrationTestCaseCollection().run();
+  }
+
   //PyClaw - this object is copied to the runner and is stored there.
-  peanoclaw::pyclaw::NumericsFactory numericsFactory;
+  peanoclaw::NumericsFactory numericsFactory;
   peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
     initializationCallback,
     boundaryConditionCallback,
@@ -264,6 +271,12 @@ void pyclaw_peano_gatherSolution(peanoclaw::runners::PeanoClawLibraryRunner* run
 extern "C"
 int pyclaw_peano_runWorker(peanoclaw::runners::PeanoClawLibraryRunner* runner)
 {
+//  if(true) {
+//    tarch::tests::TestCaseRegistry::getInstance().getIntegrationTestCaseCollection().run();
+//    exit(0);
+//  }
+
+
   if(_calledFromPython) {
     _pythonState = PyGILState_Ensure();
   }

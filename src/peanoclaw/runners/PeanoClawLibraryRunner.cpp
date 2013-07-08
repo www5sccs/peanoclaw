@@ -52,12 +52,13 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _configuration(configuration),
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
-  _numerics(numerics)
+  _numerics(numerics),
+  _validateGrid(true)
 {
   //Parallel configuration
   #ifdef Parallel
-  tarch::parallel::Node::getInstance().setTimeOutWarning(30);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(60);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(10);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(15);
   #endif
 
   peano::utils::UserInterface userInterface;
@@ -132,9 +133,19 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 #endif
 
 
-  _repository->switchToInitialiseGrid(); _repository->iterate();
+  if(_validateGrid) {
+    _repository->switchToInitialiseAndValidateGrid();
+  } else {
+    _repository->switchToInitialiseGrid();
+  }
+  _repository->iterate(); _repository->iterate(); _repository->iterate(); _repository->iterate();
   do {
     state.setInitialRefinementTriggered(false);
+    if(_validateGrid) {
+      _repository->switchToInitialiseAndValidateGrid();
+    } else {
+      _repository->switchToInitialiseGrid();
+    }
     _repository->iterate();
   } while(state.getInitialRefinementTriggered());
   state.setIsInitializing(false);
@@ -203,16 +214,6 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
  
   _repository->getState().setNumerics(_numerics);
 
-  /*if (!_repository->getState().isGridBalanced()) {
-      _repository->getState().setIsInitializing(true);
-      _repository->switchToInitialiseGrid();
-      do {
-        std::cout << "AWWWWWWW YEAH!" << std::endl;
-        _repository->iterate();
-      } while(!_repository->getState().isGridBalanced());
-      _repository->getState().setIsInitializing(false);
-  }*/
-
   _repository->getState().setGlobalTimestepEndTime(time);
   _repository->getState().setNumerics(_numerics);
   _repository->getState().setPlotNumber(_plotNumber);
@@ -228,10 +229,20 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 
     if(plotSubsteps) {
       _repository->getState().setPlotNumber(_plotNumber);
-      _repository->switchToSolveTimestepAndPlot(); _repository->iterate();
+      if(_validateGrid) {
+        _repository->switchToSolveTimestepAndPlotAndValidateGrid();
+      } else {
+        _repository->switchToSolveTimestepAndPlot();
+      }
+      _repository->iterate();
       _plotNumber++;
     } else {
-      _repository->switchToSolveTimestep(); _repository->iterate();
+      if(_validateGrid) {
+        _repository->switchToSolveTimestepAndValidateGrid();
+      } else {
+        _repository->switchToSolveTimestep();
+      }
+      _repository->iterate();
     }
 
     _repository->getState().plotStatisticsForLastGridIteration();

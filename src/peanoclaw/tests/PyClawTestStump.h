@@ -8,19 +8,15 @@
 #ifndef PEANO_APPLICATIONS_PEANOCLAW_TESTS_PYCLAWTESTSTUMP_H_
 #define PEANO_APPLICATIONS_PEANOCLAW_TESTS_PYCLAWTESTSTUMP_H_
 
-#include "peano/applications/peanoclaw/PyClaw.h"
+#include "peanoclaw/pyclaw/PyClaw.h"
 
-namespace peano {
-  namespace applications {
-    namespace peanoclaw {
-      namespace tests {
-        class PyClawTestStump;
-      }
-    }
+namespace peanoclaw {
+  namespace tests {
+    class PyClawTestStump;
   }
 }
 
-class peano::applications::peanoclaw::tests::PyClawTestStump : public peano::applications::peanoclaw::PyClaw {
+class peanoclaw::tests::PyClawTestStump : public peanoclaw::pyclaw::PyClaw {
 
   public:
     PyClawTestStump();

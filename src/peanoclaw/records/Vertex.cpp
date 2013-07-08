@@ -6,7 +6,7 @@
    }
    
    
-   peanoclaw::records::Vertex::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
+   peanoclaw::records::Vertex::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
    _indicesOfAdjacentCellDescriptions(indicesOfAdjacentCellDescriptions),
    _adjacentSubcellsEraseVeto(adjacentSubcellsEraseVeto),
    _shouldRefine(shouldRefine),
@@ -16,7 +16,8 @@
    _insideOutsideDomain(insideOutsideDomain),
    _x(x),
    _level(level),
-   _adjacentRanks(adjacentRanks) {
+   _adjacentRanks(adjacentRanks),
+   _adjacentSubtreeForksIntoOtherRank(adjacentSubtreeForksIntoOtherRank) {
       
    }
    
@@ -26,19 +27,19 @@
    
    
    peanoclaw::records::Vertex::Vertex(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords._adjacentSubcellsEraseVeto, persistentRecords._shouldRefine, persistentRecords._isHangingNode, persistentRecords._refinementControl, persistentRecords._adjacentCellsHeight, persistentRecords._insideOutsideDomain, persistentRecords._x, persistentRecords._level, persistentRecords._adjacentRanks) {
+   _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords._adjacentSubcellsEraseVeto, persistentRecords._shouldRefine, persistentRecords._isHangingNode, persistentRecords._refinementControl, persistentRecords._adjacentCellsHeight, persistentRecords._insideOutsideDomain, persistentRecords._x, persistentRecords._level, persistentRecords._adjacentRanks, persistentRecords._adjacentSubtreeForksIntoOtherRank) {
       
    }
    
    
-   peanoclaw::records::Vertex::Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
-   _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks) {
+   peanoclaw::records::Vertex::Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
+   _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks, adjacentSubtreeForksIntoOtherRank) {
       
    }
    
    
-   peanoclaw::records::Vertex::Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
-   _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
+   peanoclaw::records::Vertex::Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
+   _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks, adjacentSubtreeForksIntoOtherRank),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
    _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
       
    }
@@ -122,6 +123,8 @@
       out << getAdjacentRanks(i) << ",";
    }
    out << getAdjacentRanks(TWO_POWER_D-1) << "]";
+      out << ",";
+      out << "adjacentSubtreeForksIntoOtherRank:" << getAdjacentSubtreeForksIntoOtherRank();
       out <<  ")";
    }
    
@@ -143,7 +146,8 @@
          getInsideOutsideDomain(),
          getX(),
          getLevel(),
-         getAdjacentRanks()
+         getAdjacentRanks(),
+         getAdjacentSubtreeForksIntoOtherRank()
       );
    }
    
@@ -158,7 +162,7 @@
          {
             Vertex dummyVertex[2];
             
-            const int Attributes = 11;
+            const int Attributes = 12;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //indicesOfAdjacentCellDescriptions
                MPI_INT,		 //adjacentSubcellsEraseVeto
@@ -169,6 +173,7 @@
                MPI_DOUBLE,		 //x
                MPI_INT,		 //level
                MPI_INT,		 //adjacentRanks
+               MPI_CHAR,		 //adjacentSubtreeForksIntoOtherRank
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
             };
@@ -183,6 +188,7 @@
                DIMENSIONS,		 //x
                1,		 //level
                TWO_POWER_D,		 //adjacentRanks
+               1,		 //adjacentSubtreeForksIntoOtherRank
                1,		 //numberOfAdjacentRefinedCells
                1		 // end/displacement flag
             };
@@ -200,8 +206,9 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._x[0]))), 		&disp[6] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._level))), 		&disp[7] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentRanks[0]))), 		&disp[8] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._numberOfAdjacentRefinedCells))), 		&disp[9] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertex[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[10] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentSubtreeForksIntoOtherRank))), 		&disp[9] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._numberOfAdjacentRefinedCells))), 		&disp[10] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertex[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[11] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -216,7 +223,7 @@
          {
             Vertex dummyVertex[2];
             
-            const int Attributes = 13;
+            const int Attributes = 14;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //indicesOfAdjacentCellDescriptions
                MPI_INT,		 //adjacentSubcellsEraseVeto
@@ -228,6 +235,7 @@
                MPI_DOUBLE,		 //x
                MPI_INT,		 //level
                MPI_INT,		 //adjacentRanks
+               MPI_CHAR,		 //adjacentSubtreeForksIntoOtherRank
                MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
@@ -244,6 +252,7 @@
                DIMENSIONS,		 //x
                1,		 //level
                TWO_POWER_D,		 //adjacentRanks
+               1,		 //adjacentSubtreeForksIntoOtherRank
                1,		 //adjacentCellsHeightOfPreviousIteration
                1,		 //numberOfAdjacentRefinedCells
                1		 // end/displacement flag
@@ -263,9 +272,10 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._x[0]))), 		&disp[7] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._level))), 		&disp[8] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentRanks[0]))), 		&disp[9] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._adjacentCellsHeightOfPreviousIteration))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._numberOfAdjacentRefinedCells))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertex[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentSubtreeForksIntoOtherRank))), 		&disp[10] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._adjacentCellsHeightOfPreviousIteration))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._numberOfAdjacentRefinedCells))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertex[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[13] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -478,12 +488,12 @@
    
    
    peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
       
    }
    
    
-   peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
+   peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
    _indicesOfAdjacentCellDescriptions(indicesOfAdjacentCellDescriptions),
    _adjacentCellsHeight(adjacentCellsHeight),
    _x(x),
@@ -494,34 +504,35 @@
       setIsHangingNode(isHangingNode);
       setRefinementControl(refinementControl);
       setInsideOutsideDomain(insideOutsideDomain);
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      setAdjacentSubtreeForksIntoOtherRank(adjacentSubtreeForksIntoOtherRank);
+      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
       
    }
    
    peanoclaw::records::VertexPacked::VertexPacked() {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._x, persistentRecords._level, persistentRecords._adjacentRanks) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+   _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._x, persistentRecords._level, persistentRecords._adjacentRanks, persistentRecords.getAdjacentSubtreeForksIntoOtherRank()) {
+      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
       
    }
    
    
-   peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
-   _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+   peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
+   _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks, adjacentSubtreeForksIntoOtherRank) {
+      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
       
    }
    
    
-   peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
-   _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
+   peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
+   _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks, adjacentSubtreeForksIntoOtherRank),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
    _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-      assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
       
    }
    
@@ -592,6 +603,8 @@
       out << getAdjacentRanks(i) << ",";
    }
    out << getAdjacentRanks(TWO_POWER_D-1) << "]";
+      out << ",";
+      out << "adjacentSubtreeForksIntoOtherRank:" << getAdjacentSubtreeForksIntoOtherRank();
       out <<  ")";
    }
    
@@ -613,7 +626,8 @@
          getInsideOutsideDomain(),
          getX(),
          getLevel(),
-         getAdjacentRanks()
+         getAdjacentRanks(),
+         getAdjacentSubtreeForksIntoOtherRank()
       );
    }
    
@@ -2673,7 +2687,7 @@ peanoclaw::records::Vertex::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::Vertex::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
+peanoclaw::records::Vertex::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
 _indicesOfAdjacentCellDescriptions(indicesOfAdjacentCellDescriptions),
 _adjacentSubcellsEraseVeto(adjacentSubcellsEraseVeto),
 _shouldRefine(shouldRefine),
@@ -2681,7 +2695,8 @@ _isHangingNode(isHangingNode),
 _refinementControl(refinementControl),
 _adjacentCellsHeight(adjacentCellsHeight),
 _insideOutsideDomain(insideOutsideDomain),
-_adjacentRanks(adjacentRanks) {
+_adjacentRanks(adjacentRanks),
+_adjacentSubtreeForksIntoOtherRank(adjacentSubtreeForksIntoOtherRank) {
 
 }
 
@@ -2691,19 +2706,19 @@ peanoclaw::records::Vertex::Vertex() {
 
 
 peanoclaw::records::Vertex::Vertex(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords._adjacentSubcellsEraseVeto, persistentRecords._shouldRefine, persistentRecords._isHangingNode, persistentRecords._refinementControl, persistentRecords._adjacentCellsHeight, persistentRecords._insideOutsideDomain, persistentRecords._adjacentRanks) {
+_persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords._adjacentSubcellsEraseVeto, persistentRecords._shouldRefine, persistentRecords._isHangingNode, persistentRecords._refinementControl, persistentRecords._adjacentCellsHeight, persistentRecords._insideOutsideDomain, persistentRecords._adjacentRanks, persistentRecords._adjacentSubtreeForksIntoOtherRank) {
 
 }
 
 
-peanoclaw::records::Vertex::Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
-_persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks) {
+peanoclaw::records::Vertex::Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
+_persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks, adjacentSubtreeForksIntoOtherRank) {
 
 }
 
 
-peanoclaw::records::Vertex::Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
-_persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
+peanoclaw::records::Vertex::Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
+_persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks, adjacentSubtreeForksIntoOtherRank),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
 _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
 
 }
@@ -2779,6 +2794,8 @@ out << "adjacentRanks:[";
       out << getAdjacentRanks(i) << ",";
    }
    out << getAdjacentRanks(TWO_POWER_D-1) << "]";
+out << ",";
+out << "adjacentSubtreeForksIntoOtherRank:" << getAdjacentSubtreeForksIntoOtherRank();
 out <<  ")";
 }
 
@@ -2798,7 +2815,8 @@ return VertexPacked(
    getAdjacentCellsHeightOfPreviousIteration(),
    getNumberOfAdjacentRefinedCells(),
    getInsideOutsideDomain(),
-   getAdjacentRanks()
+   getAdjacentRanks(),
+   getAdjacentSubtreeForksIntoOtherRank()
 );
 }
 
@@ -2813,7 +2831,7 @@ void peanoclaw::records::Vertex::initDatatype() {
    {
       Vertex dummyVertex[2];
       
-      const int Attributes = 8;
+      const int Attributes = 9;
       MPI_Datatype subtypes[Attributes] = {
          MPI_INT,		 //indicesOfAdjacentCellDescriptions
          MPI_INT,		 //adjacentSubcellsEraseVeto
@@ -2821,6 +2839,7 @@ void peanoclaw::records::Vertex::initDatatype() {
          MPI_CHAR,		 //isHangingNode
          MPI_INT,		 //refinementControl
          MPI_INT,		 //adjacentRanks
+         MPI_CHAR,		 //adjacentSubtreeForksIntoOtherRank
          MPI_INT,		 //numberOfAdjacentRefinedCells
          MPI_UB		 // end/displacement flag
       };
@@ -2832,6 +2851,7 @@ void peanoclaw::records::Vertex::initDatatype() {
          1,		 //isHangingNode
          1,		 //refinementControl
          TWO_POWER_D,		 //adjacentRanks
+         1,		 //adjacentSubtreeForksIntoOtherRank
          1,		 //numberOfAdjacentRefinedCells
          1		 // end/displacement flag
       };
@@ -2846,8 +2866,9 @@ void peanoclaw::records::Vertex::initDatatype() {
       MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._isHangingNode))), 		&disp[3] );
       MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._refinementControl))), 		&disp[4] );
       MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentRanks[0]))), 		&disp[5] );
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._numberOfAdjacentRefinedCells))), 		&disp[6] );
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertex[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[7] );
+      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentSubtreeForksIntoOtherRank))), 		&disp[6] );
+      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._numberOfAdjacentRefinedCells))), 		&disp[7] );
+      MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertex[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[8] );
       
       for (int i=1; i<Attributes; i++) {
          assertion1( disp[i] > disp[i-1], i );
@@ -2862,7 +2883,7 @@ void peanoclaw::records::Vertex::initDatatype() {
    {
       Vertex dummyVertex[2];
       
-      const int Attributes = 11;
+      const int Attributes = 12;
       MPI_Datatype subtypes[Attributes] = {
          MPI_INT,		 //indicesOfAdjacentCellDescriptions
          MPI_INT,		 //adjacentSubcellsEraseVeto
@@ -2872,6 +2893,7 @@ void peanoclaw::records::Vertex::initDatatype() {
          MPI_INT,		 //adjacentCellsHeight
          MPI_INT,		 //insideOutsideDomain
          MPI_INT,		 //adjacentRanks
+         MPI_CHAR,		 //adjacentSubtreeForksIntoOtherRank
          MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
          MPI_INT,		 //numberOfAdjacentRefinedCells
          MPI_UB		 // end/displacement flag
@@ -2886,6 +2908,7 @@ void peanoclaw::records::Vertex::initDatatype() {
          1,		 //adjacentCellsHeight
          1,		 //insideOutsideDomain
          TWO_POWER_D,		 //adjacentRanks
+         1,		 //adjacentSubtreeForksIntoOtherRank
          1,		 //adjacentCellsHeightOfPreviousIteration
          1,		 //numberOfAdjacentRefinedCells
          1		 // end/displacement flag
@@ -2903,9 +2926,10 @@ void peanoclaw::records::Vertex::initDatatype() {
       MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentCellsHeight))), 		&disp[5] );
       MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._insideOutsideDomain))), 		&disp[6] );
       MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentRanks[0]))), 		&disp[7] );
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._adjacentCellsHeightOfPreviousIteration))), 		&disp[8] );
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._numberOfAdjacentRefinedCells))), 		&disp[9] );
-      MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertex[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[10] );
+      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._persistentRecords._adjacentSubtreeForksIntoOtherRank))), 		&disp[8] );
+      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._adjacentCellsHeightOfPreviousIteration))), 		&disp[9] );
+      MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertex[0]._numberOfAdjacentRefinedCells))), 		&disp[10] );
+      MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertex[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[11] );
       
       for (int i=1; i<Attributes; i++) {
          assertion1( disp[i] > disp[i-1], i );
@@ -3118,12 +3142,12 @@ int peanoclaw::records::Vertex::getSenderRank() const {
 
 
 peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
 
 }
 
 
-peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
+peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
 _indicesOfAdjacentCellDescriptions(indicesOfAdjacentCellDescriptions),
 _adjacentCellsHeight(adjacentCellsHeight),
 _adjacentRanks(adjacentRanks) {
@@ -3132,34 +3156,35 @@ setShouldRefine(shouldRefine);
 setIsHangingNode(isHangingNode);
 setRefinementControl(refinementControl);
 setInsideOutsideDomain(insideOutsideDomain);
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+setAdjacentSubtreeForksIntoOtherRank(adjacentSubtreeForksIntoOtherRank);
+assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
 
 }
 
 peanoclaw::records::VertexPacked::VertexPacked() {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
 
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._adjacentRanks) {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+_persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._adjacentRanks, persistentRecords.getAdjacentSubtreeForksIntoOtherRank()) {
+assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
 
 }
 
 
-peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
-_persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks) {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
+_persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks, adjacentSubtreeForksIntoOtherRank) {
+assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
 
 }
 
 
-peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks):
-_persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
+peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
+_persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks, adjacentSubtreeForksIntoOtherRank),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
 _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-assertion((TWO_POWER_D+7 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
 
 }
 
@@ -3222,6 +3247,8 @@ out << "adjacentRanks:[";
       out << getAdjacentRanks(i) << ",";
    }
    out << getAdjacentRanks(TWO_POWER_D-1) << "]";
+out << ",";
+out << "adjacentSubtreeForksIntoOtherRank:" << getAdjacentSubtreeForksIntoOtherRank();
 out <<  ")";
 }
 
@@ -3241,7 +3268,8 @@ return Vertex(
    getAdjacentCellsHeightOfPreviousIteration(),
    getNumberOfAdjacentRefinedCells(),
    getInsideOutsideDomain(),
-   getAdjacentRanks()
+   getAdjacentRanks(),
+   getAdjacentSubtreeForksIntoOtherRank()
 );
 }
 

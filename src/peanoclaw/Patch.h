@@ -120,10 +120,6 @@ public:
 private:
   typedef peanoclaw::records::CellDescription CellDescription;
 
-
-  //TODO unterweg debug
-  static int counter;
-
   /**
    * Logging device.
    */
@@ -197,13 +193,15 @@ public:
   Patch();
 
   Patch(
-//    const tarch::la::Vector<DIMENSIONS, double>& position,
-//    const tarch::la::Vector<DIMENSIONS, double>& size,
     const peanoclaw::Cell& cell
   );
 
   Patch(
     CellDescription& cellDescription
+  );
+
+  Patch(
+    int cellDescriptionIndex
   );
 
   /**
@@ -235,6 +233,12 @@ public:
   void loadCellDescription(int cellDescriptionIndex);
 
   void reloadCellDescription();
+
+  /**
+   * Deletes the complete patch. After this method the patch itself
+   * is not valid anymore.
+   */
+  void deleteData();
 
   const tarch::la::Vector<DIMENSIONS, double> getSize() const;
 
@@ -743,16 +747,6 @@ public:
   void switchToLeaf();
 
   /**
-   * Increases the number of performed updates of the patch state (i.e.
-   * virtual, non-virtual, leaf) within this grid iteration.
-   */
-  void increaseNumberOfPatchStateUpdate();
-
-  void decreaseNumberOfPatchStateUpdate();
-
-  int getNumberOfPatchStateUpdates();
-
-  /**
    * Returns whether this patch should restrict to virtual patches.
    */
   bool shouldRestrict();
@@ -810,6 +804,20 @@ public:
    * is overlapped by neighboring ghostlayers.
    */
   tarch::la::Vector<DIMENSIONS, double> getUpperNeighboringGhostlayerBounds() const;
+
+  #ifdef Parallel
+  /**
+   * Sets whether this patch is a remote patchm, i.e. if it actually resides on another
+   * MPI rank.
+   */
+  void setIsRemote(bool isRemote);
+
+  /**
+   * Returns whether this patch is a remote patch, i.e. if actually resides on another
+   * MPI-rank.
+   */
+  bool isRemote();
+  #endif
 };
 
 std::ostream& operator<<(std::ostream& out, const peanoclaw::Patch& patch);

@@ -100,7 +100,7 @@ public:
     int                                              localRank
   );
 
-  void deleteAdjacentPatches(
+  void deleteNonRemoteAdjacentPatches(
     const peanoclaw::Vertex&                         fineGridVertex,
     const tarch::la::Vector<DIMENSIONS,double>&      fineGridX,
     int                                              level,

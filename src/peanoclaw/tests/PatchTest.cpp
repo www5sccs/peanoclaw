@@ -5,16 +5,16 @@
  *      Author: Kristof Unterweger
  */
 
-#include "peano/applications/peanoclaw/tests/PatchTest.h"
+#include "peanoclaw/tests/PatchTest.h"
 
-#include "peano/applications/peanoclaw/tests/Helper.h"
+#include "peanoclaw/tests/Helper.h"
 
 #include "peano/utils/Globals.h"
 
-#include "peano/applications/peanoclaw/Patch.h"
+#include "peanoclaw/Patch.h"
 
 #include "tarch/tests/TestCaseFactory.h"
-registerTest(peano::applications::peanoclaw::tests::PatchTest)
+registerTest(peanoclaw::tests::PatchTest)
 
 
 #ifdef UseTestSpecificCompilerSettings
@@ -22,27 +22,27 @@ registerTest(peano::applications::peanoclaw::tests::PatchTest)
 #endif
 
 
-peano::applications::peanoclaw::tests::PatchTest::PatchTest():
-  tarch::tests::TestCase( "peano::applications::peanoclaw::tests::PeanoClawTest" ) {
+peanoclaw::tests::PatchTest::PatchTest():
+  tarch::tests::TestCase( "peanoclaw::tests::PeanoClawTest" ) {
 }
 
 
-peano::applications::peanoclaw::tests::PatchTest::~PatchTest() {
+peanoclaw::tests::PatchTest::~PatchTest() {
 }
 
 
-void peano::applications::peanoclaw::tests::PatchTest::setUp() {
+void peanoclaw::tests::PatchTest::setUp() {
 }
 
 
-void peano::applications::peanoclaw::tests::PatchTest::run() {
+void peanoclaw::tests::PatchTest::run() {
   testMethod( testFillingOfUNewArray );
   testMethod( testFillingOfUOldArray );
   testMethod( testInvalidPatch );
   testMethod(testCoarsePatchTimeInterval);
 }
 
-void peano::applications::peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
+void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
 
 //  Patch patch(
 //    0.0,    //Position
@@ -91,7 +91,7 @@ void peano::applications::peanoclaw::tests::PatchTest::testFillingOfUNewArray() 
 //  }
 }
 
-void peano::applications::peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
+void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
 //  Patch patch(
 //    0.0,    //Position
 //    1.0,    //Size
@@ -147,13 +147,13 @@ void peano::applications::peanoclaw::tests::PatchTest::testFillingOfUOldArray() 
 //  }
 }
 
-void peano::applications::peanoclaw::tests::PatchTest::testInvalidPatch() {
+void peanoclaw::tests::PatchTest::testInvalidPatch() {
   Patch patch;
   validate(!patch.isValid());
 }
 
-void peano::applications::peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
-  peano::applications::peanoclaw::Patch coarsePatch = createPatch(
+void peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
+  peanoclaw::Patch coarsePatch = createPatch(
     2,       //Unknowns per subcell
     0,       //Aux fields per subcell
     3,       //Subdivision factor
@@ -165,7 +165,7 @@ void peano::applications::peanoclaw::tests::PatchTest::testCoarsePatchTimeInterv
     0.0,     //Timestep size
     0.0      //Minimal neighbor time
   );
-  peano::applications::peanoclaw::Patch finePatches[THREE_POWER_D];
+  peanoclaw::Patch finePatches[THREE_POWER_D];
 
   for(int i = 0; i < THREE_POWER_D; i++) {
     finePatches[i] = createPatch(

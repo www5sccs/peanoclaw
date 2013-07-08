@@ -57,6 +57,8 @@ private:
 
   peanoclaw::Numerics& _numerics;
 
+  bool _validateGrid;
+
 public:
   /**
    * Sets everything up but does not start any grid-traversal, yet.

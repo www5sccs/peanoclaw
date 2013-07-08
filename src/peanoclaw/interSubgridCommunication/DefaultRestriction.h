@@ -9,6 +9,8 @@
 #define PEANOCLAW_INTERSUBGRIDCOMMUNICATION_DEFAULTRESTRICTION_H_
 
 #include "peanoclaw/interSubgridCommunication/Restriction.h"
+#include "peanoclaw/tests/GhostLayerCompositorTest.h"
+#include "peanoclaw/tests/GridLevelTransferTest.h"
 
 #include "tarch/la/Vector.h"
 
@@ -26,6 +28,9 @@ class peanoclaw::interSubgridCommunication::DefaultRestriction
      * Logging device for the trace macros.
      */
     static tarch::logging::Log  _log;
+
+    friend class peanoclaw::tests::GhostLayerCompositorTest;
+    friend class peanoclaw::tests::GridLevelTransferTest;
 
     /**
      * Returns the area of the region where the two given patches overlap.

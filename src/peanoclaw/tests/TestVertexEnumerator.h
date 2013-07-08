@@ -8,16 +8,12 @@
 #ifndef _PEANO_APPLICATIONS_PEANOCLAW_TESTS_TESTENUMERATOR_H_
 #define _PEANO_APPLICATIONS_PEANOCLAW_TESTS_TESTENUMERATOR_H_
 
-#include "peano/kernel/gridinterface/VertexEnumerator.h"
+#include "peano/grid/VertexEnumerator.h"
 #include <sstream>
 
-namespace peano {
-  namespace applications {
-    namespace peanoclaw {
-      namespace tests {
-        class TestVertexEnumerator;
-      }
-    }
+namespace peanoclaw {
+  namespace tests {
+    class TestVertexEnumerator;
   }
 }
 
@@ -28,8 +24,8 @@ namespace peano {
  * This Enumerator implements an identity mapping.
  * @author Kristof Unterweger, Michael Lieb
  */
-class peano::applications::peanoclaw::tests::TestVertexEnumerator
-  : public peano::kernel::gridinterface::VertexEnumerator
+class peanoclaw::tests::TestVertexEnumerator
+  : public peano::grid::VertexEnumerator
 {
   private:
     /**
@@ -61,11 +57,13 @@ class peano::applications::peanoclaw::tests::TestVertexEnumerator
     Vector                                  getVertexPosition() const { return Vector(-1); };
     Vector                                  getCellCenter() const {return Vector(-2.0);};
     int                                     getLevel() const {return -1;};
-    peano::kernel::gridinterface::CellFlags getCellFlags() const;
+    peano::grid::CellFlags getCellFlags() const;
     Vector                                  getCellSize() const;
     bool                                    isStationarySubdomain() const {return false;}
     bool                                    subdomainContainsParallelBoundary() const {return true;}
     int                                     cell(const LocalVertexIntegerIndex& localVertexNumber) const { return 0; }
+    bool                                    overlaps(const Vector& offset, const Vector& size) const { return false; };
+    bool                                    isVertexAtPatchBoundaryWithinRegularSubtree(const LocalVertexIntegerIndex& localVertexNumber) const { return true; }
     std::string                             toString() const {
       std::stringstream ss;
       ss << "This is a TestEnumerator." <<std::endl;

@@ -140,6 +140,17 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
       const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
     );
 
+    /**
+     * Retrieves whether a patch surrounded by the given vertices
+     * is adjacent to a subdomain residing on a different MPI
+     * rank.
+     */
+    bool isPatchAdjacentToRemoteRank (
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
+    );
+
+
   public:
     GridLevelTransfer(
       bool useDimensionalSplitting,
@@ -156,18 +167,30 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
 //      bool   needsToHoldGridData
 //    );
 
+#ifdef Parallel
     /**
-     * Called at least once before stepDown is called for the according patch.
+     * Called whenever a patch is merged from a remote MPI rank during
+     * master/worker communication.
      *
-     * Used for switching the patch to a virtual state if necessary.
-     *
-     * @param needsToHoldGridData Indicates wether this patch is supposed to
+     * @param cellDescriptionIndex The index for the current patch.
+     * @param needsToHoldGridData Indicates whether this patch is supposed to
      * hold grid data. Either as a leaf patch of as a virtual patch.
      */
-//    void updatePatchStateBeforeStepDown(
-//      Patch& finePatch,
-//      bool   needsToHoldGridData
+    void updatePatchStateDuringMergeWithWorker(
+      int  localCellDescriptionIndex,
+      int  remoteCellDescriptionIndex
+    );
+
+    /**
+     * Called whenever a patch is merged from a remote MPI rank during
+     * neighbor communication.
+     *
+     * @param cellDescriptionIndex The index for the current patch.
+     */
+//    void updatePatchStateDuringMergeWithNeighbor(
+//      int  localCellDescriptionIndex
 //    );
+#endif
 
     /**
      * Called at least once before stepDown is called for the according patch.
@@ -212,8 +235,10 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      * called in the same iteration for the same patch.
      */
     void updatePatchStateAfterStepUp(
-      Patch& finePatch,
-      bool   isPeanoCellLeaf
+      Patch&                               finePatch,
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
+      bool                                 isPeanoCellLeaf
     );
 
     /**

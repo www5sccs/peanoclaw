@@ -46,12 +46,6 @@ private:
 
   AddPatchToSolutionCallback     _addPatchToSolutionCallback;
 
-  peanoclaw::interSubgridCommunication::Interpolation*  _interpolation;
-
-  peanoclaw::interSubgridCommunication::Restriction*    _restriction;
-
-  peanoclaw::interSubgridCommunication::FluxCorrection* _fluxCorrection;
-
   double _totalSolverCallbackTime;
 
 public:
@@ -93,37 +87,37 @@ public:
    * by means of the interpolation method implemented in Python. I.e. this
    * method can only be called if providesInterpolation() returns <tt>true</tt>.
    */
-  void interpolate(
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-    const peanoclaw::Patch& source,
-    peanoclaw::Patch&        destination,
-    bool interpolateToUOld = true,
-    bool interpolateToCurrentTime = true
-  ) const;
+//  void interpolate(
+//    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
+//    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+//    const peanoclaw::Patch& source,
+//    peanoclaw::Patch&        destination,
+//    bool interpolateToUOld = true,
+//    bool interpolateToCurrentTime = true
+//  ) const;
 
   /**
    * Performs the restriction between the given source and destination
    * by means of the restriction method implemented in Python. I.e. this
    * method can only be called if providesRestriction() returns <tt>true</tt>.
    */
-  void restrict (
-    const peanoclaw::Patch& source,
-    peanoclaw::Patch&       destination,
-    bool restrictOnlyOverlappedAreas
-  ) const;
+//  void restrict (
+//    const peanoclaw::Patch& source,
+//    peanoclaw::Patch&       destination,
+//    bool restrictOnlyOverlappedAreas
+//  ) const;
 
   /**
    * Performs the flux correction between the given source and destination
    * by means of the restriction method implemented in Python. I.e. this
    * method can only be called if providesRestriction() returns <tt>true</tt>.
    */
-  void applyFluxCorrection (
-    const Patch& finePatch,
-    Patch& coarsePatch,
-    int dimension,
-    int direction
-  ) const;
+//  void applyFluxCorrection (
+//    const Patch& finePatch,
+//    Patch& coarsePatch,
+//    int dimension,
+//    int direction
+//  ) const;
 
   /**
    * @see peanoclaw::Numerics

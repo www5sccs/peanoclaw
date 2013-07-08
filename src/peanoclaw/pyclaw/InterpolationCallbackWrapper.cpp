@@ -14,6 +14,10 @@ peanoclaw::pyclaw::InterpolationCallbackWrapper::InterpolationCallbackWrapper(
 
 }
 
+peanoclaw::pyclaw::InterpolationCallbackWrapper::~InterpolationCallbackWrapper() {
+
+}
+
 void peanoclaw::pyclaw::InterpolationCallbackWrapper::interpolate (
   const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
   const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,

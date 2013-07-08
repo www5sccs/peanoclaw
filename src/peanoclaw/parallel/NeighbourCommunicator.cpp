@@ -91,10 +91,17 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   int cellDescriptionIndex
 ) {
   logTraceInWith3Arguments("sendPatch", cellDescriptionIndex, _position, _level);
+
   if(cellDescriptionIndex != -1) {
     sendCellDescription(cellDescriptionIndex);
 
     CellDescription cellDescription = _cellDescriptionHeap.getData(cellDescriptionIndex).at(0);
+
+    //TODO unterweg debug
+    std::cout << "Sending from " << tarch::parallel::Node::getInstance().getRank()
+        << " to " << _remoteRank << ": " << cellDescription.toString()
+        << ", position:" << _position
+        << std::endl;
 
     if(cellDescription.getUNewIndex() != -1) {
       sendDataArray(cellDescription.getUNewIndex());
@@ -129,11 +136,22 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPaddingPatch() {
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescriptionIndex) {
+  #ifdef Parallel
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
+
+  assertion(localCellDescriptionIndex > -1);
+  CellDescription localCellDescription = _cellDescriptionHeap.getData(localCellDescriptionIndex).at(0);
 
   std::vector<CellDescription> remoteCellDescriptionVector = _cellDescriptionHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
   assertionEquals2(remoteCellDescriptionVector.size(), 1, _position, _level);
   CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
+
+  assertionNumericalEquals2(localCellDescription.getPosition(), remoteCellDescription.getPosition(),
+      localCellDescription.toString(), remoteCellDescription.toString());
+  assertionNumericalEquals2(localCellDescription.getSize(), remoteCellDescription.getSize(),
+      localCellDescription.toString(), remoteCellDescription.toString());
+  assertionEquals2(localCellDescription.getLevel(), remoteCellDescription.getLevel(),
+      localCellDescription.toString(), remoteCellDescription.toString());
 
   //Load arrays and stores according indices in cell description
   if(remoteCellDescription.getAuxIndex() != -1) {
@@ -153,14 +171,16 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
   }
 
   //Copy remote cell description to local cell description
-  assertion2(localCellDescriptionIndex > 0, _position, _level);
+  assertion2(localCellDescriptionIndex >= 0, _position, _level);
   deleteArraysFromPatch(localCellDescriptionIndex);
   remoteCellDescription.setCellDescriptionIndex(localCellDescriptionIndex);
+  remoteCellDescription.setIsRemote(true); //TODO unterweg: Remote patches are currently never destroyed.
   _cellDescriptionHeap.getData(localCellDescriptionIndex).at(0) = remoteCellDescription;
   assertionEquals(_cellDescriptionHeap.getData(localCellDescriptionIndex).size(), 1);
 
   assertionEquals(_cellDescriptionHeap.getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   logTraceOut("receivePatch");
+  #endif
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {

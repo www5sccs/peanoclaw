@@ -9,6 +9,7 @@
 #define PEANOCLAW_INTERSUBGRIDCOMMUNICATION_DEFAULTFLUXCORRECTION_H_
 
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
+#include "peanoclaw/tests/GridLevelTransferTest.h"
 
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
@@ -30,6 +31,8 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
      * Logging device for the trace macros.
      */
     static tarch::logging::Log  _log;
+
+    friend class peanoclaw::tests::GridLevelTransferTest;
 
     /**
      * Returns the area of the region where the two given

@@ -25,6 +25,8 @@ class peanoclaw::pyclaw::InterpolationCallbackWrapper : public peanoclaw::interS
   public:
     InterpolationCallbackWrapper(InterPatchCommunicationCallback interpolationCallback);
 
+    virtual ~InterpolationCallbackWrapper();
+
     /**
      * @see peanoclaw::interSubgridCommunication::Interpolation
      */

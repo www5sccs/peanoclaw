@@ -74,6 +74,7 @@ class peanoclaw::records::Vertex {
   #endif
   
   #ifdef Parallel
-  persistent parallelise int    adjacentRanks[TWO_POWER_D];
+  persistent parallelise int           adjacentRanks[TWO_POWER_D];
+  persistent parallelise packed bool   adjacentSubtreeForksIntoOtherRank;
   #endif
 };

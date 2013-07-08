@@ -99,7 +99,15 @@ void peanoclaw::mappings::ValidateGrid::createHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                   fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "createHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-  // @todo Insert your code here
+
+  //TODO unterweg debug
+  std::cout<< "Create hanging vertex " << fineGridX << ", "
+      << fineGridH
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << std::endl;
+
   logTraceOutWith1Argument( "createHangingVertex(...)", fineGridVertex );
 }
 
@@ -196,7 +204,7 @@ void peanoclaw::mappings::ValidateGrid::destroyVertex(
       #endif
       << std::endl;
 
-  _validator.deleteAdjacentPatches(
+  _validator.deleteNonRemoteAdjacentPatches(
     fineGridVertex,
     fineGridX,
     coarseGridVerticesEnumerator.getLevel() + 1,
@@ -280,7 +288,7 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToNeighbour(
       int                                           level
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
-  // @todo Insert your code here
+
   logTraceOut( "prepareSendToNeighbour(...)" );
 }
 
@@ -311,7 +319,17 @@ void peanoclaw::mappings::ValidateGrid::prepareCopyToRemoteNode(
       int                                           level
 ) {
   logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
-  // @todo Insert your code here
+
+  //TODO unterweg debug
+  std::cout<< "Copying cell " << (cellCentre-0.5*cellSize) << ", "
+      << cellSize
+      << ", index=" << localCell.getCellDescriptionIndex()
+      #ifdef Parallel
+      << ", from=" << tarch::parallel::Node::getInstance().getRank()
+      << ", to=" << toRank
+      #endif
+      << std::endl;
+
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
 

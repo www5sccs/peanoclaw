@@ -12,17 +12,13 @@
 
 #include <vector>
 
-#include "peano/applications/peanoclaw/Patch.h"
-#include "peano/applications/peanoclaw/records/Data.h"
+#include "peanoclaw/Patch.h"
+#include "peanoclaw/records/Data.h"
 
 
-namespace peano {
-  namespace applications {
-    namespace peanoclaw {
-      namespace tests {
-      class PatchTest;
-      }
-    }
+namespace peanoclaw {
+  namespace tests {
+  class PatchTest;
   }
 }
 
@@ -32,9 +28,9 @@ namespace peano {
  * in Peano. Feel free to rename, remove, or duplicate it. It is not required
  * by the project but often useful if you wanna write unit tests.
  */
-class peano::applications::peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
+class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
   private:
-    typedef peano::applications::peanoclaw::records::Data Data;
+    typedef peanoclaw::records::Data Data;
 
     /**
      * Test wether the filling of the uNew-Array is working properly.

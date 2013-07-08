@@ -128,7 +128,7 @@ def setup_package():
         setup(**setup_dict)
         
         from subprocess import call
-        call("svn checkout -r770 svn://svn.code.sf.net/p/peano/code/trunk ../p3", shell=True)
+        call("svn checkout -r851 svn://svn.code.sf.net/p/peano/code/trunk ../p3", shell=True)
         
         return
 

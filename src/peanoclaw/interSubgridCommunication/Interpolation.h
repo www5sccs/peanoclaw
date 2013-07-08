@@ -33,6 +33,9 @@ class peanoclaw::interSubgridCommunication::Interpolation {
     static tarch::logging::Log _log;
 
   public:
+
+    virtual ~Interpolation(){};
+
     /**
      * Copies data from the source patch to the destination patch. The difference
      * to the method copyGhostLayerDataBlock is that in this method a discrete

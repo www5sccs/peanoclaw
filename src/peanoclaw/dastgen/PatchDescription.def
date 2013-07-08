@@ -111,7 +111,7 @@ class peanoclaw::records::PatchDescription {
    * grid iterations. This is due to the fact that the ghostlayer has
    * to be filled correctly first.
    */
-  //parallelise persistent int skipGridIterations;
+  parallelise persistent int skipGridIterations;
   
   /**
    * The age of this patch in terms of grid iterations. This means

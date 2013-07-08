@@ -29,6 +29,9 @@ namespace peanoclaw {
 class peanoclaw::interSubgridCommunication::FluxCorrection {
 
   public:
+
+    virtual ~FluxCorrection(){};
+
     /**
      * Applies the correction on the given coarse patch.
      */

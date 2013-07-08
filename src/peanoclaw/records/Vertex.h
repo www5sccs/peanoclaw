@@ -34,7 +34,7 @@ namespace peanoclaw {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   06/05/2013 09:15
+    * @date   02/07/2013 18:34
     */
    class peanoclaw::records::Vertex { 
       
@@ -77,6 +77,7 @@ namespace peanoclaw {
             #else
             tarch::la::Vector<TWO_POWER_D,int> _adjacentRanks;
             #endif
+            bool _adjacentSubtreeForksIntoOtherRank;
             /**
              * Generated
              */
@@ -85,7 +86,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+            PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             
             /**
@@ -440,6 +441,26 @@ namespace peanoclaw {
             
             
             
+            inline bool getAdjacentSubtreeForksIntoOtherRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _adjacentSubtreeForksIntoOtherRank;
+            }
+            
+            
+            
+            inline void setAdjacentSubtreeForksIntoOtherRank(const bool& adjacentSubtreeForksIntoOtherRank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _adjacentSubtreeForksIntoOtherRank = adjacentSubtreeForksIntoOtherRank;
+            }
+            
+            
+            
          };
          
       private: 
@@ -461,12 +482,12 @@ namespace peanoclaw {
          /**
           * Generated
           */
-         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
          
          /**
           * Generated
           */
-         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
          
          /**
           * Generated
@@ -981,6 +1002,26 @@ namespace peanoclaw {
          }
          
          
+         
+         inline bool getAdjacentSubtreeForksIntoOtherRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._adjacentSubtreeForksIntoOtherRank;
+         }
+         
+         
+         
+         inline void setAdjacentSubtreeForksIntoOtherRank(const bool& adjacentSubtreeForksIntoOtherRank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._adjacentSubtreeForksIntoOtherRank = adjacentSubtreeForksIntoOtherRank;
+         }
+         
+         
          /**
           * Generated
           */
@@ -1073,7 +1114,7 @@ namespace peanoclaw {
        *
        * 		   build date: 12-04-2013 09:18
        *
-       * @date   06/05/2013 09:15
+       * @date   02/07/2013 18:34
        */
       class peanoclaw::records::VertexPacked { 
          
@@ -1097,6 +1138,7 @@ namespace peanoclaw {
                 |  isHangingNode	| startbit TWO_POWER_D + 1	| #bits 1
                 |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
                 |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
+                |  adjacentSubtreeForksIntoOtherRank	| startbit TWO_POWER_D + 7	| #bits 1
                 */
                short int _packedRecords0;
                
@@ -1108,7 +1150,7 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+               PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                
                
                /**
@@ -1495,6 +1537,29 @@ namespace peanoclaw {
                
                
                
+               inline bool getAdjacentSubtreeForksIntoOtherRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (TWO_POWER_D + 7);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+               }
+               
+               
+               
+               inline void setAdjacentSubtreeForksIntoOtherRank(const bool& adjacentSubtreeForksIntoOtherRank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (TWO_POWER_D + 7);
+   _packedRecords0 = static_cast<short int>( adjacentSubtreeForksIntoOtherRank ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+               }
+               
+               
+               
             };
             
          private: 
@@ -1516,12 +1581,12 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             /**
              * Generated
              */
-            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             /**
              * Generated
@@ -2075,6 +2140,29 @@ namespace peanoclaw {
             }
             
             
+            
+            inline bool getAdjacentSubtreeForksIntoOtherRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               short int mask = 1 << (TWO_POWER_D + 7);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+            }
+            
+            
+            
+            inline void setAdjacentSubtreeForksIntoOtherRank(const bool& adjacentSubtreeForksIntoOtherRank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               short int mask = 1 << (TWO_POWER_D + 7);
+   _persistentRecords._packedRecords0 = static_cast<short int>( adjacentSubtreeForksIntoOtherRank ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+            }
+            
+            
             /**
              * Generated
              */
@@ -2164,7 +2252,7 @@ namespace peanoclaw {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   06/05/2013 09:15
+          * @date   02/07/2013 18:34
           */
          class peanoclaw::records::Vertex { 
             
@@ -2868,7 +2956,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   06/05/2013 09:15
+             * @date   02/07/2013 18:34
              */
             class peanoclaw::records::VertexPacked { 
                
@@ -3633,7 +3721,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   06/05/2013 09:15
+             * @date   02/07/2013 18:34
              */
             class peanoclaw::records::Vertex { 
                
@@ -4525,7 +4613,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   06/05/2013 09:15
+                * @date   02/07/2013 18:34
                 */
                class peanoclaw::records::VertexPacked { 
                   
@@ -5474,7 +5562,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   06/05/2013 09:15
+                * @date   02/07/2013 18:34
                 */
                class peanoclaw::records::Vertex { 
                   
@@ -5511,6 +5599,7 @@ namespace peanoclaw {
                         #else
                         tarch::la::Vector<TWO_POWER_D,int> _adjacentRanks;
                         #endif
+                        bool _adjacentSubtreeForksIntoOtherRank;
                         /**
                          * Generated
                          */
@@ -5519,7 +5608,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         
                         /**
@@ -5796,6 +5885,26 @@ namespace peanoclaw {
                         
                         
                         
+                        inline bool getAdjacentSubtreeForksIntoOtherRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           return _adjacentSubtreeForksIntoOtherRank;
+                        }
+                        
+                        
+                        
+                        inline void setAdjacentSubtreeForksIntoOtherRank(const bool& adjacentSubtreeForksIntoOtherRank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           _adjacentSubtreeForksIntoOtherRank = adjacentSubtreeForksIntoOtherRank;
+                        }
+                        
+                        
+                        
                      };
                      
                   private: 
@@ -5817,12 +5926,12 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                      
                      /**
                       * Generated
                       */
-                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                      
                      /**
                       * Generated
@@ -6233,6 +6342,26 @@ namespace peanoclaw {
                      }
                      
                      
+                     
+                     inline bool getAdjacentSubtreeForksIntoOtherRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _persistentRecords._adjacentSubtreeForksIntoOtherRank;
+                     }
+                     
+                     
+                     
+                     inline void setAdjacentSubtreeForksIntoOtherRank(const bool& adjacentSubtreeForksIntoOtherRank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _persistentRecords._adjacentSubtreeForksIntoOtherRank = adjacentSubtreeForksIntoOtherRank;
+                     }
+                     
+                     
                      /**
                       * Generated
                       */
@@ -6325,7 +6454,7 @@ namespace peanoclaw {
                    *
                    * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   06/05/2013 09:15
+                   * @date   02/07/2013 18:34
                    */
                   class peanoclaw::records::VertexPacked { 
                      
@@ -6347,6 +6476,7 @@ namespace peanoclaw {
                             |  isHangingNode	| startbit TWO_POWER_D + 1	| #bits 1
                             |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
                             |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
+                            |  adjacentSubtreeForksIntoOtherRank	| startbit TWO_POWER_D + 7	| #bits 1
                             */
                            short int _packedRecords0;
                            
@@ -6358,7 +6488,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+                           PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                            
                            
                            /**
@@ -6667,6 +6797,29 @@ namespace peanoclaw {
                            
                            
                            
+                           inline bool getAdjacentSubtreeForksIntoOtherRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              short int mask = 1 << (TWO_POWER_D + 7);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                           }
+                           
+                           
+                           
+                           inline void setAdjacentSubtreeForksIntoOtherRank(const bool& adjacentSubtreeForksIntoOtherRank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              short int mask = 1 << (TWO_POWER_D + 7);
+   _packedRecords0 = static_cast<short int>( adjacentSubtreeForksIntoOtherRank ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                           }
+                           
+                           
+                           
                         };
                         
                      private: 
@@ -6688,12 +6841,12 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         /**
                          * Generated
                          */
-                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks);
+                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         /**
                          * Generated
@@ -7140,6 +7293,29 @@ namespace peanoclaw {
                            assertion(elementIndex<TWO_POWER_D);
                            _persistentRecords._adjacentRanks[elementIndex]= adjacentRanks;
                            
+                        }
+                        
+                        
+                        
+                        inline bool getAdjacentSubtreeForksIntoOtherRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           short int mask = 1 << (TWO_POWER_D + 7);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+                        }
+                        
+                        
+                        
+                        inline void setAdjacentSubtreeForksIntoOtherRank(const bool& adjacentSubtreeForksIntoOtherRank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           short int mask = 1 << (TWO_POWER_D + 7);
+   _persistentRecords._packedRecords0 = static_cast<short int>( adjacentSubtreeForksIntoOtherRank ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                         }
                         
                         
