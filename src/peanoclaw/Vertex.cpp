@@ -148,7 +148,7 @@ void peanoclaw::Vertex::applyCoarseGridCorrection(
 
   //Apply coarse grid correction
   interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, numerics, false);
-  ghostLayerCompositor.applyCoarseGridCorrection();
+  ghostLayerCompositor.applyFluxCorrection();
 }
 
 void peanoclaw::Vertex::setShouldRefine(bool shouldRefine) {

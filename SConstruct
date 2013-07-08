@@ -59,8 +59,7 @@ linkerflags = []
 libpath = []
 libs = []
 
-p3Path='../p3/src'
-
+p3Path='../p3'
 cpppath.append(p3Path)
 clawpackPath='../src/clawpack'
 
@@ -130,7 +129,6 @@ elif multicore == 'openmp':
    ompDir = os.getenv ( 'OMP_DIR', '' )
    cppdefines.append('SharedOMP')
    cpppath.append(ompDir + '/include')   
-   #libpath.append(ompDir + '/build/' + tbbArch)
    pass
 elif multicore == 'tbb':
    libs.append('pthread')
@@ -153,14 +151,14 @@ elif multicore == 'tbb':
           
    if ( build == 'debug' ):
       libs.append ('tbb_debug')
-      tbbArch = tbbArch + '_debug'     
+      tbbArch = tbbArch     
    else:
       libs.append ('tbb')
-      tbbArch = tbbArch + '_release'      
+      tbbArch = tbbArch
 
    cppdefines.append('SharedTBB')
    cpppath.append(tbbDir + '/include')   
-   libpath.append(tbbDir+'/build/'+tbbArch)
+   libpath.append(tbbDir+'/lib/'+tbbArch)
 elif multicore == 'opencl':
    libs.append('OpenCL')
    libs.append ('pthread')
@@ -448,7 +446,8 @@ sourcesParallel = [
  Glob(buildpath + 'kernel/peano/parallel/configurations/*.cpp'),
  Glob(buildpath + 'kernel/peano/parallel/loadbalancing/*.cpp'),
  Glob(buildpath + 'kernel/peano/parallel/messages/*.cpp'),
- Glob(buildpath + 'kernel/peano/parallel/tests/*.cpp')
+ Glob(buildpath + 'kernel/peano/parallel/tests/*.cpp'),
+ Glob(buildpath + 'kernel/tarch/mpianalysis/*.cpp')
 ]
 
 
