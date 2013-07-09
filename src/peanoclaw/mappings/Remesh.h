@@ -100,31 +100,12 @@ class peanoclaw::mappings::Remesh {
     bool   _minimalPatchIsAllowedToAdvanceInTime;
     bool   _minimalPatchShouldSkipGridIteration;
 
-    bool _useDimensionalSplitting;
+    bool _useDimensionalSplittingOptimization;
 
     int _sentNeighborData;
     int _receivedNeighborData;
 
     peanoclaw::State* _state;
-
-//    void dataExchange_receive(
-//      peanoclaw::Cell&  localCell,
-//      const peanoclaw::Cell&  masterOrWorkerCell,
-//      int                                       fromRank,
-//      const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
-//      const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-//      int                                       level,
-//      bool                                      forkOrJoin
-//    );
-//
-//    void dataExchange_send(
-//      peanoclaw::Cell&  localCell,
-//      int  toRank,
-//      const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
-//      const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
-//      int                                       level,
-//      bool                                      forkOrJoin
-//    );
 
   public:
     /**

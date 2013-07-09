@@ -1,0 +1,29 @@
+/*
+ * GhostlayerTraversal.cpph
+ *
+ *  Created on: Jul 8, 2013
+ *      Author: kristof
+ */
+
+#include "peanoclaw/Area.h"
+
+#include "peano/utils/Loop.h"
+
+template<class LoopBody>
+peanoclaw::interSubgridCommunication::aspects::CornerTraversal<LoopBody>::CornerTraversal(
+  Patch& patch,
+  const LoopBody& loopBody
+) {
+
+  tarch::la::Vector<DIMENSIONS,int> size(patch.getGhostLayerWidth());
+
+  dfor(cornerIndex, 2) {
+    tarch::la::Vector<DIMENSIONS,int> offset
+      = tarch::la::multiplyComponents(cornerIndex, patch.getSubdivisionFactor() + patch.getGhostLayerWidth())
+        - patch.getGhostLayerWidth();
+    Area area(offset, size);
+
+    loopBody(patch, area, cornerIndex);
+  }
+}
+

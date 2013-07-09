@@ -52,7 +52,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   int ghostlayerWidth,
   double initialTimestepSize,
   char* configurationFile,
-  bool useDimensionalSplitting,
+  bool useDimensionalSplittingOptimization,
   InitializationCallback initializationCallback,
   BoundaryConditionCallback boundaryConditionCallback,
   SolverCallback solverCallback,
@@ -92,8 +92,6 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   //Tests
   if(true) {
     tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
-
-//    tarch::tests::TestCaseRegistry::getInstance().getIntegrationTestCaseCollection().run();
   }
 
   //PyClaw - this object is copied to the runner and is stored there.
@@ -176,7 +174,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     unknownsPerSubcell,
     auxiliarFieldsPerSubcell,
     initialTimestepSize,
-    useDimensionalSplitting
+    useDimensionalSplittingOptimization
   );
 
 #if defined(Parallel) 

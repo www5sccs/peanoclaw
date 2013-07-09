@@ -18,7 +18,7 @@ class peano::applications::peanoclaw::dastgen::State {
 	persistent parallelise int defaultSubdivisionFactor[DIMENSIONS];
 	persistent parallelise int defaultGhostWidthLayer;
 	persistent parallelise double initialTimestepSize;
-	persistent parallelise bool useDimensionalSplitting;
+	persistent parallelise bool useDimensionalSplittingOptimization;
 
 	//Global Timestepping	
 	persistent parallelise double globalTimestepEndTime;

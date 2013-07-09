@@ -1457,21 +1457,22 @@ void peanoclaw::mappings::Remesh::beginIteration(
     _iterationParity = peanoclaw::records::VertexDescription::EVEN;
   }
 
-  _gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(solverState.useDimensionalSplitting(), *_numerics);
+  _gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(
+                              solverState.useDimensionalSplittingOptimization(),
+                              *_numerics
+                           );
 
   _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
-
   _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
   _isInitializing = solverState.getIsInitializing();
   _averageGlobalTimeInterval = (solverState.getStartMaximumGlobalTimeInterval() + solverState.getEndMaximumGlobalTimeInterval()) / 2.0;
+  _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
+  _state = &solverState;
 
   //TODO unterweg debug
   _minimalPatchTime = std::numeric_limits<double>::max();
   _minimalTimePatch = Patch();
   _minimalTimePatchParent = Patch();
-
-  _useDimensionalSplitting = solverState.useDimensionalSplitting();
-
   _sentNeighborData = 0;
   _receivedNeighborData = 0;
 
@@ -1485,11 +1486,11 @@ void peanoclaw::mappings::Remesh::beginIteration(
       _vertexPositionToIndexMap.erase(i++);
     }
   }
- 
+
+  #ifdef Parallel
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
   peano::heap::Heap<CellDescription>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
-
-  _state = &solverState;
+  #endif
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }

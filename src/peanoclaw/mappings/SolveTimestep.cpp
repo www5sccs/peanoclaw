@@ -2,6 +2,7 @@
 
 #include "peanoclaw/mappings/SolveTimestep.h"
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/interSubgridCommunication/Extrapolation.h"
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 
@@ -585,8 +586,18 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         fineGridVerticesEnumerator
       );
 
+      //Extrapolate ghostlayer if necessary
+      if(_useDimensionalSplittingOptimization) {
+        peanoclaw::interSubgridCommunication::Extrapolation extrapolation(patch);
+        extrapolation.extrapolateGhostlayer();
+      }
+
       // Do one timestep...
-      double requiredMeshWidth = _numerics->solveTimestep(patch, maximumTimestepDueToGlobalTimestep, _useDimensionalSplitting);
+      double requiredMeshWidth = _numerics->solveTimestep(
+                                              patch,
+                                              maximumTimestepDueToGlobalTimestep,
+                                              _useDimensionalSplittingOptimization
+                                            );
       patch.setDemandedMeshWidth(requiredMeshWidth);
 
       // Coarse grid correction
@@ -726,7 +737,7 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
   _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
   _probeList = solverState.getProbeList();
-  _useDimensionalSplitting = solverState.useDimensionalSplitting();
+  _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
  
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }

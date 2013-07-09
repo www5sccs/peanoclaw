@@ -6,6 +6,7 @@
  */
 
 #include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
+#include "peanoclaw/interSubgridCommunication/aspects/FaceAdjacentPatchTraversal.h"
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
@@ -37,41 +38,11 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
     }
   }
 
-//  bool copyFromUOld = tarch::la::equals(timeFactor, 0.0);
-//  bool copyFromUNew = tarch::la::equals(timeFactor, 1.0);
-
   //TODO unterweg As soon as the virtual patches work correctly, the time interpolation can be activated
 //  timeFactor = 1.0;
 
   int sourceUnknownsPerSubcell = source.getUnknownsPerSubcell();
 
-//  if(copyFromUOld) {
-//    dfor(subcellindex, size) {
-//      int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
-//      int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
-//
-//      for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
-//        double valueUOld = source.getValueUOld(linearSourceUOldIndex, unknown);
-//
-//        destination.setValueUOld(linearDestinationUOldIndex, unknown, valueUOld);
-//
-//        logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << valueUOld << " to " << (subcellindex+destinationOffset));
-//      }
-//    }
-//  } else if (copyFromUNew) {
-//    dfor(subcellindex, size) {
-//      int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
-//      int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
-//
-//      for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
-//        double valueUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
-//
-//        destination.setValueUOld(linearDestinationUOldIndex, unknown, valueUNew);
-//
-//        logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << valueUNew << " to " << (subcellindex+destinationOffset));
-//      }
-//    }
-//  } else {
     dfor(subcellindex, size) {
       int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
       int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
@@ -113,8 +84,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 
 bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferGhostlayerData(Patch& source, Patch& destination) {
   bool sourceHoldsGridData = (source.isVirtual() || source.isLeaf());
-
-  //TODO source.isAllowedToAdvanceInTime in der letzten Zeile müsste eigentlich destination.isAllowed... heissen, oder?
   return destination.isLeaf()
             && (( sourceHoldsGridData
                 && !tarch::la::greater(destination.getCurrentTime() + destination.getTimestepSize(), source.getCurrentTime() + source.getTimestepSize()))
@@ -374,77 +343,83 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborT
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers(int destinationPatchIndex) {
   logTraceIn("fillGhostLayers()");
 
-  if(destinationPatchIndex == -1 || destinationPatchIndex == 0) {
-    //Copy from cell 1 to cell 0
-    if(
-        shouldTransferGhostlayerData(_patches[1], _patches[0])
-    ) {
-      fillLeftGhostLayer();
-    }
+  FillGhostlayerFaceFunctor faceFunctor(*this);
+  peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<FillGhostlayerFaceFunctor>(
+    _patches,
+    faceFunctor
+  );
 
-    //Copy from cell 2 to cell 0
-    if(
-        shouldTransferGhostlayerData(_patches[2], _patches[0])
-    ) {
-      fillLowerGhostLayer();
-    }
-
-    //Copy from cell 3 to cell 0
-    if(!_useDimensionalSplitting) {
-      if(
-          shouldTransferGhostlayerData(_patches[3], _patches[0])
-      ) {
-        fillLowerLeftGhostLayer();
-      }
-    }
-  }
-
-  //Copy from cell 2 to cell 1
-  if(destinationPatchIndex == -1 || destinationPatchIndex == 1) {
-    if(!_useDimensionalSplitting) {
-        if(
-            shouldTransferGhostlayerData(_patches[2], _patches[1])
-        ) {
-          fillLowerRightGhostLayer();
-        }
-      }
-  }
-
-  if(destinationPatchIndex == -1 || destinationPatchIndex == 2) {
-    //Copy from cell 0 to cell 2
-    if(
-        shouldTransferGhostlayerData(_patches[0], _patches[2])
-    ) {
-      fillUpperGhostLayer();
-    }
-
-    //Copy from cell 1 to cell 2
-    if(!_useDimensionalSplitting) {
-      if(
-          shouldTransferGhostlayerData(_patches[1], _patches[2])
-      ) {
-        fillUpperLeftGhostLayer();
-      }
-    }
-  }
-
-  if(destinationPatchIndex == -1 || destinationPatchIndex == 3) {
-    //Copy from cell 0 to cell 3
-    if(!_useDimensionalSplitting) {
-      if(
-          shouldTransferGhostlayerData(_patches[0], _patches[3])
-      ) {
-        fillUpperRightGhostLayer();
-      }
-    }
-
-    //Copy from cell 2 to cell 3
-    if(
-        shouldTransferGhostlayerData(_patches[2], _patches[3])
-    ) {
-      fillRightGhostLayer();
-    }
-  }
+//  if(destinationPatchIndex == -1 || destinationPatchIndex == 0) {
+//    //Copy from cell 1 to cell 0
+//    if(
+//        shouldTransferGhostlayerData(_patches[1], _patches[0])
+//    ) {
+//      fillLeftGhostLayer();
+//    }
+//
+//    //Copy from cell 2 to cell 0
+//    if(
+//        shouldTransferGhostlayerData(_patches[2], _patches[0])
+//    ) {
+//      fillLowerGhostLayer();
+//    }
+//
+//    //Copy from cell 3 to cell 0
+//    if(!_useDimensionalSplitting) {
+//      if(
+//          shouldTransferGhostlayerData(_patches[3], _patches[0])
+//      ) {
+//        fillLowerLeftGhostLayer();
+//      }
+//    }
+//  }
+//
+//  //Copy from cell 2 to cell 1
+//  if(destinationPatchIndex == -1 || destinationPatchIndex == 1) {
+//    if(!_useDimensionalSplitting) {
+//        if(
+//            shouldTransferGhostlayerData(_patches[2], _patches[1])
+//        ) {
+//          fillLowerRightGhostLayer();
+//        }
+//      }
+//  }
+//
+//  if(destinationPatchIndex == -1 || destinationPatchIndex == 2) {
+//    //Copy from cell 0 to cell 2
+//    if(
+//        shouldTransferGhostlayerData(_patches[0], _patches[2])
+//    ) {
+//      fillUpperGhostLayer();
+//    }
+//
+//    //Copy from cell 1 to cell 2
+//    if(!_useDimensionalSplitting) {
+//      if(
+//          shouldTransferGhostlayerData(_patches[1], _patches[2])
+//      ) {
+//        fillUpperLeftGhostLayer();
+//      }
+//    }
+//  }
+//
+//  if(destinationPatchIndex == -1 || destinationPatchIndex == 3) {
+//    //Copy from cell 0 to cell 3
+//    if(!_useDimensionalSplitting) {
+//      if(
+//          shouldTransferGhostlayerData(_patches[0], _patches[3])
+//      ) {
+//        fillUpperRightGhostLayer();
+//      }
+//    }
+//
+//    //Copy from cell 2 to cell 3
+//    if(
+//        shouldTransferGhostlayerData(_patches[2], _patches[3])
+//    ) {
+//      fillRightGhostLayer();
+//    }
+//  }
 
   logTraceOut("fillGhostLayers()");
 }
@@ -601,5 +576,44 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyCoarseGrid
         _numerics.applyFluxCorrection(_patches[rightPatchIndex], _patches[leftPatchIndex], d, 1);
       }
     }
+  }
+}
+
+peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerFaceFunctor::FillGhostlayerFaceFunctor(
+  GhostLayerCompositor& ghostlayerCompositor
+) : _ghostlayerCompositor(ghostlayerCompositor) {
+}
+
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerFaceFunctor::operator()
+(
+  peanoclaw::Patch& patch1,
+  int               index1,
+  peanoclaw::Patch& patch2,
+  int               index2,
+  int               dimension,
+  int               direction
+) {
+  assertionEquals2(patch1.getSubdivisionFactor(), patch2.getSubdivisionFactor(), patch1, patch2);
+  assertionEquals2(patch1.getGhostLayerWidth(), patch2.getGhostLayerWidth(), patch1, patch2);
+  int ghostLayerWidth = patch1.getGhostLayerWidth();
+  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = patch1.getSubdivisionFactor();
+  tarch::la::Vector<DIMENSIONS, int> faceSize(subdivisionFactor);
+  faceSize(dimension) = ghostLayerWidth;
+  tarch::la::Vector<DIMENSIONS, int> destinationOffset(0);
+  destinationOffset(dimension) = (direction==1) ? -ghostLayerWidth : subdivisionFactor(dimension);
+
+  if(patch1.getLevel() == patch2.getLevel() && patch1.getLevel() == _ghostlayerCompositor._level) {
+    tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
+    sourceOffset(dimension) = patch1.getSubdivisionFactor()(dimension) - ghostLayerWidth;
+    _ghostlayerCompositor.copyGhostLayerDataBlock(faceSize, sourceOffset, destinationOffset, patch1, patch2);
+  } else if(patch1.getLevel() < patch2.getLevel() && patch2.getLevel() == _ghostlayerCompositor._level && patch1.isLeaf()) {
+    _ghostlayerCompositor._numerics.interpolate(
+      faceSize,
+      destinationOffset,
+      patch1,
+      patch2,
+      true,
+      false
+    );
   }
 }

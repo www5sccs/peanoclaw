@@ -330,10 +330,10 @@ bool peanoclaw::State::getInitialRefinementTriggered() const {
   return _stateData.getInitialRefinmentTriggered();
 }
 
-void peanoclaw::State::setUseDimensionalSplitting(bool useDimensionalSplitting) {
-  _stateData.setUseDimensionalSplitting(useDimensionalSplitting);
+void peanoclaw::State::setUseDimensionalSplittingOptimization(bool useDimensionalSplittingOptimization) {
+  _stateData.setUseDimensionalSplittingOptimization(useDimensionalSplittingOptimization);
 }
 
-bool peanoclaw::State::useDimensionalSplitting() const {
-  return _stateData.getUseDimensionalSplitting();
+bool peanoclaw::State::useDimensionalSplittingOptimization() const {
+  return _stateData.getUseDimensionalSplittingOptimization();
 }

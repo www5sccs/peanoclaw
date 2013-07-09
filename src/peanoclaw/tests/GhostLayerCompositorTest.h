@@ -15,11 +15,15 @@
 #include "tarch/la/Vector.h"
 #include "tarch/logging/Log.h"
 
+#include <vector>
+
 namespace peanoclaw {
   class Patch;
 
   namespace tests {
     class GhostLayerCompositorTest;
+    class TestEdgeAdjacentPatchTraversalFunctor;
+    class TestFaceAdjacentPatchTraversalFunctor;
   }
 }
 
@@ -145,26 +149,6 @@ private:
   void testProjectionFromCoarseToFinePatchRightGhostLayer2D();
 
   /**
-   * Tests the restriction of subcell-data from a fine patch to a coarse patch.
-   *
-   * Both patches are of size 6x6, while the coarse patch is three times larger
-   * than the fine one. The coarse patch is located at (1/3, 2/3) while the fine
-   * one is located at (10/27, 17/27):
-   *
-   * \code
-   *    cccccc
-   *    cccccc
-   *    cccccc
-   *    cccccc
-   *    cccccc
-   *    cccccc
-   *      ff
-   *      ff
-   * \endcode
-   */
-//  void testRestrictionFromFineToCoarsePatchLowerGhostLayer2D();
-
-  /**
    * Tests the correction step for the coarse grid values according to the fine
    * grid fluxes.
    *
@@ -280,6 +264,19 @@ private:
    */
   void testPartialRestrictionAreasWithInfiniteLowerBounds();
 
+  /**
+   * Tests whether the correct patches are traversed in 2d
+   * when looking for patches adjacent via faces.
+   */
+  void testFaceAdjacentPatchTraversal2D();
+
+  /**
+   * Tests whether the correct patches are traversed in 2d
+   * when looking for patches adjacent via edges (or vertices
+   * in 2d).
+   */
+  void testEdgeAdjacentPatchTraversal2D();
+
 public:
   GhostLayerCompositorTest();
 
@@ -290,5 +287,38 @@ public:
   void virtual setUp();
 };
 
+/**
+ * Helper class for testing FaceAdjacentPatchTraversal.
+ */
+class peanoclaw::tests::TestFaceAdjacentPatchTraversalFunctor {
+
+  public:
+    std::vector<std::vector<int> > _calls;
+
+    void operator()(
+      peanoclaw::Patch& patch1,
+      int               index1,
+      peanoclaw::Patch& patch2,
+      int               index2,
+      int               dimension,
+      int               direction
+    );
+};
+
+/**
+ * Helper class for testing EdgeAdjacentPatchTraversal.
+ */
+class peanoclaw::tests::TestEdgeAdjacentPatchTraversalFunctor {
+  public:
+    std::vector<std::vector<int> > _calls;
+
+    void operator()(
+      peanoclaw::Patch&                  patch1,
+      int                                index1,
+      peanoclaw::Patch&                  patch2,
+      int                                index2,
+      tarch::la::Vector<DIMENSIONS, int> direction
+    );
+};
 
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_TESTS_GHOSTLAYERCOMPOSITORTEST_H_ */

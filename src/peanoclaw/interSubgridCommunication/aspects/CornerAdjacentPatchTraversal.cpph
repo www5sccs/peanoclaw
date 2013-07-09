@@ -1,0 +1,18 @@
+/*
+ * CornerAdjacentPatchTraversal.cpph
+ *
+ *  Created on: Jul 9, 2013
+ *      Author: kristof
+ */
+
+#include "tarch/Assertions.h"
+
+template<class LoopBody>
+peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<LoopBody>::CornerAdjacentPatchTraversal(
+  peanoclaw::Patch* patches,
+  LoopBody& loopBody
+) {
+  assertionFail("Not implemented, yet!");
+}
+
+

@@ -74,7 +74,7 @@ class peanoclaw::mappings::SolveTimestep {
 
     std::vector<peanoclaw::statistics::Probe> _probeList;
 
-    bool _useDimensionalSplitting;
+    bool _useDimensionalSplittingOptimization;
 
     /**
      * Determines whether the given patch should be advanced in time.

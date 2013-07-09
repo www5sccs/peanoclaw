@@ -46,7 +46,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   int unknownsPerSubcell,
   int auxiliarFieldsPerSubcell,
   double initialTimestepSize,
-  bool useDimensionalSplitting
+  bool useDimensionalSplittingOptimization
 ) :
   _plotNumber(1),
   _configuration(configuration),
@@ -99,10 +99,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       domainOffset  // computationalDomainOffset
     );
 
-//  UserInterface userInterface;
-//  userInterface.writeHeader();
- 
-
   logInfo("PeanoClawLibraryRunner", "Initial values: "
       << "Domain size = [" << domainSize << "]"
       << ", default subdivision factor = " << subdivisionFactor
@@ -122,7 +118,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setInitialTimestepSize(initialTimestepSize);
   state.setDomain(domainOffset, domainSize);
   state.setAdditionalLevelsForPredefinedRefinement(_configuration.getAdditionalLevelsForPredefinedRefinement());
-  state.setUseDimensionalSplitting(useDimensionalSplitting && !_configuration.disableDimensionalSplittingOptimization());
+  state.setUseDimensionalSplittingOptimization(useDimensionalSplittingOptimization && !_configuration.disableDimensionalSplittingOptimization());
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);

@@ -90,18 +90,6 @@ private:
    */
   void updateNeighborTime(int updatedPatchIndex, int neighborPatchIndex);
 
-  /**
-   * Proxy, can be removed when the interpolation is fixed.
-   */
-//  void interpolate(
-//    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-//    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-//    const peanoclaw::Patch& source,
-//    peanoclaw::Patch&       destination,
-//    bool interpolateToUOld,
-//    bool interpolateToCurrentTime
-//  );
-
   //Ghost layers, i.e. copy from one patch to another.
   void fillLeftGhostLayer();
 
@@ -173,5 +161,25 @@ public:
    * Applies the coarse grid correction on all adjacent coarse patches.
    */
   void applyCoarseGridCorrection();
+
+  /**
+   * Functor for filling ghostlayer faces between two patches.
+   */
+  class FillGhostlayerFaceFunctor {
+    private:
+      GhostLayerCompositor& _ghostlayerCompositor;
+
+    public:
+      FillGhostlayerFaceFunctor(GhostLayerCompositor& ghostlayerCompositor);
+
+      void operator() (
+        peanoclaw::Patch& patch1,
+        int               index1,
+        peanoclaw::Patch& patch2,
+        int               index2,
+        int               dimension,
+        int               direction
+      );
+  };
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_ */

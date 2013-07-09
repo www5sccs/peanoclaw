@@ -44,21 +44,6 @@ void peanoclaw::tests::PatchTest::run() {
 
 void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
 
-//  Patch patch(
-//    0.0,    //Position
-//    1.0,    //Size
-//    2,      //Number of unknowns
-//    3,      //Subdivision factor
-//    1,      //Ghostlayer width
-//    0.0,    //Current time
-//    0.0,    //Timestep size
-//    0.0,    //CFL
-//    0.0,    //Maximum timestep size
-//    0,      //Level
-//    &uNew,
-//    &uOld
-//  );
-
   Patch patch = createPatch(
     2,   //Unknowns per subcell
     0,   //Aux fields per subcell

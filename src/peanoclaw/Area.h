@@ -30,6 +30,19 @@ class peanoclaw::Area {
     tarch::la::Vector<DIMENSIONS, int> _size;
 
     /**
+     * Default constructor.
+     */
+    Area();
+
+    /**
+     * Creates an area with the given offset and size.
+     */
+    Area(
+      tarch::la::Vector<DIMENSIONS, int> offset,
+      tarch::la::Vector<DIMENSIONS, int> size
+    );
+
+    /**
      * Maps the area of the source patch to the according area
      * of the destination patch.
      */

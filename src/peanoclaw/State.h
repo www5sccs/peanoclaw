@@ -230,9 +230,9 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       bool getInitialRefinementTriggered() const;
 
-      void setUseDimensionalSplitting(bool useDimensionalSplitting);
+      void setUseDimensionalSplittingOptimization(bool useDimensionalSplittingOptimization);
 
-      bool useDimensionalSplitting() const;
+      bool useDimensionalSplittingOptimization() const;
 };
 
 

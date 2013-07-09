@@ -15,6 +15,8 @@
 #include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
 #include "peanoclaw/interSubgridCommunication/DefaultFluxCorrection.h"
 #include "peanoclaw/interSubgridCommunication/DefaultRestriction.h"
+#include "peanoclaw/interSubgridCommunication/aspects/FaceAdjacentPatchTraversal.h"
+#include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversal.h"
 #include "peanoclaw/records/CellDescription.h"
 
 #include "peano/heap/Heap.h"
@@ -49,6 +51,8 @@ void peanoclaw::tests::GhostLayerCompositorTest::run() {
   testMethod( testRestrictionWithOverlappingBounds );
   testMethod( testPartialRestrictionAreas );
   testMethod( testPartialRestrictionAreasWithInfiniteLowerBounds );
+  testMethod( testFaceAdjacentPatchTraversal2D );
+  testMethod( testEdgeAdjacentPatchTraversal2D );
 }
 
 void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
@@ -698,6 +702,136 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreasWith
   validateEquals(areas[3]._offset, offset);
   validateEquals(areas[3]._size, size);
   #endif
+}
+
+void peanoclaw::tests::GhostLayerCompositorTest::testFaceAdjacentPatchTraversal2D() {
+  #ifdef Dim2
+  peanoclaw::Patch patches[TWO_POWER_D];
+  TestFaceAdjacentPatchTraversalFunctor functor;
+  peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<TestFaceAdjacentPatchTraversalFunctor>(
+    patches,
+    functor
+  );
+
+  validateEquals(functor._calls.size(), 8);
+
+  //Patch3 -> Patch2
+  validateEquals(functor._calls[0][0], 3);
+  validateEquals(functor._calls[0][1], 2);
+  validateEquals(functor._calls[0][2], 0);
+  validateEquals(functor._calls[0][3], 1);
+
+  //Patch3 -> Patch1
+  validateEquals(functor._calls[1][0], 3);
+  validateEquals(functor._calls[1][1], 1);
+  validateEquals(functor._calls[1][2], 1);
+  validateEquals(functor._calls[1][3], 1);
+
+  //Patch2 -> Patch3
+  validateEquals(functor._calls[2][0], 2);
+  validateEquals(functor._calls[2][1], 3);
+  validateEquals(functor._calls[2][2], 0);
+  validateEquals(functor._calls[2][3], -1);
+
+  //Patch2 -> Patch0
+  validateEquals(functor._calls[3][0], 2);
+  validateEquals(functor._calls[3][1], 0);
+  validateEquals(functor._calls[3][2], 1);
+  validateEquals(functor._calls[3][3], 1);
+
+  //Patch1 -> Patch0
+  validateEquals(functor._calls[4][0], 1);
+  validateEquals(functor._calls[4][1], 0);
+  validateEquals(functor._calls[4][2], 0);
+  validateEquals(functor._calls[4][3], 1);
+
+  //Patch1 -> Patch3
+  validateEquals(functor._calls[5][0], 1);
+  validateEquals(functor._calls[5][1], 3);
+  validateEquals(functor._calls[5][2], 1);
+  validateEquals(functor._calls[5][3], -1);
+
+  //Patch0 -> Patch1
+  validateEquals(functor._calls[6][0], 0);
+  validateEquals(functor._calls[6][1], 1);
+  validateEquals(functor._calls[6][2], 0);
+  validateEquals(functor._calls[6][3], -1);
+
+  //Patch0 -> Patch2
+  validateEquals(functor._calls[7][0], 0);
+  validateEquals(functor._calls[7][1], 2);
+  validateEquals(functor._calls[7][2], 1);
+  validateEquals(functor._calls[7][3], -1);
+  #endif
+}
+
+void peanoclaw::tests::GhostLayerCompositorTest::testEdgeAdjacentPatchTraversal2D() {
+  #ifdef Dim2
+  peanoclaw::Patch patches[TWO_POWER_D];
+  TestEdgeAdjacentPatchTraversalFunctor functor;
+  peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<TestEdgeAdjacentPatchTraversalFunctor>(
+    patches,
+    functor
+  );
+
+  validateEquals(functor._calls.size(), 4);
+
+  //Lower-left <-> Upper-right
+  validateEquals(functor._calls[0][0], 3);
+  validateEquals(functor._calls[0][1], 0);
+  validateEquals(functor._calls[0][2], 1);
+  validateEquals(functor._calls[0][3], 1);
+
+  //Lower-right <-> Upper-left
+  validateEquals(functor._calls[1][0], 2);
+  validateEquals(functor._calls[1][1], 1);
+  validateEquals(functor._calls[1][2], -1);
+  validateEquals(functor._calls[1][3], 1);
+
+  //Upper-left <-> Lower-right
+  validateEquals(functor._calls[2][0], 1);
+  validateEquals(functor._calls[2][1], 2);
+  validateEquals(functor._calls[2][2], 1);
+  validateEquals(functor._calls[2][3], -1);
+
+  //Upper-right <-> Lower-left
+  validateEquals(functor._calls[3][0], 0);
+  validateEquals(functor._calls[3][1], 3);
+  validateEquals(functor._calls[3][2], -1);
+  validateEquals(functor._calls[3][3], -1);
+  #endif
+}
+
+void peanoclaw::tests::TestFaceAdjacentPatchTraversalFunctor::operator()(
+  peanoclaw::Patch& patch1,
+  int               index1,
+  peanoclaw::Patch& patch2,
+  int               index2,
+  int               dimension,
+  int               direction
+) {
+  std::vector<int> parameters;
+  parameters.push_back(index1);
+  parameters.push_back(index2);
+  parameters.push_back(dimension);
+  parameters.push_back(direction);
+  _calls.push_back(parameters);
+}
+
+void peanoclaw::tests::TestEdgeAdjacentPatchTraversalFunctor::operator()(
+  peanoclaw::Patch&                  patch1,
+  int                                index1,
+  peanoclaw::Patch&                  patch2,
+  int                                index2,
+  tarch::la::Vector<DIMENSIONS, int> direction
+) {
+  std::vector<int> parameters;
+  parameters.push_back(index1);
+  parameters.push_back(index2);
+  for(int d = 0; d < DIMENSIONS; d++) {
+    parameters.push_back(direction(d));
+  }
+  _calls.push_back(parameters);
 }
 
 #ifdef UseTestSpecificCompilerSettings

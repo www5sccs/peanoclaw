@@ -16,6 +16,15 @@ namespace peano {
   }
 }
 
+peanoclaw::Area::Area() {
+}
+
+peanoclaw::Area::Area(
+  tarch::la::Vector<DIMENSIONS, int> offset,
+  tarch::la::Vector<DIMENSIONS, int> size
+) : _offset(offset), _size(size) {
+}
+
 peanoclaw::Area peanoclaw::Area::mapToPatch(
   const Patch& source,
   const Patch& destination,
