@@ -47,7 +47,9 @@ peanoclaw::Patch peanoclaw::tests::createPatch(
   int uNewIndex = heap.createData();
   std::vector<peanoclaw::records::Data>& uNew = heap.getData(uNewIndex);
   for(int i = 0; i < tarch::la::aPowI(DIMENSIONS, subdivisionFactor)*unknownsPerSubcell; i++) {
-    uNew.push_back(peanoclaw::records::Data());
+    peanoclaw::records::Data data;
+    data.setU(0.0);
+    uNew.push_back(data);
   }
   cellDescription.setUNewIndex(uNewIndex);
 
@@ -56,7 +58,9 @@ peanoclaw::Patch peanoclaw::tests::createPatch(
     int uOldIndex = heap.createData();
     std::vector<peanoclaw::records::Data>& uOld = heap.getData(uOldIndex);
     for(int i = 0; i < tarch::la::aPowI(DIMENSIONS, (subdivisionFactor+2*ghostlayerWidth)) * unknownsPerSubcell; i++) {
-      uOld.push_back(peanoclaw::records::Data());
+      peanoclaw::records::Data data;
+      data.setU(0.0);
+      uOld.push_back(data);
     }
     cellDescription.setUOldIndex(uOldIndex);
   } else {

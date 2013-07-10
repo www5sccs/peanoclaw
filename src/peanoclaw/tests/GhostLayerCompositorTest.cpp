@@ -42,11 +42,11 @@ void peanoclaw::tests::GhostLayerCompositorTest::setUp() {
 }
 
 void peanoclaw::tests::GhostLayerCompositorTest::run() {
+  testMethod( testTimesteppingVeto2D );
   //TODO unterweg debug
-//  testMethod( testTimesteppingVeto2D );
 //  testMethod( testInterpolationFromCoarseToFinePatchLeftGhostLayer2D );
 //  testMethod( testInterpolationFromCoarseToFinePatchRightGhostLayer2D );
-//  testMethod( testProjectionFromCoarseToFinePatchRightGhostLayer2D );
+  testMethod( testProjectionFromCoarseToFinePatchRightGhostLayer2D );
 //  testMethod( testCoarseGridCorrection );
   testMethod( testRestrictionWithOverlappingBounds );
   testMethod( testPartialRestrictionAreas );
