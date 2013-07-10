@@ -160,7 +160,6 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
     logDebug("interpolateGhostLayerDataBlock", "For subcell " << (subcellIndex + destinationOffset) << " interpolated value is " << destination.getValueUOld(subcellIndex + destinationOffset, 0));
   }
 
-  //TODO unterweg debug
   #ifdef Asserts
   if(destination.containsNaN()) {
     std::cout << "Invalid interpolation "
@@ -188,108 +187,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
       throw "";
     }
   }
-
-  //Find max and min values to check correctness of the interpolation
-//  double* min = new double[source.getUnknownsPerSubcell()];
-//  double* max = new double[source.getUnknownsPerSubcell()];
-//  for (int d = 0; d < DIMENSIONS; d++) {
-//    for (int unknown = 0; unknown < source.getUnknownsPerSubcell(); unknown++) {
-//      min[unknown] = std::numeric_limits<double>::max();
-//      max[unknown] = -std::numeric_limits<double>::max();
-//    }
-//  }
-//  dfor(subcellIndex, source.getSubdivisionFactor() - 1) {
-//    for (int unknown = 0; unknown < source.getUnknownsPerSubcell(); unknown++) {
-//      double difference = 0.0;
-//      double minUValue = std::numeric_limits<double>::max();
-//      double maxUValue = -std::numeric_limits<double>::max();
-//      for(int d = 0; d < DIMENSIONS; d++) {
-//        tarch::la::Vector<DIMENSIONS, int> offset(0.0);
-//        offset(d) = 1;
-//
-//        minUValue = std::min(minUValue, std::min(source.getValueUOld(subcellIndex, unknown), source.getValueUOld(subcellIndex + offset, unknown)));
-//        maxUValue = std::max(maxUValue, std::max(source.getValueUOld(subcellIndex, unknown), source.getValueUOld(subcellIndex + offset, unknown)));
-//
-//        double differenceUOld = std::abs(source.getValueUOld(subcellIndex, unknown) - source.getValueUOld(subcellIndex + offset, unknown));
-//        double differenceUNew = std::abs(source.getValueUNew(subcellIndex, unknown) - source.getValueUNew(subcellIndex + offset, unknown));
-//        difference += differenceUOld * (1.0 - timeFactor) + differenceUNew * timeFactor;
-//      }
-//
-//      double localMin = minUValue - difference / 2.0;
-//      double localMax = maxUValue + difference / 2.0;
-//
-//      min[unknown] = std::min(localMin, min[unknown]);
-//      max[unknown] = std::max(localMax, max[unknown]);
-//    }
-//  }
-//
-//  delete[] min;
-//  delete[] max;
   #endif
 
   logTraceOut("");
 }
-
-
-//void peanoclaw::interSubgridCommunication::Interpolation::interpolateDLinearVersion2(
-//  const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
-//  const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-//  const peanoclaw::Patch& source,
-//  peanoclaw::Patch&       destination,
-//  bool interpolateToUOld,
-//  bool interpolateToCurrentTime
-//) {
-//  logTraceInWith4Arguments("", destinationSize, destinationOffset, source.toString(), destination.toString());
-//  assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
-//
-//  //TODO unterweg debug
-////  std::cout << "Interpolated cells:" << tarch::la::volume(destinationSize) << std::endl;
-//
-//  //Factor for interpolation in time
-//  double timeFactor;
-//  if(tarch::la::equals(source.getTimestepSize(), 0.0)) {
-//    timeFactor = 1.0;
-//  } else {
-//    if(interpolateToCurrentTime) {
-//      timeFactor = (destination.getTimeUOld() - source.getTimeUOld()) / (source.getTimeUNew() - source.getTimeUOld());
-//    } else {
-//      timeFactor = (destination.getTimeUNew() - source.getTimeUOld()) / (source.getTimeUNew() - source.getTimeUOld());
-//    }
-//  }
-//
-//  //TODO This should be guaranteed by the timestepping criterion but may be violated at the moment
-//  // when coarsening the grid. Fixed?
-//  timeFactor = std::max(0.0, std::min(1.0, timeFactor));
-//
-//  assertion(!tarch::la::smaller(timeFactor, 0.0) && !tarch::la::greater(timeFactor, 1.0));
-//
-//  double epsilon = 1e-12;
-//  Area destinationArea;
-//  destinationArea._offset = destinationOffset;
-//  destinationArea._size = destinationSize;
-//
-//  Area sourceArea = destinationArea.mapToPatch(source, destination, epsilon);
-//
-//  dfor(sourceSubcellIndexInArea, sourceArea._size) {
-//    tarch::la::Vector<DIMENSIONS, int> sourceSubcellIndex = sourceSubcellIndexInArea + sourceArea._offset;
-//    tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition = tarch::la::multiplyComponents(sourceSubcellIndex, source.getSubcellSize());
-//    sourceSubcellPosition += source.getPosition();
-//
-//    assertion4(tarch::la::allGreaterEquals(sourceSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))
-//              && tarch::la::allGreater(source.getSubdivisionFactor(), sourceSubcellIndex), destinationArea, sourceArea, destination, source);
-//
-//    //Get area for single source cell
-//    Area subcellArea = destinationArea.mapCellToPatch(source, destination, sourceSubcellIndex, sourceSubcellPosition, epsilon);
-//
-//    dfor(destinationSubcellIndexInArea, subcellArea._size) {
-//      tarch::la::Vector<DIMENSIONS, int> destinationSubcellIndex = destinationSubcellIndexInArea + subcellArea._offset;
-//
-//      assertion6(tarch::la::allGreaterEquals(destinationSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))
-//                && tarch::la::allGreater(destination.getSubdivisionFactor(), destinationSubcellIndex),
-//                destinationSubcellIndex, subcellArea, destinationArea, destinationArea, destination, source);
-//
-//    }
-//  }
-//
-//  logTraceOut("");
-//}

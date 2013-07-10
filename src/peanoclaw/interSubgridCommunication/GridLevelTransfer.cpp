@@ -342,13 +342,17 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
     assertionEquals(finePatch.getUNewIndex(), virtualPatch.getUNewIndex());
     assertionEquals(finePatch.getUOldIndex(), virtualPatch.getUOldIndex());
 
+    //TODO unterweg debug
+    std::cout << "Distributing virtual patch: " << finePatch;
+
     //Fill ghostlayer
     for(int i = 0; i < TWO_POWER_D; i++) {
       fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
         finePatch.getLevel(),
         _useDimensionalSplitting,
         _numerics,
-        fineGridVerticesEnumerator.getVertexPosition(i));
+        fineGridVerticesEnumerator.getVertexPosition(i)
+      );
     }
   }
 

@@ -70,7 +70,7 @@ private:
 
   peanoclaw::Numerics& _numerics;
 
-  bool _useDimensionalSplitting;
+  bool _useDimensionalSplittingOptimization;
 
   /**
    * Performs a copy of a block from the uNew of one cell to the ghostlayer of uOld
@@ -91,21 +91,21 @@ private:
   void updateNeighborTime(int updatedPatchIndex, int neighborPatchIndex);
 
   //Ghost layers, i.e. copy from one patch to another.
-  void fillLeftGhostLayer();
-
-  void fillLowerLeftGhostLayer();
-
-  void fillLowerGhostLayer();
-
-  void fillUpperLeftGhostLayer();
-
-  void fillUpperGhostLayer();
-
-  void fillUpperRightGhostLayer();
-
-  void fillRightGhostLayer();
-
-  void fillLowerRightGhostLayer();
+//  void fillLeftGhostLayer();
+//
+//  void fillLowerLeftGhostLayer();
+//
+//  void fillLowerGhostLayer();
+//
+//  void fillUpperLeftGhostLayer();
+//
+//  void fillUpperGhostLayer();
+//
+//  void fillUpperRightGhostLayer();
+//
+//  void fillRightGhostLayer();
+//
+//  void fillLowerRightGhostLayer();
 
   /**
    * Updates the lower ghostlayer bound for the given pair of patches.
@@ -134,7 +134,7 @@ public:
     peanoclaw::Patch patches[TWO_POWER_D],
     int level,
     peanoclaw::Numerics& numerics,
-    bool useDimensionalSplitting
+    bool useDimensionalSplittingOptimization
   );
 
   ~GhostLayerCompositor();
@@ -168,9 +168,13 @@ public:
   class FillGhostlayerFaceFunctor {
     private:
       GhostLayerCompositor& _ghostlayerCompositor;
+      int                   _destinationPatchIndex;
 
     public:
-      FillGhostlayerFaceFunctor(GhostLayerCompositor& ghostlayerCompositor);
+      FillGhostlayerFaceFunctor(
+        GhostLayerCompositor& ghostlayerCompositor,
+        int                   destinationPatchIndex
+      );
 
       void operator() (
         peanoclaw::Patch& patch1,
@@ -179,6 +183,74 @@ public:
         int               index2,
         int               dimension,
         int               direction
+      );
+  };
+
+  /**
+   * Functor for filling ghostlayer edges between two patches.
+   */
+  class FillGhostlayerEdgeFunctor {
+    private:
+      GhostLayerCompositor& _ghostlayerCompositor;
+      int                   _destinationPatchIndex;
+
+    public:
+      FillGhostlayerEdgeFunctor(
+        GhostLayerCompositor& ghostlayerCompositor,
+        int                   destinationPatchIndex
+      );
+
+      void operator() (
+        peanoclaw::Patch&                  patch1,
+        int                                index1,
+        peanoclaw::Patch&                  patch2,
+        int                                index2,
+        tarch::la::Vector<DIMENSIONS, int> direction
+      );
+  };
+
+  /**
+   * Functor for updating the neighbor time constraint in
+   * adjacent patches.
+   */
+  class UpdateNeighborTimeFaceFunctor {
+    private:
+      GhostLayerCompositor& _ghostlayerCompositor;
+
+    public:
+      UpdateNeighborTimeFaceFunctor(
+        GhostLayerCompositor& ghostlayerCompositor
+      );
+
+      void operator() (
+        peanoclaw::Patch&                  patch1,
+        int                                index1,
+        peanoclaw::Patch&                  patch2,
+        int                                index2,
+        int                                dimension,
+        int                                direction
+      );
+  };
+
+  /**
+   * Functor for updating the neighbor time constraint in
+   * adjacent patches.
+   */
+  class UpdateNeighborTimeEdgeFunctor {
+    private:
+      GhostLayerCompositor& _ghostlayerCompositor;
+
+    public:
+      UpdateNeighborTimeEdgeFunctor(
+        GhostLayerCompositor& ghostlayerCompositor
+      );
+
+      void operator() (
+        peanoclaw::Patch&                  patch1,
+        int                                index1,
+        peanoclaw::Patch&                  patch2,
+        int                                index2,
+        tarch::la::Vector<DIMENSIONS, int> direction
       );
   };
 };
