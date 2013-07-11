@@ -77,14 +77,11 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   //TODO unterweg Debug
 //  #ifdef Debug
   bool plotVertex = false;
-//    position = patches[0].getPosition();
-  plotVertex =
-      //tarch::la::equals(position(0), 2.0/9.0) && tarch::la::equals(position(1), 16.0/27.0)
-      tarch::la::equals(position(0), 33.0/81.0)
-      && tarch::la::equals(position(1), 1.0/3.0)
-      && level == 5
-//      false
-  ;
+//  plotVertex =
+//      tarch::la::equals(position(0), 2.0/3.0)
+//      && tarch::la::equals(position(1), 7.0/9.0)
+//      && level == 4
+//  ;
 
   if(plotVertex) {
     std::cerr << "Filling vertex ("
@@ -112,7 +109,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   ghostLayerCompositor.updateGhostlayerBounds();
 
   //TODO unterweg Debug
-  #ifdef Debug
+//  #ifdef Debug
   if(plotVertex
   ) {
     for (int i = 0; i < TWO_POWER_D; i++) {
@@ -122,10 +119,10 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
       }
     }
   }
-  #endif
+//  #endif
 }
 
-void peanoclaw::Vertex::applyCoarseGridCorrection(
+void peanoclaw::Vertex::applyFluxCorrection(
   peanoclaw::Numerics& numerics
 ) const {
   //Fill ghost layers of adjacent cells
@@ -148,7 +145,7 @@ void peanoclaw::Vertex::applyCoarseGridCorrection(
 
   //Apply coarse grid correction
   interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, numerics, false);
-  ghostLayerCompositor.applyCoarseGridCorrection();
+  ghostLayerCompositor.applyFluxCorrection();
 }
 
 void peanoclaw::Vertex::setShouldRefine(bool shouldRefine) {

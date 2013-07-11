@@ -245,16 +245,6 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
       assertion1(!patch.isLeaf() && !patch.isVirtual(), patch);
     }
   }
-
-  #ifdef Parallel
-//  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS,double>(2.0/3.0))
-//    && tarch::la::equals(fineGridVerticesEnumerator.getCellSize(), tarch::la::Vector<DIMENSIONS,double>(1.0/3.0))) {
-    std::cout << "Initialized cell on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-        << fineGridVerticesEnumerator.getVertexPosition(0) << ", " << fineGridVerticesEnumerator.getCellSize()
-        << patch.toString() << std::endl << patch.toStringUNew() << std::endl;
-//  }
-  #endif
-
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
 

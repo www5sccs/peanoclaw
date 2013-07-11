@@ -118,7 +118,7 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
     /**
      * Applies the coarse grid correction on all adjacent patches.
      */
-    void applyCoarseGridCorrection(
+    void applyFluxCorrection(
       peanoclaw::Numerics& numerics
     ) const;
 

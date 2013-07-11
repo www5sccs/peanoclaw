@@ -56,7 +56,7 @@ tarch::logging::Log                peanoclaw::mappings::ValidateGrid::_log( "pea
 
 peanoclaw::mappings::ValidateGrid::ValidateGrid()
  : _heap(peano::heap::Heap<PatchDescription>::getInstance()),
-   _validator(0, 0)
+   _validator(0, 0, false)
 {
   logTraceIn( "ValidateGrid()" );
 
@@ -101,12 +101,12 @@ void peanoclaw::mappings::ValidateGrid::createHangingVertex(
   logTraceInWith6Arguments( "createHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-  std::cout<< "Create hanging vertex " << fineGridX << ", "
-      << fineGridH
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << std::endl;
+//  std::cout<< "Create hanging vertex " << fineGridX << ", "
+//      << fineGridH
+//      #ifdef Parallel
+//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//      << std::endl;
 
   logTraceOutWith1Argument( "createHangingVertex(...)", fineGridVertex );
 }
@@ -124,9 +124,9 @@ void peanoclaw::mappings::ValidateGrid::destroyHangingVertex(
   logTraceInWith6Arguments( "destroyHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-  std::cout<< "Destroy hanging vertex " << fineGridX << ", "
-       << fineGridH
-        << std::endl;
+//  std::cout<< "Destroy hanging vertex " << fineGridX << ", "
+//       << fineGridH
+//        << std::endl;
 
   if(tarch::la::allGreaterEquals(fineGridX, _domainOffset)
     && tarch::la::allGreaterEquals(_domainOffset+_domainSize, fineGridX)) {
@@ -158,12 +158,12 @@ void peanoclaw::mappings::ValidateGrid::createInnerVertex(
   logTraceInWith6Arguments( "createInnerVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-  std::cout<< "Create inner vertex " << fineGridX << ", "
-      << fineGridH
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << std::endl;
+//  std::cout<< "Create inner vertex " << fineGridX << ", "
+//      << fineGridH
+//      #ifdef Parallel
+//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//      << std::endl;
 
   logTraceOutWith1Argument( "createInnerVertex(...)", fineGridVertex );
 }
@@ -196,13 +196,13 @@ void peanoclaw::mappings::ValidateGrid::destroyVertex(
   logTraceInWith6Arguments( "destroyVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-  std::cout<< "Destroying vertex " << fineGridX << ", "
-      << fineGridH
-      << ", level=" << (coarseGridVerticesEnumerator.getLevel()+1)
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << std::endl;
+//  std::cout<< "Destroying vertex " << fineGridX << ", "
+//      << fineGridH
+//      << ", level=" << (coarseGridVerticesEnumerator.getLevel()+1)
+//      #ifdef Parallel
+//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//      << std::endl;
 
   _validator.deleteNonRemoteAdjacentPatches(
     fineGridVertex,
@@ -231,13 +231,13 @@ void peanoclaw::mappings::ValidateGrid::createCell(
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
   //TODO unterweg debug
-  std::cout<< "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-      << fineGridVerticesEnumerator.getCellSize()
-      << ", index=" << fineGridCell.getCellDescriptionIndex()
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << std::endl;
+//  std::cout<< "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+//      << fineGridVerticesEnumerator.getCellSize()
+//      << ", index=" << fineGridCell.getCellDescriptionIndex()
+//      #ifdef Parallel
+//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//      << std::endl;
 
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
@@ -255,13 +255,13 @@ void peanoclaw::mappings::ValidateGrid::destroyCell(
   logTraceInWith4Arguments( "destroyCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
   //TODO unterweg debug
-  std::cout<< "Destroying cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-      << fineGridVerticesEnumerator.getCellSize()
-      << ", index=" << fineGridCell.getCellDescriptionIndex()
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << std::endl;
+//  std::cout<< "Destroying cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+//      << fineGridVerticesEnumerator.getCellSize()
+//      << ", index=" << fineGridCell.getCellDescriptionIndex()
+//      #ifdef Parallel
+//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//      << std::endl;
 
   logTraceOutWith1Argument( "destroyCell(...)", fineGridCell );
 }
@@ -321,14 +321,14 @@ void peanoclaw::mappings::ValidateGrid::prepareCopyToRemoteNode(
   logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
 
   //TODO unterweg debug
-  std::cout<< "Copying cell " << (cellCentre-0.5*cellSize) << ", "
-      << cellSize
-      << ", index=" << localCell.getCellDescriptionIndex()
-      #ifdef Parallel
-      << ", from=" << tarch::parallel::Node::getInstance().getRank()
-      << ", to=" << toRank
-      #endif
-      << std::endl;
+//  std::cout<< "Copying cell " << (cellCentre-0.5*cellSize) << ", "
+//      << cellSize
+//      << ", index=" << localCell.getCellDescriptionIndex()
+//      #ifdef Parallel
+//      << ", from=" << tarch::parallel::Node::getInstance().getRank()
+//      << ", to=" << toRank
+//      #endif
+//      << std::endl;
 
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -540,12 +540,12 @@ void peanoclaw::mappings::ValidateGrid::touchVertexLastTime(
   logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-  std::cout<< "Touching vertex " << fineGridX << ", "
-      << fineGridH
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << std::endl;
+//  std::cout<< "Touching vertex " << fineGridX << ", "
+//      << fineGridH
+//      #ifdef Parallel
+//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//      << std::endl;
 
   _validator.findAdjacentPatches(
     fineGridVertex,
@@ -599,7 +599,8 @@ void peanoclaw::mappings::ValidateGrid::beginIteration(
 
   _validator = peanoclaw::statistics::ParallelGridValidator(
     solverState.getDomainOffset(),
-    solverState.getDomainSize()
+    solverState.getDomainSize(),
+    solverState.useDimensionalSplittingOptimization()
   );
   assertionEquals(_validator.getAllPatches().size(), 0);
   _domainOffset = solverState.getDomainOffset();
@@ -653,18 +654,7 @@ void peanoclaw::mappings::ValidateGrid::endIteration(
       }
     }
 
-    //Check adjacency information
-    for(int i = 0; i < (int)localDescriptions.size(); i++) {
-      for(int neighborIndex = 0; neighborIndex < THREE_POWER_D; neighborIndex++) {
-        if(neighborIndex != (THREE_POWER_D-1)/2) {
-          _validator.validateNeighborPatch(
-            database,
-            localDescriptions[i],
-            peano::utils::dDelinearised(neighborIndex, 3) - 1
-          );
-        }
-      }
-    }
+    _validator.validatePatches();
 
     logInfo("endIteration", "Validated " << localDescriptions.size() << " subgrids.");
   }

@@ -26,8 +26,12 @@ namespace peanoclaw {
 class peanoclaw::statistics::PatchDescriptionDatabase {
   private:
     typedef peanoclaw::records::PatchDescription PatchDescription;
+  public:
+    typedef std::map<tarch::la::Vector<DIMENSIONS_PLUS_TWO,double>, PatchDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_TWO> > MapType;
 
-    std::map<tarch::la::Vector<DIMENSIONS_PLUS_TWO,double>, PatchDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_TWO> >  _database;
+  private:
+
+    MapType _database;
 
     tarch::la::Vector<DIMENSIONS_PLUS_TWO, double> createKey(tarch::la::Vector<DIMENSIONS, double> position, int level, int rank) const;
 
@@ -60,6 +64,10 @@ class peanoclaw::statistics::PatchDescriptionDatabase {
      * Returns the number of entries in the database.
      */
     size_t size() const;
+
+    MapType::iterator begin();
+
+    MapType::iterator end();
 
     void clear();
 };

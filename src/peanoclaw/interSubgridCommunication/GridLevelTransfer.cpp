@@ -342,9 +342,6 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
     assertionEquals(finePatch.getUNewIndex(), virtualPatch.getUNewIndex());
     assertionEquals(finePatch.getUOldIndex(), virtualPatch.getUOldIndex());
 
-    //TODO unterweg debug
-    std::cout << "Distributing virtual patch: " << finePatch;
-
     //Fill ghostlayer
     for(int i = 0; i < TWO_POWER_D; i++) {
       fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
@@ -379,12 +376,12 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateAf
         finePatch.switchToNonVirtual();
 
         //TODO unterweg debug
-        std::cout << "Not Preserving patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-            << finePatch << std::endl;
+//        std::cout << "Not Preserving patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
+//            << finePatch << std::endl;
       } else {
         //TODO unterweg debug
-        std::cout << "Preserving patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-            << finePatch << std::endl;
+//        std::cout << "Preserving patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
+//            << finePatch << std::endl;
       }
     }
 

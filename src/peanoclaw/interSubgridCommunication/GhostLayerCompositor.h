@@ -158,9 +158,9 @@ public:
   void updateGhostlayerBounds();
 
   /**
-   * Applies the coarse grid correction on all adjacent coarse patches.
+   * Applies the flux correction on all adjacent coarse patches.
    */
-  void applyCoarseGridCorrection();
+  void applyFluxCorrection();
 
   /**
    * Functor for filling ghostlayer faces between two patches.
@@ -177,12 +177,11 @@ public:
       );
 
       void operator() (
-        peanoclaw::Patch& patch1,
-        int               index1,
-        peanoclaw::Patch& patch2,
-        int               index2,
-        int               dimension,
-        int               direction
+        peanoclaw::Patch&                  patch1,
+        int                                index1,
+        peanoclaw::Patch&                  patch2,
+        int                                index2,
+        tarch::la::Vector<DIMENSIONS, int> direction
       );
   };
 
@@ -213,35 +212,12 @@ public:
    * Functor for updating the neighbor time constraint in
    * adjacent patches.
    */
-  class UpdateNeighborTimeFaceFunctor {
+  class UpdateNeighborTimeFunctor {
     private:
       GhostLayerCompositor& _ghostlayerCompositor;
 
     public:
-      UpdateNeighborTimeFaceFunctor(
-        GhostLayerCompositor& ghostlayerCompositor
-      );
-
-      void operator() (
-        peanoclaw::Patch&                  patch1,
-        int                                index1,
-        peanoclaw::Patch&                  patch2,
-        int                                index2,
-        int                                dimension,
-        int                                direction
-      );
-  };
-
-  /**
-   * Functor for updating the neighbor time constraint in
-   * adjacent patches.
-   */
-  class UpdateNeighborTimeEdgeFunctor {
-    private:
-      GhostLayerCompositor& _ghostlayerCompositor;
-
-    public:
-      UpdateNeighborTimeEdgeFunctor(
+      UpdateNeighborTimeFunctor(
         GhostLayerCompositor& ghostlayerCompositor
       );
 
@@ -253,5 +229,28 @@ public:
         tarch::la::Vector<DIMENSIONS, int> direction
       );
   };
+
+  /**
+   * Functor for correcting the flux on an adjacent
+   * coarse patch.
+   */
+  class FluxCorrectionFunctor {
+    private:
+      Numerics& _numerics;
+
+    public:
+      FluxCorrectionFunctor(
+        Numerics& numerics
+      );
+
+      void operator() (
+        peanoclaw::Patch&                  patch1,
+        int                                index1,
+        peanoclaw::Patch&                  patch2,
+        int                                index2,
+        tarch::la::Vector<DIMENSIONS, int> direction
+      );
+  };
 };
+
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_ */

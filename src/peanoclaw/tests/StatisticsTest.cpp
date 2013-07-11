@@ -43,7 +43,7 @@ void peanoclaw::tests::StatisticsTest::testGetNeighborPositionOnSameLevel() {
 
   tarch::la::Vector<DIMENSIONS, double> domainOffset(0.0);
   tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);
-  peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize);
+  peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize, false);
 
   tarch::la::Vector<DIMENSIONS, double> neighborPosition
     = validator.getNeighborPositionOnLevel(
@@ -68,7 +68,7 @@ void peanoclaw::tests::StatisticsTest::testGetNeighborPositionOnDifferentLevel()
 
   tarch::la::Vector<DIMENSIONS, double> domainOffset(0.0);
   tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);
-  peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize);
+  peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize, false);
 
   tarch::la::Vector<DIMENSIONS, double> neighborPosition
     = validator.getNeighborPositionOnLevel(
@@ -97,7 +97,7 @@ void peanoclaw::tests::StatisticsTest::testGetNeighborPositionOnRectangularDomai
   assignList(domainOffset) = 1.0, 2.0;
   tarch::la::Vector<DIMENSIONS, double> domainSize;
   assignList(domainSize) = 2.0, 1.0;
-  peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize);
+  peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize, false);
 
   tarch::la::Vector<DIMENSIONS, double> neighborPosition
     = validator.getNeighborPositionOnLevel(
@@ -122,7 +122,7 @@ void peanoclaw::tests::StatisticsTest::testRootPatch() {
 
   tarch::la::Vector<DIMENSIONS, double> domainOffset(0.0);
   tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);
-  peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize);
+  peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize, false);
 
   tarch::la::Vector<DIMENSIONS, double> neighborPosition
     = validator.getNeighborPositionOnLevel(

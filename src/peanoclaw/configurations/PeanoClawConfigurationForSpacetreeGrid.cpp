@@ -11,7 +11,7 @@ peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::PeanoClawConf
   _plotSubsteps(false),
   _plotSubstepsAfterOutputTime(-1),
   _additionalLevelsForPredefinedRefinement(1),
-  _disableDimensionalSplittingOptimization(true)
+  _disableDimensionalSplittingOptimization(false)
   {
 }
 

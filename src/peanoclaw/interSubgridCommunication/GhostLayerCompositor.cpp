@@ -138,17 +138,19 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateUpperGhos
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborTime(int updatedPatchIndex, int neighborPatchIndex) {
-  _patches[updatedPatchIndex].updateMinimalNeighborTimeConstraint(
-    _patches[neighborPatchIndex].getTimeConstraint(),
-    _patches[neighborPatchIndex].getCellDescriptionIndex()
-  );
-  _patches[updatedPatchIndex].updateMaximalNeighborTimeInterval(
-    _patches[neighborPatchIndex].getCurrentTime(),
-    _patches[neighborPatchIndex].getTimestepSize()
-  );
+  if(_patches[updatedPatchIndex].isValid() && _patches[neighborPatchIndex].isValid()) {
+    _patches[updatedPatchIndex].updateMinimalNeighborTimeConstraint(
+      _patches[neighborPatchIndex].getTimeConstraint(),
+      _patches[neighborPatchIndex].getCellDescriptionIndex()
+    );
+    _patches[updatedPatchIndex].updateMaximalNeighborTimeInterval(
+      _patches[neighborPatchIndex].getCurrentTime(),
+      _patches[neighborPatchIndex].getTimestepSize()
+    );
 
-  if(_patches[neighborPatchIndex].isLeaf()) {
-    _patches[updatedPatchIndex].updateMinimalLeafNeighborTimeConstraint(_patches[neighborPatchIndex].getTimeConstraint());
+    if(_patches[neighborPatchIndex].isLeaf()) {
+      _patches[updatedPatchIndex].updateMinimalLeafNeighborTimeConstraint(_patches[neighborPatchIndex].getTimeConstraint());
+    }
   }
 }
 
@@ -193,23 +195,21 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborTimes() {
 
-  //Faces
-  UpdateNeighborTimeFaceFunctor faceFunctor(
+  UpdateNeighborTimeFunctor functor(
     *this
   );
-  peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<UpdateNeighborTimeFaceFunctor>(
+
+  //Faces
+  peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<UpdateNeighborTimeFunctor>(
     _patches,
-    faceFunctor
+    functor
   );
 
   if(!_useDimensionalSplittingOptimization) {
-    UpdateNeighborTimeEdgeFunctor edgeFunctor(
-      *this
-    );
     //Edges
-    peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<UpdateNeighborTimeEdgeFunctor>(
+    peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<UpdateNeighborTimeFunctor>(
       _patches,
-      edgeFunctor
+      functor
     );
 
     //Corners
@@ -217,7 +217,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborT
     UpdateNeighborTimeCornerFunctor cornerFunctor(
       *this
     );
-    peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<UpdateNeighborTimeCornerFunctor>(
+    peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<UpdateNeighborTimeFunctor>(
       _patches,
       cornerFunctor
     );
@@ -305,30 +305,12 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlaye
   }
 }
 
-void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyCoarseGridCorrection() {
-
-  //Left and right patch indices need to be understood in a "per-dimension-way". I.e. in the following
-  //loop over dimensions
-  //for d=0 leftPatchIndex is the left patch, rightPatchIndex the right patch
-  //for d=1 leftPatchIndex is the lower patch, rightPatchIndex is the upper patch and so on.
-  int rightPatchIndex = 0;
-
-  for(int d = 0; d < DIMENSIONS; d++) {
-    int leftPatchIndex = rightPatchIndex + tarch::la::aPowI(d,2);
-
-    if(_patches[rightPatchIndex].isLeaf()
-        && _patches[leftPatchIndex].isLeaf()) {
-      //Correct from left to right
-      if(_patches[leftPatchIndex].getLevel() > _patches[rightPatchIndex].getLevel()) {
-        _numerics.applyFluxCorrection(_patches[leftPatchIndex], _patches[rightPatchIndex], d, -1);
-      }
-
-      //Correct from right to left
-      if(_patches[rightPatchIndex].getLevel() > _patches[leftPatchIndex].getLevel()) {
-        _numerics.applyFluxCorrection(_patches[rightPatchIndex], _patches[leftPatchIndex], d, 1);
-      }
-    }
-  }
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyFluxCorrection() {
+  FluxCorrectionFunctor functor(_numerics);
+  peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<FluxCorrectionFunctor>(
+    _patches,
+    functor
+  );
 }
 
 peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerFaceFunctor::FillGhostlayerFaceFunctor(
@@ -339,24 +321,26 @@ peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerFaceFu
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerFaceFunctor::operator()
 (
-  peanoclaw::Patch& source,
-  int               sourceIndex,
-  peanoclaw::Patch& destination,
-  int               destinationIndex,
-  int               dimension,
-  int               direction
+  peanoclaw::Patch&                  source,
+  int                                sourceIndex,
+  peanoclaw::Patch&                  destination,
+  int                                destinationIndex,
+  tarch::la::Vector<DIMENSIONS, int> direction
 ) {
-
-  //TODO unterweg debug
-//  std::cout << "Copy? " << sourceIndex << "->" << destinationIndex << " destinationPatchIndex=" << _destinationPatchIndex << std::endl
-//      << "source: " << source
-//      << ", destination: " << destination << std::endl;
-
-
   if(
     (_destinationPatchIndex == -1 || _destinationPatchIndex == destinationIndex)
     && _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination)
   ) {
+    int dimension = -1;
+    int offset = 0;
+    for(int d = 0; d < DIMENSIONS; d++) {
+      if(abs(direction(d)) == 1) {
+        dimension = d;
+        offset = direction(d);
+      }
+    }
+    assertion3(dimension!=-1 && offset != 0, dimension, offset, direction);
+
     assertionEquals2(destination.getSubdivisionFactor(), source.getSubdivisionFactor(), source, destination);
     assertionEquals2(source.getGhostLayerWidth(), destination.getGhostLayerWidth(), source, destination);
     int ghostLayerWidth = source.getGhostLayerWidth();
@@ -364,20 +348,15 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerF
     tarch::la::Vector<DIMENSIONS, int> faceSize(subdivisionFactor);
     faceSize(dimension) = ghostLayerWidth;
     tarch::la::Vector<DIMENSIONS, int> destinationOffset(0);
-    destinationOffset(dimension) = (direction==1) ? -ghostLayerWidth : subdivisionFactor(dimension);
+    destinationOffset(dimension) = (offset==1) ? -ghostLayerWidth : subdivisionFactor(dimension);
 
     if(source.getLevel() == destination.getLevel() && source.getLevel() == _ghostlayerCompositor._level) {
       tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
       sourceOffset(dimension)
-        = (direction==1) ? (source.getSubdivisionFactor()(dimension) - ghostLayerWidth) : 0;
-
-      //TODO unterweg debug
-//      std::cout << "CopyGhostlayerDataBlock: " << index1 << "->" << index2 << " sourceOffset=" << sourceOffset
-//          << ", destinationOffset=" << destinationOffset << ", faceSize=" << faceSize
-//          << " patch1=" << patch1 << ", patch2=" << patch2 << std::endl;
+        = (offset==1) ? (source.getSubdivisionFactor()(dimension) - ghostLayerWidth) : 0;
 
       _ghostlayerCompositor.copyGhostLayerDataBlock(faceSize, sourceOffset, destinationOffset, source, destination);
-    } else if(source.getLevel() < destination.getLevel() && destination.getLevel() == _ghostlayerCompositor._level && destination.isLeaf()) {
+    } else if(source.getLevel() < destination.getLevel() && destination.getLevel() == _ghostlayerCompositor._level && source.isLeaf()) {
       _ghostlayerCompositor._numerics.interpolate(
         faceSize,
         destinationOffset,
@@ -447,41 +426,12 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerE
   }
 }
 
-peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateNeighborTimeFaceFunctor::UpdateNeighborTimeFaceFunctor(
+peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateNeighborTimeFunctor::UpdateNeighborTimeFunctor(
   GhostLayerCompositor& ghostlayerCompositor
 ) : _ghostlayerCompositor(ghostlayerCompositor) {
 }
 
-void peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateNeighborTimeFaceFunctor::operator() (
-  peanoclaw::Patch&                  neighborPatch,
-  int                                neighborPatchIndex,
-  peanoclaw::Patch&                  updatedPatch,
-  int                                updatedPatchIndexIndex,
-  int                                dimension,
-  int                                direction
-) {
-  if(updatedPatch.isValid() && neighborPatch.isValid()) {
-    updatedPatch.updateMinimalNeighborTimeConstraint(
-      neighborPatch.getTimeConstraint(),
-      neighborPatch.getCellDescriptionIndex()
-    );
-    updatedPatch.updateMaximalNeighborTimeInterval(
-      neighborPatch.getCurrentTime(),
-      neighborPatch.getTimestepSize()
-    );
-
-    if(neighborPatch.isLeaf()) {
-      updatedPatch.updateMinimalLeafNeighborTimeConstraint(neighborPatch.getTimeConstraint());
-    }
-  }
-}
-
-peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateNeighborTimeEdgeFunctor::UpdateNeighborTimeEdgeFunctor(
-  GhostLayerCompositor& ghostlayerCompositor
-) : _ghostlayerCompositor(ghostlayerCompositor) {
-}
-
-void peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateNeighborTimeEdgeFunctor::operator() (
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateNeighborTimeFunctor::operator() (
   peanoclaw::Patch&                  neighborPatch,
   int                                neighborPatchIndex,
   peanoclaw::Patch&                  updatedPatch,
@@ -500,6 +450,42 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateNeighborT
 
     if(neighborPatch.isLeaf()) {
       updatedPatch.updateMinimalLeafNeighborTimeConstraint(neighborPatch.getTimeConstraint());
+    }
+  }
+}
+
+peanoclaw::interSubgridCommunication::GhostLayerCompositor::FluxCorrectionFunctor::FluxCorrectionFunctor(
+  Numerics& numerics
+) : _numerics(numerics) {
+}
+
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FluxCorrectionFunctor::operator() (
+  peanoclaw::Patch&                  patch1,
+  int                                index1,
+  peanoclaw::Patch&                  patch2,
+  int                                index2,
+  tarch::la::Vector<DIMENSIONS, int> direction
+) {
+  if(patch1.isLeaf()
+      && patch2.isLeaf()) {
+    int dimension = -1;
+    int offset = 0;
+    for(int d = 0; d < DIMENSIONS; d++) {
+      if(abs(direction(d)) == 1) {
+        dimension = d;
+        offset = direction(d);
+      }
+    }
+    assertion3(dimension!=-1 && offset != 0, dimension, offset, direction);
+
+    //Correct from patch1 to patch2
+    if(patch1.getLevel() > patch2.getLevel()) {
+      _numerics.applyFluxCorrection(patch1, patch2, dimension, offset);
+    }
+
+    //Correct from right to left
+    if(patch2.getLevel() > patch1.getLevel()) {
+      _numerics.applyFluxCorrection(patch2, patch1, dimension, offset);
     }
   }
 }

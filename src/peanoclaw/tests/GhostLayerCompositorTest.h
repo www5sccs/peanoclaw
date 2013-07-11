@@ -300,8 +300,7 @@ class peanoclaw::tests::TestFaceAdjacentPatchTraversalFunctor {
       int               index1,
       peanoclaw::Patch& patch2,
       int               index2,
-      int               dimension,
-      int               direction
+      tarch::la::Vector<DIMENSIONS, int> direction
     );
 };
 

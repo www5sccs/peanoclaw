@@ -485,36 +485,10 @@ void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
       fineGridVertex.shouldErase()
       && fineGridVertex.getCurrentAdjacentCellsHeight() == 1
     ) {
-//    fineGridVertex.erase();
+    fineGridVertex.erase();
   }
   fineGridVertex.setShouldRefine(false);
   fineGridVertex.resetSubcellsEraseVeto();
-
-  //Predefined refinement
-//    double radius = 0.2 + _averageGlobalTimeInterval / 0.2 * 0.3;
-    double radius = 0.15 + _averageGlobalTimeInterval / 0.5 * 0.3;
-
-    bool shouldBeRefined
-     = (tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth)) ||
-      ((std::abs(tarch::la::norm2(fineGridX-0.5)-radius) < fineGridH(0) / 2.0)
-          && (tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth / (std::pow(3.0, (double)_additionalLevelsForPredefinedRefinement)))));
-
-    if(shouldBeRefined) {
-      if(fineGridVertex.getRefinementControl() == peanoclaw::records::Vertex::Unrefined) {
-        //TODO unterweg debug
-//        std::cout << "Refining vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel() + 1) << std::endl;
-//        fineGridVertex.refine();
-      }
-    } else {
-      if(fineGridVertex.getRefinementControl() == peanoclaw::records::Vertex::Refined
-          && fineGridVertex.getAdjacentCellsHeightOfPreviousIteration() == 1
-          && fineGridVertex.getCurrentAdjacentCellsHeight() == 1
-        ) {
-        //TODO unterweg debug
-//        std::cout << "Coarsening vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel() + 1) << std::endl;
-//        fineGridVertex.erase();
-      }
-    }
 
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }
@@ -555,17 +529,8 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     double endTime = cellDescription.getTime() + cellDescription.getTimestepSize();
     assertionEquals1(patch.getCurrentTime(), startTime, patch.toString());
     assertionEquals1(patch.getCurrentTime() + patch.getTimestepSize(), endTime, patch.toString());
-//    assertion1(startTime <= endTime, patch);
     assertion(patch.isLeaf() || patch.isVirtual());
     #endif
-
-    //TODO unterweg debug
-//    if(tarch::la::equals(patch.getPosition()(0), 48.0/81.0)
-//      && tarch::la::equals(patch.getPosition()(1), 1.0/3.0)
-//      && patch.getLevel() == 5) {
-      std::cout << "Trying to advance minimal patch: " << patch
-          <<", allowed=" << patch.isAllowedToAdvanceInTime() << std::endl;
-//    }
 
     //Perform timestep
     double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
@@ -603,7 +568,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       // Coarse grid correction
       for(int i = 0; i < TWO_POWER_D; i++) {
         if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-          fineGridVertices[fineGridVerticesEnumerator(i)].applyCoarseGridCorrection(*_numerics);
+          fineGridVertices[fineGridVerticesEnumerator(i)].applyFluxCorrection(*_numerics);
         }
       }
 
@@ -655,12 +620,9 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     assertion2(!tarch::la::smaller(patch.getCurrentTime(), startTime), patch, startTime);
     assertion2(!tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), endTime), patch.getCurrentTime() + patch.getTimestepSize(), endTime);
 
-//    #ifdef Asserts
+    #ifdef Asserts
     if(patch.containsNaN()) {
       logError("", "Invalid solution"
-//          #ifdef Parallel
-//          << " on rank " << tarch::parallel::Node::getInstance().getRank()
-//          #endif
           << " in patch " << patch.toString()
           << std::endl << patch.toStringUNew() << std::endl << patch.toStringUOldWithGhostLayer());
       Patch coarsePatch(peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
@@ -686,7 +648,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       assertion(false);
       throw "";
     }
-//    #endif
+    #endif
 
     logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimestepSize(), cellDescription.getTime() + cellDescription.getTimestepSize() );
   } else {

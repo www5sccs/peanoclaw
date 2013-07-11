@@ -50,6 +50,12 @@ private:
    */
   tarch::la::Vector<DIMENSIONS,double> _domainSize;
 
+  /**
+   * Flag to indicate whether edge/corner-adjacent patches have
+   * to be taken into account.
+   */
+  bool                                 _useDimensionalSplittingOptimization;
+
   typedef peanoclaw::records::PatchDescription PatchDescription;
   typedef peanoclaw::records::CellDescription CellDescription;
 
@@ -81,18 +87,28 @@ private:
     const tarch::la::Vector<DIMENSIONS, int> discreteNeighborPosition
   );
 
-public:
-  ParallelGridValidator(
-    tarch::la::Vector<DIMENSIONS,double> domainOffset,
-    tarch::la::Vector<DIMENSIONS,double> domainSize
-  );
-
   void validateNeighborPatch(
-    const peanoclaw::statistics::PatchDescriptionDatabase& database,
     const PatchDescription& patch,
     const tarch::la::Vector<DIMENSIONS, int> discreteNeighborPosition
   );
 
+public:
+  ParallelGridValidator(
+    tarch::la::Vector<DIMENSIONS,double> domainOffset,
+    tarch::la::Vector<DIMENSIONS,double> domainSize,
+    bool                                 useDimensionalSplittingOptimization
+  );
+
+  /**
+   * Validates all patches in the database whether the adjacent patches
+   * have been found.
+   */
+  void validatePatches();
+
+  /**
+   * Finds all adjacent patches for the given vertex and adds them to
+   * the database.
+   */
   void findAdjacentPatches(
     const peanoclaw::Vertex&                         fineGridVertex,
     const tarch::la::Vector<DIMENSIONS,double>&      fineGridX,
@@ -100,6 +116,10 @@ public:
     int                                              localRank
   );
 
+  /**
+   * Deletes all adjacent patches for the given vertex from the databeas
+   * that are not remote
+   */
   void deleteNonRemoteAdjacentPatches(
     const peanoclaw::Vertex&                         fineGridVertex,
     const tarch::la::Vector<DIMENSIONS,double>&      fineGridX,

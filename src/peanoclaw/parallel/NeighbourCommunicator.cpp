@@ -98,10 +98,10 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
     CellDescription cellDescription = _cellDescriptionHeap.getData(cellDescriptionIndex).at(0);
 
     //TODO unterweg debug
-    std::cout << "Sending from " << tarch::parallel::Node::getInstance().getRank()
-        << " to " << _remoteRank << ": " << cellDescription.toString()
-        << ", position:" << _position
-        << std::endl;
+//    std::cout << "Sending from " << tarch::parallel::Node::getInstance().getRank()
+//        << " to " << _remoteRank << ": " << cellDescription.toString()
+//        << ", position:" << _position
+//        << std::endl;
 
     if(cellDescription.getUNewIndex() != -1) {
       sendDataArray(cellDescription.getUNewIndex());

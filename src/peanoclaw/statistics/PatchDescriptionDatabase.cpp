@@ -69,6 +69,15 @@ size_t peanoclaw::statistics::PatchDescriptionDatabase::size() const {
   return _database.size();
 }
 
+peanoclaw::statistics::PatchDescriptionDatabase::MapType::iterator
+peanoclaw::statistics::PatchDescriptionDatabase::begin() {
+  return _database.begin();
+}
+peanoclaw::statistics::PatchDescriptionDatabase::MapType::iterator
+peanoclaw::statistics::PatchDescriptionDatabase::end() {
+  return _database.end();
+}
+
 void peanoclaw::statistics::PatchDescriptionDatabase::clear() {
   _database.clear();
 }

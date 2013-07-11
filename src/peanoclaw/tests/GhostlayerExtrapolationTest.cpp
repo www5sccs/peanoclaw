@@ -74,9 +74,6 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testCornerExtrapolation2D() 
   peanoclaw::interSubgridCommunication::Extrapolation extrapolation(patch);
   extrapolation.extrapolateGhostlayer();
 
-  //TODO unterweg debug
-  std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
-
   //Validate results
   {
     tarch::la::Vector<DIMENSIONS, int> subcell;

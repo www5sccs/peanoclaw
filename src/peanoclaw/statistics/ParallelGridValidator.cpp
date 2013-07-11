@@ -7,6 +7,9 @@
 #include "peanoclaw/statistics/ParallelGridValidator.h"
 
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/interSubgridCommunication/aspects/FaceAdjacentPatchTraversal.h"
+#include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversal.h"
+#include "peanoclaw/interSubgridCommunication/aspects/CornerAdjacentPatchTraversal.h"
 
 #include "peano/heap/Heap.h"
 #include "peano/utils/Dimensions.h"
@@ -41,13 +44,6 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::statistics::ParallelGridValidato
     = projectedNeighborPosition.convertScalar<int>();
   tarch::la::Vector<DIMENSIONS,double> coarseNeighborPosition
     = tarch::la::multiplyComponents(coarseDiscreteNeighborPosition.convertScalar<double>(), coarseSize);
-
-  //TODO unterweg debug
-  std::cout << "finePosition=" << finePosition << ", fineSize=" << fineSize << ", fineLevel=" << fineLevel
-      << ", discreteNeighborPosition=" << discreteNeighborPosition
-      << ", coarseLevel=" << coarseLevel
-      << ", coarseDiscreteNeighborPosition=" << coarseDiscreteNeighborPosition
-      << ", coarsePosition=" << coarseNeighborPosition << std::endl;
 
   return coarseNeighborPosition + _domainOffset;
 }
@@ -151,12 +147,16 @@ bool peanoclaw::statistics::ParallelGridValidator::validateNeighborPatchOnRemote
 
 peanoclaw::statistics::ParallelGridValidator::ParallelGridValidator(
   tarch::la::Vector<DIMENSIONS,double> domainOffset,
-  tarch::la::Vector<DIMENSIONS,double> domainSize
-) : _domainOffset(domainOffset), _domainSize(domainSize) {
+  tarch::la::Vector<DIMENSIONS,double> domainSize,
+  bool                                 useDimensionalSplittingOptimization
+) : _domainOffset(domainOffset),
+    _domainSize(domainSize),
+    _useDimensionalSplittingOptimization(useDimensionalSplittingOptimization
+) {
 }
 
 void peanoclaw::statistics::ParallelGridValidator::validateNeighborPatch(
-    const peanoclaw::statistics::PatchDescriptionDatabase& database,
+//    const peanoclaw::statistics::PatchDescriptionDatabase& database,
     const PatchDescription& patch,
     const tarch::la::Vector<DIMENSIONS, int> discreteNeighborPosition
 ) {
@@ -170,9 +170,10 @@ void peanoclaw::statistics::ParallelGridValidator::validateNeighborPatch(
     //node, if their adjacent ranks are not set correctly
     return;
   }
-  assertion1(
+  assertion2(
     patch.getAdjacentRanks(peano::utils::dLinearised(discreteNeighborPosition+1, 3)) != -2,
-    patch.toString()
+    patch.toString(),
+    discreteNeighborPosition
   );
   #endif
 
@@ -197,7 +198,7 @@ void peanoclaw::statistics::ParallelGridValidator::validateNeighborPatch(
       if(patch.getAdjacentRanks(peano::utils::dLinearised(discreteNeighborPosition+1, 3)) == patch.getRank()) {
         //Validate patch on same rank
         foundNeighborPatch |= validateNeighborPatchOnSameRank(
-            database,
+            _descriptions,
             patch,
             neighborPosition,
             level,
@@ -206,7 +207,7 @@ void peanoclaw::statistics::ParallelGridValidator::validateNeighborPatch(
       } else {
         //Validate patch on remote rank
         foundNeighborPatch |= validateNeighborPatchOnRemoteRank(
-            database,
+            _descriptions,
             patch,
             neighborPosition,
             level,
@@ -237,6 +238,35 @@ void peanoclaw::statistics::ParallelGridValidator::validateNeighborPatch(
   }
 }
 
+void peanoclaw::statistics::ParallelGridValidator::validatePatches() {
+  //Check adjacency information
+  for(PatchDescriptionDatabase::MapType::iterator i = _descriptions.begin();
+      i != _descriptions.end();
+      i++) {
+    if(_useDimensionalSplittingOptimization) {
+      for(int dimension = 0; dimension < DIMENSIONS; dimension++) {
+        for(int direction = -1; direction <= 1; direction+=2) {
+          tarch::la::Vector<DIMENSIONS, int> neighborIndex(0);
+          neighborIndex(dimension) = direction;
+          validateNeighborPatch(
+              i->second,
+              neighborIndex
+          );
+        }
+      }
+    } else {
+      for(int neighborIndex = 0; neighborIndex < THREE_POWER_D; neighborIndex++) {
+        if(neighborIndex != (THREE_POWER_D-1)/2) {
+          validateNeighborPatch(
+              i->second,
+              peano::utils::dDelinearised(neighborIndex, 3) - 1
+          );
+        }
+      }
+    }
+  }
+}
+
 void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
     const peanoclaw::Vertex&                         fineGridVertex,
     const tarch::la::Vector<DIMENSIONS,double>&      fineGridX,
@@ -244,15 +274,10 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
     int                                              localRank
 ) {
   //TODO unterweg debug
-//  if(tarch::la::equals(fineGridX(0), 4.0/27.0)
-//    &&tarch::la::equals(fineGridX(1), 7.0/27.0)
-//    //&&level == 4
-//    ) {
-    std::cout << "Finding patches for vertex " << fineGridX << ", " << level
-            << " on rank " << tarch::parallel::Node::getInstance().getRank()
-            << ": " << fineGridVertex.toString()
-            << std::endl;
-//  }
+  std::cout << "Finding patches for vertex " << fineGridX << ", " << level
+          << " on rank " << tarch::parallel::Node::getInstance().getRank()
+          << ": " << fineGridVertex.toString()
+          << std::endl;
 
 
   for(int i = 0; i < TWO_POWER_D; i++) {
@@ -301,18 +326,18 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
             int patchBasedNeighborIndex = peano::utils::dLinearised(neighborPosition + 1, 3);
 
             //TODO unterweg debug
-//            std::cout << "------------" << std::endl
-//                << "on rank=" << tarch::parallel::Node::getInstance().getRank()
-//                << ", x=" << fineGridX
-//                << ", index=" << i
-//                << ", localPosition=" << localPosition
-//                << ", vertexBasedIndex=" << vertexBasedNeighborIndex
-//                << ", vertexBasedPosition=" << peano::utils::dDelinearised( vertexBasedNeighborIndex, 2 )
-//            << ", neighborPosition=" << neighborPosition
-//            << ", patchBasedIndex=" << patchBasedNeighborIndex
-//            << ", ranks=" << fineGridVertex.getAdjacentRanks()
-//            << ", rank=" << fineGridVertex.getAdjacentRanks()(vertexBasedNeighborIndex)
-//            << std::endl;
+            std::cout << "------------" << std::endl
+                << "on rank=" << tarch::parallel::Node::getInstance().getRank()
+                << ", x=" << fineGridX
+                << ", index=" << i
+                << ", localPosition=" << localPosition
+                << ", vertexBasedIndex=" << vertexBasedNeighborIndex
+                << ", vertexBasedPosition=" << peano::utils::dDelinearised( vertexBasedNeighborIndex, 2 )
+            << ", neighborPosition=" << neighborPosition
+            << ", patchBasedIndex=" << patchBasedNeighborIndex
+            << ", ranks=" << fineGridVertex.getAdjacentRanks()
+            << ", rank=" << fineGridVertex.getAdjacentRanks()(vertexBasedNeighborIndex)
+            << std::endl;
 
             patchDescription.setAdjacentRanks(
                 patchBasedNeighborIndex,
@@ -323,19 +348,19 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
 #endif
 
         //TODO unterweg debug
-        if(localRank != tarch::parallel::Node::getInstance().getRank()) {
-          std::cout << "Adding copied patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-              << patchDescription.toString()
-              << " vertex.position=" << fineGridX
-              << " vertex.adjacentRanks=" << fineGridVertex.getAdjacentRanks()
-              << std::endl;
-        }else {
-          std::cout << "Adding patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-              << patchDescription.toString()
-              << " vertex.position=" << fineGridX
-              << " vertex.adjacentRanks=" << fineGridVertex.getAdjacentRanks()
-              << std::endl;
-        }
+//        if(localRank != tarch::parallel::Node::getInstance().getRank()) {
+//          std::cout << "Adding copied patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
+//              << patchDescription.toString()
+//              << " vertex.position=" << fineGridX
+//              << " vertex.adjacentRanks=" << fineGridVertex.getAdjacentRanks()
+//              << std::endl;
+//        }else {
+//          std::cout << "Adding patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
+//              << patchDescription.toString()
+//              << " vertex.position=" << fineGridX
+//              << " vertex.adjacentRanks=" << fineGridVertex.getAdjacentRanks()
+//              << std::endl;
+//        }
 
         _descriptions.insertPatch(patchDescription);
         assertion1(_descriptions.containsPatch(adjacentPatch.getPosition(), adjacentPatch.getLevel(), localRank), patchDescription.toString());
@@ -347,14 +372,6 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
           localDescription.setRank(tarch::parallel::Node::getInstance().getRank());
           localDescription.setIsRemote(fineGridVertex.getAdjacentRanks()(i) != tarch::parallel::Node::getInstance().getRank());
           _descriptions.insertPatch(localDescription);
-        }
-
-        //TODO unterweg debug
-        if(tarch::la::equals(fineGridX(0), 1.0/9.0)
-          &&tarch::la::equals(fineGridX(1), 2.0/9.0)
-          &&level == 4
-          &&i == 0) {
-          std::cout << "Description: " << patchDescription.toString() << std::endl;
         }
       }
     }
@@ -381,19 +398,19 @@ void peanoclaw::statistics::ParallelGridValidator::deleteNonRemoteAdjacentPatche
       ) {
 
         //TODO unterweg debug
-        std::cout << "Erasing patch on rank "
-            #ifdef Parallel
-            << tarch::parallel::Node::getInstance().getRank()
-            #endif
-            << ": "
-            << adjacentPatch.getPosition() << ", " << adjacentPatch.getSize()
-            << " ("
-            << "present: " << _descriptions.containsPatch(adjacentPatch.getPosition(), adjacentPatch.getLevel(), localRank)
-            #ifdef Parallel
-            << ", remote: " << adjacentPatch.isRemote()
-            #endif
-            << ")"
-            << std::endl;
+//        std::cout << "Erasing patch on rank "
+//            #ifdef Parallel
+//            << tarch::parallel::Node::getInstance().getRank()
+//            #endif
+//            << ": "
+//            << adjacentPatch.getPosition() << ", " << adjacentPatch.getSize()
+//            << " ("
+//            << "present: " << _descriptions.containsPatch(adjacentPatch.getPosition(), adjacentPatch.getLevel(), localRank)
+//            #ifdef Parallel
+//            << ", remote: " << adjacentPatch.isRemote()
+//            #endif
+//            << ")"
+//            << std::endl;
 
         _descriptions.erasePatch(
             adjacentPatch.getPosition(),

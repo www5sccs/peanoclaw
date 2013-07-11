@@ -16,7 +16,11 @@ peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<LoopBo
         if(index1(d) >= 0 && index1(d) < 2) {
           int i = TWO_POWER_D - peano::utils::dLinearised(index0, 2) - 1;
           int j = TWO_POWER_D - peano::utils::dLinearised(index1, 2) - 1;
-          loopBody(patches[i], i, patches[j], j, d, offset);
+
+          tarch::la::Vector<DIMENSIONS, int> direction(0);
+          direction(d) = offset;
+
+          loopBody(patches[i], i, patches[j], j, direction);
         }
       }
     }
