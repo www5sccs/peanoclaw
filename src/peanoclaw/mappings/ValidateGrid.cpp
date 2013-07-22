@@ -101,12 +101,12 @@ void peanoclaw::mappings::ValidateGrid::createHangingVertex(
   logTraceInWith6Arguments( "createHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-//  std::cout<< "Create hanging vertex " << fineGridX << ", "
-//      << fineGridH
-//      #ifdef Parallel
-//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-//      #endif
-//      << std::endl;
+  std::cout<< "Create hanging vertex " << fineGridX << ", "
+      << fineGridH
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << std::endl;
 
   logTraceOutWith1Argument( "createHangingVertex(...)", fineGridVertex );
 }
@@ -124,9 +124,9 @@ void peanoclaw::mappings::ValidateGrid::destroyHangingVertex(
   logTraceInWith6Arguments( "destroyHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-//  std::cout<< "Destroy hanging vertex " << fineGridX << ", "
-//       << fineGridH
-//        << std::endl;
+  std::cout<< "Destroy hanging vertex " << fineGridX << ", "
+       << fineGridH
+        << std::endl;
 
   if(tarch::la::allGreaterEquals(fineGridX, _domainOffset)
     && tarch::la::allGreaterEquals(_domainOffset+_domainSize, fineGridX)) {
@@ -158,12 +158,12 @@ void peanoclaw::mappings::ValidateGrid::createInnerVertex(
   logTraceInWith6Arguments( "createInnerVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-//  std::cout<< "Create inner vertex " << fineGridX << ", "
-//      << fineGridH
-//      #ifdef Parallel
-//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-//      #endif
-//      << std::endl;
+  std::cout<< "Create inner vertex " << fineGridX << ", "
+      << fineGridH
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << std::endl;
 
   logTraceOutWith1Argument( "createInnerVertex(...)", fineGridVertex );
 }
@@ -196,24 +196,40 @@ void peanoclaw::mappings::ValidateGrid::destroyVertex(
   logTraceInWith6Arguments( "destroyVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-//  std::cout<< "Destroying vertex " << fineGridX << ", "
-//      << fineGridH
-//      << ", level=" << (coarseGridVerticesEnumerator.getLevel()+1)
-//      #ifdef Parallel
-//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-//      #endif
-//      << std::endl;
+  std::cout<< "Destroying vertex " << fineGridX << ", "
+      << fineGridH
+      << ", level=" << (coarseGridVerticesEnumerator.getLevel()+1)
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      << fineGridVertex.toString()
+      << std::endl;
 
-  _validator.deleteNonRemoteAdjacentPatches(
-    fineGridVertex,
-    fineGridX,
-    coarseGridVerticesEnumerator.getLevel() + 1,
-    #ifdef Parallel
-    tarch::parallel::Node::getInstance().getRank()
-    #else
-    0
-    #endif
-  );
+  //We need to call this method here, since it seems that touchVertexLastTime
+  //is not called in the iteration where a vertex is destroyed.
+  _validator.findAdjacentPatches(
+      fineGridVertex,
+      fineGridX,
+      coarseGridVerticesEnumerator.getLevel() + 1,
+      #ifdef Parallel
+      tarch::parallel::Node::getInstance().getRank()
+      #else
+      0
+      #endif
+    );
+
+//  if(fineGridVertex.isRemote(_state, true, true)) {
+//    _validator.deleteNonRemoteAdjacentPatches(
+//      fineGridVertex,
+//      fineGridX,
+//      coarseGridVerticesEnumerator.getLevel() + 1,
+//      #ifdef Parallel
+//      tarch::parallel::Node::getInstance().getRank()
+//      #else
+//      0
+//      #endif
+//    );
+//  }
 
   logTraceOutWith1Argument( "destroyVertex(...)", fineGridVertex );
 }
@@ -231,13 +247,13 @@ void peanoclaw::mappings::ValidateGrid::createCell(
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
   //TODO unterweg debug
-//  std::cout<< "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-//      << fineGridVerticesEnumerator.getCellSize()
-//      << ", index=" << fineGridCell.getCellDescriptionIndex()
-//      #ifdef Parallel
-//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-//      #endif
-//      << std::endl;
+  logInfo("", "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+      << fineGridVerticesEnumerator.getCellSize()
+      << ", index=" << fineGridCell.getCellDescriptionIndex()
+      #ifdef Parallel
+      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+      #endif
+      );
 
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
@@ -262,6 +278,11 @@ void peanoclaw::mappings::ValidateGrid::destroyCell(
 //      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
 //      #endif
 //      << std::endl;
+
+  _validator.deletePatchIfNotRemote(
+    fineGridVerticesEnumerator.getVertexPosition(0),
+    fineGridVerticesEnumerator.getLevel()
+  );
 
   logTraceOutWith1Argument( "destroyCell(...)", fineGridCell );
 }
@@ -288,6 +309,10 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToNeighbour(
       int                                           level
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
+
+  //TODO unterweg debug
+//  std::cout << "Sending to neighbor " << tarch::parallel::Node::getInstance().getRank()
+//      << " to " << toRank << " at " << x << " on level " << level << std::endl;
 
   logTraceOut( "prepareSendToNeighbour(...)" );
 }
@@ -603,6 +628,7 @@ void peanoclaw::mappings::ValidateGrid::beginIteration(
     solverState.useDimensionalSplittingOptimization()
   );
   assertionEquals(_validator.getAllPatches().size(), 0);
+  _state = solverState;
   _domainOffset = solverState.getDomainOffset();
   _domainSize = solverState.getDomainSize();
   _heap.getData(_patchDescriptionsIndex).clear();
@@ -616,6 +642,9 @@ void peanoclaw::mappings::ValidateGrid::endIteration(
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
 
+  //TODO unterweg debug
+  logInfo("", "END ITERATION" << tarch::parallel::Node::getInstance().getRank() << "!");
+
   if(
     #ifdef Parallel
     tarch::parallel::Node::getInstance().isGlobalMaster()
@@ -623,10 +652,6 @@ void peanoclaw::mappings::ValidateGrid::endIteration(
     true
     #endif
   ) {
-
-    //TODO unterweg debug
-    std::cout << "END ITERATION!"
-         << std::endl;
 
     //Copy collected patches
     std::vector<PatchDescription>& receivedDescriptions = _heap.getData(_patchDescriptionsIndex);

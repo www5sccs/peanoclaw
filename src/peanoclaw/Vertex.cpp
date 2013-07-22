@@ -77,11 +77,11 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   //TODO unterweg Debug
 //  #ifdef Debug
   bool plotVertex = false;
-//  plotVertex =
-//      tarch::la::equals(position(0), 2.0/3.0)
-//      && tarch::la::equals(position(1), 7.0/9.0)
-//      && level == 4
-//  ;
+  plotVertex =
+      tarch::la::equals(position(0), 48.0/81.0)
+      && tarch::la::equals(position(1), 7.0/9.0)
+      && level == 4
+  ;
 
   if(plotVertex) {
     std::cerr << "Filling vertex ("

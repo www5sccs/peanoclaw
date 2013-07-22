@@ -45,5 +45,7 @@ class peanoclaw::records::State {
   persistent packed bool             reduceStateAndCell;
 
   persistent packed bool             couldNotEraseDueToDecompositionFlag;
+
+  persistent packed bool             subWorkerIsInvolvedInJoinOrFork;
   #endif
 };

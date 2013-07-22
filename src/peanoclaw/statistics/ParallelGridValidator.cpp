@@ -276,6 +276,7 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
   //TODO unterweg debug
   std::cout << "Finding patches for vertex " << fineGridX << ", " << level
           << " on rank " << tarch::parallel::Node::getInstance().getRank()
+          << ", hanging=" << fineGridVertex.isHangingNode()
           << ": " << fineGridVertex.toString()
           << std::endl;
 
@@ -306,6 +307,7 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
         patchDescription.setSize(adjacentPatch.getSize());
         patchDescription.setLevel(adjacentPatch.getLevel());
         patchDescription.setIsReferenced(true);
+        patchDescription.setIsVirtual(adjacentPatch.isVirtual());
         patchDescription.setCellDescriptionIndex(adjacentPatch.getCellDescriptionIndex());
         patchDescription.setSkipGridIterations(adjacentPatch.shouldSkipNextGridIteration() ? -1 : 0);
 #ifdef Parallel
@@ -365,7 +367,8 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
         _descriptions.insertPatch(patchDescription);
         assertion1(_descriptions.containsPatch(adjacentPatch.getPosition(), adjacentPatch.getLevel(), localRank), patchDescription.toString());
 
-        //Keep local copy when moving patch to different node
+        //Keep local copy when moving patch to different node (i.e. insert another copy of
+        //the patch description to the database)
         if(localRank != tarch::parallel::Node::getInstance().getRank()) {
           PatchDescription localDescription = patchDescription;
           localDescription.setAdjacentRanks((THREE_POWER_D-1)/2, tarch::parallel::Node::getInstance().getRank());
@@ -373,31 +376,37 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
           localDescription.setIsRemote(fineGridVertex.getAdjacentRanks()(i) != tarch::parallel::Node::getInstance().getRank());
           _descriptions.insertPatch(localDescription);
         }
+
+        //TODO unterweg debug
+        std::cout << "Found patch for vertex " << fineGridX << ", " << level
+                << " on rank " << tarch::parallel::Node::getInstance().getRank()
+                << ": " << patchDescription.toString()
+                << std::endl;
       }
     }
   }
 }
 
-void peanoclaw::statistics::ParallelGridValidator::deleteNonRemoteAdjacentPatches(
-    const peanoclaw::Vertex&                         fineGridVertex,
-    const tarch::la::Vector<DIMENSIONS,double>&      fineGridX,
-    int                                              level,
-    int                                              localRank
-) {
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    if(fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
-      int cellDescriptionIndex = fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i);
-
-      CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
-      Patch adjacentPatch(cellDescription);
-
-      if(adjacentPatch.getLevel() == level
-        #ifdef Parallel
-        && !adjacentPatch.isRemote()
-        #endif
-      ) {
-
-        //TODO unterweg debug
+//void peanoclaw::statistics::ParallelGridValidator::deleteNonRemoteAdjacentPatches(
+//    const peanoclaw::Vertex&                         fineGridVertex,
+//    const tarch::la::Vector<DIMENSIONS,double>&      fineGridX,
+//    int                                              level,
+//    int                                              localRank
+//) {
+//  for(int i = 0; i < TWO_POWER_D; i++) {
+//    if(fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
+//      int cellDescriptionIndex = fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i);
+//
+//      CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+//      Patch adjacentPatch(cellDescription);
+//
+//      if(adjacentPatch.getLevel() == level
+//        #ifdef Parallel
+//        && !adjacentPatch.isRemote()
+//        #endif
+//      ) {
+//
+//        //TODO unterweg debug
 //        std::cout << "Erasing patch on rank "
 //            #ifdef Parallel
 //            << tarch::parallel::Node::getInstance().getRank()
@@ -411,13 +420,39 @@ void peanoclaw::statistics::ParallelGridValidator::deleteNonRemoteAdjacentPatche
 //            #endif
 //            << ")"
 //            << std::endl;
+//
+//        _descriptions.erasePatch(
+//            adjacentPatch.getPosition(),
+//            adjacentPatch.getLevel(),
+//            localRank
+//        );
+//      }
+//    }
+//  }
+//}
 
-        _descriptions.erasePatch(
-            adjacentPatch.getPosition(),
-            adjacentPatch.getLevel(),
-            localRank
-        );
-      }
+void peanoclaw::statistics::ParallelGridValidator::deletePatchIfNotRemote(
+  const tarch::la::Vector<DIMENSIONS,double>&      position,
+  int                                              level
+) {
+  int localRank = tarch::parallel::Node::getInstance().getRank();
+  if(_descriptions.containsPatch(
+    position,
+    level,
+    localRank
+  )) {
+    PatchDescription patchDescription = _descriptions.getPatch(
+      position,
+      level,
+      localRank
+    );
+
+    if(!patchDescription.getIsRemote()) {
+      _descriptions.erasePatch(
+        position,
+        level,
+        tarch::parallel::Node::getInstance().getRank()
+      );
     }
   }
 }

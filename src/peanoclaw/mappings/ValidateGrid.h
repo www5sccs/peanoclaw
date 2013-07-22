@@ -53,6 +53,7 @@ class peanoclaw::mappings::ValidateGrid {
     int                                          _patchDescriptionsIndex;
     peano::heap::Heap<PatchDescription>&         _heap;
     peanoclaw::statistics::ParallelGridValidator _validator;
+    peanoclaw::State                             _state;
 
   public:
     /**

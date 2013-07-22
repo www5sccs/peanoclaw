@@ -62,7 +62,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   InterPatchCommunicationCallback fluxCorrectionCallback,
   int *rank
 ) {
-    peano::fillLookupTables();
+  peano::fillLookupTables();
 
 #if defined(Parallel)
   char argv[2][256];
@@ -89,8 +89,29 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   static tarch::logging::Log _log("::pyclawBindings");
   logInfo("pyclaw_peano_new(...)", "Initializing Peano");
 
+  // Configure the output
+  tarch::logging::CommandLineLogger::getInstance().clearFilterList();
+//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "", true ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
+//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", true ) );
+
+  //Selective Tracing
+//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh", false ) );
+//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::destroyVertex", false ) );
+//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::endIteration", false ) );
+//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::touchVertex", false ) );
+
+  //tarch::logging::CommandLineLogger::getInstance().setLogFormat( ... please consult source code documentation );
+
+  std::ostringstream logFileName;
+  #ifdef Parallel
+  logFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-trace.txt";
+  #endif
+  tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
+
   //Tests
-  if(true) {
+  if(false) {
     tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
   }
 
@@ -140,27 +161,6 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     logError("pyclaw_peano_new(...)", "subdivisionFactor not set properly.");
   }
  
-  // Configure the output
-  tarch::logging::CommandLineLogger::getInstance().clearFilterList();
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "", false ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", false ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", true ) );
-
-  //Selective Tracing
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", -1, "peano::geometry", true ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", -1, "peano::grid::nodes::loops::LoadVertexLoopBody::operator", true ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", -1, "tarch::parallel::NodePool::replyToWorkerRequestMessages", true ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", -1, "tarch::parallel::NodePool::replyToRegistrationMessages", true ) );
-
-  //tarch::logging::CommandLineLogger::getInstance().setLogFormat( ... please consult source code documentation );
- 
-  std::ostringstream logFileName;
-  #ifdef Parallel
-  logFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-trace.txt";
-  #endif
-  tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
-
   //Create runner
   peanoclaw::runners::PeanoClawLibraryRunner* runner
     = new peanoclaw::runners::PeanoClawLibraryRunner(

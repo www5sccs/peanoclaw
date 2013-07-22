@@ -92,16 +92,24 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
 ) {
   logTraceInWith3Arguments("sendPatch", cellDescriptionIndex, _position, _level);
 
+  //TODO unterweg debug
+  logInfo("", "Sending from " << tarch::parallel::Node::getInstance().getRank()
+      << " to " << _remoteRank
+      << ", position:" << _position);
+  logInfo("", "Ulriekes Test 0");
+
   if(cellDescriptionIndex != -1) {
     sendCellDescription(cellDescriptionIndex);
 
     CellDescription cellDescription = _cellDescriptionHeap.getData(cellDescriptionIndex).at(0);
 
     //TODO unterweg debug
-//    std::cout << "Sending from " << tarch::parallel::Node::getInstance().getRank()
-//        << " to " << _remoteRank << ": " << cellDescription.toString()
-//        << ", position:" << _position
-//        << std::endl;
+    logInfo("", "Sending actual patch from " << tarch::parallel::Node::getInstance().getRank()
+      << " to " << _remoteRank
+      << ", position:" << _position
+      << " : " << cellDescription.toString()
+    );
+    logInfo("", "Ulriekes Test 1");
 
     if(cellDescription.getUNewIndex() != -1) {
       sendDataArray(cellDescription.getUNewIndex());
@@ -121,6 +129,13 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
       sendPaddingDataArray();
     }
   } else {
+
+    //TODO unterweg debug
+    logInfo("", "Sending padding patch from " << tarch::parallel::Node::getInstance().getRank()
+      << " to " << _remoteRank
+      << ", position:" << _position
+    );
+
     sendPaddingPatch();
   }
   logTraceOut("sendPatch");
@@ -132,12 +147,22 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPaddingPatch() {
   sendPaddingDataArray(); //UNew
   sendPaddingDataArray(); //UOld
   sendPaddingDataArray(); //Aux
+
+  //TODO unterweg debug
+//  std::cout << "Sending padding patch from " << tarch::parallel::Node::getInstance().getRank()
+//      << " to " << _remoteRank
+//      << ", position:" << _position
+//      << std::endl;
+
   logTraceOut("sendPaddingPatch");
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescriptionIndex) {
   #ifdef Parallel
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
+
+  //TODO unterweg debug
+  logInfo("", "Receiving neighbor patch, position: " << _position << ", level: " << _level);
 
   assertion(localCellDescriptionIndex > -1);
   CellDescription localCellDescription = _cellDescriptionHeap.getData(localCellDescriptionIndex).at(0);
@@ -146,12 +171,15 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
   assertionEquals2(remoteCellDescriptionVector.size(), 1, _position, _level);
   CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
 
-  assertionNumericalEquals2(localCellDescription.getPosition(), remoteCellDescription.getPosition(),
-      localCellDescription.toString(), remoteCellDescription.toString());
-  assertionNumericalEquals2(localCellDescription.getSize(), remoteCellDescription.getSize(),
-      localCellDescription.toString(), remoteCellDescription.toString());
-  assertionEquals2(localCellDescription.getLevel(), remoteCellDescription.getLevel(),
-      localCellDescription.toString(), remoteCellDescription.toString());
+  assertionEquals2(localCellDescription.getLevel(), _level, localCellDescription.toString(), tarch::parallel::Node::getInstance().getRank());
+//  if(!tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    assertionNumericalEquals3(localCellDescription.getPosition(), remoteCellDescription.getPosition(),
+        localCellDescription.toString(), remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank());
+    assertionNumericalEquals3(localCellDescription.getSize(), remoteCellDescription.getSize(),
+        localCellDescription.toString(), remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank());
+    assertionEquals3(localCellDescription.getLevel(), remoteCellDescription.getLevel(),
+        localCellDescription.toString(), remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank());
+//  }
 
   //Load arrays and stores according indices in cell description
   if(remoteCellDescription.getAuxIndex() != -1) {
@@ -185,6 +213,10 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
 
 void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {
   logTraceInWith2Arguments("receivePaddingPatch", _position, _level);
+
+  //TODO unterweg debug
+  logInfo("", "Receiving neighbor patch, position: " << _position << ", level: " << _level);
+
   //Receive padding patch
   _cellDescriptionHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 

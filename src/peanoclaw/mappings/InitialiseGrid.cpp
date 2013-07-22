@@ -56,7 +56,14 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::descendSpecif
 tarch::logging::Log                peanoclaw::mappings::InitialiseGrid::_log( "peanoclaw::mappings::InitialiseGrid" ); 
 
 
-peanoclaw::mappings::InitialiseGrid::InitialiseGrid() {
+peanoclaw::mappings::InitialiseGrid::InitialiseGrid()
+: _defaultSubdivisionFactor(-1),
+  _defaultGhostLayerWidth(-1),
+  _initialTimestepSize(-1.0),
+  _initialMinimalMeshWidth(-1.0),
+  _numerics(0),
+  _additionalLevelsForPredefinedRefinement(-1),
+  _refinementTriggered(false) {
   logTraceIn( "InitialiseGrid()" );
   // @todo Insert your code here
   logTraceOut( "InitialiseGrid()" );
@@ -132,7 +139,7 @@ void peanoclaw::mappings::InitialiseGrid::createInnerVertex(
   //Normal refinement
   if(
           tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth) 
-          && (fineGridVertex.getRefinementControl() == Vertex::Records::Unrefined) // roland MARK
+          && (fineGridVertex.getRefinementControl() == Vertex::Records::Unrefined)
     ) {
     fineGridVertex.refine();
   }
@@ -160,7 +167,28 @@ void peanoclaw::mappings::InitialiseGrid::createBoundaryVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "createBoundaryVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-  // @todo Insert your code here
+
+
+  assertion(!fineGridVertex.isHangingNode());
+
+  //Normal refinement
+  if(
+      tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth)
+      && (fineGridVertex.getRefinementControl() == Vertex::Records::Unrefined)
+  ) {
+    fineGridVertex.refine();
+  }
+
+  //Predefined adaptive refinement
+//  double radius = 0.15;
+//  if((tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth)) ||
+//    ((std::abs(tarch::la::norm2(fineGridX-0.5)-radius) < fineGridH(0) / 2.0)
+//        && (tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth / (std::pow(3.0, (double)_additionalLevelsForPredefinedRefinement)))))) {
+//
+//    fineGridVertex.refine();
+//  }
+//
+
   logTraceOutWith1Argument( "createBoundaryVertex(...)", fineGridVertex );
 }
 
@@ -221,11 +249,10 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
     //Refine if necessary
     if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(demandedMeshWidth))) {
       for(int i = 0; i < TWO_POWER_D; i++) {
-          // roland MARK
         if (fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined
             && !fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-            fineGridVertices[fineGridVerticesEnumerator(i)].refine();
-            _refinementTriggered = true;
+          fineGridVertices[fineGridVerticesEnumerator(i)].refine();
+          _refinementTriggered = true;
         }
       }
     }

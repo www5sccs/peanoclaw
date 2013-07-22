@@ -480,11 +480,15 @@ void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
       fineGridVertex.shouldRefine()
       && fineGridVertex.getRefinementControl() == peanoclaw::Vertex::Records::Unrefined
     ) {
+    //TODO unterweg debug
+    logInfo("", "Refining vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel()+1) << " on rank " << tarch::parallel::Node::getInstance().getRank());
     fineGridVertex.refine();
   } else if (
       fineGridVertex.shouldErase()
       && fineGridVertex.getCurrentAdjacentCellsHeight() == 1
     ) {
+    //TODO unterweg debug
+    logInfo("", "Erasing vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel()+1) << " on rank " << tarch::parallel::Node::getInstance().getRank());
     fineGridVertex.erase();
   }
   fineGridVertex.setShouldRefine(false);
@@ -587,7 +591,6 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
     } else {
       logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
-
       patch.reduceGridIterationsToBeSkipped();
     }
 
