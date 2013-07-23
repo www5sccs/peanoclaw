@@ -8,10 +8,10 @@
 #include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
 #include "peanoclaw/interSubgridCommunication/aspects/FaceAdjacentPatchTraversal.h"
 #include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversal.h"
+#include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversalWithCommonFaceNeighbors.h"
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
-
 #include "tarch/parallel/Node.h"
 
 tarch::logging::Log peanoclaw::interSubgridCommunication::GhostLayerCompositor::_log("peanoclaw::interSubgridCommunication::GhostLayerCompositor");
@@ -43,7 +43,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 //  timeFactor = 1.0;
 
   int sourceUnknownsPerSubcell = source.getUnknownsPerSubcell();
-
     dfor(subcellindex, size) {
       int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
       int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
@@ -229,79 +228,28 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlaye
   int rightPatchIndex = 0;
 
   //Faces
-  for(int d = 0; d < DIMENSIONS; d++) {
-    int leftPatchIndex = rightPatchIndex + tarch::la::aPowI(d,2);
+  UpdateGhostlayerBoundsFaceFunctor faceFunctor(*this);
+  peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<UpdateGhostlayerBoundsFaceFunctor>(
+    _patches,
+    faceFunctor
+  );
 
-    if(_patches[leftPatchIndex].isLeaf()
-        && _patches[rightPatchIndex].isValid()
-        && _patches[leftPatchIndex].getLevel() == _patches[rightPatchIndex].getLevel()) {
-      updateUpperGhostlayerBound(rightPatchIndex, leftPatchIndex, d);
-    }
-    if(_patches[rightPatchIndex].isLeaf()
-        && _patches[leftPatchIndex].isValid()
-        && _patches[rightPatchIndex].getLevel() == _patches[leftPatchIndex].getLevel()) {
-      updateLowerGhostlayerBound(leftPatchIndex, rightPatchIndex, d);
-    }
-  }
+  if(!_useDimensionalSplittingOptimization) {
+    //Edges
+    UpdateGhostlayerBoundsEdgeFunctor edgeFunctor(*this);
+    peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversalWithCommonFaceNeighbors<UpdateGhostlayerBoundsEdgeFunctor>(
+      _patches,
+      edgeFunctor
+    );
 
-  //Corners (2D)/Edges (3D)
-//  2->4
-//  3->12
-//
-//  2D:
-//  0->3
-//  1->2
-//
-//  3D:
-//  0->3
-//  0->5
-//  0->6
-//  1->2
-//  1->4
-//  1->7
-//  2->4
-//  2->7
-//  3->5
-//  3->6
-//  4->7
-//  5->6
-
-  if((!_patches[1].isValid() || !_patches[1].isLeaf()) && (!_patches[2].isValid() || !_patches[2].isLeaf())) {
-    rightPatchIndex = 0;
-    int leftPatchIndex = 3;
-    if(_patches[rightPatchIndex].isValid() && _patches[leftPatchIndex].isValid()) {
-      if(_patches[rightPatchIndex].getLevel() == _patches[leftPatchIndex].getLevel()) {
-        //Upper right corner
-        if(_patches[rightPatchIndex].isLeaf()) {
-          updateLowerGhostlayerBound(leftPatchIndex, rightPatchIndex, 0);
-          updateLowerGhostlayerBound(leftPatchIndex, rightPatchIndex, 1);
-        }
-        //Lower left corner
-        if(_patches[leftPatchIndex].isLeaf()) {
-          updateUpperGhostlayerBound(rightPatchIndex, leftPatchIndex, 0);
-          updateUpperGhostlayerBound(rightPatchIndex, leftPatchIndex, 1);
-        }
-      }
-    }
-  }
-
-  if((!_patches[0].isValid() || !_patches[0].isLeaf()) && (!_patches[3].isValid() || !_patches[3].isLeaf())) {
-    rightPatchIndex = 1;
-    int leftPatchIndex = 2;
-    if(_patches[rightPatchIndex].isValid() && _patches[leftPatchIndex].isValid()) {
-      if(_patches[rightPatchIndex].getLevel() == _patches[leftPatchIndex].getLevel()) {
-        //Upper left corner
-        if(_patches[rightPatchIndex].isLeaf()) {
-          updateUpperGhostlayerBound(leftPatchIndex, rightPatchIndex, 0);
-          updateLowerGhostlayerBound(leftPatchIndex, rightPatchIndex, 1);
-        }
-        //Lower right corner
-        if(_patches[leftPatchIndex].isLeaf()) {
-          updateLowerGhostlayerBound(rightPatchIndex, leftPatchIndex, 0);
-          updateUpperGhostlayerBound(rightPatchIndex, leftPatchIndex, 1);
-        }
-      }
-    }
+    //Corners
+    #ifdef Dim3
+    UpdateGhostlayerBoundsCornerFunctor cornerFunctor(*this);
+    peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversalWithCommonFaceAndEdgeNeighbors<UpdateGhostlayerBoundsCornerFunctor>(
+      _patches,
+      cornerFunctor
+    );
+    #endif
   }
 }
 
@@ -486,6 +434,66 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FluxCorrectionF
     //Correct from right to left
     if(patch2.getLevel() > patch1.getLevel()) {
       _numerics.applyFluxCorrection(patch2, patch1, dimension, offset);
+    }
+  }
+}
+
+peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateGhostlayerBoundsFaceFunctor::UpdateGhostlayerBoundsFaceFunctor (
+  GhostLayerCompositor& ghostlayerCompositor
+) : _ghostlayerCompositor(ghostlayerCompositor) {
+}
+
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateGhostlayerBoundsFaceFunctor::operator() (
+  peanoclaw::Patch&                  patch1,
+  int                                index1,
+  peanoclaw::Patch&                  patch2,
+  int                                index2,
+  tarch::la::Vector<DIMENSIONS, int> direction
+) {
+  int dimension = -1;
+  for(int d = 0; d < DIMENSIONS; d++) {
+    if(abs(direction(d)) == 1) {
+      dimension = d;
+    }
+  }
+
+  if(patch1.isLeaf() && patch2.isValid()
+      && patch1.getLevel() == patch2.getLevel()) {
+    if(index1 < index2) {
+      _ghostlayerCompositor.updateUpperGhostlayerBound(index2, index1, dimension);
+    } else {
+      _ghostlayerCompositor.updateLowerGhostlayerBound(index2, index1, dimension);
+    }
+  }
+}
+
+peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateGhostlayerBoundsEdgeFunctor::UpdateGhostlayerBoundsEdgeFunctor (
+  GhostLayerCompositor& ghostlayerCompositor
+) : _ghostlayerCompositor(ghostlayerCompositor) {
+}
+
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::UpdateGhostlayerBoundsEdgeFunctor::operator() (
+  peanoclaw::Patch&                  patch1,
+  int                                index1,
+  peanoclaw::Patch&                  patch2,
+  int                                index2,
+  peanoclaw::Patch&                  faceNeighbor1,
+  int                                indexFaceNeighbor1,
+  peanoclaw::Patch&                  faceNeighbor2,
+  int                                indexFaceNeighbor2,
+  tarch::la::Vector<DIMENSIONS, int> direction
+) {
+  if((!faceNeighbor1.isValid() || !faceNeighbor1.isLeaf()) && (!faceNeighbor2.isValid() || !faceNeighbor2.isLeaf())) {
+    if(patch1.isValid() && patch2.isValid() && (patch1.getLevel() == patch2.getLevel())) {
+      for(int d = 0; d < DIMENSIONS; d++) {
+        if(direction(d) != 0) {
+          if(index1 < index2) {
+            _ghostlayerCompositor.updateUpperGhostlayerBound(index2, index1, d);
+          } else {
+            _ghostlayerCompositor.updateLowerGhostlayerBound(index2, index1, d);
+          }
+        }
+      }
     }
   }
 }

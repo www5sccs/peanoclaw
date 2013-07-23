@@ -93,10 +93,11 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   logTraceInWith3Arguments("sendPatch", cellDescriptionIndex, _position, _level);
 
   //TODO unterweg debug
+  #ifdef Parallel
   logInfo("", "Sending from " << tarch::parallel::Node::getInstance().getRank()
       << " to " << _remoteRank
       << ", position:" << _position);
-  logInfo("", "Ulriekes Test 0");
+  #endif
 
   if(cellDescriptionIndex != -1) {
     sendCellDescription(cellDescriptionIndex);
@@ -104,12 +105,13 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
     CellDescription cellDescription = _cellDescriptionHeap.getData(cellDescriptionIndex).at(0);
 
     //TODO unterweg debug
+    #ifdef Parallel
     logInfo("", "Sending actual patch from " << tarch::parallel::Node::getInstance().getRank()
       << " to " << _remoteRank
       << ", position:" << _position
       << " : " << cellDescription.toString()
     );
-    logInfo("", "Ulriekes Test 1");
+    #endif
 
     if(cellDescription.getUNewIndex() != -1) {
       sendDataArray(cellDescription.getUNewIndex());
@@ -131,10 +133,12 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   } else {
 
     //TODO unterweg debug
+    #ifdef Parallel
     logInfo("", "Sending padding patch from " << tarch::parallel::Node::getInstance().getRank()
       << " to " << _remoteRank
       << ", position:" << _position
     );
+    #endif
 
     sendPaddingPatch();
   }
@@ -147,13 +151,6 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPaddingPatch() {
   sendPaddingDataArray(); //UNew
   sendPaddingDataArray(); //UOld
   sendPaddingDataArray(); //Aux
-
-  //TODO unterweg debug
-//  std::cout << "Sending padding patch from " << tarch::parallel::Node::getInstance().getRank()
-//      << " to " << _remoteRank
-//      << ", position:" << _position
-//      << std::endl;
-
   logTraceOut("sendPaddingPatch");
 }
 

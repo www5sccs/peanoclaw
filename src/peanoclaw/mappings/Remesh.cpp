@@ -518,22 +518,19 @@ void peanoclaw::mappings::Remesh::destroyCell(
 //    return;
 //  }
 
+
   assertion5(
     fineGridCell.getCellDescriptionIndex() != -2,
     fineGridCell.toString(),
     fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getCellSize(),
     fineGridVerticesEnumerator.getLevel(),
+    #ifdef Parallel
     tarch::parallel::Node::getInstance().getRank()
+    #else
+    0
+    #endif
   );
-
-  //TODO unterweg debug
-  #ifdef Parallel
-//  if(tarch::la::equals(fineGridVerticesEnumerator.getVertexPosition(0), tarch::la::Vector<DIMENSIONS,double>(2.0/3.0))
-//    && tarch::la::equals(fineGridVerticesEnumerator.getCellSize(), tarch::la::Vector<DIMENSIONS,double>(1.0/3.0))) {
-//    std::cout << "Destroying cell on rank " << tarch::parallel::Node::getInstance().getRank() << ": " << fineGridVerticesEnumerator.getVertexPosition(0) << ", " << fineGridVerticesEnumerator.getCellSize() << std::endl;
-//  }
-  #endif
 
   Patch finePatch(
     fineGridCell

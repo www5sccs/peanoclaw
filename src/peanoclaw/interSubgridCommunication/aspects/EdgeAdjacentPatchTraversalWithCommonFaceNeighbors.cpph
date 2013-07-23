@@ -1,0 +1,55 @@
+/*
+ * EdgeAdjacentPatchTraversalWithCommonFaceNeighbors.cpph
+ *
+ *  Created on: Jul 23, 2013
+ *      Author: kristof
+ */
+
+#include "peano/utils/Loop.h"
+
+template<class LoopBody>
+peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversalWithCommonFaceNeighbors<LoopBody>::EdgeAdjacentPatchTraversalWithCommonFaceNeighbors(
+  peanoclaw::Patch patches[TWO_POWER_D],
+  LoopBody& loopBody
+) {
+  #ifdef Dim2
+  for(int indexSource = TWO_POWER_D - 1; indexSource >= 0; indexSource--) {
+    tarch::la::Vector<DIMENSIONS, int> positionSource
+      = peano::utils::dDelinearised(TWO_POWER_D - 1 - indexSource, 2);
+    dfor(binaryOffsetDestination, 2) {
+      tarch::la::Vector<DIMENSIONS, int> offsetDestination = 2 * binaryOffsetDestination - 1;
+      tarch::la::Vector<DIMENSIONS, int> positionDestination = positionSource + offsetDestination;
+
+      if(tarch::la::allGreaterEquals(positionDestination, tarch::la::Vector<DIMENSIONS, int>(0))
+        && tarch::la::allGreater(tarch::la::Vector<DIMENSIONS, int>(2), positionDestination)) {
+        int indexDestination = TWO_POWER_D - 1 - peano::utils::dLinearised(positionDestination, 2);
+
+        tarch::la::Vector<DIMENSIONS, int> positionFaceNeighbor1
+          = positionSource;
+        positionFaceNeighbor1(0) = (positionFaceNeighbor1(0) + 1) % 2;
+        int indexFaceNeighbor1 = TWO_POWER_D - 1 - peano::utils::dLinearised(positionFaceNeighbor1, 2);
+
+        tarch::la::Vector<DIMENSIONS, int> positionFaceNeighbor2
+          = positionSource;
+        positionFaceNeighbor2(1) = (positionFaceNeighbor2(1) + 1) % 2;
+        int indexFaceNeighbor2 = TWO_POWER_D - 1 - peano::utils::dLinearised(positionFaceNeighbor2, 2);
+
+        loopBody(
+          patches[indexSource],
+          indexSource,
+          patches[indexDestination],
+          indexDestination,
+          patches[indexFaceNeighbor1],
+          indexFaceNeighbor1,
+          patches[indexFaceNeighbor2],
+          indexFaceNeighbor2,
+          offsetDestination
+        );
+      }
+    }
+  }
+  #else
+  assertionFail("Not implemented, yet.");
+  #endif
+}
+

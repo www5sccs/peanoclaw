@@ -74,7 +74,10 @@ peanoclaw::mappings::ValidateGrid::~ValidateGrid() {
 
 
 #if defined(SharedMemoryParallelisation)
-peanoclaw::mappings::ValidateGrid::ValidateGrid(const ValidateGrid&  masterThread) {
+peanoclaw::mappings::ValidateGrid::ValidateGrid(const ValidateGrid&  masterThread)
+  : _heap(peano::heap::Heap<PatchDescription>::getInstance()),
+    _validator(0, 0, false)
+{
   logTraceIn( "ValidateGrid(ValidateGrid)" );
   // @todo Insert your code here
   logTraceOut( "ValidateGrid(ValidateGrid)" );
@@ -99,15 +102,6 @@ void peanoclaw::mappings::ValidateGrid::createHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                   fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "createHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-
-  //TODO unterweg debug
-  std::cout<< "Create hanging vertex " << fineGridX << ", "
-      << fineGridH
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << std::endl;
-
   logTraceOutWith1Argument( "createHangingVertex(...)", fineGridVertex );
 }
 
@@ -122,12 +116,6 @@ void peanoclaw::mappings::ValidateGrid::destroyHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "destroyHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-
-  //TODO unterweg debug
-  std::cout<< "Destroy hanging vertex " << fineGridX << ", "
-       << fineGridH
-        << std::endl;
-
   if(tarch::la::allGreaterEquals(fineGridX, _domainOffset)
     && tarch::la::allGreaterEquals(_domainOffset+_domainSize, fineGridX)) {
     _validator.findAdjacentPatches(
@@ -141,7 +129,6 @@ void peanoclaw::mappings::ValidateGrid::destroyHangingVertex(
       #endif
     );
   }
-
   logTraceOutWith1Argument( "destroyHangingVertex(...)", fineGridVertex );
 }
 
@@ -643,7 +630,9 @@ void peanoclaw::mappings::ValidateGrid::endIteration(
   logTraceInWith1Argument( "endIteration(State)", solverState );
 
   //TODO unterweg debug
+  #ifdef Parallel
   logInfo("", "END ITERATION" << tarch::parallel::Node::getInstance().getRank() << "!");
+  #endif
 
   if(
     #ifdef Parallel

@@ -138,7 +138,7 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
     patch.setTimestepSize(dtAndEstimatedNextDt[0]);
   }
   patch.setEstimatedNextTimestepSize(dtAndEstimatedNextDt[1]);
- 
+
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
   return requiredMeshWidth;
 }

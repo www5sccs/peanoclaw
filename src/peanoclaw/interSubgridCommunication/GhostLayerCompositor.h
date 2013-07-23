@@ -251,6 +251,46 @@ public:
         tarch::la::Vector<DIMENSIONS, int> direction
       );
   };
+
+  class UpdateGhostlayerBoundsFaceFunctor {
+    private:
+    GhostLayerCompositor& _ghostlayerCompositor;
+
+    public:
+    UpdateGhostlayerBoundsFaceFunctor(
+      GhostLayerCompositor& ghostlayerCompositor
+    );
+
+    void operator() (
+      peanoclaw::Patch&                  patch1,
+      int                                index1,
+      peanoclaw::Patch&                  patch2,
+      int                                index2,
+      tarch::la::Vector<DIMENSIONS, int> direction
+    );
+  };
+
+  class UpdateGhostlayerBoundsEdgeFunctor {
+    private:
+    GhostLayerCompositor& _ghostlayerCompositor;
+
+    public:
+    UpdateGhostlayerBoundsEdgeFunctor(
+      GhostLayerCompositor& ghostlayerCompositor
+    );
+
+    void operator() (
+      peanoclaw::Patch&                  patch1,
+      int                                index1,
+      peanoclaw::Patch&                  patch2,
+      int                                index2,
+      peanoclaw::Patch&                  faceNeighbor1,
+      int                                indexFaceNeighbor1,
+      peanoclaw::Patch&                  faceNeighbor2,
+      int                                indexFaceNeighbor2,
+      tarch::la::Vector<DIMENSIONS, int> direction
+    );
+  };
 };
 
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_ */

@@ -30,6 +30,10 @@
 #include "peano/parallel/loadbalancing/OracleForOnePhaseWithGreedyPartitioning.h"
 #endif
 
+#ifdef SharedTBB
+#include "tarch/multicore/tbb/Core.h"
+#endif
+
 #include "peano/datatraversal/autotuning/Oracle.h"
 #include "peano/datatraversal/autotuning/OracleForOnePhaseDummy.h"
 
@@ -53,7 +57,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(true)
+  _validateGrid(false)
 {
   #ifndef Asserts
   _validateGrid = false;
@@ -65,6 +69,12 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   tarch::parallel::Node::getInstance().setDeadlockTimeOut(20);
   #endif
 
+  //Multicore configuration
+  #ifdef SharedMemoryParallelisation
+  tarch::multicore::tbb::Core::getInstance().configure(1);
+  #endif
+
+  //User interface
   peano::utils::UserInterface userInterface;
   userInterface.writeHeader();
 
