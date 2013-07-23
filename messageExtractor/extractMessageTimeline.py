@@ -77,15 +77,16 @@ if __name__ == "__main__":
   threadpool = ThreadPool(3)
   
   while True:
-    if len(glob.glob("it-" + "%05d" % iteration + "*.txt")) == 0:
+    #if len(glob.glob("it-" + "%05d" % iteration + "*.txt")) == 0:
+    if iteration > 1:
       break
     
     htmlFile.write("<h1>Iteration " + str(iteration) + "</h1>\n")
     
     print "------"
     for rank in xrange(0, numberOfRanks):
-      inputFileName = "it-" + "%05d" % iteration + "-rank-" + str(rank) + "-trace.txt"
-      #style = 'style="width:' + str(100/numberOfRanks - 3) + '%; height:75%;"'
+      #inputFileName = "it-" + "%05d" % iteration + "-rank-" + str(rank) + "-trace.txt"
+      inputFileName = "rank-" + str(rank) + "-trace.txt"
       style = 'style="width: 400px; height:75%;"'
       try:
         inputFile = open(inputFileName, 'r')

@@ -5,7 +5,7 @@ from Message import Message
 class MasterWorkerCommunicationParser(Parser):
   
   def __init__(self):
-    self.prepareSendToWorkerPattern =  re.compile("rank:(\d+) peanoclaw::mappings::Remesh::prepareSendToWorker\(...\)\s*in:.*level:(\d+).*verticesEnumerator\.getVertexPosition\(0\):(.*).*worker:(\d+)")
+    self.prepareSendToWorkerPattern =  re.compile("rank:(\d+) peanoclaw::mappings::Remesh::prepareSendToWorker\(...\)\s*in:.*level:(\d+).*fineGridVerticesEnumerator\.getVertexPosition\(0\):(.*).*worker:(\d+)")
     self.prepareSendToMasterPattern = re.compile("rank:(\d+) peanoclaw::mappings::Remesh::prepareSendToMaster\(...\)\s*in:.*level:(\d+).*verticesEnumerator\.getVertexPosition\(0\):([^ ]+)")
     self.receiveDataFromMasterPattern = re.compile("rank:(\d+) peanoclaw::mappings::Remesh::receiveDataFromMaster\(...\)\s*in:")
     self.mergeWithWorkerPattern = re.compile("rank:(\d+) peanoclaw::mappings::Remesh::mergeWithWorker\(...\)\s*in:")
