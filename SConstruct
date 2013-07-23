@@ -136,29 +136,29 @@ elif multicore == 'tbb':
    # Determine tbb directory and architecture from environment variables:
    tbbDir = os.getenv ( 'TBB_DIR' )
    
-   if ( tbbDir == None ):
-      print 'ERROR: Environment variable TBB_DIR not defined!'
-      sys.exit(1)
-   else:
-      print 'Using environment variable TBB_DIR =', tbbDir
+   #if ( tbbDir == None ):
+   #   print 'ERROR: Environment variable TBB_DIR not defined!'
+   #   sys.exit(1)
+   #else:
+   #   print 'Using environment variable TBB_DIR =', tbbDir
       
-   tbbArch = os.getenv ( 'TBB_ARCH' );
-   if( tbbArch == None ):
-      print 'ERROR: Environment variable TBB_ARCH not defined!'
-      sys.exit(1)
-   else:
-      print 'Using environment variable TBB_ARCH =', tbbArch
+   #tbbArch = os.getenv ( 'TBB_ARCH' );
+   #if( tbbArch == None ):
+   #   print 'ERROR: Environment variable TBB_ARCH not defined!'
+   #   sys.exit(1)
+   #else:
+   #   print 'Using environment variable TBB_ARCH =', tbbArch
           
    if ( build == 'debug' ):
       libs.append ('tbb_debug')
-      tbbArch = tbbArch     
+      #tbbArch = tbbArch     
    else:
       libs.append ('tbb')
-      tbbArch = tbbArch
+      #tbbArch = tbbArch
 
    cppdefines.append('SharedTBB')
-   cpppath.append(tbbDir + '/include')   
-   libpath.append(tbbDir+'/lib/'+tbbArch)
+   #cpppath.append(tbbDir + '/include')   
+   #libpath.append(tbbDir + '/lib/'+tbbArch)
 elif multicore == 'opencl':
    libs.append('OpenCL')
    libs.append ('pthread')
@@ -441,7 +441,6 @@ sourcesParallel = [
  Glob(buildpath + 'kernel/tarch/parallel/messages/*.cpp'),
  Glob(buildpath + 'kernel/tarch/parallel/dastgen/*.cpp'),
  Glob(buildpath + 'kernel/tarch/parallel/configurations/*.cpp'),
- Glob(buildpath + 'kernel/tarch/mpianalysis/*.cpp'),
  Glob(buildpath + 'kernel/peano/parallel/*.cpp'),
  Glob(buildpath + 'kernel/peano/parallel/configurations/*.cpp'),
  Glob(buildpath + 'kernel/peano/parallel/loadbalancing/*.cpp'),
@@ -548,16 +547,17 @@ sourcesToolBoxVHH = [
 ##### Define sources of application peanoclaw
 sourcesPeanoClaw = [
   Glob(buildpath + 'peanoclaw/*.cpp'),
-	Glob(buildpath + 'peanoclaw/adapters/*.cpp'),
-	Glob(buildpath + 'peanoclaw/configurations/*.cpp'),
-	Glob(buildpath + 'peanoclaw/interSubgridCommunication/*.cpp'),
-	Glob(buildpath + 'peanoclaw/mappings/*.cpp'),
-    Glob(buildpath + 'peanoclaw/native/*.cpp'),
-	Glob(buildpath + 'peanoclaw/parallel/*.cpp'),
-	Glob(buildpath + 'peanoclaw/pyclaw/*.cpp'),
-	Glob(buildpath + 'peanoclaw/records/*.cpp'),
-	Glob(buildpath + 'peanoclaw/repositories/*.cpp'),
-	Glob(buildpath + 'peanoclaw/runners/*.cpp'),
+  Glob(buildpath + 'peanoclaw/adapters/*.cpp'),
+  Glob(buildpath + 'peanoclaw/configurations/*.cpp'),
+  Glob(buildpath + 'peanoclaw/interSubgridCommunication/*.cpp'),
+  Glob(buildpath + 'peanoclaw/interSubgridCommunication/aspects/*.cpp'),
+  Glob(buildpath + 'peanoclaw/mappings/*.cpp'),
+  Glob(buildpath + 'peanoclaw/native/*.cpp'),
+  Glob(buildpath + 'peanoclaw/parallel/*.cpp'),
+  Glob(buildpath + 'peanoclaw/pyclaw/*.cpp'),
+  Glob(buildpath + 'peanoclaw/records/*.cpp'),
+  Glob(buildpath + 'peanoclaw/repositories/*.cpp'),
+  Glob(buildpath + 'peanoclaw/runners/*.cpp'),
   Glob(buildpath + 'peanoclaw/statistics/*.cpp'),
   Glob(buildpath + 'peanoclaw/tests/*.cpp')
 	]
