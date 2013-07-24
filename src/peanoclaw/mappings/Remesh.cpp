@@ -243,9 +243,7 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
     }
 
     //Fill boundary conditions
-//    if(hangingVertexDescription.getLastUpdateIterationParity() != _iterationParity) {
-      hangingVertexDescription.setLastUpdateIterationParity(_iterationParity);
-//    }
+    hangingVertexDescription.setLastUpdateIterationParity(_iterationParity);
   }
 
   logTraceOutWith1Argument( "destroyHangingVertex(...)", fineGridVertex );
@@ -698,10 +696,10 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
     tarch::la::Vector<TWO_POWER_D, int> localVertexRanks = vertex.getAdjacentRanks();
 
     //TODO unterweg debug
-    logInfo("", "Sending to neighbor " << tarch::parallel::Node::getInstance().getRank()
-      << " to " << toRank
-      << ", position:" << x
-      << ", level:" << level);
+//    logInfo("", "Sending to neighbor " << tarch::parallel::Node::getInstance().getRank()
+//      << " to " << toRank
+//      << ", position:" << x
+//      << ", level:" << level);
 
     for(int i = 0; i < TWO_POWER_D; i++) {
       #ifdef Asserts
@@ -1274,6 +1272,12 @@ void peanoclaw::mappings::Remesh::leaveCell(
 
   for(int i = 0; i < TWO_POWER_D; i++) {
     fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, fineGridCell.getCellDescriptionIndex());
+  }
+
+  //TODO unterweg debug
+  if(fineGridVerticesEnumerator.getLevel() == 3) {
+//    peano::heap::Heap<CellDescription>::getInstance().receiveDanglingMessages();
+//    peano::heap::Heap<Data>::getInstance().receiveDanglingMessages();
   }
 
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );

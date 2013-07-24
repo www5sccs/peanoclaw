@@ -87,6 +87,11 @@ public:
   void evolveToTime( double time  );
 
   /**
+   * Initializes the MPI environment
+   */
+  void initializeParallelEnvironment();
+
+  /**
    * Gathers the current solution, i.e. all patches.
    */
   void gatherCurrentSolution();

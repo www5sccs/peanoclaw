@@ -11,7 +11,7 @@
 int peanoclaw::runners::Runner::runAsWorker(peanoclaw::repositories::Repository& repository) {
   int newMasterNode = tarch::parallel::NodePool::getInstance().waitForJob(); 
   while ( newMasterNode != tarch::parallel::NodePool::JobRequestMessageAnswerValues::Terminate ) {
-    if ( tarch::parallel::NodePool::getInstance().waitForJob() >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
+    if ( newMasterNode >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
       peano::parallel::messages::ForkMessage forkMessage;
       forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
 
@@ -44,7 +44,7 @@ int peanoclaw::runners::Runner::runAsWorker(peanoclaw::repositories::Repository&
 
       repository.terminate();
     }
-    else if ( tarch::parallel::NodePool::getInstance().waitForJob() == tarch::parallel::NodePool::JobRequestMessageAnswerValues::RunAllNodes ) {
+    else if ( newMasterNode == tarch::parallel::NodePool::JobRequestMessageAnswerValues::RunAllNodes ) {
       runGlobalStep();  
     }
     newMasterNode = tarch::parallel::NodePool::getInstance().waitForJob(); 

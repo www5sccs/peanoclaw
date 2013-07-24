@@ -84,20 +84,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().setName("Data");
   peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().setName("VertexDescription");
 
-#if defined(Parallel)
-  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-    tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
-  }
-  tarch::parallel::NodePool::getInstance().restart();
- 
-  peano::parallel::loadbalancing::Oracle::getInstance().setOracle(
-    new peano::parallel::loadbalancing::OracleForOnePhaseWithGreedyPartitioning(true)
-  );
- 
-  // have to be the same for all ranks
-  peano::parallel::SendReceiveBufferPool::getInstance().setBufferSize(64);
-  peano::parallel::JoinDataBufferPool::getInstance().setBufferSize(64);
-#endif
+  initializeParallelEnvironment();
 
   peano::datatraversal::autotuning::Oracle::getInstance().setOracle( new peano::datatraversal::autotuning::OracleForOnePhaseDummy(true) );
 
@@ -273,6 +260,23 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _plotNumber++;
   }
   logTraceOut("evolveToTime");
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
+  #if defined(Parallel)
+  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
+  }
+  tarch::parallel::NodePool::getInstance().restart();
+
+  peano::parallel::loadbalancing::Oracle::getInstance().setOracle(
+    new peano::parallel::loadbalancing::OracleForOnePhaseWithGreedyPartitioning(true)
+  );
+
+  // have to be the same for all ranks
+  peano::parallel::SendReceiveBufferPool::getInstance().setBufferSize(64);
+  peano::parallel::JoinDataBufferPool::getInstance().setBufferSize(64);
+  #endif
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution() {
