@@ -39,6 +39,7 @@ def addPeanoClawFlags(libpath, libs, cpppath, cppdefines):
    libpath.append(pythonHome + '/lib/python' + pythonVersion)
    cpppath.append(pythonHome + '/include/python' + pythonVersion)
    cpppath.append(pythonHome + '/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
+   cpppath.append(os.getenv("HOME") + '/.local/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
    libs.append('python' + pythonVersion)
    if(environment['PLATFORM'] == 'darwin'):
      ccflags.append('-flat_namespace')
@@ -62,7 +63,7 @@ linkerflags = []
 libpath = []
 libs = []
 
-p3Path = '../p3'
+p3Path = '../p3/src'
 cpppath.append(p3Path)
 clawpackPath = '../src/clawpack'
 
