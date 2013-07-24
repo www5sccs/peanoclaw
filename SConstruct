@@ -7,24 +7,27 @@ import sys;
 ##### FUNCTION DEFINITIONS
 #########################################################################
 
-def addPeanoClawFlags(libpath,libs,cpppath,cppdefines):
+def addPeanoClawFlags(libpath, libs, cpppath, cppdefines):
    ccflags.append('-g3')
    ccflags.append('-g')
    ccflags.append('-march=native')
    
-   pythonVersion = str(sys.version_info.major) + '.' + str(sys.version_info.minor)
-   #Determine python version from environment variable:
-   peanoClawPythonVersion = os.getenv ( 'PEANOCLAW_PYTHONVERSION' )
-   if ( peanoClawPythonVersion != None ):
+   if sys.version_info[0] == 2 and sys.version_info[1] < 7:
+       pythonVersion = str(sys.version_info[0]) + '.' + str(sys.version_info[1]) #For Python 2.6
+   else: 
+       pythonVersion = str(sys.version_info.major) + '.' + str(sys.version_info.minor) #For Python 2.7
+   # Determine python version from environment variable:
+   peanoClawPythonVersion = os.getenv ('PEANOCLAW_PYTHONVERSION')
+   if (peanoClawPythonVersion != None):
       pythonVersion = peanoClawPythonVersion
 
    # Determine python root path from environment variable:
-   pythonHome = os.getenv ( 'PYTHONHOME' )
-   peanoClawPythonHome = os.getenv ( 'PEANOCLAW_PYTHONHOME' )
-   if ( peanoClawPythonHome != None ):
+   pythonHome = os.getenv ('PYTHONHOME')
+   peanoClawPythonHome = os.getenv ('PEANOCLAW_PYTHONHOME')
+   if (peanoClawPythonHome != None):
       print 'Using environment variable PEANOCLAW_PYTHONHOME =', peanoClawPythonHome
       pythonHome = peanoClawPythonHome
-   elif ( pythonHome != None ):
+   elif (pythonHome != None):
       print 'Using environment variable PYTHONHOME =', pythonHome
    else:
       print('Environment variables PYTHONHOME and PEANOCLAW_PYTHONHOME not defined. Using default \'/usr\'')
@@ -59,19 +62,19 @@ linkerflags = []
 libpath = []
 libs = []
 
-p3Path='../p3'
+p3Path = '../p3/src'
 cpppath.append(p3Path)
-clawpackPath='../src/clawpack'
+clawpackPath = '../src/clawpack'
 
-#Platform specific settings
+# Platform specific settings
 environment = Environment()
-#Only include library rt if not compiling on Mac OS.
+# Only include library rt if not compiling on Mac OS.
 if(environment['PLATFORM'] != 'darwin'):
     libs.append('rt')
 
 ##### Determine dimension for which to build
 #
-dim = ARGUMENTS.get('dim', 2)   # Read command line parameter
+dim = ARGUMENTS.get('dim', 2)  # Read command line parameter
 if int(dim) == 2:
    cppdefines.append('Dim2')
 elif int(dim) == 3:
@@ -88,7 +91,7 @@ else:
 # This section only defines Peano-specific flags. It does not
 # set compiler specific stuff.
 #
-build = ARGUMENTS.get('build', 'debug')   # Read command line parameter
+build = ARGUMENTS.get('build', 'debug')  # Read command line parameter
 if build == 'debug':
    cppdefines.append('Debug')
    cppdefines.append('Asserts')
@@ -105,7 +108,7 @@ else:
    
 ##### Determine MPI-Parallelization
 #
-parallel = ARGUMENTS.get('parallel', 'parallel_no') # Read command line parameter
+parallel = ARGUMENTS.get('parallel', 'parallel_no')  # Read command line parameter
 if parallel == 'yes' or parallel == 'parallel_yes':
    cppdefines.append('Parallel')
    cpppath.append('/usr/lib/openmpi/include')
@@ -121,12 +124,12 @@ else:
 
 ##### Determine Multicore usage
 #   
-multicore = ARGUMENTS.get('multicore', 'multicore_no')   # Read command line parameter
+multicore = ARGUMENTS.get('multicore', 'multicore_no')  # Read command line parameter
 
 if multicore == 'no' or multicore == 'multicore_no':
    pass
 elif multicore == 'openmp':
-   ompDir = os.getenv ( 'OMP_DIR', '' )
+   ompDir = os.getenv ('OMP_DIR', '')
    cppdefines.append('SharedOMP')
    cpppath.append(ompDir + '/include')   
    pass
@@ -134,31 +137,31 @@ elif multicore == 'tbb':
    libs.append('pthread')
    libs.append('dl')
    # Determine tbb directory and architecture from environment variables:
-   tbbDir = os.getenv ( 'TBB_DIR' )
+   tbbDir = os.getenv ('TBB_DIR')
    
-   #if ( tbbDir == None ):
+   # if ( tbbDir == None ):
    #   print 'ERROR: Environment variable TBB_DIR not defined!'
    #   sys.exit(1)
-   #else:
+   # else:
    #   print 'Using environment variable TBB_DIR =', tbbDir
       
-   #tbbArch = os.getenv ( 'TBB_ARCH' );
-   #if( tbbArch == None ):
+   # tbbArch = os.getenv ( 'TBB_ARCH' );
+   # if( tbbArch == None ):
    #   print 'ERROR: Environment variable TBB_ARCH not defined!'
    #   sys.exit(1)
-   #else:
+   # else:
    #   print 'Using environment variable TBB_ARCH =', tbbArch
           
-   if ( build == 'debug' ):
+   if (build == 'debug'):
       libs.append ('tbb_debug')
-      #tbbArch = tbbArch     
+      # tbbArch = tbbArch     
    else:
       libs.append ('tbb')
-      #tbbArch = tbbArch
+      # tbbArch = tbbArch
 
    cppdefines.append('SharedTBB')
-   #cpppath.append(tbbDir + '/include')   
-   #libpath.append(tbbDir + '/lib/'+tbbArch)
+   # cpppath.append(tbbDir + '/include')   
+   # libpath.append(tbbDir + '/lib/'+tbbArch)
 elif multicore == 'opencl':
    libs.append('OpenCL')
    libs.append ('pthread')
@@ -172,37 +175,37 @@ else:
 valgrind = ARGUMENTS.get('valgrind', 'no')
 if valgrind == 'no':
    pass
-elif valgrind=='yes':
+elif valgrind == 'yes':
    ccflags.append('-g')
    cppdefines.append('USE_VALGRIND')
-   cpppath.append(os.getenv ( 'VALGRIND_ROOT' ) + "/include")
-   cpppath.append(os.getenv ( 'VALGRIND_ROOT' ) + "/callgrind")
+   cpppath.append(os.getenv ('VALGRIND_ROOT') + "/include")
+   cpppath.append(os.getenv ('VALGRIND_ROOT') + "/callgrind")
 else:
    print "ERROR: valgrind must be = 'yes' or 'no'!"
    sys.exit(1)
    
 ##### Switch Compiler
 #
-compiler = ARGUMENTS.get('compiler', 'gcc') # Read command line parameter
+compiler = ARGUMENTS.get('compiler', 'gcc')  # Read command line parameter
 if compiler == 'gcc':
-   if(parallel=='parallel_no' or parallel=='no'):
+   if(parallel == 'parallel_no' or parallel == 'no'):
      cxx = 'g++'
    else:
      cxx = 'mpicxx'
      cppdefines.append('MPICH_SKIP_MPICXX')
    ccflags.append('-Wall')
-   #if(cca=='cca_no' or cca=='no'):
-   #ccflags.append('-Werror')
-   #	ccflags.append('-pedantic')
-   #ccflags.append('-pedantic-errors')
+   # if(cca=='cca_no' or cca=='no'):
+   # ccflags.append('-Werror')
+   # 	ccflags.append('-pedantic')
+   # ccflags.append('-pedantic-errors')
    ccflags.append('-Wstrict-aliasing')
    ccflags.append('-fstrict-aliasing')
-   #ccflags.append('-fno-exceptions')
-   #ccflags.append('-fno-rtti')
+   # ccflags.append('-fno-exceptions')
+   # ccflags.append('-fno-rtti')
    ccflags.append('-Wno-long-long')
    ccflags.append('-Wno-unknown-pragmas')
-   #if multicore == 'no' or multicore == 'multicore_no':
-      #ccflags.append('-Wconversion')
+   # if multicore == 'no' or multicore == 'multicore_no':
+      # ccflags.append('-Wconversion')
    ccflags.append('-Wno-non-virtual-dtor')
    if build == 'debug':
       ccflags.append('-g3')
@@ -215,7 +218,7 @@ if compiler == 'gcc':
       ccflags.append('-fopenmp')
       linkerflags.append('-fopenmp')
 elif compiler == 'xlc':
-   if(parallel=='parallel_no' or parallel=='no'):
+   if(parallel == 'parallel_no' or parallel == 'no'):
      cxx = 'xlc++'
    else:
      cxx = 'mpixlcxx'
@@ -236,35 +239,35 @@ elif compiler == 'xlc':
 
 elif compiler == 'icc':
    cxx = 'icpc'
-   #ccflags.append('-fast')
+   # ccflags.append('-fast')
    ccflags.append('-fstrict-aliasing')
    ccflags.append('-qpack_semantic=gnu')
    if build == 'debug':
       ccflags.append('-O0')
    elif build == 'asserts':
 #      ccflags.append('-fast')
-      #ccflags.append('-vec-report5') # is supressed by -ipo (included in -fast)
-      #ccflags.append('-xHost')       # done by -fast
-      #ccflags.append('-O3')          # done by -fast
-      #ccflags.append('-no-prec-div') # done by -fast
-      #ccflags.append('-static')      # done by -fast
+      # ccflags.append('-vec-report5') # is supressed by -ipo (included in -fast)
+      # ccflags.append('-xHost')       # done by -fast
+      # ccflags.append('-O3')          # done by -fast
+      # ccflags.append('-no-prec-div') # done by -fast
+      # ccflags.append('-static')      # done by -fast
       ccflags.append('-w')
 #     ccflags.append('-Werror-all')
       ccflags.append('-align')
       ccflags.append('-ansi-alias')
    elif build == 'release':
 #      ccflags.append('-fast')
-      #ccflags.append('-vec-report5') # is supressed by -ipo (included in -fast)
-      #ccflags.append('-xHost')       # done by -fast
-      #ccflags.append('-O3')          # done by -fast
-      #ccflags.append('-no-prec-div') # done by -fast
-      #ccflags.append('-static')      # done by -fast
+      # ccflags.append('-vec-report5') # is supressed by -ipo (included in -fast)
+      # ccflags.append('-xHost')       # done by -fast
+      # ccflags.append('-O3')          # done by -fast
+      # ccflags.append('-no-prec-div') # done by -fast
+      # ccflags.append('-static')      # done by -fast
       ccflags.append('-w')
 #     ccflags.append('-Werror-all')
       ccflags.append('-align')
       ccflags.append('-ansi-alias')
-   #PN: If -fast is used for linking, the tbb-lib cannot be found :-(   
-   #linkerflags.append('-fast')
+   # PN: If -fast is used for linking, the tbb-lib cannot be found :-(   
+   # linkerflags.append('-fast')
    if multicore == 'openmp':
       ccflags.append('-openmp')
       linkerflags.append('-openmp')
@@ -274,7 +277,7 @@ else:
    
 ##### Determine Scalasca Usage
 #
-scalasca = ARGUMENTS.get('scalasca', 'scalasca_no') # Read command line parameter
+scalasca = ARGUMENTS.get('scalasca', 'scalasca_no')  # Read command line parameter
 if scalasca == 'yes' or scalasca == 'scalasca_yes':
    cxx = 'scalasca -instrument ' + cxx
 elif scalasca == 'no' or scalasca == 'scalasca_no':
@@ -286,7 +289,7 @@ else:
 ##### Determine build path
 #
 build_offset = ARGUMENTS.get('buildoffset', 'build')
-buildpath = build_offset  + '/' + str(build) + '/dim' + str(dim) + '/' 
+buildpath = build_offset + '/' + str(build) + '/dim' + str(dim) + '/' 
 if multicore == 'tbb':
    buildpath = buildpath + 'tbb/'
 elif multicore == 'openmp':
@@ -311,7 +314,7 @@ if scalasca == 'yes' or scalasca == 'scalasca_yes':
    
 ##### Specify build settings
 #
-addPeanoClawFlags(libpath,libs,cpppath,cppdefines)
+addPeanoClawFlags(libpath, libs, cpppath, cppdefines)
 
 ##### Print options used to build
 #
@@ -322,20 +325,20 @@ print "Buildpath: " + buildpath
 print
 
 VariantDir (buildpath, './src', duplicate=0)  # Set build directory for PeanoClaw sources
-VariantDir (buildpath + 'kernel', p3Path, duplicate=0) # Set build directory for Peano sources
+VariantDir (buildpath + 'kernel', p3Path, duplicate=0)  # Set build directory for Peano sources
 
 ##### Setup construction environment:
 #
-env = Environment ( 
-   CPPDEFINES = cppdefines,
-   LIBPATH    = libpath,
-   LIBS       = libs, 
-   CPPPATH    = cpppath,
-   CCFLAGS    = ccflags,
-   LINKFLAGS  = linkerflags,
-   CXX        = cxx,
-   ENV        = os.environ # Makes environment variables visible to scons
-   #tools      = compiler_tools
+env = Environment (
+   CPPDEFINES=cppdefines,
+   LIBPATH=libpath,
+   LIBS=libs,
+   CPPPATH=cpppath,
+   CCFLAGS=ccflags,
+   LINKFLAGS=linkerflags,
+   CXX=cxx,
+   ENV=os.environ  # Makes environment variables visible to scons
+   # tools      = compiler_tools
    )
 
 ################################################################################
@@ -456,7 +459,7 @@ sourcesPeanoUtils = [
 ]
 
 
-### Peano partition coupling
+# ## Peano partition coupling
 sourcesPartitionCoupling = [
   Glob(buildpath + 'kernel/peano/integration/partitioncoupling/*.cpp'),
   Glob(buildpath + 'kernel/peano/integration/partitioncoupling/builtin/*.cpp'),
@@ -466,7 +469,7 @@ sourcesPartitionCoupling = [
   Glob(buildpath + 'kernel/peano/integration/partitioncoupling/services/*.cpp')
 ]
 
-### Kernel
+# ## Kernel
 sourcesKernelConfiguration = [
    Glob(buildpath + 'kernel/peano/configurations/*.cpp')
    ]
@@ -523,7 +526,7 @@ sourcesPeanoBase = [
   sourcesPeanoGeometry,
   sourcesPeanoUtils,
   sourcesDatatraversal,
-  #sourcesQueries,
+  # sourcesQueries,
   Glob(buildpath + 'kernel/peano/*.cpp'),
   Glob(buildpath + 'kernel/*.cpp')
 ]
@@ -543,7 +546,7 @@ sourcesToolBoxVHH = [
   Glob(buildpath + 'kernel/peano/toolbox/solver/vhh/opencl/tests/*.cpp')
 ]
 
-### Applications
+# ## Applications
 ##### Define sources of application peanoclaw
 sourcesPeanoClaw = [
   Glob(buildpath + 'peanoclaw/*.cpp'),
@@ -568,9 +571,9 @@ sourcesPeanoClaw = [
 targetfilename = 'libpeano-claw-' + str(dim) + 'd'
 target = buildpath + targetfilename
 library = env.SharedLibrary (
-#env.Program (
-  target = target,
-  source = [
+# env.Program (
+  target=target,
+  source=[
      sourcesTComponents,
      sourcesPeanoBase,
      sourcesPeanoClaw,
