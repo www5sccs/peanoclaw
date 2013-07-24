@@ -106,14 +106,6 @@ else:
    print "ERROR: build must be 'debug', 'asserts', or 'release'!"
    sys.exit(1)
    
-##### Determine machine specific parameters
-#
-machine = ARGUMENTS.get('machine', 'default')  # Read command line parameter
-if machine == 'supermuc':
-   mpicxx = 'mpiCC'
-else:
-   mpicxx = 'mpicxx'
-   
 ##### Determine MPI-Parallelization
 #
 parallel = ARGUMENTS.get('parallel', 'parallel_no')  # Read command line parameter
@@ -146,30 +138,13 @@ elif multicore == 'tbb':
    libs.append('dl')
    # Determine tbb directory and architecture from environment variables:
    tbbDir = os.getenv ('TBB_DIR')
-   
-   # if ( tbbDir == None ):
-   #   print 'ERROR: Environment variable TBB_DIR not defined!'
-   #   sys.exit(1)
-   # else:
-   #   print 'Using environment variable TBB_DIR =', tbbDir
-      
-   # tbbArch = os.getenv ( 'TBB_ARCH' );
-   # if( tbbArch == None ):
-   #   print 'ERROR: Environment variable TBB_ARCH not defined!'
-   #   sys.exit(1)
-   # else:
-   #   print 'Using environment variable TBB_ARCH =', tbbArch
           
    if (build == 'debug'):
       libs.append ('tbb_debug')
-      # tbbArch = tbbArch     
    else:
       libs.append ('tbb')
-      # tbbArch = tbbArch
 
    cppdefines.append('SharedTBB')
-   # cpppath.append(tbbDir + '/include')   
-   # libpath.append(tbbDir + '/lib/'+tbbArch)
 elif multicore == 'opencl':
    libs.append('OpenCL')
    libs.append ('pthread')
@@ -202,10 +177,6 @@ if compiler == 'gcc':
      cxx = 'mpicxx'
      cppdefines.append('MPICH_SKIP_MPICXX')
    ccflags.append('-Wall')
-   # if(cca=='cca_no' or cca=='no'):
-   # ccflags.append('-Werror')
-   # 	ccflags.append('-pedantic')
-   # ccflags.append('-pedantic-errors')
    ccflags.append('-Wstrict-aliasing')
    ccflags.append('-fstrict-aliasing')
    # ccflags.append('-fno-exceptions')
@@ -243,10 +214,11 @@ elif compiler == 'xlc':
       ccflags.append('-qsmp=omp')
       linkerflags.append('-qsmp=omp')
       cxx = cxx + '_r'
-      
-
 elif compiler == 'icc':
-   cxx = 'icpc'
+   if(parallel == 'parallel_no' or parallel == 'no'):
+     cxx = 'icpc'
+   else:
+     cxx = 'mpiCC'
    # ccflags.append('-fast')
    ccflags.append('-fstrict-aliasing')
    ccflags.append('-qpack_semantic=gnu')
