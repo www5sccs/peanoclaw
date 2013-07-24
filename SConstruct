@@ -63,7 +63,7 @@ linkerflags = []
 libpath = []
 libs = []
 
-p3Path = '../p3/src'
+p3Path = '../p3'
 cpppath.append(p3Path)
 clawpackPath = '../src/clawpack'
 
