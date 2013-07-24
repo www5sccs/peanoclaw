@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 12-04-2013 09:18
  *
- * @date   18/07/2013 13:56
+ * @date   23/07/2013 18:31
  */
 class peanoclaw::records::VertexDescription { 
    
@@ -205,7 +205,7 @@ class peanoclaw::records::VertexDescription {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   18/07/2013 13:56
+          * @date   23/07/2013 18:31
           */
          class peanoclaw::records::VertexDescriptionPacked { 
             

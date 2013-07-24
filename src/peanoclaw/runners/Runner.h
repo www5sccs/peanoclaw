@@ -26,6 +26,13 @@ class peanoclaw::runners::Runner {
     
     #ifdef Parallel
     int runAsWorker(peanoclaw::repositories::Repository& repository);
+    
+    /**
+     * If the master node calls runGlobalStep() on the repository, all MPI 
+     * ranks besides rank 0 invoke this operation no matter whether they are 
+     * idle or not. 
+     */ 
+    void runGlobalStep();
     #endif
   public:
     Runner();

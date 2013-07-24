@@ -102,23 +102,7 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(const Area& area,
     double valueUOld = getValueUOld(linearIndexUOld, unknown);
     double valueUNew = getValueUNew(linearIndexUNew, unknown);
 
-//      #ifdef Asserts
-//      if(unknown == 0) {
-//        assertion9(tarch::la::greaterEquals(valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld, 0.0)
-//        && tarch::la::greaterEquals(valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew, 0.0),
-//        toString(),
-//        getCurrentTime(),
-//        getTimestepSize(),
-//        factorForUOld,
-//        factorForUNew,
-//        valueUOld,
-//        valueUNew,
-//        valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld,
-//        valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew);
-//      }
-//      #endif
-
-//UOld
+    //UOld
     setValueUOld(linearIndexUOld, unknown, valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld);
 
     //UNew
@@ -205,6 +189,8 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
       -std::numeric_limits<double>::max());
 #ifdef Parallel
   cellDescription.setIsRemote(false);
+  cellDescription.setCurrentStateWasSend(false);
+  cellDescription.setIsPaddingSubgrid(false);
 #endif
 
   cellDescriptions.push_back(cellDescription);
@@ -1096,8 +1082,19 @@ void peanoclaw::Patch::setIsRemote(bool isRemote) {
   _cellDescription->setIsRemote(isRemote);
 }
 
-bool peanoclaw::Patch::isRemote() {
+bool peanoclaw::Patch::isRemote() const {
   return _cellDescription->getIsRemote();
+}
+
+void peanoclaw::Patch::markCurrentStateAsSent(bool wasSent) {
+  _cellDescription->setCurrentStateWasSend(wasSent);
+}
+
+/**
+ * Returns whether this patch was sent to the neighbor ranks since the last time step.
+ */
+bool peanoclaw::Patch::wasCurrentStateSent() const {
+  return _cellDescription->getCurrentStateWasSend();
 }
 #endif
 

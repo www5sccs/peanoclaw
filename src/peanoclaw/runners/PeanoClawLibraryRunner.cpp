@@ -7,6 +7,7 @@
 
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 
+#include "peanoclaw/runners/Runner.h"
 #include "peanoclaw/repositories/RepositoryFactory.h"
 #include "peanoclaw/State.h"
 #include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
@@ -284,24 +285,47 @@ void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution() {
 }
 
 int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
-  #if defined(Parallel)
-  while ( tarch::parallel::NodePool::getInstance().waitForJob() >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
-    peano::parallel::messages::ForkMessage forkMessage;
-    forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
-
-    _repository->restart(
+  #ifdef Parallel
+  int newMasterNode = tarch::parallel::NodePool::getInstance().waitForJob();
+  while ( newMasterNode != tarch::parallel::NodePool::JobRequestMessageAnswerValues::Terminate ) {
+    if ( newMasterNode >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
+      peano::parallel::messages::ForkMessage forkMessage;
+      forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
+      _repository->restart(
         forkMessage.getH(),
         forkMessage.getDomainOffset(),
         forkMessage.getLevel(),
         forkMessage.getPositionOfFineGridCellRelativeToCoarseGridCell()
-    );
+      );
 
-    _repository->getState().setNumerics(_numerics);
-    while (_repository->continueToIterate()) {
-      _repository->iterate();
+      bool continueToIterate = true;
+      while (continueToIterate) {
+        switch (_repository->continueToIterate()) {
+          case peanoclaw::repositories::Repository::Continue:
+            _repository->iterate();
+            break;
+          case peanoclaw::repositories::Repository::Terminate:
+            continueToIterate = false;
+            break;
+          case peanoclaw::repositories::Repository::RunGlobalStep:
+            //runGlobalStep();
+            break;
+        }
+      }
+
+      // insert your postprocessing here
+      // -------------------------------
+
+      // -------------------------------
+
+      _repository->terminate();
     }
-    _repository->terminate();
+    else if ( newMasterNode == tarch::parallel::NodePool::JobRequestMessageAnswerValues::RunAllNodes ) {
+      //runGlobalStep();
+    }
+    newMasterNode = tarch::parallel::NodePool::getInstance().waitForJob();
   }
+
   #endif
   return 0;
 }

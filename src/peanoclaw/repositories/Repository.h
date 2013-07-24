@@ -141,6 +141,12 @@ class peanoclaw::repositories::Repository {
     virtual void terminate() = 0;
     
     #ifdef Parallel
+    enum ContinueCommand {
+      Continue,
+      Terminate,
+      RunGlobalStep
+    };
+    
     /**
      * Shall a worker in the parallel cluster continue to iterate?
      *
@@ -154,7 +160,18 @@ class peanoclaw::repositories::Repository {
      * and the terminate(), these iterations won't trigger any communication 
      * anymore.
      */
-    virtual bool continueToIterate() = 0;
+    virtual ContinueCommand continueToIterate() = 0;
+
+    /**
+     * Run one global step on all mpi ranks
+     * 
+     * This operation sends a marker to all nodes, i.e. 
+     * both idle and working nodes, and calls their runGlobalStep() routine 
+     * within the parallel runner. Afterwards, all idle nodes again register as 
+     * idle on the node pool, all other nodes continue to run Peano. Should be 
+     * used with care, as it might be expensive on massively parallel systems.  
+     */
+    virtual void runGlobalStep() = 0;
     #endif
     
     

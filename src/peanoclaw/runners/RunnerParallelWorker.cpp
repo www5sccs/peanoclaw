@@ -9,28 +9,54 @@
 
 
 int peanoclaw::runners::Runner::runAsWorker(peanoclaw::repositories::Repository& repository) {
-  while ( tarch::parallel::NodePool::getInstance().waitForJob() >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
-    peano::parallel::messages::ForkMessage forkMessage;
-    forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
+  int newMasterNode = tarch::parallel::NodePool::getInstance().waitForJob(); 
+  while ( newMasterNode != tarch::parallel::NodePool::JobRequestMessageAnswerValues::Terminate ) {
+    if ( tarch::parallel::NodePool::getInstance().waitForJob() >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
+      peano::parallel::messages::ForkMessage forkMessage;
+      forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
 
-    repository.restart(
-      forkMessage.getH(),
-      forkMessage.getDomainOffset(),
-      forkMessage.getLevel(),
-      forkMessage.getPositionOfFineGridCellRelativeToCoarseGridCell()
-    );
+      repository.restart(
+        forkMessage.getH(),
+        forkMessage.getDomainOffset(),
+        forkMessage.getLevel(),
+        forkMessage.getPositionOfFineGridCellRelativeToCoarseGridCell()
+      );
   
-    while (repository.continueToIterate()) {
-      repository.iterate();
+      bool continueToIterate = true;
+      while (continueToIterate) {
+        switch (repository.continueToIterate()) {
+          case peanoclaw::repositories::Repository::Continue:
+            repository.iterate();  
+            break;
+          case peanoclaw::repositories::Repository::Terminate:
+            continueToIterate = false;  
+            break;
+          case peanoclaw::repositories::Repository::RunGlobalStep:
+            runGlobalStep();  
+            break;
+        }
+      }
+    
+      // insert your postprocessing here
+      // -------------------------------  
+
+      // -------------------------------
+
+      repository.terminate();
     }
-
-    // insert your postprocessing here
-    // -------------------------------
-
-    // -------------------------------
-
-    repository.terminate();
+    else if ( tarch::parallel::NodePool::getInstance().waitForJob() == tarch::parallel::NodePool::JobRequestMessageAnswerValues::RunAllNodes ) {
+      runGlobalStep();  
+    }
+    newMasterNode = tarch::parallel::NodePool::getInstance().waitForJob(); 
   }
   return 0;
+}
+
+
+void peanoclaw::runners::Runner::runGlobalStep() {
+    // insert yourcode here
+    // -------------------------------
+
+    // -------------------------------
 }
 #endif

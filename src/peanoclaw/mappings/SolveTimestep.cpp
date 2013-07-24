@@ -661,8 +661,16 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     }
     #endif
 
+    #ifdef Parallel
+    patch.markCurrentStateAsSent(false);
+    #endif
+
     logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimestepSize(), cellDescription.getTime() + cellDescription.getTimestepSize() );
   } else {
+    #ifdef Parallel
+    patch.markCurrentStateAsSent(true);
+    #endif
+
     logTraceOut( "enterCell(...)" );
   }
 

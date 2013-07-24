@@ -71,10 +71,13 @@ int peanoclaw::runners::Runner::runAsMaster(peanoclaw::repositories::Repository&
   // Start of dummy implementation
   
   repository.switchToInitialiseGrid(); repository.iterate();
+  repository.switchToInitialiseAndValidateGrid(); repository.iterate();
   repository.switchToPlot(); repository.iterate();
   repository.switchToRemesh(); repository.iterate();
   repository.switchToSolveTimestep(); repository.iterate();
+  repository.switchToSolveTimestepAndValidateGrid(); repository.iterate();
   repository.switchToSolveTimestepAndPlot(); repository.iterate();
+  repository.switchToSolveTimestepAndPlotAndValidateGrid(); repository.iterate();
   repository.switchToGatherCurrentSolution(); repository.iterate();
   repository.switchToCleanup(); repository.iterate();
 

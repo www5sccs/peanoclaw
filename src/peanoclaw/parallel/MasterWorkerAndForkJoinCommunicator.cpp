@@ -121,7 +121,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
   #endif
 
   //TODO unterweg debug
-  std::cout << "Received cell description: " << remoteCellDescription.toString() << std::endl;
+//  std::cout << "Received cell description: " << remoteCellDescription.toString() << std::endl;
 
   //Load arrays and stores according indices in cell description
   if(remoteCellDescription.getUNewIndex() != -1) {

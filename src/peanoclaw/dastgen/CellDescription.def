@@ -16,6 +16,8 @@ class peanoclaw::records::CellDescription {
   
   #ifdef Parallel
   parallelise persistent bool isRemote;
+  parallelise persistent bool currentStateWasSend;
+  parallelise persistent bool isPaddingSubgrid;
   #endif
 
   parallelise persistent double position[DIMENSIONS];

@@ -148,7 +148,8 @@ class peanoclaw::repositories::RepositorySTDStack: public peanoclaw::repositorie
 
    
     #ifdef Parallel
-    virtual bool continueToIterate();
+    virtual ContinueCommand continueToIterate();
+    virtual void runGlobalStep();
     #endif
 
     virtual void setMaximumMemoryFootprintForTemporaryRegularGrids(double value);

@@ -40,11 +40,10 @@ peanoclaw::repositories::RepositorySTDStack::RepositorySTDStack(
   logTraceIn( "RepositorySTDStack(...)" );
   _repositoryState.setAction( peanoclaw::records::RepositoryState::Terminate );
 
-  peano::datatraversal::autotuning::Oracle::getInstance().setNumberOfOracles(10 +3);
+  peano::datatraversal::autotuning::Oracle::getInstance().setNumberOfOracles(peanoclaw::records::RepositoryState::NumberOfAdapters);
   #ifdef Parallel
-  peano::parallel::loadbalancing::Oracle::getInstance().setNumberOfOracles(10 +3 );
+  peano::parallel::loadbalancing::Oracle::getInstance().setNumberOfOracles(peanoclaw::records::RepositoryState::NumberOfAdapters);
   #endif
-  
   
   logTraceOut( "RepositorySTDStack(...)" );
 }
@@ -74,11 +73,10 @@ peanoclaw::repositories::RepositorySTDStack::RepositorySTDStack(
 
   _repositoryState.setAction( peanoclaw::records::RepositoryState::Terminate );
   
-  peano::datatraversal::autotuning::Oracle::getInstance().setNumberOfOracles(10 +3);
+  peano::datatraversal::autotuning::Oracle::getInstance().setNumberOfOracles(peanoclaw::records::RepositoryState::NumberOfAdapters);
   #ifdef Parallel
-  peano::parallel::loadbalancing::Oracle::getInstance().setNumberOfOracles(10 +3 );
+  peano::parallel::loadbalancing::Oracle::getInstance().setNumberOfOracles(peanoclaw::records::RepositoryState::NumberOfAdapters);
   #endif
-  
   
   logTraceOut( "RepositorySTDStack(Geometry&)" );
 }
@@ -199,6 +197,12 @@ void peanoclaw::repositories::RepositorySTDStack::iterate(bool reduceState) {
     case peanoclaw::records::RepositoryState::Terminate:
       assertionMsg( false, "this branch/state should never be reached" ); 
       break;
+    case peanoclaw::records::RepositoryState::NumberOfAdapters:
+      assertionMsg( false, "this branch/state should never be reached" ); 
+      break;
+    case peanoclaw::records::RepositoryState::RunOnAllNodes:
+      assertionMsg( false, "this branch/state should never be reached" ); 
+      break;
     case peanoclaw::records::RepositoryState::ReadCheckpoint:
       assertionMsg( false, "not implemented yet" );
       break;
@@ -261,14 +265,30 @@ void peanoclaw::repositories::RepositorySTDStack::setMaximumMemoryFootprintForTe
 
 
 #ifdef Parallel
-bool peanoclaw::repositories::RepositorySTDStack::continueToIterate() {
+void peanoclaw::repositories::RepositorySTDStack::runGlobalStep() {
+  assertion(tarch::parallel::Node::getInstance().isGlobalMaster());
+
+  peanoclaw::records::RepositoryState intermediateStateForWorkingNodes;
+  intermediateStateForWorkingNodes.setAction( peanoclaw::records::RepositoryState::RunOnAllNodes );
+  
+  tarch::parallel::NodePool::getInstance().broadcastToWorkingNodes(
+    intermediateStateForWorkingNodes,
+    peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag()
+  );
+  tarch::parallel::NodePool::getInstance().activateIdleNodes(
+    peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag()
+  );
+}
+
+
+peanoclaw::repositories::RepositorySTDStack::ContinueCommand peanoclaw::repositories::RepositorySTDStack::continueToIterate() {
   logTraceIn( "continueToIterate()" );
 
   assertion( !tarch::parallel::Node::getInstance().isGlobalMaster());
 
-  bool result;
+  ContinueCommand result;
   if ( _solverState.hasJoinedWithMaster() ) {
-    result = false;
+    result = Terminate;
   }
   else {
     int masterNode = tarch::parallel::Node::getInstance().getGlobalMasterRank();
@@ -276,7 +296,13 @@ bool peanoclaw::repositories::RepositorySTDStack::continueToIterate() {
 
     _repositoryState.receive( masterNode, peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag(), true );
 
-    result = _repositoryState.getAction()!=peanoclaw::records::RepositoryState::Terminate;
+    result = Continue;
+    if (_repositoryState.getAction()==peanoclaw::records::RepositoryState::Terminate) {
+      result = Terminate;
+    } 
+    if (_repositoryState.getAction()==peanoclaw::records::RepositoryState::RunOnAllNodes) {
+      result = RunGlobalStep;
+    } 
   }
    
   logTraceOutWith1Argument( "continueToIterate()", result );
