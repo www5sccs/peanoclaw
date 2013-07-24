@@ -109,7 +109,7 @@ else:
 ##### Determine machine specific parameters
 #
 parallel = ARGUMENTS.get('machine', 'default')  # Read command line parameter
-if parallel == 'supermuc':
+if machine == 'supermuc':
    mpicxx = 'mpiCC'
 else:
    mpicxx = 'mpicxx'
