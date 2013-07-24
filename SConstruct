@@ -115,7 +115,7 @@ if parallel == 'yes' or parallel == 'parallel_yes':
    libpath.append('/usr/lib/openmpi/lib')
    libs.append ('mpi')
    libs.append ('pthread')
-   cxx = mpicxx
+   cxx = 'mpicxx'
 elif parallel == 'no' or parallel == 'parallel_no':
    pass
 else:
