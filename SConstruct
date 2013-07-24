@@ -106,6 +106,14 @@ else:
    print "ERROR: build must be 'debug', 'asserts', or 'release'!"
    sys.exit(1)
    
+##### Determine machine specific parameters
+#
+parallel = ARGUMENTS.get('machine', 'default')  # Read command line parameter
+if parallel == 'supermuc':
+   mpicxx = 'mpiCC'
+else:
+   mpicxx = 'mpicxx'
+   
 ##### Determine MPI-Parallelization
 #
 parallel = ARGUMENTS.get('parallel', 'parallel_no')  # Read command line parameter
@@ -115,7 +123,7 @@ if parallel == 'yes' or parallel == 'parallel_yes':
    libpath.append('/usr/lib/openmpi/lib')
    libs.append ('mpi')
    libs.append ('pthread')
-   cxx = 'mpicxx'
+   cxx = mpicxx
 elif parallel == 'no' or parallel == 'parallel_no':
    pass
 else:
