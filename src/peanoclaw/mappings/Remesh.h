@@ -5,27 +5,23 @@
 
 #include <map>
 
-#include "tarch/logging/Log.h"
-#include "tarch/la/Vector.h"
-#include "tarch/la/VectorCompare.h"
+#include "peanoclaw/interSubgridCommunication/AdjacentSubgrids.h"
+#include "peanoclaw/Vertex.h"
+#include "peanoclaw/Cell.h"
+#include "peanoclaw/State.h"
+#include "peanoclaw/records/CellDescription.h"
+#include "peanoclaw/records/VertexDescription.h"
+#include "peanoclaw/records/Data.h"
+#include "peanoclaw/Patch.h"
 
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/MappingSpecification.h"
 
+#include "tarch/logging/Log.h"
+#include "tarch/la/Vector.h"
+#include "tarch/la/VectorCompare.h"
+
 #include "tarch/multicore/MulticoreDefinitions.h"
-
-#include "peanoclaw/Vertex.h"
-#include "peanoclaw/Cell.h"
-#include "peanoclaw/State.h"
-
-#include "peanoclaw/records/CellDescription.h"
-#include "peanoclaw/records/VertexDescription.h"
-#include "peanoclaw/records/Data.h"
-
-#include "peanoclaw/Patch.h"
-
-#define DIMENSIONS_PLUS_ONE (DIMENSIONS+1)
-
 
 namespace peanoclaw {
 
@@ -63,7 +59,7 @@ class peanoclaw::mappings::Remesh {
     /**
      * Map from a hanging node's position and level to
      */
-    static std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >   _vertexPositionToIndexMap;
+    static peanoclaw::interSubgridCommunication::AdjacentSubgrids::VertexMap _vertexPositionToIndexMap;
 
     int _unknownsPerSubcell;
 

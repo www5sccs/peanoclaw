@@ -82,6 +82,16 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
 
   assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getMinimalNeighborTimeConstraint());
 
+  //TODO unterweg debug
+//  for(int x = 0; x < 6; x++) {
+//    for(int y = 0; y < 6; y++) {
+//      tarch::la::Vector<DIMENSIONS, int> index;
+//      index(0) = x;
+//      index(1) = y;
+//      patch.setValueUOld(index, 0, 1 + x + 10*y);
+//    }
+//  }
+
   PyClawState state(patch);
 
   tarch::timing::Watch pyclawWatch("", "", false);
@@ -176,7 +186,6 @@ void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, b
   logDebug("fillBoundaryLayerInPyClaw", "Setting left boundary for " << patch.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);
 
   PyClawState state(patch);
-
   _boundaryConditionCallback(state._q, state._qbc, dimension, setUpper ? 1 : 0);
 
   logTraceOut("fillBoundaryLayerInPyClaw");

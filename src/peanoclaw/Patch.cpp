@@ -562,9 +562,10 @@ double peanoclaw::Patch::getValueUNew(tarch::la::Vector<DIMENSIONS, int> subcell
 #endif
 
 double peanoclaw::Patch::getValueUNew(
-    tarch::la::Vector<DIMENSIONS, double> subcellPosition, int unknown) const {
+  tarch::la::Vector<DIMENSIONS, double> subcellPosition,
+  int unknown
+) const {
 
-  //tarch::la::Vector<DIMENSIONS, int> subcellIndex = ((subcellPosition - getPosition()) / getSubcellSize()).convertScalar<int>();
   tarch::la::Vector<DIMENSIONS, double> temp = subcellPosition - getPosition();
   for (int d = 0; d < DIMENSIONS; d++) {
     temp[d] /= getSubcellSize()[d];

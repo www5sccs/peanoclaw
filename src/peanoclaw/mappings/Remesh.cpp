@@ -476,7 +476,16 @@ void peanoclaw::mappings::Remesh::createCell(
 
   //Set indices on adjacent vertices and on this cell
   for(int i = 0; i < TWO_POWER_D; i++) {
-    fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, fineGridCell.getCellDescriptionIndex());
+    peanoclaw::interSubgridCommunication::AdjacentSubgrids adjacentSubgrids(
+      fineGridVertices[fineGridVerticesEnumerator(i)],
+      _vertexPositionToIndexMap,
+      fineGridVerticesEnumerator.getVertexPosition(i),
+      fineGridVerticesEnumerator.getLevel()
+    );
+    adjacentSubgrids.createdAdjacentSubgrid(
+      fineGridCell.getCellDescriptionIndex(),
+      i
+    );
   }
 
   //TODO unterweg debug
@@ -631,7 +640,7 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
 ) {
   logTraceInWith6Arguments( "mergeWithNeighbour(...)", vertex, neighbour, fromRank, fineGridX, fineGridH, level );
 
-  if(!tarch::parallel::Node::getInstance().isGlobalMaster() && fromRank != 0) {
+//  if(!tarch::parallel::Node::getInstance().isGlobalMaster() && fromRank != 0) {
     assertionEquals(vertex.isInside(), neighbour.isInside());
     assertionEquals(vertex.isBoundary(), neighbour.isBoundary());
 
@@ -678,7 +687,7 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
 
       _receivedNeighborData++;
     }
-  }
+//  }
 
   logTraceOut( "mergeWithNeighbour(...)" );
 }
@@ -692,7 +701,7 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
 
-  if(!tarch::parallel::Node::getInstance().isGlobalMaster() && toRank != 0) {
+//  if(!tarch::parallel::Node::getInstance().isGlobalMaster() && toRank != 0) {
     tarch::la::Vector<TWO_POWER_D, int> localVertexRanks = vertex.getAdjacentRanks();
 
     //TODO unterweg debug
@@ -713,7 +722,7 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
 
       _sentNeighborData++;
     }
-  }
+//  }
 
   logTraceOut( "prepareSendToNeighbour(...)" );
 }
@@ -1275,10 +1284,10 @@ void peanoclaw::mappings::Remesh::leaveCell(
   }
 
   //TODO unterweg debug
-  if(fineGridVerticesEnumerator.getLevel() == 3) {
+//  if(fineGridVerticesEnumerator.getLevel() == 2) {
 //    peano::heap::Heap<CellDescription>::getInstance().receiveDanglingMessages();
 //    peano::heap::Heap<Data>::getInstance().receiveDanglingMessages();
-  }
+//  }
 
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
 }

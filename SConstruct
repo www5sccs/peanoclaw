@@ -63,9 +63,13 @@ linkerflags = []
 libpath = []
 libs = []
 
-p3Path = '../p3'
+p3Path = 'src/p3/src'
+try:
+  import peanoConfiguration
+  p3Path = peanoConfiguration.getPeano3Path()
+except ImportError:
+  pass
 cpppath.append(p3Path)
-clawpackPath = '../src/clawpack'
 
 # Platform specific settings
 environment = Environment()
@@ -564,7 +568,7 @@ library = env.SharedLibrary (
   
 ##### Copy library to Clawpack
 #
-installation = env.Alias('install', env.Install(clawpackPath + '/pyclaw/src/peanoclaw', library))
+installation = env.Alias('install', env.Install('src/clawpack/peanoclaw', library))
 
 Default(installation)
 
