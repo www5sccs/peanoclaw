@@ -15,6 +15,7 @@ def installPeano3():
     p3Revision = peanoConfiguration.getPeano3Revision()
     p3Build = peanoConfiguration.getPeano3Build()
     p3ParallelSupport = peanoConfiguration.getPeano3ParallelSupport()
+    p3Dimension = peanoConfiguration.getPeano3Dimension()
   except ImportError:
     pass
   
@@ -27,7 +28,7 @@ def installPeano3():
     print("Checking out Peano3 Repository")
     call("svn checkout -r" + p3Revision + " svn://svn.code.sf.net/p/peano/code/trunk " + p3Path, shell=True)
   print("Building Peano3")
-  call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " -j2", shell=True)
+  call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=" + str(p3Dimension) + " -j2", shell=True)
 
 
 class Peano3Install(install):
@@ -47,7 +48,7 @@ setup(name='PeanoClaw',
       author_email='unterweg@in.tum.de',
       url='http://github.com/unterweg/peanoclaw',
       packages=['clawpack.peanoclaw'],
-      package_dir={'': 'src'},
+      package_dir={'': 'src/python'},
       package_data={'clawpack.peanoclaw': ['libpeano-claw-*']},
       cmdclass={'install': Peano3Install, 'develop': Peano3Develop}
      )
