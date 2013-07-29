@@ -29,9 +29,6 @@ class BoundaryConditionCallback(object):
     def callback_boundary_conditions(q, qbc, dimension, setUpper):
       import numpy
       
-      #TODO unterweg debug
-      print("Filling boundary condition dimension=" + str(dimension) + " setUpper=" + str(setUpper))
-      
       if(setUpper == 1):
         self.solver._qbc_upper(
               self.solver.solution.state, 

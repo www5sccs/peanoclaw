@@ -75,7 +75,7 @@ class SolverCallback(object):
       aux = None
       
     # Set up grid information for current patch
-    import clawpack.peanoclaw as peanoclaw
+    import peanoclaw as peanoclaw
     subgridsolver = peanoclaw.SubgridSolver(self.solver.solver, self.solver.solution.state, q, qbc, aux, (position_x, position_y,position_z), (size_x, size_y,size_z), (subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2), unknowns_per_cell, aux_fields_per_cell, current_time)
     
     new_q, number_of_rollbacks = subgridsolver.step(maximum_timestep_size, estimated_next_dt)

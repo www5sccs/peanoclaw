@@ -9,7 +9,7 @@ from ctypes import c_int
 from ctypes import CFUNCTYPE
 from ctypes import py_object
 
-from clawpack.peanoclaw.converter import get_number_of_dimensions
+from peanoclaw.converter import get_number_of_dimensions
 
 class InitializationCallback(object):
   '''

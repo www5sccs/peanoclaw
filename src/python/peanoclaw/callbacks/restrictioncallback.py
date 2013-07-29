@@ -4,9 +4,9 @@ Created on Mar 6, 2013
 @author: kristof
 '''
 
-from clawpack.peanoclaw.converter import get_number_of_dimensions
-from clawpack.peanoclaw.converter import create_domain
-from clawpack.peanoclaw.converter import create_subgrid_state
+from peanoclaw.converter import get_number_of_dimensions
+from peanoclaw.converter import create_domain
+from peanoclaw.converter import create_subgrid_state
 
 class RestrictionCallback(object):
     '''

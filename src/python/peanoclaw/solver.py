@@ -4,13 +4,13 @@ Created on Feb 7, 2012
 @author: Kristof
 '''
 from clawpack.pyclaw.solver import Solver
-from clawpack.peanoclaw.callbacks.initializationcallback import InitializationCallback 
-from clawpack.peanoclaw.callbacks.solvercallback import SolverCallback
-from clawpack.peanoclaw.callbacks.boundaryconditioncallback import BoundaryConditionCallback
-from clawpack.peanoclaw.callbacks.interpolationcallback import InterpolationCallback
-from clawpack.peanoclaw.callbacks.restrictioncallback import RestrictionCallback
-from clawpack.peanoclaw.callbacks.fluxcorrectioncallback import FluxCorrectionCallback
-from clawpack.peanoclaw.peano import Peano
+from peanoclaw.callbacks.initializationcallback import InitializationCallback 
+from peanoclaw.callbacks.solvercallback import SolverCallback
+from peanoclaw.callbacks.boundaryconditioncallback import BoundaryConditionCallback
+from peanoclaw.callbacks.interpolationcallback import InterpolationCallback
+from peanoclaw.callbacks.restrictioncallback import RestrictionCallback
+from peanoclaw.callbacks.fluxcorrectioncallback import FluxCorrectionCallback
+from peanoclaw.peano import Peano
 
 class Solver(Solver):
     r"""

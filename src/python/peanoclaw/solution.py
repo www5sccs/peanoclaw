@@ -10,7 +10,7 @@ from ctypes import c_int
 from ctypes import c_double
 from ctypes import c_void_p
 
-from clawpack.peanoclaw.converter import get_number_of_dimensions
+from peanoclaw.converter import get_number_of_dimensions
 
 class Solution(pyclaw.solution.Solution):
     r"""

@@ -14,7 +14,7 @@ from ctypes import c_char_p
 from ctypes import byref
 from ctypes import RTLD_GLOBAL
 import signal
-from clawpack.peanoclaw.converter import get_number_of_dimensions
+from peanoclaw.converter import get_number_of_dimensions
 
 class Peano(object):
   '''
@@ -129,7 +129,7 @@ class Peano(object):
     print 'peano instance: got rank: ', self.rank
 
     # Set PeanoSolution
-    import clawpack.peanoclaw as peanoclaw
+    import peanoclaw as peanoclaw
     if(isinstance(solution, peanoclaw.Solution)):
         solution.peano = self.peano
         solution.libpeano = self.libpeano
@@ -147,7 +147,7 @@ class Peano(object):
     """
     import os
     import platform
-    import clawpack.peanoclaw as peanoclaw
+    import peanoclaw as peanoclaw
     if platform.system() == 'Linux':
         shared_library_extension = 'so'
     elif platform.system() == 'Darwin':

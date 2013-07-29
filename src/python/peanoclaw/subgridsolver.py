@@ -4,9 +4,9 @@ Created on Mar 18, 2012
 @author: kristof
 '''
 import clawpack.pyclaw as pyclaw
-from clawpack.peanoclaw.converter import get_number_of_dimensions
-from clawpack.peanoclaw.converter import create_domain
-from clawpack.peanoclaw.converter import create_subgrid_state
+from peanoclaw.converter import get_number_of_dimensions
+from peanoclaw.converter import create_domain
+from peanoclaw.converter import create_subgrid_state
 
 class SubgridSolver(object):
     r"""
