@@ -56,6 +56,11 @@ class peanoclaw::mappings::Plot {
     peanoclaw::PatchPlotter*                  _patchPlotter;
 
     int                                       _nextPlotNumber;
+
+    /**
+     * Plots
+     */
+    void plotFile(int plotNumber);
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 

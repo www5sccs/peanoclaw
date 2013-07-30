@@ -54,6 +54,16 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::descendSpecification() 
 
 tarch::logging::Log                peanoclaw::mappings::Plot::_log( "peanoclaw::mappings::Plot" ); 
 
+void peanoclaw::mappings::Plot::plotFile(int plotNumber) {
+  std::ostringstream snapshotFileName;
+  snapshotFileName << "vtkOutput/adaptive-"
+                   #ifdef Parallel
+                   << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-"
+                   #endif
+                   << plotNumber
+                   << ".vtk";
+  _vtkWriter.writeToFile( snapshotFileName.str() );
+}
 
 peanoclaw::mappings::Plot::Plot() : _nextPlotNumber(0) {
   logTraceIn( "Plot()" );
@@ -438,14 +448,8 @@ void peanoclaw::mappings::Plot::beginIteration(
 
   for(;_nextPlotNumber < solverState.getPlotNumber(); _nextPlotNumber++) {
     _vtkWriter.clear();
-    std::ostringstream snapshotFileName;
-    #ifdef Parallel
-    snapshotFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-";
-    #endif
-    snapshotFileName << "vtkOutput/adaptive-"
-                     << _nextPlotNumber
-                     << ".vtk";
-    _vtkWriter.writeToFile( snapshotFileName.str() );
+    plotFile(_nextPlotNumber);
+
   }
 
   _vtkWriter.clear();
@@ -468,14 +472,7 @@ void peanoclaw::mappings::Plot::endIteration(
   _patchPlotter->close();
   delete _patchPlotter;
 
-  std::ostringstream snapshotFileName;
-  #ifdef Parallel
-  snapshotFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-";
-  #endif
-  snapshotFileName << "vtkOutput/adaptive-"
-                   << solverState.getPlotNumber()
-                   << ".vtk";
-  _vtkWriter.writeToFile( snapshotFileName.str() );
+  plotFile(solverState.getPlotNumber());
   _nextPlotNumber = solverState.getPlotNumber() + 1;
 
   // @todo Insert your code here
