@@ -1,3 +1,4 @@
+setup.py
 src/python/PeanoClaw.egg-info/PKG-INFO
 src/python/PeanoClaw.egg-info/SOURCES.txt
 src/python/PeanoClaw.egg-info/dependency_links.txt
