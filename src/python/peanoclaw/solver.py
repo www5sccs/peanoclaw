@@ -77,19 +77,25 @@ class Solver(Solver):
         
         self.solution = solution
         
-        self.peano = Peano(
-                           solution,
-                           self.initial_minimal_mesh_width,
-                           self.solver.dimensional_split,
-                           self.num_ghost,
-                           self.solver.dt_initial,
-                           self.initialization_callback,
-                           self.solver_callback,
-                           self.boundary_condition_callback,
-                           self.interpolation_callback,
-                           self.restriction_callback,
-                           self.flux_correction_callback)
-                
+        self.peano = self.setup_peano(solution)
+        
+    def run_tests(self, solution):
+      self.setup_peano(solution).run_tests()
+        
+    def setup_peano(self, solution):
+      return Peano(
+         solution,
+         self.initial_minimal_mesh_width,
+         self.solver.dimensional_split,
+         self.num_ghost,
+         self.solver.dt_initial,
+         self.initialization_callback,
+         self.solver_callback,
+         self.boundary_condition_callback,
+         self.interpolation_callback,
+         self.restriction_callback,
+         self.flux_correction_callback)
+      
     def teardown(self):
         r"""
         See :class:`Solver` for full documentation

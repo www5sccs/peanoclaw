@@ -37,7 +37,7 @@ class Peano(object):
     '''
     Constructor
     '''
-    dim = get_number_of_dimensions( solution.q )
+    dim = len(solution.state.grid.dimensions)
     
     logging.getLogger('peanoclaw').info("Loading Peano-library...")
     self.libpeano = CDLL(self.get_lib_path(dim),mode=RTLD_GLOBAL)
