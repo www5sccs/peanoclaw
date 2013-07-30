@@ -43,6 +43,15 @@ class peanoclaw::NumericsFactory {
       InterPatchCommunicationCallback fluxCorrectionCallback
     );
 
+    peanoclaw::Numerics* createSWENumerics(
+      /*InitializationCallback initializationCallback,
+      BoundaryConditionCallback boundaryConditionCallback,
+      SolverCallback solverCallback,
+      AddPatchToSolutionCallback addPatchToSolutionCallback,
+      InterPatchCommunicationCallback interpolationCallback,
+      InterPatchCommunicationCallback restrictionCallback,
+      InterPatchCommunicationCallback fluxCorrectionCallback*/
+    );
     /**
      * Creates a new Numerics object on the heap that provides
      * native functionality.

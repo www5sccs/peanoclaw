@@ -72,16 +72,18 @@ set(PEANOCLAW_SOURCES
     src/peanoclaw/parallel/NeighbourCommunicator.cpp
 
     src/peanoclaw/native/NativeKernel.cpp   
-    #src/peanoclaw/native/SWEKernel.cpp   
-    #src/peanoclaw/native/SWE/blocks/SWE_Block.cpp
-    #src/peanoclaw/native/SWE/blocks/SWE_WavePropagationBlock.cpp
-    #src/peanoclaw/native/SWE_WavePropagationBlock_patch.cpp
+    src/peanoclaw/native/SWEKernel.cpp   
+    src/peanoclaw/native/SWE_WavePropagationBlock_patch.cpp
+
+    # swe part
+    src/peanoclaw/native/SWE/src/blocks/SWE_Block.cpp
+    src/peanoclaw/native/SWE/src/blocks/SWE_WavePropagationBlock.cpp
 )
 
 
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/peanoclaw/native/SWE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/peanoclaw/native/SWE/src
         ${PYTHON_INCLUDE_DIRS}
         /home/hpc/pr63so/di72bap/mytools-amd/lib/python2.7/site-packages/numpy/core/include # numpy.get_include()
 )
