@@ -54,6 +54,8 @@ class peanoclaw::mappings::Plot {
     tarch::plotter::griddata::unstructured::vtk::VTKTextFileWriter _vtkWriter;
 
     peanoclaw::PatchPlotter*                  _patchPlotter;
+
+    int                                       _nextPlotNumber;
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 

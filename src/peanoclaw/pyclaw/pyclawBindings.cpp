@@ -82,7 +82,6 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     Py_Initialize();
   }
 
-
   importArrays();
 
   //Initialize Logger
@@ -109,11 +108,6 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   logFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-trace.txt";
   #endif
   tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
-
-  //Tests
-  if(false) {
-    tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
-  }
 
   //PyClaw - this object is copied to the runner and is stored there.
   peanoclaw::NumericsFactory numericsFactory;
@@ -194,6 +188,11 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   }
 
   return runner;
+}
+
+extern "C"
+void pyclaw_peano_runTests() {
+  tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
 }
 
 extern "C"

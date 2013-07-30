@@ -55,7 +55,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::descendSpecification() 
 tarch::logging::Log                peanoclaw::mappings::Plot::_log( "peanoclaw::mappings::Plot" ); 
 
 
-peanoclaw::mappings::Plot::Plot() {
+peanoclaw::mappings::Plot::Plot() : _nextPlotNumber(0) {
   logTraceIn( "Plot()" );
   // @todo Insert your code here
   logTraceOut( "Plot()" );
@@ -436,6 +436,18 @@ void peanoclaw::mappings::Plot::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
 
+  for(;_nextPlotNumber < solverState.getPlotNumber(); _nextPlotNumber++) {
+    _vtkWriter.clear();
+    std::ostringstream snapshotFileName;
+    #ifdef Parallel
+    snapshotFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-";
+    #endif
+    snapshotFileName << "vtkOutput/adaptive-"
+                     << _nextPlotNumber
+                     << ".vtk";
+    _vtkWriter.writeToFile( snapshotFileName.str() );
+  }
+
   _vtkWriter.clear();
 
   _patchPlotter = new PatchPlotter(
@@ -462,9 +474,9 @@ void peanoclaw::mappings::Plot::endIteration(
   #endif
   snapshotFileName << "vtkOutput/adaptive-"
                    << solverState.getPlotNumber()
-//                   << "_" << solverState.getSubPlotNumber()
                    << ".vtk";
   _vtkWriter.writeToFile( snapshotFileName.str() );
+  _nextPlotNumber = solverState.getPlotNumber() + 1;
 
   // @todo Insert your code here
   logTraceOutWith1Argument( "endIteration(State)", solverState);

@@ -568,7 +568,7 @@ library = env.SharedLibrary (
   
 ##### Copy library to Clawpack
 #
-installation = env.Alias('install', env.Install('src/clawpack/peanoclaw', library))
+installation = env.Alias('install', env.Install('src/python/peanoclaw', library))
 
 Default(installation)
 

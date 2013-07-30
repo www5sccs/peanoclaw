@@ -23,14 +23,15 @@ class Peano(object):
 
 
   def __init__(self, 
-               solution, 
+               solution,
                initial_minimal_mesh_width, 
                use_dimensional_splitting_optimization, 
-               ghostlayer_width, dt_initial, 
+               ghostlayer_width, 
+               dt_initial,
                initialization_callback, 
-               solver_callback, 
-               boundary_condition_callback, 
-               interpolation_callback, 
+               solver_callback,
+               boundary_condition_callback,
+               interpolation_callback,
                restriction_callback,
                flux_correction_callback):
     '''
@@ -139,7 +140,8 @@ class Peano(object):
     #Causes Ctrl+C to quit Peano
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    
+  def run_tests(self):
+    self.libpeano.pyclaw_peano_runTests()
             
   def get_lib_path(self, dim):
     r"""
