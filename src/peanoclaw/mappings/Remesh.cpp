@@ -788,7 +788,7 @@ void peanoclaw::mappings::Remesh::mergeWithMaster(
   logTraceInWith7Arguments( "mergeWithMaster(...)", workerGridCell, fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, worker );
 
   peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(
-    tarch::parallel::NodePool::getInstance().getMasterRank(),
+    worker,
     fineGridVerticesEnumerator.getCellCenter(),
     fineGridVerticesEnumerator.getLevel(),
     false
