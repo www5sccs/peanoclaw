@@ -19,7 +19,7 @@ void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
       logInfo("logStatistics()", "Minimal time patch" << ": " << minimalTimePatch);
 
       //Parent
-      if(_minimalPatchParentIndex != -1) {
+      if(_minimalPatchParentIndex >= 0) {
         Patch minimalTimePatchParent(
           peano::heap::Heap<CellDescription>::getInstance().getData(_minimalPatchParentIndex).at(0)
         );
