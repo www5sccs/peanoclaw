@@ -119,7 +119,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.resetTotalNumberOfCellUpdates();
   state.setInitialTimestepSize(initialTimestepSize);
   state.setDomain(domainOffset, domainSize);
-  state.setAdditionalLevelsForPredefinedRefinement(_configuration.getAdditionalLevelsForPredefinedRefinement());
   state.setUseDimensionalSplittingOptimization(useDimensionalSplittingOptimization && !_configuration.disableDimensionalSplittingOptimization());
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)

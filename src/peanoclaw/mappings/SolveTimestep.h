@@ -16,6 +16,7 @@
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/State.h"
 #include "peanoclaw/statistics/LevelInformation.h"
+#include "peanoclaw/statistics/SubgridStatistics.h"
 
 namespace peanoclaw {
   namespace mappings {
@@ -48,29 +49,15 @@ class peanoclaw::mappings::SolveTimestep {
 
     double _globalTimestepEndTime;
 
-    bool _allPatchesEvolvedToGlobalTimestep;
-
-    double _startMaximumLocalTimeInterval;
-
-    double _endMaximumLocalTimeInterval;
-
-    double _startMinimumLocalTimeInterval;
-
-    double _endMinimumLocalTimeInterval;
-
-    double _minimalTimestep;
-
     tarch::la::Vector<DIMENSIONS, double> _domainOffset;
 
     tarch::la::Vector<DIMENSIONS, double> _domainSize;
 
     std::vector<peanoclaw::statistics::LevelInformation> _levelStatistics;
 
-    double _averageGlobalTimeInterval;
+    peanoclaw::statistics::SubgridStatistics _subgridStatistics;
 
     tarch::la::Vector<DIMENSIONS, double> _initialMinimalMeshWidth;
-
-    int _additionalLevelsForPredefinedRefinement;
 
     std::vector<peanoclaw::statistics::Probe> _probeList;
 

@@ -5,7 +5,7 @@
 
 #include <map>
 
-#include "peanoclaw/interSubgridCommunication/AdjacentSubgrids.h"
+#include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/State.h"
@@ -59,7 +59,7 @@ class peanoclaw::mappings::Remesh {
     /**
      * Map from a hanging node's position and level to
      */
-    static peanoclaw::interSubgridCommunication::AdjacentSubgrids::VertexMap _vertexPositionToIndexMap;
+    static peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap _vertexPositionToIndexMap;
 
     int _unknownsPerSubcell;
 
@@ -83,18 +83,7 @@ class peanoclaw::mappings::Remesh {
 
     tarch::la::Vector<DIMENSIONS, double> _initialMinimalMeshWidth;
 
-    int _additionalLevelsForPredefinedRefinement;
-
     bool _isInitializing;
-
-    double _averageGlobalTimeInterval;
-
-    double _minimalPatchTime;
-    Patch  _minimalTimePatch;
-    Patch  _minimalTimePatchParent;
-    bool   _minimalPatchCoarsening;
-    bool   _minimalPatchIsAllowedToAdvanceInTime;
-    bool   _minimalPatchShouldSkipGridIteration;
 
     bool _useDimensionalSplittingOptimization;
 
@@ -1178,6 +1167,4 @@ class peanoclaw::mappings::Remesh {
     );
 
 };
-
-
 #endif

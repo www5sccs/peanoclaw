@@ -588,7 +588,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       assertion1(tarch::la::greater(patch.getTimestepSize(), 0.0), patch);
       assertion1(patch.getTimestepSize() != std::numeric_limits<double>::infinity(), patch);
       levelInformation._numberOfCellUpdates += (patch.getSubdivisionFactor() * patch.getSubdivisionFactor());
-      _minimalTimestep = std::min(_minimalTimestep, patch.getTimestepSize());
+      _subgridStatistics.processSubgridAfterUpdate(patch, coarseGridCell.getCellDescriptionIndex());
 
       //Probes
       for(std::vector<peanoclaw::statistics::Probe>::iterator i = _probeList.begin();
@@ -621,11 +621,6 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
           coarseGridVertices[coarseGridVerticesEnumerator(i)].setShouldRefine(true);
         }
       }
-    }
-
-    //Stopping criterion for global timestep
-    if(tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), _globalTimestepEndTime)) {
-      _allPatchesEvolvedToGlobalTimestep = false;
     }
 
     assertion2(!tarch::la::smaller(patch.getCurrentTime(), startTime), patch, startTime);
@@ -671,14 +666,14 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     patch.markCurrentStateAsSent(true);
     #endif
 
+    //Statistics
+    _subgridStatistics.processSubgrid(
+      patch,
+      coarseGridCell.getCellDescriptionIndex()
+    );
+
     logTraceOut( "enterCell(...)" );
   }
-
-  //Statistics
-  _startMaximumLocalTimeInterval = std::min(patch.getCurrentTime(), _startMaximumLocalTimeInterval);
-  _endMaximumLocalTimeInterval = std::max(patch.getCurrentTime() + patch.getTimestepSize(), _endMaximumLocalTimeInterval);
-  _startMinimumLocalTimeInterval = std::max(patch.getCurrentTime(), _startMinimumLocalTimeInterval);
-  _endMinimumLocalTimeInterval = std::min(patch.getCurrentTime() + patch.getTimestepSize(), _endMinimumLocalTimeInterval);
 
   patch.increaseAgeByOneGridIteration();
 }
@@ -706,19 +701,12 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
  
   _numerics = solverState.getNumerics();
   _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();
-  _allPatchesEvolvedToGlobalTimestep = solverState.getAllPatchesEvolvedToGlobalTimestep();
-  _startMaximumLocalTimeInterval = std::numeric_limits<double>::max();
-  _endMaximumLocalTimeInterval = -std::numeric_limits<double>::max();
-  _startMinimumLocalTimeInterval = -std::numeric_limits<double>::max();
-  _endMinimumLocalTimeInterval = std::numeric_limits<double>::max();
-//  _numberOfCellUpdates = 0;
-  _minimalTimestep = std::numeric_limits<double>::max();
   _domainOffset = solverState.getDomainOffset();
   _domainSize = solverState.getDomainSize();
   _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
-  _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
   _probeList = solverState.getProbeList();
   _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
+  _subgridStatistics = peanoclaw::statistics::SubgridStatistics(solverState);
  
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
@@ -729,27 +717,11 @@ void peanoclaw::mappings::SolveTimestep::endIteration(
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
  
-  solverState.setAllPatchesEvolvedToGlobalTimestep(
-    solverState.getAllPatchesEvolvedToGlobalTimestep()
-    && _allPatchesEvolvedToGlobalTimestep
-  );
-  solverState.updateGlobalTimeIntervals(
-    _startMaximumLocalTimeInterval,
-    _endMaximumLocalTimeInterval,
-    _startMinimumLocalTimeInterval,
-    _endMinimumLocalTimeInterval
-  );
-//  solverState.addToTotalNumberOfCellUpdates(_numberOfCellUpdates);
-  solverState.updateMinimalTimestep(_minimalTimestep);
-
-  static int counter = 0;
-  counter++;
+  _subgridStatistics.finalizeIteration(solverState);
 
   solverState.setLevelStatisticsForLastGridIteration(_levelStatistics);
   _levelStatistics.clear();
 
-  _averageGlobalTimeInterval = (solverState.getStartMaximumGlobalTimeInterval() + solverState.getEndMaximumGlobalTimeInterval()) / 2.0;
- 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }
 

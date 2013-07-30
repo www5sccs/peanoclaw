@@ -62,7 +62,6 @@ peanoclaw::mappings::InitialiseGrid::InitialiseGrid()
   _initialTimestepSize(-1.0),
   _initialMinimalMeshWidth(-1.0),
   _numerics(0),
-  _additionalLevelsForPredefinedRefinement(-1),
   _refinementTriggered(false) {
   logTraceIn( "InitialiseGrid()" );
   // @todo Insert your code here
@@ -534,8 +533,6 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
   
-//  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().startToSendOrReceiveHeapData (solverState.isTraversalInverted());
-
   _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
 
   _defaultSubdivisionFactor = solverState.getDefaultSubdivisionFactor();
@@ -546,10 +543,7 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 
   _numerics = solverState.getNumerics();
 
-  _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
-
   _refinementTriggered = solverState.getInitialRefinementTriggered();
-
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
@@ -561,8 +555,6 @@ void peanoclaw::mappings::InitialiseGrid::endIteration(
   logTraceInWith1Argument( "endIteration(State)", solverState );
 
   solverState.setInitialRefinementTriggered(solverState.getInitialRefinementTriggered() || _refinementTriggered);
-
-//  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().finishedToSendOrReceiveHeapData();
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }

@@ -183,10 +183,6 @@ void peanoclaw::State::resetTotalNumberOfCellUpdates() {
   _stateData.setTotalNumberOfCellUpdates(0.0);
 }
 
-//void peanoclaw::State::addToTotalNumberOfCellUpdates(int cellUpdates) {
-//  _stateData.setTotalNumberOfCellUpdates( _stateData.getTotalNumberOfCellUpdates() + cellUpdates );
-//}
-
 double peanoclaw::State::getTotalNumberOfCellUpdates() const {
   return _stateData.getTotalNumberOfCellUpdates();
 }
@@ -304,14 +300,6 @@ void peanoclaw::State::plotTotalStatistics() const {
     << " Blocking: " << totalBlockedPatchesDueToNeighbors << ", " << totalBlockedPatchesDueToGlobalTimestep
     << ", " << totalSkippingPatches << ", " << totalCoarseningPatches
     );
-}
-
-void peanoclaw::State::setAdditionalLevelsForPredefinedRefinement(int levels) {
-  _stateData.setAdditionalLevelsForPredefinedRefinement(levels);
-}
-
-int peanoclaw::State::getAdditionalLevelsForPredefinedRefinement() const {
-  return _stateData.getAdditionalLevelsForPredefinedRefinement();
 }
 
 void peanoclaw::State::setIsInitializing(bool isInitializing) {

@@ -50,8 +50,6 @@ class peanoclaw::mappings::InitialiseGrid {
 
     peanoclaw::Numerics* _numerics;
 
-    int _additionalLevelsForPredefinedRefinement;
-
     bool _refinementTriggered;
 
   public:

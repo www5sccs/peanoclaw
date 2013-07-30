@@ -9,9 +9,6 @@
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 
-peanoclaw::records::VertexDescription::IterationParity peanoclaw::mappings::Remesh::_iterationParity
- = peanoclaw::records::VertexDescription::EVEN;
-
 std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , peanoclaw::mappings::Remesh::VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >   peanoclaw::mappings::Remesh::_vertexPositionToIndexMap;
 
 /**
@@ -72,13 +69,7 @@ peanoclaw::mappings::Remesh::Remesh()
   _initialTimestepSize(0.0),
   _numerics(0),
   _gridLevelTransfer(),
-  _additionalLevelsForPredefinedRefinement(0),
   _isInitializing(false),
-  _averageGlobalTimeInterval(0.0),
-  _minimalPatchTime(0.0),
-  _minimalPatchCoarsening(false),
-  _minimalPatchIsAllowedToAdvanceInTime(false),
-  _minimalPatchShouldSkipGridIteration(false),
   _useDimensionalSplittingOptimization(false),
   _sentNeighborData(0),
   _receivedNeighborData(0),
@@ -126,77 +117,20 @@ void peanoclaw::mappings::Remesh::createHangingVertex(
   fineGridVertex.setShouldRefine(false);
   fineGridVertex.resetSubcellsEraseVeto();
 
-  if(!tarch::la::oneGreater(_domainOffset, fineGridX) && !tarch::la::oneGreater(fineGridX, _domainOffset + _domainSize)) {
-    //Project adjacency information down from coarse grid vertex
-    _gridLevelTransfer->fillAdjacentPatchIndicesFromCoarseVertices(
-      coarseGridVertices,
-      coarseGridVerticesEnumerator,
-      fineGridVertex,
-      fineGridPositionOfVertex
-    );
-
-    //Retrieve or create hanging vertex description
-    tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> hangingVertexPosition;
-    for(int d = 0; d < DIMENSIONS; d++) {
-      hangingVertexPosition(d) = fineGridX(d);
-    }
-    hangingVertexPosition(DIMENSIONS) = coarseGridVerticesEnumerator.getLevel() + 1;
-
-    if( _vertexPositionToIndexMap.find(hangingVertexPosition) == _vertexPositionToIndexMap.end() ) {
-      VertexDescription vertexDescription;
-      vertexDescription.setTouched(true);
-      for(int i = 0; i < TWO_POWER_D; i++) {
-        vertexDescription.setIndicesOfAdjacentCellDescriptions(i, -1);
-      }
-      if(_iterationParity == peanoclaw::records::VertexDescription::EVEN) {
-        vertexDescription.setLastUpdateIterationParity(peanoclaw::records::VertexDescription::ODD);
-      } else {
-        vertexDescription.setLastUpdateIterationParity(peanoclaw::records::VertexDescription::EVEN);
-      }
-      _vertexPositionToIndexMap[hangingVertexPosition] = vertexDescription;
-    }
-
-    VertexDescription& hangingVertexDescription = _vertexPositionToIndexMap[hangingVertexPosition];
-    hangingVertexDescription.setTouched(true);
-
-    //Copy indices from coarse level
-    _gridLevelTransfer->fillAdjacentPatchIndicesFromCoarseVertices(
-      coarseGridVertices,
-      coarseGridVerticesEnumerator,
-      fineGridVertex,
-      fineGridPositionOfVertex
-    );
-
-    //Remove deleted indices
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      //From hanging vertex description
-      if(hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i) != -1
-          && !peano::heap::Heap<CellDescription>::getInstance().isValidIndex(hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i))) {
-        hangingVertexDescription.setIndicesOfAdjacentCellDescriptions(i, -1);
-      }
-      if(fineGridVertex.getAdjacentCellDescriptionIndex(i) != -1
-          && !peano::heap::Heap<CellDescription>::getInstance().isValidIndex(fineGridVertex.getAdjacentCellDescriptionIndex(i))) {
-        fineGridVertex.setAdjacentCellDescriptionIndex(i, -1);
-      }
-    }
-
-    //TODO If the coarse grid vertices are also hanging, a deleted patch index two or more
-    //levels coarser than this hanging vertex might not be recognized, yet.
-    //Merging adjacency information from stored hanging vertex description and hanging vertex
-    //The data stored on the hanging vertex itself must come from the coarser vertex, since
-    //the hanging vertex has just been created. So, this data is more recent, when the data
-    //in the hanging vertex description describes a patch on a coarser level than the hanging
-    //vertex (Should be solved by the check before).
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      assertion(hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i) >= -1);
-      if(hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i) != -1) {
-        CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i)).at(0);
-        if(cellDescription.getLevel() == (coarseGridVerticesEnumerator.getLevel() + 1)) {
-          fineGridVertex.setAdjacentCellDescriptionIndex(i, hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i));
-        }
-      }
-    }
-  }
+  peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+    fineGridVertex,
+    _vertexPositionToIndexMap,
+    fineGridX,
+    (coarseGridVerticesEnumerator.getLevel() + 1)
+  );
+  adjacentSubgrids.createHangingVertex(
+    coarseGridVertices,
+    coarseGridVerticesEnumerator,
+    fineGridPositionOfVertex,
+    _domainOffset,
+    _domainSize,
+    *_gridLevelTransfer
+  );
 
   logTraceOutWith1Argument( "createHangingVertex(...)", fineGridVertex );
 }
@@ -223,28 +157,17 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
     );
   }
 
-  if(!tarch::la::oneGreater(_domainOffset, fineGridX) && !tarch::la::oneGreater(fineGridX, _domainOffset + _domainSize)) {
-
-    //Retrieve hanging vertex description
-    tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> hangingVertexPosition;
-    for(int d = 0; d < DIMENSIONS; d++) {
-      hangingVertexPosition(d) = fineGridX(d);
-    }
-    hangingVertexPosition(DIMENSIONS) = coarseGridVerticesEnumerator.getLevel() + 1;
-
-    assertionMsg(_vertexPositionToIndexMap.find(hangingVertexPosition) != _vertexPositionToIndexMap.end(), "Hanging vertex description was not created for vertex " << fineGridVertex);
-
-    VertexDescription& hangingVertexDescription = _vertexPositionToIndexMap[hangingVertexPosition];
-    hangingVertexDescription.setTouched(true);
-
-    //Copy adjacency information from hanging vertex to hanging vertex description
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      hangingVertexDescription.setIndicesOfAdjacentCellDescriptions(i, fineGridVertex.getAdjacentCellDescriptionIndex(i));
-    }
-
-    //Fill boundary conditions
-    hangingVertexDescription.setLastUpdateIterationParity(_iterationParity);
-  }
+  peanoclaw::Vertex vertex = fineGridVertex;
+  peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+    vertex,
+    _vertexPositionToIndexMap,
+    fineGridX,
+    (coarseGridVerticesEnumerator.getLevel() + 1)
+  );
+  adjacentSubgrids.destroyHangingVertex(
+    _domainOffset,
+    _domainSize
+  );
 
   logTraceOutWith1Argument( "destroyHangingVertex(...)", fineGridVertex );
 }
@@ -264,36 +187,13 @@ void peanoclaw::mappings::Remesh::createInnerVertex(
   fineGridVertex.setShouldRefine(false);
   fineGridVertex.resetSubcellsEraseVeto();
 
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    fineGridVertex.setAdjacentCellDescriptionIndex(i, -1);
-  }
-
-  //Copy adjacent cell indices from former hanging vertex description, if available.
-  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> vertexPosition;
-  for(int d = 0; d < DIMENSIONS; d++) {
-    vertexPosition(d) = fineGridX(d);
-  }
-  vertexPosition(DIMENSIONS) = coarseGridVerticesEnumerator.getLevel() + 1;
-
-  if( _vertexPositionToIndexMap.find(vertexPosition) != _vertexPositionToIndexMap.end() ) {
-    VertexDescription& hangingVertexDescription = _vertexPositionToIndexMap[vertexPosition];
-
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      int hangingVertexIndex = hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i);
-      int persistentVertexIndex = -1;
-      if(hangingVertexIndex != -1) {
-        Patch patch(peano::heap::Heap<CellDescription>::getInstance().getData(hangingVertexIndex).at(0));
-        if(patch.getLevel() == (coarseGridVerticesEnumerator.getLevel() + 1)) {
-          persistentVertexIndex = hangingVertexIndex;
-        }
-      }
-      fineGridVertex.setAdjacentCellDescriptionIndex(i, persistentVertexIndex);
-    }
-  } else {
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      fineGridVertex.setAdjacentCellDescriptionIndex(i, -1);
-    }
-  }
+  peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+    fineGridVertex,
+    _vertexPositionToIndexMap,
+    fineGridX,
+    (coarseGridVerticesEnumerator.getLevel() + 1)
+  );
+  adjacentSubgrids.convertHangingVertexToPersistentVertex();
 
   logTraceOutWith1Argument( "createInnerVertex(...)", fineGridVertex );
 }
@@ -313,36 +213,13 @@ void peanoclaw::mappings::Remesh::createBoundaryVertex(
   fineGridVertex.setShouldRefine(false);
   fineGridVertex.resetSubcellsEraseVeto();
 
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    fineGridVertex.setAdjacentCellDescriptionIndex(i, -1);
-  }
-
-  //Copy adjacent cell indices from former hanging vertex description, if available.
-  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> vertexPosition;
-  for(int d = 0; d < DIMENSIONS; d++) {
-    vertexPosition(d) = fineGridX(d);
-  }
-  vertexPosition(DIMENSIONS) = coarseGridVerticesEnumerator.getLevel() + 1;
-
-  if( _vertexPositionToIndexMap.find(vertexPosition) != _vertexPositionToIndexMap.end() ) {
-    VertexDescription& hangingVertexDescription = _vertexPositionToIndexMap[vertexPosition];
-
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      int hangingVertexIndex = hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i);
-      int persistentVertexIndex = -1;
-      if(hangingVertexIndex != -1) {
-        Patch patch(peano::heap::Heap<CellDescription>::getInstance().getData(hangingVertexIndex).at(0));
-        if(patch.getLevel() == (coarseGridVerticesEnumerator.getLevel() + 1)) {
-          persistentVertexIndex = hangingVertexIndex;
-        }
-      }
-      fineGridVertex.setAdjacentCellDescriptionIndex(i, persistentVertexIndex);
-    }
-  } else {
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      fineGridVertex.setAdjacentCellDescriptionIndex(i, -1);
-    }
-  }
+  peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+    fineGridVertex,
+    _vertexPositionToIndexMap,
+    fineGridX,
+    (coarseGridVerticesEnumerator.getLevel() + 1)
+  );
+  adjacentSubgrids.convertHangingVertexToPersistentVertex();
 
   logTraceOutWith1Argument( "createBoundaryVertex(...)", fineGridVertex );
 }
@@ -359,30 +236,14 @@ void peanoclaw::mappings::Remesh::destroyVertex(
 ) {
   logTraceInWith6Arguments( "destroyVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
-  //  Retrieve or create hanging vertex description
-  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> hangingVertexPosition;
-  for(int d = 0; d < DIMENSIONS; d++) {
-    hangingVertexPosition(d) = fineGridX(d);
-  }
-  hangingVertexPosition(DIMENSIONS) = coarseGridVerticesEnumerator.getLevel() + 1;
-
-  if( _vertexPositionToIndexMap.find(hangingVertexPosition) == _vertexPositionToIndexMap.end() ) {
-    VertexDescription vertexDescription;
-    if(_iterationParity == peanoclaw::records::VertexDescription::EVEN) {
-      vertexDescription.setLastUpdateIterationParity(peanoclaw::records::VertexDescription::ODD);
-    } else {
-      vertexDescription.setLastUpdateIterationParity(peanoclaw::records::VertexDescription::EVEN);
-    }
-    _vertexPositionToIndexMap[hangingVertexPosition] = vertexDescription;
-  }
-
-  VertexDescription& vertexDescription = _vertexPositionToIndexMap[hangingVertexPosition];
-  vertexDescription.setTouched(true);
-
-  //Copy adjacency information from destroyed vertex to hanging vertex description
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    vertexDescription.setIndicesOfAdjacentCellDescriptions(i, fineGridVertex.getAdjacentCellDescriptionIndex(i));
-  }
+  peanoclaw::Vertex vertex = fineGridVertex;
+  peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+    vertex,
+    _vertexPositionToIndexMap,
+    fineGridX,
+    (coarseGridVerticesEnumerator.getLevel() + 1)
+  );
+  adjacentSubgrids.convertPersistentToHangingVertex();
 
   logTraceOutWith1Argument( "destroyVertex(...)", fineGridVertex );
 }
@@ -422,7 +283,8 @@ void peanoclaw::mappings::Remesh::createCell(
   );
   fineGridCell.setCellDescriptionIndex(fineGridPatch.getCellDescriptionIndex());
 
-  if(fineGridCell.isLeaf() && !fineGridPatch.isLeaf()) {
+  if(fineGridCell.isLeaf()) {
+    assertion1(!fineGridPatch.isLeaf(), fineGridPatch);
     fineGridPatch.switchToVirtual();
     fineGridPatch.switchToLeaf();
   }
@@ -476,7 +338,7 @@ void peanoclaw::mappings::Remesh::createCell(
 
   //Set indices on adjacent vertices and on this cell
   for(int i = 0; i < TWO_POWER_D; i++) {
-    peanoclaw::interSubgridCommunication::AdjacentSubgrids adjacentSubgrids(
+    peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
       fineGridVertices[fineGridVerticesEnumerator(i)],
       _vertexPositionToIndexMap,
       fineGridVerticesEnumerator.getVertexPosition(i),
@@ -486,23 +348,6 @@ void peanoclaw::mappings::Remesh::createCell(
       fineGridCell.getCellDescriptionIndex(),
       i
     );
-  }
-
-  //TODO unterweg debug
-  {
-    Patch patch(fineGridCell);
-//    std::cout << "Created cell on rank "
-//      #ifdef Parallel
-//      << tarch::parallel::Node::getInstance().getRank() << ": "
-//      #endif
-//      << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-//      << fineGridVerticesEnumerator.getCellSize()
-//      << ", index=" << fineGridCell.getCellDescriptionIndex()
-//      << ", level=" << fineGridVerticesEnumerator.getLevel()
-//      << ", leaf=" << patch.isLeaf()
-//      << ", unew=" << patch.getUNewIndex()
-//      << ", isInitializing=" << _isInitializing
-//      << std::endl;
   }
 
   logTraceOutWith2Arguments( "createCell(...)", fineGridCell, fineGridPatch );
@@ -519,12 +364,6 @@ void peanoclaw::mappings::Remesh::destroyCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "destroyCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-
-  //TODO unterweg debug: Workaround for cells being destroyed that don't belong to this rank's domain
-//  if(fineGridCell.isAssignedToRemoteRank() && fineGridCell.getCellDescriptionIndex() == -2) {
-//    return;
-//  }
-
 
   assertion5(
     fineGridCell.getCellDescriptionIndex() != -2,
@@ -547,12 +386,6 @@ void peanoclaw::mappings::Remesh::destroyCell(
   bool isRootOfNewWorker = isDestroyedDueToForkOrJoin && !coarseGridCell.isAssignedToRemoteRank();
 
   if(fineGridCell.isInside() && !isRootOfNewWorker && !fineGridCell.isAssignedToRemoteRank()) {
-	  //TODO unterweg debug
-	  #ifdef Parallel
-//	  std::cout << "Destroying cell at " << fineGridVerticesEnumerator.getVertexPosition(0) << " on level " << fineGridVerticesEnumerator.getLevel() << " with size " << fineGridVerticesEnumerator.getCellSize() << " on rank " << tarch::parallel::Node::getInstance().getRank()
-//		  << " " << fineGridCell.isInside() << std::endl;
-	  #endif
-
       //Delete patch data and description from this cell
       assertion3(fineGridCell.getCellDescriptionIndex() > -1,
         fineGridCell,
@@ -560,21 +393,10 @@ void peanoclaw::mappings::Remesh::destroyCell(
         fineGridVerticesEnumerator.getCellSize()
       );
 
-	  //Fix minimal time patch
-	  if(_minimalTimePatch.isValid()
-		  && tarch::la::equals(finePatch.getPosition(), _minimalTimePatch.getPosition())
-		  && finePatch.getLevel() == _minimalTimePatch.getLevel()) {
-		_minimalTimePatch = Patch();
-	  }
-	  if(_minimalTimePatchParent.isValid()
-		  && tarch::la::equals(finePatch.getPosition(), _minimalTimePatchParent.getPosition())
-		  && finePatch.getLevel() == _minimalTimePatchParent.getLevel()) {
-		_minimalTimePatchParent = Patch();
-	  }
-
 	  //Create patch in parent cell if it doesn't exist
 	  if(!coarseGridCell.isRoot() && coarseGridCell.isInside()) {
 		CellDescription& coarseCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0);
+		assertion1(tarch::la::greaterEquals(coarseCellDescription.getTimestepSize(), 0.0), finePatch);
 
 		//Fix timestep size
 		coarseCellDescription.setTimestepSize(std::max(0.0, coarseCellDescription.getTimestepSize()));
@@ -640,7 +462,7 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
 ) {
   logTraceInWith6Arguments( "mergeWithNeighbour(...)", vertex, neighbour, fromRank, fineGridX, fineGridH, level );
 
-//  if(!tarch::parallel::Node::getInstance().isGlobalMaster() && fromRank != 0) {
+  if(!tarch::parallel::Node::getInstance().isGlobalMaster() && fromRank != 0) {
     assertionEquals(vertex.isInside(), neighbour.isInside());
     assertionEquals(vertex.isBoundary(), neighbour.isBoundary());
 
@@ -687,7 +509,7 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
 
       _receivedNeighborData++;
     }
-//  }
+  }
 
   logTraceOut( "mergeWithNeighbour(...)" );
 }
@@ -701,9 +523,7 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
 
-//  if(!tarch::parallel::Node::getInstance().isGlobalMaster() && toRank != 0) {
-    tarch::la::Vector<TWO_POWER_D, int> localVertexRanks = vertex.getAdjacentRanks();
-
+  if(!tarch::parallel::Node::getInstance().isGlobalMaster() && toRank != 0) {
     //TODO unterweg debug
 //    logInfo("", "Sending to neighbor " << tarch::parallel::Node::getInstance().getRank()
 //      << " to " << toRank
@@ -722,7 +542,7 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
 
       _sentNeighborData++;
     }
-//  }
+  }
 
   logTraceOut( "prepareSendToNeighbour(...)" );
 }
@@ -813,12 +633,15 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
   assertion3(localCell.isAssignedToRemoteRank() || localCell.getCellDescriptionIndex() != -2, localCell.toString(), cellCentre, cellSize);
 
   //TODO unterweg debug
-//  std::cout << "Merging with remote data localIndex=" << localCell.getCellDescriptionIndex()
-//      << " remoteIndex=" << masterOrWorkerCell.getCellDescriptionIndex()
-//      << " position=" << (cellCentre-0.5*cellSize) << " size=" << cellSize
-//      << std::endl;
+  #ifdef Parallel
+  std::cout << "Merging with remote data localIndex=" << localCell.getCellDescriptionIndex()
+      << " on rank=" << tarch::parallel::Node::getInstance().getRank()
+      << " remoteIndex=" << masterOrWorkerCell.getCellDescriptionIndex()
+      << " position=" << (cellCentre-0.5*cellSize) << " size=" << cellSize
+      << " isInside=" << localCell.isInside() << " isAssignedToRemoteRank=" << masterOrWorkerCell.isAssignedToRemoteRank()
+      << std::endl;
+  #endif
 
-  //TODO unterweg debug Workaraound for cells outside the current worker's domain as inside cells.
   if(localCell.isInside() && !masterOrWorkerCell.isAssignedToRemoteRank()) {
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(fromRank, cellCentre, level, true);
 
@@ -964,27 +787,16 @@ void peanoclaw::mappings::Remesh::mergeWithMaster(
 ) {
   logTraceInWith7Arguments( "mergeWithMaster(...)", workerGridCell, fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, worker );
 
-  masterState.updateGlobalTimeIntervals(
-        workerState.getStartMaximumGlobalTimeInterval(),
-        workerState.getEndMaximumGlobalTimeInterval(),
-        workerState.getStartMinimumGlobalTimeInterval(),
-        workerState.getEndMinimumGlobalTimeInterval()
+  peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(
+    tarch::parallel::NodePool::getInstance().getMasterRank(),
+    fineGridVerticesEnumerator.getCellCenter(),
+    fineGridVerticesEnumerator.getLevel(),
+    false
   );
 
-  masterState.updateMinimalTimestep(workerState.getMinimalTimestep());
-
-  bool allPatchesEvolvedToGlobalTimestep = workerState.getAllPatchesEvolvedToGlobalTimestep();
-  allPatchesEvolvedToGlobalTimestep &= masterState.getAllPatchesEvolvedToGlobalTimestep();
-
-  masterState.setAllPatchesEvolvedToGlobalTimestep(allPatchesEvolvedToGlobalTimestep);
+  communicator.mergeWorkerStateIntoMasterState(workerState, masterState);
 
   if(fineGridCell.isInside()) {
-    peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(
-      tarch::parallel::NodePool::getInstance().getMasterRank(),
-      fineGridVerticesEnumerator.getCellCenter(),
-      fineGridVerticesEnumerator.getLevel(),
-      false
-    );
     communicator.receivePatch(fineGridCell.getCellDescriptionIndex());
 
     assertionEquals1(
@@ -1163,23 +975,6 @@ void peanoclaw::mappings::Remesh::enterCell(
   );
   #endif
 
-  #if defined(Parallel)
-  if(!fineGridCell.isRemote(*_state, true, true)) {
-    int numberOfAdjacentRemoteVertices = 0;
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      if(fineGridVertices[fineGridVerticesEnumerator(i)].isAdjacentToRemoteRank()
-          && !fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()
-      ) {
-        numberOfAdjacentRemoteVertices += fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentRemoteRanks().size();
-      }
-    }
-    if(coarseGridCell.isRoot() && !_state->isNewWorkerDueToForkOfExistingDomain()) {
-      //Due to the increase in mergeWithWorker
-      numberOfAdjacentRemoteVertices++;
-    }
-  }
-  #endif
-
   _gridLevelTransfer->updatePatchStateBeforeStepDown(
     patch,
     fineGridVertices,
@@ -1230,18 +1025,6 @@ void peanoclaw::mappings::Remesh::leaveCell(
     fineGridCell
   );
 
-  if(!coarseGridCell.isRoot()) {
-    Patch coarsePatch(
-      coarseGridCell
-    );
-
-    //Copy vertices
-    peanoclaw::Vertex vertices[TWO_POWER_D];
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      vertices[i] = fineGridVertices[fineGridVerticesEnumerator(i)];
-    }
-  }
-
   _gridLevelTransfer->stepUp(
     coarseGridCell.getCellDescriptionIndex(),
     finePatch,
@@ -1260,33 +1043,12 @@ void peanoclaw::mappings::Remesh::leaveCell(
   assertionEquals1(finePatch.isLeaf(), fineGridCell.isLeaf(), finePatch);
   assertionEquals1(finePatch.getLevel(), fineGridVerticesEnumerator.getLevel(), finePatch.toString());
 
-  //Todo unterweg debug
-  if(finePatch.isLeaf() && (finePatch.getCurrentTime() + finePatch.getTimestepSize() < _minimalPatchTime)) {
-    _minimalPatchTime = finePatch.getCurrentTime() + finePatch.getTimestepSize();
-    _minimalTimePatch = finePatch;
-    _minimalPatchCoarsening = peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::Erasing
-                            );
-    _minimalPatchIsAllowedToAdvanceInTime = finePatch.isAllowedToAdvanceInTime();
-    _minimalPatchShouldSkipGridIteration = finePatch.shouldSkipNextGridIteration();
-
-    if(coarseGridCell.getCellDescriptionIndex() > 0) {
-      Patch coarsePatch(coarseGridCell);
-      _minimalTimePatchParent = coarsePatch;
-    }
-  }
-
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, fineGridCell.getCellDescriptionIndex());
-  }
-
-  //TODO unterweg debug
-//  if(fineGridVerticesEnumerator.getLevel() == 2) {
-//    peano::heap::Heap<CellDescription>::getInstance().receiveDanglingMessages();
-//    peano::heap::Heap<Data>::getInstance().receiveDanglingMessages();
+  //TODO unterweg: Braucht man das wirklich nicht mehr?
+//  for(int i = 0; i < TWO_POWER_D; i++) {
+//    fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(
+//      i,
+//      fineGridCell.getCellDescriptionIndex()
+//    );
 //  }
 
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
@@ -1299,26 +1061,19 @@ void peanoclaw::mappings::Remesh::beginIteration(
   logTraceInWith1Argument( "beginIteration(State)", solverState );
 
   _unknownsPerSubcell       = solverState.getUnknownsPerSubcell();
-
   _auxiliarFieldsPerSubcell = solverState.getAuxiliarFieldsPerSubcell();
-
   _defaultSubdivisionFactor = solverState.getDefaultSubdivisionFactor();
-
   _defaultGhostLayerWidth   = solverState.getDefaultGhostLayerWidth();
-
   _initialTimestepSize      = solverState.getInitialTimestepSize();
-
   _numerics                   = solverState.getNumerics();
-
   _domainOffset             = solverState.getDomainOffset();
-
   _domainSize               = solverState.getDomainSize();
 
-  if(_iterationParity == peanoclaw::records::VertexDescription::EVEN) {
-    _iterationParity = peanoclaw::records::VertexDescription::ODD;
-  } else {
-    _iterationParity = peanoclaw::records::VertexDescription::EVEN;
-  }
+//  if(_iterationParity == peanoclaw::records::VertexDescription::EVEN) {
+//    _iterationParity = peanoclaw::records::VertexDescription::ODD;
+//  } else {
+//    _iterationParity = peanoclaw::records::VertexDescription::EVEN;
+//  }
 
   _gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(
                               solverState.useDimensionalSplittingOptimization(),
@@ -1326,18 +1081,9 @@ void peanoclaw::mappings::Remesh::beginIteration(
                            );
 
   _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
-  _additionalLevelsForPredefinedRefinement = solverState.getAdditionalLevelsForPredefinedRefinement();
   _isInitializing = solverState.getIsInitializing();
-  _averageGlobalTimeInterval = (solverState.getStartMaximumGlobalTimeInterval() + solverState.getEndMaximumGlobalTimeInterval()) / 2.0;
   _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
   _state = &solverState;
-
-  //TODO unterweg debug
-  _minimalPatchTime = std::numeric_limits<double>::max();
-  _minimalTimePatch = Patch();
-  _minimalTimePatchParent = Patch();
-  _sentNeighborData = 0;
-  _receivedNeighborData = 0;
 
   //Reset touched for all hanging vertex descriptions
   std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >::iterator i = _vertexPositionToIndexMap.begin();
@@ -1365,23 +1111,6 @@ void peanoclaw::mappings::Remesh::endIteration(
   logTraceInWith1Argument( "endIteration(State)", solverState );
 
   delete _gridLevelTransfer;
-
-  //Todo unterweg debug
-  _minimalTimePatch.reloadCellDescription();
-  _minimalTimePatchParent.reloadCellDescription();
-  if(_minimalTimePatch.isValid()) {
-    std::cout << "Minimal time patch"
-        #ifdef Parallel
-        << " on rank " << tarch::parallel::Node::getInstance().getRank()
-        #endif
-        << ": " << _minimalTimePatch << std::endl;
-    std::cout << "Minimal time patch parent: " << _minimalTimePatchParent << std::endl;
-
-    if(_minimalTimePatch.getConstrainingNeighborIndex() != -1) {
-      Patch constrainingPatch(peano::heap::Heap<CellDescription>::getInstance().getData(_minimalTimePatch.getConstrainingNeighborIndex()).at(0));
-      std::cout << "Constrained by " << constrainingPatch << std::endl;
-    }
-  }
 
   logInfo("endIteration(State)", "Sent neighbor data: " << _sentNeighborData << " Received neighbor data: " << _receivedNeighborData);
 

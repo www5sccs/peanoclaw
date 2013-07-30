@@ -8,6 +8,7 @@
 #ifndef PEANOCLAW_PARALLEL_MASTERWORKERANDFORKJOINCOMMUNICATOR_H_
 #define PEANOCLAW_PARALLEL_MASTERWORKERANDFORKJOINCOMMUNICATOR_H_
 
+#include "peanoclaw/State.h"
 #include "peano/heap/Heap.h"
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
@@ -96,6 +97,16 @@ class peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator {
      */
     void receivePatch(
       int localCellDescriptionIndex
+    );
+
+    /**
+     * Called when a worker returns its state to its master. The
+     * worker's state is then merged into the master's state by
+     * this method.
+     */
+    void mergeWorkerStateIntoMasterState(
+      const peanoclaw::State&          workerState,
+      peanoclaw::State&                masterState
     );
 };
 

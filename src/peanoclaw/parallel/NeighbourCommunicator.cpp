@@ -110,7 +110,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   if(cellDescriptionIndex != -1) {
     CellDescription cellDescription = _cellDescriptionHeap.getData(cellDescriptionIndex).at(0);
     sendActualPatch = !cellDescription.getIsRemote();
-    sendActualPatch &= !cellDescription.getCurrentStateWasSend();
+    //sendActualPatch &= !cellDescription.getCurrentStateWasSend();
   } else {
     sendActualPatch = false;
   }
@@ -171,9 +171,6 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
   #ifdef Parallel
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
 
-  //TODO unterweg debug
-//  logInfo("", "Receiving neighbor patch, position: " << _position << ", level: " << _level);
-
   assertion(localCellDescriptionIndex > -1);
   CellDescription localCellDescription = _cellDescriptionHeap.getData(localCellDescriptionIndex).at(0);
 
@@ -219,6 +216,10 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
     receiveDataArray(); //UOld
     receiveDataArray(); //UNew
   }
+
+  //TODO unterweg debug
+//  logInfo("", "Receiving neighbor patch, position: " << _position << ", level: " << _level
+//      << " -- " << _cellDescriptionHeap.getData(localCellDescriptionIndex).at(0).toString());
 
   assertionEquals(_cellDescriptionHeap.getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   logTraceOut("receivePatch");

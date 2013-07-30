@@ -218,10 +218,6 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        */
       void plotTotalStatistics() const;
 
-      void setAdditionalLevelsForPredefinedRefinement(int levels);
-
-      int getAdditionalLevelsForPredefinedRefinement() const;
-
       void setIsInitializing(bool isInitializing);
 
       bool getIsInitializing() const;

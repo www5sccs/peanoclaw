@@ -145,3 +145,22 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
   assertionEquals(_cellDescriptionHeap.getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   logTraceOut("receivePatch");
 }
+
+void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeWorkerStateIntoMasterState(
+  const peanoclaw::State&          workerState,
+  peanoclaw::State&                masterState
+) {
+  masterState.updateGlobalTimeIntervals(
+        workerState.getStartMaximumGlobalTimeInterval(),
+        workerState.getEndMaximumGlobalTimeInterval(),
+        workerState.getStartMinimumGlobalTimeInterval(),
+        workerState.getEndMinimumGlobalTimeInterval()
+  );
+
+  masterState.updateMinimalTimestep(workerState.getMinimalTimestep());
+
+  bool allPatchesEvolvedToGlobalTimestep = workerState.getAllPatchesEvolvedToGlobalTimestep();
+  allPatchesEvolvedToGlobalTimestep &= masterState.getAllPatchesEvolvedToGlobalTimestep();
+
+  masterState.setAllPatchesEvolvedToGlobalTimestep(allPatchesEvolvedToGlobalTimestep);
+}
