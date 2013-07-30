@@ -28,7 +28,8 @@ def installPeano3():
     print("Checking out Peano3 Repository")
     call("svn checkout -r" + p3Revision + " svn://svn.code.sf.net/p/peano/code/trunk " + p3Path, shell=True)
   print("Building Peano3")
-  call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=" + str(p3Dimension) + " -j2", shell=True)
+  call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=2" + " -j2", shell=True)
+  call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=3" + " -j2", shell=True)
 
 
 class Peano3Install(install):
