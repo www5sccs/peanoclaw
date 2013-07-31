@@ -5,8 +5,8 @@ class TimeoutException(Exception): pass
 
 from argparse import ArgumentParser
 parser = ArgumentParser(description='Starts script with a timeout.')
-parser.add_argument('script', help='Script to be started.')
 parser.add_argument('timeout', type=int, help='Timeout in seconds')
+parser.add_argument('script', help='Script to be started.')
 args = parser.parse_args()
 
 @contextmanager
