@@ -90,13 +90,13 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
 
   // Configure the output
   tarch::logging::CommandLineLogger::getInstance().clearFilterList();
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", true ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
 
   //Selective Tracing
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw", false ) );
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::mappings::Remesh::endIteration", true ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
+//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel", true ) );
 
   //tarch::logging::CommandLineLogger::getInstance().setLogFormat( ... please consult source code documentation );
@@ -190,7 +190,18 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
 
 extern "C"
 void pyclaw_peano_runTests() {
+  if(_calledFromPython) {
+    _pythonState = PyGILState_Ensure();
+  }
+
   tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
+  if(tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().getNumberOfErrors() > 0) {
+    exit(1);
+  }
+
+  if(_calledFromPython) {
+    PyGILState_Release(_pythonState);
+  }
 }
 
 extern "C"
