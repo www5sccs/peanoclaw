@@ -22,8 +22,9 @@ def installPeano3():
     pass
   
   from os.path import join
+  from os.path import exists
   from subprocess import call
-  if os.path.exists(join(p3Path, '.svn')):
+  if exists(join(p3Path, '.svn')):
     pass
     #print("Updating Peano3 Repository")
     #call("svn update -r" + p3Revision + " " + p3Path, shell=True)
