@@ -30,6 +30,9 @@ event-mapping:
   
 event-mapping:
   name: ValidateGrid
+
+event-mapping:
+  name: Query
   
 adapter:
   name: InitialiseGrid
@@ -46,6 +49,11 @@ adapter:
   name: Plot
   merge-with-user-defined-mapping: Remesh
   merge-with-user-defined-mapping: Plot
+
+adapter:
+  name: Query
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: Query
   
 adapter:
   name: Remesh

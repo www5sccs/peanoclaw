@@ -12,6 +12,9 @@ def getPeano3Path():
 def getPeano3RepositorySubpath():
   return p3RepositorySubpath
 
+def getQueryPath():
+  return queryPath	
+
 def getPeano3Revision():
   return p3Revision
 

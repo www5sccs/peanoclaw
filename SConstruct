@@ -63,13 +63,21 @@ linkerflags = []
 libpath = []
 libs = []
 
+ccflags.append('-std=c++0x')
 p3Path = 'src/p3/src'
+queryPath = 'PQi/src'
 try:
   import peanoConfiguration
   p3Path = peanoConfiguration.getPeano3Path()
 except ImportError:
   pass
 cpppath.append(p3Path)
+try:
+  import peanoConfiguration
+  queryPath = peanoConfiguration.getQueryPath()
+except ImportError:
+  pass
+cpppath.append(queryPath)
 
 # Platform specific settings
 environment = Environment()
@@ -310,6 +318,7 @@ print "Buildpath: " + buildpath
 print
 
 VariantDir (buildpath, './src', duplicate=0)  # Set build directory for PeanoClaw sources
+VariantDir (buildpath + 'pqi', queryPath, duplicate=0)  # Set build directory for Query sources
 VariantDir (buildpath + 'kernel', p3Path, duplicate=0)  # Set build directory for Peano sources
 
 ##### Setup construction environment:
@@ -551,6 +560,15 @@ sourcesPeanoClaw = [
 	]
 ################################################################################
 
+##### Define sources of application peanoclaw
+sourcesQuery = [
+  Glob(buildpath + 'pqi/queries/*.cpp'),
+  Glob(buildpath + 'pqi/queries/records/*.cpp')
+ 
+	]
+
+################################################################################
+
 ##### Build selected target
 #
 targetfilename = 'libpeano-claw-' + str(dim) + 'd'
@@ -562,7 +580,8 @@ library = env.SharedLibrary (
      sourcesTComponents,
      sourcesPeanoBase,
      sourcesPeanoClaw,
-     sourcesParallel
+     sourcesParallel,
+     sourcesQuery
      ]
   )
   
