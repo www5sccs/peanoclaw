@@ -22,14 +22,18 @@ def installPeano3():
   import os.path
   from subprocess import call
   if os.path.exists(os.path.join(p3Path, 'peano')) and os.path.exists(os.path.join(p3Path, 'tarch')):
-    print("Updating Peano3 Repository")
-    call("svn update -r" + p3Revision + " " + p3Path, shell=True)
+    pass
+    #print("Updating Peano3 Repository")
+    #call("svn update -r" + p3Revision + " " + p3Path, shell=True)
   else:
     print("Checking out Peano3 Repository")
     call("svn checkout -r" + p3Revision + " svn://svn.code.sf.net/p/peano/code/trunk " + p3Path, shell=True)
   print("Building Peano3")
-  call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=2" + " -j2", shell=True)
+  returnValue = call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=2" + " -j2", shell=True)
   #call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=3" + " -j2", shell=True)
+  
+  if returnValue != 0:
+    raise Exception("Peano3: Build failed.")
 
 
 class Peano3Install(install):
