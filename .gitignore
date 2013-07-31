@@ -32,3 +32,6 @@ gallery
 /compiler-minutes.txt
 /makefile~
 build/
+
+#Testscenarios
+testscenarios/breakingDam/rank-*-trace.txt
