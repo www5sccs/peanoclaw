@@ -21,8 +21,8 @@ def time_limit(seconds):
         signal.alarm(0)
 
 try:
-  import os
+  from subprocess import call
   with time_limit(args.timeout):
-      os.system('python ' + args.script)
+    return call('python ' + args.script, shell=True)
 except TimeoutException, msg:
     print "Timed out!"
