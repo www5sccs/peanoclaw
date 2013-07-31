@@ -325,3 +325,28 @@ void peanoclaw::State::setUseDimensionalSplittingOptimization(bool useDimensiona
 bool peanoclaw::State::useDimensionalSplittingOptimization() const {
   return _stateData.getUseDimensionalSplittingOptimization();
 }
+
+void peanoclaw::State::resetLocalHeightOfWorkerTree() {
+  _stateData.setGlobalHeightOfWorkerTreeDuringLastIteration(
+    _stateData.getLocalHeightOfWorkerTree()
+  );
+  _stateData.setLocalHeightOfWorkerTree(0);
+}
+
+void peanoclaw::State::increaseLocalHeightOfWorkerTree() {
+  _stateData.setLocalHeightOfWorkerTree(_stateData.getLocalHeightOfWorkerTree() + 1);
+}
+
+void peanoclaw::State::updateLocalHeightOfWorkerTree(int localHeightOfWorkerTree) {
+  _stateData.setLocalHeightOfWorkerTree(
+    std::max(_stateData.getLocalHeightOfWorkerTree(), localHeightOfWorkerTree)
+  );
+}
+
+int peanoclaw::State::getLocalHeightOfWorkerTree() const {
+  return _stateData.getLocalHeightOfWorkerTree();
+}
+
+int peanoclaw::State::getGlobalHeightOfWorkerTreeDuringLastIteration() const {
+  return _stateData.getGlobalHeightOfWorkerTreeDuringLastIteration();
+}

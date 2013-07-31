@@ -1099,6 +1099,14 @@ void peanoclaw::mappings::Remesh::beginIteration(
   #ifdef Parallel
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
   peano::heap::Heap<CellDescription>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
+
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    solverState.resetLocalHeightOfWorkerTree();
+
+    logInfo("beginIteration(State)", "Height of worker tree in last grid iteration was " << solverState.getGlobalHeightOfWorkerTreeDuringLastIteration())
+  } else {
+    solverState.increaseLocalHeightOfWorkerTree();
+  }
   #endif
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);

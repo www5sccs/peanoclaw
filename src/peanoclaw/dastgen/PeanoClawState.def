@@ -40,5 +40,9 @@ class peano::applications::peanoclaw::dastgen::State {
 	persistent parallelise double minimalTimestep;
 	persistent parallelise double totalNumberOfCellUpdates;
 		
+	#ifdef Parallel
+	persistent parallelise int localHeightOfWorkerTree;
+	persistent parallelise int globalHeightOfWorkerTreeDuringLastIteration;
+	#endif
 };
 	
