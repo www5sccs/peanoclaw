@@ -15,6 +15,11 @@
 # Temporary/swap files
 *~
 
+#Eclipse
+.pydevproject
+.sconsign.dblite
+.settings/
+
 # PyClaw-specific files to ignore
 _output
 _plots
