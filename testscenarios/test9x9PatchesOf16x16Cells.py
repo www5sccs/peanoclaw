@@ -90,7 +90,7 @@ def refinement_criterion_time_dependent(state):
 
 
     
-def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_type='classic',amr_type=None):
+def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_type='classic',amr_type="peano"):
     #===========================================================================
     # Import libraries
     #===========================================================================
@@ -211,4 +211,14 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
 
 if __name__=="__main__":
     from clawpack.pyclaw.util import run_app_from_main
-    output = run_app_from_main(shallow2D)
+
+    import signal
+    def signal_handler(signum, frame):
+        raise Exception("Function call took too long.")
+    
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(30)
+    try:
+      run_app_from_main(shallow2D)        
+    except Exception, msg:
+        print "Function call took too long. Probably deadlock."
