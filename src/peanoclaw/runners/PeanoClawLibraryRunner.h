@@ -17,7 +17,7 @@
 #include "tarch/timing/Watch.h"
 
 #include "peano/geometry/Hexahedron.h"
-
+#include "de/tum/QueryCxx2SocketPlainPort.h"
 namespace peanoclaw {
 
   class Numerics;
@@ -58,7 +58,8 @@ private:
   peanoclaw::Numerics& _numerics;
 
   bool _validateGrid;
-
+  de::tum::QueryCxx2SocketPlainPort *_queryServer;
+  void sync();
 public:
   /**
    * Sets everything up but does not start any grid-traversal, yet.
