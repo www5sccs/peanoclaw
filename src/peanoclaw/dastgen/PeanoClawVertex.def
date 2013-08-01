@@ -8,4 +8,8 @@ class peano::applications::peanoclaw::dastgen::Vertex {
   parallelise persistent packed bool adjacentSubcellsEraseVeto[TWO_POWER_D];
 	
 	parallelise persistent packed bool shouldRefine;
+	
+	#ifdef Parallel
+	parallelise persistent int adjacentRanksDuringLastIteration[TWO_POWER_D];
+	#endif
 };

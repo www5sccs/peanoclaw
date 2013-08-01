@@ -142,6 +142,18 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
      * Returns wether all adjacent subcells should be erased.
      */
     bool shouldErase() const;
+
+    /**
+     * Sets the adjacent ranks so that they are available during the next grid iteration.
+     */
+    void setAdjacentRanksDuringLastIteration(
+      const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringCurrentIteration
+    );
+
+    /**
+     * Returns the adjacent ranks from the last grid iteration.
+     */
+    tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksDuringLastIteration() const;
 };
 
 
