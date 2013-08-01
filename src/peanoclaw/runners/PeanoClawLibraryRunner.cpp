@@ -156,7 +156,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 #ifdef Parallel
   }
 #endif
-  _queryServer=new de::tum::QueryCxx2SocketPlainPort("localhost",50000,256);
+  _queryServer=new de::tum::QueryCxx2SocketPlainPort("127.0.0.1",50000,256);
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
@@ -211,7 +211,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::sync(){
 	double size[2];
 	int res[2];
 	int *mids=new int[parts];
-	_queryServer->getQueryDescription(offset,2,size,2,res,2,mids,1);
+    _queryServer->getQueryDescription(offset,2,size,2,res,2,mids,1);
 	std::cout<<"qo:"<<offset[0]<<" " <<offset[1]<<std::endl;
 	std::cout<<"qs:"<<size[0]<<" " <<size[1]<<std::endl;
 	std::cout<<"qr:"<<res[0]<<" " <<res[1]<<std::endl;
@@ -250,7 +250,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
       }
       _repository->iterate();
       _plotNumber++;
-      sync();
+      //sync();
     } else {
       if(_validateGrid) {
         _repository->switchToSolveTimestepAndValidateGrid();
@@ -259,6 +259,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
       }
       _repository->iterate();
     }
+    sync();
 
     _repository->getState().plotStatisticsForLastGridIteration();
 

@@ -30,6 +30,7 @@ set(PEANOCLAW_SOURCES
     src/peanoclaw/adapters/InitialiseGrid.cpp
     src/peanoclaw/adapters/InitialiseAndValidateGrid.cpp
     src/peanoclaw/adapters/Plot.cpp
+    src/peanoclaw/adapters/Query.cpp
     src/peanoclaw/adapters/Remesh.cpp
     src/peanoclaw/adapters/SolveTimestep.cpp
     src/peanoclaw/adapters/SolveTimestepAndValidateGrid.cpp
@@ -41,6 +42,7 @@ set(PEANOCLAW_SOURCES
     src/peanoclaw/mappings/GatherCurrentSolution.cpp
     src/peanoclaw/mappings/InitialiseGrid.cpp
     src/peanoclaw/mappings/Plot.cpp
+    src/peanoclaw/mappings/Query.cpp
     src/peanoclaw/mappings/Remesh.cpp
     src/peanoclaw/mappings/SolveTimestep.cpp
     src/peanoclaw/mappings/ValidateGrid.cpp
@@ -78,17 +80,31 @@ set(PEANOCLAW_SOURCES
     # swe part
     src/peanoclaw/native/SWE/src/blocks/SWE_Block.cpp
     src/peanoclaw/native/SWE/src/blocks/SWE_WavePropagationBlock.cpp
+
+    # PQi part
+    PQi/src/de/tum/iQueryCxx2SocketClientPlainPort.cpp
+    PQi/src/queries/DummyQuery.cpp
+    PQi/src/queries/QueryCxx2SocketClientPlainPort.cpp
+    PQi/src/queries/QueryServer.cpp
+    PQi/src/queries/records/Answer.cpp
+    PQi/src/queries/records/AnswerConfiguration.cpp
+    PQi/src/queries/records/HeapQuery.cpp
+    PQi/src/queries/vtkClientQuery.cpp
+    PQi/CxxSocketTests/components/java/de/tum/QueryCxx2SocketPlainPort.cpp
 )
 
 
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/src/peanoclaw/native/SWE/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/PQi/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/PQi/CxxSocketTests/components/java
         ${PYTHON_INCLUDE_DIRS}
         /home/hpc/pr63so/di72bap/mytools-amd/lib/python2.7/site-packages/numpy/core/include # numpy.get_include()
 )
 
 add_definitions(-DWAVE_PROPAGATION_SOLVER=1)
+add_definitions(-std=c++0x)
 
 add_library (peanoclaw SHARED ${PEANOCLAW_SOURCES})
 

@@ -122,9 +122,9 @@ int main(int argc, char **argv) {
   tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(0.05);
   tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(9);
   int ghostlayerWidth = 1;
-  int unknownsPerSubcell = 3;
+  int unknownsPerSubcell = 40;
   int auxiliarFieldsPerSubcell = 0;
-  int initialTimestepSize = 0.05;
+  int initialTimestepSize = 0.1;
   bool useDimensionalSplittingOptimization = true;
 
   //Check parameters
@@ -161,14 +161,14 @@ int main(int argc, char **argv) {
   assertion(runner != 0);
  
   // run experiment
-  double timestep = 0.005;
+  double timestep = 0.05;
   double endtime = 0.5;
 #if defined(Parallel)
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
 #endif
       for (double time=0.0; time < endtime; time+=timestep) {
         runner->evolveToTime(time);
-        runner->gatherCurrentSolution();
+        //runner->gatherCurrentSolution();
         std::cout << "time " << time << " done " << std::endl;
       }
 
