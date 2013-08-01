@@ -64,8 +64,10 @@ libpath = []
 libs = []
 
 ccflags.append('-std=c++0x')
+cpppath.append('-I/usr/lib/jvm/java-7-openjdk-amd64/include')
 p3Path = 'src/p3/src'
 queryPath = 'PQi/src'
+queryStubs = 'PQi-stubs/src'
 try:
   import peanoConfiguration
   p3Path = peanoConfiguration.getPeano3Path()
@@ -78,6 +80,12 @@ try:
 except ImportError:
   pass
 cpppath.append(queryPath)
+try:
+  import peanoConfiguration
+  queryStubs = peanoConfiguration.getQueryStubsPath()
+except ImportError:
+  pass
+cpppath.append(queryStubs)
 
 # Platform specific settings
 environment = Environment()
@@ -319,6 +327,7 @@ print
 
 VariantDir (buildpath, './src', duplicate=0)  # Set build directory for PeanoClaw sources
 VariantDir (buildpath + 'pqi', queryPath, duplicate=0)  # Set build directory for Query sources
+VariantDir (buildpath + 'pqi-stubs', queryStubs, duplicate=0)  # Set build directory for Query sources
 VariantDir (buildpath + 'kernel', p3Path, duplicate=0)  # Set build directory for Peano sources
 
 ##### Setup construction environment:
@@ -563,7 +572,8 @@ sourcesPeanoClaw = [
 ##### Define sources of application peanoclaw
 sourcesQuery = [
   Glob(buildpath + 'pqi/queries/*.cpp'),
-  Glob(buildpath + 'pqi/queries/records/*.cpp')
+  Glob(buildpath + 'pqi/queries/records/*.cpp'),
+  Glob(buildpath + 'pqi-stubs/de/tum/QueryCxx2SocketPlainPort.cpp')
  
 	]
 
