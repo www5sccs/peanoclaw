@@ -80,7 +80,8 @@ class Solver(Solver):
         self.peano = self.setup_peano(solution)
         
     def run_tests(self, solution):
-      self.setup_peano(solution).run_tests()
+      self.peano = self.setup_peano(solution)
+      self.peano.run_tests()
         
     def setup_peano(self, solution):
       return Peano(

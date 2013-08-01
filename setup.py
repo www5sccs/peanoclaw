@@ -6,12 +6,14 @@ from setuptools.command.develop import develop
 
 def installPeano3():
   p3Path = 'src/p3/src'
+  p3RepositorySubpath = 'src'
   p3Revision = 'HEAD'
   p3Build = 'release'
   p3ParallelSupport = 'yes' 
   try:
     import peanoConfiguration
     p3Path = peanoConfiguration.getPeano3Path()
+    p3RepositorySubpath = peanoConfiguration.getPeano3RepositorySubpath()
     p3Revision = peanoConfiguration.getPeano3Revision()
     p3Build = peanoConfiguration.getPeano3Build()
     p3ParallelSupport = peanoConfiguration.getPeano3ParallelSupport()
@@ -19,17 +21,22 @@ def installPeano3():
   except ImportError:
     pass
   
-  import os.path
+  from os.path import join
+  from os.path import exists
   from subprocess import call
-  if os.path.exists(os.path.join(p3Path, 'peano')) and os.path.exists(os.path.join(p3Path, 'tarch')):
-    print("Updating Peano3 Repository")
-    call("svn update -r" + p3Revision + " " + p3Path, shell=True)
+  if exists(join(p3Path, '.svn')):
+    pass
+    #print("Updating Peano3 Repository")
+    #call("svn update -r" + p3Revision + " " + p3Path, shell=True)
   else:
     print("Checking out Peano3 Repository")
-    call("svn checkout -r" + p3Revision + " svn://svn.code.sf.net/p/peano/code/trunk " + p3Path, shell=True)
+    call("svn checkout -r" + p3Revision + join(" svn://svn.code.sf.net/p/peano/code/trunk", p3RepositorySubpath) + " " + p3Path, shell=True)
   print("Building Peano3")
-  call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=2" + " -j2", shell=True)
+  returnValue = call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=2" + " -j2", shell=True)
   #call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=3" + " -j2", shell=True)
+  
+  if returnValue != 0:
+    raise Exception("Peano3: Build failed.")
 
 
 class Peano3Install(install):

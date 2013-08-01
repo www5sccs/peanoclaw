@@ -30,7 +30,7 @@ _solverCallback(solverCallback),
 _addPatchToSolutionCallback(addPatchToSolutionCallback),
 _totalSolverCallbackTime(0.0)
 {
-  import_array();
+  //import_array();
 }
 
 peanoclaw::pyclaw::PyClaw::~PyClaw()
@@ -81,16 +81,6 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
 
   assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getMinimalNeighborTimeConstraint());
-
-  //TODO unterweg debug
-//  for(int x = 0; x < 6; x++) {
-//    for(int y = 0; y < 6; y++) {
-//      tarch::la::Vector<DIMENSIONS, int> index;
-//      index(0) = x;
-//      index(1) = y;
-//      patch.setValueUOld(index, 0, 1 + x + 10*y);
-//    }
-//  }
 
   PyClawState state(patch);
 

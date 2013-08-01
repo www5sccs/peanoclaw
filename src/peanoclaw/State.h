@@ -229,6 +229,36 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
       void setUseDimensionalSplittingOptimization(bool useDimensionalSplittingOptimization);
 
       bool useDimensionalSplittingOptimization() const;
+
+      /**
+       * Resets the local height of the worker tree and sets the global height
+       * of the worker tree during the last grid iteration. I.e. this is called
+       * between two grid iterations.
+       */
+      void resetLocalHeightOfWorkerTree();
+
+      /**
+       * Increases the local height of the worker tree by one.
+       */
+      void increaseLocalHeightOfWorkerTree();
+
+      /**
+       * Updates the local height of the worker tree by comparing it with
+       * the given value and taking the maximum.
+       */
+      void updateLocalHeightOfWorkerTree(int localHeightOfWorkerTree);
+
+      /**
+       * Returns the current local height of the worker tree. While decending in the
+       * spacetree this holds the depth of the current worker. While ascending, it
+       * holds the actual height of the local worker tree.
+       */
+      int getLocalHeightOfWorkerTree() const;
+
+      /**
+       * Returns the global height of the worker tree during the last grid iteration.
+       */
+      int getGlobalHeightOfWorkerTreeDuringLastIteration() const;
 };
 
 

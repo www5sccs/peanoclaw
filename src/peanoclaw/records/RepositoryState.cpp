@@ -39,7 +39,6 @@ std::string peanoclaw::records::RepositoryState::toString(const Action& param) {
       case UseAdapterInitialiseGrid: return "UseAdapterInitialiseGrid";
       case UseAdapterInitialiseAndValidateGrid: return "UseAdapterInitialiseAndValidateGrid";
       case UseAdapterPlot: return "UseAdapterPlot";
-      case UseAdapterQuery: return "UseAdapterQuery";
       case UseAdapterRemesh: return "UseAdapterRemesh";
       case UseAdapterSolveTimestep: return "UseAdapterSolveTimestep";
       case UseAdapterSolveTimestepAndValidateGrid: return "UseAdapterSolveTimestepAndValidateGrid";
@@ -53,7 +52,7 @@ std::string peanoclaw::records::RepositoryState::toString(const Action& param) {
 }
 
 std::string peanoclaw::records::RepositoryState::getActionMapping() {
-   return "Action(WriteCheckpoint=0,ReadCheckpoint=1,Terminate=2,RunOnAllNodes=3,UseAdapterInitialiseGrid=4,UseAdapterInitialiseAndValidateGrid=5,UseAdapterPlot=6,UseAdapterQuery=7,UseAdapterRemesh=8,UseAdapterSolveTimestep=9,UseAdapterSolveTimestepAndValidateGrid=10,UseAdapterSolveTimestepAndPlot=11,UseAdapterSolveTimestepAndPlotAndValidateGrid=12,UseAdapterGatherCurrentSolution=13,UseAdapterCleanup=14,NumberOfAdapters=15)";
+   return "Action(WriteCheckpoint=0,ReadCheckpoint=1,Terminate=2,RunOnAllNodes=3,UseAdapterInitialiseGrid=4,UseAdapterInitialiseAndValidateGrid=5,UseAdapterPlot=6,UseAdapterRemesh=7,UseAdapterSolveTimestep=8,UseAdapterSolveTimestepAndValidateGrid=9,UseAdapterSolveTimestepAndPlot=10,UseAdapterSolveTimestepAndPlotAndValidateGrid=11,UseAdapterGatherCurrentSolution=12,UseAdapterCleanup=13,NumberOfAdapters=14)";
 }
 
 
