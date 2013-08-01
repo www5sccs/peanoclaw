@@ -1,4 +1,6 @@
-p3Path='../p3/src'
+p3Path='/home/atanasoa/workspace/peano/src'
+queryPath='/home/atanasoa/workspace/PQi/src'
+queryStubsPath='/home/atanasoa/workspace/PQi/CxxSocketTests/components/java'
 p3RepositorySubpath='src'
 p3Revision='984' #Revision number or 'HEAD'
 p3Build='release' #'debug', 'asserts', or 'release'
@@ -13,7 +15,9 @@ def getPeano3RepositorySubpath():
   return p3RepositorySubpath
 
 def getQueryPath():
-  return queryPath	
+  return queryPath
+def getQueryStubsPath():
+  return queryStubsPath	
 
 def getPeano3Revision():
   return p3Revision
