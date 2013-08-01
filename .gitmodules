@@ -1,3 +1,6 @@
 [submodule "src/peanoclaw/native/SWE"]
 	path = src/peanoclaw/native/SWE
 	url = https://github.com/TUM-I5/SWE.git
+[submodule "PQi"]
+	path = PQi
+	url = https://github.com/atanasoa/PQi.git
