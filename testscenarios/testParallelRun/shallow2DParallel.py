@@ -79,7 +79,7 @@ def refinement_criterion_time_dependent(state):
         or distance_to_circle2 < (dimension_x.upper - dimension_x.lower) / 2
         or distance_to_circle3 < (dimension_x.upper - dimension_x.lower) / 2
         ):
-        return 1.0/(6.0*27.0)
+        return 1.0/(6.0*81.0)
     elif (distance_to_circle1 > (dimension_x.upper - dimension_x.lower) * 1.5 
         and distance_to_circle2 > (dimension_x.upper - dimension_x.lower) * 1.5
         and distance_to_circle3 > (dimension_x.upper - dimension_x.lower) * 1.5
@@ -186,7 +186,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 1e-1 #3e-1 #0.03
+    claw.tfinal = 3e-1
 
     if amr_type is not None:        
         if amr_type == 'peano':
@@ -194,7 +194,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
             claw.solver = amrclaw.Solver(solver
                                         ,1/(mgrid*msubgrid)
                                         ,qinit_callback
-                                        #,refinement_criterion=refinement_criterion_time_dependent
+                                        ,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
                                         #,refinement_criterion=refinement_criterion_gradient
                                         )
