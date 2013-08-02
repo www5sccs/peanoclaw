@@ -30,6 +30,8 @@ registerTest(peanoclaw::tests::GridLevelTransferTest)
 #pragma optimize("",off)
 #endif
 
+tarch::logging::Log peanoclaw::tests::GridLevelTransferTest::_log("peanoclaw::tests::GridLevelTransferTest");
+
 void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleRefinedCell() {
 #ifdef Dim2
 
@@ -343,11 +345,11 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
     1.0, //coarse size
     0,   //level
     1.0, //time
-    4.0/3.0, //timestep size
+    1.0, //timestep size
     1.0  //Minimal neighbor time
-    );
+  );
 
-  //Create refined cell that gets the virtual patch
+  //Create refined cell that becomes the virtual patch
   tarch::la::Vector<DIMENSIONS, double> virtualPatchPosition;
   assignList(virtualPatchPosition) = 1.0, 0;
   int virtualCellDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
@@ -360,15 +362,15 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   virtualCellDescription.setSize(1.0);
   virtualCellDescription.setPosition(0.0);
   virtualCellDescription.setLevel(0);
-  virtualCellDescription.setTime(0.0);
-  virtualCellDescription.setTimestepSize(1.0+4.0/3.0);
+  virtualCellDescription.setTime(1.0);
+  virtualCellDescription.setTimestepSize(1.0);
   virtualCellDescription.setMaximumFineGridTime(0.0);
   virtualCellDescription.setMinimumFineGridTimestep(1.0+4.0/3.0);
   virtualCellDescription.setMinimalNeighborTime(0.0);
   virtualCellDescription.setMaximalNeighborTimestep(1.0+4.0/3.0);
   virtualCellDescription.setUNewIndex(-1);
-  virtualCellDescription.setUOldIndex(-1);
-  virtualCellDescription.setAuxIndex(-1);
+//  virtualCellDescription.setUOldIndex(-1);
+//  virtualCellDescription.setAuxIndex(-1);
   virtualCellDescription.setCellDescriptionIndex(virtualCellDescriptionIndex);
   virtualCellDescription.setIsVirtual(false);
 
@@ -466,6 +468,9 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
           peanoclaw::records::Vertex::Refining
         ));
 
+  gridLevelTransfer.updatePatchStateBeforeStepDown(
+    virtualPatch, coarseVertices, enumerator, false, false
+  );
   gridLevelTransfer.stepDown(virtualCellDescriptionIndex, virtualPatch, coarseVertices, enumerator);
 
   validateEquals(gridLevelTransfer._virtualPatchDescriptionIndices.size(), 1);
@@ -482,10 +487,14 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
     virtualCellDescription
   );
 
+  //TODO unterweg debug
+  logInfo("", "Virtual Patch: " << std::endl << virtualPatch.toStringUOldWithGhostLayer());
+  logInfo("", "Neighbor: " << std::endl << neighboringCoarsePatch.toStringUOldWithGhostLayer());
+
   //Check results
   double areaFraction = (1.0/9.0)*(1.0/9.0) / (1.0/2.0) / (1.0/2.0);
   assignList(subcellIndex) = -2, 0;
-  validateNumericalEquals(neighboringCoarsePatch.getValueUOld(subcellIndex, 0), areaFraction * (-1.0/3.0*9.0 + 1.0/2.0*(4.0/3.0 - 1.0/3.0*8.0) + 1.0/2.0*(4.0/3.0*3.0 - 1.0/3.0*6.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
+  validateNumericalEquals(neighboringCoarsePatch.getValueUOld(subcellIndex, 0), areaFraction * (-1.0*9.0 + 1.0/2.0*(2.0 - 1.0*8.0) + 1.0/2.0*(2.0*3.0 - 1.0*6.0) + 1.0/4.0*(2.0*4.0 - 1.0*5.0)));
   assignList(subcellIndex) = -2, 1;
   validateNumericalEquals(neighboringCoarsePatch.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*2.0 - 1.0/3.0*7.0 + 1.0/2.0*(4.0/3.0 - 1.0/3.0*8.0) + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
   assignList(subcellIndex) = -1, 0;
@@ -506,10 +515,10 @@ peanoclaw::tests::GridLevelTransferTest::~GridLevelTransferTest(){
 
 void peanoclaw::tests::GridLevelTransferTest::run() {
   //TODO unterweg debug
-//  testMethod(testAdjacentPatchIndicesForSingleRefinedCell);
-//  testMethod(testOverlappingAreaWithRealOverlap);
-//  testMethod(testOverlappingAreaWithTouchingPatches);
-//  testMethod(testOverlappingAreaWithoutOverlap);
+  testMethod(testAdjacentPatchIndicesForSingleRefinedCell);
+  testMethod(testOverlappingAreaWithRealOverlap);
+  testMethod(testOverlappingAreaWithTouchingPatches);
+  testMethod(testOverlappingAreaWithoutOverlap);
 //  testMethod(testRestrictionToVirtualPatch);
 }
 

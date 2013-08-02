@@ -119,6 +119,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestriction::restrictArea (
           unknown,
           destination.getValueUNew(linearIndexDestinationUNew, unknown) + deltaUNew
         );
+
       }
     }
   }

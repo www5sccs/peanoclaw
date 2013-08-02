@@ -201,7 +201,7 @@ private:
    *    = 4 * (1/3 - 31/729) = 2792/729
    * New value for the lower left coarse cell therefore is u''(c,1) = u'(c,1) + delta(c,1,2) = 62/27 + 2792/729 = 4466/729
    */
-  void testCoarseGridCorrection();
+  void testFluxCorrection();
 
   /**
    * Tests the interpolation in time, when copying ghostlayer data from

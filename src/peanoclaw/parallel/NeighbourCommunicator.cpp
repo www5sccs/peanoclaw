@@ -56,12 +56,12 @@ void peanoclaw::parallel::NeighbourCommunicator::deleteArraysFromPatch(int cellD
     if(cellDescription.getUNewIndex() != -1) {
       _dataHeap.deleteData(cellDescription.getUNewIndex());
     }
-    if(cellDescription.getUOldIndex() != -1) {
-      _dataHeap.deleteData(cellDescription.getUOldIndex());
-    }
-    if(cellDescription.getAuxIndex() != -1) {
-      _dataHeap.deleteData(cellDescription.getAuxIndex());
-    }
+//    if(cellDescription.getUOldIndex() != -1) {
+//      _dataHeap.deleteData(cellDescription.getUOldIndex());
+//    }
+//    if(cellDescription.getAuxIndex() != -1) {
+//      _dataHeap.deleteData(cellDescription.getAuxIndex());
+//    }
   }
   logTraceOut("deleteArraysFromPatch");
 }
@@ -133,17 +133,17 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
       sendPaddingDataArray();
     }
 
-    if(cellDescription.getUOldIndex() != -1) {
-      sendDataArray(cellDescription.getUOldIndex());
-    } else {
-      sendPaddingDataArray();
-    }
-
-    if(cellDescription.getAuxIndex() != -1) {
-      sendDataArray(cellDescription.getAuxIndex());
-    } else {
-      sendPaddingDataArray();
-    }
+//    if(cellDescription.getUOldIndex() != -1) {
+//      sendDataArray(cellDescription.getUOldIndex());
+//    } else {
+//      sendPaddingDataArray();
+//    }
+//
+//    if(cellDescription.getAuxIndex() != -1) {
+//      sendDataArray(cellDescription.getAuxIndex());
+//    } else {
+//      sendPaddingDataArray();
+//    }
   } else {
 
     //TODO unterweg debug
@@ -162,8 +162,8 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPaddingPatch() {
   logTraceInWith2Arguments("sendPaddingPatch", _position, _level);
   sendPaddingCellDescription();
   sendPaddingDataArray(); //UNew
-  sendPaddingDataArray(); //UOld
-  sendPaddingDataArray(); //Aux
+//  sendPaddingDataArray(); //UOld
+//  sendPaddingDataArray(); //Aux
   logTraceOut("sendPaddingPatch");
 }
 
@@ -188,16 +188,16 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
 
   if(!remoteCellDescription.getIsPaddingSubgrid()) {
     //Load arrays and stores according indices in cell description
-    if(remoteCellDescription.getAuxIndex() != -1) {
-      remoteCellDescription.setAuxIndex(receiveDataArray());
-    } else {
-      receiveDataArray();
-    }
-    if(remoteCellDescription.getUOldIndex() != -1) {
-      remoteCellDescription.setUOldIndex(receiveDataArray());
-    } else {
-      receiveDataArray();
-    }
+//    if(remoteCellDescription.getAuxIndex() != -1) {
+//      remoteCellDescription.setAuxIndex(receiveDataArray());
+//    } else {
+//      receiveDataArray();
+//    }
+//    if(remoteCellDescription.getUOldIndex() != -1) {
+//      remoteCellDescription.setUOldIndex(receiveDataArray());
+//    } else {
+//      receiveDataArray();
+//    }
     if(remoteCellDescription.getUNewIndex() != -1) {
       remoteCellDescription.setUNewIndex(receiveDataArray());
     } else {
@@ -212,8 +212,8 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
     _cellDescriptionHeap.getData(localCellDescriptionIndex).at(0) = remoteCellDescription;
     assertionEquals(_cellDescriptionHeap.getData(localCellDescriptionIndex).size(), 1);
   } else {
-    receiveDataArray(); //Aux
-    receiveDataArray(); //UOld
+//    receiveDataArray(); //Aux
+//    receiveDataArray(); //UOld
     receiveDataArray(); //UNew
   }
 
@@ -233,10 +233,10 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {
   _cellDescriptionHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
   //Aux
-  _dataHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
-
-  //UOld
-  _dataHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+//  _dataHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+//
+//  //UOld
+//  _dataHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
   //UNew
   _dataHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);

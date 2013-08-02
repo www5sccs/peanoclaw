@@ -33,12 +33,12 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::deleteArraysFromP
     if(cellDescription.getUNewIndex() != -1) {
       _dataHeap.deleteData(cellDescription.getUNewIndex());
     }
-    if(cellDescription.getUOldIndex() != -1) {
-      _dataHeap.deleteData(cellDescription.getUOldIndex());
-    }
-    if(cellDescription.getAuxIndex() != -1) {
-      _dataHeap.deleteData(cellDescription.getAuxIndex());
-    }
+//    if(cellDescription.getUOldIndex() != -1) {
+//      _dataHeap.deleteData(cellDescription.getUOldIndex());
+//    }
+//    if(cellDescription.getAuxIndex() != -1) {
+//      _dataHeap.deleteData(cellDescription.getAuxIndex());
+//    }
   }
   logTraceOut("deleteArraysFromPatch");
 }
@@ -90,17 +90,17 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendPatch(
       sendDataArray(cellDescription.getUNewIndex());
     }
 
-    if(cellDescription.getUOldIndex() != -1) {
-      std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getUOldIndex());
-//      std::cout << "sending new data with elements: " << localMatrix.size() << std::endl;
-      sendDataArray(cellDescription.getUOldIndex());
-    }
-
-    if(cellDescription.getAuxIndex() != -1) {
-      std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getAuxIndex());
-//      std::cout << "sending old data with elements: " << localMatrix.size() << std::endl;
-      sendDataArray(cellDescription.getAuxIndex());
-    }
+//    if(cellDescription.getUOldIndex() != -1) {
+//      std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getUOldIndex());
+////      std::cout << "sending new data with elements: " << localMatrix.size() << std::endl;
+//      sendDataArray(cellDescription.getUOldIndex());
+//    }
+//
+//    if(cellDescription.getAuxIndex() != -1) {
+//      std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getAuxIndex());
+////      std::cout << "sending old data with elements: " << localMatrix.size() << std::endl;
+//      sendDataArray(cellDescription.getAuxIndex());
+//    }
   }
   logTraceOut("sendPatch");
 }
@@ -128,13 +128,13 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
     remoteCellDescription.setUNewIndex(receiveDataArray());
   }
 
-  if(remoteCellDescription.getUOldIndex() != -1) {
-    remoteCellDescription.setUOldIndex(receiveDataArray());
-  }
-
-  if(remoteCellDescription.getAuxIndex() != -1) {
-    remoteCellDescription.setAuxIndex(receiveDataArray());
-  }
+//  if(remoteCellDescription.getUOldIndex() != -1) {
+//    remoteCellDescription.setUOldIndex(receiveDataArray());
+//  }
+//
+//  if(remoteCellDescription.getAuxIndex() != -1) {
+//    remoteCellDescription.setAuxIndex(receiveDataArray());
+//  }
 
   //Copy remote cell description to local cell description
   deleteArraysFromPatch(localCellDescriptionIndex);

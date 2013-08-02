@@ -17,11 +17,12 @@
 tarch::logging::Log peanoclaw::interSubgridCommunication::GhostLayerCompositor::_log("peanoclaw::interSubgridCommunication::GhostLayerCompositor");
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerDataBlock(
-    const tarch::la::Vector<DIMENSIONS, int>& size,
-    const tarch::la::Vector<DIMENSIONS, int>& sourceOffset,
-    const tarch::la::Vector<DIMENSIONS, int>& destinationOffset,
-    const peanoclaw::Patch& source,
-    peanoclaw::Patch& destination) {
+  const tarch::la::Vector<DIMENSIONS, int>& size,
+  const tarch::la::Vector<DIMENSIONS, int>& sourceOffset,
+  const tarch::la::Vector<DIMENSIONS, int>& destinationOffset,
+  const peanoclaw::Patch& source,
+  peanoclaw::Patch& destination
+) {
   logTraceInWith3Arguments("copyGhostLayerDataBlock", size, sourceOffset, destinationOffset);
 
   assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
@@ -225,8 +226,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborT
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlayerBounds() {
-  int rightPatchIndex = 0;
-
   //Faces
   UpdateGhostlayerBoundsFaceFunctor faceFunctor(*this);
   peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<UpdateGhostlayerBoundsFaceFunctor>(
@@ -291,17 +290,17 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerF
 
     assertionEquals2(destination.getSubdivisionFactor(), source.getSubdivisionFactor(), source, destination);
     assertionEquals2(source.getGhostLayerWidth(), destination.getGhostLayerWidth(), source, destination);
-    int ghostLayerWidth = source.getGhostLayerWidth();
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
     tarch::la::Vector<DIMENSIONS, int> faceSize(subdivisionFactor);
-    faceSize(dimension) = ghostLayerWidth;
+    faceSize(dimension) = destination.getGhostLayerWidth();
     tarch::la::Vector<DIMENSIONS, int> destinationOffset(0);
-    destinationOffset(dimension) = (offset==1) ? -ghostLayerWidth : subdivisionFactor(dimension);
+    destinationOffset(dimension) = (offset==1) ? -destination.getGhostLayerWidth() : subdivisionFactor(dimension);
 
     if(source.getLevel() == destination.getLevel() && source.getLevel() == _ghostlayerCompositor._level) {
+      assertionEquals2(source.getGhostLayerWidth(), destination.getGhostLayerWidth(), source, destination);
       tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
       sourceOffset(dimension)
-        = (offset==1) ? (source.getSubdivisionFactor()(dimension) - ghostLayerWidth) : 0;
+        = (offset==1) ? (source.getSubdivisionFactor()(dimension) - source.getGhostLayerWidth()) : 0;
 
       _ghostlayerCompositor.copyGhostLayerDataBlock(faceSize, sourceOffset, destinationOffset, source, destination);
     } else if(source.getLevel() < destination.getLevel() && destination.getLevel() == _ghostlayerCompositor._level && source.isLeaf()) {

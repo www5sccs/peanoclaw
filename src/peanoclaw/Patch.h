@@ -129,9 +129,10 @@ private:
 
   std::vector<Data>* _uNew;
 
-  std::vector<Data>* _uOldWithGhostlayer;
-
-  std::vector<Data>* _auxArray;
+//  std::vector<Data>* _uOldWithGhostlayer;
+  int                _uOldWithGhostlayerArrayIndex;
+//  std::vector<Data>* _auxArray;
+  int                _auxArrayIndex;
 
   int uNewStrideCache[DIMENSIONS+1];
   int uOldStrideCache[DIMENSIONS+1];
@@ -469,11 +470,11 @@ public:
     assertion(isLeaf() || isVirtual());
     int index = linearizeWithGhostlayer(unknown, subcellIndex);
     assertion3(index >= 0, index, subcellIndex, unknown);
-    assertion5(index < static_cast<int>(_uOldWithGhostlayer->size()), index, subcellIndex, unknown, static_cast<int>(_uOldWithGhostlayer->size()), toString());
+    assertion5(index < _auxArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _auxArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
     #ifdef PATCH_RANGE_CHECK
-    _uOldWithGhostlayer->at(index).setU(value);
+    _uNew->at(_uOldWithGhostlayerArrayIndex + index).setU(value);
     #else
-    (*_uOldWithGhostlayer)[index].setU(value);
+    (*_uNew)[_uOldWithGhostlayerArrayIndex + index].setU(value);
     #endif
   }
   #else
@@ -506,11 +507,12 @@ public:
     assertion1(isLeaf() || isVirtual(), toString());
     int index = linearizeWithGhostlayer(unknown, subcellIndex);
     assertion4(index >= 0, index, subcellIndex, unknown, toString());
-    assertion5(index < static_cast<int>(_uOldWithGhostlayer->size()), index, subcellIndex, unknown, static_cast<int>(_uOldWithGhostlayer->size()), toString());
+//    assertion5(index < static_cast<int>(_uOldWithGhostlayer->size()), index, subcellIndex, unknown, static_cast<int>(_uOldWithGhostlayer->size()), toString());
+    assertion5(index < _auxArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _auxArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
     #ifdef PATCH_RANGE_CHECK
-    return _uOldWithGhostlayer->at(index).getU();
+    return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
     #else
-    return (*_uOldWithGhostlayer)[index].getU();
+    return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
     #endif
   }
   #else
@@ -576,9 +578,9 @@ public:
   {
     int index = linearIndex + uOldStrideCache[0] * unknown;
     #ifdef PATCH_RANGE_CHECK
-    return _uOldWithGhostlayer->at(index).getU();
+    return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
     #else
-    return (*_uOldWithGhostlayer)[index].getU();
+    return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
     #endif
   }
   #else
@@ -590,9 +592,9 @@ public:
   {
     int index = linearIndex + uOldStrideCache[0] * unknown;
     #ifdef PATCH_RANGE_CHECK
-    _uOldWithGhostlayer->at(index).setU(value);
+    _uNew->at(_uOldWithGhostlayerArrayIndex + index).setU(value);
     #else
-    (*_uOldWithGhostlayer)[index].setU(value);
+    (*_uNew)[_uOldWithGhostlayerArrayIndex + index].setU(value);
     #endif
   }
   #else
@@ -606,28 +608,6 @@ public:
   tarch::la::Vector<DIMENSIONS, double> getSubcellPosition(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const;
 
   tarch::la::Vector<DIMENSIONS, double> getSubcellSize() const;
-
-  /**
-   * Fills data into the subdivisionFactor x subdivisionFactor x unknownsPerCell array that holds the current
-   * solution.
-   */
-//  void fillUNewArray(double* uNewArray) const;
-
-  /**
-   * Fills data into the (subdivisionFactor+2*ghostLayerWidth) x (subdivisionFactor+2*ghostLayerWidth) x unknownsPerCell
-   * array that holds the current solution together with the ghost layer.
-   */
-//  void fillUOldWithGhostLayerArray(double* uOldWithGhostLayerArray) const;
-
-  /**
-   * Retrieves the data computed by PyClaw and writes it back to the patch.
-   */
-//  void setValuesFromUNewArray(double* uNewArray);
-
-  /**
-   * Retrieves the data computed by PyClaw and writes it back to the patch.
-   */
-//  void setValuesFromUOldWithGhostLayerArray(double* uOldWithGhostLayerArray);
 
   /**
    * Copies the data from uNew to uOld, i.e. this actually performs the
@@ -668,12 +648,12 @@ public:
   /**
    * Returns the index for the uOld array.
    */
-  int getUOldIndex() const;
+//  int getUOldIndex() const;
 
   /**
    * Returns the index for the aux array.
    */
-  int getAuxIndex() const;
+//  int getAuxIndex() const;
 
   /**
    * Returns the index for the CellDescription. Not always valid,

@@ -135,7 +135,7 @@ class peanoclaw::records::CellDescription {
    * Heap data indices
    */
   parallelise persistent int cellDescriptionIndex;
-  parallelise persistent int uOldIndex;
+  //parallelise persistent int uOldIndex;
   parallelise persistent int uNewIndex;
-  parallelise persistent int auxIndex;
+  //parallelise persistent int auxIndex;
 };

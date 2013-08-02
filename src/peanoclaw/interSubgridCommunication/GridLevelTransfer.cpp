@@ -96,15 +96,15 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateDu
 
       //Delete current content of patch
       peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getUNewIndex());
-      peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getUOldIndex());
-      if(localPatch.getAuxIndex() != -1) {
-        peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getAuxIndex());
-      }
+//      peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getUOldIndex());
+//      if(localPatch.getAuxIndex() != -1) {
+//        peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getAuxIndex());
+//      }
 
       //Merge
       localCellDescription.setUNewIndex(remoteCellDescription.getUNewIndex());
-      localCellDescription.setUOldIndex(remoteCellDescription.getUOldIndex());
-      localCellDescription.setAuxIndex(remoteCellDescription.getAuxIndex());
+//      localCellDescription.setUOldIndex(remoteCellDescription.getUOldIndex());
+//      localCellDescription.setAuxIndex(remoteCellDescription.getAuxIndex());
     }
 
     peano::heap::Heap<CellDescription>::getInstance().deleteData(remoteCellDescriptionIndex);
@@ -340,7 +340,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
     assertionNumericalEquals(finePatch.getSize(), virtualPatch.getSize());
     assertionEquals(finePatch.getLevel(), virtualPatch.getLevel());
     assertionEquals(finePatch.getUNewIndex(), virtualPatch.getUNewIndex());
-    assertionEquals(finePatch.getUOldIndex(), virtualPatch.getUOldIndex());
+//    assertionEquals(finePatch.getUOldIndex(), virtualPatch.getUOldIndex());
 
     //Fill ghostlayer
     for(int i = 0; i < TWO_POWER_D; i++) {
@@ -374,14 +374,6 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateAf
         fineGridVerticesEnumerator
       )) {
         finePatch.switchToNonVirtual();
-
-        //TODO unterweg debug
-//        std::cout << "Not Preserving patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-//            << finePatch << std::endl;
-      } else {
-        //TODO unterweg debug
-//        std::cout << "Preserving patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-//            << finePatch << std::endl;
       }
     }
 
