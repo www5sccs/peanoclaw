@@ -17,3 +17,8 @@ With merging uOld, uNew, and aux into one array:
 real	0m11.466s
 user	0m29.868s
 sys	  0m9.804s
+
+Sending patches only when necessary:
+real	0m11.783s
+user	0m29.896s
+sys	  0m10.220s
