@@ -797,16 +797,6 @@ public:
    * MPI-rank.
    */
   bool isRemote() const;
-
-  /**
-   * Sets whether this patch was sent to the neighbor ranks since the last time step.
-   */
-  void markCurrentStateAsSent(bool wasSent);
-
-  /**
-   * Returns whether this patch was sent to the neighbor ranks since the last time step.
-   */
-  bool wasCurrentStateSent() const;
   #endif
 };
 

@@ -7,6 +7,7 @@
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
 
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/ParallelSubgrid.h"
 
 #include "peano/heap/Heap.h"
 
@@ -194,4 +195,21 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
     }
 //    hangingVertexDescription.setLastUpdateIterationParity(_iterationParity);
   }
+}
+
+void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::storeAdjacencyInformation() {
+  //Set all adjacent patches to unsent if the adjacency information has changed
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    if(_vertex.getAdjacentRanks()(i) != _vertex.getAdjacentRanksDuringLastIteration()(i)) {
+      for(int j = 0; j < TWO_POWER_D; j++) {
+        if(_vertex.getAdjacentCellDescriptionIndex(j) != -1) {
+          ParallelSubgrid adjacentSubgrid(_vertex.getAdjacentCellDescriptionIndex(j));
+          adjacentSubgrid.markCurrentStateAsSent(false);
+        }
+      }
+    }
+  }
+
+  //Store adjacent ranks for next grid iteration
+  _vertex.setAdjacentRanksDuringLastIteration(_vertex.getAdjacentRanks());
 }

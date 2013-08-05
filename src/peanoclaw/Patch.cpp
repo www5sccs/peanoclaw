@@ -219,14 +219,14 @@ void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
       cellDescriptionIndex).at(0);
 
   //Retrieve patch data
-  assertion2(
-      (_cellDescription->getUNewIndex() == -1
-          && _cellDescription->getUOldIndex() == -1)
-          || (_cellDescription->getUNewIndex() != -1
-              && _cellDescription->getUOldIndex() != -1)
-          || (_cellDescription->getUNewIndex() != -1
-              && _cellDescription->getUOldIndex() == -1),
-      _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex());
+//  assertion2(
+//      (_cellDescription->getUNewIndex() == -1
+//          && _cellDescription->getUOldIndex() == -1)
+//          || (_cellDescription->getUNewIndex() != -1
+//              && _cellDescription->getUOldIndex() != -1)
+//          || (_cellDescription->getUNewIndex() != -1
+//              && _cellDescription->getUOldIndex() == -1),
+//      _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex());
   if (_cellDescription->getUNewIndex() != -1) {
     _uNew = &peano::heap::Heap<Data>::getInstance().getData(
         _cellDescription->getUNewIndex());
@@ -880,11 +880,11 @@ bool peanoclaw::Patch::isVirtual() const {
   if (_cellDescription == 0) {
     return false;
   }
-  assertion7(
+  assertion6(
       (!_cellDescription->getIsVirtual()
           || (_uNew != 0 /*&& _uOldWithGhostlayer != 0*/)), getPosition(),
       getSize(), _cellDescription->getIsVirtual(), _uNew, /*_uOldWithGhostlayer,*/
-      _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex(),
+      _cellDescription->getUNewIndex(), /*_cellDescription->getUOldIndex(),*/
       _cellDescription->getCellDescriptionIndex());
   return _cellDescription->getIsVirtual();
 }
@@ -950,8 +950,7 @@ void peanoclaw::Patch::switchToVirtual() {
 //  }
 
   assertion1(_uNew != 0 && _cellDescription->getUNewIndex() != -1, toString());
-  assertion1(/*_uOldWithGhostlayer != 0 &&*/ _cellDescription->getUOldIndex() != -1,
-      toString());
+  //assertion1(_uOldWithGhostlayer != 0 && _cellDescription->getUOldIndex() != -1, toString());
 }
 
 void peanoclaw::Patch::switchToNonVirtual() {
@@ -1109,17 +1108,6 @@ void peanoclaw::Patch::setIsRemote(bool isRemote) {
 
 bool peanoclaw::Patch::isRemote() const {
   return _cellDescription->getIsRemote();
-}
-
-void peanoclaw::Patch::markCurrentStateAsSent(bool wasSent) {
-  _cellDescription->setCurrentStateWasSend(wasSent);
-}
-
-/**
- * Returns whether this patch was sent to the neighbor ranks since the last time step.
- */
-bool peanoclaw::Patch::wasCurrentStateSent() const {
-  return _cellDescription->getCurrentStateWasSend();
 }
 #endif
 

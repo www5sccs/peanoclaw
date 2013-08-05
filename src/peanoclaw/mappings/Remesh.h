@@ -5,14 +5,15 @@
 
 #include <map>
 
-#include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
-#include "peanoclaw/Vertex.h"
 #include "peanoclaw/Cell.h"
+#include "peanoclaw/Patch.h"
 #include "peanoclaw/State.h"
+#include "peanoclaw/Vertex.h"
+#include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/VertexDescription.h"
 #include "peanoclaw/records/Data.h"
-#include "peanoclaw/Patch.h"
+#include "peanoclaw/statistics/ParallelStatistics.h"
 
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/MappingSpecification.h"
@@ -77,7 +78,7 @@ class peanoclaw::mappings::Remesh {
 
     tarch::la::Vector<DIMENSIONS, double> _domainSize;
 
-    static peanoclaw::records::VertexDescription::IterationParity _iterationParity;
+//    static peanoclaw::records::VertexDescription::IterationParity _iterationParity;
 
     peanoclaw::interSubgridCommunication::GridLevelTransfer* _gridLevelTransfer;
 
@@ -87,8 +88,7 @@ class peanoclaw::mappings::Remesh {
 
     bool _useDimensionalSplittingOptimization;
 
-    int _sentNeighborData;
-    int _receivedNeighborData;
+    peanoclaw::statistics::ParallelStatistics _parallelStatistics;
 
     peanoclaw::State* _state;
 

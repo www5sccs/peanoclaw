@@ -96,6 +96,12 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
       tarch::la::Vector<DIMENSIONS, double>    domainOffset,
       tarch::la::Vector<DIMENSIONS, double>    domainSize
     );
+
+    /**
+     * Stores the adjacent ranks of the current vertex for the
+     * next grid iteration.
+     */
+    void storeAdjacencyInformation();
 };
 
 #endif /* PEANOCLAW_INTERSUBGRIDCOMMUNICATION_ADJACENTSUBGRIDS_H_ */

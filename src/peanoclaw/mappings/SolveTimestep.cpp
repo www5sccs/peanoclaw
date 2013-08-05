@@ -1,8 +1,10 @@
-#include "peano/heap/Heap.h"
-
 #include "peanoclaw/mappings/SolveTimestep.h"
+
+#include "peanoclaw/ParallelSubgrid.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/interSubgridCommunication/Extrapolation.h"
+
+#include "peano/heap/Heap.h"
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 
@@ -657,13 +659,15 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     #endif
 
     #ifdef Parallel
-    patch.markCurrentStateAsSent(false);
+    ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+    parallelSubgrid.markCurrentStateAsSent(false);
     #endif
 
     logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimestepSize(), cellDescription.getTime() + cellDescription.getTimestepSize() );
   } else {
     #ifdef Parallel
-    patch.markCurrentStateAsSent(true);
+    ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+    parallelSubgrid.markCurrentStateAsSent(true);
     #endif
 
     //Statistics

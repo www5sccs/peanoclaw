@@ -44,22 +44,22 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 //  timeFactor = 1.0;
 
   int sourceUnknownsPerSubcell = source.getUnknownsPerSubcell();
-    dfor(subcellindex, size) {
-      int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
-      int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
-      int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
+  dfor(subcellindex, size) {
+    int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
+    int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
+    int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
 
-      for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
-        double valueUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
-        double valueUOld = source.getValueUOld(linearSourceUOldIndex, unknown);
+    for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
+      double valueUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
+      double valueUOld = source.getValueUOld(linearSourceUOldIndex, unknown);
 
-        double value = valueUNew * timeFactor + valueUOld * (1.0 - timeFactor);
+      double value = valueUNew * timeFactor + valueUOld * (1.0 - timeFactor);
 
-        destination.setValueUOld(linearDestinationUOldIndex, unknown, value);
+      destination.setValueUOld(linearDestinationUOldIndex, unknown, value);
 
-        logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << value << " to " << (subcellindex+destinationOffset));
-      }
+      logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << value << " to " << (subcellindex+destinationOffset));
     }
+  }
 
   #ifdef Asserts
   dfor(subcellIndex, size) {
