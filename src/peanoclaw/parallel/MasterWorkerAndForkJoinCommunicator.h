@@ -100,6 +100,26 @@ class peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator {
     );
 
     /**
+     * Merges an incoming cell during a fork or join operation.
+     *
+     * There are several cases:
+     *
+     *  - The local cell is not inside or the remote cell is assigned
+     *    to a different rank: No merge is necessary, since the data
+     *    is not relevant to the local rank.
+     *  - The local cell is flagged as remote: The remote subgrid is
+     *    received and discarded.
+     *  - Otherwise: The remote subgrid is received and is merged into
+     *    the local subgrid.
+     */
+    void mergeCellDuringForkOrJoin(
+      peanoclaw::Cell&                      localCell,
+      const peanoclaw::Cell&                remoteCell,
+      tarch::la::Vector<DIMENSIONS, double> cellSize,
+      const peanoclaw::State&               state
+    );
+
+    /**
      * Called when a worker returns its state to its master. The
      * worker's state is then merged into the master's state by
      * this method.

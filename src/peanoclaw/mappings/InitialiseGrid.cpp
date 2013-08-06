@@ -77,7 +77,14 @@ peanoclaw::mappings::InitialiseGrid::~InitialiseGrid() {
 
 
 #if defined(SharedMemoryParallelisation)
-peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  masterThread) {
+peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  masterThread)
+:  _initialMinimalMeshWidth(masterThread._initialMinimalMeshWidth),
+   _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
+   _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
+   _initialTimestepSize(masterThread._initialTimestepSize),
+   _numerics(masterThread._numerics),
+   _refinementTriggered(masterThread._refinementTriggered)
+{
   logTraceIn( "InitialiseGrid(InitialiseGrid)" );
   // @todo Insert your code here
   logTraceOut( "InitialiseGrid(InitialiseGrid)" );
@@ -86,7 +93,9 @@ peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  maste
 
 void peanoclaw::mappings::InitialiseGrid::mergeWithWorkerThread(const InitialiseGrid& workerThread) {
   logTraceIn( "mergeWithWorkerThread(InitialiseGrid)" );
-  // @todo Insert your code here
+
+  _refinementTriggered |= workerThread._refinementTriggered;
+
   logTraceOut( "mergeWithWorkerThread(InitialiseGrid)" );
 }
 #endif

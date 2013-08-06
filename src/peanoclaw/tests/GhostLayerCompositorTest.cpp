@@ -43,11 +43,11 @@ void peanoclaw::tests::GhostLayerCompositorTest::setUp() {
 
 void peanoclaw::tests::GhostLayerCompositorTest::run() {
   testMethod( testTimesteppingVeto2D );
-  //TODO unterweg debug
-//  testMethod( testInterpolationFromCoarseToFinePatchLeftGhostLayer2D );
-//  testMethod( testInterpolationFromCoarseToFinePatchRightGhostLayer2D );
+  testMethod( testInterpolationFromCoarseToFinePatchLeftGhostLayer2D );
+  testMethod( testInterpolationFromCoarseToFinePatchRightGhostLayer2D );
   testMethod( testProjectionFromCoarseToFinePatchRightGhostLayer2D );
-//  testMethod( testCoarseGridCorrection );
+  //TODO unterweg debug
+//  testMethod( testFluxCorrection );
   testMethod( testRestrictionWithOverlappingBounds );
   testMethod( testPartialRestrictionAreas );
   testMethod( testPartialRestrictionAreasWithInfiniteLowerBounds );
@@ -393,7 +393,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testProjectionFromCoarseToFineP
   #endif
 }
 
-void peanoclaw::tests::GhostLayerCompositorTest::testCoarseGridCorrection() {
+void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
   int unknownsPerSubcell = 3;
   int coarseSubdivisionFactor = 2;
   int fineSubdivisionFactor = 3;
@@ -416,28 +416,39 @@ void peanoclaw::tests::GhostLayerCompositorTest::testCoarseGridCorrection() {
   );
 
   //Fill coarse patch
-  std::vector<peanoclaw::records::Data>& uNewCoarse
-    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
-    .getData(coarsePatch.getUNewIndex());
-  for(int i = 0; i < coarseSubdivisionFactor*coarseSubdivisionFactor*unknownsPerSubcell; i++) {
-    uNewCoarse.push_back(peanoclaw::records::Data());
-    if(i < coarseSubdivisionFactor*coarseSubdivisionFactor) {
-      uNewCoarse.at(i).setU(1.0);
-    } else {
-      uNewCoarse.at(i).setU(0.5);
+  dfor(subcellIndex, coarseSubdivisionFactor) {
+    for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
+      coarsePatch.setValueUNew(subcellIndex, unknown, (unknown == 0) ? 1.0 : 0.5);
     }
   }
-  std::vector<peanoclaw::records::Data>& uOldCoarse
-    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
-    .getData(coarsePatch.getUOldIndex());
-  for(int i = 0; i < (coarseSubdivisionFactor+2*ghostlayerWidth) * (coarseSubdivisionFactor+2*ghostlayerWidth) * unknownsPerSubcell; i++) {
-    uOldCoarse.push_back(peanoclaw::records::Data());
-    if(i < (coarseSubdivisionFactor+2*ghostlayerWidth) * (coarseSubdivisionFactor+2*ghostlayerWidth)) {
-      uOldCoarse.at(i).setU(1.0);
-    } else {
-      uOldCoarse.at(i).setU(0.5);
+
+  dfor(subcellIndex, coarseSubdivisionFactor + 2*ghostlayerWidth) {
+    for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
+      coarsePatch.setValueUOld(subcellIndex - ghostlayerWidth, unknown, (unknown == 0) ? 1.0 : 0.5);
     }
   }
+//  std::vector<peanoclaw::records::Data>& uNewCoarse
+//    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
+//    .getData(coarsePatch.getUNewIndex());
+//  for(int i = 0; i < coarseSubdivisionFactor*coarseSubdivisionFactor*unknownsPerSubcell; i++) {
+//    uNewCoarse.push_back(peanoclaw::records::Data());
+//    if(i < coarseSubdivisionFactor*coarseSubdivisionFactor) {
+//      uNewCoarse.at(i).setU(1.0);
+//    } else {
+//      uNewCoarse.at(i).setU(0.5);
+//    }
+//  }
+//  std::vector<peanoclaw::records::Data>& uOldCoarse
+//    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
+//    .getData(coarsePatch.getUOldIndex());
+//  for(int i = 0; i < (coarseSubdivisionFactor+2*ghostlayerWidth) * (coarseSubdivisionFactor+2*ghostlayerWidth) * unknownsPerSubcell; i++) {
+//    uOldCoarse.push_back(peanoclaw::records::Data());
+//    if(i < (coarseSubdivisionFactor+2*ghostlayerWidth) * (coarseSubdivisionFactor+2*ghostlayerWidth)) {
+//      uOldCoarse.at(i).setU(1.0);
+//    } else {
+//      uOldCoarse.at(i).setU(0.5);
+//    }
+//  }
 
   tarch::la::Vector<DIMENSIONS, double> finePosition(2.0/3.0);
   finePosition(1) = 1.0/3.0;
@@ -456,46 +467,65 @@ void peanoclaw::tests::GhostLayerCompositorTest::testCoarseGridCorrection() {
   );
 
   //Fine patch
-  std::vector<peanoclaw::records::Data>& uNewFine
-    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
-    .getData(finePatch.getUNewIndex());
-  for(int i = 0; i < fineSubdivisionFactor*fineSubdivisionFactor*unknownsPerSubcell; i++) {
-    uNewFine.push_back(peanoclaw::records::Data());
-    if(i < fineSubdivisionFactor*fineSubdivisionFactor) {
-      uNewFine.at(i).setU(1.0);
-    } else {
-      uNewFine.at(i).setU(0.5);
+  dfor(subcellIndex, fineSubdivisionFactor) {
+    for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
+      finePatch.setValueUNew(subcellIndex, unknown, (unknown == 0) ? 1.0 : 0.5);
     }
   }
-  std::vector<peanoclaw::records::Data>& uOldFine
-    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
-    .getData(finePatch.getUOldIndex());
-  for(int i = 0; i < (fineSubdivisionFactor+2*ghostlayerWidth) * (fineSubdivisionFactor+2*ghostlayerWidth) * unknownsPerSubcell; i++) {
-    uOldFine.push_back(peanoclaw::records::Data());
-    if(i < (fineSubdivisionFactor+2*ghostlayerWidth) * (fineSubdivisionFactor+2*ghostlayerWidth)) {
-      uOldFine.at(i).setU(1.0);
-    } else {
-      uOldFine.at(i).setU(0.5);
+  tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+  assignList(subcellIndex) = 2, 0;
+  finePatch.setValueUNew(subcellIndex, 0, 18.0);
+  assignList(subcellIndex) = 2, 1;
+  finePatch.setValueUNew(subcellIndex, 0, 36.0);
+  assignList(subcellIndex) = 2, 2;
+  finePatch.setValueUNew(subcellIndex, 0, 54.0);
+//  uNewFine[6] = 18.0;
+//  uNewFine[7] = 36.0;
+//  uNewFine[8] = 54.0;
+
+  dfor(subcellIndex, fineSubdivisionFactor + 2*ghostlayerWidth) {
+    for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
+      finePatch.setValueUOld(subcellIndex - ghostlayerWidth, unknown, (unknown == 0) ? 1.0 : 0.5);
     }
   }
-  uNewFine[6] = 18.0;
-  uNewFine[7] = 36.0;
-  uNewFine[8] = 54.0;
+//  std::vector<peanoclaw::records::Data>& uNewFine
+//    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
+//    .getData(finePatch.getUNewIndex());
+//  for(int i = 0; i < fineSubdivisionFactor*fineSubdivisionFactor*unknownsPerSubcell; i++) {
+//    uNewFine.push_back(peanoclaw::records::Data());
+//    if(i < fineSubdivisionFactor*fineSubdivisionFactor) {
+//      uNewFine.at(i).setU(1.0);
+//    } else {
+//      uNewFine.at(i).setU(0.5);
+//    }
+//  }
+//  std::vector<peanoclaw::records::Data>& uOldFine
+//    = peano::heap::Heap<peanoclaw::records::Data>::getInstance()
+//    .getData(finePatch.getUOldIndex());
+//  for(int i = 0; i < (fineSubdivisionFactor+2*ghostlayerWidth) * (fineSubdivisionFactor+2*ghostlayerWidth) * unknownsPerSubcell; i++) {
+//    uOldFine.push_back(peanoclaw::records::Data());
+//    if(i < (fineSubdivisionFactor+2*ghostlayerWidth) * (fineSubdivisionFactor+2*ghostlayerWidth)) {
+//      uOldFine.at(i).setU(1.0);
+//    } else {
+//      uOldFine.at(i).setU(0.5);
+//    }
+//  }
+
+  //TODO unterweg debug
+  logInfo("", "Fine Patch: \n" << finePatch.toStringUNew());
+  logInfo("", "Coarse Patch: \n" << coarsePatch.toStringUNew());
 
   //GhostLayerCompositor
-  PyClawTestStump pyClaw;
-  peanoclaw::Patch patches[TWO_POWER_D];
-  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, pyClaw, false);
+//  PyClawTestStump pyClaw;
+//  peanoclaw::Patch patches[TWO_POWER_D];
+//  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, pyClaw, false);
   peanoclaw::interSubgridCommunication::DefaultFluxCorrection fluxCorrection;
 
-//  tarch::la::Vector<DIMENSIONS, double> normal;
-//  assignList(normal) = 1.0, 0.0;
-
-  //ghostLayerCompositor.applyCoarseGridCorrection(finePatch, coarsePatch, 0, 1);
   fluxCorrection.applyCorrection(finePatch, coarsePatch, 0, 1);
 
+  //TODO unterweg debug
+  logInfo("", "Coarse Patch after: \n" << coarsePatch.toStringUNew());
 
-  tarch::la::Vector<DIMENSIONS, int> subcellIndex;
   assignList(subcellIndex) = 0, 0;
   validateNumericalEquals(coarsePatch.getValueUNew(subcellIndex, 0), 2558.0 / 729.0);
   assignList(subcellIndex) = 0, 1;

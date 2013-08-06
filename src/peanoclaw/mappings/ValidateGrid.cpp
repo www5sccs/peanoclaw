@@ -75,8 +75,12 @@ peanoclaw::mappings::ValidateGrid::~ValidateGrid() {
 
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::ValidateGrid::ValidateGrid(const ValidateGrid&  masterThread)
-  : _heap(peano::heap::Heap<PatchDescription>::getInstance()),
-    _validator(0, 0, false)
+  : _domainOffset(masterThread._domainOffset),
+    _domainSize(masterThread._domainSize),
+    _patchDescriptionsIndex(masterThread._patchDescriptionsIndex),
+    _heap(masterThread._heap),
+    _validator(masterThread._validator),
+    _state(masterThread._state)
 {
   logTraceIn( "ValidateGrid(ValidateGrid)" );
   // @todo Insert your code here

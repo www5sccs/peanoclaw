@@ -12,12 +12,28 @@ class peanoclaw::records::CellDescription {
   parallelise persistent int  auxiliarFieldsPerSubcell;
   parallelise persistent int  level;
   parallelise persistent bool isVirtual;
-  parallelise persistent int  numberOfPatchStateUpdates;
   
   #ifdef Parallel
   parallelise persistent bool isRemote;
   parallelise persistent bool currentStateWasSend;
   parallelise persistent bool isPaddingSubgrid;
+  
+  /**
+   * States that this MPI message is the only MPI message for this
+   * subgrid in this grid iteration. All following pontential messages
+   * for this subgrid are padding messages.
+   */
+  parallelise persistent bool isExclusiveMessageForSubgrid;
+  
+  /**
+   * Adjacent MPI rank if only one other rank is adjacent. Otherwise zero.
+   */
+  parallelise persistent int  adjacentRank;
+  /**
+   * Number adjacent vertices that are shared between the local and the
+   * remote rank. This number is only valid if there is only one rank adjacent.
+   */
+  parallelise persistent int  numberOfSharedAdjacentVertices;
   #endif
 
   parallelise persistent double position[DIMENSIONS];
@@ -135,7 +151,7 @@ class peanoclaw::records::CellDescription {
    * Heap data indices
    */
   parallelise persistent int cellDescriptionIndex;
-  parallelise persistent int uOldIndex;
+  //parallelise persistent int uOldIndex;
   parallelise persistent int uNewIndex;
-  parallelise persistent int auxIndex;
+  //parallelise persistent int auxIndex;
 };

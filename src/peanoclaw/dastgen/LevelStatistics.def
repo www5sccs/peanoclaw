@@ -1,0 +1,23 @@
+Packed-Type: short int;
+
+#include "peano/utils/Globals.h"
+
+Constant: DIMENSIONS;
+Constant: DIMENSIONS_TIMES_TWO;
+
+/**
+ * This class is generated via DaStGen.
+ */
+class peanoclaw::statistics::LevelStatistics {
+  parallelise persistent double _area;
+  parallelise persistent int    _level;
+  parallelise persistent double _numberOfPatches;
+  parallelise persistent double _numberOfCells;
+  parallelise persistent double _numberOfCellUpdates;
+  parallelise persistent double _createdPatches;
+  parallelise persistent double _destroyedPatches;
+  parallelise persistent double _patchesBlockedDueToNeighbors;
+  parallelise persistent double _patchesBlockedDueToGlobalTimestep;
+  parallelise persistent double _patchesSkippingIteration;
+  parallelise persistent double _patchesCoarsening;
+};

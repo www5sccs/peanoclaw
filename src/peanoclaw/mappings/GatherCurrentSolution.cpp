@@ -68,7 +68,9 @@ peanoclaw::mappings::GatherCurrentSolution::~GatherCurrentSolution() {
 
 
 #if defined(SharedMemoryParallelisation)
-peanoclaw::mappings::GatherCurrentSolution::GatherCurrentSolution(const GatherCurrentSolution&  masterThread) {
+peanoclaw::mappings::GatherCurrentSolution::GatherCurrentSolution(const GatherCurrentSolution&  masterThread)
+  : _numerics(masterThread._numerics)
+{
   logTraceIn( "GatherCurrentSolution(GatherCurrentSolution)" );
   // @todo Insert your code here
   logTraceOut( "GatherCurrentSolution(GatherCurrentSolution)" );

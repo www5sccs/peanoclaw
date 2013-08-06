@@ -1,0 +1,24 @@
+Before optimization:
+real	0m41.700s
+user	1m43.016s
+sys	  0m37.768s
+
+Without sending empty messages:
+real	0m29.995s
+user	1m11.724s
+sys	  0m27.028s
+
+Sending only local patches (as far as possible -> padding patches on corner of domain):
+real	0m19.406s
+user	0m39.560s
+sys	  0m14.268s
+
+With merging uOld, uNew, and aux into one array:
+real	0m11.466s
+user	0m29.868s
+sys	  0m9.804s
+
+Sending patches only when necessary:
+real	0m11.783s
+user	0m29.896s
+sys	  0m10.220s

@@ -11,11 +11,13 @@
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/Vertex.h"
+
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/heap/Heap.h"
 #include "peano/grid/aspects/VertexStateAnalysis.h"
-
 #include "peano/utils/Loop.h"
+
+#include "tarch/multicore/Lock.h"
 
 tarch::logging::Log peanoclaw::interSubgridCommunication::GridLevelTransfer::_log("peanoclaw::interSubgridCommunication::GridLevelTransfer");
 
@@ -60,6 +62,166 @@ bool peanoclaw::interSubgridCommunication::GridLevelTransfer::isPatchAdjacentToR
   #endif
 }
 
+bool peanoclaw::interSubgridCommunication::GridLevelTransfer::shouldBecomeVirtualSubgrid(
+  const Patch&                         fineSubgrid,
+  peanoclaw::Vertex * const            fineGridVertices,
+  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
+  bool                                 isInitializing
+) {
+  //Check wether the patch should become a virtual patch
+  bool createVirtualPatch = false;
+  if(!fineSubgrid.isLeaf()) {
+    if(peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+      (
+        fineGridVertices,
+        fineGridVerticesEnumerator,
+        peanoclaw::records::Vertex::Unrefined
+      )
+    ) {
+      createVirtualPatch = true;
+    }
+    if(!isInitializing
+      //&& finePatch.isLeaf()
+      && !peano::grid::aspects::VertexStateAnalysis::doAllVerticesCarryRefinementFlag
+      (
+        fineGridVertices,
+        fineGridVerticesEnumerator,
+        peanoclaw::records::Vertex::Refined
+      )
+    ) {
+      createVirtualPatch = true;
+    }
+//      TODO unterweg debug
+//      if(finePatch.getLevel() > 1) {
+//        createVirtualPatch = true;
+//      }
+  }
+
+  return createVirtualPatch;
+}
+
+void peanoclaw::interSubgridCommunication::GridLevelTransfer::switchToAndAddVirtualSubgrid(
+  Patch& subgrid
+) {
+  tarch::multicore::Lock lock(_virtualPatchListSemaphore);
+
+  //Push virtual stack
+  _virtualPatchDescriptionIndices.push_back(subgrid.getCellDescriptionIndex());
+  _virtualPatchTimeConstraints.push_back(subgrid.getMinimalNeighborTimeConstraint());
+
+  if(static_cast<int>(_virtualPatchDescriptionIndices.size()) > _maximumNumberOfSimultaneousVirtualPatches) {
+    _maximumNumberOfSimultaneousVirtualPatches = _virtualPatchDescriptionIndices.size();
+  }
+
+  //Create virtual patch
+  if(subgrid.isVirtual()) {
+    subgrid.clearRegion(
+      tarch::la::Vector<DIMENSIONS, int>(0),
+      subgrid.getSubdivisionFactor(),
+      false
+    );
+    subgrid.clearRegion(
+      tarch::la::Vector<DIMENSIONS, int>(0),
+      subgrid.getSubdivisionFactor(),
+      true
+    );
+  } else {
+    subgrid.switchToVirtual();
+  }
+}
+
+void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToAllVirtualSubgrids(
+  const Patch& fineSubgrid
+) {
+  tarch::multicore::Lock lock(_virtualPatchListSemaphore);
+
+  //Restrict to all
+  for(int i = 0;  i < (int)_virtualPatchDescriptionIndices.size(); i++) {
+    int virtualSubgridDescriptionIndex = _virtualPatchDescriptionIndices[i];
+    CellDescription& virtualSubgridDescription = peano::heap::Heap<CellDescription>::getInstance().getData(virtualSubgridDescriptionIndex).at(0);
+    Patch virtualSubgrid(virtualSubgridDescription);
+    if(
+//          true
+        // Restrict if virtual patch is coarsening
+        virtualSubgrid.willCoarsen()
+        #ifdef Dim2
+        || (
+          // Restrict only if coarse patches can advance in time
+          (tarch::la::greaterEquals(fineSubgrid.getCurrentTime() + fineSubgrid.getTimestepSize(), virtualSubgrid.getMinimalLeafNeighborTimeConstraint()))
+        &&
+          // Restrict only if this patch is overlapped by neighboring ghostlayers
+          (tarch::la::oneGreater(virtualSubgrid.getUpperNeighboringGhostlayerBounds(), fineSubgrid.getPosition())
+          || tarch::la::oneGreater(fineSubgrid.getPosition() + fineSubgrid.getSize(), virtualSubgrid.getLowerNeighboringGhostlayerBounds()))
+        )
+        #else
+         || true
+        #endif
+    ) {
+      assertion2(virtualSubgrid.isVirtual(), fineSubgrid.toString(), virtualSubgrid.toString());
+      assertion2(!tarch::la::oneGreater(virtualSubgrid.getPosition(), fineSubgrid.getPosition())
+          && !tarch::la::oneGreater(fineSubgrid.getPosition() + fineSubgrid.getSize(), virtualSubgrid.getPosition() + virtualSubgrid.getSize()),
+          fineSubgrid.toString(), virtualSubgrid.toString());
+
+      _numerics.restrict(fineSubgrid, virtualSubgrid, !virtualSubgrid.willCoarsen());
+
+      virtualSubgrid.setEstimatedNextTimestepSize(fineSubgrid.getEstimatedNextTimestepSize());
+    }
+  }
+}
+
+void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSubgrid(
+  Patch&                               subgrid,
+  peanoclaw::Vertex * const            fineGridVertices,
+  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
+  bool                                 isPeanoCellLeaf
+) {
+  tarch::multicore::Lock lock(_virtualPatchListSemaphore);
+  assertion1(_virtualPatchDescriptionIndices.size() > 0, subgrid.toString());
+
+  int virtualPatchDescriptionIndex = _virtualPatchDescriptionIndices[_virtualPatchDescriptionIndices.size()-1];
+  _virtualPatchDescriptionIndices.pop_back();
+  _virtualPatchTimeConstraints.pop_back();
+  CellDescription& virtualPatchDescription = peano::heap::Heap<CellDescription>::getInstance().getData(virtualPatchDescriptionIndex).at(0);
+  Patch virtualPatch(virtualPatchDescription);
+
+  //Assert that we're working on the correct virtual patch
+  assertionEquals3(subgrid.getCellDescriptionIndex(), virtualPatchDescriptionIndex, subgrid, virtualPatch, _virtualPatchDescriptionIndices.size());
+  assertionNumericalEquals(subgrid.getPosition(), virtualPatch.getPosition());
+  assertionNumericalEquals(subgrid.getSize(), virtualPatch.getSize());
+  assertionEquals(subgrid.getLevel(), virtualPatch.getLevel());
+  assertionEquals(subgrid.getUNewIndex(), virtualPatch.getUNewIndex());
+//    assertionEquals(finePatch.getUOldIndex(), virtualPatch.getUOldIndex());
+
+  //Fill ghostlayer
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
+      subgrid.getLevel(),
+      _useDimensionalSplitting,
+      _numerics,
+      fineGridVerticesEnumerator.getVertexPosition(i)
+    );
+  }
+
+  //Switch to leaf or non-virtual
+  if(isPeanoCellLeaf) {
+    assertion1(tarch::la::greaterEquals(subgrid.getTimestepSize(), 0.0), subgrid);
+    subgrid.switchToLeaf();
+  } else {
+    if(!isPatchAdjacentToRemoteRank(
+      fineGridVertices,
+      fineGridVerticesEnumerator
+    )) {
+      subgrid.switchToNonVirtual();
+    }
+  }
+
+  assertion1(!subgrid.isVirtual()
+    || isPatchAdjacentToRemoteRank(
+        fineGridVertices,
+        fineGridVerticesEnumerator),
+    subgrid);
+}
+
 peanoclaw::interSubgridCommunication::GridLevelTransfer::GridLevelTransfer(
   bool useDimensionalSplitting,
   peanoclaw::Numerics& numerics
@@ -71,6 +233,7 @@ peanoclaw::interSubgridCommunication::GridLevelTransfer::GridLevelTransfer(
 }
 
 peanoclaw::interSubgridCommunication::GridLevelTransfer::~GridLevelTransfer() {
+  tarch::multicore::Lock lock(_virtualPatchListSemaphore);
   assertion1(_virtualPatchDescriptionIndices.empty(), _virtualPatchDescriptionIndices.size());
 
   logDebug("~GridLevelTransfer", "Maximum number of simultaneously held virtual patches: " << _maximumNumberOfSimultaneousVirtualPatches);
@@ -96,15 +259,15 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateDu
 
       //Delete current content of patch
       peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getUNewIndex());
-      peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getUOldIndex());
-      if(localPatch.getAuxIndex() != -1) {
-        peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getAuxIndex());
-      }
+//      peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getUOldIndex());
+//      if(localPatch.getAuxIndex() != -1) {
+//        peano::heap::Heap<Data>::getInstance().deleteData(localPatch.getAuxIndex());
+//      }
 
       //Merge
       localCellDescription.setUNewIndex(remoteCellDescription.getUNewIndex());
-      localCellDescription.setUOldIndex(remoteCellDescription.getUOldIndex());
-      localCellDescription.setAuxIndex(remoteCellDescription.getAuxIndex());
+//      localCellDescription.setUOldIndex(remoteCellDescription.getUOldIndex());
+//      localCellDescription.setAuxIndex(remoteCellDescription.getAuxIndex());
     }
 
     peano::heap::Heap<CellDescription>::getInstance().deleteData(remoteCellDescriptionIndex);
@@ -114,50 +277,30 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateDu
 }
 #endif
 
-void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateBeforeStepDown(
-  Patch&                               finePatch,
+void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
+  int                                  coarseCellDescriptionIndex,
+  Patch&                               fineSubgrid,
   peanoclaw::Vertex * const            fineGridVertices,
   const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
-  bool                                 isInitializing,
-  bool                                 isInvolvedInFork
+  bool                                 isInitializing
 ) {
-  logTraceInWith1Argument("updatePatchStateBeforeStepDown", finePatch);
 
-//  assertion1(
-//    !finePatch.isVirtual()
-//    || isPatchAdjacentToRemoteRank(fineGridVertices, fineGridVerticesEnumerator),
-//    finePatch
-//  );
+  //Switch to virtual subgrid if necessary
+  if(shouldBecomeVirtualSubgrid(
+      fineSubgrid,
+      fineGridVertices,
+      fineGridVerticesEnumerator,
+      isInitializing
+  )) {
+    switchToAndAddVirtualSubgrid(fineSubgrid);
+  } else if(fineSubgrid.isVirtual()) {
+    //Switch to non-virtual if still virtual
+    fineSubgrid.switchToNonVirtual();
+  }
 
-  //Check wether the patch should become a virtual patch
-  bool createVirtualPatch = false;
-  if(!finePatch.isLeaf()) {
-    if(peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-      (
-        fineGridVertices,
-        fineGridVerticesEnumerator,
-        peanoclaw::records::Vertex::Unrefined
-      )
-    ) {
-      createVirtualPatch = true;
-    }
-    if(!isInitializing
-      //&& finePatch.isLeaf()
-      && !peano::grid::aspects::VertexStateAnalysis::doAllVerticesCarryRefinementFlag
-      (
-        fineGridVertices,
-        fineGridVerticesEnumerator,
-        peanoclaw::records::Vertex::Refined
-      )
-    ) {
-      createVirtualPatch = true;
-    }
-//      TODO unterweg debug
-//      if(finePatch.getLevel() > 1) {
-//        createVirtualPatch = true;
-//      }
-
-    finePatch.setWillCoarsen(peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+  //Prepare flags for subgrid
+  if(!fineSubgrid.isLeaf()) {
+    fineSubgrid.setWillCoarsen(peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
       (
         fineGridVertices,
         fineGridVerticesEnumerator,
@@ -165,56 +308,17 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateBe
       )
     );
   }
-
-  if(createVirtualPatch) {
-    //Push virtual stack
-    _virtualPatchDescriptionIndices.push_back(finePatch.getCellDescriptionIndex());
-    _virtualPatchTimeConstraints.push_back(finePatch.getMinimalNeighborTimeConstraint());
-
-    if(static_cast<int>(_virtualPatchDescriptionIndices.size()) > _maximumNumberOfSimultaneousVirtualPatches) {
-      _maximumNumberOfSimultaneousVirtualPatches = _virtualPatchDescriptionIndices.size();
-    }
-
-    //Create virtual patch
-    if(finePatch.isVirtual()) {
-      finePatch.clearRegion(
-        tarch::la::Vector<DIMENSIONS, int>(0),
-        finePatch.getSubdivisionFactor(),
-        false
-      );
-      finePatch.clearRegion(
-        tarch::la::Vector<DIMENSIONS, int>(0),
-        finePatch.getSubdivisionFactor(),
-        true
-      );
-    } else {
-      finePatch.switchToVirtual();
-    }
-  } else if(finePatch.isVirtual()) {
-    //Switch to non-virtual if still virtual
-    finePatch.switchToNonVirtual();
-  }
-
-  logTraceOut("updatePatchStateBeforeStepDown");
-}
-
-void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
-  int                                  coarseCellDescriptionIndex,
-  Patch&                               finePatch,
-  peanoclaw::Vertex * const            fineGridVertices,
-  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
-) {
-  finePatch.resetMinimalNeighborTimeConstraint();
-  finePatch.resetMaximalNeighborTimeInterval();
-  finePatch.resetNeighboringGhostlayerBounds();
-  finePatch.resetMinimalFineGridTimeInterval();
+  fineSubgrid.resetMinimalNeighborTimeConstraint();
+  fineSubgrid.resetMaximalNeighborTimeInterval();
+  fineSubgrid.resetNeighboringGhostlayerBounds();
+  fineSubgrid.resetMinimalFineGridTimeInterval();
 
   //Get data from neighbors:
   //  - Ghostlayers data
   //  - Ghostlayer bounds
   //  - Neighbor times
   for(int i = 0; i < TWO_POWER_D; i++) {
-    fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, finePatch.getCellDescriptionIndex());
+    fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, fineSubgrid.getCellDescriptionIndex());
     fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
       fineGridVerticesEnumerator.getLevel(),
       _useDimensionalSplitting,
@@ -232,7 +336,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
     if(coarsePatch.shouldFineGridsSynchronize()) {
       //Set time constraint of fine grid to time of coarse grid to synch
       //on that time.
-      finePatch.updateMinimalNeighborTimeConstraint(coarsePatch.getCurrentTime(), coarsePatch.getCellDescriptionIndex());
+      fineSubgrid.updateMinimalNeighborTimeConstraint(coarsePatch.getCurrentTime(), coarsePatch.getCellDescriptionIndex());
     }
   }
 }
@@ -272,38 +376,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
   }
 
   if(finePatch.isLeaf()) {
-    //Restrict to all
-    for(int i = 0;  i < (int)_virtualPatchDescriptionIndices.size(); i++) {
-      int virtualPatchDescriptionIndex = _virtualPatchDescriptionIndices[i];
-      CellDescription& virtualPatchDescription = peano::heap::Heap<CellDescription>::getInstance().getData(virtualPatchDescriptionIndex).at(0);
-      Patch virtualPatch(virtualPatchDescription);
-      if(
-//          true
-          // Restrict if virtual patch is coarsening
-          virtualPatch.willCoarsen()
-          #ifdef Dim2
-          || (
-            // Restrict only if coarse patches can advance in time
-            (tarch::la::greaterEquals(finePatch.getCurrentTime() + finePatch.getTimestepSize(), virtualPatch.getMinimalLeafNeighborTimeConstraint()))
-          &&
-            // Restrict only if this patch is overlapped by neighboring ghostlayers
-            (tarch::la::oneGreater(virtualPatch.getUpperNeighboringGhostlayerBounds(), finePatch.getPosition())
-            || tarch::la::oneGreater(finePatch.getPosition() + finePatch.getSize(), virtualPatch.getLowerNeighboringGhostlayerBounds()))
-          )
-          #else
-           || true
-          #endif
-      ) {
-        assertion2(virtualPatch.isVirtual(), finePatch.toString(), virtualPatch.toString());
-        assertion2(!tarch::la::oneGreater(virtualPatch.getPosition(), finePatch.getPosition())
-            && !tarch::la::oneGreater(finePatch.getPosition() + finePatch.getSize(), virtualPatch.getPosition() + virtualPatch.getSize()),
-            finePatch.toString(), virtualPatch.toString());
-
-        _numerics.restrict(finePatch, virtualPatch, !virtualPatch.willCoarsen());
-
-        virtualPatch.setEstimatedNextTimestepSize(finePatch.getEstimatedNextTimestepSize());
-      }
-    }
+    restrictToAllVirtualSubgrids(finePatch);
 
     //TODO unterweg dissertation:
     //If the patch is leaf, but the Peano cell is not, it got refined.
@@ -326,71 +399,16 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
       finePatch.switchToNonVirtual();
     }
   } else if (finePatch.isVirtual()) {
-    assertion1(_virtualPatchDescriptionIndices.size() > 0, finePatch.toString());
-
-    int virtualPatchDescriptionIndex = _virtualPatchDescriptionIndices[_virtualPatchDescriptionIndices.size()-1];
-    _virtualPatchDescriptionIndices.pop_back();
-    _virtualPatchTimeConstraints.pop_back();
-    CellDescription& virtualPatchDescription = peano::heap::Heap<CellDescription>::getInstance().getData(virtualPatchDescriptionIndex).at(0);
-    Patch virtualPatch(virtualPatchDescription);
-
-    //Assert that we're working on the correct virtual patch
-    assertionEquals3(finePatch.getCellDescriptionIndex(), virtualPatchDescriptionIndex, finePatch, virtualPatch, _virtualPatchDescriptionIndices.size());
-    assertionNumericalEquals(finePatch.getPosition(), virtualPatch.getPosition());
-    assertionNumericalEquals(finePatch.getSize(), virtualPatch.getSize());
-    assertionEquals(finePatch.getLevel(), virtualPatch.getLevel());
-    assertionEquals(finePatch.getUNewIndex(), virtualPatch.getUNewIndex());
-    assertionEquals(finePatch.getUOldIndex(), virtualPatch.getUOldIndex());
-
-    //Fill ghostlayer
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
-        finePatch.getLevel(),
-        _useDimensionalSplitting,
-        _numerics,
-        fineGridVerticesEnumerator.getVertexPosition(i)
-      );
-    }
+    finalizeVirtualSubgrid(
+      finePatch,
+      fineGridVertices,
+      fineGridVerticesEnumerator,
+      isPeanoCellLeaf
+    );
   }
 
   //Reset time constraint for optimization of ghostlayer filling
 //  finePatch.resetMinimalNeighborTimeConstraint();
-}
-
-void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateAfterStepUp(
-  Patch&                               finePatch,
-  peanoclaw::Vertex * const            fineGridVertices,
-  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
-  bool                                 isPeanoCellLeaf
-) {
-  if(finePatch.isVirtual()) {
-    //Switch to leaf or non-virtual
-    if(isPeanoCellLeaf) {
-      assertion1(tarch::la::greaterEquals(finePatch.getTimestepSize(), 0.0), finePatch);
-      finePatch.switchToLeaf();
-    } else {
-      if(!isPatchAdjacentToRemoteRank(
-        fineGridVertices,
-        fineGridVerticesEnumerator
-      )) {
-        finePatch.switchToNonVirtual();
-
-        //TODO unterweg debug
-//        std::cout << "Not Preserving patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-//            << finePatch << std::endl;
-      } else {
-        //TODO unterweg debug
-//        std::cout << "Preserving patch on rank " << tarch::parallel::Node::getInstance().getRank() << ": "
-//            << finePatch << std::endl;
-      }
-    }
-
-    assertion1(!finePatch.isVirtual()
-        || isPatchAdjacentToRemoteRank(
-            fineGridVertices,
-            fineGridVerticesEnumerator),
-        finePatch);
-  }
 }
 
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::fillAdjacentPatchIndicesFromCoarseVertices(
@@ -459,5 +477,3 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictRefinement
 
   logTraceOut( "restrictRefinementFlagsToCoarseVertices(...)" );
 }
-
-

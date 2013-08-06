@@ -7,6 +7,7 @@ peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<LoopBo
   peanoclaw::Patch patches[TWO_POWER_D],
   LoopBody& loopBody
 ) {
+  //dfor(index0, 2) traverses all TWO_POWER_D adjacent patches, independent of the dimension.
   dfor(index0, 2) {
     for(int d = 0; d < DIMENSIONS; d++) {
       for(int offset = 1; offset >= -1; offset -= 2) {

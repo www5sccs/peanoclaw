@@ -13,6 +13,8 @@
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
+#include "tarch/logging/Log.h"
+
 namespace peanoclaw {
   namespace tests {
   class GridLevelTransferTest;
@@ -27,6 +29,11 @@ namespace peanoclaw {
 class peanoclaw::tests::GridLevelTransferTest: public tarch::tests::TestCase {
 
   private:
+    /**
+     * Logging device.
+     */
+    static tarch::logging::Log _log;
+
     typedef peanoclaw::records::CellDescription CellDescription;
     typedef peanoclaw::records::Data Data;
 

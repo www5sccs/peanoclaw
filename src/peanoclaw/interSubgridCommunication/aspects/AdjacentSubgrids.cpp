@@ -7,6 +7,7 @@
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
 
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/ParallelSubgrid.h"
 
 #include "peano/heap/Heap.h"
 
@@ -193,5 +194,46 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
       );
     }
 //    hangingVertexDescription.setLastUpdateIterationParity(_iterationParity);
+  }
+}
+
+void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::storeAdjacencyInformation() {
+  #ifdef Parallel
+  //Set all adjacent patches to unsent if the adjacency information has changed
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    if(_vertex.getAdjacentRanks()(i) != _vertex.getAdjacentRanksDuringLastIteration()(i)) {
+      for(int j = 0; j < TWO_POWER_D; j++) {
+        if(_vertex.getAdjacentCellDescriptionIndex(j) != -1) {
+          ParallelSubgrid adjacentSubgrid(_vertex.getAdjacentCellDescriptionIndex(j));
+          adjacentSubgrid.markCurrentStateAsSent(false);
+        }
+      }
+    }
+  }
+
+  //Store adjacent ranks for next grid iteration
+  _vertex.setAdjacentRanksDuringLastIteration(_vertex.getAdjacentRanks());
+  #endif
+}
+
+void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::regainTwoIrregularity(
+  peanoclaw::Vertex * const            coarseGridVertices,
+  const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
+) {
+  //Regain 2-irregularity if necessary
+  if(_vertex.getRefinementControl() == peanoclaw::Vertex::Records::Refined
+      || _vertex.getRefinementControl() == peanoclaw::Vertex::Records::Refining) {
+    tarch::la::Vector<DIMENSIONS, int> coarseGridPositionOfVertex(0);
+    for(int d = 0; d < DIMENSIONS; d++) {
+      if(_position(d) > 1) {
+        coarseGridPositionOfVertex(d) = 1;
+      }
+    }
+
+    peanoclaw::Vertex& coarseVertex = coarseGridVertices[coarseGridVerticesEnumerator(coarseGridPositionOfVertex)];
+    if(coarseVertex.getRefinementControl() == peanoclaw::Vertex::Records::Unrefined
+        && !coarseVertex.isHangingNode()) {
+      coarseVertex.refine();
+    }
   }
 }

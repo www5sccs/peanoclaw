@@ -17,11 +17,12 @@
 tarch::logging::Log peanoclaw::interSubgridCommunication::GhostLayerCompositor::_log("peanoclaw::interSubgridCommunication::GhostLayerCompositor");
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerDataBlock(
-    const tarch::la::Vector<DIMENSIONS, int>& size,
-    const tarch::la::Vector<DIMENSIONS, int>& sourceOffset,
-    const tarch::la::Vector<DIMENSIONS, int>& destinationOffset,
-    const peanoclaw::Patch& source,
-    peanoclaw::Patch& destination) {
+  const tarch::la::Vector<DIMENSIONS, int>& size,
+  const tarch::la::Vector<DIMENSIONS, int>& sourceOffset,
+  const tarch::la::Vector<DIMENSIONS, int>& destinationOffset,
+  const peanoclaw::Patch& source,
+  peanoclaw::Patch& destination
+) {
   logTraceInWith3Arguments("copyGhostLayerDataBlock", size, sourceOffset, destinationOffset);
 
   assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
@@ -43,22 +44,22 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 //  timeFactor = 1.0;
 
   int sourceUnknownsPerSubcell = source.getUnknownsPerSubcell();
-    dfor(subcellindex, size) {
-      int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
-      int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
-      int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
+  dfor(subcellindex, size) {
+    int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
+    int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
+    int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
 
-      for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
-        double valueUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
-        double valueUOld = source.getValueUOld(linearSourceUOldIndex, unknown);
+    for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
+      double valueUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
+      double valueUOld = source.getValueUOld(linearSourceUOldIndex, unknown);
 
-        double value = valueUNew * timeFactor + valueUOld * (1.0 - timeFactor);
+      double value = valueUNew * timeFactor + valueUOld * (1.0 - timeFactor);
 
-        destination.setValueUOld(linearDestinationUOldIndex, unknown, value);
+      destination.setValueUOld(linearDestinationUOldIndex, unknown, value);
 
-        logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << value << " to " << (subcellindex+destinationOffset));
-      }
+      logDebug("copyGhostLayerDataBlock(...)", "Copied cell " << (subcellindex+sourceOffset) << " with value " << value << " to " << (subcellindex+destinationOffset));
     }
+  }
 
   #ifdef Asserts
   dfor(subcellIndex, size) {
@@ -225,8 +226,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborT
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlayerBounds() {
-  int rightPatchIndex = 0;
-
   //Faces
   UpdateGhostlayerBoundsFaceFunctor faceFunctor(*this);
   peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<UpdateGhostlayerBoundsFaceFunctor>(
@@ -290,18 +289,16 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerF
     assertion3(dimension!=-1 && offset != 0, dimension, offset, direction);
 
     assertionEquals2(destination.getSubdivisionFactor(), source.getSubdivisionFactor(), source, destination);
-    assertionEquals2(source.getGhostLayerWidth(), destination.getGhostLayerWidth(), source, destination);
-    int ghostLayerWidth = source.getGhostLayerWidth();
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
     tarch::la::Vector<DIMENSIONS, int> faceSize(subdivisionFactor);
-    faceSize(dimension) = ghostLayerWidth;
+    faceSize(dimension) = destination.getGhostLayerWidth();
     tarch::la::Vector<DIMENSIONS, int> destinationOffset(0);
-    destinationOffset(dimension) = (offset==1) ? -ghostLayerWidth : subdivisionFactor(dimension);
+    destinationOffset(dimension) = (offset==1) ? -destination.getGhostLayerWidth() : subdivisionFactor(dimension);
 
     if(source.getLevel() == destination.getLevel() && source.getLevel() == _ghostlayerCompositor._level) {
       tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
       sourceOffset(dimension)
-        = (offset==1) ? (source.getSubdivisionFactor()(dimension) - ghostLayerWidth) : 0;
+        = (offset==1) ? (source.getSubdivisionFactor()(dimension) - source.getGhostLayerWidth()) : 0;
 
       _ghostlayerCompositor.copyGhostLayerDataBlock(faceSize, sourceOffset, destinationOffset, source, destination);
     } else if(source.getLevel() < destination.getLevel() && destination.getLevel() == _ghostlayerCompositor._level && source.isLeaf()) {
@@ -335,18 +332,17 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerE
     && _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination)
   ) {
     assertionEquals2(source.getSubdivisionFactor(), destination.getSubdivisionFactor(), source, destination);
-    assertionEquals2(source.getGhostLayerWidth(), destination.getGhostLayerWidth(), source, destination);
-    int ghostLayerWidth = source.getGhostLayerWidth();
+    int ghostlayerWidth = destination.getGhostLayerWidth();
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
-    tarch::la::Vector<DIMENSIONS, int> edgeSize(ghostLayerWidth);
+    tarch::la::Vector<DIMENSIONS, int> edgeSize(ghostlayerWidth);
     tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
     tarch::la::Vector<DIMENSIONS, int> destinationOffset(0);
     for(int d = 0; d < DIMENSIONS; d++) {
       if(direction(d) == 0) {
         edgeSize(d) = subdivisionFactor(d);
       } else if(direction(d) == 1) {
-        sourceOffset(d) = subdivisionFactor(d) - ghostLayerWidth;
-        destinationOffset(d) = -ghostLayerWidth;
+        sourceOffset(d) = subdivisionFactor(d) - ghostlayerWidth;
+        destinationOffset(d) = -ghostlayerWidth;
       } else if(direction(d) == -1) {
         destinationOffset(d) = subdivisionFactor(d);
       } else {

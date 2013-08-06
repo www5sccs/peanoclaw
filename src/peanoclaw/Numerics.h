@@ -102,7 +102,7 @@ private:
       Patch& patch,
       int dimension,
       bool setUpper
-    ) const = 0;
+    ) = 0;
 
     /**
      * Solves a timestep. All updates (e.g. change of grid values, taken timestep size, new cfl number)
