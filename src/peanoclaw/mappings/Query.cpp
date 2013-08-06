@@ -1,6 +1,11 @@
 #include "peanoclaw/mappings/Query.h"
+#include "queries/QueryServer.h"
+#include "peanoclaw/Patch.h"
 
-
+#ifdef Parallel
+#include "tarch/parallel/Node.h"
+#include "tarch/parallel/NodePool.h"
+#endif
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
@@ -398,7 +403,7 @@ void peanoclaw::mappings::Query::enterCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-  // @todo Insert your code here
+  std::cout<<"Rank:"<<tarch::parallel::Node::getInstance().getRank()<<" queries:"<<queries::QueryServer::getInstance().getNumberOfPendingQueries()<<std::endl;
   logTraceOutWith1Argument( "enterCell(...)", fineGridCell );
 }
 
@@ -413,7 +418,24 @@ void peanoclaw::mappings::Query::leaveCell(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "leaveCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-  // @todo Insert your code here
+  if(
+      fineGridCell.isLeaf()
+      #ifdef Parallel
+      && !fineGridCell.isAssignedToRemoteRank()
+      #endif
+    ) {
+      Patch patch(
+        fineGridCell
+      );
+      double localGap = 0;
+      tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize() / (1.0 + localGap);
+	
+      dfor(subcellIndex, patch.getSubdivisionFactor()) {
+    	tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition()  + tarch::la::multiplyComponents(subcellIndex.convertScalar<double>(), subcellSize);
+      //_patchPlotter->plotPatch(patch, fineGridVertices, fineGridVerticesEnumerator);
+      
+      }
+    }
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
 }
 
@@ -431,7 +453,7 @@ void peanoclaw::mappings::Query::endIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
-  // @todo Insert your code here
+  queries::QueryServer::getInstance().commitQueries();
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }
 
