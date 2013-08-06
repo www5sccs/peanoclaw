@@ -340,6 +340,10 @@ public:
    */
   void resetMinimalNeighborTimeConstraint();
 
+  /**
+   * Returns the index of the subgrid that implies the time constraint
+   * on this subgrid.
+   */
   int getConstrainingNeighborIndex() const;
 
   /**
@@ -673,12 +677,6 @@ public:
    */
   double getDemandedMeshWidth() const;
 
-  /**
-   * Sets the values in the ghostlayer cells to zero so that the
-   * accumulation of restricted values is working correctly.
-   */
-//  void resetGhostLayer();
-
   std::string toStringUNew() const;
 
   std::string toStringUOldWithGhostLayer() const;
@@ -752,7 +750,6 @@ public:
    */
   int getAge() const;
 
-
   /**
    * Resets the bounds for the overlap of neighboring ghostlayers.
    */
@@ -771,7 +768,6 @@ public:
    * the given domain.
    */
   void updateUpperNeighboringGhostlayerBound(int dimension, double bound);
-
 
   /**
    * Returns the lower bounds for all dimensions that define how far this patch

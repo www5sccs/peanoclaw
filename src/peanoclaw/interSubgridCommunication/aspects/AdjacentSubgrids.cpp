@@ -213,3 +213,25 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::storeAdjac
   //Store adjacent ranks for next grid iteration
   _vertex.setAdjacentRanksDuringLastIteration(_vertex.getAdjacentRanks());
 }
+
+void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::regainTwoIrregularity(
+  peanoclaw::Vertex * const            coarseGridVertices,
+  const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
+) {
+  //Regain 2-irregularity if necessary
+  if(_vertex.getRefinementControl() == peanoclaw::Vertex::Records::Refined
+      || _vertex.getRefinementControl() == peanoclaw::Vertex::Records::Refining) {
+    tarch::la::Vector<DIMENSIONS, int> coarseGridPositionOfVertex(0);
+    for(int d = 0; d < DIMENSIONS; d++) {
+      if(_position(d) > 1) {
+        coarseGridPositionOfVertex(d) = 1;
+      }
+    }
+
+    peanoclaw::Vertex& coarseVertex = coarseGridVertices[coarseGridVerticesEnumerator(coarseGridPositionOfVertex)];
+    if(coarseVertex.getRefinementControl() == peanoclaw::Vertex::Records::Unrefined
+        && !coarseVertex.isHangingNode()) {
+      coarseVertex.refine();
+    }
+  }
+}

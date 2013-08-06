@@ -3,8 +3,6 @@
 #ifndef PEANOCLAW_MAPPINGS_Remesh_H_
 #define PEANOCLAW_MAPPINGS_Remesh_H_
 
-#include <map>
-
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/State.h"
@@ -14,6 +12,7 @@
 #include "peanoclaw/records/VertexDescription.h"
 #include "peanoclaw/records/Data.h"
 #include "peanoclaw/statistics/ParallelStatistics.h"
+#include "peanoclaw/statistics/LevelStatistics.h"
 
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/MappingSpecification.h"
@@ -56,6 +55,7 @@ class peanoclaw::mappings::Remesh {
     typedef peanoclaw::records::CellDescription CellDescription;
     typedef peanoclaw::records::VertexDescription VertexDescription;
     typedef peanoclaw::records::Data Data;
+    typedef peanoclaw::statistics::LevelStatistics LevelStatistics;
 
     /**
      * Map from a hanging node's position and level to
@@ -77,8 +77,6 @@ class peanoclaw::mappings::Remesh {
     tarch::la::Vector<DIMENSIONS, double> _domainOffset;
 
     tarch::la::Vector<DIMENSIONS, double> _domainSize;
-
-//    static peanoclaw::records::VertexDescription::IterationParity _iterationParity;
 
     peanoclaw::interSubgridCommunication::GridLevelTransfer* _gridLevelTransfer;
 

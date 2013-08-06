@@ -58,9 +58,10 @@ class peanoclaw::statistics::ParallelStatistics {
     void receivedPaddingNeighborData(int numberOfReceivedSubgrids=1);
 
     /**
-     * Loggs the statistics.
+     * Logs the statistics.
      */
     void logStatistics() const;
+
 };
 
 #endif /* PEANOCLAW_STATISTICS_PARALLELSTATISTICS_H_ */

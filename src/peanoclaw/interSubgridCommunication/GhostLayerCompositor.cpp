@@ -289,7 +289,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerF
     assertion3(dimension!=-1 && offset != 0, dimension, offset, direction);
 
     assertionEquals2(destination.getSubdivisionFactor(), source.getSubdivisionFactor(), source, destination);
-    assertionEquals2(source.getGhostLayerWidth(), destination.getGhostLayerWidth(), source, destination);
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
     tarch::la::Vector<DIMENSIONS, int> faceSize(subdivisionFactor);
     faceSize(dimension) = destination.getGhostLayerWidth();
@@ -297,7 +296,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerF
     destinationOffset(dimension) = (offset==1) ? -destination.getGhostLayerWidth() : subdivisionFactor(dimension);
 
     if(source.getLevel() == destination.getLevel() && source.getLevel() == _ghostlayerCompositor._level) {
-      assertionEquals2(source.getGhostLayerWidth(), destination.getGhostLayerWidth(), source, destination);
       tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
       sourceOffset(dimension)
         = (offset==1) ? (source.getSubdivisionFactor()(dimension) - source.getGhostLayerWidth()) : 0;
@@ -334,18 +332,17 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::FillGhostlayerE
     && _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination)
   ) {
     assertionEquals2(source.getSubdivisionFactor(), destination.getSubdivisionFactor(), source, destination);
-    assertionEquals2(source.getGhostLayerWidth(), destination.getGhostLayerWidth(), source, destination);
-    int ghostLayerWidth = source.getGhostLayerWidth();
+    int ghostlayerWidth = destination.getGhostLayerWidth();
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
-    tarch::la::Vector<DIMENSIONS, int> edgeSize(ghostLayerWidth);
+    tarch::la::Vector<DIMENSIONS, int> edgeSize(ghostlayerWidth);
     tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
     tarch::la::Vector<DIMENSIONS, int> destinationOffset(0);
     for(int d = 0; d < DIMENSIONS; d++) {
       if(direction(d) == 0) {
         edgeSize(d) = subdivisionFactor(d);
       } else if(direction(d) == 1) {
-        sourceOffset(d) = subdivisionFactor(d) - ghostLayerWidth;
-        destinationOffset(d) = -ghostLayerWidth;
+        sourceOffset(d) = subdivisionFactor(d) - ghostlayerWidth;
+        destinationOffset(d) = -ghostlayerWidth;
       } else if(direction(d) == -1) {
         destinationOffset(d) = subdivisionFactor(d);
       } else {

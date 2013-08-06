@@ -19,6 +19,13 @@ class peanoclaw::records::CellDescription {
   parallelise persistent bool isPaddingSubgrid;
   
   /**
+   * States that this MPI message is the only MPI message for this
+   * subgrid in this grid iteration. All following pontential messages
+   * for this subgrid are padding messages.
+   */
+  parallelise persistent bool isExclusiveMessageForSubgrid;
+  
+  /**
    * Adjacent MPI rank if only one other rank is adjacent. Otherwise zero.
    */
   parallelise persistent int  adjacentRank;

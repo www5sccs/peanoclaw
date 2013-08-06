@@ -59,7 +59,6 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::descendSpecification(
   return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
 }
 
-
 tarch::logging::Log                peanoclaw::mappings::Remesh::_log( "peanoclaw::mappings::Remesh" ); 
 
 peanoclaw::mappings::Remesh::Remesh()
@@ -88,7 +87,27 @@ peanoclaw::mappings::Remesh::~Remesh() {
 
 
 #if defined(SharedMemoryParallelisation)
-peanoclaw::mappings::Remesh::Remesh(const Remesh&  masterThread) {
+peanoclaw::mappings::Remesh::Remesh(const Remesh&  masterThread)
+:_unknownsPerSubcell(masterThread._unknownsPerSubcell),
+_auxiliarFieldsPerSubcell(masterThread._auxiliarFieldsPerSubcell),
+_defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor)
+//_defaultGhostLayerWidth   = solverState.getDefaultGhostLayerWidth(),
+//_initialTimestepSize      = solverState.getInitialTimestepSize(),
+//_numerics                 = solverState.getNumerics(),
+//_domainOffset             = solverState.getDomainOffset(),
+//_domainSize               = solverState.getDomainSize(),
+//
+//_gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(
+//                            solverState.useDimensionalSplittingOptimization(),
+//                            *_numerics
+//                         );
+//
+//_initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
+//_isInitializing = solverState.getIsInitializing();
+//_useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
+//_parallelStatistics = peanoclaw::statistics::ParallelStatistics("Iteration");
+//_state = &solverState;
+{
   logTraceIn( "Remesh(Remesh)" );
   // @todo Insert your code here
   logTraceOut( "Remesh(Remesh)" );
@@ -529,7 +548,6 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
   int                                          level
 ) {
   logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
-//  std::cout << "[prepareCopyToRemoteNode] sending to " << toRank << " next item @ " << cellCentre << " on level " << level << std::endl;
 
   if(localCell.isInside() && localCell.getRankOfRemoteNode() == toRank) {
    assertion7(
@@ -549,13 +567,6 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
     //Switch to remote after having sent the patch away...
     Patch patch(localCell);
     patch.setIsRemote(true);
-
-    //TODO unterweg debug
-//    std::cout << "Copying to remote from " << tarch::parallel::Node::getInstance().getRank() << " to " << toRank << " "
-//        << patch
-//        << " isInside " << localCell.isInside()
-//        << std::endl;
-
   }
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -582,73 +593,16 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
   int                                       level
 ) {
   logTraceInWith6Arguments( "mergeWithRemoteDataDueToForkOrJoin(...)", localCell, masterOrWorkerCell, fromRank, cellCentre, cellSize, level );
-//  logInfo("", "[mergeWithRemoteDataDueToForkOrJoin] receiving next item @ " << cellCentre << " on level " << level << " localCell.isRemote: " << localCell.isRemote(*_state, false, false));
 
   assertion3(localCell.isAssignedToRemoteRank() || localCell.getCellDescriptionIndex() != -2, localCell.toString(), cellCentre, cellSize);
 
-  //TODO unterweg debug
-//  #ifdef Parallel
-//  std::cout << "Merging with remote data localIndex=" << localCell.getCellDescriptionIndex()
-//      << " on rank=" << tarch::parallel::Node::getInstance().getRank()
-//      << " remoteIndex=" << masterOrWorkerCell.getCellDescriptionIndex()
-//      << " position=" << (cellCentre-0.5*cellSize) << " size=" << cellSize
-//      << " isInside=" << localCell.isInside() << " isAssignedToRemoteRank=" << masterOrWorkerCell.isAssignedToRemoteRank()
-//      << std::endl;
-//  #endif
-
-  if(localCell.isInside() && !masterOrWorkerCell.isAssignedToRemoteRank()) {
-    peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(fromRank, cellCentre, level, true);
-
-    if(localCell.isRemote(*_state, false, false)) {
-      if(tarch::parallel::NodePool::getInstance().getMasterRank() != 0) {
-        assertionEquals2(localCell.getCellDescriptionIndex(), -2, cellCentre, level);
-      }
-      Patch temporaryPatch(
-        cellCentre - cellSize * 0.5,
-        cellSize,
-        _unknownsPerSubcell,
-        _auxiliarFieldsPerSubcell,
-        _defaultSubdivisionFactor,
-        _defaultGhostLayerWidth,
-        _initialTimestepSize,
-        level
-      );
-
-      communicator.receivePatch(temporaryPatch.getCellDescriptionIndex());
-      temporaryPatch.reloadCellDescription();
-
-      if(temporaryPatch.isLeaf()) {
-        temporaryPatch.switchToVirtual();
-      }
-      if(temporaryPatch.isVirtual()) {
-        temporaryPatch.switchToNonVirtual();
-      }
-      peano::heap::Heap<CellDescription>::getInstance().deleteData(temporaryPatch.getCellDescriptionIndex());
-    } else {
-      assertion2(localCell.getCellDescriptionIndex() != -1, cellCentre, level);
-
-      Patch localPatch(localCell);
-
-      assertion2(
-        (!localPatch.isLeaf() && !localPatch.isVirtual())
-        || localPatch.getUNewIndex() >= 0,
-        cellCentre,
-        level
-      );
-
-      communicator.receivePatch(localPatch.getCellDescriptionIndex());
-      localPatch.loadCellDescription(localCell.getCellDescriptionIndex());
-
-      assertion1(!localPatch.isRemote(), localPatch);
-
-      //TODO unterweg dissertation: Wenn auf dem neuen Knoten die Adjazenzinformationen auf den
-      // Vertices noch nicht richtig gesetzt sind können wir nicht gleich voranschreiten.
-      // U.U. brauchen wir sogar 2 Iterationen ohne Aktion... (Wegen hin- und herlaufen).
-      localPatch.setSkipNextGridIteration(2);
-
-      assertionEquals1(localPatch.getLevel(), level, localPatch);
-    }
-  }
+  peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(fromRank, cellCentre, level, true);
+  communicator.mergeCellDuringForkOrJoin(
+    localCell,
+    masterOrWorkerCell,
+    cellSize,
+    *_state
+  );
 
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
@@ -700,17 +654,11 @@ void peanoclaw::mappings::Remesh::prepareSendToMaster(
 ) {
   logTraceInWith3Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString(), verticesEnumerator.getVertexPosition(0) );
   
-//  std::cout << "[prepareSendToMaster] sending to master on rank " << tarch::parallel::Node::getInstance().getRank() << ": next item @ " << verticesEnumerator.getCellCenter() << " on level " << verticesEnumerator.getLevel() << std::endl;
-
   int toRank = tarch::parallel::NodePool::getInstance().getMasterRank();
   if(localCell.isInside()){
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, verticesEnumerator.getCellCenter(), verticesEnumerator.getLevel(), false);
     communicator.sendPatch(localCell.getCellDescriptionIndex());
   }
-
-  Patch localPatch(
-    localCell
-  );
 
   logTraceOut( "prepareSendToMaster(...)" );
 }
@@ -874,29 +822,17 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
- 
-  //Regain 2-irregularity if necessary
-  if(fineGridVertex.getRefinementControl() == peanoclaw::Vertex::Records::Refined
-      || fineGridVertex.getRefinementControl() == peanoclaw::Vertex::Records::Refining) {
-    tarch::la::Vector<DIMENSIONS, int> coarseGridPositionOfVertex(0);
-    for(int d = 0; d < DIMENSIONS; d++) {
-      if(fineGridPositionOfVertex(d) > 1) {
-        coarseGridPositionOfVertex(d) = 1;
-      }
-    }
-
-    peanoclaw::Vertex& coarseVertex = coarseGridVertices[coarseGridVerticesEnumerator(coarseGridPositionOfVertex)];
-    if(coarseVertex.getRefinementControl() == peanoclaw::Vertex::Records::Unrefined
-        && !coarseVertex.isHangingNode()) {
-      coarseVertex.refine();
-    }
-  }
 
   peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
     fineGridVertex,
     _vertexPositionToIndexMap,
     fineGridX,
     coarseGridVerticesEnumerator.getLevel()+1
+  );
+
+  adjacentSubgrids.regainTwoIrregularity(
+    coarseGridVertices,
+    coarseGridVerticesEnumerator
   );
   adjacentSubgrids.storeAdjacencyInformation();
 
@@ -919,6 +855,8 @@ void peanoclaw::mappings::Remesh::enterCell(
     fineGridCell
   );
 
+  assertion(patch.isLeaf() || !patch.isLeaf());
+
   #ifdef Parallel
   assertionEquals4(patch.getLevel(),
     fineGridVerticesEnumerator.getLevel(),
@@ -929,19 +867,12 @@ void peanoclaw::mappings::Remesh::enterCell(
   );
   #endif
 
-  _gridLevelTransfer->updatePatchStateBeforeStepDown(
-    patch,
-    fineGridVertices,
-    fineGridVerticesEnumerator,
-    _isInitializing,
-    _state->isInvolvedInJoinOrFork()
-  );
-
   _gridLevelTransfer->stepDown(
     coarseGridCell.isRoot() ? -1 : coarseGridCell.getCellDescriptionIndex(),
     patch,
     fineGridVertices,
-    fineGridVerticesEnumerator
+    fineGridVerticesEnumerator,
+    _isInitializing
   );
 
   #ifdef Asserts
@@ -987,13 +918,6 @@ void peanoclaw::mappings::Remesh::leaveCell(
     fineGridVerticesEnumerator
   );
 
-  _gridLevelTransfer->updatePatchStateAfterStepUp(
-    finePatch,
-    fineGridVertices,
-    fineGridVerticesEnumerator,
-    fineGridCell.isLeaf()
-  );
-
   assertionEquals1(finePatch.isLeaf(), fineGridCell.isLeaf(), finePatch);
   assertionEquals1(finePatch.getLevel(), fineGridVerticesEnumerator.getLevel(), finePatch.toString());
 
@@ -1012,7 +936,7 @@ void peanoclaw::mappings::Remesh::leaveCell(
 
   //Count number of adjacent subgrids
   ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-  parallelSubgrid.countNumberOfAdjacentParallelSubgrids(
+  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag(
     fineGridVertices,
     fineGridVerticesEnumerator
   );
@@ -1034,12 +958,6 @@ void peanoclaw::mappings::Remesh::beginIteration(
   _numerics                 = solverState.getNumerics();
   _domainOffset             = solverState.getDomainOffset();
   _domainSize               = solverState.getDomainSize();
-
-//  if(_iterationParity == peanoclaw::records::VertexDescription::EVEN) {
-//    _iterationParity = peanoclaw::records::VertexDescription::ODD;
-//  } else {
-//    _iterationParity = peanoclaw::records::VertexDescription::EVEN;
-//  }
 
   _gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(
                               solverState.useDimensionalSplittingOptimization(),
@@ -1066,6 +984,7 @@ void peanoclaw::mappings::Remesh::beginIteration(
   #ifdef Parallel
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
   peano::heap::Heap<CellDescription>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
+  peano::heap::Heap<LevelStatistics>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
 
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
     solverState.resetLocalHeightOfWorkerTree();
@@ -1091,6 +1010,7 @@ void peanoclaw::mappings::Remesh::endIteration(
 
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().finishedToSendOrReceiveHeapData();
   peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().finishedToSendOrReceiveHeapData();
+  peano::heap::Heap<LevelStatistics>::getInstance().finishedToSendOrReceiveHeapData();
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }

@@ -12,6 +12,7 @@
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
 #include "peanoclaw/pyclaw/PyClaw.h"
 #include "peanoclaw/records/CellDescription.h"
+#include "peanoclaw/statistics/SubgridStatistics.h"
 
 #include "peano/utils/Globals.h"
 

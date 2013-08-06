@@ -6,6 +6,8 @@
  */
 #include "MasterWorkerAndForkJoinCommunicator.h"
 
+#include "peanoclaw/Cell.h"
+#include "peanoclaw/Patch.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
@@ -85,7 +87,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendPatch(
     CellDescription cellDescription = _cellDescriptionHeap.getData(cellDescriptionIndex).at(0);
 
     if(cellDescription.getUNewIndex() != -1) {
-      std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getUNewIndex());
+//      std::vector<Data>& localMatrix = peano::heap::Heap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getUNewIndex());
 //      std::cout << "sending new data with elements: " << localMatrix.size() << std::endl;
       sendDataArray(cellDescription.getUNewIndex());
     }
@@ -144,6 +146,65 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
 
   assertionEquals(_cellDescriptionHeap.getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   logTraceOut("receivePatch");
+}
+
+void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringForkOrJoin(
+  peanoclaw::Cell&                      localCell,
+  const peanoclaw::Cell&                remoteCell,
+  tarch::la::Vector<DIMENSIONS, double> cellSize,
+  peanoclaw::State&                     state
+) {
+  if(localCell.isInside() && !remoteCell.isAssignedToRemoteRank()) {
+    if(localCell.isRemote(state, false, false)) {
+      if(tarch::parallel::NodePool::getInstance().getMasterRank() != 0) {
+        assertionEquals2(localCell.getCellDescriptionIndex(), -2, _position, _level);
+      }
+      Patch temporaryPatch(
+        _position - cellSize * 0.5,
+        cellSize,
+        1,
+        0,
+        1,
+        1,
+        0.0,
+        _level
+      );
+
+      receivePatch(temporaryPatch.getCellDescriptionIndex());
+      temporaryPatch.reloadCellDescription();
+
+      if(temporaryPatch.isLeaf()) {
+        temporaryPatch.switchToVirtual();
+      }
+      if(temporaryPatch.isVirtual()) {
+        temporaryPatch.switchToNonVirtual();
+      }
+      peano::heap::Heap<CellDescription>::getInstance().deleteData(temporaryPatch.getCellDescriptionIndex());
+    } else {
+      assertion2(localCell.getCellDescriptionIndex() != -1, _position, _level);
+
+      Patch localPatch(localCell);
+
+      assertion2(
+        (!localPatch.isLeaf() && !localPatch.isVirtual())
+        || localPatch.getUNewIndex() >= 0,
+        _position,
+        _level
+      );
+
+      receivePatch(localPatch.getCellDescriptionIndex());
+      localPatch.loadCellDescription(localCell.getCellDescriptionIndex());
+
+      assertion1(!localPatch.isRemote(), localPatch);
+
+      //TODO unterweg dissertation: Wenn auf dem neuen Knoten die Adjazenzinformationen auf den
+      // Vertices noch nicht richtig gesetzt sind können wir nicht gleich voranschreiten.
+      // U.U. brauchen wir sogar 2 Iterationen ohne Aktion... (Wegen hin- und herlaufen).
+      localPatch.setSkipNextGridIteration(2);
+
+      assertionEquals1(localPatch.getLevel(), _level, localPatch);
+    }
+  }
 }
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeWorkerStateIntoMasterState(

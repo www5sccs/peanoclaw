@@ -42,7 +42,7 @@ int peanoclaw::ParallelSubgrid::getNumberOfSharedAdjacentVertices() const {
   return _cellDescription->getNumberOfSharedAdjacentVertices();
 }
 
-void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
+void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag (
   peanoclaw::Vertex * const            vertices,
   const peano::grid::VertexEnumerator& verticesEnumerator
 ) {
@@ -72,4 +72,5 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
   }
   _cellDescription->setAdjacentRank(adjacentRank);
   _cellDescription->setNumberOfSharedAdjacentVertices(numberOfSharedAdjacentVertices);
+  _cellDescription->setIsExclusiveMessageForSubgrid(false);
 }

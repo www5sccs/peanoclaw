@@ -16,8 +16,9 @@
 #include "peanoclaw/records/Data.h"
 #include "peanoclaw/records/Cell.h"
 #include "peanoclaw/records/Vertex.h"
-#include "peano/heap/Heap.h"
+#include "peanoclaw/statistics/LevelStatistics.h"
 
+#include "peano/heap/Heap.h"
 #include "peano/utils/UserInterface.h"
 #include "peano/peano.h"
 
@@ -83,6 +84,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().setName("CellDescription");
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().setName("Data");
   peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().setName("VertexDescription");
+  peano::heap::Heap<peanoclaw::statistics::LevelStatistics>::getInstance().setName("LevelStatistics");
 
   initializeParallelEnvironment();
 

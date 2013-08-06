@@ -150,6 +150,44 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
       const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
     );
 
+    /**
+     * Determines, whether the given subgrid should be turned into a
+     * virtual subgrid.
+     */
+    bool shouldBecomeVirtualSubgrid(
+      const Patch&                         fineSubgrid,
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
+      bool                                 isInitializing
+    );
+
+    /**
+     * Turns the given subgrid into a virtual subgrid and adds it to
+     * the list of virtual subgrids for restriction.
+     */
+    void switchToAndAddVirtualSubgrid(
+      Patch& subgrid
+    );
+
+    /**
+     * Restricts to all subgrids that are in the path from the root of
+     * the spacetree to the current subgrid.
+     */
+    void restrictToAllVirtualSubgrids(
+      const Patch& subgrid
+    );
+
+    /**
+     * Fills the surrounding ghostlayers of a virtual subgrid and
+     * switches the subgrid to non-virtual, while removing it
+     * from the virtual subgrids-list.
+     */
+    void finalizeVirtualSubgrid(
+      Patch&                               subgrid,
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
+      bool                                 isPeanoCellLeaf
+    );
 
   public:
     GridLevelTransfer(
@@ -158,14 +196,6 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
     );
 
     virtual ~GridLevelTransfer();
-
-    /**
-     * Called when a patch is transfered during a fork or a join operation.
-     */
-//    void updatePatchStateDuringForkOrJoin(
-//      Patch& finePatch,
-//      bool   needsToHoldGridData
-//    );
 
 #ifdef Parallel
     /**
@@ -180,16 +210,6 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
       int  localCellDescriptionIndex,
       int  remoteCellDescriptionIndex
     );
-
-    /**
-     * Called whenever a patch is merged from a remote MPI rank during
-     * neighbor communication.
-     *
-     * @param cellDescriptionIndex The index for the current patch.
-     */
-//    void updatePatchStateDuringMergeWithNeighbor(
-//      int  localCellDescriptionIndex
-//    );
 #endif
 
     /**
@@ -197,22 +217,23 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      *
      * Used for switching the patch to a virtual state if necessary.
      */
-    void updatePatchStateBeforeStepDown(
-      Patch&                               finePatch,
-      peanoclaw::Vertex * const            fineGridVertices,
-      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
-      bool                                 isInitializing,
-      bool                                 isInvolvedInFork
-    );
+//    void updatePatchStateBeforeStepDown(
+//      Patch&                               finePatch,
+//      peanoclaw::Vertex * const            fineGridVertices,
+//      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
+//      bool                                 isInitializing,
+//      bool                                 isInvolvedInFork
+//    );
 
     /**
      * Performs the operations necessary when stepping into a cell.
      */
     void stepDown(
-      int                                                         coarseCellDescriptionIndex,
-      Patch&                                                      finePatch,
-      peanoclaw::Vertex * const                                   fineGridVertices,
-      const peano::grid::VertexEnumerator&                        fineGridVerticesEnumerator
+      int                                  coarseCellDescriptionIndex,
+      Patch&                               fineSubgrid,
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
+      bool                                 isInitializing
     );
 
     /**
@@ -228,17 +249,6 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
       bool                                 isPeanoCellLeaf,
       peanoclaw::Vertex * const            fineGridVertices,
       const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
-    );
-
-    /**
-     * Called after calling stepUp the same number of times as updatePatchStateBeforeStepDown was
-     * called in the same iteration for the same patch.
-     */
-    void updatePatchStateAfterStepUp(
-      Patch&                               finePatch,
-      peanoclaw::Vertex * const            fineGridVertices,
-      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
-      bool                                 isPeanoCellLeaf
     );
 
     /**

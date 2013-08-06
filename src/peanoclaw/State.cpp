@@ -2,18 +2,20 @@
 #include "Cell.h"
 #include "Vertex.h"
 
+#include "peanoclaw/statistics/SubgridStatistics.h"
+
 #include "peano/grid/Checkpoint.h"
 
 tarch::logging::Log peanoclaw::State::_log("peanoclaw::State");
 
 peanoclaw::State::State():
-  Base() { 
+  Base(), _numerics(0) {
   // @todo Insert your code here
 }
 
 
 peanoclaw::State::State(const Base::PersistentState& argument):
-  Base(argument) {
+  Base(argument), _numerics(0) {
   // @todo Insert your code here
 }
 
@@ -202,104 +204,24 @@ double peanoclaw::State::getMinimalTimestep() const {
 }
 
 void peanoclaw::State::setLevelStatisticsForLastGridIteration (
-  const std::vector<peanoclaw::statistics::LevelInformation>& levelStatistics
+  const std::vector<peanoclaw::statistics::LevelStatistics>& levelStatistics
 ) {
   _levelStatisticsForLastGridIteration = levelStatistics;
-
-  double totalNumberOfCellUpdates = 0.0;
-  for(size_t i = 0; i < _levelStatisticsForLastGridIteration.size(); i++) {
-    const peanoclaw::statistics::LevelInformation& levelInformation = _levelStatisticsForLastGridIteration[i];
-    totalNumberOfCellUpdates += levelInformation._numberOfCellUpdates;
-
-    if(_totalLevelStatistics.size() <= i) {
-      assertionEquals(_totalLevelStatistics.size(), i);
-      _totalLevelStatistics.push_back(peanoclaw::statistics::LevelInformation());
-    }
-
-    _totalLevelStatistics.at(i)._area = std::max(_totalLevelStatistics.at(i)._area, levelInformation._area);
-    _totalLevelStatistics.at(i)._numberOfPatches = std::max(_totalLevelStatistics.at(i)._numberOfPatches, levelInformation._numberOfPatches);
-    _totalLevelStatistics.at(i)._numberOfCells = std::max(_totalLevelStatistics.at(i)._numberOfCells, levelInformation._numberOfCells);
-    _totalLevelStatistics.at(i)._numberOfCellUpdates += levelInformation._numberOfCellUpdates;
-    _totalLevelStatistics.at(i)._patchesBlockedDueToNeighbors += levelInformation._patchesBlockedDueToNeighbors;
-    _totalLevelStatistics.at(i)._patchesBlockedDueToGlobalTimestep += levelInformation._patchesBlockedDueToGlobalTimestep;
-    _totalLevelStatistics.at(i)._patchesSkippingIteration += levelInformation._patchesSkippingIteration;
-    _totalLevelStatistics.at(i)._patchesCoarsening += levelInformation._patchesCoarsening;
-  }
+  _levelStatisticsHistory.push_back(levelStatistics);
 }
 
 void peanoclaw::State::plotStatisticsForLastGridIteration() const {
-  logInfo("plotStatisticsForLastGridIteration", "Statistics for last grid iteration: Spacetree height: " <<  _levelStatisticsForLastGridIteration.size());
-
-  double totalArea = 0.0;
-  double totalNumberOfPatches = 0.0;
-  double totalNumberOfCells = 0.0;
-  double totalNumberOfCellUpdates = 0.0;
-  double totalCreatedPatches = 0.0;
-  double totalDestroyedPatches = 0.0;
-  double totalBlockedPatchesDueToNeighbors = 0.0;
-  double totalBlockedPatchesDueToGlobalTimestep = 0.0;
-  double totalSkippingPatches = 0.0;
-  double totalCoarseningPatches = 0.0;
-
-  for(size_t i = 0; i < _levelStatisticsForLastGridIteration.size(); i++) {
-    const peanoclaw::statistics::LevelInformation& levelInformation = _levelStatisticsForLastGridIteration[i];
-    logInfo("plotStatisticsForLastGridIteration", "\tLevel " << i << ": " << levelInformation._numberOfPatches << " patches (area=" << levelInformation._area <<  "), "
-      << levelInformation._numberOfCells << " cells, " << levelInformation._numberOfCellUpdates << " cell updates."
-      << " Blocking: (" << levelInformation._patchesBlockedDueToNeighbors << ", " << levelInformation._patchesBlockedDueToGlobalTimestep
-      << ", " << levelInformation._patchesSkippingIteration << ", " << levelInformation._patchesCoarsening << ")"
-    );
-
-    totalArea += levelInformation._area;
-    totalNumberOfPatches += levelInformation._numberOfPatches;
-    totalNumberOfCells += levelInformation._numberOfCells;
-    totalNumberOfCellUpdates += levelInformation._numberOfCellUpdates;
-    totalCreatedPatches += levelInformation._createdPatches;
-    totalDestroyedPatches += levelInformation._destroyedPatches;
-    totalBlockedPatchesDueToNeighbors += levelInformation._patchesBlockedDueToNeighbors;
-    totalBlockedPatchesDueToGlobalTimestep += levelInformation._patchesBlockedDueToGlobalTimestep;
-    totalSkippingPatches += levelInformation._patchesSkippingIteration;
-    totalCoarseningPatches += levelInformation._patchesCoarsening;
-  }
-  logInfo("plotStatisticsForLastGridIteration", "Sum for grid iteration: "
-    << totalNumberOfPatches << " patches (+" << totalCreatedPatches << "/-" << totalDestroyedPatches << ",area=" << totalArea <<  "), "
-    << totalNumberOfCells << " cells, " << totalNumberOfCellUpdates << " cell updates."
-    << " Blocking: " << totalBlockedPatchesDueToNeighbors << ", " << totalBlockedPatchesDueToGlobalTimestep
-    << ", " << totalSkippingPatches << ", " << totalCoarseningPatches
-  );
+  peanoclaw::statistics::SubgridStatistics subgridStatistics(_levelStatisticsForLastGridIteration);
+  subgridStatistics.logLevelStatistics("Statistics for last grid iteration");
 }
 
 void peanoclaw::State::plotTotalStatistics() const {
-  logInfo("plotTotalStatistics", "Total statistics: Spacetree height: " <<  _totalLevelStatistics.size());
-
-  double totalArea = 0.0;
-  double totalNumberOfPatches = 0.0;
-  double totalNumberOfCells = 0.0;
-  double totalNumberOfCellUpdates = 0.0;
-  double totalBlockedPatchesDueToNeighbors = 0.0;
-  double totalBlockedPatchesDueToGlobalTimestep = 0.0;
-  double totalSkippingPatches = 0.0;
-  double totalCoarseningPatches = 0.0;
-
-  for(size_t i = 0; i < _totalLevelStatistics.size(); i++) {
-    const peanoclaw::statistics::LevelInformation& levelInformation = _totalLevelStatistics[i];
-    logInfo("plotTotalStatistics", "\tLevel " << i << ": " << levelInformation._numberOfPatches << " patches (area=" << levelInformation._area <<  "), "
-        << levelInformation._numberOfCells << " cells, " << levelInformation._numberOfCellUpdates << " cell updates.");
-
-    totalArea += levelInformation._area;
-    totalNumberOfPatches += levelInformation._numberOfPatches;
-    totalNumberOfCells += levelInformation._numberOfCells;
-    totalNumberOfCellUpdates += levelInformation._numberOfCellUpdates;
-    totalBlockedPatchesDueToNeighbors += levelInformation._patchesBlockedDueToNeighbors;
-    totalBlockedPatchesDueToGlobalTimestep += levelInformation._patchesBlockedDueToGlobalTimestep;
-    totalSkippingPatches += levelInformation._patchesSkippingIteration;
-    totalCoarseningPatches += levelInformation._patchesCoarsening;
+  peanoclaw::statistics::SubgridStatistics totalStatistics;
+  for(int i = 0; i < (int)_levelStatisticsHistory.size(); i++) {
+    totalStatistics.merge(_levelStatisticsHistory[i]);
   }
-  logInfo("plotTotalStatistics",
-    "Sum for simulation: max. " << totalNumberOfPatches << " patches (area=" << totalArea <<  "), max. "
-    << totalNumberOfCells << " cells, " << totalNumberOfCellUpdates << " cell updates."
-    << " Blocking: " << totalBlockedPatchesDueToNeighbors << ", " << totalBlockedPatchesDueToGlobalTimestep
-    << ", " << totalSkippingPatches << ", " << totalCoarseningPatches
-    );
+  totalStatistics.averageTotalSimulationValues(_levelStatisticsHistory.size());
+  totalStatistics.logLevelStatistics("Total Statistics");
 }
 
 void peanoclaw::State::setIsInitializing(bool isInitializing) {

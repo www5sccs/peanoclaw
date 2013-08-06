@@ -1555,7 +1555,7 @@ peanoclaw::records::Cell::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::Cell::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate):
+peanoclaw::records::Cell::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate):
 _cellDescriptionIndex(cellDescriptionIndex),
 _isInside(isInside),
 _state(state),
@@ -1566,6 +1566,8 @@ _subtreeHoldsWorker(subtreeHoldsWorker),
 _nodeWorkload(nodeWorkload),
 _localWorkload(localWorkload),
 _totalWorkload(totalWorkload),
+_maxWorkload(maxWorkload),
+_minWorkload(minWorkload),
 _cellIsAForkCandidate(cellIsAForkCandidate) {
    
 }
@@ -1576,13 +1578,13 @@ peanoclaw::records::Cell::Cell() {
 
 
 peanoclaw::records::Cell::Cell(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords._isInside, persistentRecords._state, persistentRecords._evenFlags, persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._cellIsAForkCandidate) {
+_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords._isInside, persistentRecords._state, persistentRecords._evenFlags, persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._maxWorkload, persistentRecords._minWorkload, persistentRecords._cellIsAForkCandidate) {
    
 }
 
 
-peanoclaw::records::Cell::Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate):
-_persistentRecords(cellDescriptionIndex, isInside, state, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, cellIsAForkCandidate) {
+peanoclaw::records::Cell::Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate):
+_persistentRecords(cellDescriptionIndex, isInside, state, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, maxWorkload, minWorkload, cellIsAForkCandidate) {
    
 }
 
@@ -1639,6 +1641,10 @@ void peanoclaw::records::Cell::toString (std::ostream& out) const {
    out << ",";
    out << "totalWorkload:" << getTotalWorkload();
    out << ",";
+   out << "maxWorkload:" << getMaxWorkload();
+   out << ",";
+   out << "minWorkload:" << getMinWorkload();
+   out << ",";
    out << "cellIsAForkCandidate:" << getCellIsAForkCandidate();
    out <<  ")";
 }
@@ -1660,6 +1666,8 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
       getNodeWorkload(),
       getLocalWorkload(),
       getTotalWorkload(),
+      getMaxWorkload(),
+      getMinWorkload(),
       getCellIsAForkCandidate()
    );
 }
@@ -1675,7 +1683,7 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
       {
          Cell dummyCell[2];
          
-         const int Attributes = 8;
+         const int Attributes = 10;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //cellDescriptionIndex
             MPI_CHAR,		 //isInside
@@ -1684,6 +1692,8 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
             MPI_DOUBLE,		 //nodeWorkload
             MPI_DOUBLE,		 //localWorkload
             MPI_DOUBLE,		 //totalWorkload
+            MPI_DOUBLE,		 //maxWorkload
+            MPI_DOUBLE,		 //minWorkload
             MPI_UB		 // end/displacement flag
          };
          
@@ -1695,6 +1705,8 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
             1,		 //nodeWorkload
             1,		 //localWorkload
             1,		 //totalWorkload
+            1,		 //maxWorkload
+            1,		 //minWorkload
             1		 // end/displacement flag
          };
          
@@ -1709,7 +1721,9 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._nodeWorkload))), 		&disp[4] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._localWorkload))), 		&disp[5] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._totalWorkload))), 		&disp[6] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[7] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._maxWorkload))), 		&disp[7] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._minWorkload))), 		&disp[8] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[9] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -1724,7 +1738,7 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
       {
          Cell dummyCell[2];
          
-         const int Attributes = 12;
+         const int Attributes = 14;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //cellDescriptionIndex
             MPI_CHAR,		 //isInside
@@ -1736,6 +1750,8 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
             MPI_DOUBLE,		 //nodeWorkload
             MPI_DOUBLE,		 //localWorkload
             MPI_DOUBLE,		 //totalWorkload
+            MPI_DOUBLE,		 //maxWorkload
+            MPI_DOUBLE,		 //minWorkload
             MPI_CHAR,		 //cellIsAForkCandidate
             MPI_UB		 // end/displacement flag
          };
@@ -1751,6 +1767,8 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
             1,		 //nodeWorkload
             1,		 //localWorkload
             1,		 //totalWorkload
+            1,		 //maxWorkload
+            1,		 //minWorkload
             1,		 //cellIsAForkCandidate
             1		 // end/displacement flag
          };
@@ -1769,8 +1787,10 @@ peanoclaw::records::CellPacked peanoclaw::records::Cell::convert() const{
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._nodeWorkload))), 		&disp[7] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._localWorkload))), 		&disp[8] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._totalWorkload))), 		&disp[9] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._cellIsAForkCandidate))), 		&disp[10] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._maxWorkload))), 		&disp[10] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._minWorkload))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._cellIsAForkCandidate))), 		&disp[12] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[13] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -1988,14 +2008,16 @@ peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate):
+peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate):
 _cellDescriptionIndex(cellDescriptionIndex),
 _accessNumber(accessNumber),
 _responsibleRank(responsibleRank),
 _subtreeHoldsWorker(subtreeHoldsWorker),
 _nodeWorkload(nodeWorkload),
 _localWorkload(localWorkload),
-_totalWorkload(totalWorkload) {
+_totalWorkload(totalWorkload),
+_maxWorkload(maxWorkload),
+_minWorkload(minWorkload) {
    setIsInside(isInside);
    setState(state);
    setEvenFlags(evenFlags);
@@ -2011,14 +2033,14 @@ peanoclaw::records::CellPacked::CellPacked() {
 
 
 peanoclaw::records::CellPacked::CellPacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords.getIsInside(), persistentRecords.getState(), persistentRecords.getEvenFlags(), persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords.getCellIsAForkCandidate()) {
+_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords.getIsInside(), persistentRecords.getState(), persistentRecords.getEvenFlags(), persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._maxWorkload, persistentRecords._minWorkload, persistentRecords.getCellIsAForkCandidate()) {
    assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
    
 }
 
 
-peanoclaw::records::CellPacked::CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate):
-_persistentRecords(cellDescriptionIndex, isInside, state, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, cellIsAForkCandidate) {
+peanoclaw::records::CellPacked::CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate):
+_persistentRecords(cellDescriptionIndex, isInside, state, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, maxWorkload, minWorkload, cellIsAForkCandidate) {
    assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
    
 }
@@ -2072,6 +2094,10 @@ void peanoclaw::records::CellPacked::toString (std::ostream& out) const {
    out << ",";
    out << "totalWorkload:" << getTotalWorkload();
    out << ",";
+   out << "maxWorkload:" << getMaxWorkload();
+   out << ",";
+   out << "minWorkload:" << getMinWorkload();
+   out << ",";
    out << "cellIsAForkCandidate:" << getCellIsAForkCandidate();
    out <<  ")";
 }
@@ -2093,6 +2119,8 @@ peanoclaw::records::Cell peanoclaw::records::CellPacked::convert() const{
       getNodeWorkload(),
       getLocalWorkload(),
       getTotalWorkload(),
+      getMaxWorkload(),
+      getMinWorkload(),
       getCellIsAForkCandidate()
    );
 }
@@ -2108,13 +2136,15 @@ peanoclaw::records::Cell peanoclaw::records::CellPacked::convert() const{
       {
          CellPacked dummyCellPacked[2];
          
-         const int Attributes = 7;
+         const int Attributes = 9;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //cellDescriptionIndex
             MPI_CHAR,		 //subtreeHoldsWorker
             MPI_DOUBLE,		 //nodeWorkload
             MPI_DOUBLE,		 //localWorkload
             MPI_DOUBLE,		 //totalWorkload
+            MPI_DOUBLE,		 //maxWorkload
+            MPI_DOUBLE,		 //minWorkload
             MPI_SHORT,		 //_packedRecords0
             MPI_UB		 // end/displacement flag
          };
@@ -2125,6 +2155,8 @@ peanoclaw::records::Cell peanoclaw::records::CellPacked::convert() const{
             1,		 //nodeWorkload
             1,		 //localWorkload
             1,		 //totalWorkload
+            1,		 //maxWorkload
+            1,		 //minWorkload
             1,		 //_packedRecords0
             1		 // end/displacement flag
          };
@@ -2138,8 +2170,10 @@ peanoclaw::records::Cell peanoclaw::records::CellPacked::convert() const{
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._nodeWorkload))), 		&disp[2] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._localWorkload))), 		&disp[3] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._totalWorkload))), 		&disp[4] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[5] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[6] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._maxWorkload))), 		&disp[5] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._minWorkload))), 		&disp[6] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[7] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[8] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -2154,7 +2188,7 @@ peanoclaw::records::Cell peanoclaw::records::CellPacked::convert() const{
       {
          CellPacked dummyCellPacked[2];
          
-         const int Attributes = 9;
+         const int Attributes = 11;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //cellDescriptionIndex
             MPI_SHORT,		 //accessNumber
@@ -2163,6 +2197,8 @@ peanoclaw::records::Cell peanoclaw::records::CellPacked::convert() const{
             MPI_DOUBLE,		 //nodeWorkload
             MPI_DOUBLE,		 //localWorkload
             MPI_DOUBLE,		 //totalWorkload
+            MPI_DOUBLE,		 //maxWorkload
+            MPI_DOUBLE,		 //minWorkload
             MPI_SHORT,		 //_packedRecords0
             MPI_UB		 // end/displacement flag
          };
@@ -2175,6 +2211,8 @@ peanoclaw::records::Cell peanoclaw::records::CellPacked::convert() const{
             1,		 //nodeWorkload
             1,		 //localWorkload
             1,		 //totalWorkload
+            1,		 //maxWorkload
+            1,		 //minWorkload
             1,		 //_packedRecords0
             1		 // end/displacement flag
          };
@@ -2190,8 +2228,10 @@ peanoclaw::records::Cell peanoclaw::records::CellPacked::convert() const{
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._nodeWorkload))), 		&disp[4] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._localWorkload))), 		&disp[5] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._totalWorkload))), 		&disp[6] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[7] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[8] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._maxWorkload))), 		&disp[7] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._minWorkload))), 		&disp[8] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[9] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[10] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -3162,7 +3202,7 @@ peanoclaw::records::Cell::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::Cell::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
+peanoclaw::records::Cell::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
 _cellDescriptionIndex(cellDescriptionIndex),
 _isInside(isInside),
 _state(state),
@@ -3174,6 +3214,8 @@ _subtreeHoldsWorker(subtreeHoldsWorker),
 _nodeWorkload(nodeWorkload),
 _localWorkload(localWorkload),
 _totalWorkload(totalWorkload),
+_maxWorkload(maxWorkload),
+_minWorkload(minWorkload),
 _cellIsAForkCandidate(cellIsAForkCandidate),
 _numberOfLoadsFromInputStream(numberOfLoadsFromInputStream),
 _numberOfStoresToOutputStream(numberOfStoresToOutputStream) {
@@ -3186,13 +3228,13 @@ peanoclaw::records::Cell::Cell() {
 
 
 peanoclaw::records::Cell::Cell(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords._isInside, persistentRecords._state, persistentRecords._level, persistentRecords._evenFlags, persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._cellIsAForkCandidate, persistentRecords._numberOfLoadsFromInputStream, persistentRecords._numberOfStoresToOutputStream) {
+_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords._isInside, persistentRecords._state, persistentRecords._level, persistentRecords._evenFlags, persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._maxWorkload, persistentRecords._minWorkload, persistentRecords._cellIsAForkCandidate, persistentRecords._numberOfLoadsFromInputStream, persistentRecords._numberOfStoresToOutputStream) {
 
 }
 
 
-peanoclaw::records::Cell::Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
-_persistentRecords(cellDescriptionIndex, isInside, state, level, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, cellIsAForkCandidate, numberOfLoadsFromInputStream, numberOfStoresToOutputStream) {
+peanoclaw::records::Cell::Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
+_persistentRecords(cellDescriptionIndex, isInside, state, level, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, maxWorkload, minWorkload, cellIsAForkCandidate, numberOfLoadsFromInputStream, numberOfStoresToOutputStream) {
 
 }
 
@@ -3251,6 +3293,10 @@ out << "localWorkload:" << getLocalWorkload();
 out << ",";
 out << "totalWorkload:" << getTotalWorkload();
 out << ",";
+out << "maxWorkload:" << getMaxWorkload();
+out << ",";
+out << "minWorkload:" << getMinWorkload();
+out << ",";
 out << "cellIsAForkCandidate:" << getCellIsAForkCandidate();
 out << ",";
 out << "numberOfLoadsFromInputStream:" << getNumberOfLoadsFromInputStream();
@@ -3277,6 +3323,8 @@ getSubtreeHoldsWorker(),
 getNodeWorkload(),
 getLocalWorkload(),
 getTotalWorkload(),
+getMaxWorkload(),
+getMinWorkload(),
 getCellIsAForkCandidate(),
 getNumberOfLoadsFromInputStream(),
 getNumberOfStoresToOutputStream()
@@ -3294,7 +3342,7 @@ void peanoclaw::records::Cell::initDatatype() {
 {
    Cell dummyCell[2];
    
-   const int Attributes = 9;
+   const int Attributes = 11;
    MPI_Datatype subtypes[Attributes] = {
       MPI_INT,		 //cellDescriptionIndex
       MPI_CHAR,		 //isInside
@@ -3304,6 +3352,8 @@ void peanoclaw::records::Cell::initDatatype() {
       MPI_DOUBLE,		 //nodeWorkload
       MPI_DOUBLE,		 //localWorkload
       MPI_DOUBLE,		 //totalWorkload
+      MPI_DOUBLE,		 //maxWorkload
+      MPI_DOUBLE,		 //minWorkload
       MPI_UB		 // end/displacement flag
    };
    
@@ -3316,6 +3366,8 @@ void peanoclaw::records::Cell::initDatatype() {
       1,		 //nodeWorkload
       1,		 //localWorkload
       1,		 //totalWorkload
+      1,		 //maxWorkload
+      1,		 //minWorkload
       1		 // end/displacement flag
    };
    
@@ -3331,7 +3383,9 @@ void peanoclaw::records::Cell::initDatatype() {
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._nodeWorkload))), 		&disp[5] );
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._localWorkload))), 		&disp[6] );
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._totalWorkload))), 		&disp[7] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[8] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._maxWorkload))), 		&disp[8] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._minWorkload))), 		&disp[9] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[10] );
    
    for (int i=1; i<Attributes; i++) {
       assertion1( disp[i] > disp[i-1], i );
@@ -3346,7 +3400,7 @@ void peanoclaw::records::Cell::initDatatype() {
 {
    Cell dummyCell[2];
    
-   const int Attributes = 15;
+   const int Attributes = 17;
    MPI_Datatype subtypes[Attributes] = {
       MPI_INT,		 //cellDescriptionIndex
       MPI_CHAR,		 //isInside
@@ -3359,6 +3413,8 @@ void peanoclaw::records::Cell::initDatatype() {
       MPI_DOUBLE,		 //nodeWorkload
       MPI_DOUBLE,		 //localWorkload
       MPI_DOUBLE,		 //totalWorkload
+      MPI_DOUBLE,		 //maxWorkload
+      MPI_DOUBLE,		 //minWorkload
       MPI_CHAR,		 //cellIsAForkCandidate
       MPI_INT,		 //numberOfLoadsFromInputStream
       MPI_INT,		 //numberOfStoresToOutputStream
@@ -3377,6 +3433,8 @@ void peanoclaw::records::Cell::initDatatype() {
       1,		 //nodeWorkload
       1,		 //localWorkload
       1,		 //totalWorkload
+      1,		 //maxWorkload
+      1,		 //minWorkload
       1,		 //cellIsAForkCandidate
       1,		 //numberOfLoadsFromInputStream
       1,		 //numberOfStoresToOutputStream
@@ -3398,10 +3456,12 @@ void peanoclaw::records::Cell::initDatatype() {
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._nodeWorkload))), 		&disp[8] );
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._localWorkload))), 		&disp[9] );
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._totalWorkload))), 		&disp[10] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._cellIsAForkCandidate))), 		&disp[11] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._numberOfLoadsFromInputStream))), 		&disp[12] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._numberOfStoresToOutputStream))), 		&disp[13] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._maxWorkload))), 		&disp[11] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._minWorkload))), 		&disp[12] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._cellIsAForkCandidate))), 		&disp[13] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._numberOfLoadsFromInputStream))), 		&disp[14] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._numberOfStoresToOutputStream))), 		&disp[15] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[16] );
    
    for (int i=1; i<Attributes; i++) {
       assertion1( disp[i] > disp[i-1], i );
@@ -3619,7 +3679,7 @@ assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 }
 
 
-peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
+peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
 _cellDescriptionIndex(cellDescriptionIndex),
 _level(level),
 _accessNumber(accessNumber),
@@ -3628,6 +3688,8 @@ _subtreeHoldsWorker(subtreeHoldsWorker),
 _nodeWorkload(nodeWorkload),
 _localWorkload(localWorkload),
 _totalWorkload(totalWorkload),
+_maxWorkload(maxWorkload),
+_minWorkload(minWorkload),
 _numberOfLoadsFromInputStream(numberOfLoadsFromInputStream),
 _numberOfStoresToOutputStream(numberOfStoresToOutputStream) {
 setIsInside(isInside);
@@ -3645,14 +3707,14 @@ assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 
 peanoclaw::records::CellPacked::CellPacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords.getIsInside(), persistentRecords.getState(), persistentRecords._level, persistentRecords.getEvenFlags(), persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords.getCellIsAForkCandidate(), persistentRecords._numberOfLoadsFromInputStream, persistentRecords._numberOfStoresToOutputStream) {
+_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords.getIsInside(), persistentRecords.getState(), persistentRecords._level, persistentRecords.getEvenFlags(), persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._maxWorkload, persistentRecords._minWorkload, persistentRecords.getCellIsAForkCandidate(), persistentRecords._numberOfLoadsFromInputStream, persistentRecords._numberOfStoresToOutputStream) {
 assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 }
 
 
-peanoclaw::records::CellPacked::CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
-_persistentRecords(cellDescriptionIndex, isInside, state, level, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, cellIsAForkCandidate, numberOfLoadsFromInputStream, numberOfStoresToOutputStream) {
+peanoclaw::records::CellPacked::CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
+_persistentRecords(cellDescriptionIndex, isInside, state, level, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, maxWorkload, minWorkload, cellIsAForkCandidate, numberOfLoadsFromInputStream, numberOfStoresToOutputStream) {
 assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 }
@@ -3708,6 +3770,10 @@ out << "localWorkload:" << getLocalWorkload();
 out << ",";
 out << "totalWorkload:" << getTotalWorkload();
 out << ",";
+out << "maxWorkload:" << getMaxWorkload();
+out << ",";
+out << "minWorkload:" << getMinWorkload();
+out << ",";
 out << "cellIsAForkCandidate:" << getCellIsAForkCandidate();
 out << ",";
 out << "numberOfLoadsFromInputStream:" << getNumberOfLoadsFromInputStream();
@@ -3734,6 +3800,8 @@ getSubtreeHoldsWorker(),
 getNodeWorkload(),
 getLocalWorkload(),
 getTotalWorkload(),
+getMaxWorkload(),
+getMinWorkload(),
 getCellIsAForkCandidate(),
 getNumberOfLoadsFromInputStream(),
 getNumberOfStoresToOutputStream()
@@ -3751,7 +3819,7 @@ void peanoclaw::records::CellPacked::initDatatype() {
 {
    CellPacked dummyCellPacked[2];
    
-   const int Attributes = 8;
+   const int Attributes = 10;
    MPI_Datatype subtypes[Attributes] = {
       MPI_INT,		 //cellDescriptionIndex
       MPI_INT,		 //level
@@ -3759,6 +3827,8 @@ void peanoclaw::records::CellPacked::initDatatype() {
       MPI_DOUBLE,		 //nodeWorkload
       MPI_DOUBLE,		 //localWorkload
       MPI_DOUBLE,		 //totalWorkload
+      MPI_DOUBLE,		 //maxWorkload
+      MPI_DOUBLE,		 //minWorkload
       MPI_SHORT,		 //_packedRecords0
       MPI_UB		 // end/displacement flag
    };
@@ -3770,6 +3840,8 @@ void peanoclaw::records::CellPacked::initDatatype() {
       1,		 //nodeWorkload
       1,		 //localWorkload
       1,		 //totalWorkload
+      1,		 //maxWorkload
+      1,		 //minWorkload
       1,		 //_packedRecords0
       1		 // end/displacement flag
    };
@@ -3784,8 +3856,10 @@ void peanoclaw::records::CellPacked::initDatatype() {
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._nodeWorkload))), 		&disp[3] );
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._localWorkload))), 		&disp[4] );
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._totalWorkload))), 		&disp[5] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[6] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[7] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._maxWorkload))), 		&disp[6] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._minWorkload))), 		&disp[7] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[8] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[9] );
    
    for (int i=1; i<Attributes; i++) {
       assertion1( disp[i] > disp[i-1], i );
@@ -3800,7 +3874,7 @@ void peanoclaw::records::CellPacked::initDatatype() {
 {
    CellPacked dummyCellPacked[2];
    
-   const int Attributes = 12;
+   const int Attributes = 14;
    MPI_Datatype subtypes[Attributes] = {
       MPI_INT,		 //cellDescriptionIndex
       MPI_INT,		 //level
@@ -3810,6 +3884,8 @@ void peanoclaw::records::CellPacked::initDatatype() {
       MPI_DOUBLE,		 //nodeWorkload
       MPI_DOUBLE,		 //localWorkload
       MPI_DOUBLE,		 //totalWorkload
+      MPI_DOUBLE,		 //maxWorkload
+      MPI_DOUBLE,		 //minWorkload
       MPI_INT,		 //numberOfLoadsFromInputStream
       MPI_INT,		 //numberOfStoresToOutputStream
       MPI_SHORT,		 //_packedRecords0
@@ -3825,6 +3901,8 @@ void peanoclaw::records::CellPacked::initDatatype() {
       1,		 //nodeWorkload
       1,		 //localWorkload
       1,		 //totalWorkload
+      1,		 //maxWorkload
+      1,		 //minWorkload
       1,		 //numberOfLoadsFromInputStream
       1,		 //numberOfStoresToOutputStream
       1,		 //_packedRecords0
@@ -3843,10 +3921,12 @@ void peanoclaw::records::CellPacked::initDatatype() {
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._nodeWorkload))), 		&disp[5] );
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._localWorkload))), 		&disp[6] );
    MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._totalWorkload))), 		&disp[7] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._numberOfLoadsFromInputStream))), 		&disp[8] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._numberOfStoresToOutputStream))), 		&disp[9] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[10] );
-   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[11] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._maxWorkload))), 		&disp[8] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._minWorkload))), 		&disp[9] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._numberOfLoadsFromInputStream))), 		&disp[10] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._numberOfStoresToOutputStream))), 		&disp[11] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[12] );
+   MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[13] );
    
    for (int i=1; i<Attributes; i++) {
       assertion1( disp[i] > disp[i-1], i );
@@ -4066,7 +4146,7 @@ peanoclaw::records::Cell::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::Cell::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate):
+peanoclaw::records::Cell::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate):
 _cellDescriptionIndex(cellDescriptionIndex),
 _isInside(isInside),
 _state(state),
@@ -4078,6 +4158,8 @@ _subtreeHoldsWorker(subtreeHoldsWorker),
 _nodeWorkload(nodeWorkload),
 _localWorkload(localWorkload),
 _totalWorkload(totalWorkload),
+_maxWorkload(maxWorkload),
+_minWorkload(minWorkload),
 _cellIsAForkCandidate(cellIsAForkCandidate) {
 
 }
@@ -4088,13 +4170,13 @@ peanoclaw::records::Cell::Cell() {
 
 
 peanoclaw::records::Cell::Cell(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords._isInside, persistentRecords._state, persistentRecords._level, persistentRecords._evenFlags, persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._cellIsAForkCandidate) {
+_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords._isInside, persistentRecords._state, persistentRecords._level, persistentRecords._evenFlags, persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._maxWorkload, persistentRecords._minWorkload, persistentRecords._cellIsAForkCandidate) {
 
 }
 
 
-peanoclaw::records::Cell::Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate):
-_persistentRecords(cellDescriptionIndex, isInside, state, level, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, cellIsAForkCandidate) {
+peanoclaw::records::Cell::Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate):
+_persistentRecords(cellDescriptionIndex, isInside, state, level, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, maxWorkload, minWorkload, cellIsAForkCandidate) {
 
 }
 
@@ -4153,6 +4235,10 @@ out << "localWorkload:" << getLocalWorkload();
 out << ",";
 out << "totalWorkload:" << getTotalWorkload();
 out << ",";
+out << "maxWorkload:" << getMaxWorkload();
+out << ",";
+out << "minWorkload:" << getMinWorkload();
+out << ",";
 out << "cellIsAForkCandidate:" << getCellIsAForkCandidate();
 out <<  ")";
 }
@@ -4175,6 +4261,8 @@ getSubtreeHoldsWorker(),
 getNodeWorkload(),
 getLocalWorkload(),
 getTotalWorkload(),
+getMaxWorkload(),
+getMinWorkload(),
 getCellIsAForkCandidate()
 );
 }
@@ -4190,7 +4278,7 @@ void peanoclaw::records::Cell::initDatatype() {
 {
 Cell dummyCell[2];
 
-const int Attributes = 9;
+const int Attributes = 11;
 MPI_Datatype subtypes[Attributes] = {
    MPI_INT,		 //cellDescriptionIndex
    MPI_CHAR,		 //isInside
@@ -4200,6 +4288,8 @@ MPI_Datatype subtypes[Attributes] = {
    MPI_DOUBLE,		 //nodeWorkload
    MPI_DOUBLE,		 //localWorkload
    MPI_DOUBLE,		 //totalWorkload
+   MPI_DOUBLE,		 //maxWorkload
+   MPI_DOUBLE,		 //minWorkload
    MPI_UB		 // end/displacement flag
 };
 
@@ -4212,6 +4302,8 @@ int blocklen[Attributes] = {
    1,		 //nodeWorkload
    1,		 //localWorkload
    1,		 //totalWorkload
+   1,		 //maxWorkload
+   1,		 //minWorkload
    1		 // end/displacement flag
 };
 
@@ -4227,7 +4319,9 @@ MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persiste
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._nodeWorkload))), 		&disp[5] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._localWorkload))), 		&disp[6] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._totalWorkload))), 		&disp[7] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[8] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._maxWorkload))), 		&disp[8] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._minWorkload))), 		&disp[9] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[10] );
 
 for (int i=1; i<Attributes; i++) {
    assertion1( disp[i] > disp[i-1], i );
@@ -4242,7 +4336,7 @@ MPI_Type_commit( &Cell::Datatype );
 {
 Cell dummyCell[2];
 
-const int Attributes = 13;
+const int Attributes = 15;
 MPI_Datatype subtypes[Attributes] = {
    MPI_INT,		 //cellDescriptionIndex
    MPI_CHAR,		 //isInside
@@ -4255,6 +4349,8 @@ MPI_Datatype subtypes[Attributes] = {
    MPI_DOUBLE,		 //nodeWorkload
    MPI_DOUBLE,		 //localWorkload
    MPI_DOUBLE,		 //totalWorkload
+   MPI_DOUBLE,		 //maxWorkload
+   MPI_DOUBLE,		 //minWorkload
    MPI_CHAR,		 //cellIsAForkCandidate
    MPI_UB		 // end/displacement flag
 };
@@ -4271,6 +4367,8 @@ int blocklen[Attributes] = {
    1,		 //nodeWorkload
    1,		 //localWorkload
    1,		 //totalWorkload
+   1,		 //maxWorkload
+   1,		 //minWorkload
    1,		 //cellIsAForkCandidate
    1		 // end/displacement flag
 };
@@ -4290,8 +4388,10 @@ MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persiste
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._nodeWorkload))), 		&disp[8] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._localWorkload))), 		&disp[9] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._totalWorkload))), 		&disp[10] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._cellIsAForkCandidate))), 		&disp[11] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[12] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._maxWorkload))), 		&disp[11] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._minWorkload))), 		&disp[12] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._cellIsAForkCandidate))), 		&disp[13] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
 
 for (int i=1; i<Attributes; i++) {
    assertion1( disp[i] > disp[i-1], i );
@@ -4509,7 +4609,7 @@ assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 }
 
 
-peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate):
+peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate):
 _cellDescriptionIndex(cellDescriptionIndex),
 _level(level),
 _accessNumber(accessNumber),
@@ -4517,7 +4617,9 @@ _responsibleRank(responsibleRank),
 _subtreeHoldsWorker(subtreeHoldsWorker),
 _nodeWorkload(nodeWorkload),
 _localWorkload(localWorkload),
-_totalWorkload(totalWorkload) {
+_totalWorkload(totalWorkload),
+_maxWorkload(maxWorkload),
+_minWorkload(minWorkload) {
 setIsInside(isInside);
 setState(state);
 setEvenFlags(evenFlags);
@@ -4533,14 +4635,14 @@ assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 
 peanoclaw::records::CellPacked::CellPacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords.getIsInside(), persistentRecords.getState(), persistentRecords._level, persistentRecords.getEvenFlags(), persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords.getCellIsAForkCandidate()) {
+_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords.getIsInside(), persistentRecords.getState(), persistentRecords._level, persistentRecords.getEvenFlags(), persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._maxWorkload, persistentRecords._minWorkload, persistentRecords.getCellIsAForkCandidate()) {
 assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 }
 
 
-peanoclaw::records::CellPacked::CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate):
-_persistentRecords(cellDescriptionIndex, isInside, state, level, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, cellIsAForkCandidate) {
+peanoclaw::records::CellPacked::CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate):
+_persistentRecords(cellDescriptionIndex, isInside, state, level, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, maxWorkload, minWorkload, cellIsAForkCandidate) {
 assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 }
@@ -4596,6 +4698,10 @@ out << "localWorkload:" << getLocalWorkload();
 out << ",";
 out << "totalWorkload:" << getTotalWorkload();
 out << ",";
+out << "maxWorkload:" << getMaxWorkload();
+out << ",";
+out << "minWorkload:" << getMinWorkload();
+out << ",";
 out << "cellIsAForkCandidate:" << getCellIsAForkCandidate();
 out <<  ")";
 }
@@ -4618,6 +4724,8 @@ getSubtreeHoldsWorker(),
 getNodeWorkload(),
 getLocalWorkload(),
 getTotalWorkload(),
+getMaxWorkload(),
+getMinWorkload(),
 getCellIsAForkCandidate()
 );
 }
@@ -4633,7 +4741,7 @@ void peanoclaw::records::CellPacked::initDatatype() {
 {
 CellPacked dummyCellPacked[2];
 
-const int Attributes = 8;
+const int Attributes = 10;
 MPI_Datatype subtypes[Attributes] = {
    MPI_INT,		 //cellDescriptionIndex
    MPI_INT,		 //level
@@ -4641,6 +4749,8 @@ MPI_Datatype subtypes[Attributes] = {
    MPI_DOUBLE,		 //nodeWorkload
    MPI_DOUBLE,		 //localWorkload
    MPI_DOUBLE,		 //totalWorkload
+   MPI_DOUBLE,		 //maxWorkload
+   MPI_DOUBLE,		 //minWorkload
    MPI_SHORT,		 //_packedRecords0
    MPI_UB		 // end/displacement flag
 };
@@ -4652,6 +4762,8 @@ int blocklen[Attributes] = {
    1,		 //nodeWorkload
    1,		 //localWorkload
    1,		 //totalWorkload
+   1,		 //maxWorkload
+   1,		 //minWorkload
    1,		 //_packedRecords0
    1		 // end/displacement flag
 };
@@ -4666,8 +4778,10 @@ MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._pe
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._nodeWorkload))), 		&disp[3] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._localWorkload))), 		&disp[4] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._totalWorkload))), 		&disp[5] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[6] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[7] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._maxWorkload))), 		&disp[6] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._minWorkload))), 		&disp[7] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[8] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[9] );
 
 for (int i=1; i<Attributes; i++) {
    assertion1( disp[i] > disp[i-1], i );
@@ -4682,7 +4796,7 @@ MPI_Type_commit( &CellPacked::Datatype );
 {
 CellPacked dummyCellPacked[2];
 
-const int Attributes = 10;
+const int Attributes = 12;
 MPI_Datatype subtypes[Attributes] = {
    MPI_INT,		 //cellDescriptionIndex
    MPI_INT,		 //level
@@ -4692,6 +4806,8 @@ MPI_Datatype subtypes[Attributes] = {
    MPI_DOUBLE,		 //nodeWorkload
    MPI_DOUBLE,		 //localWorkload
    MPI_DOUBLE,		 //totalWorkload
+   MPI_DOUBLE,		 //maxWorkload
+   MPI_DOUBLE,		 //minWorkload
    MPI_SHORT,		 //_packedRecords0
    MPI_UB		 // end/displacement flag
 };
@@ -4705,6 +4821,8 @@ int blocklen[Attributes] = {
    1,		 //nodeWorkload
    1,		 //localWorkload
    1,		 //totalWorkload
+   1,		 //maxWorkload
+   1,		 //minWorkload
    1,		 //_packedRecords0
    1		 // end/displacement flag
 };
@@ -4721,8 +4839,10 @@ MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._pe
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._nodeWorkload))), 		&disp[5] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._localWorkload))), 		&disp[6] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._totalWorkload))), 		&disp[7] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[8] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[9] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._maxWorkload))), 		&disp[8] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._minWorkload))), 		&disp[9] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[10] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[11] );
 
 for (int i=1; i<Attributes; i++) {
    assertion1( disp[i] > disp[i-1], i );
@@ -4942,7 +5062,7 @@ peanoclaw::records::Cell::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::Cell::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
+peanoclaw::records::Cell::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
 _cellDescriptionIndex(cellDescriptionIndex),
 _isInside(isInside),
 _state(state),
@@ -4953,6 +5073,8 @@ _subtreeHoldsWorker(subtreeHoldsWorker),
 _nodeWorkload(nodeWorkload),
 _localWorkload(localWorkload),
 _totalWorkload(totalWorkload),
+_maxWorkload(maxWorkload),
+_minWorkload(minWorkload),
 _cellIsAForkCandidate(cellIsAForkCandidate),
 _numberOfLoadsFromInputStream(numberOfLoadsFromInputStream),
 _numberOfStoresToOutputStream(numberOfStoresToOutputStream) {
@@ -4965,13 +5087,13 @@ peanoclaw::records::Cell::Cell() {
 
 
 peanoclaw::records::Cell::Cell(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords._isInside, persistentRecords._state, persistentRecords._evenFlags, persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._cellIsAForkCandidate, persistentRecords._numberOfLoadsFromInputStream, persistentRecords._numberOfStoresToOutputStream) {
+_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords._isInside, persistentRecords._state, persistentRecords._evenFlags, persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._maxWorkload, persistentRecords._minWorkload, persistentRecords._cellIsAForkCandidate, persistentRecords._numberOfLoadsFromInputStream, persistentRecords._numberOfStoresToOutputStream) {
 
 }
 
 
-peanoclaw::records::Cell::Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
-_persistentRecords(cellDescriptionIndex, isInside, state, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, cellIsAForkCandidate, numberOfLoadsFromInputStream, numberOfStoresToOutputStream) {
+peanoclaw::records::Cell::Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
+_persistentRecords(cellDescriptionIndex, isInside, state, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, maxWorkload, minWorkload, cellIsAForkCandidate, numberOfLoadsFromInputStream, numberOfStoresToOutputStream) {
 
 }
 
@@ -5028,6 +5150,10 @@ out << "localWorkload:" << getLocalWorkload();
 out << ",";
 out << "totalWorkload:" << getTotalWorkload();
 out << ",";
+out << "maxWorkload:" << getMaxWorkload();
+out << ",";
+out << "minWorkload:" << getMinWorkload();
+out << ",";
 out << "cellIsAForkCandidate:" << getCellIsAForkCandidate();
 out << ",";
 out << "numberOfLoadsFromInputStream:" << getNumberOfLoadsFromInputStream();
@@ -5053,6 +5179,8 @@ getSubtreeHoldsWorker(),
 getNodeWorkload(),
 getLocalWorkload(),
 getTotalWorkload(),
+getMaxWorkload(),
+getMinWorkload(),
 getCellIsAForkCandidate(),
 getNumberOfLoadsFromInputStream(),
 getNumberOfStoresToOutputStream()
@@ -5070,7 +5198,7 @@ void peanoclaw::records::Cell::initDatatype() {
 {
 Cell dummyCell[2];
 
-const int Attributes = 8;
+const int Attributes = 10;
 MPI_Datatype subtypes[Attributes] = {
 MPI_INT,		 //cellDescriptionIndex
 MPI_CHAR,		 //isInside
@@ -5079,6 +5207,8 @@ MPI_CHAR,		 //subtreeHoldsWorker
 MPI_DOUBLE,		 //nodeWorkload
 MPI_DOUBLE,		 //localWorkload
 MPI_DOUBLE,		 //totalWorkload
+MPI_DOUBLE,		 //maxWorkload
+MPI_DOUBLE,		 //minWorkload
 MPI_UB		 // end/displacement flag
 };
 
@@ -5090,6 +5220,8 @@ int blocklen[Attributes] = {
 1,		 //nodeWorkload
 1,		 //localWorkload
 1,		 //totalWorkload
+1,		 //maxWorkload
+1,		 //minWorkload
 1		 // end/displacement flag
 };
 
@@ -5104,7 +5236,9 @@ MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persiste
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._nodeWorkload))), 		&disp[4] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._localWorkload))), 		&disp[5] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._totalWorkload))), 		&disp[6] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[7] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._maxWorkload))), 		&disp[7] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._minWorkload))), 		&disp[8] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[9] );
 
 for (int i=1; i<Attributes; i++) {
 assertion1( disp[i] > disp[i-1], i );
@@ -5119,7 +5253,7 @@ MPI_Type_commit( &Cell::Datatype );
 {
 Cell dummyCell[2];
 
-const int Attributes = 14;
+const int Attributes = 16;
 MPI_Datatype subtypes[Attributes] = {
 MPI_INT,		 //cellDescriptionIndex
 MPI_CHAR,		 //isInside
@@ -5131,6 +5265,8 @@ MPI_CHAR,		 //subtreeHoldsWorker
 MPI_DOUBLE,		 //nodeWorkload
 MPI_DOUBLE,		 //localWorkload
 MPI_DOUBLE,		 //totalWorkload
+MPI_DOUBLE,		 //maxWorkload
+MPI_DOUBLE,		 //minWorkload
 MPI_CHAR,		 //cellIsAForkCandidate
 MPI_INT,		 //numberOfLoadsFromInputStream
 MPI_INT,		 //numberOfStoresToOutputStream
@@ -5148,6 +5284,8 @@ DIMENSIONS_TIMES_TWO,		 //accessNumber
 1,		 //nodeWorkload
 1,		 //localWorkload
 1,		 //totalWorkload
+1,		 //maxWorkload
+1,		 //minWorkload
 1,		 //cellIsAForkCandidate
 1,		 //numberOfLoadsFromInputStream
 1,		 //numberOfStoresToOutputStream
@@ -5168,10 +5306,12 @@ MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persiste
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._nodeWorkload))), 		&disp[7] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._localWorkload))), 		&disp[8] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._totalWorkload))), 		&disp[9] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._cellIsAForkCandidate))), 		&disp[10] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._numberOfLoadsFromInputStream))), 		&disp[11] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._numberOfStoresToOutputStream))), 		&disp[12] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[13] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._maxWorkload))), 		&disp[10] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._minWorkload))), 		&disp[11] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._cellIsAForkCandidate))), 		&disp[12] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._numberOfLoadsFromInputStream))), 		&disp[13] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[0]._persistentRecords._numberOfStoresToOutputStream))), 		&disp[14] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCell[1]._persistentRecords._cellDescriptionIndex))), 		&disp[15] );
 
 for (int i=1; i<Attributes; i++) {
 assertion1( disp[i] > disp[i-1], i );
@@ -5389,7 +5529,7 @@ assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 }
 
 
-peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
+peanoclaw::records::CellPacked::PersistentRecords::PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
 _cellDescriptionIndex(cellDescriptionIndex),
 _accessNumber(accessNumber),
 _responsibleRank(responsibleRank),
@@ -5397,6 +5537,8 @@ _subtreeHoldsWorker(subtreeHoldsWorker),
 _nodeWorkload(nodeWorkload),
 _localWorkload(localWorkload),
 _totalWorkload(totalWorkload),
+_maxWorkload(maxWorkload),
+_minWorkload(minWorkload),
 _numberOfLoadsFromInputStream(numberOfLoadsFromInputStream),
 _numberOfStoresToOutputStream(numberOfStoresToOutputStream) {
 setIsInside(isInside);
@@ -5414,14 +5556,14 @@ assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 
 peanoclaw::records::CellPacked::CellPacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords.getIsInside(), persistentRecords.getState(), persistentRecords.getEvenFlags(), persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords.getCellIsAForkCandidate(), persistentRecords._numberOfLoadsFromInputStream, persistentRecords._numberOfStoresToOutputStream) {
+_persistentRecords(persistentRecords._cellDescriptionIndex, persistentRecords.getIsInside(), persistentRecords.getState(), persistentRecords.getEvenFlags(), persistentRecords._accessNumber, persistentRecords._responsibleRank, persistentRecords._subtreeHoldsWorker, persistentRecords._nodeWorkload, persistentRecords._localWorkload, persistentRecords._totalWorkload, persistentRecords._maxWorkload, persistentRecords._minWorkload, persistentRecords.getCellIsAForkCandidate(), persistentRecords._numberOfLoadsFromInputStream, persistentRecords._numberOfStoresToOutputStream) {
 assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 }
 
 
-peanoclaw::records::CellPacked::CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
-_persistentRecords(cellDescriptionIndex, isInside, state, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, cellIsAForkCandidate, numberOfLoadsFromInputStream, numberOfStoresToOutputStream) {
+peanoclaw::records::CellPacked::CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream):
+_persistentRecords(cellDescriptionIndex, isInside, state, evenFlags, accessNumber, responsibleRank, subtreeHoldsWorker, nodeWorkload, localWorkload, totalWorkload, maxWorkload, minWorkload, cellIsAForkCandidate, numberOfLoadsFromInputStream, numberOfStoresToOutputStream) {
 assertion((DIMENSIONS+4 < (8 * sizeof(short int))));
 
 }
@@ -5475,6 +5617,10 @@ out << "localWorkload:" << getLocalWorkload();
 out << ",";
 out << "totalWorkload:" << getTotalWorkload();
 out << ",";
+out << "maxWorkload:" << getMaxWorkload();
+out << ",";
+out << "minWorkload:" << getMinWorkload();
+out << ",";
 out << "cellIsAForkCandidate:" << getCellIsAForkCandidate();
 out << ",";
 out << "numberOfLoadsFromInputStream:" << getNumberOfLoadsFromInputStream();
@@ -5500,6 +5646,8 @@ getSubtreeHoldsWorker(),
 getNodeWorkload(),
 getLocalWorkload(),
 getTotalWorkload(),
+getMaxWorkload(),
+getMinWorkload(),
 getCellIsAForkCandidate(),
 getNumberOfLoadsFromInputStream(),
 getNumberOfStoresToOutputStream()
@@ -5517,13 +5665,15 @@ void peanoclaw::records::CellPacked::initDatatype() {
 {
 CellPacked dummyCellPacked[2];
 
-const int Attributes = 7;
+const int Attributes = 9;
 MPI_Datatype subtypes[Attributes] = {
 MPI_INT,		 //cellDescriptionIndex
 MPI_CHAR,		 //subtreeHoldsWorker
 MPI_DOUBLE,		 //nodeWorkload
 MPI_DOUBLE,		 //localWorkload
 MPI_DOUBLE,		 //totalWorkload
+MPI_DOUBLE,		 //maxWorkload
+MPI_DOUBLE,		 //minWorkload
 MPI_SHORT,		 //_packedRecords0
 MPI_UB		 // end/displacement flag
 };
@@ -5534,6 +5684,8 @@ int blocklen[Attributes] = {
 1,		 //nodeWorkload
 1,		 //localWorkload
 1,		 //totalWorkload
+1,		 //maxWorkload
+1,		 //minWorkload
 1,		 //_packedRecords0
 1		 // end/displacement flag
 };
@@ -5547,8 +5699,10 @@ MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._pe
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._nodeWorkload))), 		&disp[2] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._localWorkload))), 		&disp[3] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._totalWorkload))), 		&disp[4] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[5] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[6] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._maxWorkload))), 		&disp[5] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._minWorkload))), 		&disp[6] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[7] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[8] );
 
 for (int i=1; i<Attributes; i++) {
 assertion1( disp[i] > disp[i-1], i );
@@ -5563,7 +5717,7 @@ MPI_Type_commit( &CellPacked::Datatype );
 {
 CellPacked dummyCellPacked[2];
 
-const int Attributes = 11;
+const int Attributes = 13;
 MPI_Datatype subtypes[Attributes] = {
 MPI_INT,		 //cellDescriptionIndex
 MPI_SHORT,		 //accessNumber
@@ -5572,6 +5726,8 @@ MPI_CHAR,		 //subtreeHoldsWorker
 MPI_DOUBLE,		 //nodeWorkload
 MPI_DOUBLE,		 //localWorkload
 MPI_DOUBLE,		 //totalWorkload
+MPI_DOUBLE,		 //maxWorkload
+MPI_DOUBLE,		 //minWorkload
 MPI_INT,		 //numberOfLoadsFromInputStream
 MPI_INT,		 //numberOfStoresToOutputStream
 MPI_SHORT,		 //_packedRecords0
@@ -5586,6 +5742,8 @@ DIMENSIONS_TIMES_TWO,		 //accessNumber
 1,		 //nodeWorkload
 1,		 //localWorkload
 1,		 //totalWorkload
+1,		 //maxWorkload
+1,		 //minWorkload
 1,		 //numberOfLoadsFromInputStream
 1,		 //numberOfStoresToOutputStream
 1,		 //_packedRecords0
@@ -5603,10 +5761,12 @@ MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._pe
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._nodeWorkload))), 		&disp[4] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._localWorkload))), 		&disp[5] );
 MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._totalWorkload))), 		&disp[6] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._numberOfLoadsFromInputStream))), 		&disp[7] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._numberOfStoresToOutputStream))), 		&disp[8] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[9] );
-MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[10] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._maxWorkload))), 		&disp[7] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._minWorkload))), 		&disp[8] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._numberOfLoadsFromInputStream))), 		&disp[9] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._numberOfStoresToOutputStream))), 		&disp[10] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[0]._persistentRecords._packedRecords0))), 		&disp[11] );
+MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellPacked[1]._persistentRecords._cellDescriptionIndex))), 		&disp[12] );
 
 for (int i=1; i<Attributes; i++) {
 assertion1( disp[i] > disp[i-1], i );

@@ -468,10 +468,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
           peanoclaw::records::Vertex::Refining
         ));
 
-  gridLevelTransfer.updatePatchStateBeforeStepDown(
-    virtualPatch, coarseVertices, enumerator, false, false
-  );
-  gridLevelTransfer.stepDown(virtualCellDescriptionIndex, virtualPatch, coarseVertices, enumerator);
+  gridLevelTransfer.stepDown(virtualCellDescriptionIndex, virtualPatch, coarseVertices, enumerator, false);
 
   validateEquals(gridLevelTransfer._virtualPatchDescriptionIndices.size(), 1);
 

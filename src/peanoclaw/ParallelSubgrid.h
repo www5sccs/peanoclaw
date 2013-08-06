@@ -72,7 +72,7 @@ class peanoclaw::ParallelSubgrid {
    * Counts how many of the adjacent subgrids belong to a different MPI rank
    * and how many vertices are involved in the communication.
    */
-  void countNumberOfAdjacentParallelSubgrids(
+  void countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag(
     peanoclaw::Vertex * const            vertices,
     const peano::grid::VertexEnumerator& verticesEnumerator
   );
