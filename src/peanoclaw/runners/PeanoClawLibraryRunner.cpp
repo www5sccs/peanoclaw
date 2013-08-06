@@ -37,8 +37,8 @@
 
 #include "peano/datatraversal/autotuning/Oracle.h"
 #include "peano/datatraversal/autotuning/OracleForOnePhaseDummy.h"
-
-
+#include "queries/QueryServer.h"
+#include "queries/records/HeapQuery.h"
 tarch::logging::Log peanoclaw::runners::PeanoClawLibraryRunner::_log("peanoclaw::runners::PeanoClawLibraryRunner");
 
 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
@@ -156,7 +156,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 #ifdef Parallel
   }
 #endif
-  _queryServer=new de::tum::QueryCxx2SocketPlainPort("localhost",50000,256);
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()) 
+  	_queryServer=new de::tum::QueryCxx2SocketPlainPort("localhost",50000,256);
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
@@ -203,19 +204,21 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   logTraceOut("~PeanoClawLibraryRunner");
 }
 
+ 
 void peanoclaw::runners::PeanoClawLibraryRunner::sync(){
 	int parts=-1;
 	_queryServer->getNumberOfParts(parts);
-	std::cout<<"query parts:"<<parts<<std::endl;
-	double offset[2];
-	double size[2];
-	int res[2];
-	int *mids=new int[parts];
-	_queryServer->getQueryDescription(offset,2,size,2,res,2,mids,1);
-	std::cout<<"qo:"<<offset[0]<<" " <<offset[1]<<std::endl;
-	std::cout<<"qs:"<<size[0]<<" " <<size[1]<<std::endl;
-	std::cout<<"qr:"<<res[0]<<" " <<res[1]<<std::endl;
-	delete []mids;
+        if(parts>0){	
+		
+		int *mids=new int[parts];
+		queries::records::HeapQuery q;
+		_queryServer->getQueryDescription(&q.getOffset()[0],2,&q.getSize()[0],2,&q.getDimenions()[0],2,mids,1);
+		
+				
+		
+		queries::QueryServer::getInstance().addQuery(q);
+		delete []mids;
+	}
 }
 void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   double time
@@ -250,7 +253,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
       }
       _repository->iterate();
       _plotNumber++;
-      sync();
+      
     } else {
       if(_validateGrid) {
         _repository->switchToSolveTimestepAndValidateGrid();
@@ -258,6 +261,11 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
         _repository->switchToSolveTimestep();
       }
       _repository->iterate();
+      if(tarch::parallel::Node::getInstance().isGlobalMaster())      
+      sync();
+      _repository->switchToQuery();
+      _repository->iterate();
+      	
     }
 
     _repository->getState().plotStatisticsForLastGridIteration();
