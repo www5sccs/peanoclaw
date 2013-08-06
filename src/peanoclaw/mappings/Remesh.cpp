@@ -88,25 +88,20 @@ peanoclaw::mappings::Remesh::~Remesh() {
 
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::Remesh::Remesh(const Remesh&  masterThread)
-:_unknownsPerSubcell(masterThread._unknownsPerSubcell),
-_auxiliarFieldsPerSubcell(masterThread._auxiliarFieldsPerSubcell),
-_defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor)
-//_defaultGhostLayerWidth   = solverState.getDefaultGhostLayerWidth(),
-//_initialTimestepSize      = solverState.getInitialTimestepSize(),
-//_numerics                 = solverState.getNumerics(),
-//_domainOffset             = solverState.getDomainOffset(),
-//_domainSize               = solverState.getDomainSize(),
-//
-//_gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(
-//                            solverState.useDimensionalSplittingOptimization(),
-//                            *_numerics
-//                         );
-//
-//_initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
-//_isInitializing = solverState.getIsInitializing();
-//_useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
-//_parallelStatistics = peanoclaw::statistics::ParallelStatistics("Iteration");
-//_state = &solverState;
+: _unknownsPerSubcell(masterThread._unknownsPerSubcell),
+  _auxiliarFieldsPerSubcell(masterThread._auxiliarFieldsPerSubcell),
+  _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
+  _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
+  _initialTimestepSize(masterThread._initialTimestepSize),
+  _numerics(masterThread._numerics),
+  _domainOffset(masterThread._domainOffset),
+  _domainSize(masterThread._domainSize),
+  _gridLevelTransfer(masterThread._gridLevelTransfer),
+  _initialMinimalMeshWidth(masterThread._initialMinimalMeshWidth),
+  _isInitializing(masterThread._isInitializing),
+  _useDimensionalSplittingOptimization(masterThread._useDimensionalSplittingOptimization),
+  _parallelStatistics(masterThread._parallelStatistics),
+  _state(masterThread._state)
 {
   logTraceIn( "Remesh(Remesh)" );
   // @todo Insert your code here
@@ -116,7 +111,9 @@ _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor)
 
 void peanoclaw::mappings::Remesh::mergeWithWorkerThread(const Remesh& workerThread) {
   logTraceIn( "mergeWithWorkerThread(Remesh)" );
-  // @todo Insert your code here
+
+  _parallelStatistics.merge(workerThread._parallelStatistics);
+
   logTraceOut( "mergeWithWorkerThread(Remesh)" );
 }
 #endif

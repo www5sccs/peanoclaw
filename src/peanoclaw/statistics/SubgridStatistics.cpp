@@ -253,8 +253,23 @@ void peanoclaw::statistics::SubgridStatistics::addBlockedPatchDueToCoarsening(co
 
 void peanoclaw::statistics::SubgridStatistics::merge(const SubgridStatistics& subgridStatistics) {
 
-  addLevelToLevelStatistics(subgridStatistics._levelStatistics->size()-1);
+  //Subgrid statistics
+  if(_minimalPatchTime > subgridStatistics._minimalPatchTime) {
+    _minimalPatchTime = subgridStatistics._minimalPatchTime;
+    _minimalPatchIndex = subgridStatistics._minimalPatchIndex;
+    _minimalPatchParentIndex = subgridStatistics._minimalPatchParentIndex;
+  }
 
+  _startMaximumLocalTimeInterval     = std::min(_startMaximumLocalTimeInterval, subgridStatistics._startMaximumLocalTimeInterval);
+  _endMaximumLocalTimeInterval       = std::max(_endMaximumLocalTimeInterval, subgridStatistics._endMaximumLocalTimeInterval);
+  _startMinimumLocalTimeInterval     = std::max(_startMinimumLocalTimeInterval, subgridStatistics._startMinimumLocalTimeInterval);
+  _endMinimumLocalTimeInterval       = std::min(_endMinimumLocalTimeInterval, subgridStatistics._endMinimumLocalTimeInterval);
+  _minimalTimestep                   = std::min(_minimalTimestep, subgridStatistics._minimalTimestep);
+  _allPatchesEvolvedToGlobalTimestep &= subgridStatistics._allPatchesEvolvedToGlobalTimestep;
+  _averageGlobalTimeInterval         = (_averageGlobalTimeInterval + subgridStatistics._averageGlobalTimeInterval) / 2.0;
+
+  //Level statistics
+  addLevelToLevelStatistics(subgridStatistics._levelStatistics->size()-1);
   for(int level = 0; level < (int)subgridStatistics._levelStatistics->size(); level++) {
 
     LevelStatistics& thisLevel = _levelStatistics->at(level);

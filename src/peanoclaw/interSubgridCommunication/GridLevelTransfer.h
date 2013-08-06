@@ -15,6 +15,7 @@ w * GridLevelTransfer.h
 #include "peano/utils/Globals.h"
 #include "tarch/la/Vector.h"
 #include "tarch/logging/Log.h"
+#include "tarch/multicore/BooleanSemaphore.h"
 
 namespace peanoclaw {
   class Numerics;
@@ -93,6 +94,8 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      * Logging device.
      */
     static tarch::logging::Log _log;
+
+    tarch::multicore::BooleanSemaphore _virtualPatchListSemaphore;
 
     friend class peanoclaw::tests::GridLevelTransferTest;
 

@@ -10,9 +10,10 @@
 
 #include "Numerics.h"
 
-//#include "statistics/LevelInformation.h"
 #include "peanoclaw/statistics/LevelStatistics.h"
 #include "statistics/Probe.h"
+
+#include <list>
 
 namespace peanoclaw { 
       class State;
@@ -64,8 +65,8 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
     std::vector<peanoclaw::statistics::Probe> _probeList;
 
-    std::vector<LevelStatistics>                _levelStatisticsForLastGridIteration;
-    std::vector< std::vector<LevelStatistics> > _levelStatisticsHistory;
+    std::vector<LevelStatistics>              _levelStatisticsForLastGridIteration;
+    std::list< std::vector<LevelStatistics> > _levelStatisticsHistory;
 
   public:
     /**
@@ -208,6 +209,11 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        * Sets the level statistics for the last grid iteration.
        */
       void setLevelStatisticsForLastGridIteration(const std::vector<LevelStatistics>& levelStatistics);
+
+      /**
+       * Returns the history of LevelStatistics over all iterations.
+       */
+      std::list<std::vector<LevelStatistics> > getLevelStatisticsHistory() const;
 
       /**
        * Plots grid statistics for the last grid iteration

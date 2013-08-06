@@ -35,3 +35,10 @@ void peanoclaw::statistics::ParallelStatistics::logStatistics() const {
   logInfo("logStatistics()", "Subgrids received from neighbors: " << _receivedNeighborData);
   logInfo("logStatistics()", "Padding subgrids received from neighbors: " << _receivedPaddingNeighborData);
 }
+
+void peanoclaw::statistics::ParallelStatistics::merge(const ParallelStatistics& otherStatistics) {
+  _sentNeighborData            += otherStatistics._sentNeighborData;
+  _sentPaddingNeighborData     += otherStatistics._sentPaddingNeighborData;
+  _receivedNeighborData        += otherStatistics._receivedNeighborData;
+  _receivedPaddingNeighborData += otherStatistics._receivedPaddingNeighborData;
+}

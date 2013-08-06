@@ -252,6 +252,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
   const tarch::la::Vector<DIMENSIONS, double>& adjacentSubgridSize,
   int                                          level
 ) {
+  #ifdef Parallel
   if(!tarch::parallel::Node::getInstance().isGlobalMaster() && _remoteRank != 0) {
     //TODO unterweg debug
 //    logInfo("", "Sending to neighbor " << tarch::parallel::Node::getInstance().getRank()
@@ -278,6 +279,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
       sendPaddingPatch();
     }
   }
+  #endif
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
@@ -287,6 +289,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
   const tarch::la::Vector<DIMENSIONS, double>& adjacentSubgridSize,
   int                                          level
 ) {
+  #ifdef Parallel
   if(!tarch::parallel::Node::getInstance().isGlobalMaster() && _remoteRank != 0) {
     assertionEquals(localVertex.isInside(), remoteVertex.isInside());
     assertionEquals(localVertex.isBoundary(), remoteVertex.isBoundary());
@@ -336,4 +339,5 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
       }
     }
   }
+  #endif
 }

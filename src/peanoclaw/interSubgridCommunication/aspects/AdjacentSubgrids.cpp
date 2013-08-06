@@ -198,6 +198,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::storeAdjacencyInformation() {
+  #ifdef Parallel
   //Set all adjacent patches to unsent if the adjacency information has changed
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(_vertex.getAdjacentRanks()(i) != _vertex.getAdjacentRanksDuringLastIteration()(i)) {
@@ -212,6 +213,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::storeAdjac
 
   //Store adjacent ranks for next grid iteration
   _vertex.setAdjacentRanksDuringLastIteration(_vertex.getAdjacentRanks());
+  #endif
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::regainTwoIrregularity(

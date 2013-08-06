@@ -62,6 +62,11 @@ class peanoclaw::statistics::ParallelStatistics {
      */
     void logStatistics() const;
 
+    /**
+     * Merges two statistics objects.
+     */
+    void merge(const ParallelStatistics& otherStatistics);
+
 };
 
 #endif /* PEANOCLAW_STATISTICS_PARALLELSTATISTICS_H_ */

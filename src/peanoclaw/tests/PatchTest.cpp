@@ -211,6 +211,7 @@ void peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
 }
 
 void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
+  #ifdef Parallel
   Vertex vertices[TWO_POWER_D];
   TestVertexEnumerator enumerator(1.0);
 
@@ -242,9 +243,11 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
 
   validateEquals(parallelSubgrid.getAdjacentRank(), 1);
   validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), 2);
+  #endif
 }
 
 void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeighboringRanks() {
+  #ifdef Parallel
   Vertex vertices[TWO_POWER_D];
   TestVertexEnumerator enumerator(1.0);
 
@@ -276,6 +279,7 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeig
 
   validateEquals(parallelSubgrid.getAdjacentRank(), -1);
   validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), -1);
+  #endif
 }
 
 #ifdef UseTestSpecificCompilerSettings

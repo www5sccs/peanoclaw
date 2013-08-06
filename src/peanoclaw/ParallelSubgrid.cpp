@@ -23,29 +23,46 @@ peanoclaw::ParallelSubgrid::ParallelSubgrid(
 }
 
 void peanoclaw::ParallelSubgrid::markCurrentStateAsSent(bool wasSent) {
+  #ifdef Parallel
   _cellDescription->setCurrentStateWasSend(wasSent);
+  #endif
 }
 
 bool peanoclaw::ParallelSubgrid::wasCurrentStateSent() const {
+  #ifdef Parallel
   return _cellDescription->getCurrentStateWasSend();
+  #else
+  return false;
+  #endif
 }
 
 void peanoclaw::ParallelSubgrid::decreaseNumberOfSharedAdjacentVertices() {
+  #ifdef Parallel
   _cellDescription->setNumberOfSharedAdjacentVertices(_cellDescription->getNumberOfSharedAdjacentVertices() - 1);
+  #endif
 }
 
 int peanoclaw::ParallelSubgrid::getAdjacentRank() const {
+  #ifdef Parallel
   return _cellDescription->getAdjacentRank();
+  #else
+  return -1;
+  #endif
 }
 
 int peanoclaw::ParallelSubgrid::getNumberOfSharedAdjacentVertices() const {
+  #ifdef Parallel
   return _cellDescription->getNumberOfSharedAdjacentVertices();
+  #else
+  return 0;
+  #endif
 }
 
 void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag (
   peanoclaw::Vertex * const            vertices,
   const peano::grid::VertexEnumerator& verticesEnumerator
 ) {
+  #ifdef Parallel
   int adjacentRank = -1;
   int localRank = tarch::parallel::Node::getInstance().getRank();
   int numberOfSharedAdjacentVertices = 0;
@@ -73,4 +90,5 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndResetEx
   _cellDescription->setAdjacentRank(adjacentRank);
   _cellDescription->setNumberOfSharedAdjacentVertices(numberOfSharedAdjacentVertices);
   _cellDescription->setIsExclusiveMessageForSubgrid(false);
+  #endif
 }

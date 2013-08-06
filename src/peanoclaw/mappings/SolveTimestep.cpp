@@ -148,7 +148,16 @@ peanoclaw::mappings::SolveTimestep::~SolveTimestep() {
 
 
 #if defined(SharedMemoryParallelisation)
-peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterThread) {
+peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterThread)
+: _numerics(masterThread._numerics),
+  _globalTimestepEndTime(masterThread._globalTimestepEndTime),
+  _domainOffset(masterThread._domainOffset),
+  _domainSize(masterThread._domainSize),
+  _initialMinimalMeshWidth(masterThread._initialMinimalMeshWidth),
+  _probeList(masterThread._probeList),
+  _useDimensionalSplittingOptimization(masterThread._useDimensionalSplittingOptimization),
+  _subgridStatistics(masterThread._subgridStatistics)
+{
   logTraceIn( "SolveTimestep(SolveTimestep)" );
   // @todo Insert your code here
   logTraceOut( "SolveTimestep(SolveTimestep)" );
@@ -157,7 +166,9 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
 
 void peanoclaw::mappings::SolveTimestep::mergeWithWorkerThread(const SolveTimestep& workerThread) {
   logTraceIn( "mergeWithWorkerThread(SolveTimestep)" );
-  // @todo Insert your code here
+
+  _subgridStatistics.merge(workerThread._subgridStatistics);
+
   logTraceOut( "mergeWithWorkerThread(SolveTimestep)" );
 }
 #endif

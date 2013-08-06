@@ -210,6 +210,10 @@ void peanoclaw::State::setLevelStatisticsForLastGridIteration (
   _levelStatisticsHistory.push_back(levelStatistics);
 }
 
+std::list<std::vector<peanoclaw::statistics::LevelStatistics> > peanoclaw::State::getLevelStatisticsHistory() const {
+  return _levelStatisticsHistory;
+}
+
 void peanoclaw::State::plotStatisticsForLastGridIteration() const {
   peanoclaw::statistics::SubgridStatistics subgridStatistics(_levelStatisticsForLastGridIteration);
   subgridStatistics.logLevelStatistics("Statistics for last grid iteration");
@@ -217,8 +221,9 @@ void peanoclaw::State::plotStatisticsForLastGridIteration() const {
 
 void peanoclaw::State::plotTotalStatistics() const {
   peanoclaw::statistics::SubgridStatistics totalStatistics;
-  for(int i = 0; i < (int)_levelStatisticsHistory.size(); i++) {
-    totalStatistics.merge(_levelStatisticsHistory[i]);
+  for(std::list<std::vector<LevelStatistics> >::const_iterator i = _levelStatisticsHistory.begin();
+      i != _levelStatisticsHistory.end(); i++) {
+    totalStatistics.merge(*i);
   }
   totalStatistics.averageTotalSimulationValues(_levelStatisticsHistory.size());
   totalStatistics.logLevelStatistics("Total Statistics");
@@ -249,26 +254,40 @@ bool peanoclaw::State::useDimensionalSplittingOptimization() const {
 }
 
 void peanoclaw::State::resetLocalHeightOfWorkerTree() {
+  #ifdef Parallel
   _stateData.setGlobalHeightOfWorkerTreeDuringLastIteration(
     _stateData.getLocalHeightOfWorkerTree()
   );
   _stateData.setLocalHeightOfWorkerTree(0);
+  #endif
 }
 
 void peanoclaw::State::increaseLocalHeightOfWorkerTree() {
+  #ifdef Parallel
   _stateData.setLocalHeightOfWorkerTree(_stateData.getLocalHeightOfWorkerTree() + 1);
+  #endif
 }
 
 void peanoclaw::State::updateLocalHeightOfWorkerTree(int localHeightOfWorkerTree) {
+  #ifdef Parallel
   _stateData.setLocalHeightOfWorkerTree(
     std::max(_stateData.getLocalHeightOfWorkerTree(), localHeightOfWorkerTree)
   );
+  #endif
 }
 
 int peanoclaw::State::getLocalHeightOfWorkerTree() const {
+  #ifdef Parallel
   return _stateData.getLocalHeightOfWorkerTree();
+  #else
+  return 0;
+  #endif
 }
 
 int peanoclaw::State::getGlobalHeightOfWorkerTreeDuringLastIteration() const {
+  #ifdef Parallel
   return _stateData.getGlobalHeightOfWorkerTreeDuringLastIteration();
+  #else
+  return 0;
+  #endif
 }

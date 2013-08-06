@@ -11,11 +11,13 @@
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/Vertex.h"
+
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/heap/Heap.h"
 #include "peano/grid/aspects/VertexStateAnalysis.h"
-
 #include "peano/utils/Loop.h"
+
+#include "tarch/multicore/Lock.h"
 
 tarch::logging::Log peanoclaw::interSubgridCommunication::GridLevelTransfer::_log("peanoclaw::interSubgridCommunication::GridLevelTransfer");
 
@@ -101,6 +103,8 @@ bool peanoclaw::interSubgridCommunication::GridLevelTransfer::shouldBecomeVirtua
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::switchToAndAddVirtualSubgrid(
   Patch& subgrid
 ) {
+  tarch::multicore::Lock lock(_virtualPatchListSemaphore);
+
   //Push virtual stack
   _virtualPatchDescriptionIndices.push_back(subgrid.getCellDescriptionIndex());
   _virtualPatchTimeConstraints.push_back(subgrid.getMinimalNeighborTimeConstraint());
@@ -129,6 +133,8 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::switchToAndAddVirt
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToAllVirtualSubgrids(
   const Patch& fineSubgrid
 ) {
+  tarch::multicore::Lock lock(_virtualPatchListSemaphore);
+
   //Restrict to all
   for(int i = 0;  i < (int)_virtualPatchDescriptionIndices.size(); i++) {
     int virtualSubgridDescriptionIndex = _virtualPatchDescriptionIndices[i];
@@ -169,6 +175,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSub
   const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
   bool                                 isPeanoCellLeaf
 ) {
+  tarch::multicore::Lock lock(_virtualPatchListSemaphore);
   assertion1(_virtualPatchDescriptionIndices.size() > 0, subgrid.toString());
 
   int virtualPatchDescriptionIndex = _virtualPatchDescriptionIndices[_virtualPatchDescriptionIndices.size()-1];
@@ -226,6 +233,7 @@ peanoclaw::interSubgridCommunication::GridLevelTransfer::GridLevelTransfer(
 }
 
 peanoclaw::interSubgridCommunication::GridLevelTransfer::~GridLevelTransfer() {
+  tarch::multicore::Lock lock(_virtualPatchListSemaphore);
   assertion1(_virtualPatchDescriptionIndices.empty(), _virtualPatchDescriptionIndices.size());
 
   logDebug("~GridLevelTransfer", "Maximum number of simultaneously held virtual patches: " << _maximumNumberOfSimultaneousVirtualPatches);

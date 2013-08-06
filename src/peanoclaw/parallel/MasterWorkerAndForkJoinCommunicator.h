@@ -116,7 +116,7 @@ class peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator {
       peanoclaw::Cell&                      localCell,
       const peanoclaw::Cell&                remoteCell,
       tarch::la::Vector<DIMENSIONS, double> cellSize,
-      peanoclaw::State&                     state
+      const peanoclaw::State&               state
     );
 
     /**

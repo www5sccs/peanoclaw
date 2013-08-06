@@ -152,8 +152,9 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringFo
   peanoclaw::Cell&                      localCell,
   const peanoclaw::Cell&                remoteCell,
   tarch::la::Vector<DIMENSIONS, double> cellSize,
-  peanoclaw::State&                     state
+  const peanoclaw::State&               state
 ) {
+  #ifdef Parallel
   if(localCell.isInside() && !remoteCell.isAssignedToRemoteRank()) {
     if(localCell.isRemote(state, false, false)) {
       if(tarch::parallel::NodePool::getInstance().getMasterRank() != 0) {
@@ -205,12 +206,14 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringFo
       assertionEquals1(localPatch.getLevel(), _level, localPatch);
     }
   }
+  #endif
 }
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeWorkerStateIntoMasterState(
   const peanoclaw::State&          workerState,
   peanoclaw::State&                masterState
 ) {
+  #ifdef Parallel
   masterState.updateGlobalTimeIntervals(
         workerState.getStartMaximumGlobalTimeInterval(),
         workerState.getEndMaximumGlobalTimeInterval(),
@@ -226,4 +229,5 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeWorkerStateI
   masterState.setAllPatchesEvolvedToGlobalTimestep(allPatchesEvolvedToGlobalTimestep);
 
   masterState.updateLocalHeightOfWorkerTree(workerState.getLocalHeightOfWorkerTree());
+  #endif
 }

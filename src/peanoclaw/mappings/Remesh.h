@@ -88,7 +88,7 @@ class peanoclaw::mappings::Remesh {
 
     peanoclaw::statistics::ParallelStatistics _parallelStatistics;
 
-    peanoclaw::State* _state;
+    peanoclaw::State const* _state;
 
   public:
     /**
