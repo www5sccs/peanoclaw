@@ -5,32 +5,22 @@
  *      Author: kristof
  */
 
-#include <Python.h>
-//#include <numpy/arrayobject.h>
 #include "peanoclaw/native/SWEKernel.h"
-//#include "peanoclaw/pyclaw/PyClaw.h"
-//#include "peanoclaw/pyclaw/PyClawState.h"
 #include "peanoclaw/Patch.h"
 #include "tarch/timing/Watch.h"
 #include "tarch/parallel/Node.h"
 
 #include "peanoclaw/native/SWE_WavePropagationBlock_patch.hh"
 
-tarch::logging::Log peanoclaw::native::SWEKernel::_log("peanoclaw::pyclaw::SWEKernel");
+tarch::logging::Log peanoclaw::native::SWEKernel::_log("peanoclaw::native::SWEKernel");
 
 peanoclaw::native::SWEKernel::SWEKernel(
-  /*InitializationCallback         initializationCallback,
-  BoundaryConditionCallback      boundaryConditionCallback,
-  SolverCallback                 solverCallback,
-  AddPatchToSolutionCallback     addPatchToSolutionCallback,*/
+  SWEKernelScenario& scenario,
   peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
   peanoclaw::interSubgridCommunication::Restriction*    restriction,
   peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
 ) : Numerics(interpolation, restriction, fluxCorrection),
-/*_initializationCallback(initializationCallback),
-_boundaryConditionCallback(boundaryConditionCallback),
-_solverCallback(solverCallback),
-_addPatchToSolutionCallback(addPatchToSolutionCallback),*/
+_scenario(scenario),
 _totalSolverCallbackTime(0.0)
 {
   //import_array();
@@ -41,122 +31,13 @@ peanoclaw::native::SWEKernel::~SWEKernel()
 }
 
 
-double compute_demandedMeshWidth(peanoclaw::Patch& patch) {
-    double max_gradient = 0.0;
-    const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
-    
-    tarch::la::Vector<DIMENSIONS, int> this_subcellIndex;
-    tarch::la::Vector<DIMENSIONS, int> next_subcellIndex_x;
-    tarch::la::Vector<DIMENSIONS, int> next_subcellIndex_y;
-    for (int yi = 0; yi < patch.getSubdivisionFactor()(1)-1; yi++) {
-        for (int xi = 0; xi < patch.getSubdivisionFactor()(0)-1; xi++) {
-            this_subcellIndex(0) = xi;
-            this_subcellIndex(1) = yi;
-  
-            next_subcellIndex_x(0) = xi+1;
-            next_subcellIndex_x(1) = yi;
-  
-            next_subcellIndex_y(0) = xi;
-            next_subcellIndex_y(1) = yi+1;
- 
-            double q0 =  patch.getValueUNew(this_subcellIndex, 0);
-            double q0_x =  (patch.getValueUNew(next_subcellIndex_x, 0) - q0) / meshWidth(0);
-            double q0_y =  (patch.getValueUNew(next_subcellIndex_y, 0) - q0) / meshWidth(1);
-
-            max_gradient = fmax(max_gradient, q0_x);
-            max_gradient = fmax(max_gradient, q0_y);
-        }
-    }
-  
-    double demandedMeshWidth = 0;
-    if (max_gradient > 0.05) {
-        demandedMeshWidth = 1.0/243;
-        //demandedMeshWidth = 1.0/81;
-    } else {
-        demandedMeshWidth = 1.0/81;
-    }
-
-    return demandedMeshWidth;
-}
-
 double peanoclaw::native::SWEKernel::initializePatch(
   Patch& patch
 ) {
   logTraceIn( "initializePatch(...)");
 
-#if 0
-  peanoclaw::pyclaw::PyClawState state(patch);
-
-  double demandedMeshWidth = _initializationCallback(
-    state._q,
-    state._qbc,
-    state._aux,
-    patch.getSubdivisionFactor()(0),
-    patch.getSubdivisionFactor()(1),
-    #ifdef Dim3
-    patch.getSubdivisionFactor()(2),
-    #else
-      0,
-    #endif
-    patch.getUnknownsPerSubcell(),
-    patch.getAuxiliarFieldsPerSubcell(),
-    patch.getSize()(0),
-    patch.getSize()(1),
-    #ifdef Dim3
-    patch.getSize()(2),
-    #else
-      0,
-    #endif
-    patch.getPosition()(0),
-    patch.getPosition()(1),
-    #ifdef Dim3
-    patch.getPosition()(2)
-    #else
-      0
-    #endif
-  );
-
-#else
-    // dam coordinates
-    double x0=0.5;
-    double y0=0.5;
-    
-    // Riemann states of the dam break problem
-    double radDam = 0.5;
-    double hl = 2.;
-    double ul = 0.;
-    double vl = 0.;
-    double hr = 1.;
-    double ur = 0.;
-    double vr = 0.;
-    
-    // compute from mesh data
-    const tarch::la::Vector<DIMENSIONS, double> patchSize = patch.getSize();
-    const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
-    const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
-
-    tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-    for (int yi = 0; yi < patch.getSubdivisionFactor()(1); yi++) {
-        for (int xi = 0; xi < patch.getSubdivisionFactor()(0); xi++) {
-            subcellIndex(0) = xi;
-            subcellIndex(1) = yi;
- 
-            double X = patchPosition(0) + xi*meshWidth(0);
-            double Y = patchPosition(1) + yi*meshWidth(1);
- 
-            double r = sqrt((X-x0)*(X-x0) + (Y-y0)*(Y-y0));
-            double q0 = hl*(r<=radDam) + hr*(r>radDam);
-            double q1 = hl*ul*(r<=radDam) + hr*ur*(r>radDam);
-            double q2 = hl*vl*(r<=radDam) + hr*vr*(r>radDam);
-  
-            patch.setValueUNew(subcellIndex, 0, q0);
-            patch.setValueUNew(subcellIndex, 1, q1);
-            patch.setValueUNew(subcellIndex, 2, q2);
-        }
-    }
-
-    double demandedMeshWidth = compute_demandedMeshWidth(patch);
-#endif
+  _scenario.initializePatch(patch);
+  double demandedMeshWidth = _scenario.computeDemandedMeshWidth(patch);
 
   logTraceOutWith1Argument( "initializePatch(...)", demandedMeshWidth);
   return demandedMeshWidth;
@@ -198,36 +79,10 @@ double peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumT
   patch.setEstimatedNextTimestepSize(estimatedNextTimestepSize);
 
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
-  return compute_demandedMeshWidth(patch);
+  return _scenario.computeDemandedMeshWidth(patch);
 }
 
 void peanoclaw::native::SWEKernel::addPatchToSolution(Patch& patch) {
-
-#if 0
-    peanoclaw::pyclaw::PyClawState state(patch);
-
-  assertion(_addPatchToSolutionCallback != 0);
-  _addPatchToSolutionCallback(
-    state._q,
-    state._qbc,
-    patch.getGhostLayerWidth(),
-    patch.getSize()(0),
-    patch.getSize()(1),
-    #ifdef Dim3
-    patch.getSize()(2),
-    #else
-    0,
-    #endif
-    patch.getPosition()(0),
-    patch.getPosition()(1),
-    #ifdef Dim3
-    patch.getPosition()(2),
-    #else
-    0,
-    #endif
-    patch.getCurrentTime()+patch.getTimestepSize()
-  );
-#endif
 }
 
 void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension, bool setUpper) const {
@@ -235,12 +90,6 @@ void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension
 
   logDebug("fillBoundaryLayerInPyClaw", "Setting left boundary for " << patch.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);
 
-#if 0
-  peanoclaw::pyclaw::PyClawState state(patch);
-
-  _boundaryConditionCallback(state._q, state._qbc, dimension, setUpper ? 1 : 0);
-    
-#else 
    //std::cout << "------ setUpper " << setUpper << " dimension " << dimension << std::endl;
    //std::cout << patch << std::endl;
    //std::cout << "++++++" << std::endl;
@@ -297,7 +146,6 @@ void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension
    //std::cout << "++++++" << std::endl;
    //std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
    //std::cout << "||||||" << std::endl;
-#endif
 
       logTraceOut("fillBoundaryLayerInPyClaw");
     }

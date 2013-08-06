@@ -25,6 +25,7 @@
 namespace peanoclaw {
   namespace native {
     class SWEKernel;
+    class SWEKernelScenario;
   }
 } /* namespace peanoclaw */
 
@@ -46,12 +47,10 @@ private:
 
   double _totalSolverCallbackTime;
 
+  SWEKernelScenario& _scenario;
 public:
   SWEKernel(
-    /*InitializationCallback   initializationCallback,
-    BoundaryConditionCallback      boundaryConditionCallback,
-    SolverCallback                 solverCallback,
-    AddPatchToSolutionCallback     addPatchToSolutionCallback,*/
+    SWEKernelScenario& scenario,
     peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
     peanoclaw::interSubgridCommunication::Restriction*    restriction,
     peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
@@ -171,4 +170,14 @@ public:
 //#endif
 
 };
-#endif /* PEANOCLAW_PYCLAW_PYCLAW_H_ */
+
+class peanoclaw::native::SWEKernelScenario {
+    public:
+        virtual ~SWEKernelScenario() {}
+        virtual void initializePatch(Patch& patch) = 0;
+        virtual double computeDemandedMeshWidth(Patch& patch) = 0;
+    protected:
+        SWEKernelScenario() {}
+};
+
+#endif /* PEANOCLAW_SWEKERNEL_NATIVE_H_ */

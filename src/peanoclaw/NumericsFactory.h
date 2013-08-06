@@ -10,6 +10,10 @@
 
 #include "peanoclaw/pyclaw/PyClawCallbacks.h"
 
+#if defined(SWE)
+    #include "peanoclaw/native/SWEKernel.h" 
+#endif
+
 #include "tarch/logging/Log.h"
 
 namespace peanoclaw {
@@ -43,15 +47,11 @@ class peanoclaw::NumericsFactory {
       InterPatchCommunicationCallback fluxCorrectionCallback
     );
 
+#if defined(SWE)
     peanoclaw::Numerics* createSWENumerics(
-      /*InitializationCallback initializationCallback,
-      BoundaryConditionCallback boundaryConditionCallback,
-      SolverCallback solverCallback,
-      AddPatchToSolutionCallback addPatchToSolutionCallback,
-      InterPatchCommunicationCallback interpolationCallback,
-      InterPatchCommunicationCallback restrictionCallback,
-      InterPatchCommunicationCallback fluxCorrectionCallback*/
+      peanoclaw::native::SWEKernelScenario& scenario
     );
+#endif
     /**
      * Creates a new Numerics object on the heap that provides
      * native functionality.

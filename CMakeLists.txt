@@ -1,5 +1,14 @@
 find_package(PythonLibs)
 
+set (PEANOCLAW_PYCLAW_SOURCES
+    src/peanoclaw/pyclaw/PyClaw.cpp
+    src/peanoclaw/pyclaw/PyClawState.cpp
+    src/peanoclaw/pyclaw/pyclawBindings.cpp
+    src/peanoclaw/pyclaw/FluxCorrectionCallbackWrapper.cpp
+    src/peanoclaw/pyclaw/InterpolationCallbackWrapper.cpp
+    src/peanoclaw/pyclaw/RestrictionCallbackWrapper.cpp
+)
+
 set(PEANOCLAW_SOURCES
     src/peanoclaw/Area.cpp
     src/peanoclaw/Cell.cpp
@@ -9,13 +18,6 @@ set(PEANOCLAW_SOURCES
     src/peanoclaw/Vertex.cpp
     src/peanoclaw/Numerics.cpp
     src/peanoclaw/NumericsFactory.cpp
-
-    src/peanoclaw/pyclaw/PyClaw.cpp
-    src/peanoclaw/pyclaw/PyClawState.cpp
-    src/peanoclaw/pyclaw/pyclawBindings.cpp
-    src/peanoclaw/pyclaw/FluxCorrectionCallbackWrapper.cpp
-    src/peanoclaw/pyclaw/InterpolationCallbackWrapper.cpp
-    src/peanoclaw/pyclaw/RestrictionCallbackWrapper.cpp
 
     src/peanoclaw/interSubgridCommunication/GhostLayerCompositor.cpp
     src/peanoclaw/interSubgridCommunication/DefaultRestriction.cpp
@@ -93,6 +95,7 @@ set(PEANOCLAW_SOURCES
     PQi/CxxSocketTests/components/java/de/tum/QueryCxx2SocketPlainPort.cpp
 )
 
+execute_process ( COMMAND python -c "from numpy import get_include; print get_include()" OUTPUT_VARIABLE NUMPY_INCLUDE_DIR OUTPUT_STRIP_TRAILING_WHITESPACE )
 
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -100,16 +103,20 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/PQi/src
         ${CMAKE_CURRENT_SOURCE_DIR}/PQi/CxxSocketTests/components/java
         ${PYTHON_INCLUDE_DIRS}
-        /home/hpc/pr63so/di72bap/mytools-amd/lib/python2.7/site-packages/numpy/core/include # numpy.get_include()
+        ${NUMPY_INCLUDE_DIR}
 )
 
-add_definitions(-DWAVE_PROPAGATION_SOLVER=1)
+add_definitions(-DSWE -DWAVE_PROPAGATION_SOLVER=1) # TODO: 4 was slow, why?
 add_definitions(-std=c++0x)
 
-add_library (peanoclaw SHARED ${PEANOCLAW_SOURCES})
+add_library (peanoclaw SHARED ${PEANOCLAW_SOURCES} ${PEANOCLAW_PYCLAW_SOURCES})
+add_library (peanoclaw_static STATIC ${PEANOCLAW_SOURCES} ${PEANOCLAW_PYCLAW_SOURCES})
 
 target_link_libraries (peanoclaw peano_shared peano_tarch_shared ${PYTHON_LIBRARIES} ${TBB_LINK_FLAGS} -lrt)
+target_link_libraries (peanoclaw_static peano_static peano_tarch_static ${PYTHON_LIBRARIES} ${TBB_LINK_FLAGS} -lrt)
+
+
 SET_TARGET_PROPERTIES(peanoclaw PROPERTIES LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
 
 add_executable (peanoclaw_run src/peanoclaw/main.cpp)
-target_link_libraries (peanoclaw_run peanoclaw)
+target_link_libraries (peanoclaw_run peanoclaw_static)

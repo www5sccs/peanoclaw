@@ -12,7 +12,6 @@
 #include "peanoclaw/pyclaw/RestrictionCallbackWrapper.h"
 #include "peanoclaw/pyclaw/FluxCorrectionCallbackWrapper.h"
 #include "peanoclaw/Numerics.h"
-#include "peanoclaw/native/SWEKernel.h"
 
 #include "peanoclaw/interSubgridCommunication/Interpolation.h"
 #include "peanoclaw/interSubgridCommunication/DefaultInterpolation.h"
@@ -74,14 +73,9 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
   );
 }
 
+#if defined(SWE)
 peanoclaw::Numerics* peanoclaw::NumericsFactory::createSWENumerics(
-  /*InitializationCallback initializationCallback,
-  BoundaryConditionCallback boundaryConditionCallback,
-  SolverCallback solverCallback,
-  AddPatchToSolutionCallback addPatchToSolutionCallback,
-  InterPatchCommunicationCallback interpolationCallback,
-  InterPatchCommunicationCallback restrictionCallback,
-  InterPatchCommunicationCallback fluxCorrectionCallback*/
+  peanoclaw::native::SWEKernelScenario& scenario
 ) {
 
   //Interpolation Callback
@@ -97,16 +91,13 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createSWENumerics(
   fluxCorrection = new peanoclaw::interSubgridCommunication::DefaultFluxCorrection();
 
   return new peanoclaw::native::SWEKernel(
-    /*initializationCallback,
-    boundaryConditionCallback,
-    solverCallback,
-    addPatchToSolutionCallback,*/
+    scenario,
     interpolation,
     restriction,
     fluxCorrection
   );
 }
-
+#endif
 
 peanoclaw::Numerics* peanoclaw::NumericsFactory::createNativeNumerics() {
   return new peanoclaw::native::NativeKernel;
