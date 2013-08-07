@@ -6,7 +6,8 @@
 #include "tarch/parallel/Node.h"
 #include "tarch/parallel/NodePool.h"
 #endif
-
+#include "queries/records/Answer.h"
+#include "peano/heap/Heap.h"
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
@@ -293,7 +294,22 @@ void peanoclaw::mappings::Query::prepareSendToMaster(
   const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
 ) {
   logTraceInWith2Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString() );
-  // @todo Insert your code here
+  for(int i=0;i<queries::QueryServer::getInstance().getNumberOfPendingQueries();i++)
+  {
+	 
+	
+	if(
+		coarseGridVerticesEnumerator.getLevel()>=1 &&
+		!queries::QueryServer::getInstance().holdsFullQuery(i,verticesEnumerator.getCellCenter(),verticesEnumerator.getCellSize())&&
+		queries::QueryServer::getInstance().intersectsWithQuery(i,verticesEnumerator.getCellCenter(),verticesEnumerator.getCellSize())
+	){
+		queries::QueryServer::getInstance().swapBuffers(i);
+		
+		queries::QueryServer::getInstance().sendData(i,verticesEnumerator.getCellCenter(),verticesEnumerator.getLevel());
+		
+  	}
+	
+   }
   logTraceOut( "prepareSendToMaster(...)" );
 }
 
@@ -314,7 +330,20 @@ void peanoclaw::mappings::Query::mergeWithMaster(
   peanoclaw::State&                masterState
 ) {
   logTraceIn( "mergeWithMaster(...)" );
-  // @todo Insert your code here
+  for(int i=0;i<queries::QueryServer::getInstance().getNumberOfPendingQueries();i++)
+  if(
+	coarseGridVerticesEnumerator.getLevel()>=1 &&
+	queries::QueryServer::getInstance().intersectsWithQuery(
+		i,
+		workerEnumerator.getCellCenter(),
+		workerEnumerator.getCellSize())
+	)
+  {
+	queries::QueryServer::getInstance().receiveData(i,workerEnumerator.getCellCenter(),workerEnumerator.getLevel(),worker);
+	if(coarseGridVerticesEnumerator.getLevel()==1)
+		queries::QueryServer::getInstance().fireAnswers(i);  	
+  }
+  //queries::QueryServer::getInstance().commitQueries();	
   logTraceOut( "mergeWithMaster(...)" );
 }
 
@@ -403,7 +432,7 @@ void peanoclaw::mappings::Query::enterCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-  std::cout<<"Rank:"<<tarch::parallel::Node::getInstance().getRank()<<" queries:"<<queries::QueryServer::getInstance().getNumberOfPendingQueries()<<std::endl;
+  
   logTraceOutWith1Argument( "enterCell(...)", fineGridCell );
 }
 
@@ -424,16 +453,25 @@ void peanoclaw::mappings::Query::leaveCell(
       && !fineGridCell.isAssignedToRemoteRank()
       #endif
     ) {
-      Patch patch(
-        fineGridCell
-      );
-      double localGap = 0;
-      tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize() / (1.0 + localGap);
-	
-      dfor(subcellIndex, patch.getSubdivisionFactor()) {
-    	tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition()  + tarch::la::multiplyComponents(subcellIndex.convertScalar<double>(), subcellSize);
-      //_patchPlotter->plotPatch(patch, fineGridVertices, fineGridVerticesEnumerator);
-      
+      for(int i=0;i<queries::QueryServer::getInstance().getNumberOfPendingQueries();i++){
+        
+	      Patch patch(
+		fineGridCell
+	      );
+	      double localGap = 0;
+	      tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize();
+			
+	      dfor(subcellIndex, patch.getSubdivisionFactor()) {
+	    	tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition()  + tarch::la::multiplyComponents(subcellIndex.convertScalar<double>(), subcellSize);
+		if(queries::QueryServer::getInstance().intersectsWithQuery(i,x,subcellSize))
+			queries::QueryServer::getInstance().setData(
+							i,							
+							x,
+							subcellSize,
+							patch.getValueUNew(subcellIndex, 0));  
+	      //_patchPlotter->plotPatch(patch, fineGridVertices, fineGridVerticesEnumerator);
+	      
+	      }
       }
     }
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
@@ -444,7 +482,8 @@ void peanoclaw::mappings::Query::beginIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
-  //_heapId=peano::heap::Heap<queries::records::Answer>::getInstance().createData(); 
+  peano::heap::Heap<queries::records::Answer>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
+
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
 
@@ -453,7 +492,7 @@ void peanoclaw::mappings::Query::endIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
-  queries::QueryServer::getInstance().commitQueries();
+  peano::heap::Heap<queries::records::Answer>::getInstance().finishedToSendOrReceiveHeapData();
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }
 

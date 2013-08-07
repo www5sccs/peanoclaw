@@ -212,8 +212,24 @@ void peanoclaw::runners::PeanoClawLibraryRunner::sync(){
 		
 		int *mids=new int[parts];
 		queries::records::HeapQuery q;
-		_queryServer->getQueryDescription(&q.getOffset()[0],2,&q.getSize()[0],2,&q.getDimenions()[0],2,mids,1);
-		
+		double offset[2];
+		double size[2];
+		int dim[2];		
+		_queryServer->getQueryDescription(offset,2,size,2,dim,2,mids,1);
+		tarch::la::Vector<3,double> la_offset;
+		tarch::la::Vector<3,double> la_size;
+		tarch::la::Vector<3,int> la_dim;
+				
+		la_offset[0]=offset[0];
+		la_offset[1]=offset[1];
+		la_size[0] = size[0];
+		la_size[1] = size[1];
+		la_dim[0] = dim[0];
+		la_dim[1] = dim[1];
+		q.setOffset(la_offset);
+		q.setSize(la_size);		
+		q.setDimenions(la_dim);
+		std::cout<<"received q:"<<q.getOffset()<<","<<q.getSize()<<std::endl;
 				
 		
 		queries::QueryServer::getInstance().addQuery(q);
@@ -233,6 +249,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   _repository->getState().setGlobalTimestepEndTime(time);
   _repository->getState().setNumerics(_numerics);
   _repository->getState().setPlotNumber(_plotNumber);
+  int c=0;
   do {
     logInfo("evolveToTime", "Solving timestep " << (_plotNumber-1) << " with maximum global time interval ("
         << _repository->getState().getStartMaximumGlobalTimeInterval() << ", " << _repository->getState().getEndMaximumGlobalTimeInterval() << ")"
@@ -261,8 +278,9 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
         _repository->switchToSolveTimestep();
       }
       _repository->iterate();
-      if(tarch::parallel::Node::getInstance().isGlobalMaster())      
+      if(tarch::parallel::Node::getInstance().isGlobalMaster()&&c==0)      
       sync();
+      c++;
       _repository->switchToQuery();
       _repository->iterate();
       	

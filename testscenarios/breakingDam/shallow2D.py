@@ -79,12 +79,12 @@ def refinement_criterion_time_dependent(state):
         or distance_to_circle2 < (dimension_x.upper - dimension_x.lower) / 2
         or distance_to_circle3 < (dimension_x.upper - dimension_x.lower) / 2
         ):
-        return 1.0/(6.0*27.0)
+        return 1.0/(6.0*81.0)
     elif (distance_to_circle1 > (dimension_x.upper - dimension_x.lower) * 1.5 
         and distance_to_circle2 > (dimension_x.upper - dimension_x.lower) * 1.5
         and distance_to_circle3 > (dimension_x.upper - dimension_x.lower) * 1.5
         ):
-        return 1.0/(6.0*9.0)
+        return 1.0/(6.0*27.0)
     else:
         return dimension_x.delta
 
@@ -125,7 +125,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     mgrid = 6
 
     # number of initial AMR grids in each dimension
-    msubgrid = 9
+    msubgrid = 27
 
     if amr_type is not None:
         m = mgrid
