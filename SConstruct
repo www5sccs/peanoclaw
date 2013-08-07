@@ -540,9 +540,7 @@ sourcesPeanoClaw = [
   Glob(join(buildpath, 'peanoclaw/interSubgridCommunication/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/interSubgridCommunication/aspects/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/mappings/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/native/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/parallel/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/pyclaw/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/records/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/repositories/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/runners/*.cpp')),
@@ -552,11 +550,16 @@ sourcesPeanoClaw = [
 
 ##### Define sources of application peanoclaw
 if solver == 'swe':
-  sourcesSWE = [
+  sourcesSolver = [
+    Glob(join(buildpath, 'peanoclaw/native/*.cpp')),
     #Glob(join(buildpath, '..', swePath, './blocks/*.cpp'))            
     Glob(join(buildpath, './peanoclaw/native/SWE/src/blocks/*.cpp'))
     ]
-  sourcesPeanoClaw.extend(sourcesSWE)
+elif solver == 'pyclaw':
+  sourcesSolver = [
+     Glob(join(buildpath, 'peanoclaw/pyclaw/*.cpp'))
+     ]
+sourcesPeanoClaw.extend(sourcesSolver)
 
 ################################################################################
 

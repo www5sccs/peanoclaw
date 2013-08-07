@@ -6,7 +6,6 @@
  */
 #include "peanoclaw/NumericsFactory.h"
 
-#include "peanoclaw/native/NativeKernel.h"
 #include "peanoclaw/pyclaw/PyClaw.h"
 #include "peanoclaw/pyclaw/InterpolationCallbackWrapper.h"
 #include "peanoclaw/pyclaw/RestrictionCallbackWrapper.h"
@@ -99,9 +98,9 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createSWENumerics(
 }
 #endif
 
-peanoclaw::Numerics* peanoclaw::NumericsFactory::createNativeNumerics() {
-  return new peanoclaw::native::NativeKernel;
-}
+//peanoclaw::Numerics* peanoclaw::NumericsFactory::createNativeNumerics() {
+//  return new peanoclaw::native::NativeKernel;
+//}
 
 
 

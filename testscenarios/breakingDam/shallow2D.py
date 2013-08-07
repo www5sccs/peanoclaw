@@ -24,16 +24,6 @@ def qinit(state,hl,ul,vl,hr,ur,vr,radDam):
     state.q[1,:,:] = hl*ul*(r<=radDam) + hr*ur*(r>radDam)
     state.q[2,:,:] = hl*vl*(r<=radDam) + hr*vr*(r>radDam)
     
-#     for x in xrange(6):
-#       for y in xrange(6):
-#         state.q[0, x, y] = x + y*100 + 1
-    
-def refinement_criterion_tmp(state):
-    if((state.q[0,:,:].max() - state.q[0,:,:].min()) > 0.2):
-        return 1.0/(4.0*81.0)
-    else:
-        return 1.0/(6.0*9.0)
-      
 def refinement_criterion(state):
     center_x = 0.5
     center_y = 0.5
@@ -79,7 +69,7 @@ def refinement_criterion_time_dependent(state):
         or distance_to_circle2 < (dimension_x.upper - dimension_x.lower) / 2
         or distance_to_circle3 < (dimension_x.upper - dimension_x.lower) / 2
         ):
-        return 1.0/(6.0*27.0)
+        return 1.0/(6.0*81.0)
     elif (distance_to_circle1 > (dimension_x.upper - dimension_x.lower) * 1.5 
         and distance_to_circle2 > (dimension_x.upper - dimension_x.lower) * 1.5
         and distance_to_circle3 > (dimension_x.upper - dimension_x.lower) * 1.5
@@ -88,7 +78,19 @@ def refinement_criterion_time_dependent(state):
     else:
         return dimension_x.delta
 
-
+def refinement_criterion_gradient(state):
+  import numpy
+  dimension_x = state.patch.dimensions[0]
+  dimension_y = state.patch.dimensions[1]
+  #max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:], dimension_x.delta, dimension_y.delta)))
+  max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:])))
+  
+  if max_gradient > 0.03:
+      return 1.0/(6.0*81.0)
+  elif max_gradient < 0.05:
+      return 1.0/(6.0*9.0)
+  else:
+      return dimension_x.delta
     
 def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_type='classic',amr_type=None):
     #===========================================================================
@@ -174,7 +176,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 1e-1 #0.03
+    claw.tfinal = 3e-1 #3e-1 #0.03
 
     if amr_type is not None:        
         if amr_type == 'peano':
@@ -182,8 +184,9 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
             claw.solver = amrclaw.Solver(solver
                                         ,1/(mgrid*msubgrid)
                                         ,qinit_callback
-                                        ,refinement_criterion=refinement_criterion_time_dependent
+                                        #,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
+                                        ,refinement_criterion=refinement_criterion_gradient
                                         )
             claw.solution = amrclaw.Solution(state, domain)
         else:
@@ -199,22 +202,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     claw.output_format = None
     claw.outdir = None
 
-    claw.num_output_times = 100
-
-    #===========================================================================
-    # Solve the problem
-    #===========================================================================
-
-    if amr_type == 'peano':
-        claw.run_prepare()
-        print 'running on rank: ', claw.solver.peano.rank
-        if claw.solver.peano.rank == 0:
-            status = claw.runMaster()
-        else:
-            status = claw.solver.peano.runWorker()
-    else:
-        claw.run()
-    
+    claw.num_output_times = 50
 
     #===========================================================================
     # Plot results

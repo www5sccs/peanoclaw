@@ -56,8 +56,8 @@ class peanoclaw::NumericsFactory {
      * Creates a new Numerics object on the heap that provides
      * native functionality.
      */
-    peanoclaw::Numerics* createNativeNumerics(
-    );
+//    peanoclaw::Numerics* createNativeNumerics(
+//    );
 };
 
 #endif /* NUMERICSFACTORY_H_ */
