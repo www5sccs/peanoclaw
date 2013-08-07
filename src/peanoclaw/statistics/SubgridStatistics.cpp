@@ -60,7 +60,6 @@ void peanoclaw::statistics::SubgridStatistics::addSubgridToLevelStatistics(
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics()
 : _levelStatisticsIndex(peano::heap::Heap<LevelStatistics>::getInstance().createData(0)),
   _levelStatistics(&peano::heap::Heap<LevelStatistics>::getInstance().getData(_levelStatisticsIndex)),
-//  _levelStatistics(&_dummyVector),
   _minimalPatchIndex(-1),
   _minimalPatchParentIndex(-1),
   _minimalPatchTime(std::numeric_limits<double>::max()),
@@ -69,7 +68,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics()
   _startMinimumLocalTimeInterval(-std::numeric_limits<double>::max()),
   _endMinimumLocalTimeInterval(std::numeric_limits<double>::max()),
   _minimalTimestep(std::numeric_limits<double>::max()),
-  _allPatchesEvolvedToGlobalTimestep(-1.0),
+  _allPatchesEvolvedToGlobalTimestep(true),
   _averageGlobalTimeInterval(0.0),
   _globalTimestepEndTime(-1.0),
   _isFinalized(false) {
@@ -78,7 +77,6 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics()
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics(const peanoclaw::State& state)
  : _levelStatisticsIndex(peano::heap::Heap<LevelStatistics>::getInstance().createData(0)),
    _levelStatistics(&peano::heap::Heap<LevelStatistics>::getInstance().getData(_levelStatisticsIndex)),
-   //_levelStatistics(&_dummyVector),
    _minimalPatchIndex(-1),
    _minimalPatchParentIndex(-1),
    _minimalPatchTime(std::numeric_limits<double>::max()),
@@ -104,11 +102,10 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(std::vector<LevelSta
    _startMinimumLocalTimeInterval(-std::numeric_limits<double>::max()),
    _endMinimumLocalTimeInterval(std::numeric_limits<double>::max()),
    _minimalTimestep(std::numeric_limits<double>::max()),
-   _allPatchesEvolvedToGlobalTimestep(false),
+   _allPatchesEvolvedToGlobalTimestep(true),
    _averageGlobalTimeInterval(0.0),
    _globalTimestepEndTime(0.0),
    _isFinalized(false) {
-//  std::copy(levelStatistics.begin(), levelStatistics.end(), _levelStatistics->begin());
   for(std::vector<LevelStatistics>::iterator i = levelStatistics.begin(); i != levelStatistics.end(); i++) {
     _levelStatistics->push_back(*i);
   }
@@ -289,7 +286,7 @@ void peanoclaw::statistics::SubgridStatistics::merge(const SubgridStatistics& su
 }
 
 void peanoclaw::statistics::SubgridStatistics::averageTotalSimulationValues(int numberOfEntries) {
-  for(int i = 0; i < _levelStatistics->size(); i++) {
+  for(int i = 0; i < (int)_levelStatistics->size(); i++) {
     LevelStatistics& level = _levelStatistics->at(i);
     level.setArea(level.getArea() / numberOfEntries);
     level.setNumberOfCells(level.getNumberOfCells() / numberOfEntries);
