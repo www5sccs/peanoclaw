@@ -13,17 +13,104 @@
 
 #include <list>
 
+#include "peanoclaw/Patch.h"
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/NumericsFactory.h"
 #include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 #include "tarch/tests/TestCaseRegistry.h"
 
+#include "peanoclaw/native/SWEKernel.h"
+
 #if USE_VALGRIND
 #include <callgrind.h>
 #endif
 
-#define SWE
+#if defined(SWE)
+class BreakingDam_SWEKernelScenario : public peanoclaw::native::SWEKernelScenario {
+    public:
+        BreakingDam_SWEKernelScenario() {}
+        ~BreakingDam_SWEKernelScenario() {}
+
+        virtual void initializePatch(peanoclaw::Patch& patch) {
+            // dam coordinates
+            double x0=0.5;
+            double y0=0.5;
+            
+            // Riemann states of the dam break problem
+            double radDam = 0.1;
+            double hl = 2.;
+            double ul = 0.;
+            double vl = 0.;
+            double hr = 1.;
+            double ur = 0.;
+            double vr = 0.;
+            
+            // compute from mesh data
+            const tarch::la::Vector<DIMENSIONS, double> patchSize = patch.getSize();
+            const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
+            const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
+
+            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+            for (int yi = 0; yi < patch.getSubdivisionFactor()(1); yi++) {
+                for (int xi = 0; xi < patch.getSubdivisionFactor()(0); xi++) {
+                    subcellIndex(0) = xi;
+                    subcellIndex(1) = yi;
+         
+                    double X = patchPosition(0) + xi*meshWidth(0);
+                    double Y = patchPosition(1) + yi*meshWidth(1);
+         
+                    double r = sqrt((X-x0)*(X-x0) + (Y-y0)*(Y-y0));
+                    double q0 = hl*(r<=radDam) + hr*(r>radDam);
+                    double q1 = hl*ul*(r<=radDam) + hr*ur*(r>radDam);
+                    double q2 = hl*vl*(r<=radDam) + hr*vr*(r>radDam);
+          
+                    patch.setValueUNew(subcellIndex, 0, q0);
+                    patch.setValueUNew(subcellIndex, 1, q1);
+                    patch.setValueUNew(subcellIndex, 2, q2);
+                }
+            }
+        }
+
+        virtual double computeDemandedMeshWidth(peanoclaw::Patch& patch) {
+            double max_gradient = 0.0;
+            const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
+            
+            tarch::la::Vector<DIMENSIONS, int> this_subcellIndex;
+            tarch::la::Vector<DIMENSIONS, int> next_subcellIndex_x;
+            tarch::la::Vector<DIMENSIONS, int> next_subcellIndex_y;
+            for (int yi = 0; yi < patch.getSubdivisionFactor()(1)-1; yi++) {
+                for (int xi = 0; xi < patch.getSubdivisionFactor()(0)-1; xi++) {
+                    this_subcellIndex(0) = xi;
+                    this_subcellIndex(1) = yi;
+          
+                    next_subcellIndex_x(0) = xi+1;
+                    next_subcellIndex_x(1) = yi;
+          
+                    next_subcellIndex_y(0) = xi;
+                    next_subcellIndex_y(1) = yi+1;
+         
+                    double q0 =  patch.getValueUNew(this_subcellIndex, 0);
+                    double q0_x =  (patch.getValueUNew(next_subcellIndex_x, 0) - q0) / meshWidth(0);
+                    double q0_y =  (patch.getValueUNew(next_subcellIndex_y, 0) - q0) / meshWidth(1);
+
+                    max_gradient = fmax(max_gradient, q0_x);
+                    max_gradient = fmax(max_gradient, q0_y);
+                }
+            }
+          
+            double demandedMeshWidth = 0;
+            if (max_gradient > 0.05) {
+                //demandedMeshWidth = 1.0/243;
+                demandedMeshWidth = 1.0/81;
+            } else {
+                demandedMeshWidth = 1.0/81;
+            }
+
+            return demandedMeshWidth;
+        }
+};
+#endif
 
 static peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid* _configuration;
 
@@ -100,17 +187,10 @@ int main(int argc, char **argv) {
   peanoclaw::NumericsFactory numericsFactory;
 
 #if defined(SWE)
-  peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics();
+  BreakingDam_SWEKernelScenario scenario;
+  peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(scenario);
 #else
-  peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
-    initializationCallback,
-    boundaryConditionCallback,
-    solverCallback,
-    addPatchToSolutionCallback,
-    interpolationCallback,
-    restrictionCallback,
-    fluxCorrectionCallback
-  );
+    #warning no suitable numerics implemtation selected
 #endif
 
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
@@ -122,7 +202,7 @@ int main(int argc, char **argv) {
   tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(0.05);
   tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(9);
   int ghostlayerWidth = 1;
-  int unknownsPerSubcell = 40;
+  int unknownsPerSubcell = 3;
   int auxiliarFieldsPerSubcell = 0;
   int initialTimestepSize = 0.1;
   bool useDimensionalSplittingOptimization = true;
@@ -161,8 +241,8 @@ int main(int argc, char **argv) {
   assertion(runner != 0);
  
   // run experiment
-  double timestep = 0.05;
-  double endtime = 0.5;
+  double timestep = 0.005;
+  double endtime = 2.0;
 #if defined(Parallel)
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
 #endif

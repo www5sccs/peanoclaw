@@ -85,7 +85,7 @@ double peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumT
 void peanoclaw::native::SWEKernel::addPatchToSolution(Patch& patch) {
 }
 
-void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension, bool setUpper) const {
+void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension, bool setUpper) {
   logTraceInWith3Arguments("fillBoundaryLayerInPyClaw", patch, dimension, setUpper);
 
   logDebug("fillBoundaryLayerInPyClaw", "Setting left boundary for " << patch.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);

@@ -120,7 +120,7 @@ public:
   /**
    * @see peanoclaw::Numerics
    */
-  void fillBoundaryLayer(Patch& patch, int dimension, bool setUpper) const;
+  void fillBoundaryLayer(Patch& patch, int dimension, bool setUpper);
 
 //#ifdef Dim2
 //  /**
