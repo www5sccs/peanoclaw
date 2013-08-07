@@ -73,6 +73,32 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
   );
 }
 
+#if defined(SWE)
+peanoclaw::Numerics* peanoclaw::NumericsFactory::createSWENumerics(
+  peanoclaw::native::SWEKernelScenario& scenario
+) {
+
+  //Interpolation Callback
+  peanoclaw::interSubgridCommunication::Interpolation* interpolation;
+  interpolation = new peanoclaw::interSubgridCommunication::DefaultInterpolation();
+
+  //Restriction Callback
+  peanoclaw::interSubgridCommunication::Restriction* restriction;
+  restriction = new peanoclaw::interSubgridCommunication::DefaultRestriction();
+
+  //Flux Correction Callback
+  peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection;
+  fluxCorrection = new peanoclaw::interSubgridCommunication::DefaultFluxCorrection();
+
+  return new peanoclaw::native::SWEKernel(
+    scenario,
+    interpolation,
+    restriction,
+    fluxCorrection
+  );
+}
+#endif
+
 peanoclaw::Numerics* peanoclaw::NumericsFactory::createNativeNumerics() {
   return new peanoclaw::native::NativeKernel;
 }

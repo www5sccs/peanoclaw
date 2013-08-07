@@ -8,8 +8,12 @@
 #ifndef PEANOCLAW_PARALLEL_NEIGHBOURCOMMUNICATOR_H_
 #define PEANOCLAW_PARALLEL_NEIGHBOURCOMMUNICATOR_H_
 
+#include "peanoclaw/Vertex.h"
+#include "peanoclaw/statistics/ParallelStatistics.h"
+
 #include "peano/heap/Heap.h"
 #include "peano/utils/Dimensions.h"
+
 #include "tarch/la/Vector.h"
 #include "tarch/logging/Log.h"
 
@@ -42,13 +46,14 @@ class peanoclaw::parallel::NeighbourCommunicator {
     /**
      * Logging device.
      */
-    static tarch::logging::Log _log;
+    static tarch::logging::Log                 _log;
 
-    int _remoteRank;
-    tarch::la::Vector<DIMENSIONS,double> _position;
-    int _level;
-    peano::heap::Heap<CellDescription>& _cellDescriptionHeap;
-    peano::heap::Heap<Data>& _dataHeap;
+    int                                        _remoteRank;
+    tarch::la::Vector<DIMENSIONS,double>       _position;
+    int                                        _level;
+    peano::heap::Heap<CellDescription>&        _cellDescriptionHeap;
+    peano::heap::Heap<Data>&                   _dataHeap;
+    peanoclaw::statistics::ParallelStatistics& _statistics;
 
     void sendCellDescription(int cellDescriptionIndex);
 
@@ -77,23 +82,6 @@ class peanoclaw::parallel::NeighbourCommunicator {
      */
     int receiveDataArray();
 
-  public:
-    NeighbourCommunicator(
-      int remoteRank,
-      const tarch::la::Vector<DIMENSIONS,double> position,
-      int level
-    );
-
-    /**
-     * Sends all necessary information for a patch defined by its
-     * cell description index.
-     */
-    void sendPatch(
-      int cellDescriptionIndex
-    );
-
-    void sendPaddingPatch();
-
     /**
      * Receives all necessary information for a patch defined
      * by its cell description index.
@@ -107,6 +95,46 @@ class peanoclaw::parallel::NeighbourCommunicator {
     );
 
     void receivePaddingPatch();
+
+  public:
+    NeighbourCommunicator(
+      int remoteRank,
+      const tarch::la::Vector<DIMENSIONS,double> position,
+      int level,
+      peanoclaw::statistics::ParallelStatistics& statistics
+    );
+
+    /**
+     * Sends all necessary information for a patch defined by its
+     * cell description index.
+     */
+    void sendPatch(
+      int cellDescriptionIndex
+    );
+
+    void sendPaddingPatch();
+
+    /**
+     * Send all required adjacent subgrids for a vertex.
+     */
+    void sendSubgridsForVertex(
+      peanoclaw::Vertex&                           vertex,
+      const tarch::la::Vector<DIMENSIONS, double>& vertexPosition,
+      const tarch::la::Vector<DIMENSIONS, double>& adjacentSubgridSize,
+      int                                          level
+    );
+
+    /**
+     * Receives the subgrids adjacent to a vertex that is merged
+     * from a neighbor.
+     */
+    void receiveSubgridsForVertex(
+      peanoclaw::Vertex&                           localVertex,
+      const peanoclaw::Vertex&                     remoteVertex,
+      const tarch::la::Vector<DIMENSIONS, double>& vertexPosition,
+      const tarch::la::Vector<DIMENSIONS, double>& adjacentSubgridSize,
+      int                                          level
+    );
 };
 
 #endif /* PEANOCLAW_PARALLEL_NEIGHBOURCOMMUNICATOR_H_ */

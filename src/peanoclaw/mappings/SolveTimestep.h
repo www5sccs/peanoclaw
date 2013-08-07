@@ -15,7 +15,7 @@
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/State.h"
-#include "peanoclaw/statistics/LevelInformation.h"
+#include "peanoclaw/statistics/LevelStatistics.h"
 #include "peanoclaw/statistics/SubgridStatistics.h"
 
 namespace peanoclaw {
@@ -53,8 +53,6 @@ class peanoclaw::mappings::SolveTimestep {
 
     tarch::la::Vector<DIMENSIONS, double> _domainSize;
 
-    std::vector<peanoclaw::statistics::LevelInformation> _levelStatistics;
-
     peanoclaw::statistics::SubgridStatistics _subgridStatistics;
 
     tarch::la::Vector<DIMENSIONS, double> _initialMinimalMeshWidth;
@@ -70,8 +68,7 @@ class peanoclaw::mappings::SolveTimestep {
       const peanoclaw::Patch&                  patch,
       double                                   maximumTimestepDueToGlobalTimestep,
       peanoclaw::Vertex * const                coarseGridVertices,
-      const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator,
-      peanoclaw::statistics::LevelInformation& levelInformation
+      const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator
     );
 
     /**

@@ -4,14 +4,15 @@
  *  Created on: Feb 15, 2012
  *      Author: Kristof Unterweger
  */
-
 #include "peanoclaw/tests/PatchTest.h"
 
+#include "peanoclaw/ParallelSubgrid.h"
+#include "peanoclaw/Patch.h"
+#include "peanoclaw/Vertex.h"
 #include "peanoclaw/tests/Helper.h"
+#include "peanoclaw/tests/TestVertexEnumerator.h"
 
 #include "peano/utils/Globals.h"
-
-#include "peanoclaw/Patch.h"
 
 #include "tarch/tests/TestCaseFactory.h"
 registerTest(peanoclaw::tests::PatchTest)
@@ -39,7 +40,9 @@ void peanoclaw::tests::PatchTest::run() {
   testMethod( testFillingOfUNewArray );
   testMethod( testFillingOfUOldArray );
   testMethod( testInvalidPatch );
-  testMethod(testCoarsePatchTimeInterval);
+  testMethod( testCoarsePatchTimeInterval );
+  testMethod( testCountingOfAdjacentParallelSubgrids );
+  testMethod( testCountingOfAdjacentParallelSubgridsFourNeighboringRanks );
 }
 
 void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
@@ -205,6 +208,78 @@ void peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
   //Check
   validateNumericalEquals(coarsePatch.getCurrentTime(), 2.5);
   validateNumericalEquals(coarsePatch.getTimestepSize(), 0.2);
+}
+
+void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
+  #ifdef Parallel
+  Vertex vertices[TWO_POWER_D];
+  TestVertexEnumerator enumerator(1.0);
+
+  vertices[0].setAdjacentRank(0, 0);
+  vertices[0].setAdjacentRank(1, 0);
+  vertices[0].setAdjacentRank(2, 0);
+  vertices[0].setAdjacentRank(3, 0);
+
+  vertices[1].setAdjacentRank(0, 0);
+  vertices[1].setAdjacentRank(1, 0);
+  vertices[1].setAdjacentRank(2, 0);
+  vertices[1].setAdjacentRank(3, 0);
+
+  vertices[2].setAdjacentRank(0, 0);
+  vertices[2].setAdjacentRank(1, 0);
+  vertices[2].setAdjacentRank(2, 1);
+  vertices[2].setAdjacentRank(3, 1);
+
+  vertices[3].setAdjacentRank(0, 0);
+  vertices[3].setAdjacentRank(1, 0);
+  vertices[3].setAdjacentRank(2, 1);
+  vertices[3].setAdjacentRank(3, 1);
+
+  peanoclaw::records::CellDescription cellDescription;
+
+  //Test
+  peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
+  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag(vertices, enumerator);
+
+  validateEquals(parallelSubgrid.getAdjacentRank(), 1);
+  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), 2);
+  #endif
+}
+
+void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeighboringRanks() {
+  #ifdef Parallel
+  Vertex vertices[TWO_POWER_D];
+  TestVertexEnumerator enumerator(1.0);
+
+  vertices[0].setAdjacentRank(0, 3);
+  vertices[0].setAdjacentRank(1, 3);
+  vertices[0].setAdjacentRank(2, 4);
+  vertices[0].setAdjacentRank(3, 0);
+
+  vertices[1].setAdjacentRank(0, 3);
+  vertices[1].setAdjacentRank(1, 3);
+  vertices[1].setAdjacentRank(2, 0);
+  vertices[1].setAdjacentRank(3, 2);
+
+  vertices[2].setAdjacentRank(0, 4);
+  vertices[2].setAdjacentRank(1, 0);
+  vertices[2].setAdjacentRank(2, 1);
+  vertices[2].setAdjacentRank(3, 1);
+
+  vertices[3].setAdjacentRank(0, 0);
+  vertices[3].setAdjacentRank(1, 2);
+  vertices[3].setAdjacentRank(2, 1);
+  vertices[3].setAdjacentRank(3, 1);
+
+  peanoclaw::records::CellDescription cellDescription;
+
+  //Test
+  peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
+  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag(vertices, enumerator);
+
+  validateEquals(parallelSubgrid.getAdjacentRank(), -1);
+  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), -1);
+  #endif
 }
 
 #ifdef UseTestSpecificCompilerSettings

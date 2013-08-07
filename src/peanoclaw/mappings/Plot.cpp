@@ -80,7 +80,9 @@ peanoclaw::mappings::Plot::~Plot() {
 
 
 #if defined(SharedMemoryParallelisation)
-peanoclaw::mappings::Plot::Plot(const Plot&  masterThread) {
+peanoclaw::mappings::Plot::Plot(const Plot&  masterThread)
+ : _patchPlotter(masterThread._patchPlotter)
+{
   logTraceIn( "Plot(Plot)" );
   // @todo Insert your code here
   logTraceOut( "Plot(Plot)" );

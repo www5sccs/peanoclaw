@@ -205,7 +205,15 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Solve the problem
     #===========================================================================
 
-    
+    if amr_type == 'peano':
+        claw.run_prepare()
+        print 'running on rank: ', claw.solver.peano.rank
+        if claw.solver.peano.rank == 0:
+            status = claw.runMaster()
+        else:
+            status = claw.solver.peano.runWorker()
+    else:
+        claw.run()
     
 
     #===========================================================================

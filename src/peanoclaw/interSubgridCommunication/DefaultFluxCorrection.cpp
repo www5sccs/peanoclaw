@@ -61,7 +61,7 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
   tarch::la::Vector<DIMENSIONS, int> searchArea = tarch::la::Vector<DIMENSIONS, int>(2);
   searchArea(dimension) = 1;
 
-  logDebug("applyCoarseGridCorrection", "face=" << face << ", offset=" << offset << ", searchArea=" << searchArea);
+  logDebug("applyFluxCorrection", "face=" << face << ", offset=" << offset << ", searchArea=" << searchArea);
 
   tarch::la::Vector<DIMENSIONS, double> fineSubcellSize = finePatch.getSubcellSize();
   tarch::la::Vector<DIMENSIONS, double> coarseSubcellSize = coarsePatch.getSubcellSize();
@@ -81,12 +81,12 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
     tarch::la::Vector<DIMENSIONS, int> neighboringSubcellIndexInCoarsePatch =
         (tarch::la::multiplyComponents((neighboringSubcellPositionInCoarsePatch.convertScalar<double>() -coarsePatch.getPosition()), tarch::la::invertEntries(coarseSubcellSize))).convertScalar<int>();
 
-    logDebug("applyCoarseGridCorrection", "Correcting from cell " << subcellIndexInFinePatch);
+    logDebug("applyFluxCorrection", "Correcting from cell " << subcellIndexInFinePatch);
 
     dfor(neighborOffset, searchArea) {
       tarch::la::Vector<DIMENSIONS, int> adjacentSubcellIndexInCoarsePatch = neighboringSubcellIndexInCoarsePatch + neighborOffset;
 
-      logDebug("applyCoarseGridCorrection", "Correcting cell " << adjacentSubcellIndexInCoarsePatch);
+      logDebug("applyFluxCorrection", "Correcting cell " << adjacentSubcellIndexInCoarsePatch);
 
       if(
           !tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(0), adjacentSubcellIndexInCoarsePatch)
@@ -115,7 +115,7 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
         //        double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / coarseSubcellSize(dimension) / refinementFactor;
         double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / refinementFactor;
 
-        logDebug("applyCoarseGridCorrection", "Correcting neighbor cell " << adjacentSubcellIndexInCoarsePatch << " from cell " << subcellIndexInFinePatch << " with interfaceArea=" << interfaceArea << std::endl
+        logDebug("applyFluxCorrection", "Correcting neighbor cell " << adjacentSubcellIndexInCoarsePatch << " from cell " << subcellIndexInFinePatch << " with interfaceArea=" << interfaceArea << std::endl
             << "\tu0=" << finePatch.getValueUNew(subcellIndexInFinePatch, 0) << " u1=" << finePatch.getValueUNew(subcellIndexInFinePatch, 1) << " u2=" << finePatch.getValueUNew(subcellIndexInFinePatch, 2) << std::endl
             << "\tfineGridFlux=" << fineGridFlux << std::endl
             << "\tcoarseGridFlux=" << coarseGridFlux << std::endl
@@ -124,8 +124,6 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
             << "\tdelta=" << delta << std::endl
             << "\told u=" << coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) << std::endl
             << "\tnew u=" << coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta);
-
-        //        assertion(tarch::la::greater(coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta, 0.0));
 
         //Scaled down due to inaccuracy
         coarsePatch.setValueUNew(adjacentSubcellIndexInCoarsePatch, 0,

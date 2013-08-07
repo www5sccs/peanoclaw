@@ -42,7 +42,7 @@ class peanoclaw::native::NativeKernel : public peanoclaw::Numerics {
       Patch& patch,
       int dimension,
       bool setUpper
-    ) const;
+    );
 
     /**
      * @see peanoclaw::Numerics

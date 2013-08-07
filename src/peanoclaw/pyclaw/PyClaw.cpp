@@ -10,8 +10,10 @@
 #include "peanoclaw/pyclaw/PyClaw.h"
 #include "peanoclaw/pyclaw/PyClawState.h"
 #include "peanoclaw/Patch.h"
+
 #include "tarch/timing/Watch.h"
 #include "tarch/parallel/Node.h"
+#include "tarch/multicore/Lock.h"
 
 tarch::logging::Log peanoclaw::pyclaw::PyClaw::_log("peanoclaw::pyclaw::PyClaw");
 
@@ -42,6 +44,8 @@ double peanoclaw::pyclaw::PyClaw::initializePatch(
   Patch& patch
 ) {
   logTraceIn( "initializePatch(...)");
+
+  tarch::multicore::Lock lock(_semaphore);
 
   PyClawState state(patch);
   double demandedMeshWidth = _initializationCallback(
@@ -79,6 +83,8 @@ double peanoclaw::pyclaw::PyClaw::initializePatch(
 
 double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
+
+  tarch::multicore::Lock lock(_semaphore);
 
   assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getMinimalNeighborTimeConstraint());
 
@@ -145,6 +151,8 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
 
 void peanoclaw::pyclaw::PyClaw::addPatchToSolution(Patch& patch) {
 
+  tarch::multicore::Lock lock(_semaphore);
+
   PyClawState state(patch);
 
   assertion(_addPatchToSolutionCallback != 0);
@@ -170,8 +178,10 @@ void peanoclaw::pyclaw::PyClaw::addPatchToSolution(Patch& patch) {
   );
 }
 
-void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, bool setUpper) const {
+void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, bool setUpper) {
   logTraceInWith3Arguments("fillBoundaryLayerInPyClaw", patch, dimension, setUpper);
+
+  tarch::multicore::Lock lock(_semaphore);
 
   logDebug("fillBoundaryLayerInPyClaw", "Setting left boundary for " << patch.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);
 

@@ -77,6 +77,41 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
      */
     void testCoarsePatchTimeInterval();
 
+    /**
+     * Tests the counting of adjacent subgrids that reside on different ranks.
+     *
+     * For this test four vertices with the following adjacency information are created:
+     *  1   1   1   1
+     *   v2      v3
+     *  0   0   0   0
+     *
+     *  0   0   0   0
+     *   v0      v1
+     *  0   0   0   0
+     *
+     *  Therefore, there is one neighboring rank and two vertices that are shared between
+     *  the local and the neighboring rank.
+     */
+    void testCountingOfAdjacentParallelSubgrids();
+
+    /**
+     * Tests the counting of adjacent subgrids that reside on different ranks
+     * where more than one ranks are neighboring.
+     *
+     * For this test four vertices with the following adjacency information are created:
+     *  1   1   1   1
+     *   v2      v3
+     *  4   0   0   2
+     *
+     *  4   0   0   2
+     *   v0      v1
+     *  3   3   3   3
+     *
+     *  Therefore, there are four neighboring ranks. I.e. the number of shared vertices
+     *  can't be counted.
+     */
+    void testCountingOfAdjacentParallelSubgridsFourNeighboringRanks();
+
 
   public:
     PatchTest();

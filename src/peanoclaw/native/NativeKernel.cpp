@@ -33,7 +33,7 @@ void peanoclaw::native::NativeKernel::fillBoundaryLayer(
   Patch& patch,
   int dimension,
   bool setUpper
-) const {
+) {
 }
 
 double peanoclaw::native::NativeKernel::solveTimestep(

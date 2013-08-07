@@ -10,8 +10,10 @@
 
 #include "Numerics.h"
 
-#include "statistics/LevelInformation.h"
+#include "peanoclaw/statistics/LevelStatistics.h"
 #include "statistics/Probe.h"
+
+#include <list>
 
 namespace peanoclaw { 
       class State;
@@ -43,6 +45,7 @@ namespace peanoclaw {
 class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > { 
   private: 
     typedef class peano::grid::State< peanoclaw::records::State >  Base;
+    typedef peanoclaw::statistics::LevelStatistics LevelStatistics;
 
     /**
      * Needed for checkpointing.
@@ -53,18 +56,17 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
     void writeToCheckpoint( peano::grid::Checkpoint<Vertex,Cell>&  checkpoint ) const;    
     void readFromCheckpoint( const peano::grid::Checkpoint<Vertex,Cell>&  checkpoint );    
   
-  /**
-   * Logging device.
-   */
-  static tarch::logging::Log _log;
+    /**
+     * Logging device.
+     */
+    static tarch::logging::Log _log;
 
-  Numerics* _numerics;
+    Numerics* _numerics;
 
-  std::vector<peanoclaw::statistics::Probe> _probeList;
+    std::vector<peanoclaw::statistics::Probe> _probeList;
 
-  std::vector<peanoclaw::statistics::LevelInformation> _levelStatisticsForLastGridIteration;
-  std::vector<peanoclaw::statistics::LevelInformation> _totalLevelStatistics;
-
+    std::vector<LevelStatistics>              _levelStatisticsForLastGridIteration;
+    std::list< std::vector<LevelStatistics> > _levelStatisticsHistory;
 
   public:
     /**
@@ -206,7 +208,12 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
       /**
        * Sets the level statistics for the last grid iteration.
        */
-      void setLevelStatisticsForLastGridIteration(const std::vector<peanoclaw::statistics::LevelInformation>& levelStatistics);
+      void setLevelStatisticsForLastGridIteration(const std::vector<LevelStatistics>& levelStatistics);
+
+      /**
+       * Returns the history of LevelStatistics over all iterations.
+       */
+      std::list<std::vector<LevelStatistics> > getLevelStatisticsHistory() const;
 
       /**
        * Plots grid statistics for the last grid iteration

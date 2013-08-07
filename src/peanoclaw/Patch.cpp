@@ -77,6 +77,7 @@ void peanoclaw::Patch::fillCaches() {
     stride *= subdivisionFactor(d - 1) + 2 * ghostlayerWidth;
   }
   uOldStrideCache[0] = stride;
+  _uOldWithGhostlayerArrayIndex = tarch::la::volume(subdivisionFactor) * _cellDescription->getUnknownsPerSubcell();
 
   //UNew
   stride = 1;
@@ -85,6 +86,11 @@ void peanoclaw::Patch::fillCaches() {
     stride *= subdivisionFactor(d - 1);
   }
   uNewStrideCache[0] = stride;
+
+  //Aux
+  tarch::la::Vector<DIMENSIONS, int> ghostlayer = tarch::la::Vector<DIMENSIONS, int>(2*ghostlayerWidth);
+  _auxArrayIndex = _uOldWithGhostlayerArrayIndex
+      + tarch::la::volume(_cellDescription->getSubdivisionFactor() + ghostlayer) * _cellDescription->getUnknownsPerSubcell();
 
   //Precompute subcell size
   for (int d = 0; d < DIMENSIONS; d++) {
@@ -112,7 +118,7 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(const Area& area,
 }
 
 peanoclaw::Patch::Patch() :
-    _cellDescription(0), _uNew(0), _uOldWithGhostlayer(0), _auxArray(0) {
+    _cellDescription(0), _uNew(0)/*, _uOldWithGhostlayer(0), _auxArray(0)*/, _uOldWithGhostlayerArrayIndex(-1), _auxArrayIndex(-1) {
 }
 
 peanoclaw::Patch::Patch(const Cell& cell) :
@@ -181,9 +187,9 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setSkipGridIterations(0);
   cellDescription.setDemandedMeshWidth(size(0) / subdivisionFactor(0) * 3.0);
   cellDescription.setAgeInGridIterations(0);
-  cellDescription.setUOldIndex(-1);
+//  cellDescription.setUOldIndex(-1);
   cellDescription.setUNewIndex(-1);
-  cellDescription.setAuxIndex(-1);
+//  cellDescription.setAuxIndex(-1);
   cellDescription.setRestrictionLowerBounds(std::numeric_limits<double>::max());
   cellDescription.setRestrictionUpperBounds(
       -std::numeric_limits<double>::max());
@@ -213,14 +219,14 @@ void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
       cellDescriptionIndex).at(0);
 
   //Retrieve patch data
-  assertion2(
-      (_cellDescription->getUNewIndex() == -1
-          && _cellDescription->getUOldIndex() == -1)
-          || (_cellDescription->getUNewIndex() != -1
-              && _cellDescription->getUOldIndex() != -1)
-          || (_cellDescription->getUNewIndex() != -1
-              && _cellDescription->getUOldIndex() == -1),
-      _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex());
+//  assertion2(
+//      (_cellDescription->getUNewIndex() == -1
+//          && _cellDescription->getUOldIndex() == -1)
+//          || (_cellDescription->getUNewIndex() != -1
+//              && _cellDescription->getUOldIndex() != -1)
+//          || (_cellDescription->getUNewIndex() != -1
+//              && _cellDescription->getUOldIndex() == -1),
+//      _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex());
   if (_cellDescription->getUNewIndex() != -1) {
     _uNew = &peano::heap::Heap<Data>::getInstance().getData(
         _cellDescription->getUNewIndex());
@@ -228,19 +234,19 @@ void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
     _uNew = 0;
   }
 
-  if (_cellDescription->getUOldIndex() != -1) {
-    _uOldWithGhostlayer = &peano::heap::Heap<Data>::getInstance().getData(
-        _cellDescription->getUOldIndex());
-  } else {
-    _uOldWithGhostlayer = 0;
-  }
-
-  if (_cellDescription->getAuxIndex() != -1) {
-    _auxArray = &peano::heap::Heap<Data>::getInstance().getData(
-        _cellDescription->getAuxIndex());
-  } else {
-    _auxArray = 0;
-  }
+//  if (_cellDescription->getUOldIndex() != -1) {
+//    _uOldWithGhostlayer = &peano::heap::Heap<Data>::getInstance().getData(
+//        _cellDescription->getUOldIndex());
+//  } else {
+//    _uOldWithGhostlayer = 0;
+//  }
+//
+//  if (_cellDescription->getAuxIndex() != -1) {
+//    _auxArray = &peano::heap::Heap<Data>::getInstance().getData(
+//        _cellDescription->getAuxIndex());
+//  } else {
+//    _auxArray = 0;
+//  }
 }
 
 void peanoclaw::Patch::reloadCellDescription() {
@@ -255,16 +261,16 @@ void peanoclaw::Patch::deleteData() {
     _cellDescription->setUNewIndex(-1);
     _uNew = 0;
   }
-  if(_cellDescription->getUOldIndex() != -1) {
-    peano::heap::Heap<Data>::getInstance().deleteData(_cellDescription->getUOldIndex());
-    _cellDescription->setUOldIndex(-1);
-    _uOldWithGhostlayer = 0;
-  }
-  if(_cellDescription->getAuxIndex() != -1) {
-    peano::heap::Heap<Data>::getInstance().deleteData(_cellDescription->getAuxIndex());
-    _cellDescription->setAuxIndex(-1);
-    _auxArray = 0;
-  }
+//  if(_cellDescription->getUOldIndex() != -1) {
+//    peano::heap::Heap<Data>::getInstance().deleteData(_cellDescription->getUOldIndex());
+//    _cellDescription->setUOldIndex(-1);
+//    _uOldWithGhostlayer = 0;
+//  }
+//  if(_cellDescription->getAuxIndex() != -1) {
+//    peano::heap::Heap<Data>::getInstance().deleteData(_cellDescription->getAuxIndex());
+//    _cellDescription->setAuxIndex(-1);
+//    _auxArray = 0;
+//  }
   peano::heap::Heap<CellDescription>::getInstance().deleteData(_cellDescription->getCellDescriptionIndex());
   _cellDescription = 0;
 
@@ -461,8 +467,8 @@ bool peanoclaw::Patch::willCoarsen() {
 
 void peanoclaw::Patch::switchValuesAndTimeIntervalToMinimalFineGridTimeInterval() {
   //TODO unterweg restricting to interval [0, 1]
-  double time = 0.0; //_cellDescription->getTime();
-  double timestepSize = 1.0; //_cellDescription->getTimestepSize();
+//  double time = 0.0; //_cellDescription->getTime();
+//  double timestepSize = 1.0; //_cellDescription->getTimestepSize();
 
   _cellDescription->setTime(_cellDescription->getMaximumFineGridTime());
   _cellDescription->setTimestepSize(
@@ -579,11 +585,11 @@ double peanoclaw::Patch::getValueUOld(tarch::la::Vector<DIMENSIONS, int> subcell
   assertion1(isLeaf() || isVirtual(), toString());
   int index = linearizeWithGhostlayer(unknown, subcellIndex);
   assertion4(index >= 0, index, subcellIndex, unknown, toString());
-  assertion5(index < static_cast<int>(_uOldWithGhostlayer->size()), index, subcellIndex, unknown, static_cast<int>(_uOldWithGhostlayer->size()), toString());
+  assertion5(index < _auxArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, auxArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
 #ifdef PATCH_DISABLE_RANGE_CHECK
-  return (*_uOldWithGhostlayer)[index].getU();
+  return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
 #else
-  return _uOldWithGhostlayer->at(index).getU();
+  return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
 #endif
 }
 #endif
@@ -626,9 +632,9 @@ void peanoclaw::Patch::setValueUNew(int linearIndex, int unknown, double value) 
 double peanoclaw::Patch::getValueUOld(int linearIndex, int unknown) const {
   int index = linearIndex + uOldStrideCache[0] * unknown;
 #ifdef PATCH_DISABLE_RANGE_CHECK
-  return (*_uOldWithGhostlayer)[index].getU();
+  return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
 #else
-  return _uOldWithGhostlayer->at(index).getU();
+  return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
 #endif
 }
 #endif
@@ -637,9 +643,9 @@ double peanoclaw::Patch::getValueUOld(int linearIndex, int unknown) const {
 void peanoclaw::Patch::setValueUOld(int linearIndex, int unknown, double value) {
   int index = linearIndex + uOldStrideCache[0] * unknown;
 #ifdef PATCH_DISABLE_RANGE_CHECK
-  (*_uOldWithGhostlayer)[index].setU(value);
+  (*_uNew)[_uOldWithGhostlayerArrayIndex + index].setU(value);
 #else
-  _uOldWithGhostlayer->at(index).setU(value);
+  _uNew->at(_uOldWithGhostlayerArrayIndex + index).setU(value);
 #endif
 }
 #endif
@@ -649,9 +655,11 @@ double peanoclaw::Patch::getValueAux(
   assertion1(isLeaf() || isVirtual(), toString());
   int index = linearize(auxField, subcellIndex);
   assertion4(index >= 0, index, subcellIndex, auxField, toString());
-  assertion5(index < static_cast<int>(_auxArray->size()), index, subcellIndex,
-      auxField, static_cast<int>(_auxArray->size()), toString());
-  return _auxArray->at(index).getU();
+//  assertion5(index < static_cast<int>(_auxArray->size()), index, subcellIndex,
+//      auxField, static_cast<int>(_auxArray->size()), toString());
+  assertion6(_auxArrayIndex+index < static_cast<int>(_uNew->size()), _auxArrayIndex, index, subcellIndex,
+        auxField, static_cast<int>(_uNew->size()), toString());
+  return _uNew->at(_auxArrayIndex + index).getU();
 }
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellCenter(
@@ -710,24 +718,26 @@ double* peanoclaw::Patch::getUNewArray() const {
 }
 
 double* peanoclaw::Patch::getUOldWithGhostlayerArray() const {
-  return reinterpret_cast<double*>(&(_uOldWithGhostlayer->at(0)));
+  //return reinterpret_cast<double*>(&(_uOldWithGhostlayer->at(0)));
+  return reinterpret_cast<double*>(&(_uNew->at(_uOldWithGhostlayerArrayIndex)));
 }
 
 double* peanoclaw::Patch::getAuxArray() const {
-  return reinterpret_cast<double*>(&(_auxArray->at(0)));
+//  return reinterpret_cast<double*>(&(_auxArray->at(0)));
+  return reinterpret_cast<double*>(&(_uNew->at(_auxArrayIndex)));
 }
 
 int peanoclaw::Patch::getUNewIndex() const {
   return _cellDescription->getUNewIndex();
 }
 
-int peanoclaw::Patch::getUOldIndex() const {
-  return _cellDescription->getUOldIndex();
-}
-
-int peanoclaw::Patch::getAuxIndex() const {
-  return _cellDescription->getAuxIndex();
-}
+//int peanoclaw::Patch::getUOldIndex() const {
+//  return _cellDescription->getUOldIndex();
+//}
+//
+//int peanoclaw::Patch::getAuxIndex() const {
+//  return _cellDescription->getAuxIndex();
+//}
 
 int peanoclaw::Patch::getCellDescriptionIndex() const {
   return _cellDescription->getCellDescriptionIndex();
@@ -813,10 +823,13 @@ std::string peanoclaw::Patch::toString() const {
         << ",ghostlayerWidth=" << getGhostLayerWidth()
         << ",unknownsPerSubcell=" << _cellDescription->getUnknownsPerSubcell()
         << ",cellDescriptionIndex=" << getCellDescriptionIndex()
-        << ",uNewIndex=" << getUNewIndex() << ",uOldIndex=" << getUOldIndex()
-        << ",elements in uNew=" << ((_uNew == 0) ? 0 : (int) _uNew->size())
+        << ",uNewIndex=" << getUNewIndex()
+//        << ",uOldIndex=" << getUOldIndex()
+//        << ",elements in uNew=" << ((_uNew == 0) ? 0 : (int) _uNew->size())
+        << ",elements in uNew=" << ((_uNew == 0) ? 0 : _uOldWithGhostlayerArrayIndex)
         << ",elements in uOld="
-        << ((_uOldWithGhostlayer == 0) ? 0 : (int) _uOldWithGhostlayer->size())
+//        << ((_uOldWithGhostlayer == 0) ? 0 : (int) _uOldWithGhostlayer->size())
+        << ((_uNew == 0) ? 0 : (_auxArrayIndex - _uOldWithGhostlayerArrayIndex))
         << ",age=" << _cellDescription->getAgeInGridIterations()
         << ",currentTime=" << _cellDescription->getTime() << ",timestepSize="
         << _cellDescription->getTimestepSize()
@@ -860,18 +873,18 @@ bool peanoclaw::Patch::isLeaf() const {
         _uNew, _cellDescription->getUNewIndex());
   }
   return (_cellDescription != 0) && !_cellDescription->getIsVirtual()
-      && (_uNew != 0 && _uOldWithGhostlayer != 0);
+      && (_uNew != 0 /*&& _uOldWithGhostlayer != 0*/);
 }
 
 bool peanoclaw::Patch::isVirtual() const {
   if (_cellDescription == 0) {
     return false;
   }
-  assertion8(
+  assertion6(
       (!_cellDescription->getIsVirtual()
-          || (_uNew != 0 && _uOldWithGhostlayer != 0)), getPosition(),
-      getSize(), _cellDescription->getIsVirtual(), _uNew, _uOldWithGhostlayer,
-      _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex(),
+          || (_uNew != 0 /*&& _uOldWithGhostlayer != 0*/)), getPosition(),
+      getSize(), _cellDescription->getIsVirtual(), _uNew, /*_uOldWithGhostlayer,*/
+      _cellDescription->getUNewIndex(), /*_cellDescription->getUOldIndex(),*/
       _cellDescription->getCellDescriptionIndex());
   return _cellDescription->getIsVirtual();
 }
@@ -885,49 +898,59 @@ void peanoclaw::Patch::switchToVirtual() {
     _cellDescription->setUNewIndex(uNewIndex);
     std::vector<Data>& virtualUNew =
         peano::heap::Heap<Data>::getInstance().getData(uNewIndex);
+
     size_t uNewArraySize = tarch::la::volume(
         _cellDescription->getSubdivisionFactor())
         * _cellDescription->getUnknownsPerSubcell();
-    virtualUNew.resize(uNewArraySize, 0.0);
-    _uNew = &virtualUNew;
-  }
 
-  //Create uOld if necessary
-  if (_cellDescription->getUOldIndex() == -1) {
-    int uOldWithGhostlayerIndex =
-        peano::heap::Heap<Data>::getInstance().createData();
-    _cellDescription->setUOldIndex(uOldWithGhostlayerIndex);
-    std::vector<Data>& virtualUOldWithGhostlayer =
-        peano::heap::Heap<Data>::getInstance().getData(uOldWithGhostlayerIndex);
     size_t uOldWithGhostlayerArraySize = tarch::la::volume(
         _cellDescription->getSubdivisionFactor()
             + 2 * _cellDescription->getGhostLayerWidth())
         * _cellDescription->getUnknownsPerSubcell();
-    virtualUOldWithGhostlayer.resize(uOldWithGhostlayerArraySize, 0.0);
-    _uOldWithGhostlayer = &virtualUOldWithGhostlayer;
+
+    size_t auxArraySize = tarch::la::volume(
+        _cellDescription->getSubdivisionFactor())
+        * _cellDescription->getAuxiliarFieldsPerSubcell();
+
+    virtualUNew.resize(uNewArraySize + uOldWithGhostlayerArraySize + auxArraySize, 0.0);
+    _uNew = &virtualUNew;
   }
+
+  //Create uOld if necessary
+//  if (_cellDescription->getUOldIndex() == -1) {
+//    int uOldWithGhostlayerIndex =
+//        peano::heap::Heap<Data>::getInstance().createData();
+//    _cellDescription->setUOldIndex(uOldWithGhostlayerIndex);
+//    std::vector<Data>& virtualUOldWithGhostlayer =
+//        peano::heap::Heap<Data>::getInstance().getData(uOldWithGhostlayerIndex);
+//    size_t uOldWithGhostlayerArraySize = tarch::la::volume(
+//        _cellDescription->getSubdivisionFactor()
+//            + 2 * _cellDescription->getGhostLayerWidth())
+//        * _cellDescription->getUnknownsPerSubcell();
+//    virtualUOldWithGhostlayer.resize(uOldWithGhostlayerArraySize, 0.0);
+//    _uOldWithGhostlayer = &virtualUOldWithGhostlayer;
+//  }
 
   //Initialise aux array
-  if (_cellDescription->getAuxIndex() == -1) {
-    if (_cellDescription->getAuxiliarFieldsPerSubcell() > 0) {
-      _cellDescription->setAuxIndex(
-          peano::heap::Heap<Data>::getInstance().createData());
-      std::vector<Data>& auxArray =
-          peano::heap::Heap<Data>::getInstance().getData(
-              _cellDescription->getAuxIndex());
-      size_t auxArraySize = tarch::la::volume(
-          _cellDescription->getSubdivisionFactor())
-          * _cellDescription->getAuxiliarFieldsPerSubcell();
-      auxArray.resize(auxArraySize, -1.0);
-      _auxArray = &auxArray;
-    } else {
-      _cellDescription->setAuxIndex(-1);
-    }
-  }
+//  if (_cellDescription->getAuxIndex() == -1) {
+//    if (_cellDescription->getAuxiliarFieldsPerSubcell() > 0) {
+//      _cellDescription->setAuxIndex(
+//          peano::heap::Heap<Data>::getInstance().createData());
+//      std::vector<Data>& auxArray =
+//          peano::heap::Heap<Data>::getInstance().getData(
+//              _cellDescription->getAuxIndex());
+//      size_t auxArraySize = tarch::la::volume(
+//          _cellDescription->getSubdivisionFactor())
+//          * _cellDescription->getAuxiliarFieldsPerSubcell();
+//      auxArray.resize(auxArraySize, -1.0);
+//      _auxArray = &auxArray;
+//    } else {
+//      _cellDescription->setAuxIndex(-1);
+//    }
+//  }
 
   assertion1(_uNew != 0 && _cellDescription->getUNewIndex() != -1, toString());
-  assertion1(_uOldWithGhostlayer != 0 && _cellDescription->getUOldIndex() != -1,
-      toString());
+  //assertion1(_uOldWithGhostlayer != 0 && _cellDescription->getUOldIndex() != -1, toString());
 }
 
 void peanoclaw::Patch::switchToNonVirtual() {
@@ -939,21 +962,21 @@ void peanoclaw::Patch::switchToNonVirtual() {
     _uNew = 0;
   }
 
-  if (_cellDescription->getUOldIndex() != -1) {
-    peano::heap::Heap<Data>::getInstance().deleteData(getUOldIndex());
-    _cellDescription->setUOldIndex(-1);
-    _uOldWithGhostlayer = 0;
-  }
-
-  if (_cellDescription->getAuxIndex() != -1) {
-    peano::heap::Heap<Data>::getInstance().deleteData(getAuxIndex());
-    _cellDescription->setAuxIndex(-1);
-    _auxArray = 0;
-  }
+//  if (_cellDescription->getUOldIndex() != -1) {
+//    peano::heap::Heap<Data>::getInstance().deleteData(getUOldIndex());
+//    _cellDescription->setUOldIndex(-1);
+//    _uOldWithGhostlayer = 0;
+//  }
+//
+//  if (_cellDescription->getAuxIndex() != -1) {
+//    peano::heap::Heap<Data>::getInstance().deleteData(getAuxIndex());
+//    _cellDescription->setAuxIndex(-1);
+//    _auxArray = 0;
+//  }
 
   assertionEquals1(_uNew, 0, toString());
-  assertionEquals1(_uOldWithGhostlayer, 0, toString());
-  assertionEquals1(_auxArray, 0, toString());
+  //assertionEquals1(_uOldWithGhostlayer, 0, toString());
+  //assertionEquals1(_auxArray, 0, toString());
   assertion(!isLeaf() && !isVirtual());
 }
 
@@ -1085,17 +1108,6 @@ void peanoclaw::Patch::setIsRemote(bool isRemote) {
 
 bool peanoclaw::Patch::isRemote() const {
   return _cellDescription->getIsRemote();
-}
-
-void peanoclaw::Patch::markCurrentStateAsSent(bool wasSent) {
-  _cellDescription->setCurrentStateWasSend(wasSent);
-}
-
-/**
- * Returns whether this patch was sent to the neighbor ranks since the last time step.
- */
-bool peanoclaw::Patch::wasCurrentStateSent() const {
-  return _cellDescription->getCurrentStateWasSend();
 }
 #endif
 

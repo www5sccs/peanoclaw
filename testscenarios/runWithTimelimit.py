@@ -20,9 +20,13 @@ def time_limit(seconds):
     finally:
         signal.alarm(0)
 
-try:
-  import os
-  with time_limit(args.timeout):
-      os.system('python ' + args.script)
-except TimeoutException, msg:
-    print "Timed out!"
+def main():
+  try:
+    from subprocess import call
+    with time_limit(args.timeout):
+      return call('python ' + args.script, shell=True)
+  except TimeoutException, msg:
+      print "Timed out!"
+      
+if __name__=="__main__":
+  exit(main())
