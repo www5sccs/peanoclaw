@@ -21,6 +21,7 @@
 .settings/
 
 # PyClaw-specific files to ignore
+bin
 _output
 _plots
 petclaw.log
