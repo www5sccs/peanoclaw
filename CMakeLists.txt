@@ -18,6 +18,7 @@ set(PEANOCLAW_SOURCES
     src/peanoclaw/Vertex.cpp
     src/peanoclaw/Numerics.cpp
     src/peanoclaw/NumericsFactory.cpp
+    src/peanoclaw/ParallelSubgrid.cpp
 
     src/peanoclaw/interSubgridCommunication/GhostLayerCompositor.cpp
     src/peanoclaw/interSubgridCommunication/DefaultRestriction.cpp
@@ -67,10 +68,12 @@ set(PEANOCLAW_SOURCES
     #src/peanoclaw/tests/TestCase.cpp
 
     src/peanoclaw/statistics/LevelInformation.cpp
+    src/peanoclaw/statistics/LevelStatistics.cpp
     src/peanoclaw/statistics/Probe.cpp
     src/peanoclaw/statistics/PatchDescriptionDatabase.cpp
     src/peanoclaw/statistics/ParallelGridValidator.cpp
     src/peanoclaw/statistics/SubgridStatistics.cpp
+    src/peanoclaw/statistics/ParallelStatistics.cpp
 
     src/peanoclaw/parallel/MasterWorkerAndForkJoinCommunicator.cpp
     src/peanoclaw/parallel/NeighbourCommunicator.cpp
