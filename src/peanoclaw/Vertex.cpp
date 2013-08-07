@@ -8,8 +8,8 @@
 #include "interSubgridCommunication/GhostLayerCompositor.h"
 
 peanoclaw::Vertex::Vertex():
-  Base() { 
-  // @todo Insert your code here
+  Base() {
+  _vertexData.setIndicesOfAdjacentCellDescriptions(-1);
 }
 
 
@@ -25,6 +25,7 @@ peanoclaw::Vertex::Vertex(const Base::PersistentVertex& argument):
 }
 
 void peanoclaw::Vertex::setAdjacentCellDescriptionIndex(int cellIndex, int cellDescriptionIndex) {
+//  assertion1(isBoundary() || cellDescriptionIndex != -1, toString());
   _vertexData.setIndicesOfAdjacentCellDescriptions(cellIndex, cellDescriptionIndex);
 }
 

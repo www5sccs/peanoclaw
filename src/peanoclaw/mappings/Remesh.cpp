@@ -162,6 +162,9 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "destroyHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
+
+  //TODO unterweg debug
+  logInfo("", "Destroying hanging vertex: " << fineGridVertex);
  
   //Handle refinement flags
   if(tarch::la::allGreater(fineGridX, _domainOffset) && tarch::la::allGreater(_domainOffset + _domainSize, fineGridX)) {
@@ -276,15 +279,15 @@ void peanoclaw::mappings::Remesh::createCell(
 ) {
   logTraceInWith6Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, fineGridVerticesEnumerator.getCellCenter() );
 
-//    std::cout << "Creating cell on rank "
-//        #ifdef Parallel
-//        << tarch::parallel::Node::getInstance().getRank() << ": "
-//        #endif
-//        << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-//        << fineGridVerticesEnumerator.getCellSize()
-//        << ", index=" << fineGridCell.getCellDescriptionIndex()
-//        << ", level=" << fineGridVerticesEnumerator.getLevel()
-//        << std::endl;
+    std::cout << "Creating cell on rank "
+        #ifdef Parallel
+        << tarch::parallel::Node::getInstance().getRank() << ": "
+        #endif
+        << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+        << fineGridVerticesEnumerator.getCellSize()
+        << ", index=" << fineGridCell.getCellDescriptionIndex()
+        << ", level=" << fineGridVerticesEnumerator.getLevel()
+        << std::endl;
  
   //Initialise new Patch
   Patch fineGridPatch = Patch(
@@ -352,6 +355,9 @@ void peanoclaw::mappings::Remesh::createCell(
     }
   }
 
+  //TODO unterweg debug
+  logInfo("", "Vertex0 (before) after creating cell at " << fineGridVerticesEnumerator.getVertexPosition(0) << " on level " << fineGridVerticesEnumerator.getLevel() << ": " << fineGridVertices[fineGridVerticesEnumerator(0)]);
+
   //Set indices on adjacent vertices and on this cell
   for(int i = 0; i < TWO_POWER_D; i++) {
     peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
@@ -365,6 +371,9 @@ void peanoclaw::mappings::Remesh::createCell(
       i
     );
   }
+
+  //TODO unterweg debug
+  logInfo("", "Vertex0 after creating cell at " << fineGridVerticesEnumerator.getVertexPosition(0) << " on level " << fineGridVerticesEnumerator.getLevel() << ": " << fineGridVertices[fineGridVerticesEnumerator(0)]);
 
   logTraceOutWith2Arguments( "createCell(...)", fineGridCell, fineGridPatch );
 }
@@ -398,6 +407,9 @@ void peanoclaw::mappings::Remesh::destroyCell(
     fineGridCell
   );
 
+  //TODO unterweg debug
+  logInfo("", "Destroying cell: " << finePatch);
+
   bool isDestroyedDueToForkOrJoin = fineGridCell.isAssignedToRemoteRank();
   bool isRootOfNewWorker = isDestroyedDueToForkOrJoin && !coarseGridCell.isAssignedToRemoteRank();
 
@@ -411,44 +423,27 @@ void peanoclaw::mappings::Remesh::destroyCell(
 
 	  //Create patch in parent cell if it doesn't exist
 	  if(!coarseGridCell.isRoot() && coarseGridCell.isInside()) {
-		CellDescription& coarseCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0);
-		assertion1(tarch::la::greaterEquals(coarseCellDescription.getTimestepSize(), 0.0), finePatch);
-
-		//Fix timestep size
-		coarseCellDescription.setTimestepSize(std::max(0.0, coarseCellDescription.getTimestepSize()));
-
-		//Set indices on coarse adjacent vertices and fill adjacent ghostlayers
-		for(int i = 0; i < TWO_POWER_D; i++) {
-		  fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, coarseGridCell.getCellDescriptionIndex());
-		}
-
-		//Skip update for coarse patch in next grid iteration
-		coarseCellDescription.setSkipGridIterations(1);
-
-		//Set demanded mesh width for coarse cell to coarse cell size. Otherwise
-		//the coarse patch might get refined immediately.
-		coarseCellDescription.setDemandedMeshWidth(coarseGridVerticesEnumerator.getCellSize()(0) / coarseCellDescription.getSubdivisionFactor()(0));
+	    Patch coarseSubgrid(peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
+	    _gridLevelTransfer->restrictDestroyedSubgrid(
+	      finePatch,
+	      coarseSubgrid,
+	      fineGridVertices,
+	      fineGridVerticesEnumerator
+	    );
 	  } else {
 		for(int i = 0; i < TWO_POWER_D; i++) {
-			fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, -1);
+          fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, -1);
 		}
 	  }
 
 	  finePatch.deleteData();
   } else if(fineGridCell.isAssignedToRemoteRank()) {
     //Patch got moved to other rank, check whether it is now adjacent to the local domain.
-    bool adjacentToLocalDomain = !coarseGridCell.isAssignedToRemoteRank();
-    #ifdef Parallel
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      adjacentToLocalDomain |= fineGridVertices[fineGridVerticesEnumerator(i)].isAdjacentToDomainOf(
-          tarch::parallel::Node::getInstance().getRank()
-        );
-    }
-    #endif
+    ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
 
     //If it is adjacent -> Now remote
     //If not -> Delete it
-    if(adjacentToLocalDomain) {
+    if(parallelSubgrid.isAdjacentToLocalSubdomain(coarseGridCell, fineGridVertices, fineGridVerticesEnumerator)) {
       #ifdef Parallel
       finePatch.setIsRemote(true);
       #endif
@@ -924,11 +919,6 @@ void peanoclaw::mappings::Remesh::leaveCell(
 //      i,
 //      fineGridCell.getCellDescriptionIndex()
 //    );
-//  }
-
-//  if(fineGridVerticesEnumerator.getLevel() == 3) {
-//    peano::heap::Heap<CellDescription>::getInstance().receiveDanglingMessages();
-//    peano::heap::Heap<Data>::getInstance().receiveDanglingMessages();
 //  }
 
   //Count number of adjacent subgrids

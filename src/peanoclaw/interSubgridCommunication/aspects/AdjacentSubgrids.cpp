@@ -11,6 +11,17 @@
 
 #include "peano/heap/Heap.h"
 
+tarch::logging::Log peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::_log("peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids");
+
+tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::createVertexKey() const {
+  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> vertexKey;
+  for(int d = 0; d < DIMENSIONS; d++) {
+    vertexKey(d) = _position(d);
+  }
+  vertexKey(DIMENSIONS) = _level;
+  return vertexKey;
+}
+
 peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::AdjacentSubgrids(
   peanoclaw::Vertex&                    vertex,
   VertexMap&                            vertexMap,
@@ -28,24 +39,18 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::createdAdj
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertPersistentToHangingVertex() {
   //  Retrieve or create hanging vertex description
-  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> hangingVertexPosition;
-  for(int d = 0; d < DIMENSIONS; d++) {
-    hangingVertexPosition(d) = _position(d);
-  }
-  hangingVertexPosition(DIMENSIONS) = _level;
+  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> hangingVertexPosition = createVertexKey();
 
   if( _vertexMap.find(hangingVertexPosition) == _vertexMap.end() ) {
     VertexDescription vertexDescription;
-//    if(_iterationParity == peanoclaw::records::VertexDescription::EVEN) {
-//      vertexDescription.setLastUpdateIterationParity(peanoclaw::records::VertexDescription::ODD);
-//    } else {
-//      vertexDescription.setLastUpdateIterationParity(peanoclaw::records::VertexDescription::EVEN);
-//    }
     _vertexMap[hangingVertexPosition] = vertexDescription;
   }
 
   VertexDescription& vertexDescription = _vertexMap[hangingVertexPosition];
   vertexDescription.setTouched(true);
+
+  //TODO unterweg debug
+  logInfo("convertPersistentVertexToHangingVertex", "Setting hanging vertex " << vertexDescription.getIndicesOfAdjacentCellDescriptions() << "   to   " << _vertex);
 
   //Copy adjacency information from destroyed vertex to hanging vertex description
   for(int i = 0; i < TWO_POWER_D; i++) {
@@ -54,36 +59,36 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertPer
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertHangingVertexToPersistentVertex() {
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    _vertex.setAdjacentCellDescriptionIndex(i, -1);
-  }
-
   //Copy adjacent cell indices from former hanging vertex description, if available.
-  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> vertexPosition;
-  for(int d = 0; d < DIMENSIONS; d++) {
-    vertexPosition(d) = _position(d);
-  }
-  vertexPosition(DIMENSIONS) = _level;
+  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> vertexPosition = createVertexKey();
 
   if( _vertexMap.find(vertexPosition) != _vertexMap.end() ) {
     VertexDescription& hangingVertexDescription = _vertexMap[vertexPosition];
 
     for(int i = 0; i < TWO_POWER_D; i++) {
-      int hangingVertexIndex = hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i);
-      int persistentVertexIndex = -1;
-      if(hangingVertexIndex != -1) {
-        Patch patch(peano::heap::Heap<CellDescription>::getInstance().getData(hangingVertexIndex).at(0));
-        if(patch.getLevel() == _level) {
-          persistentVertexIndex = hangingVertexIndex;
+      //Skip setting the index if a valid index is already set. It seems that sometimes createCell(...) is
+      //triggered before createInnerVertex(...)
+      if(_vertex.getAdjacentCellDescriptionIndex(i) == -1) {
+        int hangingVertexIndex = hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i);
+        int persistentVertexIndex = -1;
+        if(hangingVertexIndex != -1) {
+          Patch patch(peano::heap::Heap<CellDescription>::getInstance().getData(hangingVertexIndex).at(0));
+          if(patch.getLevel() == _level) {
+            persistentVertexIndex = hangingVertexIndex;
+          }
         }
+        _vertex.setAdjacentCellDescriptionIndex(i, persistentVertexIndex);
       }
-      _vertex.setAdjacentCellDescriptionIndex(i, persistentVertexIndex);
     }
-  } else {
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      _vertex.setAdjacentCellDescriptionIndex(i, -1);
-    }
+
+    //TODO unterweg debug
+    logInfo("convertHangingVertexToPersistentVertex", "Setting persistent vertex " << _vertex << "   to   " << hangingVertexDescription.getIndicesOfAdjacentCellDescriptions());
   }
+//  else {
+//    for(int i = 0; i < TWO_POWER_D; i++) {
+//      _vertex.setAdjacentCellDescriptionIndex(i, -1);
+//    }
+//  }
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::createHangingVertex(

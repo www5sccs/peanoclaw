@@ -8,6 +8,7 @@
 #ifndef PEANOCLAW_PARALLELSUBGRID_H_
 #define PEANOCLAW_PARALLELSUBGRID_H_
 
+#include "peanoclaw/Cell.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
@@ -76,6 +77,25 @@ class peanoclaw::ParallelSubgrid {
     peanoclaw::Vertex * const            vertices,
     const peano::grid::VertexEnumerator& verticesEnumerator
   );
+
+  /**
+   * Determines whether the subgrid is adjacent to the local subdomain. This
+   * requires that the subgrid is assigned to a different rank.
+   */
+  bool isAdjacentToLocalSubdomain(
+    const peanoclaw::Cell&               coarseGridCell,
+    peanoclaw::Vertex * const            fineGridVertices,
+    const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
+  );
+
+  /**
+   * Determines whether the subgrid is adjacent to a remote subdomain. I.e.
+   * if one of the adjacent vertices is shared with a remote rank.
+   */
+//  bool isAdjacentToRemoteSubdomain(
+//    peanoclaw::Vertex * const            fineGridVertices,
+//    const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
+//  );
 };
 
 #endif /* PEANOCLAW_PARALLELSUBGRID_H_ */

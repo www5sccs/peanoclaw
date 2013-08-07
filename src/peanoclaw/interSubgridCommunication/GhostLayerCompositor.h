@@ -91,23 +91,6 @@ private:
    */
   void updateNeighborTime(int updatedPatchIndex, int neighborPatchIndex);
 
-  //Ghost layers, i.e. copy from one patch to another.
-//  void fillLeftGhostLayer();
-//
-//  void fillLowerLeftGhostLayer();
-//
-//  void fillLowerGhostLayer();
-//
-//  void fillUpperLeftGhostLayer();
-//
-//  void fillUpperGhostLayer();
-//
-//  void fillUpperRightGhostLayer();
-//
-//  void fillRightGhostLayer();
-//
-//  void fillLowerRightGhostLayer();
-
   /**
    * Updates the lower ghostlayer bound for the given pair of patches.
    */

@@ -497,22 +497,22 @@ void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
       && fineGridVertex.getRefinementControl() == peanoclaw::Vertex::Records::Unrefined
     ) {
     //TODO unterweg debug
-    logInfo("", "Refining vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel()+1)
-      #ifdef Parallel
-      << " on rank " << tarch::parallel::Node::getInstance().getRank()
-      #endif
-    );
+//    logInfo("", "Refining vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel()+1)
+//      #ifdef Parallel
+//      << " on rank " << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//    );
     fineGridVertex.refine();
   } else if (
       fineGridVertex.shouldErase()
       && fineGridVertex.getCurrentAdjacentCellsHeight() == 1
     ) {
     //TODO unterweg debug
-    logInfo("", "Erasing vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel()+1)
-      #ifdef Parallel
-      << " on rank " << tarch::parallel::Node::getInstance().getRank()
-      #endif
-    );
+//    logInfo("", "Erasing vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel()+1)
+//      #ifdef Parallel
+//      << " on rank " << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//    );
     fineGridVertex.erase();
   }
   fineGridVertex.setShouldRefine(false);

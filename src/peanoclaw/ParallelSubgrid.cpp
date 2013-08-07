@@ -92,3 +92,36 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndResetEx
   _cellDescription->setIsExclusiveMessageForSubgrid(false);
   #endif
 }
+
+bool peanoclaw::ParallelSubgrid::isAdjacentToLocalSubdomain(
+  const peanoclaw::Cell&               coarseGridCell,
+  peanoclaw::Vertex * const            fineGridVertices,
+  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
+) {
+  #ifdef Parallel
+  bool isAdjacentToLocalDomain = !coarseGridCell.isAssignedToRemoteRank();
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    isAdjacentToLocalDomain |= fineGridVertices[fineGridVerticesEnumerator(i)].isAdjacentToDomainOf(
+        tarch::parallel::Node::getInstance().getRank()
+      );
+  }
+  return isAdjacentToLocalDomain;
+  #else
+  return true;
+  #endif
+}
+
+//bool isAdjacentToRemoteSubdomain(
+//  peanoclaw::Vertex * const            fineGridVertices,
+//  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
+//) {
+//  #ifdef Parallel
+//  bool isAdjacentToRemoteRank = false;
+//  for(int i = 0; i < TWO_POWER_D; i++) {
+//    isAdjacentToRemoteRank |= fineGridVertices[fineGridVerticesEnumerator(i)].isAdjacentToRemoteRank();
+//  }
+//  return isAdjacentToRemoteRank;
+//  #else
+//  return false;
+//  #endif
+//}

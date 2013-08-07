@@ -216,19 +216,6 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
 #endif
 
     /**
-     * Called at least once before stepDown is called for the according patch.
-     *
-     * Used for switching the patch to a virtual state if necessary.
-     */
-//    void updatePatchStateBeforeStepDown(
-//      Patch&                               finePatch,
-//      peanoclaw::Vertex * const            fineGridVertices,
-//      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
-//      bool                                 isInitializing,
-//      bool                                 isInvolvedInFork
-//    );
-
-    /**
      * Performs the operations necessary when stepping into a cell.
      */
     void stepDown(
@@ -353,33 +340,14 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
     );
 
     /**
-     * Prepares a refined patch for finding the correct time interval.
-     * Basically this method sets current time to -infinity and timestepSize
-     * to +infinity.
+     * Restricts the data of a subgrid that is about to be destroyed
+     * to the overlapping coarse subgrid.
      */
-//    void prepareCoarsePatchForUpdatingTimeinterval(Patch& coarsePatch);
-
-    /**
-     * Sets the time interval that is spanned by a coarse patch according on
-     * the time intervals spent by the overlapping fine patches. The
-     * dependency between them is that the coarse patch always spans the time
-     * interval which is covered by all subpatches. I.e. currentTime is the
-     * maximum of all the currentTimes of all subpatches and
-     * currentTime+timestepSize is the minimum of all currentTime+timestepSize
-     * of all subpatches.
-     */
-//    void updateCoarseTimeintervalFromFineTimeInterval(
-//        Patch& coarsePatch,
-//        const Patch& finePatch
-//    );
-
-    /**
-     * Updates the minimal neighbor time for a patch depending on the minimal
-     * neighbor time of the coarser patch.
-     */
-    void updateMinimalNeighborTimeFromCoarserPatch(
-        const Patch& coarsePatch,
-        Patch& finePatch
+    void restrictDestroyedSubgrid(
+      const Patch&                         destroyedSubgrid,
+      Patch&                               coarseSubgrid,
+      peanoclaw::Vertex * const            fineGridVertices,
+      const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
     );
 };
 
