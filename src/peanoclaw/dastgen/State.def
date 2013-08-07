@@ -38,14 +38,10 @@ class peanoclaw::records::State {
   persistent parallelise bool   isTraversalInverted;
   
   #ifdef Parallel
-  /**
-   * There is no need to exchange this piece of data, as we it is set due to 
-   * the repository state.
-   */  
-  persistent packed bool             reduceStateAndCell;
+  persistent packed parallelise bool             reduceStateAndCell;
 
-  persistent packed bool             couldNotEraseDueToDecompositionFlag;
+  persistent packed parallelise bool             couldNotEraseDueToDecompositionFlag;
 
-  persistent packed bool             subWorkerIsInvolvedInJoinOrFork;
+  persistent packed parallelise bool             subWorkerIsInvolvedInJoinOrFork;
   #endif
 };
