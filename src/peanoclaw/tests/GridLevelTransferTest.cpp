@@ -7,7 +7,7 @@
 #include "peanoclaw/tests/GridLevelTransferTest.h"
 
 #include "peanoclaw/tests/Helper.h"
-#include "peanoclaw/tests/PyClawTestStump.h"
+#include "peanoclaw/tests/NumericsTestStump.h"
 #include "peanoclaw/tests/TestVertexEnumerator.h"
 
 #include "peanoclaw/interSubgridCommunication/GridLevelTransfer.h"
@@ -122,9 +122,9 @@ void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleR
   tarch::la::Vector<TWO_POWER_D, int> expectedAdjacentIndices;
   peanoclaw::Vertex fineGridVertex;
 
-  PyClawTestStump pyClaw;
+  NumericsTestStump numerics;
 
-  interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, pyClaw);
+  interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, numerics);
 
   //Hanging Vertex 0, 0
   assignList(hangingVertexPosition) = 0, 0;
@@ -300,8 +300,8 @@ void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithTouchingPat
   position2(1) = 1.5;
   tarch::la::Vector<DIMENSIONS, double> size2(1.0);
 
-  peanoclaw::pyclaw::PyClaw pyClaw(0, 0, 0, 0, 0, 0, 0);
-  peanoclaw::interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, pyClaw);
+  peanoclaw::tests::NumericsTestStump numerics;
+  peanoclaw::interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, numerics);
 
   peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
   validateNumericalEquals( defaultRestriction.calculateOverlappingArea(position1, size1, position2, size2), 0.0);
@@ -449,8 +449,8 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   coarseVertices[3].setAdjacentCellDescriptionIndex(3, virtualCellDescriptionIndex);
 
   //GridLevelTransfer
-  PyClawTestStump pyClaw;
-  peanoclaw::interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, pyClaw);
+  NumericsTestStump numerics;
+  peanoclaw::interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, numerics);
   TestVertexEnumerator enumerator(1.0);
 
   //Virtual patch

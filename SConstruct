@@ -261,7 +261,7 @@ else:
 #
 solver = ARGUMENTS.get('solver', 'pyclaw')
 if solver == 'pyclaw':
-  pass
+  cppdefines.append('PYCLAW')
 elif solver == 'swe':
   #Configure SWE-Sources
   swePath = 'src/peanoclaw/native/SWE/src'

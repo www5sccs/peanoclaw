@@ -21,6 +21,33 @@
 
 tarch::logging::Log peanoclaw::NumericsFactory::_log("peanoclaw::NumericsFactory");
 
+#if defined(SWE)
+peanoclaw::Numerics* peanoclaw::NumericsFactory::createSWENumerics(
+  peanoclaw::native::SWEKernelScenario& scenario
+) {
+
+  //Interpolation Callback
+  peanoclaw::interSubgridCommunication::Interpolation* interpolation;
+  interpolation = new peanoclaw::interSubgridCommunication::DefaultInterpolation();
+
+  //Restriction Callback
+  peanoclaw::interSubgridCommunication::Restriction* restriction;
+  restriction = new peanoclaw::interSubgridCommunication::DefaultRestriction();
+
+  //Flux Correction Callback
+  peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection;
+  fluxCorrection = new peanoclaw::interSubgridCommunication::DefaultFluxCorrection();
+
+  return new peanoclaw::native::SWEKernel(
+    scenario,
+    interpolation,
+    restriction,
+    fluxCorrection
+  );
+}
+
+#else
+
 peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
   InitializationCallback initializationCallback,
   BoundaryConditionCallback boundaryConditionCallback,
@@ -66,31 +93,6 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
     boundaryConditionCallback,
     solverCallback,
     addPatchToSolutionCallback,
-    interpolation,
-    restriction,
-    fluxCorrection
-  );
-}
-
-#if defined(SWE)
-peanoclaw::Numerics* peanoclaw::NumericsFactory::createSWENumerics(
-  peanoclaw::native::SWEKernelScenario& scenario
-) {
-
-  //Interpolation Callback
-  peanoclaw::interSubgridCommunication::Interpolation* interpolation;
-  interpolation = new peanoclaw::interSubgridCommunication::DefaultInterpolation();
-
-  //Restriction Callback
-  peanoclaw::interSubgridCommunication::Restriction* restriction;
-  restriction = new peanoclaw::interSubgridCommunication::DefaultRestriction();
-
-  //Flux Correction Callback
-  peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection;
-  fluxCorrection = new peanoclaw::interSubgridCommunication::DefaultFluxCorrection();
-
-  return new peanoclaw::native::SWEKernel(
-    scenario,
     interpolation,
     restriction,
     fluxCorrection
