@@ -554,8 +554,7 @@ sourcesPeanoClaw = [
 if solver == 'swe':
   sourcesSolver = [
     Glob(join(buildpath, 'peanoclaw/native/*.cpp')),
-    #Glob(join(buildpath, '..', swePath, './blocks/*.cpp'))            
-    Glob(join(buildpath, './peanoclaw/native/SWE/src/blocks/*.cpp'))
+    Glob(join(buildpath, swePath, './blocks/*.cpp'))            
     ]
 elif solver == 'pyclaw':
   sourcesSolver = [
