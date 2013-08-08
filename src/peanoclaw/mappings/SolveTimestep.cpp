@@ -287,8 +287,7 @@ void peanoclaw::mappings::SolveTimestep::destroyCell(
   //peanoclaw::statistics::LevelInformation& levelInformation = _levelStatistics.at(fineGridVerticesEnumerator.getLevel()-1);
   //levelInformation._destroyedPatches++;
 
-  Patch patch(fineGridCell);
-  _subgridStatistics.destroyedSubgrid(patch);
+  _subgridStatistics.destroyedSubgrid(fineGridCell.getCellDescriptionIndex());
 
   logTraceOutWith1Argument( "destroyCell(...)", fineGridCell );
 }
