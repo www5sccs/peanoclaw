@@ -166,11 +166,11 @@ void peanoclaw::statistics::SubgridStatistics::processSubgridAfterUpdate(const p
   );
 }
 
-void peanoclaw::statistics::SubgridStatistics::destroyedSubgrid(const Patch& subgrid) {
-  if(_minimalPatchIndex == subgrid.getCellDescriptionIndex()) {
+void peanoclaw::statistics::SubgridStatistics::destroyedSubgrid(int cellDescriptionIndex) {
+  if(_minimalPatchIndex == cellDescriptionIndex) {
     _minimalPatchIndex = -1;
   }
-  if(_minimalPatchParentIndex == subgrid.getCellDescriptionIndex()) {
+  if(_minimalPatchParentIndex == cellDescriptionIndex) {
     _minimalPatchParentIndex = -1;
   }
 }

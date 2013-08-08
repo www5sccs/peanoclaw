@@ -99,7 +99,7 @@ class peanoclaw::statistics::SubgridStatistics {
      * Called after a subgrid got destroyed -> Check if it's one of the stored
      * patches and update.
      */
-    void destroyedSubgrid(const Patch& patch);
+    void destroyedSubgrid(int cellDescriptionIndex);
 
     /**
      * Sets the statistics values in the state after a grid iteration
