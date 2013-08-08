@@ -1,4 +1,4 @@
-swePath='src/peanoclaw/native/SWE/src'
+swePath='../SWE/src'
 
 def getSWEPath():
   return swePath

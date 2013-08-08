@@ -264,7 +264,7 @@ if solver == 'pyclaw':
   cppdefines.append('PYCLAW')
 elif solver == 'swe':
   #Configure SWE-Sources
-  swePath = 'src/peanoclaw/native/SWE/src'
+  swePath = '../SWE/src'
   try:
     import sweConfiguration
     swePath = sweConfiguration.getSWEPath()
@@ -312,6 +312,8 @@ print
 
 VariantDir (buildpath, './src', duplicate=0)  # Set build directory for PeanoClaw sources
 VariantDir (buildpath + 'kernel', p3Path, duplicate=0)  # Set build directory for Peano sources
+if solver == 'swe':
+  VariantDir (buildpath + 'swe', swePath, duplicate=0)  # Set build directory for SWE sources
 
 ##### Setup construction environment:
 #
