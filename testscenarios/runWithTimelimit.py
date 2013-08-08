@@ -26,6 +26,7 @@ def main():
     with time_limit(args.timeout):
       return call('python ' + args.script, shell=True)
   except TimeoutException, msg:
+      print "TIMEOUT AFTER", args.timeout, "SECONDS..."
       return 1
       
 if __name__=="__main__":
