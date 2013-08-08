@@ -287,6 +287,9 @@ void peanoclaw::mappings::SolveTimestep::destroyCell(
   //peanoclaw::statistics::LevelInformation& levelInformation = _levelStatistics.at(fineGridVerticesEnumerator.getLevel()-1);
   //levelInformation._destroyedPatches++;
 
+  Patch patch(fineGridCell);
+  _subgridStatistics.destroyedSubgrid(patch);
+
   logTraceOutWith1Argument( "destroyCell(...)", fineGridCell );
 }
 
@@ -655,7 +658,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
                 << neighborPatch.toStringUNew() << std::endl
                 << neighborPatch.toStringUOldWithGhostLayer());
           } else {
-            logError("", i << ": Invalid patch");
+            logError("", i << " " << j << ": Invalid patch");
           }
         }
         //std::cout << std::endl;

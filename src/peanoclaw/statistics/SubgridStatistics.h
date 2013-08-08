@@ -96,6 +96,12 @@ class peanoclaw::statistics::SubgridStatistics {
     void processSubgridAfterUpdate(const Patch& patch, int parentIndex);
 
     /**
+     * Called after a subgrid got destroyed -> Check if it's one of the stored
+     * patches and update.
+     */
+    void destroyedSubgrid(const Patch& patch);
+
+    /**
      * Sets the statistics values in the state after a grid iteration
      * and logs the statistics for this iteration.
      */

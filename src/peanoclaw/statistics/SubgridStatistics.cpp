@@ -166,6 +166,15 @@ void peanoclaw::statistics::SubgridStatistics::processSubgridAfterUpdate(const p
   );
 }
 
+void peanoclaw::statistics::SubgridStatistics::destroyedSubgrid(const Patch& subgrid) {
+  if(_minimalPatchIndex == subgrid.getCellDescriptionIndex()) {
+    _minimalPatchIndex = -1;
+  }
+  if(_minimalPatchParentIndex == subgrid.getCellDescriptionIndex()) {
+    _minimalPatchParentIndex = -1;
+  }
+}
+
 void peanoclaw::statistics::SubgridStatistics::finalizeIteration(peanoclaw::State& state) {
   state.setAllPatchesEvolvedToGlobalTimestep(
     state.getAllPatchesEvolvedToGlobalTimestep()
