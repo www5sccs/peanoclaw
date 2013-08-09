@@ -488,7 +488,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictDestroyedS
   assertion1(tarch::la::greaterEquals(coarseSubgrid.getTimestepSize(), 0.0), destroyedSubgrid);
 
   //Fix timestep size
-  assertion(coarseSubgrid.getTimestepSize() >= 0);
+  assertion1(tarch::la::greaterEquals(coarseSubgrid.getTimestepSize(), 0), coarseSubgrid);
   coarseSubgrid.setTimestepSize(std::max(0.0, coarseSubgrid.getTimestepSize()));
 
   //Set indices on coarse adjacent vertices

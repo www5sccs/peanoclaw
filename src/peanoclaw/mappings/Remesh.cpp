@@ -163,9 +163,6 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
 ) {
   logTraceInWith6Arguments( "destroyHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
-  //TODO unterweg debug
-  logInfo("", "Destroying hanging vertex: " << fineGridVertex);
- 
   //Handle refinement flags
   if(tarch::la::allGreater(fineGridX, _domainOffset) && tarch::la::allGreater(_domainOffset + _domainSize, fineGridX)) {
     _gridLevelTransfer->restrictRefinementFlagsToCoarseVertices(
@@ -314,7 +311,7 @@ void peanoclaw::mappings::Remesh::createCell(
     Patch coarseGridPatch(
       coarseGridCell
     );
-    assertion1(coarseGridPatch.getTimestepSize() >= 0.0 || coarseGridPatch.isVirtual(), coarseGridPatch);
+    assertion1(tarch::la::greaterEquals(coarseGridPatch.getTimestepSize(), 0.0) || coarseGridPatch.isVirtual(), coarseGridPatch);
 
     if(!_isInitializing && (coarseGridPatch.isVirtual() || coarseGridPatch.isLeaf())) {
       //TODO unterweg dissertation: The grid is skipped directly after the creation in enterCell.
@@ -355,9 +352,6 @@ void peanoclaw::mappings::Remesh::createCell(
     }
   }
 
-  //TODO unterweg debug
-  logInfo("", "Vertex0 (before) after creating cell at " << fineGridVerticesEnumerator.getVertexPosition(0) << " on level " << fineGridVerticesEnumerator.getLevel() << ": " << fineGridVertices[fineGridVerticesEnumerator(0)]);
-
   //Set indices on adjacent vertices and on this cell
   for(int i = 0; i < TWO_POWER_D; i++) {
     peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
@@ -371,9 +365,6 @@ void peanoclaw::mappings::Remesh::createCell(
       i
     );
   }
-
-  //TODO unterweg debug
-  logInfo("", "Vertex0 after creating cell at " << fineGridVerticesEnumerator.getVertexPosition(0) << " on level " << fineGridVerticesEnumerator.getLevel() << ": " << fineGridVertices[fineGridVerticesEnumerator(0)]);
 
   logTraceOutWith2Arguments( "createCell(...)", fineGridCell, fineGridPatch );
 }
@@ -406,9 +397,6 @@ void peanoclaw::mappings::Remesh::destroyCell(
   Patch finePatch(
     fineGridCell
   );
-
-  //TODO unterweg debug
-  logInfo("", "Destroying cell: " << finePatch);
 
   bool isDestroyedDueToForkOrJoin = fineGridCell.isAssignedToRemoteRank();
   bool isRootOfNewWorker = isDestroyedDueToForkOrJoin && !coarseGridCell.isAssignedToRemoteRank();

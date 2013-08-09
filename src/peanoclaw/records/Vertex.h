@@ -34,7 +34,7 @@ namespace peanoclaw {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   07/08/2013 14:33
+    * @date   09/08/2013 11:20
     */
    class peanoclaw::records::Vertex { 
       
@@ -62,6 +62,7 @@ namespace peanoclaw {
             std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto;
             #endif
             bool _shouldRefine;
+            bool _wasCreatedInThisIteration;
             #ifdef UseManualAlignment
             tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksDuringLastIteration __attribute__((aligned(VectorisationAlignment)));
             #else
@@ -91,7 +92,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+            PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             
             /**
@@ -226,6 +227,26 @@ namespace peanoclaw {
  #endif 
  {
                _shouldRefine = shouldRefine;
+            }
+            
+            
+            
+            inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _wasCreatedInThisIteration;
+            }
+            
+            
+            
+            inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _wasCreatedInThisIteration = wasCreatedInThisIteration;
             }
             
             
@@ -545,12 +566,12 @@ namespace peanoclaw {
          /**
           * Generated
           */
-         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
          
          /**
           * Generated
           */
-         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
          
          /**
           * Generated
@@ -754,6 +775,26 @@ namespace peanoclaw {
  #endif 
  {
             _persistentRecords._shouldRefine = shouldRefine;
+         }
+         
+         
+         
+         inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._wasCreatedInThisIteration;
+         }
+         
+         
+         
+         inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._wasCreatedInThisIteration = wasCreatedInThisIteration;
          }
          
          
@@ -1261,7 +1302,7 @@ namespace peanoclaw {
        *
        * 		   build date: 12-04-2013 09:18
        *
-       * @date   07/08/2013 14:33
+       * @date   09/08/2013 11:20
        */
       class peanoclaw::records::VertexPacked { 
          
@@ -1283,10 +1324,11 @@ namespace peanoclaw {
                || Member 	|| startbit 	|| length
                 |  adjacentSubcellsEraseVeto	| startbit 0	| #bits TWO_POWER_D
                 |  shouldRefine	| startbit TWO_POWER_D + 0	| #bits 1
-                |  isHangingNode	| startbit TWO_POWER_D + 1	| #bits 1
-                |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
-                |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
-                |  adjacentSubtreeForksIntoOtherRank	| startbit TWO_POWER_D + 7	| #bits 1
+                |  wasCreatedInThisIteration	| startbit TWO_POWER_D + 1	| #bits 1
+                |  isHangingNode	| startbit TWO_POWER_D + 2	| #bits 1
+                |  refinementControl	| startbit TWO_POWER_D + 3	| #bits 3
+                |  insideOutsideDomain	| startbit TWO_POWER_D + 6	| #bits 2
+                |  adjacentSubtreeForksIntoOtherRank	| startbit TWO_POWER_D + 8	| #bits 1
                 */
                short int _packedRecords0;
                
@@ -1298,7 +1340,7 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+               PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                
                
                /**
@@ -1448,6 +1490,29 @@ namespace peanoclaw {
                
                
                
+               inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+               }
+               
+               
+               
+               inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (TWO_POWER_D + 1);
+   _packedRecords0 = static_cast<short int>( wasCreatedInThisIteration ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+               }
+               
+               
+               
                /**
                 * Generated and optimized
                 * 
@@ -1511,7 +1576,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  short int mask = 1 << (TWO_POWER_D + 1);
+                  short int mask = 1 << (TWO_POWER_D + 2);
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                }
@@ -1523,7 +1588,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  short int mask = 1 << (TWO_POWER_D + 1);
+                  short int mask = 1 << (TWO_POWER_D + 2);
    _packedRecords0 = static_cast<short int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                }
                
@@ -1535,9 +1600,9 @@ namespace peanoclaw {
  #endif 
  {
                   short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 3));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                }
@@ -1551,9 +1616,9 @@ namespace peanoclaw {
  {
                   assertion((refinementControl >= 0 && refinementControl <= 6));
    short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 3));
                }
                
                
@@ -1584,9 +1649,9 @@ namespace peanoclaw {
  #endif 
  {
                   short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 6));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                }
@@ -1600,9 +1665,9 @@ namespace peanoclaw {
  {
                   assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
    short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 6));
                }
                
                
@@ -1748,7 +1813,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  short int mask = 1 << (TWO_POWER_D + 7);
+                  short int mask = 1 << (TWO_POWER_D + 8);
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                }
@@ -1760,7 +1825,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                  short int mask = 1 << (TWO_POWER_D + 7);
+                  short int mask = 1 << (TWO_POWER_D + 8);
    _packedRecords0 = static_cast<short int>( adjacentSubtreeForksIntoOtherRank ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                }
                
@@ -1787,12 +1852,12 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             /**
              * Generated
              */
-            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             /**
              * Generated
@@ -2018,6 +2083,29 @@ namespace peanoclaw {
             
             
             
+            inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+            }
+            
+            
+            
+            inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               short int mask = 1 << (TWO_POWER_D + 1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( wasCreatedInThisIteration ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+            }
+            
+            
+            
             /**
              * Generated and optimized
              * 
@@ -2107,7 +2195,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               short int mask = 1 << (TWO_POWER_D + 1);
+               short int mask = 1 << (TWO_POWER_D + 2);
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
             }
@@ -2119,7 +2207,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               short int mask = 1 << (TWO_POWER_D + 1);
+               short int mask = 1 << (TWO_POWER_D + 2);
    _persistentRecords._packedRecords0 = static_cast<short int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
             }
             
@@ -2131,9 +2219,9 @@ namespace peanoclaw {
  #endif 
  {
                short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 3));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
             }
@@ -2147,9 +2235,9 @@ namespace peanoclaw {
  {
                assertion((refinementControl >= 0 && refinementControl <= 6));
    short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 3));
             }
             
             
@@ -2220,9 +2308,9 @@ namespace peanoclaw {
  #endif 
  {
                short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 6));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
             }
@@ -2236,9 +2324,9 @@ namespace peanoclaw {
  {
                assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
    short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 6));
             }
             
             
@@ -2436,7 +2524,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               short int mask = 1 << (TWO_POWER_D + 7);
+               short int mask = 1 << (TWO_POWER_D + 8);
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
             }
@@ -2448,7 +2536,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-               short int mask = 1 << (TWO_POWER_D + 7);
+               short int mask = 1 << (TWO_POWER_D + 8);
    _persistentRecords._packedRecords0 = static_cast<short int>( adjacentSubtreeForksIntoOtherRank ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
             }
             
@@ -2542,7 +2630,7 @@ namespace peanoclaw {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   07/08/2013 14:33
+          * @date   09/08/2013 11:20
           */
          class peanoclaw::records::Vertex { 
             
@@ -2570,6 +2658,7 @@ namespace peanoclaw {
                   std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto;
                   #endif
                   bool _shouldRefine;
+                  bool _wasCreatedInThisIteration;
                   bool _isHangingNode;
                   RefinementControl _refinementControl;
                   int _adjacentCellsHeight;
@@ -2582,7 +2671,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
+                  PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
                   
                   
                   /**
@@ -2721,6 +2810,26 @@ namespace peanoclaw {
                   
                   
                   
+                  inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _wasCreatedInThisIteration;
+                  }
+                  
+                  
+                  
+                  inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _wasCreatedInThisIteration = wasCreatedInThisIteration;
+                  }
+                  
+                  
+                  
                   inline bool getIsHangingNode() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -2822,12 +2931,12 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
+               Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
                
                /**
                 * Generated
                 */
-               Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain);
+               Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain);
                
                /**
                 * Generated
@@ -3031,6 +3140,26 @@ namespace peanoclaw {
  #endif 
  {
                   _persistentRecords._shouldRefine = shouldRefine;
+               }
+               
+               
+               
+               inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._wasCreatedInThisIteration;
+               }
+               
+               
+               
+               inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._wasCreatedInThisIteration = wasCreatedInThisIteration;
                }
                
                
@@ -3246,7 +3375,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   07/08/2013 14:33
+             * @date   09/08/2013 11:20
              */
             class peanoclaw::records::VertexPacked { 
                
@@ -3264,9 +3393,10 @@ namespace peanoclaw {
                      || Member 	|| startbit 	|| length
                       |  adjacentSubcellsEraseVeto	| startbit 0	| #bits TWO_POWER_D
                       |  shouldRefine	| startbit TWO_POWER_D + 0	| #bits 1
-                      |  isHangingNode	| startbit TWO_POWER_D + 1	| #bits 1
-                      |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
-                      |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
+                      |  wasCreatedInThisIteration	| startbit TWO_POWER_D + 1	| #bits 1
+                      |  isHangingNode	| startbit TWO_POWER_D + 2	| #bits 1
+                      |  refinementControl	| startbit TWO_POWER_D + 3	| #bits 3
+                      |  insideOutsideDomain	| startbit TWO_POWER_D + 6	| #bits 2
                       */
                      short int _packedRecords0;
                      
@@ -3278,7 +3408,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
+                     PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
                      
                      
                      /**
@@ -3428,7 +3558,7 @@ namespace peanoclaw {
                      
                      
                      
-                     inline bool getIsHangingNode() const 
+                     inline bool getWasCreatedInThisIteration() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -3440,12 +3570,35 @@ namespace peanoclaw {
                      
                      
                      
-                     inline void setIsHangingNode(const bool& isHangingNode) 
+                     inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                         short int mask = 1 << (TWO_POWER_D + 1);
+   _packedRecords0 = static_cast<short int>( wasCreatedInThisIteration ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                     }
+                     
+                     
+                     
+                     inline bool getIsHangingNode() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        short int mask = 1 << (TWO_POWER_D + 2);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                     }
+                     
+                     
+                     
+                     inline void setIsHangingNode(const bool& isHangingNode) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        short int mask = 1 << (TWO_POWER_D + 2);
    _packedRecords0 = static_cast<short int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                      }
                      
@@ -3457,9 +3610,9 @@ namespace peanoclaw {
  #endif 
  {
                         short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 3));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                      }
@@ -3473,9 +3626,9 @@ namespace peanoclaw {
  {
                         assertion((refinementControl >= 0 && refinementControl <= 6));
    short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 3));
                      }
                      
                      
@@ -3506,9 +3659,9 @@ namespace peanoclaw {
  #endif 
  {
                         short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 6));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                      }
@@ -3522,9 +3675,9 @@ namespace peanoclaw {
  {
                         assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
    short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 6));
                      }
                      
                      
@@ -3550,12 +3703,12 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
+                  VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
                   
                   /**
                    * Generated
                    */
-                  VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain);
+                  VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain);
                   
                   /**
                    * Generated
@@ -3781,7 +3934,7 @@ namespace peanoclaw {
                   
                   
                   
-                  inline bool getIsHangingNode() const 
+                  inline bool getWasCreatedInThisIteration() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -3793,12 +3946,35 @@ namespace peanoclaw {
                   
                   
                   
-                  inline void setIsHangingNode(const bool& isHangingNode) 
+                  inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                      short int mask = 1 << (TWO_POWER_D + 1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( wasCreatedInThisIteration ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                  }
+                  
+                  
+                  
+                  inline bool getIsHangingNode() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     short int mask = 1 << (TWO_POWER_D + 2);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+                  }
+                  
+                  
+                  
+                  inline void setIsHangingNode(const bool& isHangingNode) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     short int mask = 1 << (TWO_POWER_D + 2);
    _persistentRecords._packedRecords0 = static_cast<short int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                   }
                   
@@ -3810,9 +3986,9 @@ namespace peanoclaw {
  #endif 
  {
                      short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 3));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                   }
@@ -3826,9 +4002,9 @@ namespace peanoclaw {
  {
                      assertion((refinementControl >= 0 && refinementControl <= 6));
    short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 3));
                   }
                   
                   
@@ -3899,9 +4075,9 @@ namespace peanoclaw {
  #endif 
  {
                      short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 6));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                   }
@@ -3915,9 +4091,9 @@ namespace peanoclaw {
  {
                      assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
    short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 6));
                   }
                   
                   
@@ -4011,7 +4187,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   07/08/2013 14:33
+             * @date   09/08/2013 11:20
              */
             class peanoclaw::records::Vertex { 
                
@@ -4039,6 +4215,7 @@ namespace peanoclaw {
                      std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto;
                      #endif
                      bool _shouldRefine;
+                     bool _wasCreatedInThisIteration;
                      bool _isHangingNode;
                      RefinementControl _refinementControl;
                      int _adjacentCellsHeight;
@@ -4057,7 +4234,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                     PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                      
                      
                      /**
@@ -4192,6 +4369,26 @@ namespace peanoclaw {
  #endif 
  {
                         _shouldRefine = shouldRefine;
+                     }
+                     
+                     
+                     
+                     inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _wasCreatedInThisIteration;
+                     }
+                     
+                     
+                     
+                     inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _wasCreatedInThisIteration = wasCreatedInThisIteration;
                      }
                      
                      
@@ -4375,12 +4572,12 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                  Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                   
                   /**
                    * Generated
                    */
-                  Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                  Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                   
                   /**
                    * Generated
@@ -4584,6 +4781,26 @@ namespace peanoclaw {
  #endif 
  {
                      _persistentRecords._shouldRefine = shouldRefine;
+                  }
+                  
+                  
+                  
+                  inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._wasCreatedInThisIteration;
+                  }
+                  
+                  
+                  
+                  inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._wasCreatedInThisIteration = wasCreatedInThisIteration;
                   }
                   
                   
@@ -4903,7 +5120,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   07/08/2013 14:33
+                * @date   09/08/2013 11:20
                 */
                class peanoclaw::records::VertexPacked { 
                   
@@ -4923,9 +5140,10 @@ namespace peanoclaw {
                         || Member 	|| startbit 	|| length
                          |  adjacentSubcellsEraseVeto	| startbit 0	| #bits TWO_POWER_D
                          |  shouldRefine	| startbit TWO_POWER_D + 0	| #bits 1
-                         |  isHangingNode	| startbit TWO_POWER_D + 1	| #bits 1
-                         |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
-                         |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
+                         |  wasCreatedInThisIteration	| startbit TWO_POWER_D + 1	| #bits 1
+                         |  isHangingNode	| startbit TWO_POWER_D + 2	| #bits 1
+                         |  refinementControl	| startbit TWO_POWER_D + 3	| #bits 3
+                         |  insideOutsideDomain	| startbit TWO_POWER_D + 6	| #bits 2
                          */
                         short int _packedRecords0;
                         
@@ -4937,7 +5155,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                         
                         
                         /**
@@ -5087,7 +5305,7 @@ namespace peanoclaw {
                         
                         
                         
-                        inline bool getIsHangingNode() const 
+                        inline bool getWasCreatedInThisIteration() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -5099,12 +5317,35 @@ namespace peanoclaw {
                         
                         
                         
-                        inline void setIsHangingNode(const bool& isHangingNode) 
+                        inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                            short int mask = 1 << (TWO_POWER_D + 1);
+   _packedRecords0 = static_cast<short int>( wasCreatedInThisIteration ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                        }
+                        
+                        
+                        
+                        inline bool getIsHangingNode() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           short int mask = 1 << (TWO_POWER_D + 2);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                        }
+                        
+                        
+                        
+                        inline void setIsHangingNode(const bool& isHangingNode) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           short int mask = 1 << (TWO_POWER_D + 2);
    _packedRecords0 = static_cast<short int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                         }
                         
@@ -5116,9 +5357,9 @@ namespace peanoclaw {
  #endif 
  {
                            short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 3));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                         }
@@ -5132,9 +5373,9 @@ namespace peanoclaw {
  {
                            assertion((refinementControl >= 0 && refinementControl <= 6));
    short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 3));
                         }
                         
                         
@@ -5165,9 +5406,9 @@ namespace peanoclaw {
  #endif 
  {
                            short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 6));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                         }
@@ -5181,9 +5422,9 @@ namespace peanoclaw {
  {
                            assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
    short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 6));
                         }
                         
                         
@@ -5287,12 +5528,12 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                     VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                      
                      /**
                       * Generated
                       */
-                     VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                     VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                      
                      /**
                       * Generated
@@ -5518,7 +5759,7 @@ namespace peanoclaw {
                      
                      
                      
-                     inline bool getIsHangingNode() const 
+                     inline bool getWasCreatedInThisIteration() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -5530,12 +5771,35 @@ namespace peanoclaw {
                      
                      
                      
-                     inline void setIsHangingNode(const bool& isHangingNode) 
+                     inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                         short int mask = 1 << (TWO_POWER_D + 1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( wasCreatedInThisIteration ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                     }
+                     
+                     
+                     
+                     inline bool getIsHangingNode() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        short int mask = 1 << (TWO_POWER_D + 2);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+                     }
+                     
+                     
+                     
+                     inline void setIsHangingNode(const bool& isHangingNode) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        short int mask = 1 << (TWO_POWER_D + 2);
    _persistentRecords._packedRecords0 = static_cast<short int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                      }
                      
@@ -5547,9 +5811,9 @@ namespace peanoclaw {
  #endif 
  {
                         short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 3));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                      }
@@ -5563,9 +5827,9 @@ namespace peanoclaw {
  {
                         assertion((refinementControl >= 0 && refinementControl <= 6));
    short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 3));
                      }
                      
                      
@@ -5636,9 +5900,9 @@ namespace peanoclaw {
  #endif 
  {
                         short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 6));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                      }
@@ -5652,9 +5916,9 @@ namespace peanoclaw {
  {
                         assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
    short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 6));
                      }
                      
                      
@@ -5852,7 +6116,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   07/08/2013 14:33
+                * @date   09/08/2013 11:20
                 */
                class peanoclaw::records::Vertex { 
                   
@@ -5880,6 +6144,7 @@ namespace peanoclaw {
                         std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto;
                         #endif
                         bool _shouldRefine;
+                        bool _wasCreatedInThisIteration;
                         #ifdef UseManualAlignment
                         tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksDuringLastIteration __attribute__((aligned(VectorisationAlignment)));
                         #else
@@ -5903,7 +6168,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         
                         /**
@@ -6038,6 +6303,26 @@ namespace peanoclaw {
  #endif 
  {
                            _shouldRefine = shouldRefine;
+                        }
+                        
+                        
+                        
+                        inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           return _wasCreatedInThisIteration;
+                        }
+                        
+                        
+                        
+                        inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           _wasCreatedInThisIteration = wasCreatedInThisIteration;
                         }
                         
                         
@@ -6279,12 +6564,12 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                      
                      /**
                       * Generated
                       */
-                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                      
                      /**
                       * Generated
@@ -6488,6 +6773,26 @@ namespace peanoclaw {
  #endif 
  {
                         _persistentRecords._shouldRefine = shouldRefine;
+                     }
+                     
+                     
+                     
+                     inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _persistentRecords._wasCreatedInThisIteration;
+                     }
+                     
+                     
+                     
+                     inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _persistentRecords._wasCreatedInThisIteration = wasCreatedInThisIteration;
                      }
                      
                      
@@ -6891,7 +7196,7 @@ namespace peanoclaw {
                    *
                    * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   07/08/2013 14:33
+                   * @date   09/08/2013 11:20
                    */
                   class peanoclaw::records::VertexPacked { 
                      
@@ -6911,10 +7216,11 @@ namespace peanoclaw {
                            || Member 	|| startbit 	|| length
                             |  adjacentSubcellsEraseVeto	| startbit 0	| #bits TWO_POWER_D
                             |  shouldRefine	| startbit TWO_POWER_D + 0	| #bits 1
-                            |  isHangingNode	| startbit TWO_POWER_D + 1	| #bits 1
-                            |  refinementControl	| startbit TWO_POWER_D + 2	| #bits 3
-                            |  insideOutsideDomain	| startbit TWO_POWER_D + 5	| #bits 2
-                            |  adjacentSubtreeForksIntoOtherRank	| startbit TWO_POWER_D + 7	| #bits 1
+                            |  wasCreatedInThisIteration	| startbit TWO_POWER_D + 1	| #bits 1
+                            |  isHangingNode	| startbit TWO_POWER_D + 2	| #bits 1
+                            |  refinementControl	| startbit TWO_POWER_D + 3	| #bits 3
+                            |  insideOutsideDomain	| startbit TWO_POWER_D + 6	| #bits 2
+                            |  adjacentSubtreeForksIntoOtherRank	| startbit TWO_POWER_D + 8	| #bits 1
                             */
                            short int _packedRecords0;
                            
@@ -6926,7 +7232,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                           PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                            
                            
                            /**
@@ -7076,6 +7382,29 @@ namespace peanoclaw {
                            
                            
                            
+                           inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                           }
+                           
+                           
+                           
+                           inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              short int mask = 1 << (TWO_POWER_D + 1);
+   _packedRecords0 = static_cast<short int>( wasCreatedInThisIteration ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                           }
+                           
+                           
+                           
                            /**
                             * Generated and optimized
                             * 
@@ -7139,7 +7468,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              short int mask = 1 << (TWO_POWER_D + 1);
+                              short int mask = 1 << (TWO_POWER_D + 2);
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                            }
@@ -7151,7 +7480,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              short int mask = 1 << (TWO_POWER_D + 1);
+                              short int mask = 1 << (TWO_POWER_D + 2);
    _packedRecords0 = static_cast<short int>( isHangingNode ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                            }
                            
@@ -7163,9 +7492,9 @@ namespace peanoclaw {
  #endif 
  {
                               short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 3));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                            }
@@ -7179,9 +7508,9 @@ namespace peanoclaw {
  {
                               assertion((refinementControl >= 0 && refinementControl <= 6));
    short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | refinementControl << (TWO_POWER_D + 3));
                            }
                            
                            
@@ -7212,9 +7541,9 @@ namespace peanoclaw {
  #endif 
  {
                               short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 6));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                            }
@@ -7228,9 +7557,9 @@ namespace peanoclaw {
  {
                               assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
    short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    _packedRecords0 = static_cast<short int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   _packedRecords0 = static_cast<short int>(_packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 6));
                            }
                            
                            
@@ -7298,7 +7627,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              short int mask = 1 << (TWO_POWER_D + 7);
+                              short int mask = 1 << (TWO_POWER_D + 8);
    short int tmp = static_cast<short int>(_packedRecords0 & mask);
    return (tmp != 0);
                            }
@@ -7310,7 +7639,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                              short int mask = 1 << (TWO_POWER_D + 7);
+                              short int mask = 1 << (TWO_POWER_D + 8);
    _packedRecords0 = static_cast<short int>( adjacentSubtreeForksIntoOtherRank ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                            }
                            
@@ -7337,12 +7666,12 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         /**
                          * Generated
                          */
-                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringLastIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         /**
                          * Generated
@@ -7568,6 +7897,29 @@ namespace peanoclaw {
                         
                         
                         
+                        inline bool getWasCreatedInThisIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           short int mask = 1 << (TWO_POWER_D + 1);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+                        }
+                        
+                        
+                        
+                        inline void setWasCreatedInThisIteration(const bool& wasCreatedInThisIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           short int mask = 1 << (TWO_POWER_D + 1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( wasCreatedInThisIteration ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+                        }
+                        
+                        
+                        
                         /**
                          * Generated and optimized
                          * 
@@ -7657,7 +8009,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           short int mask = 1 << (TWO_POWER_D + 1);
+                           short int mask = 1 << (TWO_POWER_D + 2);
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
                         }
@@ -7669,7 +8021,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           short int mask = 1 << (TWO_POWER_D + 1);
+                           short int mask = 1 << (TWO_POWER_D + 2);
    _persistentRecords._packedRecords0 = static_cast<short int>( isHangingNode ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                         }
                         
@@ -7681,9 +8033,9 @@ namespace peanoclaw {
  #endif 
  {
                            short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 2));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 3));
    assertion(( tmp >= 0 &&  tmp <= 6));
    return (RefinementControl) tmp;
                         }
@@ -7697,9 +8049,9 @@ namespace peanoclaw {
  {
                            assertion((refinementControl >= 0 && refinementControl <= 6));
    short int mask =  (1 << (3)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 2));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 3));
    _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 2));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | refinementControl << (TWO_POWER_D + 3));
                         }
                         
                         
@@ -7770,9 +8122,9 @@ namespace peanoclaw {
  #endif 
  {
                            short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 5));
+   tmp = static_cast<short int>(tmp >> (TWO_POWER_D + 6));
    assertion(( tmp >= 0 &&  tmp <= 2));
    return (InsideOutsideDomain) tmp;
                         }
@@ -7786,9 +8138,9 @@ namespace peanoclaw {
  {
                            assertion((insideOutsideDomain >= 0 && insideOutsideDomain <= 2));
    short int mask =  (1 << (2)) - 1;
-   mask = static_cast<short int>(mask << (TWO_POWER_D + 5));
+   mask = static_cast<short int>(mask << (TWO_POWER_D + 6));
    _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 5));
+   _persistentRecords._packedRecords0 = static_cast<short int>(_persistentRecords._packedRecords0 | insideOutsideDomain << (TWO_POWER_D + 6));
                         }
                         
                         
@@ -7882,7 +8234,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           short int mask = 1 << (TWO_POWER_D + 7);
+                           short int mask = 1 << (TWO_POWER_D + 8);
    short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
                         }
@@ -7894,7 +8246,7 @@ namespace peanoclaw {
  __attribute__((always_inline))
  #endif 
  {
-                           short int mask = 1 << (TWO_POWER_D + 7);
+                           short int mask = 1 << (TWO_POWER_D + 8);
    _persistentRecords._packedRecords0 = static_cast<short int>( adjacentSubtreeForksIntoOtherRank ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
                         }
                         

@@ -48,6 +48,11 @@ class peanoclaw::statistics::SubgridStatistics {
     bool   _isFinalized;
 
     /**
+     * Reserves a Heap-vector for the level statistics.
+     */
+    void initializeLevelStatistics();
+
+    /**
      * Logs the statistics to the info-logger.
      */
     void logStatistics() const;
@@ -76,7 +81,16 @@ class peanoclaw::statistics::SubgridStatistics {
      */
     SubgridStatistics(const peanoclaw::State& state);
 
-    SubgridStatistics(std::vector<LevelStatistics> levelStatistics);
+    /**
+     * Constructor to build a SubgridStatistics from given levelStatistics.
+     * The rest of the statistics is empty. Used for merging in parallel.
+     */
+    SubgridStatistics(const std::vector<LevelStatistics>& levelStatistics);
+
+    /**
+     * Copy-constructor.
+     */
+//    SubgridStatistics(const SubgridStatistics& toCopy);
 
     /**
      * Destructor.
