@@ -73,7 +73,6 @@ peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::MasterWorkerAndForkJoi
     _dataHeap(peano::heap::Heap<Data>::getInstance()),
     _messageType(forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication) {
   logTraceInWith3Arguments("MasterWorkerAndForkJoinCommunicator", remoteRank, position, level);
-
   logTraceOut("MasterWorkerAndForkJoinCommunicator");
 }
 
@@ -222,6 +221,11 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeWorkerStateI
   );
 
   masterState.updateMinimalTimestep(workerState.getMinimalTimestep());
+
+  //TODO unterweg debug
+  logDebug("", "On rank " << tarch::parallel::Node::getInstance().getRank()
+      << " master.allPatchesEvolved=" << masterState.getAllPatchesEvolvedToGlobalTimestep()
+      << " worker.allPatchesEvolved=" << workerState.getAllPatchesEvolvedToGlobalTimestep());
 
   bool allPatchesEvolvedToGlobalTimestep = workerState.getAllPatchesEvolvedToGlobalTimestep();
   allPatchesEvolvedToGlobalTimestep &= masterState.getAllPatchesEvolvedToGlobalTimestep();

@@ -624,6 +624,12 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         patch,
         coarseGridCell.getCellDescriptionIndex()
       );
+      _subgridStatistics.updateMinimalSubgridBlockReason(
+        patch,
+        coarseGridVertices,
+        coarseGridVerticesEnumerator,
+        _globalTimestepEndTime
+      );
     }
 
     //Refinement criterion
@@ -738,6 +744,11 @@ void peanoclaw::mappings::SolveTimestep::endIteration(
   logTraceInWith1Argument( "endIteration(State)", solverState );
  
   _subgridStatistics.finalizeIteration(solverState);
+
+//  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+//    static int counter = 0;
+//    assertion(counter++ < 50);
+//  }
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }

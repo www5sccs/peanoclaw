@@ -13,6 +13,8 @@
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/statistics/LevelStatistics.h"
 
+#include "peano/grid/VertexEnumerator.h"
+
 #include "tarch/logging/Log.h"
 
 namespace peanoclaw {
@@ -44,6 +46,9 @@ class peanoclaw::statistics::SubgridStatistics {
     bool   _allPatchesEvolvedToGlobalTimestep;
     double _averageGlobalTimeInterval;
     double _globalTimestepEndTime;
+
+    bool   _minimalPatchBlockedDueToCoarsening;
+    bool   _minimalPatchBlockedDueToGlobalTimestep;
 
     bool   _isFinalized;
 
@@ -108,6 +113,17 @@ class peanoclaw::statistics::SubgridStatistics {
      * patch in this statistics object.
      */
     void processSubgridAfterUpdate(const Patch& patch, int parentIndex);
+
+    /**
+     * Updates the reason for the minimal subgrid to be blocked for
+     * timestepping.
+     */
+    void updateMinimalSubgridBlockReason(
+      const peanoclaw::Patch&              subgrid,
+      peanoclaw::Vertex * const            coarseGridVertices,
+      const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator,
+      double                               globalTimestep
+    );
 
     /**
      * Called after a subgrid got destroyed -> Check if it's one of the stored

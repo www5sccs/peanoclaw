@@ -17,6 +17,7 @@ class peanoclaw::records::CellDescription {
   parallelise persistent bool isRemote;
   parallelise persistent bool currentStateWasSend;
   parallelise persistent bool isPaddingSubgrid;
+  parallelise persistent bool avoidedMultipleSentsOfSubgrid;
   
   /**
    * States that this MPI message is the only MPI message for this

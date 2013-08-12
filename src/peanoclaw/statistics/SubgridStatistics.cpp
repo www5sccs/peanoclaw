@@ -6,6 +6,9 @@
  */
 #include "peanoclaw/statistics/SubgridStatistics.h"
 
+#include "peanoclaw/Vertex.h"
+
+#include "peano/grid/aspects/VertexStateAnalysis.h"
 #include "peano/heap/Heap.h"
 
 #include <limits>
@@ -22,7 +25,7 @@ void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
   if(_minimalPatchIndex != -1) {
     Patch minimalTimePatch(peano::heap::Heap<CellDescription>::getInstance().getData(_minimalPatchIndex).at(0));
     if(minimalTimePatch.isValid()) {
-      logInfo("logStatistics()", "Minimal time patch" << ": " << minimalTimePatch);
+      logInfo("logStatistics()", "Minimal time subgrid" << ": " << minimalTimePatch);
 
       //Parent
       if(_minimalPatchParentIndex >= 0) {
@@ -30,7 +33,7 @@ void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
           peano::heap::Heap<CellDescription>::getInstance().getData(_minimalPatchParentIndex).at(0)
         );
         if(minimalTimePatchParent.isValid()) {
-          logInfo("logStatistics()", "\tMinimal time patch parent: " << minimalTimePatchParent);
+          logInfo("logStatistics()", "\tMinimal time subgrid parent: " << minimalTimePatchParent);
         }
       }
 
@@ -39,6 +42,9 @@ void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
         Patch constrainingPatch(peano::heap::Heap<CellDescription>::getInstance().getData(minimalTimePatch.getConstrainingNeighborIndex()).at(0));
         logInfo("logStatistics()", "\tConstrained by " << constrainingPatch);
       }
+
+      logInfo("logStatistics()", "Minimal time subgrid blocked due to coarsening: " << _minimalPatchBlockedDueToCoarsening);
+      logInfo("logStatistics()", "Minimal time subgrid blocked due to global timestep: " << _minimalPatchBlockedDueToGlobalTimestep);
     }
   }
 }
@@ -77,6 +83,8 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics()
   _allPatchesEvolvedToGlobalTimestep(true),
   _averageGlobalTimeInterval(0.0),
   _globalTimestepEndTime(-1.0),
+  _minimalPatchBlockedDueToCoarsening(false),
+  _minimalPatchBlockedDueToGlobalTimestep(false),
   _isFinalized(false) {
   initializeLevelStatistics();
 }
@@ -95,6 +103,8 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(const peanoclaw::Sta
    _allPatchesEvolvedToGlobalTimestep(state.getAllPatchesEvolvedToGlobalTimestep()),
    _averageGlobalTimeInterval(0.0),
    _globalTimestepEndTime(state.getGlobalTimestepEndTime()),
+   _minimalPatchBlockedDueToCoarsening(false),
+   _minimalPatchBlockedDueToGlobalTimestep(false),
    _isFinalized(false) {
   initializeLevelStatistics();
 }
@@ -114,6 +124,8 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
     _allPatchesEvolvedToGlobalTimestep(true),
     _averageGlobalTimeInterval(0.0),
     _globalTimestepEndTime(0.0),
+    _minimalPatchBlockedDueToCoarsening(false),
+    _minimalPatchBlockedDueToGlobalTimestep(false),
     _isFinalized(false) {
   initializeLevelStatistics();
   for(std::vector<LevelStatistics>::const_iterator i = levelStatistics.begin(); i != levelStatistics.end(); i++) {
@@ -160,6 +172,10 @@ void peanoclaw::statistics::SubgridStatistics::processSubgrid(
 
   //Stopping criterion for global timestep
   if(tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), _globalTimestepEndTime)) {
+
+    //TODO unterweg debug
+    logInfo("", "Blocking global timestep: " << patch);
+
     _allPatchesEvolvedToGlobalTimestep = false;
   }
 
@@ -167,25 +183,6 @@ void peanoclaw::statistics::SubgridStatistics::processSubgrid(
   _endMaximumLocalTimeInterval = std::max(patch.getCurrentTime() + patch.getTimestepSize(), _endMaximumLocalTimeInterval);
   _startMinimumLocalTimeInterval = std::max(patch.getCurrentTime(), _startMinimumLocalTimeInterval);
   _endMinimumLocalTimeInterval = std::min(patch.getCurrentTime() + patch.getTimestepSize(), _endMinimumLocalTimeInterval);
-
-  //TODO unterweg: We cannot do this here. If we need it -> new method that is called in leaveCell(...).
-//  if(finePatch.isLeaf() && (finePatch.getCurrentTime() + finePatch.getTimestepSize() < _minimalPatchTime)) {
-//    _minimalPatchTime = finePatch.getCurrentTime() + finePatch.getTimestepSize();
-//    _minimalTimePatch = finePatch;
-//    _minimalPatchCoarsening = peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-//                            (
-//                              coarseGridVertices,
-//                              coarseGridVerticesEnumerator,
-//                              peanoclaw::records::Vertex::Erasing
-//                            );
-//    _minimalPatchIsAllowedToAdvanceInTime = finePatch.isAllowedToAdvanceInTime();
-//    _minimalPatchShouldSkipGridIteration = finePatch.shouldSkipNextGridIteration();
-//
-//    if(coarseGridCell.getCellDescriptionIndex() > 0) {
-//      Patch coarsePatch(coarseGridCell);
-//      _minimalTimePatchParent = coarsePatch;
-//    }
-//  }
 }
 
 void peanoclaw::statistics::SubgridStatistics::processSubgridAfterUpdate(const peanoclaw::Patch& patch, int parentIndex) {
@@ -196,6 +193,24 @@ void peanoclaw::statistics::SubgridStatistics::processSubgridAfterUpdate(const p
   level.setNumberOfCellUpdates(
     level.getNumberOfCellUpdates() + tarch::la::volume(patch.getSubdivisionFactor())
   );
+}
+
+void peanoclaw::statistics::SubgridStatistics::updateMinimalSubgridBlockReason(
+  const peanoclaw::Patch&              subgrid,
+  peanoclaw::Vertex * const            coarseGridVertices,
+  const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator,
+  double                               globalTimestep
+) {
+  if(subgrid.getCellDescriptionIndex() == _minimalPatchIndex) {
+    _minimalPatchBlockedDueToCoarsening = peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Erasing
+                            );
+    _minimalPatchBlockedDueToGlobalTimestep
+      = tarch::la::greaterEquals(subgrid.getCurrentTime() + subgrid.getTimestepSize(), globalTimestep);
+  }
 }
 
 void peanoclaw::statistics::SubgridStatistics::destroyedSubgrid(int cellDescriptionIndex) {

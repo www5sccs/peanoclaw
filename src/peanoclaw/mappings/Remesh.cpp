@@ -10,7 +10,8 @@
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 
-std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , peanoclaw::mappings::Remesh::VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >   peanoclaw::mappings::Remesh::_vertexPositionToIndexMap;
+peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap peanoclaw::mappings::Remesh::_vertexPositionToIndexMap;
+peanoclaw::parallel::NeighbourCommunicator::RemoteSubgridMap               peanoclaw::mappings::Remesh::_remoteSubgridMap;
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
@@ -276,15 +277,15 @@ void peanoclaw::mappings::Remesh::createCell(
 ) {
   logTraceInWith6Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, fineGridVerticesEnumerator.getCellCenter() );
 
-    std::cout << "Creating cell on rank "
-        #ifdef Parallel
-        << tarch::parallel::Node::getInstance().getRank() << ": "
-        #endif
-        << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-        << fineGridVerticesEnumerator.getCellSize()
-        << ", index=" << fineGridCell.getCellDescriptionIndex()
-        << ", level=" << fineGridVerticesEnumerator.getLevel()
-        << std::endl;
+//    std::cout << "Creating cell on rank "
+//        #ifdef Parallel
+//        << tarch::parallel::Node::getInstance().getRank() << ": "
+//        #endif
+//        << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+//        << fineGridVerticesEnumerator.getCellSize()
+//        << ", index=" << fineGridCell.getCellDescriptionIndex()
+//        << ", level=" << fineGridVerticesEnumerator.getLevel()
+//        << std::endl;
  
   //Initialise new Patch
   Patch fineGridPatch = Patch(
@@ -433,7 +434,14 @@ void peanoclaw::mappings::Remesh::destroyCell(
     //If not -> Delete it
     if(parallelSubgrid.isAdjacentToLocalSubdomain(coarseGridCell, fineGridVertices, fineGridVerticesEnumerator)) {
       #ifdef Parallel
-      finePatch.setIsRemote(true);
+      peanoclaw::parallel::NeighbourCommunicator communicator(
+        -1,
+        fineGridVerticesEnumerator.getVertexPosition(0),
+        fineGridVerticesEnumerator.getLevel(),
+        fineGridVerticesEnumerator.getCellSize(),
+        _remoteSubgridMap,
+        _parallelStatistics);
+      communicator.switchToRemote(finePatch);
       #endif
     } else {
       finePatch.deleteData();
@@ -480,7 +488,7 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
     }
   }
 
-  peanoclaw::parallel::NeighbourCommunicator communicator(fromRank, fineGridX, level, _parallelStatistics);
+  peanoclaw::parallel::NeighbourCommunicator communicator(fromRank, fineGridX, level, fineGridH, _remoteSubgridMap, _parallelStatistics);
   communicator.receiveSubgridsForVertex(
     vertex,
     neighbour,
@@ -501,7 +509,7 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
 
-  peanoclaw::parallel::NeighbourCommunicator communicator(toRank, x, level, _parallelStatistics);
+  peanoclaw::parallel::NeighbourCommunicator communicator(toRank, x, level, h, _remoteSubgridMap, _parallelStatistics);
   communicator.sendSubgridsForVertex(vertex, x, h, level);
 
   logTraceOut( "prepareSendToNeighbour(...)" );
