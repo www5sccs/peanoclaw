@@ -318,6 +318,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
   //  - Ghostlayer bounds
   //  - Neighbor times
   for(int i = 0; i < TWO_POWER_D; i++) {
+    assertion1(fineSubgrid.getCellDescriptionIndex() != -1, fineSubgrid);
     fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, fineSubgrid.getCellDescriptionIndex());
     fineGridVertices[fineGridVerticesEnumerator(i)].fillAdjacentGhostLayers(
       fineGridVerticesEnumerator.getLevel(),
@@ -476,4 +477,29 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictRefinement
   #endif
 
   logTraceOut( "restrictRefinementFlagsToCoarseVertices(...)" );
+}
+
+void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictDestroyedSubgrid(
+  const Patch&                         destroyedSubgrid,
+  Patch&                               coarseSubgrid,
+  peanoclaw::Vertex * const            fineGridVertices,
+  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
+) {
+  assertion1(tarch::la::greaterEquals(coarseSubgrid.getTimestepSize(), 0.0), destroyedSubgrid);
+
+  //Fix timestep size
+  assertion1(tarch::la::greaterEquals(coarseSubgrid.getTimestepSize(), 0), coarseSubgrid);
+  coarseSubgrid.setTimestepSize(std::max(0.0, coarseSubgrid.getTimestepSize()));
+
+  //Set indices on coarse adjacent vertices
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, coarseSubgrid.getCellDescriptionIndex());
+  }
+
+  //Skip update for coarse patch in next grid iteration
+  coarseSubgrid.setSkipNextGridIteration(1);
+
+  //Set demanded mesh width for coarse cell to coarse cell size. Otherwise
+  //the coarse patch might get refined immediately.
+  coarseSubgrid.setDemandedMeshWidth(coarseSubgrid.getSubcellSize()(0));
 }

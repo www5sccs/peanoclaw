@@ -10,7 +10,8 @@
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 
-std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , peanoclaw::mappings::Remesh::VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >   peanoclaw::mappings::Remesh::_vertexPositionToIndexMap;
+peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap peanoclaw::mappings::Remesh::_vertexPositionToIndexMap;
+peanoclaw::parallel::NeighbourCommunicator::RemoteSubgridMap               peanoclaw::mappings::Remesh::_remoteSubgridMap;
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
@@ -162,7 +163,7 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "destroyHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
- 
+
   //Handle refinement flags
   if(tarch::la::allGreater(fineGridX, _domainOffset) && tarch::la::allGreater(_domainOffset + _domainSize, fineGridX)) {
     _gridLevelTransfer->restrictRefinementFlagsToCoarseVertices(
@@ -311,7 +312,7 @@ void peanoclaw::mappings::Remesh::createCell(
     Patch coarseGridPatch(
       coarseGridCell
     );
-    assertion1(coarseGridPatch.getTimestepSize() >= 0.0 || coarseGridPatch.isVirtual(), coarseGridPatch);
+    assertion1(tarch::la::greaterEquals(coarseGridPatch.getTimestepSize(), 0.0) || coarseGridPatch.isVirtual(), coarseGridPatch);
 
     if(!_isInitializing && (coarseGridPatch.isVirtual() || coarseGridPatch.isLeaf())) {
       //TODO unterweg dissertation: The grid is skipped directly after the creation in enterCell.
@@ -411,46 +412,36 @@ void peanoclaw::mappings::Remesh::destroyCell(
 
 	  //Create patch in parent cell if it doesn't exist
 	  if(!coarseGridCell.isRoot() && coarseGridCell.isInside()) {
-		CellDescription& coarseCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0);
-		assertion1(tarch::la::greaterEquals(coarseCellDescription.getTimestepSize(), 0.0), finePatch);
-
-		//Fix timestep size
-		coarseCellDescription.setTimestepSize(std::max(0.0, coarseCellDescription.getTimestepSize()));
-
-		//Set indices on coarse adjacent vertices and fill adjacent ghostlayers
-		for(int i = 0; i < TWO_POWER_D; i++) {
-		  fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, coarseGridCell.getCellDescriptionIndex());
-		}
-
-		//Skip update for coarse patch in next grid iteration
-		coarseCellDescription.setSkipGridIterations(1);
-
-		//Set demanded mesh width for coarse cell to coarse cell size. Otherwise
-		//the coarse patch might get refined immediately.
-		coarseCellDescription.setDemandedMeshWidth(coarseGridVerticesEnumerator.getCellSize()(0) / coarseCellDescription.getSubdivisionFactor()(0));
+	    Patch coarseSubgrid(peano::heap::Heap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
+	    _gridLevelTransfer->restrictDestroyedSubgrid(
+	      finePatch,
+	      coarseSubgrid,
+	      fineGridVertices,
+	      fineGridVerticesEnumerator
+	    );
 	  } else {
 		for(int i = 0; i < TWO_POWER_D; i++) {
-			fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, -1);
+          fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(i, -1);
 		}
 	  }
 
 	  finePatch.deleteData();
   } else if(fineGridCell.isAssignedToRemoteRank()) {
     //Patch got moved to other rank, check whether it is now adjacent to the local domain.
-    bool adjacentToLocalDomain = !coarseGridCell.isAssignedToRemoteRank();
-    #ifdef Parallel
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      adjacentToLocalDomain |= fineGridVertices[fineGridVerticesEnumerator(i)].isAdjacentToDomainOf(
-          tarch::parallel::Node::getInstance().getRank()
-        );
-    }
-    #endif
+    ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
 
     //If it is adjacent -> Now remote
     //If not -> Delete it
-    if(adjacentToLocalDomain) {
+    if(parallelSubgrid.isAdjacentToLocalSubdomain(coarseGridCell, fineGridVertices, fineGridVerticesEnumerator)) {
       #ifdef Parallel
-      finePatch.setIsRemote(true);
+      peanoclaw::parallel::NeighbourCommunicator communicator(
+        -1,
+        fineGridVerticesEnumerator.getVertexPosition(0),
+        fineGridVerticesEnumerator.getLevel(),
+        fineGridVerticesEnumerator.getCellSize(),
+        _remoteSubgridMap,
+        _parallelStatistics);
+      communicator.switchToRemote(finePatch);
       #endif
     } else {
       finePatch.deleteData();
@@ -497,7 +488,7 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
     }
   }
 
-  peanoclaw::parallel::NeighbourCommunicator communicator(fromRank, fineGridX, level, _parallelStatistics);
+  peanoclaw::parallel::NeighbourCommunicator communicator(fromRank, fineGridX, level, fineGridH, _remoteSubgridMap, _parallelStatistics);
   communicator.receiveSubgridsForVertex(
     vertex,
     neighbour,
@@ -518,7 +509,7 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
 ) {
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
 
-  peanoclaw::parallel::NeighbourCommunicator communicator(toRank, x, level, _parallelStatistics);
+  peanoclaw::parallel::NeighbourCommunicator communicator(toRank, x, level, h, _remoteSubgridMap, _parallelStatistics);
   communicator.sendSubgridsForVertex(vertex, x, h, level);
 
   logTraceOut( "prepareSendToNeighbour(...)" );
@@ -924,11 +915,6 @@ void peanoclaw::mappings::Remesh::leaveCell(
 //      i,
 //      fineGridCell.getCellDescriptionIndex()
 //    );
-//  }
-
-//  if(fineGridVerticesEnumerator.getLevel() == 3) {
-//    peano::heap::Heap<CellDescription>::getInstance().receiveDanglingMessages();
-//    peano::heap::Heap<Data>::getInstance().receiveDanglingMessages();
 //  }
 
   //Count number of adjacent subgrids

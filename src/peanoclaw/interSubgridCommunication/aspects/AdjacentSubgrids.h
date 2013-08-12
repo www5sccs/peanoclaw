@@ -14,6 +14,7 @@
 
 #include "tarch/la/Vector.h"
 #include "tarch/la/VectorCompare.h"
+#include "tarch/logging/Log.h"
 
 #include <map>
 
@@ -41,10 +42,16 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
     typedef std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double>, VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> > VertexMap;
 
   private:
+    /**
+     * Logging device.
+     */
+    static tarch::logging::Log            _log;
     peanoclaw::Vertex&                    _vertex;
     VertexMap&                            _vertexMap;
     tarch::la::Vector<DIMENSIONS, double> _position;
     int                                   _level;
+
+    tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> createVertexKey() const;
 
   public:
     AdjacentSubgrids(

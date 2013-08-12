@@ -13,6 +13,8 @@
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/statistics/LevelStatistics.h"
 
+#include "peano/grid/VertexEnumerator.h"
+
 #include "tarch/logging/Log.h"
 
 namespace peanoclaw {
@@ -45,7 +47,15 @@ class peanoclaw::statistics::SubgridStatistics {
     double _averageGlobalTimeInterval;
     double _globalTimestepEndTime;
 
+    bool   _minimalPatchBlockedDueToCoarsening;
+    bool   _minimalPatchBlockedDueToGlobalTimestep;
+
     bool   _isFinalized;
+
+    /**
+     * Reserves a Heap-vector for the level statistics.
+     */
+    void initializeLevelStatistics();
 
     /**
      * Logs the statistics to the info-logger.
@@ -76,7 +86,16 @@ class peanoclaw::statistics::SubgridStatistics {
      */
     SubgridStatistics(const peanoclaw::State& state);
 
-    SubgridStatistics(std::vector<LevelStatistics> levelStatistics);
+    /**
+     * Constructor to build a SubgridStatistics from given levelStatistics.
+     * The rest of the statistics is empty. Used for merging in parallel.
+     */
+    SubgridStatistics(const std::vector<LevelStatistics>& levelStatistics);
+
+    /**
+     * Copy-constructor.
+     */
+//    SubgridStatistics(const SubgridStatistics& toCopy);
 
     /**
      * Destructor.
@@ -94,6 +113,23 @@ class peanoclaw::statistics::SubgridStatistics {
      * patch in this statistics object.
      */
     void processSubgridAfterUpdate(const Patch& patch, int parentIndex);
+
+    /**
+     * Updates the reason for the minimal subgrid to be blocked for
+     * timestepping.
+     */
+    void updateMinimalSubgridBlockReason(
+      const peanoclaw::Patch&              subgrid,
+      peanoclaw::Vertex * const            coarseGridVertices,
+      const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator,
+      double                               globalTimestep
+    );
+
+    /**
+     * Called after a subgrid got destroyed -> Check if it's one of the stored
+     * patches and update.
+     */
+    void destroyedSubgrid(int cellDescriptionIndex);
 
     /**
      * Sets the statistics values in the state after a grid iteration

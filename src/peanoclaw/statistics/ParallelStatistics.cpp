@@ -9,23 +9,27 @@
 tarch::logging::Log peanoclaw::statistics::ParallelStatistics::_log("peanoclaw::statistics::ParallelStatistics");
 
 peanoclaw::statistics::ParallelStatistics::ParallelStatistics(std::string name)
- : _name(name), _sentNeighborData(0), _sentPaddingNeighborData(0), _receivedNeighborData(0), _receivedPaddingNeighborData(0) {
+ : _name(name),
+   _sentNeighborData(0),
+   _sentPaddingNeighborData(0),
+   _receivedNeighborData(0),
+   _receivedPaddingNeighborData(0) {
 }
 
 void peanoclaw::statistics::ParallelStatistics::sentNeighborData( int numberOfSentSubgrids ) {
-  _sentNeighborData += numberOfSentSubgrids;
+  _sentNeighborData += 1; //numberOfSentSubgrids;
 }
 
 void peanoclaw::statistics::ParallelStatistics::sentPaddingNeighborData( int numberOfSentSubgrids ) {
-  _sentPaddingNeighborData += numberOfSentSubgrids;
+  _sentPaddingNeighborData += 1; //numberOfSentSubgrids;
 }
 
 void peanoclaw::statistics::ParallelStatistics::receivedNeighborData( int numberOfReceivedSubgrids ) {
-  _receivedNeighborData += numberOfReceivedSubgrids;
+  _receivedNeighborData += 1; //numberOfReceivedSubgrids;
 }
 
 void peanoclaw::statistics::ParallelStatistics::receivedPaddingNeighborData( int numberOfReceivedSubgrids ) {
-  _receivedPaddingNeighborData += numberOfReceivedSubgrids;
+  _receivedPaddingNeighborData += 1; //numberOfReceivedSubgrids;
 }
 
 void peanoclaw::statistics::ParallelStatistics::logStatistics() const {

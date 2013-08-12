@@ -30,6 +30,7 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.159467953" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1047086821" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="Dim2"/>
+									<listOptionValue builtIn="false" value="PYCLAW"/>
 									<listOptionValue builtIn="false" value="SharedMemoryParallelisation"/>
 									<listOptionValue builtIn="false" value="SharedTBB"/>
 									<listOptionValue builtIn="false" value="Asserts"/>

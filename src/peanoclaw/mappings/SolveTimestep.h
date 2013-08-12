@@ -67,6 +67,8 @@ class peanoclaw::mappings::SolveTimestep {
     bool shouldAdvanceInTime(
       const peanoclaw::Patch&                  patch,
       double                                   maximumTimestepDueToGlobalTimestep,
+      peanoclaw::Vertex * const                fineGridVertices,
+      const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator,
       peanoclaw::Vertex * const                coarseGridVertices,
       const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator
     );

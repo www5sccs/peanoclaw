@@ -7,9 +7,12 @@
 #include "Numerics.h"
 #include "interSubgridCommunication/GhostLayerCompositor.h"
 
+tarch::logging::Log peanoclaw::Vertex::_log("peanoclaw::Vertex");
+
 peanoclaw::Vertex::Vertex():
-  Base() { 
-  // @todo Insert your code here
+  Base() {
+  _vertexData.setIndicesOfAdjacentCellDescriptions(-1);
+  _vertexData.setWasCreatedInThisIteration(true);
 }
 
 
@@ -191,4 +194,12 @@ tarch::la::Vector<TWO_POWER_D,int> peanoclaw::Vertex::getAdjacentRanksDuringLast
   #else
   return tarch::la::Vector<TWO_POWER_D, int>(0);
   #endif
+}
+
+void peanoclaw::Vertex::setWasCreatedInThisIteration(bool flag) {
+  _vertexData.setWasCreatedInThisIteration(flag);
+}
+
+bool peanoclaw::Vertex::wasCreatedInThisIteration() const {
+  return _vertexData.getWasCreatedInThisIteration();
 }

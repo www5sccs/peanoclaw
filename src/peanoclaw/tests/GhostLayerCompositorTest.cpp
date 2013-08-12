@@ -6,12 +6,11 @@
  */
 #include "peanoclaw/tests/GhostLayerCompositorTest.h"
 
-#include "peanoclaw/tests/PyClawTestStump.h"
+#include "peanoclaw/tests/NumericsTestStump.h"
 #include "peanoclaw/tests/Helper.h"
 
 #include "peanoclaw/Area.h"
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/pyclaw/PyClaw.h"
 #include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
 #include "peanoclaw/interSubgridCommunication/DefaultFluxCorrection.h"
 #include "peanoclaw/interSubgridCommunication/DefaultRestriction.h"
@@ -56,7 +55,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::run() {
 }
 
 void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
-  #ifdef Dim2
+  #if defined(Dim2)
 
   for(int vetoIndex = 0; vetoIndex < TWO_POWER_D; vetoIndex++) {
 
@@ -97,12 +96,12 @@ void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
       validate(patches[i].isValid());
     }
 
-    peanoclaw::pyclaw::PyClaw pyClaw(0, 0, 0, 0, 0, 0, 0);
+    peanoclaw::tests::NumericsTestStump numerics;
     peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor
       = peanoclaw::interSubgridCommunication::GhostLayerCompositor(
           patches,
           0,
-          pyClaw,
+          numerics,
           false
           );
     ghostLayerCompositor.fillGhostLayers(-1);
@@ -122,7 +121,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
 }
 
 void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFinePatchLeftGhostLayer2D() {
-  #ifdef Dim2
+  #if defined(Dim2)
   //Patch-array for lower-left vertex in fine patch
   peanoclaw::Patch patches[TWO_POWER_D];
 
@@ -191,11 +190,11 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
   patches[1].setValueUOld(subcellIndex, 0, 11.0);
 
   //Fill left ghostlayer
-  peanoclaw::tests::PyClawTestStump pyClaw;
+  peanoclaw::tests::NumericsTestStump numerics;
   peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(
     patches,
     1,
-    pyClaw,
+    numerics,
     false
   );
   ghostLayerCompositor.fillGhostLayers(-1);
@@ -212,7 +211,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
 }
 
 void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFinePatchRightGhostLayer2D() {
-  #ifdef Dim2
+  #if defined(Dim2)
   //Patch-array for lower-left vertex in fine patch
   peanoclaw::Patch patches[TWO_POWER_D];
 
@@ -280,11 +279,11 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
   patches[2].setValueUOld(subcellIndex, 0, 11.0);
 
   //Fill left ghostlayer
-  peanoclaw::tests::PyClawTestStump pyClaw;
+  peanoclaw::tests::NumericsTestStump numerics;
   peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(
     patches,
     1,
-    pyClaw,
+    numerics,
     false
   );
   ghostLayerCompositor.fillGhostLayers(-1);
@@ -365,11 +364,11 @@ void peanoclaw::tests::GhostLayerCompositorTest::testProjectionFromCoarseToFineP
 //  );
 //
 //  //Fill right ghostlayer
-//  peanoclaw::pyclaw::PyClaw pyClaw(0, 0, 0, 0);
+//  peanoclaw::tests::NumericsTestStump numerics;
 //  peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(
 //    patches,
 //    1,
-//    pyClaw
+//    numerics
 //  );
 //  ghostLayerCompositor.fillGhostLayers();
 //
@@ -516,9 +515,9 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
   logInfo("", "Coarse Patch: \n" << coarsePatch.toStringUNew());
 
   //GhostLayerCompositor
-//  PyClawTestStump pyClaw;
+//  NumericsTestStump numerics;
 //  peanoclaw::Patch patches[TWO_POWER_D];
-//  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, pyClaw, false);
+//  interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, numerics, false);
   peanoclaw::interSubgridCommunication::DefaultFluxCorrection fluxCorrection;
 
   fluxCorrection.applyCorrection(finePatch, coarsePatch, 0, 1);
@@ -591,12 +590,12 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
   patches[3] = sourcePatch;
   patches[2] = destinationPatch;
 
-  peanoclaw::pyclaw::PyClaw pyClaw(0, 0, 0, 0, 0, 0, 0);
+  peanoclaw::tests::NumericsTestStump numerics;
   peanoclaw::interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor
     = peanoclaw::interSubgridCommunication::GhostLayerCompositor(
         patches,
         0,
-        pyClaw,
+        numerics,
         true
       );
   //TODO Add a test for filling only one adjacent patch? (i.e. parameter != -1)

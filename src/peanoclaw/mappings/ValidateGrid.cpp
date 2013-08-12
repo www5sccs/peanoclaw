@@ -404,7 +404,7 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
   //Assemble vector to send to master
   std::vector<PatchDescription>& workerAndLocalData = _heap.getData(_patchDescriptionsIndex);
   std::vector<PatchDescription> localData = _validator.getAllPatches();
-  for(int i = 0; i < localData.size(); i++) {
+  for(int i = 0; i < (int)localData.size(); i++) {
     workerAndLocalData.push_back(localData[i]);
   }
 

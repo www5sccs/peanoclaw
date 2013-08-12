@@ -8,6 +8,7 @@
 #include "peanoclaw/State.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
+#include "peanoclaw/parallel/NeighbourCommunicator.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/VertexDescription.h"
 #include "peanoclaw/records/Data.h"
@@ -61,6 +62,7 @@ class peanoclaw::mappings::Remesh {
      * Map from a hanging node's position and level to
      */
     static peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap _vertexPositionToIndexMap;
+    static peanoclaw::parallel::NeighbourCommunicator::RemoteSubgridMap               _remoteSubgridMap;
 
     int _unknownsPerSubcell;
 

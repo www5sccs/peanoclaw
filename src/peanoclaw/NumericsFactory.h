@@ -33,6 +33,12 @@ class peanoclaw::NumericsFactory {
     static tarch::logging::Log _log;
 
   public:
+
+#if defined(SWE)
+    peanoclaw::Numerics* createSWENumerics(
+      peanoclaw::native::SWEKernelScenario& scenario
+    );
+#else
     /**
      * Creates a new Numerics object on the heap that encapsulates
      * all offered PyClaw functionality.
@@ -46,18 +52,13 @@ class peanoclaw::NumericsFactory {
       InterPatchCommunicationCallback restrictionCallback,
       InterPatchCommunicationCallback fluxCorrectionCallback
     );
-
-#if defined(SWE)
-    peanoclaw::Numerics* createSWENumerics(
-      peanoclaw::native::SWEKernelScenario& scenario
-    );
 #endif
     /**
      * Creates a new Numerics object on the heap that provides
      * native functionality.
      */
-    peanoclaw::Numerics* createNativeNumerics(
-    );
+//    peanoclaw::Numerics* createNativeNumerics(
+//    );
 };
 
 #endif /* NUMERICSFACTORY_H_ */

@@ -40,9 +40,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
     }
   }
 
-  //TODO unterweg As soon as the virtual patches work correctly, the time interpolation can be activated
-//  timeFactor = 1.0;
-
   int sourceUnknownsPerSubcell = source.getUnknownsPerSubcell();
   dfor(subcellindex, size) {
     int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);

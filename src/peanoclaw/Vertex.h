@@ -12,6 +12,8 @@
 #include "records/CellDescription.h"
 #include "records/Data.h"
 
+#include "tarch/logging/Log.h"
+
 namespace peanoclaw {
   class Numerics;
   class Vertex;
@@ -29,6 +31,11 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
     typedef class peano::grid::Vertex< peanoclaw::records::Vertex >  Base;
     typedef class peanoclaw::records::CellDescription CellDescription;
     typedef class peanoclaw::records::Data Data;
+
+    /**
+     * Logging device.
+     */
+    static tarch::logging::Log _log;
 
   public:
     /**
@@ -154,6 +161,16 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
      * Returns the adjacent ranks from the last grid iteration.
      */
     tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksDuringLastIteration() const;
+
+    /**
+     * Sets, whether this vertex was just created or not.
+     */
+    void setWasCreatedInThisIteration(bool flag);
+
+    /**
+     * Returns, whether this vertex was just created or not.
+     */
+    bool wasCreatedInThisIteration() const;
 };
 
 

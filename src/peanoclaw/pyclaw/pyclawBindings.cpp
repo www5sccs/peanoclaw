@@ -35,6 +35,45 @@ void importArrays() {
   import_array();
 }
 
+void configureLogFilter() {
+  // Configure the output
+  tarch::logging::CommandLineLogger::getInstance().clearFilterList();
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
+
+  //Disable minimal time subgrid
+//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics::logStatistics", true ) );
+
+  //Selective Tracing
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel", true ) );
+
+  std::ostringstream logFileName;
+  #ifdef Parallel
+  logFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-trace.txt";
+  #endif
+  tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
+}
+
+tarch::la::Vector<DIMENSIONS, double> convertToVector(double v0, double v1, double v2) {
+  tarch::la::Vector<DIMENSIONS, double> vector;
+  vector(0) = v0;
+  vector(1) = v1;
+  #ifdef Dim3
+  vector(2) = v2;
+  #endif
+  return vector;
+}
+
+tarch::la::Vector<DIMENSIONS, int> convertToVector(int v0, int v1, int v2) {
+  tarch::la::Vector<DIMENSIONS, int> vector;
+  vector(0) = v0;
+  vector(1) = v1;
+  #ifdef Dim3
+  vector(2) = v2;
+  #endif
+  return vector;
+}
+
 extern "C"
 peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   double initialMinimalMeshWidthScalar,
@@ -67,9 +106,9 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
 #if defined(Parallel)
   char argv[2][256];
   int argc = 1;
-  sprintf(argv[0], "%s", "peanoclaw");
-  int parallelSetup = peano::initParallelEnvironment(&argc,(char ***)&argv);
-  int sharedMemorySetup = peano::initSharedMemoryEnvironment();
+  //sprintf(argv[0], "%s", "peanoclaw");
+  peano::initParallelEnvironment(&argc,(char ***)&argv);
+  peano::initSharedMemoryEnvironment();
 #endif
 
   //Initialize Python
@@ -88,26 +127,9 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   static tarch::logging::Log _log("::pyclawBindings");
   logInfo("pyclaw_peano_new(...)", "Initializing Peano");
 
-  // Configure the output
-  tarch::logging::CommandLineLogger::getInstance().clearFilterList();
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
+  configureLogFilter();
 
-  //Selective Tracing
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw", false ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::mappings::Remesh::endIteration", true ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel", true ) );
-
-  //tarch::logging::CommandLineLogger::getInstance().setLogFormat( ... please consult source code documentation );
-
-  std::ostringstream logFileName;
-  #ifdef Parallel
-  logFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-trace.txt";
-  #endif
-  tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
-
-  //PyClaw - this object is copied to the runner and is stored there.
+  //Numerics -- this object is copied to the runner and is stored there.
   peanoclaw::NumericsFactory numericsFactory;
   peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
     initializationCallback,
@@ -120,29 +142,13 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   );
 
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
-  // assertion1(_configuration->isValid(), _configuration);
 
   //Construct parameters
-  tarch::la::Vector<DIMENSIONS, double> domainOffset;
-  domainOffset(0) = domainOffsetX0;
-  domainOffset(1) = domainOffsetX1;
-  #ifdef Dim3
-  domainOffset(2) = domainOffsetX2;
-  #endif
-  tarch::la::Vector<DIMENSIONS, double> domainSize;
-  domainSize(0) = domainSizeX0;
-  domainSize(1) = domainSizeX1;
-  #ifdef Dim3
-  domainSize(2) = domainSizeX2;
-  #endif
+  tarch::la::Vector<DIMENSIONS, double> domainOffset = convertToVector(domainOffsetX0, domainOffsetX1, domainOffsetX2);
+  tarch::la::Vector<DIMENSIONS, double> domainSize = convertToVector(domainSizeX0, domainSizeX1, domainSizeX2);
   
   tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(initialMinimalMeshWidthScalar);
-  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor;
-  subdivisionFactor(0) = subdivisionFactorX0;
-  subdivisionFactor(1) = subdivisionFactorX1;
-  #ifdef Dim3
-  subdivisionFactor(2) = subdivisionFactorX2;
-  #endif
+  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = convertToVector(subdivisionFactorX0, subdivisionFactorX1, subdivisionFactorX2);
 
   //Check parameters
   assertion1(tarch::la::greater(domainSizeX0, 0.0) && tarch::la::greater(domainSizeX1, 0.0), domainSize);
@@ -168,10 +174,6 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     initialTimestepSize,
     useDimensionalSplittingOptimization
   );
-
-#if defined(Parallel) 
-  std::cout << tarch::parallel::Node::getInstance().getRank() << ": peano instance created" << std::endl;
-#endif
 
   assertion(runner != 0);
  
@@ -277,12 +279,6 @@ void pyclaw_peano_gatherSolution(peanoclaw::runners::PeanoClawLibraryRunner* run
 extern "C"
 int pyclaw_peano_runWorker(peanoclaw::runners::PeanoClawLibraryRunner* runner)
 {
-//  if(true) {
-//    tarch::tests::TestCaseRegistry::getInstance().getIntegrationTestCaseCollection().run();
-//    exit(0);
-//  }
-
-
   if(_calledFromPython) {
     _pythonState = PyGILState_Ensure();
   }
