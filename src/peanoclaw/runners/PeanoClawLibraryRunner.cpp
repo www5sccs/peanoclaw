@@ -67,8 +67,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   //Parallel configuration
   #ifdef Parallel
-  tarch::parallel::Node::getInstance().setTimeOutWarning(10);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(20);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(30);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(60);
   #endif
 
   //Multicore configuration

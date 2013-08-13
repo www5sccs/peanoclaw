@@ -86,8 +86,6 @@ class peanoclaw::records::Cell {
   persistent parallelise double  nodeWorkload;
   persistent parallelise double  localWorkload;
   persistent parallelise double  totalWorkload;
-  persistent parallelise double  maxWorkload;
-  persistent parallelise double  minWorkload;
   
   persistent packed bool         cellIsAForkCandidate;
   #endif

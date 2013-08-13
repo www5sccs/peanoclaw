@@ -186,7 +186,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
                                         ,qinit_callback
                                         #,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
-                                        ,refinement_criterion=refinement_criterion_gradient
+                                        #,refinement_criterion=refinement_criterion_gradient
                                         )
             claw.solution = amrclaw.Solution(state, domain)
         else:

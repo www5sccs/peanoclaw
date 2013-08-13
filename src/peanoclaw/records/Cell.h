@@ -34,7 +34,7 @@ namespace peanoclaw {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   11/08/2013 11:57
+    * @date   13/08/2013 09:35
     */
    class peanoclaw::records::Cell { 
       
@@ -677,7 +677,7 @@ namespace peanoclaw {
        *
        * 		   build date: 12-04-2013 09:18
        *
-       * @date   11/08/2013 11:57
+       * @date   13/08/2013 09:35
        */
       class peanoclaw::records::CellPacked { 
          
@@ -1358,7 +1358,7 @@ namespace peanoclaw {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   11/08/2013 11:57
+          * @date   13/08/2013 09:35
           */
          class peanoclaw::records::Cell { 
             
@@ -1960,7 +1960,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   11/08/2013 11:57
+             * @date   13/08/2013 09:35
              */
             class peanoclaw::records::CellPacked { 
                
@@ -2601,7 +2601,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   11/08/2013 11:57
+             * @date   13/08/2013 09:35
              */
             class peanoclaw::records::Cell { 
                
@@ -2632,8 +2632,6 @@ namespace peanoclaw {
                      double _nodeWorkload;
                      double _localWorkload;
                      double _totalWorkload;
-                     double _maxWorkload;
-                     double _minWorkload;
                      bool _cellIsAForkCandidate;
                      /**
                       * Generated
@@ -2643,7 +2641,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate);
+                     PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                      
                      
                      inline int getCellDescriptionIndex() const 
@@ -2922,46 +2920,6 @@ namespace peanoclaw {
                      
                      
                      
-                     inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                        return _maxWorkload;
-                     }
-                     
-                     
-                     
-                     inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                        _maxWorkload = maxWorkload;
-                     }
-                     
-                     
-                     
-                     inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                        return _minWorkload;
-                     }
-                     
-                     
-                     
-                     inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                        _minWorkload = minWorkload;
-                     }
-                     
-                     
-                     
                      inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -3001,7 +2959,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate);
+                  Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                   
                   /**
                    * Generated
@@ -3349,46 +3307,6 @@ namespace peanoclaw {
                   
                   
                   
-                  inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                     return _persistentRecords._maxWorkload;
-                  }
-                  
-                  
-                  
-                  inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                     _persistentRecords._maxWorkload = maxWorkload;
-                  }
-                  
-                  
-                  
-                  inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                     return _persistentRecords._minWorkload;
-                  }
-                  
-                  
-                  
-                  inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                     _persistentRecords._minWorkload = minWorkload;
-                  }
-                  
-                  
-                  
                   inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -3490,7 +3408,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   11/08/2013 11:57
+                * @date   13/08/2013 09:35
                 */
                class peanoclaw::records::CellPacked { 
                   
@@ -3506,8 +3424,6 @@ namespace peanoclaw {
                         double _nodeWorkload;
                         double _localWorkload;
                         double _totalWorkload;
-                        double _maxWorkload;
-                        double _minWorkload;
                         
                         /** mapping of records:
                         || Member 	|| startbit 	|| length
@@ -3526,7 +3442,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate);
+                        PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                         
                         
                         inline int getCellDescriptionIndex() const 
@@ -3825,46 +3741,6 @@ namespace peanoclaw {
                         
                         
                         
-                        inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                           return _maxWorkload;
-                        }
-                        
-                        
-                        
-                        inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                           _maxWorkload = maxWorkload;
-                        }
-                        
-                        
-                        
-                        inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                           return _minWorkload;
-                        }
-                        
-                        
-                        
-                        inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                           _minWorkload = minWorkload;
-                        }
-                        
-                        
-                        
                         inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -3907,7 +3783,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate);
+                     CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                      
                      /**
                       * Generated
@@ -4282,46 +4158,6 @@ namespace peanoclaw {
                      
                      
                      
-                     inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                        return _persistentRecords._maxWorkload;
-                     }
-                     
-                     
-                     
-                     inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                        _persistentRecords._maxWorkload = maxWorkload;
-                     }
-                     
-                     
-                     
-                     inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                        return _persistentRecords._minWorkload;
-                     }
-                     
-                     
-                     
-                     inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                        _persistentRecords._minWorkload = minWorkload;
-                     }
-                     
-                     
-                     
                      inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -4424,7 +4260,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 12-04-2013 09:18
                 *
-                * @date   11/08/2013 11:57
+                * @date   13/08/2013 09:35
                 */
                class peanoclaw::records::Cell { 
                   
@@ -4985,7 +4821,7 @@ namespace peanoclaw {
                    *
                    * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   11/08/2013 11:57
+                   * @date   13/08/2013 09:35
                    */
                   class peanoclaw::records::CellPacked { 
                      
@@ -5585,7 +5421,7 @@ namespace peanoclaw {
                    *
                    * 		   build date: 12-04-2013 09:18
                    *
-                   * @date   11/08/2013 11:57
+                   * @date   13/08/2013 09:35
                    */
                   class peanoclaw::records::Cell { 
                      
@@ -5617,8 +5453,6 @@ namespace peanoclaw {
                            double _nodeWorkload;
                            double _localWorkload;
                            double _totalWorkload;
-                           double _maxWorkload;
-                           double _minWorkload;
                            bool _cellIsAForkCandidate;
                            int _numberOfLoadsFromInputStream;
                            int _numberOfStoresToOutputStream;
@@ -5630,7 +5464,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                           PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                            
                            
                            inline int getCellDescriptionIndex() const 
@@ -5929,46 +5763,6 @@ namespace peanoclaw {
                            
                            
                            
-                           inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              return _maxWorkload;
-                           }
-                           
-                           
-                           
-                           inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              _maxWorkload = maxWorkload;
-                           }
-                           
-                           
-                           
-                           inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              return _minWorkload;
-                           }
-                           
-                           
-                           
-                           inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              _minWorkload = minWorkload;
-                           }
-                           
-                           
-                           
                            inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -6048,7 +5842,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                        Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                         
                         /**
                          * Generated
@@ -6416,46 +6210,6 @@ namespace peanoclaw {
                         
                         
                         
-                        inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                           return _persistentRecords._maxWorkload;
-                        }
-                        
-                        
-                        
-                        inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                           _persistentRecords._maxWorkload = maxWorkload;
-                        }
-                        
-                        
-                        
-                        inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                           return _persistentRecords._minWorkload;
-                        }
-                        
-                        
-                        
-                        inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                           _persistentRecords._minWorkload = minWorkload;
-                        }
-                        
-                        
-                        
                         inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -6597,7 +6351,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 12-04-2013 09:18
                       *
-                      * @date   11/08/2013 11:57
+                      * @date   13/08/2013 09:35
                       */
                      class peanoclaw::records::CellPacked { 
                         
@@ -6614,8 +6368,6 @@ namespace peanoclaw {
                               double _nodeWorkload;
                               double _localWorkload;
                               double _totalWorkload;
-                              double _maxWorkload;
-                              double _minWorkload;
                               int _numberOfLoadsFromInputStream;
                               int _numberOfStoresToOutputStream;
                               
@@ -6636,7 +6388,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                               
                               
                               inline int getCellDescriptionIndex() const 
@@ -6955,46 +6707,6 @@ namespace peanoclaw {
                               
                               
                               
-                              inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 return _maxWorkload;
-                              }
-                              
-                              
-                              
-                              inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 _maxWorkload = maxWorkload;
-                              }
-                              
-                              
-                              
-                              inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 return _minWorkload;
-                              }
-                              
-                              
-                              
-                              inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 _minWorkload = minWorkload;
-                              }
-                              
-                              
-                              
                               inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -7077,7 +6789,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                           CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                            
                            /**
                             * Generated
@@ -7472,46 +7184,6 @@ namespace peanoclaw {
                            
                            
                            
-                           inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              return _persistentRecords._maxWorkload;
-                           }
-                           
-                           
-                           
-                           inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              _persistentRecords._maxWorkload = maxWorkload;
-                           }
-                           
-                           
-                           
-                           inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              return _persistentRecords._minWorkload;
-                           }
-                           
-                           
-                           
-                           inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              _persistentRecords._minWorkload = minWorkload;
-                           }
-                           
-                           
-                           
                            inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -7654,7 +7326,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 12-04-2013 09:18
                       *
-                      * @date   11/08/2013 11:57
+                      * @date   13/08/2013 09:35
                       */
                      class peanoclaw::records::Cell { 
                         
@@ -7686,8 +7358,6 @@ namespace peanoclaw {
                               double _nodeWorkload;
                               double _localWorkload;
                               double _totalWorkload;
-                              double _maxWorkload;
-                              double _minWorkload;
                               bool _cellIsAForkCandidate;
                               /**
                                * Generated
@@ -7697,7 +7367,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate);
+                              PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                               
                               
                               inline int getCellDescriptionIndex() const 
@@ -7996,46 +7666,6 @@ namespace peanoclaw {
                               
                               
                               
-                              inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 return _maxWorkload;
-                              }
-                              
-                              
-                              
-                              inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 _maxWorkload = maxWorkload;
-                              }
-                              
-                              
-                              
-                              inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 return _minWorkload;
-                              }
-                              
-                              
-                              
-                              inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 _minWorkload = minWorkload;
-                              }
-                              
-                              
-                              
                               inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -8075,7 +7705,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate);
+                           Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                            
                            /**
                             * Generated
@@ -8443,46 +8073,6 @@ namespace peanoclaw {
                            
                            
                            
-                           inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              return _persistentRecords._maxWorkload;
-                           }
-                           
-                           
-                           
-                           inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              _persistentRecords._maxWorkload = maxWorkload;
-                           }
-                           
-                           
-                           
-                           inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              return _persistentRecords._minWorkload;
-                           }
-                           
-                           
-                           
-                           inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                              _persistentRecords._minWorkload = minWorkload;
-                           }
-                           
-                           
-                           
                            inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -8584,7 +8174,7 @@ namespace peanoclaw {
                          *
                          * 		   build date: 12-04-2013 09:18
                          *
-                         * @date   11/08/2013 11:57
+                         * @date   13/08/2013 09:35
                          */
                         class peanoclaw::records::CellPacked { 
                            
@@ -8601,8 +8191,6 @@ namespace peanoclaw {
                                  double _nodeWorkload;
                                  double _localWorkload;
                                  double _totalWorkload;
-                                 double _maxWorkload;
-                                 double _minWorkload;
                                  
                                  /** mapping of records:
                                  || Member 	|| startbit 	|| length
@@ -8621,7 +8209,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate);
+                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                                  
                                  
                                  inline int getCellDescriptionIndex() const 
@@ -8940,46 +8528,6 @@ namespace peanoclaw {
                                  
                                  
                                  
-                                 inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    return _maxWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    _maxWorkload = maxWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    return _minWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    _minWorkload = minWorkload;
-                                 }
-                                 
-                                 
-                                 
                                  inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -9022,7 +8570,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate);
+                              CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const int& level, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate);
                               
                               /**
                                * Generated
@@ -9417,46 +8965,6 @@ namespace peanoclaw {
                               
                               
                               
-                              inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 return _persistentRecords._maxWorkload;
-                              }
-                              
-                              
-                              
-                              inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 _persistentRecords._maxWorkload = maxWorkload;
-                              }
-                              
-                              
-                              
-                              inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 return _persistentRecords._minWorkload;
-                              }
-                              
-                              
-                              
-                              inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 _persistentRecords._minWorkload = minWorkload;
-                              }
-                              
-                              
-                              
                               inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -9559,7 +9067,7 @@ namespace peanoclaw {
                          *
                          * 		   build date: 12-04-2013 09:18
                          *
-                         * @date   11/08/2013 11:57
+                         * @date   13/08/2013 09:35
                          */
                         class peanoclaw::records::Cell { 
                            
@@ -9590,8 +9098,6 @@ namespace peanoclaw {
                                  double _nodeWorkload;
                                  double _localWorkload;
                                  double _totalWorkload;
-                                 double _maxWorkload;
-                                 double _minWorkload;
                                  bool _cellIsAForkCandidate;
                                  int _numberOfLoadsFromInputStream;
                                  int _numberOfStoresToOutputStream;
@@ -9603,7 +9109,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                 PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                  
                                  
                                  inline int getCellDescriptionIndex() const 
@@ -9882,46 +9388,6 @@ namespace peanoclaw {
                                  
                                  
                                  
-                                 inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    return _maxWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    _maxWorkload = maxWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    return _minWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    _minWorkload = minWorkload;
-                                 }
-                                 
-                                 
-                                 
                                  inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -10001,7 +9467,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                              Cell(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                               
                               /**
                                * Generated
@@ -10349,46 +9815,6 @@ namespace peanoclaw {
                               
                               
                               
-                              inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 return _persistentRecords._maxWorkload;
-                              }
-                              
-                              
-                              
-                              inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 _persistentRecords._maxWorkload = maxWorkload;
-                              }
-                              
-                              
-                              
-                              inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 return _persistentRecords._minWorkload;
-                              }
-                              
-                              
-                              
-                              inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                 _persistentRecords._minWorkload = minWorkload;
-                              }
-                              
-                              
-                              
                               inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -10530,7 +9956,7 @@ namespace peanoclaw {
                             *
                             * 		   build date: 12-04-2013 09:18
                             *
-                            * @date   11/08/2013 11:57
+                            * @date   13/08/2013 09:35
                             */
                            class peanoclaw::records::CellPacked { 
                               
@@ -10546,8 +9972,6 @@ namespace peanoclaw {
                                     double _nodeWorkload;
                                     double _localWorkload;
                                     double _totalWorkload;
-                                    double _maxWorkload;
-                                    double _minWorkload;
                                     int _numberOfLoadsFromInputStream;
                                     int _numberOfStoresToOutputStream;
                                     
@@ -10568,7 +9992,7 @@ namespace peanoclaw {
                                     /**
                                      * Generated
                                      */
-                                    PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                    PersistentRecords(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                     
                                     
                                     inline int getCellDescriptionIndex() const 
@@ -10867,46 +10291,6 @@ namespace peanoclaw {
                                     
                                     
                                     
-                                    inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                       return _maxWorkload;
-                                    }
-                                    
-                                    
-                                    
-                                    inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                       _maxWorkload = maxWorkload;
-                                    }
-                                    
-                                    
-                                    
-                                    inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                       return _minWorkload;
-                                    }
-                                    
-                                    
-                                    
-                                    inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                       _minWorkload = minWorkload;
-                                    }
-                                    
-                                    
-                                    
                                     inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -10989,7 +10373,7 @@ namespace peanoclaw {
                                  /**
                                   * Generated
                                   */
-                                 CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const double& maxWorkload, const double& minWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
+                                 CellPacked(const int& cellDescriptionIndex, const bool& isInside, const State& state, const std::bitset<DIMENSIONS>& evenFlags, const tarch::la::Vector<DIMENSIONS_TIMES_TWO,short int>& accessNumber, const int& responsibleRank, const bool& subtreeHoldsWorker, const double& nodeWorkload, const double& localWorkload, const double& totalWorkload, const bool& cellIsAForkCandidate, const int& numberOfLoadsFromInputStream, const int& numberOfStoresToOutputStream);
                                  
                                  /**
                                   * Generated
@@ -11364,46 +10748,6 @@ namespace peanoclaw {
                                  
                                  
                                  
-                                 inline double getMaxWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    return _persistentRecords._maxWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline void setMaxWorkload(const double& maxWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    _persistentRecords._maxWorkload = maxWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline double getMinWorkload() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    return _persistentRecords._minWorkload;
-                                 }
-                                 
-                                 
-                                 
-                                 inline void setMinWorkload(const double& minWorkload) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                                    _persistentRecords._minWorkload = minWorkload;
-                                 }
-                                 
-                                 
-                                 
                                  inline bool getCellIsAForkCandidate() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
@@ -11546,7 +10890,7 @@ namespace peanoclaw {
                             *
                             * 		   build date: 12-04-2013 09:18
                             *
-                            * @date   11/08/2013 11:57
+                            * @date   13/08/2013 09:35
                             */
                            class peanoclaw::records::Cell { 
                               
@@ -12230,7 +11574,7 @@ namespace peanoclaw {
                                *
                                * 		   build date: 12-04-2013 09:18
                                *
-                               * @date   11/08/2013 11:57
+                               * @date   13/08/2013 09:35
                                */
                               class peanoclaw::records::CellPacked { 
                                  

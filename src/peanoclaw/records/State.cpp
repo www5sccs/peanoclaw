@@ -270,7 +270,7 @@
          {
             State dummyState[2];
             
-            const int Attributes = 47;
+            const int Attributes = 44;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //additionalLevelsForPredefinedRefinement
                MPI_CHAR,		 //isInitializing
@@ -315,9 +315,6 @@
                MPI_CHAR,		 //hasTriggeredEraseForNextIteration
                MPI_CHAR,		 //hasChangedVertexOrCellState
                MPI_CHAR,		 //isTraversalInverted
-               MPI_CHAR,		 //reduceStateAndCell
-               MPI_CHAR,		 //couldNotEraseDueToDecompositionFlag
-               MPI_CHAR,		 //subWorkerIsInvolvedInJoinOrFork
                MPI_UB		 // end/displacement flag
             };
             
@@ -365,9 +362,6 @@
                1,		 //hasTriggeredEraseForNextIteration
                1,		 //hasChangedVertexOrCellState
                1,		 //isTraversalInverted
-               1,		 //reduceStateAndCell
-               1,		 //couldNotEraseDueToDecompositionFlag
-               1,		 //subWorkerIsInvolvedInJoinOrFork
                1		 // end/displacement flag
             };
             
@@ -418,10 +412,7 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredEraseForNextIteration))), 		&disp[40] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasChangedVertexOrCellState))), 		&disp[41] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._isTraversalInverted))), 		&disp[42] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._reduceStateAndCell))), 		&disp[43] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._couldNotEraseDueToDecompositionFlag))), 		&disp[44] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._subWorkerIsInvolvedInJoinOrFork))), 		&disp[45] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[1]._persistentRecords._additionalLevelsForPredefinedRefinement))), 		&disp[46] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[1]._persistentRecords._additionalLevelsForPredefinedRefinement))), 		&disp[43] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
