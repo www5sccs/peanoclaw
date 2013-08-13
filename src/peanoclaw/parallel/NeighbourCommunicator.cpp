@@ -145,11 +145,11 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
     CellDescription cellDescription = _cellDescriptionHeap.getData(cellDescriptionIndex).at(0);
 
     //TODO unterweg debug
-    logInfo("", "Sending actual patch from " << tarch::parallel::Node::getInstance().getRank()
-      << " to " << _remoteRank
-      << ", position:" << position
-      << " : " << cellDescription.toString()
-    );
+//    logInfo("", "Sending actual patch from " << tarch::parallel::Node::getInstance().getRank()
+//      << " to " << _remoteRank
+//      << ", position:" << position
+//      << " : " << cellDescription.toString()
+//    );
 
     if(cellDescription.getUNewIndex() != -1) {
       sendDataArray(cellDescription.getUNewIndex());
@@ -171,10 +171,10 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   } else {
 
     //TODO unterweg debug
-    logInfo("", "Sending padding patch from " << tarch::parallel::Node::getInstance().getRank()
-      << " to " << _remoteRank
-      << ", position:" << position
-    );
+//    logInfo("", "Sending padding patch from " << tarch::parallel::Node::getInstance().getRank()
+//      << " to " << _remoteRank
+//      << ", position:" << position
+//    );
 
     sendPaddingPatch(
       position,
@@ -224,7 +224,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
       localCellDescription.toString(), remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank());
 
   //TODO unterweg debug
-  logInfo("", "Receiving patch: " << remoteCellDescription.toString());
+//  logInfo("", "Receiving patch: " << remoteCellDescription.toString());
 
   if(!remoteCellDescription.getIsPaddingSubgrid()) {
     _statistics.receivedNeighborData();
@@ -254,7 +254,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
     assertionEquals(_cellDescriptionHeap.getData(localCellDescriptionIndex).size(), 1);
 
     //TODO unterweg debug
-    logInfo("", "Merged: " << _cellDescriptionHeap.getData(localCellDescriptionIndex).at(0).toString());
+//    logInfo("", "Merged: " << _cellDescriptionHeap.getData(localCellDescriptionIndex).at(0).toString());
 
   } else {
     _statistics.receivedPaddingNeighborData();
