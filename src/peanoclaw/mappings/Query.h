@@ -39,10 +39,7 @@ class peanoclaw::mappings::Query {
      */
     static tarch::logging::Log  _log;
     
-    /**
-     * Id where to store query answers
-     */
-    int _workers;
+    bool _sendMergedData;
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 
