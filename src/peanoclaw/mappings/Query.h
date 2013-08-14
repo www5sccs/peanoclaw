@@ -42,7 +42,7 @@ class peanoclaw::mappings::Query {
     /**
      * Id where to store query answers
      */
-    int _heapId;
+    int _workers;
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 

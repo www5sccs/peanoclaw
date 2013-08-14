@@ -207,6 +207,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
  
 void peanoclaw::runners::PeanoClawLibraryRunner::sync(){
 	int parts=-1;
+	std::cout<<"syncing with query server"<<std::endl;
 	_queryServer->getNumberOfParts(parts);
         if(parts>0){	
 		
@@ -278,11 +279,11 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
         _repository->switchToSolveTimestep();
       }
       _repository->iterate();
-      //if(tarch::parallel::Node::getInstance().isGlobalMaster()&&c==0)      
-      //sync();
-      //c++;
-      //_repository->switchToQuery();
-      //_repository->iterate();
+      if(tarch::parallel::Node::getInstance().isGlobalMaster()&&c==0)      
+      sync();
+      c++;
+      _repository->switchToQuery();
+      _repository->iterate();
       	
     }
 

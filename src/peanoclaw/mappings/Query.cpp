@@ -281,6 +281,7 @@ void peanoclaw::mappings::Query::prepareSendToWorker(
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
   // @todo Insert your code here
+  _workers++; 	
   logTraceOut( "prepareSendToWorker(...)" );
 }
 
@@ -330,7 +331,8 @@ void peanoclaw::mappings::Query::mergeWithMaster(
   peanoclaw::State&                masterState
 ) {
   logTraceIn( "mergeWithMaster(...)" );
-  for(int i=0;i<queries::QueryServer::getInstance().getNumberOfPendingQueries();i++)
+  for(int i=0;i<queries::QueryServer::getInstance().getNumberOfPendingQueries();i++){
+  std::cout<<"merging on level:"<<coarseGridVerticesEnumerator.getLevel()<<"w_l:"<<workerEnumerator.getLevel()<<std::endl;
   if(
 	coarseGridVerticesEnumerator.getLevel()>=1 &&
 	queries::QueryServer::getInstance().intersectsWithQuery(
@@ -340,8 +342,12 @@ void peanoclaw::mappings::Query::mergeWithMaster(
 	)
   {
 	queries::QueryServer::getInstance().receiveData(i,workerEnumerator.getCellCenter(),workerEnumerator.getLevel(),worker);
-	if(coarseGridVerticesEnumerator.getLevel()==1)
-		queries::QueryServer::getInstance().fireAnswers(i);  	
+	_workers--;
+	if(coarseGridVerticesEnumerator.getLevel()==1&&_workers<=0){
+		queries::QueryServer::getInstance().swapBuffers(i);		
+		queries::QueryServer::getInstance().fireAnswers(i); 
+	} 
+  }	
   }
   //queries::QueryServer::getInstance().commitQueries();	
   logTraceOut( "mergeWithMaster(...)" );
@@ -483,7 +489,7 @@ void peanoclaw::mappings::Query::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
   peano::heap::Heap<queries::records::Answer>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
-
+  _workers=0;
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
 
