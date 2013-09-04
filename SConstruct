@@ -11,7 +11,8 @@ import sys;
 def addPeanoClawFlags(libpath, libs, cpppath, cppdefines):
    ccflags.append('-g3')
    ccflags.append('-g')
-   ccflags.append('-march=native')
+   if(environment['PLATFORM'] != 'darwin'):
+     ccflags.append('-march=native')
    
    if sys.version_info[0] == 2 and sys.version_info[1] < 7:
        pythonVersion = str(sys.version_info[0]) + '.' + str(sys.version_info[1]) #For Python 2.6
