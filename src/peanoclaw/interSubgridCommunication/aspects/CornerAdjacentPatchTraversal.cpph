@@ -12,7 +12,11 @@ peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<Loop
   peanoclaw::Patch* patches,
   LoopBody& loopBody
 ) {
+  #ifdef Dim3
   assertionFail("Not implemented, yet!");
+  #else
+  assertionFail("This kind of traversal is not valid in 2D. Use EdgeAdjacentPatchTraversal instead!");
+  #endif
 }
 
 

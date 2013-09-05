@@ -1,0 +1,17 @@
+/*
+ * CornerAdjacentPatchTraversalWithCommonFaceAndEdgeNeighbors.cpp
+ *
+ *  Created on: Sep 5, 2013
+ *      Author: unterweg
+ */
+
+
+#include "peano/utils/Loop.h"
+
+template<class LoopBody>
+peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversalWithCommonFaceAndEdgeNeighbors<LoopBody>::CornerAdjacentPatchTraversalWithCommonFaceAndEdgeNeighbors(
+  peanoclaw::Patch patches[TWO_POWER_D],
+  LoopBody& loopBody
+) {
+  assertionFail("Not implemented, yet.");
+}

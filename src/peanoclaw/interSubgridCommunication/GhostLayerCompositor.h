@@ -25,6 +25,15 @@ namespace peanoclaw {
 
   namespace interSubgridCommunication {
     class GhostLayerCompositor;
+
+    class FillGhostlayerFaceFunctor;
+    class FillGhostlayerEdgeFunctor;
+    class FillGhostlayerCornerFunctor;
+    class UpdateNeighborTimeFunctor;
+    class FluxCorrectionFunctor;
+    class UpdateGhostlayerBoundsFaceFunctor;
+    class UpdateGhostlayerBoundsEdgeFunctor;
+    class UpdateGhostlayerBoundsCornerFunctor;
   }
 
   namespace tests {
@@ -64,6 +73,12 @@ private:
   static tarch::logging::Log _log;
 
   friend class peanoclaw::tests::GhostLayerCompositorTest;
+  friend class peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor;
+  friend class peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor;
+  friend class peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor;
+  friend class peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsFaceFunctor;
+  friend class peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsEdgeFunctor;
+  friend class peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsCornerFunctor;
 
   Patch* _patches;
 
@@ -145,136 +160,6 @@ public:
    * Applies the flux correction on all adjacent coarse patches.
    */
   void applyFluxCorrection();
-
-  /**
-   * Functor for filling ghostlayer faces between two patches.
-   */
-  class FillGhostlayerFaceFunctor {
-    private:
-      GhostLayerCompositor& _ghostlayerCompositor;
-      int                   _destinationPatchIndex;
-
-    public:
-      FillGhostlayerFaceFunctor(
-        GhostLayerCompositor& ghostlayerCompositor,
-        int                   destinationPatchIndex
-      );
-
-      void operator() (
-        peanoclaw::Patch&                  patch1,
-        int                                index1,
-        peanoclaw::Patch&                  patch2,
-        int                                index2,
-        tarch::la::Vector<DIMENSIONS, int> direction
-      );
-  };
-
-  /**
-   * Functor for filling ghostlayer edges between two patches.
-   */
-  class FillGhostlayerEdgeFunctor {
-    private:
-      GhostLayerCompositor& _ghostlayerCompositor;
-      int                   _destinationPatchIndex;
-
-    public:
-      FillGhostlayerEdgeFunctor(
-        GhostLayerCompositor& ghostlayerCompositor,
-        int                   destinationPatchIndex
-      );
-
-      void operator() (
-        peanoclaw::Patch&                  patch1,
-        int                                index1,
-        peanoclaw::Patch&                  patch2,
-        int                                index2,
-        tarch::la::Vector<DIMENSIONS, int> direction
-      );
-  };
-
-  /**
-   * Functor for updating the neighbor time constraint in
-   * adjacent patches.
-   */
-  class UpdateNeighborTimeFunctor {
-    private:
-      GhostLayerCompositor& _ghostlayerCompositor;
-
-    public:
-      UpdateNeighborTimeFunctor(
-        GhostLayerCompositor& ghostlayerCompositor
-      );
-
-      void operator() (
-        peanoclaw::Patch&                  patch1,
-        int                                index1,
-        peanoclaw::Patch&                  patch2,
-        int                                index2,
-        tarch::la::Vector<DIMENSIONS, int> direction
-      );
-  };
-
-  /**
-   * Functor for correcting the flux on an adjacent
-   * coarse patch.
-   */
-  class FluxCorrectionFunctor {
-    private:
-      Numerics& _numerics;
-
-    public:
-      FluxCorrectionFunctor(
-        Numerics& numerics
-      );
-
-      void operator() (
-        peanoclaw::Patch&                  patch1,
-        int                                index1,
-        peanoclaw::Patch&                  patch2,
-        int                                index2,
-        tarch::la::Vector<DIMENSIONS, int> direction
-      );
-  };
-
-  class UpdateGhostlayerBoundsFaceFunctor {
-    private:
-    GhostLayerCompositor& _ghostlayerCompositor;
-
-    public:
-    UpdateGhostlayerBoundsFaceFunctor(
-      GhostLayerCompositor& ghostlayerCompositor
-    );
-
-    void operator() (
-      peanoclaw::Patch&                  patch1,
-      int                                index1,
-      peanoclaw::Patch&                  patch2,
-      int                                index2,
-      tarch::la::Vector<DIMENSIONS, int> direction
-    );
-  };
-
-  class UpdateGhostlayerBoundsEdgeFunctor {
-    private:
-    GhostLayerCompositor& _ghostlayerCompositor;
-
-    public:
-    UpdateGhostlayerBoundsEdgeFunctor(
-      GhostLayerCompositor& ghostlayerCompositor
-    );
-
-    void operator() (
-      peanoclaw::Patch&                  patch1,
-      int                                index1,
-      peanoclaw::Patch&                  patch2,
-      int                                index2,
-      peanoclaw::Patch&                  faceNeighbor1,
-      int                                indexFaceNeighbor1,
-      peanoclaw::Patch&                  faceNeighbor2,
-      int                                indexFaceNeighbor2,
-      tarch::la::Vector<DIMENSIONS, int> direction
-    );
-  };
 };
 
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_ */
