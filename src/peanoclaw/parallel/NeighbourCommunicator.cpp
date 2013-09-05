@@ -101,6 +101,13 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   logTraceInWith3Arguments("sendPatch", cellDescriptionIndex, _position, _level);
   #ifdef Parallel
 
+  #ifdef Asserts
+  if(cellDescriptionIndex != -1) {
+    CellDescription cellDescription = _cellDescriptionHeap.getData(cellDescriptionIndex).at(0);
+    assertion3(tarch::la::allGreater(cellDescription.getSubdivisionFactor(), 0), cellDescription.toString(), _position, _level);
+  }
+  #endif
+
   //TODO unterweg debug
 //  logInfo("", "Sending from " << tarch::parallel::Node::getInstance().getRank()
 //      << " to " << _remoteRank
@@ -215,6 +222,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
   assertionEquals2(remoteCellDescriptionVector.size(), 1, _position, _level);
   CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
 
+  assertion6(!remoteCellDescription.getIsRemote(), localCellDescription.toString(), remoteCellDescription.toString(), _position, _level, _remoteRank, tarch::parallel::Node::getInstance().getRank());
   assertionEquals2(localCellDescription.getLevel(), _level, localCellDescription.toString(), tarch::parallel::Node::getInstance().getRank());
   assertionNumericalEquals3(localCellDescription.getPosition(), remoteCellDescription.getPosition(),
       localCellDescription.toString(), remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank());
@@ -347,6 +355,8 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
       }
     }
 
+    logDebug("sendSubgridsForVertex", "Sending subgrids at " << _position << " on level " << _level << ". local: " << localPatches << " neighbor: " << neighborPatches);
+
     //Send padding patches if remote rank has more patches than local rank
     for( ; localPatches < neighborPatches; localPatches++) {
       sendPaddingPatch();
@@ -367,7 +377,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
     assertionEquals(localVertex.isInside(), remoteVertex.isInside());
     assertionEquals(localVertex.isBoundary(), remoteVertex.isBoundary());
 
-    tarch::la::Vector<TWO_POWER_D, int> neighbourVertexRanks = localVertex.getAdjacentRanksDuringLastIteration();
+    tarch::la::Vector<TWO_POWER_D, int> neighbourVertexRanks = remoteVertex.getAdjacentRanksDuringLastIteration();
 
     //Count local and neighbor patches
     int localRank = tarch::parallel::Node::getInstance().getRank();
@@ -380,6 +390,8 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
         localPatches++;
       }
     }
+
+    logDebug("receiveSubgridsForVertex", "Receiving subgridsat " << _position << " on level " << _level << ". local: " << localPatches << " neighbor: " << neighborPatches);
 
     //Receive padding patches
     for( ; neighborPatches < localPatches; neighborPatches++) {
