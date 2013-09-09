@@ -391,7 +391,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
       }
     }
 
-    logDebug("receiveSubgridsForVertex", "Receiving subgridsat " << _position << " on level " << _level << ". local: " << localPatches << " neighbor: " << neighborPatches);
+    logDebug("receiveSubgridsForVertex", "Receiving subgrids at " << _position << " on level " << _level << ". local: " << localPatches << " neighbor: " << neighborPatches);
 
     //Receive padding patches
     for( ; neighborPatches < localPatches; neighborPatches++) {

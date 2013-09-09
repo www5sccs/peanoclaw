@@ -170,9 +170,10 @@ void peanoclaw::statistics::ParallelGridValidator::validateNeighborPatch(
     //node, if their adjacent ranks are not set correctly
     return;
   }
-  assertion2(
+  assertion3(
     patch.getAdjacentRanks(peano::utils::dLinearised(discreteNeighborPosition+1, 3)) != -2,
     patch.toString(),
+    tarch::parallel::Node::getInstance().getRank(),
     discreteNeighborPosition
   );
   #endif
@@ -273,15 +274,9 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
     int                                              level,
     int                                              localRank
 ) {
-  //TODO unterweg debug
-//  std::cout << "Finding patches for vertex " << fineGridX << ", " << level
-//          #ifdef Parallel
-//          << " on rank " << tarch::parallel::Node::getInstance().getRank()
-//          #endif
-//          << ", hanging=" << fineGridVertex.isHangingNode()
-//          << ": " << fineGridVertex.toString()
-//          << std::endl;
-
+  logDebug("findAdjacentPatches", "Finding patches for vertex " << fineGridX << ", " << level
+          << ", hanging=" << fineGridVertex.isHangingNode()
+          << ": " << fineGridVertex.toString());
 
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
@@ -332,18 +327,16 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
             int patchBasedNeighborIndex = peano::utils::dLinearised(neighborPosition + 1, 3);
 
             //TODO unterweg debug
-//            std::cout << "------------" << std::endl
-//                << "on rank=" << tarch::parallel::Node::getInstance().getRank()
-//                << ", x=" << fineGridX
-//                << ", index=" << i
-//                << ", localPosition=" << localPosition
-//                << ", vertexBasedIndex=" << vertexBasedNeighborIndex
-//                << ", vertexBasedPosition=" << peano::utils::dDelinearised( vertexBasedNeighborIndex, 2 )
-//            << ", neighborPosition=" << neighborPosition
-//            << ", patchBasedIndex=" << patchBasedNeighborIndex
-//            << ", ranks=" << fineGridVertex.getAdjacentRanks()
-//            << ", rank=" << fineGridVertex.getAdjacentRanks()(vertexBasedNeighborIndex)
-//            << std::endl;
+            logDebug("findAdjacentPatches", "Setting adjacent ranks"
+                << ", x=" << fineGridX
+                << ", index=" << i
+                << ", localPosition=" << localPosition
+                << ", vertexBasedIndex=" << vertexBasedNeighborIndex
+                << ", vertexBasedPosition=" << peano::utils::dDelinearised( vertexBasedNeighborIndex, 2 )
+            << ", neighborPosition=" << neighborPosition
+            << ", patchBasedIndex=" << patchBasedNeighborIndex
+            << ", ranks=" << fineGridVertex.getAdjacentRanks()
+            << ", rank=" << fineGridVertex.getAdjacentRanks()(vertexBasedNeighborIndex));
 
             patchDescription.setAdjacentRanks(
                 patchBasedNeighborIndex,

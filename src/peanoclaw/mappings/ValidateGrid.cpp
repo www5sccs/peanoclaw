@@ -238,13 +238,11 @@ void peanoclaw::mappings::ValidateGrid::createCell(
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
   //TODO unterweg debug
-  logInfo("", "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-      << fineGridVerticesEnumerator.getCellSize()
-      << ", index=" << fineGridCell.getCellDescriptionIndex()
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      );
+//  logInfo("", "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+//      << fineGridVerticesEnumerator.getCellSize()
+//      << ", index=" << fineGridCell.getCellDescriptionIndex()
+//      << ",level=" << fineGridVerticesEnumerator.getLevel()
+//      );
 
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
@@ -556,12 +554,10 @@ void peanoclaw::mappings::ValidateGrid::touchVertexLastTime(
   logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-//  std::cout<< "Touching vertex " << fineGridX << ", "
+//  logInfo("", "Touching vertex last time " << fineGridX << ", "
 //      << fineGridH
-//      #ifdef Parallel
-//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-//      #endif
-//      << std::endl;
+//      << ",level=" << (coarseGridVerticesEnumerator.getLevel() + 1)
+//      );
 
   _validator.findAdjacentPatches(
     fineGridVertex,

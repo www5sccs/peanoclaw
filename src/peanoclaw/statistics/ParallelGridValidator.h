@@ -117,17 +117,6 @@ public:
   );
 
   /**
-   * Deletes all adjacent patches for the given vertex from the database
-   * that are not remote
-   */
-//  void deleteNonRemoteAdjacentPatches(
-//    const peanoclaw::Vertex&                         fineGridVertex,
-//    const tarch::la::Vector<DIMENSIONS,double>&      fineGridX,
-//    int                                              level,
-//    int                                              localRank
-//  );
-
-  /**
    * Deletes the given patch from the database when the corresponding
    * spacetree node is destroyed.
    */
