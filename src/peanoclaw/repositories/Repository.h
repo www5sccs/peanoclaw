@@ -50,23 +50,27 @@ class peanoclaw::repositories::Repository {
     virtual void switchToInitialiseGrid() = 0;    
     virtual void switchToInitialiseAndValidateGrid() = 0;    
     virtual void switchToPlot() = 0;    
+    virtual void switchToPlotAndValidateGrid() = 0;    
     virtual void switchToRemesh() = 0;    
     virtual void switchToSolveTimestep() = 0;    
     virtual void switchToSolveTimestepAndValidateGrid() = 0;    
     virtual void switchToSolveTimestepAndPlot() = 0;    
     virtual void switchToSolveTimestepAndPlotAndValidateGrid() = 0;    
     virtual void switchToGatherCurrentSolution() = 0;    
+    virtual void switchToGatherCurrentSolutionAndValidateGrid() = 0;    
     virtual void switchToCleanup() = 0;    
 
     virtual bool isActiveAdapterInitialiseGrid() const = 0;
     virtual bool isActiveAdapterInitialiseAndValidateGrid() const = 0;
     virtual bool isActiveAdapterPlot() const = 0;
+    virtual bool isActiveAdapterPlotAndValidateGrid() const = 0;
     virtual bool isActiveAdapterRemesh() const = 0;
     virtual bool isActiveAdapterSolveTimestep() const = 0;
     virtual bool isActiveAdapterSolveTimestepAndValidateGrid() const = 0;
     virtual bool isActiveAdapterSolveTimestepAndPlot() const = 0;
     virtual bool isActiveAdapterSolveTimestepAndPlotAndValidateGrid() const = 0;
     virtual bool isActiveAdapterGatherCurrentSolution() const = 0;
+    virtual bool isActiveAdapterGatherCurrentSolutionAndValidateGrid() const = 0;
     virtual bool isActiveAdapterCleanup() const = 0;
 
 

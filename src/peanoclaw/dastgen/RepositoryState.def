@@ -1,7 +1,7 @@
 // This file is part of the Peano project. For conditions of distribution and
 // use, please see the copyright notice at www.peano-framework.org
 class peanoclaw::records::RepositoryState { 
-  enum Action { WriteCheckpoint, ReadCheckpoint, Terminate, RunOnAllNodes,UseAdapterInitialiseGrid,UseAdapterInitialiseAndValidateGrid,UseAdapterPlot,UseAdapterRemesh,UseAdapterSolveTimestep,UseAdapterSolveTimestepAndValidateGrid,UseAdapterSolveTimestepAndPlot,UseAdapterSolveTimestepAndPlotAndValidateGrid,UseAdapterGatherCurrentSolution,UseAdapterCleanup,NumberOfAdapters};
+  enum Action { WriteCheckpoint, ReadCheckpoint, Terminate, RunOnAllNodes,UseAdapterInitialiseGrid,UseAdapterInitialiseAndValidateGrid,UseAdapterPlot,UseAdapterPlotAndValidateGrid,UseAdapterRemesh,UseAdapterSolveTimestep,UseAdapterSolveTimestepAndValidateGrid,UseAdapterSolveTimestepAndPlot,UseAdapterSolveTimestepAndPlotAndValidateGrid,UseAdapterGatherCurrentSolution,UseAdapterGatherCurrentSolutionAndValidateGrid,UseAdapterCleanup,NumberOfAdapters};
   persistent parallelise Action action;
 
   persistent parallelise bool reduceState;

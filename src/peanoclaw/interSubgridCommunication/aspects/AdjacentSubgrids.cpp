@@ -203,9 +203,6 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::storeAdjac
       }
     }
   }
-
-  //Store adjacent ranks for next grid iteration
-  _vertex.setAdjacentRanksDuringLastIteration(_vertex.getAdjacentRanks());
   #endif
 }
 

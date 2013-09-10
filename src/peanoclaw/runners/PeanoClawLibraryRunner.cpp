@@ -59,7 +59,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(false)
+  _validateGrid(true)
 {
   #ifndef Asserts
   _validateGrid = false;
@@ -151,7 +151,11 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   _repository->getState().setPlotNumber(0);
   if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
-    _repository->switchToPlot(); _repository->iterate();
+    if(_validateGrid) {
+      _repository->switchToPlotAndValidateGrid(); _repository->iterate();
+    } else {
+      _repository->switchToPlot(); _repository->iterate();
+    }
   }
 
 #ifdef Parallel
@@ -256,7 +260,11 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 
   if(_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _repository->getState().setPlotNumber(_plotNumber);
-    _repository->switchToPlot(); _repository->iterate();
+    if(_validateGrid) {
+      _repository->switchToPlotAndValidateGrid(); _repository->iterate();
+    } else {
+      _repository->switchToPlot(); _repository->iterate();
+    }
     _plotNumber++;
   } else if (!_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _plotNumber++;
@@ -285,8 +293,11 @@ void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution() {
   logTraceIn("gatherCurrentSolution");
   assertion(_repository != 0);
 
-  _repository->switchToGatherCurrentSolution();
-  _repository->iterate();
+  if(_validateGrid) {
+    _repository->switchToGatherCurrentSolutionAndValidateGrid(); _repository->iterate();
+  } else {
+    _repository->switchToGatherCurrentSolution(); _repository->iterate();
+  }
   logTraceOut("gatherCurrentSolution");
 }
 

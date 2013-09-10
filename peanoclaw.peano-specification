@@ -48,6 +48,12 @@ adapter:
   merge-with-user-defined-mapping: Plot
   
 adapter:
+  name: PlotAndValidateGrid
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: Plot
+  merge-with-user-defined-mapping: ValidateGrid
+  
+adapter:
   name: Remesh
   merge-with-user-defined-mapping: Remesh
   
@@ -79,6 +85,12 @@ adapter:
   name: GatherCurrentSolution
   merge-with-user-defined-mapping: Remesh
   merge-with-user-defined-mapping: GatherCurrentSolution
+  
+adapter:
+  name: GatherCurrentSolutionAndValidateGrid
+  merge-with-user-defined-mapping: Remesh
+  merge-with-user-defined-mapping: GatherCurrentSolution
+  merge-with-user-defined-mapping: ValidateGrid
   
 adapter:
   name: Cleanup
