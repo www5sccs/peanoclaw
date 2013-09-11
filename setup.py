@@ -53,11 +53,11 @@ class Peano3Develop(develop):
 import sys
 
 global p3ParallelSupport
-p3ParallelSupport = False
+p3ParallelSupport = "no"
 for argument in sys.argv:
   splitargument = argument.split('=')
   if splitargument[0]=="parallel":
-      buildParallel = (splitargument[1].lower() == 'yes')
+      buildParallel = splitargument[1].lower()
 
 setup(name='PeanoClaw',
       version='0.1',
