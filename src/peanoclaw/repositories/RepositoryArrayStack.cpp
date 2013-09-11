@@ -31,6 +31,7 @@ peanoclaw::repositories::RepositoryArrayStack::RepositoryArrayStack(
   _gridWithInitialiseGrid(_vertexStack,_cellStack,_geometry,_solverState,domainSize,domainOffset,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithInitialiseAndValidateGrid(_vertexStack,_cellStack,_geometry,_solverState,domainSize,domainOffset,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithPlot(_vertexStack,_cellStack,_geometry,_solverState,domainSize,domainOffset,_regularGridContainer,_traversalOrderOnTopLevel),
+  _gridWithQuery(_vertexStack,_cellStack,_geometry,_solverState,domainSize,domainOffset,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithPlotAndValidateGrid(_vertexStack,_cellStack,_geometry,_solverState,domainSize,domainOffset,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithRemesh(_vertexStack,_cellStack,_geometry,_solverState,domainSize,domainOffset,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithSolveTimestep(_vertexStack,_cellStack,_geometry,_solverState,domainSize,domainOffset,_regularGridContainer,_traversalOrderOnTopLevel),
@@ -69,6 +70,7 @@ peanoclaw::repositories::RepositoryArrayStack::RepositoryArrayStack(
   _gridWithInitialiseGrid(_vertexStack,_cellStack,_geometry,_solverState,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithInitialiseAndValidateGrid(_vertexStack,_cellStack,_geometry,_solverState,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithPlot(_vertexStack,_cellStack,_geometry,_solverState,_regularGridContainer,_traversalOrderOnTopLevel),
+  _gridWithQuery(_vertexStack,_cellStack,_geometry,_solverState,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithPlotAndValidateGrid(_vertexStack,_cellStack,_geometry,_solverState,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithRemesh(_vertexStack,_cellStack,_geometry,_solverState,_regularGridContainer,_traversalOrderOnTopLevel),
   _gridWithSolveTimestep(_vertexStack,_cellStack,_geometry,_solverState,_regularGridContainer,_traversalOrderOnTopLevel),
@@ -119,6 +121,7 @@ void peanoclaw::repositories::RepositoryArrayStack::restart(
   _gridWithInitialiseGrid.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
   _gridWithInitialiseAndValidateGrid.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
   _gridWithPlot.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
+  _gridWithQuery.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
   _gridWithPlotAndValidateGrid.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
   _gridWithRemesh.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
   _gridWithSolveTimestep.restart(domainSize,domainOffset,domainLevel,positionOfCentralElementWithRespectToCoarserRemoteLevel);
@@ -154,6 +157,7 @@ void peanoclaw::repositories::RepositoryArrayStack::terminate() {
   _gridWithInitialiseGrid.terminate();
   _gridWithInitialiseAndValidateGrid.terminate();
   _gridWithPlot.terminate();
+  _gridWithQuery.terminate();
   _gridWithPlotAndValidateGrid.terminate();
   _gridWithRemesh.terminate();
   _gridWithSolveTimestep.terminate();
@@ -199,6 +203,7 @@ void peanoclaw::repositories::RepositoryArrayStack::iterate(bool reduceState) {
     case peanoclaw::records::RepositoryState::UseAdapterInitialiseGrid: watch.startTimer(); _gridWithInitialiseGrid.iterate(reduceState); watch.stopTimer(); _measureInitialiseGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseGridCalendarTime.setValue( watch.getCalendarTime() ); break;
     case peanoclaw::records::RepositoryState::UseAdapterInitialiseAndValidateGrid: watch.startTimer(); _gridWithInitialiseAndValidateGrid.iterate(reduceState); watch.stopTimer(); _measureInitialiseAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
     case peanoclaw::records::RepositoryState::UseAdapterPlot: watch.startTimer(); _gridWithPlot.iterate(reduceState); watch.stopTimer(); _measurePlotCPUTime.setValue( watch.getCPUTime() ); _measurePlotCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterQuery: watch.startTimer(); _gridWithQuery.iterate(reduceState); watch.stopTimer(); _measureQueryCPUTime.setValue( watch.getCPUTime() ); _measureQueryCalendarTime.setValue( watch.getCalendarTime() ); break;
     case peanoclaw::records::RepositoryState::UseAdapterPlotAndValidateGrid: watch.startTimer(); _gridWithPlotAndValidateGrid.iterate(reduceState); watch.stopTimer(); _measurePlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measurePlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
     case peanoclaw::records::RepositoryState::UseAdapterRemesh: watch.startTimer(); _gridWithRemesh.iterate(reduceState); watch.stopTimer(); _measureRemeshCPUTime.setValue( watch.getCPUTime() ); _measureRemeshCalendarTime.setValue( watch.getCalendarTime() ); break;
     case peanoclaw::records::RepositoryState::UseAdapterSolveTimestep: watch.startTimer(); _gridWithSolveTimestep.iterate(reduceState); watch.stopTimer(); _measureSolveTimestepCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepCalendarTime.setValue( watch.getCalendarTime() ); break;
@@ -236,6 +241,7 @@ void peanoclaw::repositories::RepositoryArrayStack::iterate(bool reduceState) {
  void peanoclaw::repositories::RepositoryArrayStack::switchToInitialiseGrid() { _repositoryState.setAction(peanoclaw::records::RepositoryState::UseAdapterInitialiseGrid); }
  void peanoclaw::repositories::RepositoryArrayStack::switchToInitialiseAndValidateGrid() { _repositoryState.setAction(peanoclaw::records::RepositoryState::UseAdapterInitialiseAndValidateGrid); }
  void peanoclaw::repositories::RepositoryArrayStack::switchToPlot() { _repositoryState.setAction(peanoclaw::records::RepositoryState::UseAdapterPlot); }
+ void peanoclaw::repositories::RepositoryArrayStack::switchToQuery() { _repositoryState.setAction(peanoclaw::records::RepositoryState::UseAdapterQuery); }
  void peanoclaw::repositories::RepositoryArrayStack::switchToPlotAndValidateGrid() { _repositoryState.setAction(peanoclaw::records::RepositoryState::UseAdapterPlotAndValidateGrid); }
  void peanoclaw::repositories::RepositoryArrayStack::switchToRemesh() { _repositoryState.setAction(peanoclaw::records::RepositoryState::UseAdapterRemesh); }
  void peanoclaw::repositories::RepositoryArrayStack::switchToSolveTimestep() { _repositoryState.setAction(peanoclaw::records::RepositoryState::UseAdapterSolveTimestep); }
@@ -251,6 +257,7 @@ void peanoclaw::repositories::RepositoryArrayStack::iterate(bool reduceState) {
  bool peanoclaw::repositories::RepositoryArrayStack::isActiveAdapterInitialiseGrid() const { return _repositoryState.getAction() == peanoclaw::records::RepositoryState::UseAdapterInitialiseGrid; }
  bool peanoclaw::repositories::RepositoryArrayStack::isActiveAdapterInitialiseAndValidateGrid() const { return _repositoryState.getAction() == peanoclaw::records::RepositoryState::UseAdapterInitialiseAndValidateGrid; }
  bool peanoclaw::repositories::RepositoryArrayStack::isActiveAdapterPlot() const { return _repositoryState.getAction() == peanoclaw::records::RepositoryState::UseAdapterPlot; }
+ bool peanoclaw::repositories::RepositoryArrayStack::isActiveAdapterQuery() const { return _repositoryState.getAction() == peanoclaw::records::RepositoryState::UseAdapterQuery; }
  bool peanoclaw::repositories::RepositoryArrayStack::isActiveAdapterPlotAndValidateGrid() const { return _repositoryState.getAction() == peanoclaw::records::RepositoryState::UseAdapterPlotAndValidateGrid; }
  bool peanoclaw::repositories::RepositoryArrayStack::isActiveAdapterRemesh() const { return _repositoryState.getAction() == peanoclaw::records::RepositoryState::UseAdapterRemesh; }
  bool peanoclaw::repositories::RepositoryArrayStack::isActiveAdapterSolveTimestep() const { return _repositoryState.getAction() == peanoclaw::records::RepositoryState::UseAdapterSolveTimestep; }
@@ -341,6 +348,7 @@ void peanoclaw::repositories::RepositoryArrayStack::logIterationStatistics() con
    logInfo( "logIterationStatistics()", "| InitialiseGrid \t |  " << _measureInitialiseGridCPUTime.getNumberOfMeasurements() << " \t |  " << _measureInitialiseGridCPUTime.getAccumulatedValue() << " \t |  " << _measureInitialiseGridCPUTime.getValue()  << " \t |  " << _measureInitialiseGridCalendarTime.getAccumulatedValue() << " \t |  " << _measureInitialiseGridCalendarTime.getValue() << " \t |  " << _measureInitialiseGridCPUTime.toString() << " \t |  " << _measureInitialiseGridCalendarTime.toString() );
    logInfo( "logIterationStatistics()", "| InitialiseAndValidateGrid \t |  " << _measureInitialiseAndValidateGridCPUTime.getNumberOfMeasurements() << " \t |  " << _measureInitialiseAndValidateGridCPUTime.getAccumulatedValue() << " \t |  " << _measureInitialiseAndValidateGridCPUTime.getValue()  << " \t |  " << _measureInitialiseAndValidateGridCalendarTime.getAccumulatedValue() << " \t |  " << _measureInitialiseAndValidateGridCalendarTime.getValue() << " \t |  " << _measureInitialiseAndValidateGridCPUTime.toString() << " \t |  " << _measureInitialiseAndValidateGridCalendarTime.toString() );
    logInfo( "logIterationStatistics()", "| Plot \t |  " << _measurePlotCPUTime.getNumberOfMeasurements() << " \t |  " << _measurePlotCPUTime.getAccumulatedValue() << " \t |  " << _measurePlotCPUTime.getValue()  << " \t |  " << _measurePlotCalendarTime.getAccumulatedValue() << " \t |  " << _measurePlotCalendarTime.getValue() << " \t |  " << _measurePlotCPUTime.toString() << " \t |  " << _measurePlotCalendarTime.toString() );
+   logInfo( "logIterationStatistics()", "| Query \t |  " << _measureQueryCPUTime.getNumberOfMeasurements() << " \t |  " << _measureQueryCPUTime.getAccumulatedValue() << " \t |  " << _measureQueryCPUTime.getValue()  << " \t |  " << _measureQueryCalendarTime.getAccumulatedValue() << " \t |  " << _measureQueryCalendarTime.getValue() << " \t |  " << _measureQueryCPUTime.toString() << " \t |  " << _measureQueryCalendarTime.toString() );
    logInfo( "logIterationStatistics()", "| PlotAndValidateGrid \t |  " << _measurePlotAndValidateGridCPUTime.getNumberOfMeasurements() << " \t |  " << _measurePlotAndValidateGridCPUTime.getAccumulatedValue() << " \t |  " << _measurePlotAndValidateGridCPUTime.getValue()  << " \t |  " << _measurePlotAndValidateGridCalendarTime.getAccumulatedValue() << " \t |  " << _measurePlotAndValidateGridCalendarTime.getValue() << " \t |  " << _measurePlotAndValidateGridCPUTime.toString() << " \t |  " << _measurePlotAndValidateGridCalendarTime.toString() );
    logInfo( "logIterationStatistics()", "| Remesh \t |  " << _measureRemeshCPUTime.getNumberOfMeasurements() << " \t |  " << _measureRemeshCPUTime.getAccumulatedValue() << " \t |  " << _measureRemeshCPUTime.getValue()  << " \t |  " << _measureRemeshCalendarTime.getAccumulatedValue() << " \t |  " << _measureRemeshCalendarTime.getValue() << " \t |  " << _measureRemeshCPUTime.toString() << " \t |  " << _measureRemeshCalendarTime.toString() );
    logInfo( "logIterationStatistics()", "| SolveTimestep \t |  " << _measureSolveTimestepCPUTime.getNumberOfMeasurements() << " \t |  " << _measureSolveTimestepCPUTime.getAccumulatedValue() << " \t |  " << _measureSolveTimestepCPUTime.getValue()  << " \t |  " << _measureSolveTimestepCalendarTime.getAccumulatedValue() << " \t |  " << _measureSolveTimestepCalendarTime.getValue() << " \t |  " << _measureSolveTimestepCPUTime.toString() << " \t |  " << _measureSolveTimestepCalendarTime.toString() );
@@ -358,6 +366,7 @@ void peanoclaw::repositories::RepositoryArrayStack::clearIterationStatistics() {
    _measureInitialiseGridCPUTime.erase();
    _measureInitialiseAndValidateGridCPUTime.erase();
    _measurePlotCPUTime.erase();
+   _measureQueryCPUTime.erase();
    _measurePlotAndValidateGridCPUTime.erase();
    _measureRemeshCPUTime.erase();
    _measureSolveTimestepCPUTime.erase();
@@ -371,6 +380,7 @@ void peanoclaw::repositories::RepositoryArrayStack::clearIterationStatistics() {
    _measureInitialiseGridCalendarTime.erase();
    _measureInitialiseAndValidateGridCalendarTime.erase();
    _measurePlotCalendarTime.erase();
+   _measureQueryCalendarTime.erase();
    _measurePlotAndValidateGridCalendarTime.erase();
    _measureRemeshCalendarTime.erase();
    _measureSolveTimestepCalendarTime.erase();

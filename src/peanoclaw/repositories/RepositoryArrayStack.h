@@ -19,6 +19,7 @@
  #include "peanoclaw/adapters/InitialiseGrid.h" 
  #include "peanoclaw/adapters/InitialiseAndValidateGrid.h" 
  #include "peanoclaw/adapters/Plot.h" 
+ #include "peanoclaw/adapters/Query.h" 
  #include "peanoclaw/adapters/PlotAndValidateGrid.h" 
  #include "peanoclaw/adapters/Remesh.h" 
  #include "peanoclaw/adapters/SolveTimestep.h" 
@@ -56,6 +57,7 @@ class peanoclaw::repositories::RepositoryArrayStack: public peanoclaw::repositor
     peano::grid::Grid<peanoclaw::Vertex,peanoclaw::Cell,peanoclaw::State,VertexStack,CellStack,peanoclaw::adapters::InitialiseGrid> _gridWithInitialiseGrid;
     peano::grid::Grid<peanoclaw::Vertex,peanoclaw::Cell,peanoclaw::State,VertexStack,CellStack,peanoclaw::adapters::InitialiseAndValidateGrid> _gridWithInitialiseAndValidateGrid;
     peano::grid::Grid<peanoclaw::Vertex,peanoclaw::Cell,peanoclaw::State,VertexStack,CellStack,peanoclaw::adapters::Plot> _gridWithPlot;
+    peano::grid::Grid<peanoclaw::Vertex,peanoclaw::Cell,peanoclaw::State,VertexStack,CellStack,peanoclaw::adapters::Query> _gridWithQuery;
     peano::grid::Grid<peanoclaw::Vertex,peanoclaw::Cell,peanoclaw::State,VertexStack,CellStack,peanoclaw::adapters::PlotAndValidateGrid> _gridWithPlotAndValidateGrid;
     peano::grid::Grid<peanoclaw::Vertex,peanoclaw::Cell,peanoclaw::State,VertexStack,CellStack,peanoclaw::adapters::Remesh> _gridWithRemesh;
     peano::grid::Grid<peanoclaw::Vertex,peanoclaw::Cell,peanoclaw::State,VertexStack,CellStack,peanoclaw::adapters::SolveTimestep> _gridWithSolveTimestep;
@@ -72,6 +74,7 @@ class peanoclaw::repositories::RepositoryArrayStack: public peanoclaw::repositor
     tarch::timing::Measurement _measureInitialiseGridCPUTime;
     tarch::timing::Measurement _measureInitialiseAndValidateGridCPUTime;
     tarch::timing::Measurement _measurePlotCPUTime;
+    tarch::timing::Measurement _measureQueryCPUTime;
     tarch::timing::Measurement _measurePlotAndValidateGridCPUTime;
     tarch::timing::Measurement _measureRemeshCPUTime;
     tarch::timing::Measurement _measureSolveTimestepCPUTime;
@@ -85,6 +88,7 @@ class peanoclaw::repositories::RepositoryArrayStack: public peanoclaw::repositor
     tarch::timing::Measurement _measureInitialiseGridCalendarTime;
     tarch::timing::Measurement _measureInitialiseAndValidateGridCalendarTime;
     tarch::timing::Measurement _measurePlotCalendarTime;
+    tarch::timing::Measurement _measureQueryCalendarTime;
     tarch::timing::Measurement _measurePlotAndValidateGridCalendarTime;
     tarch::timing::Measurement _measureRemeshCalendarTime;
     tarch::timing::Measurement _measureSolveTimestepCalendarTime;
@@ -141,6 +145,7 @@ class peanoclaw::repositories::RepositoryArrayStack: public peanoclaw::repositor
     virtual void switchToInitialiseGrid();    
     virtual void switchToInitialiseAndValidateGrid();    
     virtual void switchToPlot();    
+    virtual void switchToQuery();    
     virtual void switchToPlotAndValidateGrid();    
     virtual void switchToRemesh();    
     virtual void switchToSolveTimestep();    
@@ -154,6 +159,7 @@ class peanoclaw::repositories::RepositoryArrayStack: public peanoclaw::repositor
     virtual bool isActiveAdapterInitialiseGrid() const;
     virtual bool isActiveAdapterInitialiseAndValidateGrid() const;
     virtual bool isActiveAdapterPlot() const;
+    virtual bool isActiveAdapterQuery() const;
     virtual bool isActiveAdapterPlotAndValidateGrid() const;
     virtual bool isActiveAdapterRemesh() const;
     virtual bool isActiveAdapterSolveTimestep() const;

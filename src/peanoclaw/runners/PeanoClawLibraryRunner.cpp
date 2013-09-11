@@ -16,9 +16,8 @@
 #include "peanoclaw/records/Data.h"
 #include "peanoclaw/records/Cell.h"
 #include "peanoclaw/records/Vertex.h"
-#include "peanoclaw/statistics/LevelStatistics.h"
-
 #include "peano/heap/Heap.h"
+
 #include "peano/utils/UserInterface.h"
 #include "peano/peano.h"
 
@@ -38,7 +37,8 @@
 
 #include "peano/datatraversal/autotuning/Oracle.h"
 #include "peano/datatraversal/autotuning/OracleForOnePhaseDummy.h"
-
+#include "queries/QueryServer.h"
+#include "queries/records/HeapQuery.h"
 tarch::logging::Log peanoclaw::runners::PeanoClawLibraryRunner::_log("peanoclaw::runners::PeanoClawLibraryRunner");
 
 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
@@ -59,7 +59,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(true)
+  _validateGrid(false)
 {
   #ifndef Asserts
   _validateGrid = false;
@@ -67,8 +67,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   //Parallel configuration
   #ifdef Parallel
-  tarch::parallel::Node::getInstance().setTimeOutWarning(10);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(20);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(30);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(60);
   #endif
 
   //Multicore configuration
@@ -84,7 +84,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().setName("CellDescription");
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().setName("Data");
   peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().setName("VertexDescription");
-  peano::heap::Heap<peanoclaw::statistics::LevelStatistics>::getInstance().setName("LevelStatistics");
 
   initializeParallelEnvironment();
 
@@ -151,16 +150,19 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   _repository->getState().setPlotNumber(0);
   if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
-    if(_validateGrid) {
-      _repository->switchToPlotAndValidateGrid(); _repository->iterate();
-    } else {
-      _repository->switchToPlot(); _repository->iterate();
-    }
+    _repository->switchToPlot(); _repository->iterate();
   }
 
 #ifdef Parallel
   }
 #endif
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()){
+     char* hostname = getenv("PEANOCLAW_HOSTNAME");
+      
+     _queryServer=new de::tum::QueryCxx2SocketPlainPort(hostname,50000,8192);
+
+  
+  }
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
@@ -197,7 +199,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   #endif
   delete _repository;
   delete _geometry;
-
+  delete _queryServer;
   #ifdef Parallel
   tarch::parallel::NodePool::getInstance().terminate();
   #endif
@@ -207,6 +209,39 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   logTraceOut("~PeanoClawLibraryRunner");
 }
 
+ 
+void peanoclaw::runners::PeanoClawLibraryRunner::sync(){
+	int parts=-1;
+	std::cout<<"syncing with query server"<<std::endl;
+	_queryServer->getNumberOfParts(parts);
+        if(parts>0){	
+		
+		int *mids=new int[parts];
+		queries::records::HeapQuery q;
+		double offset[2];
+		double size[2];
+		int dim[2];		
+		_queryServer->getQueryDescription(offset,2,size,2,dim,2,mids,1);
+		tarch::la::Vector<3,double> la_offset;
+		tarch::la::Vector<3,double> la_size;
+		tarch::la::Vector<3,int> la_dim;
+				
+		la_offset[0]=offset[0];
+		la_offset[1]=offset[1];
+		la_size[0] = size[0];
+		la_size[1] = size[1];
+		la_dim[0] = dim[0];
+		la_dim[1] = dim[1];
+		q.setOffset(la_offset);
+		q.setSize(la_size);		
+		q.setDimenions(la_dim);
+		std::cout<<"received q:"<<q.getOffset()<<","<<q.getSize()<<std::endl;
+				
+		
+		queries::QueryServer::getInstance().addQuery(q);
+		delete []mids;
+	}
+}
 void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   double time
 ) {
@@ -220,6 +255,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   _repository->getState().setGlobalTimestepEndTime(time);
   _repository->getState().setNumerics(_numerics);
   _repository->getState().setPlotNumber(_plotNumber);
+  int c=0;
   do {
     logInfo("evolveToTime", "Solving timestep " << (_plotNumber-1) << " with maximum global time interval ("
         << _repository->getState().getStartMaximumGlobalTimeInterval() << ", " << _repository->getState().getEndMaximumGlobalTimeInterval() << ")"
@@ -231,6 +267,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _repository->getState().setAllPatchesEvolvedToGlobalTimestep(true);
 
     if(plotSubsteps) {
+      
       _repository->getState().setPlotNumber(_plotNumber);
       if(_validateGrid) {
         _repository->switchToSolveTimestepAndPlotAndValidateGrid();
@@ -239,6 +276,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
       }
       _repository->iterate();
       _plotNumber++;
+      
     } else {
       if(_validateGrid) {
         _repository->switchToSolveTimestepAndValidateGrid();
@@ -246,6 +284,12 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
         _repository->switchToSolveTimestep();
       }
       _repository->iterate();
+      if(tarch::parallel::Node::getInstance().isGlobalMaster()&&c==0)      
+      sync();
+      c++;
+      _repository->switchToQuery();
+      _repository->iterate();
+      	
     }
 
     _repository->getState().plotStatisticsForLastGridIteration();
@@ -260,11 +304,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 
   if(_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _repository->getState().setPlotNumber(_plotNumber);
-    if(_validateGrid) {
-      _repository->switchToPlotAndValidateGrid(); _repository->iterate();
-    } else {
-      _repository->switchToPlot(); _repository->iterate();
-    }
+    _repository->switchToPlot(); _repository->iterate();
     _plotNumber++;
   } else if (!_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _plotNumber++;
@@ -293,11 +333,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution() {
   logTraceIn("gatherCurrentSolution");
   assertion(_repository != 0);
 
-  if(_validateGrid) {
-    _repository->switchToGatherCurrentSolutionAndValidateGrid(); _repository->iterate();
-  } else {
-    _repository->switchToGatherCurrentSolution(); _repository->iterate();
-  }
+  _repository->switchToGatherCurrentSolution();
+  _repository->iterate();
   logTraceOut("gatherCurrentSolution");
 }
 

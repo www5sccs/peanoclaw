@@ -11,8 +11,7 @@ import sys;
 def addPeanoClawFlags(libpath, libs, cpppath, cppdefines):
    ccflags.append('-g3')
    ccflags.append('-g')
-   if(environment['PLATFORM'] != 'darwin'):
-     ccflags.append('-march=native')
+   ccflags.append('-march=native')
    
    if sys.version_info[0] == 2 and sys.version_info[1] < 7:
        pythonVersion = str(sys.version_info[0]) + '.' + str(sys.version_info[1]) #For Python 2.6
@@ -52,6 +51,8 @@ def addPeanoClawFlags(libpath, libs, cpppath, cppdefines):
    if '-Werror' in ccflags:
      ccflags.remove('-Werror')
      
+
+
 #########################################################################
 ##### MAIN CODE
 #########################################################################
@@ -66,14 +67,33 @@ linkerflags = []
 libpath = []
 libs = []
 
+ccflags.append('-std=c++0x')
+cpppath.append('-I/usr/lib/jvm/java-7-openjdk-amd64/include')
+cpppath.append('-I/home/hpc/pr63so/lu26hij3/Programs/Python-2.7.5/build/include/python2.7')
+cpppath.append('-I/home/hpc/pr63so/lu26hij3/.local/lib/python2.7/site-packages/numpy/core/include')
+libpath.append('-L/home/hpc/pr63so/lu26hij3/Programs/Python-2.7.5/build/lib')
 #Configure Peano 3
 p3Path = 'src/p3/src'
+queryPath = 'PQi/src'
+queryStubs = 'PQi-stubs/src'
 try:
   import peanoConfiguration
   p3Path = peanoConfiguration.getPeano3Path()
 except ImportError:
   pass
 cpppath.append(p3Path)
+try:
+  import peanoConfiguration
+  queryPath = peanoConfiguration.getQueryPath()
+except ImportError:
+  pass
+cpppath.append(queryPath)
+try:
+  import peanoConfiguration
+  queryStubs = peanoConfiguration.getQueryStubsPath()
+except ImportError:
+  pass
+cpppath.append(queryStubs)
 
 # Platform specific settings
 environment = Environment()
@@ -123,8 +143,8 @@ if parallel == 'yes' or parallel == 'parallel_yes':
    cpppath.append('/usr/lib/openmpi/include')
    libpath.append('/usr/lib/openmpi/lib')
    libs.append ('mpi')
-   libs.append ('pthread')
-   cxx = 'mpicxx'
+#   libs.append ('pthread')
+   cxx = 'mpicc'
 elif parallel == 'no' or parallel == 'parallel_no':
    pass
 else:
@@ -313,6 +333,9 @@ print
 
 VariantDir (buildpath, './src', duplicate=0)  # Set build directory for PeanoClaw sources
 VariantDir (join(buildpath, 'kernel'), p3Path, duplicate=0)  # Set build directory for Peano sources
+VariantDir (buildpath + 'pqi', queryPath, duplicate=0)  # Set build directory for Query sources
+VariantDir (buildpath + 'pqi-stubs', queryStubs, duplicate=0)  # Set build directory for Query sources
+
 if solver == 'swe':
   
   print "VariantDir(", join(buildpath, 'swe'), ",", swePath, ")"
@@ -553,6 +576,13 @@ sourcesPeanoClaw = [
   Glob(join(buildpath, 'peanoclaw/statistics/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/tests/*.cpp')),
 	]
+##### Define sources of application peanoclaw
+sourcesQuery = [
+  Glob(buildpath + 'pqi/queries/QueryServer.cpp'),
+  Glob(buildpath + 'pqi/queries/records/*.cpp'),
+  Glob(buildpath + 'pqi-stubs/de/tum/QueryCxx2SocketPlainPort.cpp')
+ 
+	]
 
 ##### Define sources of application peanoclaw
 if solver == 'swe':
@@ -574,7 +604,8 @@ source = [
    sourcesTComponents,
    sourcesPeanoBase,
    sourcesPeanoClaw,
-   sourcesParallel
+   sourcesParallel,
+   sourcesQuery   
    ]
 
 if solver == 'pyclaw':
@@ -601,4 +632,5 @@ elif solver == 'swe':
   installation = env.Alias('install', env.Install('bin', executable))
 
 Default(installation)
+
 

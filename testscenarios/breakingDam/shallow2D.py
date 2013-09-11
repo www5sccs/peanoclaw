@@ -69,7 +69,7 @@ def refinement_criterion_time_dependent(state):
         or distance_to_circle2 < (dimension_x.upper - dimension_x.lower) / 2
         or distance_to_circle3 < (dimension_x.upper - dimension_x.lower) / 2
         ):
-        return 1.0/(6.0*81.0)
+        return 1.0/(6.0*243.0)
     elif (distance_to_circle1 > (dimension_x.upper - dimension_x.lower) * 1.5 
         and distance_to_circle2 > (dimension_x.upper - dimension_x.lower) * 1.5
         and distance_to_circle3 > (dimension_x.upper - dimension_x.lower) * 1.5
@@ -86,7 +86,7 @@ def refinement_criterion_gradient(state):
   max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:])))
   
   if max_gradient > 0.03:
-      return 1.0/(6.0*81.0)
+      return 1.0/(6.0*243.0)
   elif max_gradient < 0.05:
       return 1.0/(6.0*9.0)
   else:
@@ -127,7 +127,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     mgrid = 6
 
     # number of initial AMR grids in each dimension
-    msubgrid = 9
+    msubgrid = 81
 
     if amr_type is not None:
         m = mgrid
@@ -186,7 +186,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
                                         ,qinit_callback
                                         #,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
-                                        ,refinement_criterion=refinement_criterion_gradient
+                                        #,refinement_criterion=refinement_criterion_gradient
                                         )
             claw.solution = amrclaw.Solution(state, domain)
         else:
