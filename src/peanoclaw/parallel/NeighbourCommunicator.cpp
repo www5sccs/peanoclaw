@@ -14,7 +14,7 @@ tarch::logging::Log peanoclaw::parallel::NeighbourCommunicator::_log("peanoclaw:
 void peanoclaw::parallel::NeighbourCommunicator::sendCellDescription(int cellDescriptionIndex)
 {
   logTraceInWith1Argument("sendCellDescription", cellDescriptionIndex);
-  #ifdef Asserts
+  #if defined(Asserts) && defined(Parallel)
   CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
   assertion1(!cellDescription.getIsPaddingSubgrid(), cellDescription.toString());
   assertion1(!cellDescription.getIsRemote(), cellDescription.toString());
@@ -283,6 +283,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
 
 void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {
   logTraceInWith2Arguments("receivePaddingPatch", _position, _level);
+  #ifdef Parallel
   _statistics.receivedPaddingNeighborData();
 
   //TODO unterweg debug
@@ -304,6 +305,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {
 
   //UNew
   _dataHeap.receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  #endif
   logTraceOut("receivePaddingPatch");
 }
 
