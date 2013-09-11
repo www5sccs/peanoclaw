@@ -39,21 +39,18 @@ def addPeanoClawFlags(libpath, libs, cpppath, cppdefines):
    cppdefines.append('NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION')
       
    # Add paths and lib
-   if (environment['PLATFORM'] != 'darwin'):
-     libpath.append(pythonHome + '/lib')
-     libpath.append(pythonHome + '/lib/python' + pythonVersion)
-     cpppath.append(pythonHome + '/include/python' + pythonVersion)
-     cpppath.append(pythonHome + '/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
-     cpppath.append(os.getenv("HOME") + '/.local/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
-     libs.append('python' + pythonVersion)
-     if(environment['PLATFORM'] == 'darwin'):
-       ccflags.append('-flat_namespace')
-       linkerflags.append('-flat_namespace')
-     if build == 'release':
-       cppdefines.append('_GLIBCXX_DEBUG')
-       cppdefines.append('NDEBUG')
-   else:
-     cpppath.append('/Library/Frameworks/Python.framework/Versions/' + pythonVersion + '/include/python' + pythonVersion)
+   libpath.append(pythonHome + '/lib')
+   libpath.append(pythonHome + '/lib/python' + pythonVersion)
+   cpppath.append(pythonHome + '/include/python' + pythonVersion)
+   cpppath.append(pythonHome + '/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
+   cpppath.append(os.getenv("HOME") + '/.local/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
+   libs.append('python' + pythonVersion)
+   if(environment['PLATFORM'] == 'darwin'):
+     ccflags.append('-flat_namespace')
+     linkerflags.append('-flat_namespace')
+   elif build == 'release':
+     cppdefines.append('_GLIBCXX_DEBUG')
+     cppdefines.append('NDEBUG')
      
      
    if '-Werror' in ccflags:
