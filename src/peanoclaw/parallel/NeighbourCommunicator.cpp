@@ -476,8 +476,10 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::switchToRemote(peanoclaw::Patch& subgrid) {
+  #ifdef Parallel
   subgrid.setIsRemote(true);
   tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> key = createRemoteSubgridKey();
 
   _remoteSubgridMap[key] = subgrid.getCellDescriptionIndex();
+  #endif
 }
