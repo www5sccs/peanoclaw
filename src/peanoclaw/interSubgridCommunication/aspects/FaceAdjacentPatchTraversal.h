@@ -21,7 +21,7 @@ namespace peanoclaw {
 
 /**
  * Implements a scheme for traversing through all pairs of patches adjacent to
- * a vertex which are sharing a face (or an edge in 2D).
+ * a vertex which are sharing a face.
  *
  * The LoopBody has to provide an operator() with the following parameters:
  * - Patch& patch1

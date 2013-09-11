@@ -196,7 +196,7 @@ int main(int argc, char **argv) {
   //Construct parameters
   tarch::la::Vector<DIMENSIONS, double> domainOffset(0);
   tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);
-  tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(0.05);
+  tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(0.01);
   tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(9);
   int ghostlayerWidth = 1;
   int unknownsPerSubcell = 3;

@@ -1,7 +1,7 @@
 // This file is part of the Peano project. For conditions of distribution and 
 // use, please see the copyright notice at www.peano-framework.org
-#ifndef PEANOCLAW_ADAPTERS_PlotAndValidateGrid_H_
-#define PEANOCLAW_ADAPTERS_PlotAndValidateGrid_H_
+#ifndef PEANOCLAW_ADAPTERS_Query_H_
+#define PEANOCLAW_ADAPTERS_Query_H_
 
 
 #include "tarch/logging/Log.h"
@@ -17,15 +17,14 @@
 #include "peanoclaw/State.h"
 
  #include "peanoclaw/mappings/Remesh.h"
- #include "peanoclaw/mappings/Plot.h"
- #include "peanoclaw/mappings/ValidateGrid.h"
+ #include "peanoclaw/mappings/Query.h"
 
 
 
 
 namespace peanoclaw {
       namespace adapters {
-        class PlotAndValidateGrid;
+        class Query;
       } 
 }
 
@@ -37,11 +36,10 @@ namespace peanoclaw {
  * @author Peano Development Toolkit (PDT) by  Tobias Weinzierl
  * @version $Revision: 1.10 $
  */
-class peanoclaw::adapters::PlotAndValidateGrid {
+class peanoclaw::adapters::Query {
   private:
     peanoclaw::mappings::Remesh _map2Remesh;
-    peanoclaw::mappings::Plot _map2Plot;
-    peanoclaw::mappings::ValidateGrid _map2ValidateGrid;
+    peanoclaw::mappings::Query _map2Query;
 
 
   public:
@@ -52,16 +50,16 @@ class peanoclaw::adapters::PlotAndValidateGrid {
     static peano::MappingSpecification   ascendSpecification();
     static peano::MappingSpecification   descendSpecification();
 
-    PlotAndValidateGrid();
+    Query();
 
     #if defined(SharedMemoryParallelisation)
-    PlotAndValidateGrid(const PlotAndValidateGrid& masterThread);
+    Query(const Query& masterThread);
     #endif
 
-    virtual ~PlotAndValidateGrid();
+    virtual ~Query();
   
     #if defined(SharedMemoryParallelisation)
-    void mergeWithWorkerThread(const PlotAndValidateGrid& workerThread);
+    void mergeWithWorkerThread(const Query& workerThread);
     #endif
 
     void createInnerVertex(

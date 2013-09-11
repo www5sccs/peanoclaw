@@ -78,13 +78,7 @@ class SubgridSolver(object):
         self.solver.qbc = self.qbc
         self.solver.dt_max = maximum_timestep_size
         
-        success = False
-        t_start = self.solution.t
-        
-        while not success:
-          self.solver.evolve_to_time(self.solution)
-          self.solver.dt = min(self.solver.dt_max,self.solver.dt * self.solver.cfl_desired / self.solver.cfl.get_cached_max())
-          success = self.solution.t > t_start
+        self.solver.evolve_to_time(self.solution)
         
         return self.solution.state.q, self.number_of_rollbacks
         
