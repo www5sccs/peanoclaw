@@ -9,14 +9,14 @@ def installPeano3():
   p3RepositorySubpath = 'src'
   p3Revision = 'HEAD'
   p3Build = 'release'
-  p3ParallelSupport = 'yes' 
+  global p3ParallelSupport
+  p3ParallelSupport = p3ParallelSupport
   try:
     import peanoConfiguration
     p3Path = peanoConfiguration.getPeano3Path()
     p3RepositorySubpath = peanoConfiguration.getPeano3RepositorySubpath()
     p3Revision = peanoConfiguration.getPeano3Revision()
     p3Build = peanoConfiguration.getPeano3Build()
-    p3ParallelSupport = peanoConfiguration.getPeano3ParallelSupport()
     p3Dimension = peanoConfiguration.getPeano3Dimension()
   except ImportError:
     pass
@@ -48,6 +48,16 @@ class Peano3Develop(develop):
   def run(self):
     installPeano3()
     develop.run(self)
+    
+#Read command line parameters
+import sys
+
+global p3ParallelSupport
+p3ParallelSupport = False
+for argument in sys.argv:
+  splitargument = argument.split('=')
+  if splitargument[0]=="parallel":
+      buildParallel = (splitargument[1].lower() == 'yes')
 
 setup(name='PeanoClaw',
       version='0.1',
