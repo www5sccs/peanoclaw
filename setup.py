@@ -56,7 +56,7 @@ global p3ParallelSupport
 p3ParallelSupport = "no"
 for argument in sys.argv:
   splitargument = argument.split('=')
-  if splitargument[0]=="parallel":
+  if splitargument[0]=="--parallel":
       buildParallel = splitargument[1].lower()
 
 setup(name='PeanoClaw',
