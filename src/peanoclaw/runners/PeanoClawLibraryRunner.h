@@ -60,6 +60,8 @@ private:
   bool _validateGrid;
   de::tum::QueryCxx2SocketPlainPort *_queryServer;
   void sync();
+  void runGlobalStep();
+  int c;
 public:
   /**
    * Sets everything up but does not start any grid-traversal, yet.

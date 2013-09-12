@@ -304,13 +304,12 @@ void peanoclaw::mappings::Query::prepareSendToMaster(
 	
 	if(
 		coarseGridVerticesEnumerator.getLevel()>=2 &&
-		!queries::QueryServer::getInstance().holdsFullQuery(i,verticesEnumerator.getCellCenter(),verticesEnumerator.getCellSize())&&
 		queries::QueryServer::getInstance().intersectsWithQuery(i,verticesEnumerator.getCellCenter(),verticesEnumerator.getCellSize())
 	){
+		std::cout<<"rank:"<<tarch::parallel::Node::getInstance().getRank()<<" sending level:"<<verticesEnumerator.getLevel()<<" to rank:"<<tarch::parallel::NodePool::getInstance().getMasterRank()<<" on level:"<<coarseGridVerticesEnumerator.getLevel()<<std::endl;		
 		queries::QueryServer::getInstance().swapBuffers(i);
-		
 		queries::QueryServer::getInstance().sendData(i,verticesEnumerator.getCellCenter(),verticesEnumerator.getLevel());
-		queries::QueryServer::getInstance().clearQueryBuffer(i);
+		queries::QueryServer::getInstance().clearHeapBuffer(i);
   	}
 	
    }
@@ -344,6 +343,8 @@ void peanoclaw::mappings::Query::mergeWithMaster(
 		workerEnumerator.getCellSize())
 	)
   {
+	std::cout<<"queries:"<<queries::QueryServer::getInstance().getNumberOfPendingQueries()<<std::endl;
+	std::cout<<"rank:"<<tarch::parallel::Node::getInstance().getRank()<<" receiving level:"<<workerEnumerator.getLevel()<<" from rank:"<<worker<<" to level:"<<coarseGridVerticesEnumerator.getLevel()<<std::endl;	
 	queries::QueryServer::getInstance().receiveData(i,workerEnumerator.getCellCenter(),workerEnumerator.getLevel(),worker);
 	
 	if(coarseGridVerticesEnumerator.getLevel()==2){
@@ -472,17 +473,21 @@ void peanoclaw::mappings::Query::leaveCell(
 			
 	      dfor(subcellIndex, patch.getSubdivisionFactor()) {
 	    	tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition()  + tarch::la::multiplyComponents(subcellIndex.convertScalar<double>(), subcellSize);
-		if(queries::QueryServer::getInstance().intersectsWithQuery(i,x,subcellSize))
+		if(queries::QueryServer::getInstance().intersectsWithQuery(i,x,subcellSize)){
 			queries::QueryServer::getInstance().setData(
 							i,							
 							x,
 							subcellSize,
-							patch.getValueUNew(subcellIndex, 0));  
+							patch.getValueUNew(subcellIndex, 0));
+		}  
 	      //_patchPlotter->plotPatch(patch, fineGridVertices, fineGridVerticesEnumerator);
-	      
+	        
 	      }
       }
+      
     }
+  if(fineGridVerticesEnumerator.getLevel()<=2||coarseGridVerticesEnumerator.getLevel()<=2)
+  	_sendMergedData=true;	
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
 }
 
@@ -492,10 +497,6 @@ void peanoclaw::mappings::Query::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
   peano::heap::Heap<queries::records::Answer>::getInstance().startToSendOrReceiveHeapData(solverState.isTraversalInverted());
-  
-  //if(solverState.isJoiningWithWorker())
-	//_workers--;	
-	//_workers=0;
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
 
@@ -508,11 +509,15 @@ void peanoclaw::mappings::Query::endIteration(
 	  if(_sendMergedData){
 		        queries::QueryServer::getInstance().swapBuffers(i);		
 			queries::QueryServer::getInstance().fireAnswers(i);
+			
+    			
 	  }
 	   
+    queries::QueryServer::getInstance().clearQueryBuffer(i);
     queries::QueryServer::getInstance().clearHeapBuffer(i);
     _sendMergedData=false;
-  }
+  };
+		
   peano::heap::Heap<queries::records::Answer>::getInstance().finishedToSendOrReceiveHeapData();
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);

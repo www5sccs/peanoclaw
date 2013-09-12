@@ -67,8 +67,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   //Parallel configuration
   #ifdef Parallel
-  tarch::parallel::Node::getInstance().setTimeOutWarning(30);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(60);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(120);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(240);
   #endif
 
   //Multicore configuration
@@ -163,6 +163,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   
   }
+  c=0;
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
@@ -212,16 +213,23 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
  
 void peanoclaw::runners::PeanoClawLibraryRunner::sync(){
 	int parts=-1;
-	std::cout<<"syncing with query server"<<std::endl;
-	_queryServer->getNumberOfParts(parts);
+	std::cout<<"syncing with query server:"<<tarch::parallel::Node::getInstance().getRank()<<std::endl;
+	if(tarch::parallel::Node::getInstance().isGlobalMaster())
+		_queryServer->getNumberOfParts(parts);
+	MPI_Bcast(&parts,1,MPI_INT,tarch::parallel::Node::getInstance().getGlobalMasterRank(),MPI_COMM_WORLD);
         if(parts>0){	
 		
 		int *mids=new int[parts];
 		queries::records::HeapQuery q;
 		double offset[2];
 		double size[2];
-		int dim[2];		
-		_queryServer->getQueryDescription(offset,2,size,2,dim,2,mids,1);
+		int dim[2];
+		if(tarch::parallel::Node::getInstance().isGlobalMaster())		
+			_queryServer->getQueryDescription(offset,2,size,2,dim,2,mids,1);
+		
+		MPI_Bcast(offset,2,MPI_DOUBLE,tarch::parallel::Node::getInstance().getGlobalMasterRank(),MPI_COMM_WORLD);
+		MPI_Bcast(size,2,MPI_DOUBLE,tarch::parallel::Node::getInstance().getGlobalMasterRank(),MPI_COMM_WORLD);
+		MPI_Bcast(dim,2,MPI_INT,tarch::parallel::Node::getInstance().getGlobalMasterRank(),MPI_COMM_WORLD);
 		tarch::la::Vector<3,double> la_offset;
 		tarch::la::Vector<3,double> la_size;
 		tarch::la::Vector<3,int> la_dim;
@@ -255,7 +263,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   _repository->getState().setGlobalTimestepEndTime(time);
   _repository->getState().setNumerics(_numerics);
   _repository->getState().setPlotNumber(_plotNumber);
-  int c=0;
+  
   do {
     logInfo("evolveToTime", "Solving timestep " << (_plotNumber-1) << " with maximum global time interval ("
         << _repository->getState().getStartMaximumGlobalTimeInterval() << ", " << _repository->getState().getEndMaximumGlobalTimeInterval() << ")"
@@ -284,13 +292,15 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
         _repository->switchToSolveTimestep();
       }
       _repository->iterate();
-      if(tarch::parallel::NodePool::getInstance().areAllNodesWorking()&&c==0){      
-      	sync();
-      	c++;
+      if(tarch::parallel::NodePool::getInstance().areAllNodesWorking()){      
+	_repository->runGlobalStep();      	
+	runGlobalStep();
+	
       }
-      _repository->switchToQuery();
-      _repository->iterate();
-      	
+      if(c>0){
+      	_repository->switchToQuery();
+      	_repository->iterate();
+      }
     }
 
     _repository->getState().plotStatisticsForLastGridIteration();
@@ -339,6 +349,12 @@ void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution() {
   logTraceOut("gatherCurrentSolution");
 }
 
+void peanoclaw::runners::PeanoClawLibraryRunner::runGlobalStep(){
+  if(c==0){		
+	sync();
+    c++;
+  }
+}
 int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
   #ifdef Parallel
   int newMasterNode = tarch::parallel::NodePool::getInstance().waitForJob();
@@ -363,7 +379,7 @@ int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
             continueToIterate = false;
             break;
           case peanoclaw::repositories::Repository::RunGlobalStep:
-            //runGlobalStep();
+            runGlobalStep();
             break;
         }
       }
@@ -376,7 +392,7 @@ int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
       _repository->terminate();
     }
     else if ( newMasterNode == tarch::parallel::NodePool::JobRequestMessageAnswerValues::RunAllNodes ) {
-      //runGlobalStep();
+      runGlobalStep();
     }
     newMasterNode = tarch::parallel::NodePool::getInstance().waitForJob();
   }

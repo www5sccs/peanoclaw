@@ -1,1611 +1,217 @@
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,613 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,613 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,613 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,613 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,617 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,613 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,619 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,613 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,612 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,613 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,617 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,617 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,618 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,619 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,619 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,619 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,618 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,618 INFO CLAW: Loading Peano-library...
-2013-09-11 12:58:18,719 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,736 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,757 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,765 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,771 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,784 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,792 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,795 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,799 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,804 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,805 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,807 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,807 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,809 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,810 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,810 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,811 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,812 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,812 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,812 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,814 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,815 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,815 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,816 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,817 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,818 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,818 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,823 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,823 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,823 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,823 INFO CLAW: /home/hpc/pr63so/lu26hij3/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
-2013-09-11 12:58:18,827 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,840 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,840 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,842 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,840 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,841 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,842 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,842 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,842 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,842 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,842 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,843 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,843 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,843 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,843 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,844 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,844 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,845 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,845 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,847 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,847 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,848 INFO CLAW: Peano loaded successfully.
-2013-09-11 12:58:18,848 INFO CLAW: Peano loaded successfully.
- 1378897098   12:58:18     [mac-bdz02],rank:15 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:19 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:22 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:0 info         tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message tarch::parallel::NodePool[registration] the free tag 8
- 1378897098   12:58:18     [mac-bdz02],rank:0 info         tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message tarch::parallel::NodePool[job-management] the free tag 9
- 1378897098   12:58:18     [mac-bdz02],rank:0 info         tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message tarch::parallel::NodePool[job-services] the free tag 10
- 1378897098   12:58:18     [mac-bdz02],rank:10 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:26 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:11 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:13 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:2 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:4 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:5 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:6 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:8 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:9 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:14 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:16 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:17 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:18 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:20 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:21 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:23 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:24 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:25 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:0 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:1 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:3 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:7 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- 1378897098   12:58:18     [mac-bdz02],rank:12 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
- [mac-bdz02],rank:22 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:22 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:22 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:22 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:22 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:22 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:22 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:22 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:22 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:15 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:15 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:15 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:15 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:15 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:15 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:15 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:15 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:15 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:19 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:19 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:19 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:19 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:19 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:19 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:19 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:19 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:19 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:26 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:26 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:26 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:26 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:26 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:26 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:26 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:26 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:26 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:10 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:10 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:10 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:10 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:10 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:10 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:10 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:10 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:10 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:13 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:13 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:13 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:13 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:13 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:13 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:13 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:13 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:13 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:11 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:11 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:11 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:11 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:11 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:11 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:11 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:11 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:11 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:6 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:6 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:6 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:6 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:6 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:6 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:6 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:6 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:6 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:9 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:9 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:9 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:9 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:9 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:9 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:9 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:9 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:9 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:23 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:23 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:23 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:23 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:23 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:23 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:23 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:23 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:23 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:25 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:25 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:25 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:25 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:25 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:25 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:25 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:25 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:25 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:17 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:17 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:17 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:17 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:17 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:17 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:17 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:17 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:17 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:14 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:14 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:14 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:14 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:14 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:14 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:14 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:14 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:14 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:18 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:18 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:18 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:18 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:18 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:18 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:18 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:18 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:18 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:2 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:2 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:2 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:2 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:2 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:2 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:2 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:2 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:2 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:16 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:16 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:16 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:16 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:16 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:16 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:16 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:16 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:16 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:8 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:8 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:8 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:8 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:8 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:8 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:8 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:8 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:8 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:5 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:5 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:5 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:21 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:21 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:21 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:5 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:5 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:5 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:21 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:21 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:5 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:5 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:5 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:21 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:21 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:21 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:21 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:20 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:20 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:20 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:20 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:20 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:20 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:20 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:20 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:20 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:4 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:4 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:4 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:4 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:4 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:4 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:4 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:4 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:4 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:24 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:24 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:24 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:24 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:24 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:24 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:24 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:24 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:24 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:3 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:3 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:3 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:3 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:3 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:3 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:3 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:3 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:3 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:1 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:1 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:1 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:1 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:1 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:1 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:1 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:1 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:1 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:12 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:12 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:12 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:12 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:12 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:12 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:12 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:12 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:12 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:7 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:7 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:7 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:7 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:7 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:7 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:7 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:7 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:7 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:0 peanoclaw::NumericsFactory::createPyClawNumerics        Using default interpolation.
- [mac-bdz02],rank:0 peanoclaw::NumericsFactory::createPyClawNumerics        Using default restriction.
- [mac-bdz02],rank:0 peanoclaw::NumericsFactory::createPyClawNumerics        Using default flux correction.
- [mac-bdz02],rank:0 peano::utils::UserInterface::writeHeader()             
- [mac-bdz02],rank:0 peano::utils::UserInterface::writeHeader()              Application based upon the PDE framework Peano - Release P3
- [mac-bdz02],rank:0 peano::utils::UserInterface::writeHeader()              build: dim=2
- [mac-bdz02],rank:0 peano::utils::UserInterface::writeHeader()              optimisations: d-loop persistent-attributes packed opt-static-subtrees recursion-unrolling 
- [mac-bdz02],rank:0 peano::utils::UserInterface::writeHeader()              (C) 2005 - 2013   www.peano-framework.org
- [mac-bdz02],rank:0 peano::utils::UserInterface::writeHeader()              processes: 27, threads: 1 (per process)
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[neighbour] the free tag 11
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[master-worker] the free tag 12
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[join/fork] the free tag 13
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[neighbour] the free tag 14
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[master-worker] the free tag 15
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[join/fork] the free tag 16
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[neighbour] the free tag 17
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[master-worker] the free tag 18
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[join/fork] the free tag 19
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[neighbour] the free tag 20
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[master-worker] the free tag 21
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[join/fork] the free tag 22
- [mac-bdz02],rank:11 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
- [mac-bdz02],rank:15 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  [mac-bdz02],rank:16 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  [mac-bdz02],rank:17 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  17 [mac-bdz02],rank:21 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  21
- [mac-bdz02],rank:22 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  22
- [mac-bdz02],rank:23 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  23
- [mac-bdz02],rank:24 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  24
- [mac-bdz02],rank:26 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  26
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[neighbour] the free tag 23
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[master-worker] the free tag 24
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[join/fork] the free tag 25
- [mac-bdz02],rank:1 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  1
- [mac-bdz02],rank:2 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  2
- [mac-bdz02],rank:3 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  3
- [mac-bdz02],rank:4 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  4
- [mac-bdz02],rank:5 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  5
- [mac-bdz02],rank:6 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  6
- [mac-bdz02],rank:7 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  7
- [mac-bdz02],rank:8 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  8
- [mac-bdz02],rank:9 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  9
- [mac-bdz02],rank:10 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
+2013-09-12 14:31:05,413 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,433 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,454 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,463 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,482 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,487 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,495 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,506 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,507 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,518 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,547 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,550 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,556 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,557 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,561 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,564 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,573 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,575 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,583 INFO CLAW: Loading Peano-library...
+2013-09-12 14:31:05,584 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,584 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,591 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,594 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,595 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,602 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,603 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,610 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,611 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,615 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,616 INFO CLAW: /home/atanasoa/workspace/peanoclaw/src/python/peanoclaw/libpeano-claw-2d.so
+2013-09-12 14:31:05,625 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,628 INFO CLAW: Peano loaded successfully.
+2013-09-12 14:31:05,642 INFO CLAW: Peano loaded successfully.
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:2 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:0 info         tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message tarch::parallel::NodePool[registration] the free tag 8
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:0 info         tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message tarch::parallel::NodePool[job-management] the free tag 9
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:0 info         tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message tarch::parallel::NodePool[job-services] the free tag 10
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:0 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:9 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:7 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:8 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:4 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:5 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:10 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:6 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:3 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
+ 1378989066   14:31:06     [atanasoa-Latitude-E6410],rank:1 info         ::pyclawBindings::pyclaw_peano_new(...)                 Initializing Peano
 peano instance: got rank:  10
-peano instance: got rank:  11
- [mac-bdz02],rank:12 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  12
- [mac-bdz02],rank:13 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  13
- [mac-bdz02],rank:14 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  14
- 15
- 16
-
- [mac-bdz02],rank:18 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  18
- [mac-bdz02],rank:19 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  19
- [mac-bdz02],rank:20 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  20
- [mac-bdz02],rank:25 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-peano instance: got rank:  25
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner Initial values: Domain size = [[1,1]], default subdivision factor = [6,6], default ghostlayer width = 2, unknowns per cell = 3
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,993 INFO CLAW: Solution 0 computed for time t=0.000000
-2013-09-11 12:58:18,994 INFO CLAW: Solution 0 computed for time t=0.000000
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 0
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 0->0+1 [worker's domain:[0,0]x[1,1],level:1]
- [mac-bdz02],rank:1 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0,0]x[1,1] on level 1
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 90
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 68
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 7965
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 7688
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 1
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 9009
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 8717
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 3294
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2825
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 1
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 9162
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 8861
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 184 times
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 40 times
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 3 used 1 times
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 3060
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2558
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 1
- [mac-bdz02],rank:1 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 8 new workers on local identifier 111111111
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+2 [worker's domain:[0,0]x[0.333333,0.333333],level:2]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+3 [worker's domain:[0.333333,0]x[0.333333,0.333333],level:2]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+4 [worker's domain:[0.666667,0]x[0.333333,0.333333],level:2]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+5 [worker's domain:[0.666667,0.333333]x[0.333333,0.333333],level:2]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+6 [worker's domain:[0.333333,0.333333]x[0.333333,0.333333],level:2]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+7 [worker's domain:[0,0.333333]x[0.333333,0.333333],level:2]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+8 [worker's domain:[0,0.666667]x[0.333333,0.333333],level:2]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+9 [worker's domain:[0.333333,0.666667]x[0.333333,0.333333],level:2]
- [mac-bdz02],rank:2 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0,0]x[0.333333,0.333333] on level 2
- [mac-bdz02],rank:3 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.333333,0]x[0.333333,0.333333] on level 2
- [mac-bdz02],rank:4 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.666667,0]x[0.333333,0.333333] on level 2
- [mac-bdz02],rank:5 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.666667,0.333333]x[0.333333,0.333333] on level 2
- [mac-bdz02],rank:6 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.333333,0.333333]x[0.333333,0.333333] on level 2
- [mac-bdz02],rank:7 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0,0.333333]x[0.333333,0.333333] on level 2
- [mac-bdz02],rank:8 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0,0.666667]x[0.333333,0.333333] on level 2
- [mac-bdz02],rank:9 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.333333,0.666667]x[0.333333,0.333333] on level 2
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 9216
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 8915
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 2997
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2507
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
+peano instance: got rank:  6
+peano instance: got rank:  3
+2013-09-12 14:31:06,712 INFO CLAW: Solution 0 computed for time t=0.000000
+rank:6job_waitig__tag:9
+peano instance: got rank:  8
+peano instance: got rank:  2
+peano instance: got rank:  1
+2013-09-12 14:31:06,713 INFO CLAW: Solution 0 computed for time t=0.000000
+rank:2job_waitig__tag:9
+peano instance: got rank:  5
+peano instance: got rank:  7
+peano instance: got rank:  4
+2013-09-12 14:31:06,714 INFO CLAW: Solution 0 computed for time t=0.000000
+2013-09-12 14:31:06,714 INFO CLAW: Solution 0 computed for time t=0.000000
+rank:8job_waitig__tag:9
+2013-09-12 14:31:06,714 INFO CLAW: Solution 0 computed for time t=0.000000
+rank:5job_waitig__tag:9
+rank:3job_waitig__tag:9
+2013-09-12 14:31:06,715 INFO CLAW: Solution 0 computed for time t=0.000000
+2013-09-12 14:31:06,715 INFO CLAW: Solution 0 computed for time t=0.000000
+2013-09-12 14:31:06,715 INFO CLAW: Solution 0 computed for time t=0.000000
+rank:7job_waitig__tag:9
+rank:1job_waitig__tag:9
+rank:4job_waitig__tag:9
+peano instance: got rank:  9
+2013-09-12 14:31:06,717 INFO CLAW: Solution 0 computed for time t=0.000000
+rank:9job_waitig__tag:9
+2013-09-12 14:31:06,718 INFO CLAW: Solution 0 computed for time t=0.000000
+rank:10job_waitig__tag:9
 peano instance: got rank:  0
-2013-09-11 12:58:38,571 INFO CLAW: Solution 0 computed for time t=0.000000
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Solving timestep 0 with maximum global time interval (0, 0) and minimum global time interval (0, 0)
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 1
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 9063
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 8771
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 2970
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2489
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:8 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:7 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:9 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 432
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:5 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:4 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:3 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:2 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
-syncing with query server
+2013-09-12 14:31:43,206 INFO CLAW: Solution 0 computed for time t=0.000000
+fire 
+fire 
+fire 
+fire 
+fire 
+fire 
+fire 
+fire 
+fire 
+syncing with query server:0
+syncing with query server:4
+syncing with query server:6
+syncing with query server:10
+syncing with query server:2
+syncing with query server:1
+syncing with query server:5
+syncing with query server:9
+syncing with query server:3
+syncing with query server:7
+syncing with query server:8
 received q:[0,0,0],[1,1,0]
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[neighbour] the free tag 26
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[master-worker] the free tag 27
- [mac-bdz02],rank:0 tarch::mpianalysis::DefaultAnalyser::reserveFreeTag()   assigned message heap[join/fork] the free tag 28
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 1
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local cells: 1449
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local vertices: 1330
- [mac-bdz02],rank:2 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:8 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local cells: 1440
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local vertices: 1321
- [mac-bdz02],rank:4 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local cells: 1458
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local vertices: 1336
- [mac-bdz02],rank:5 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:9 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local cells: 1440
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local vertices: 1321
- [mac-bdz02],rank:3 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:7 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 432
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 432
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local cells: 1458
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local vertices: 1336
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 1629
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 1484
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 3060
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2573
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Wallclock time for this grid iteration/Total runtime: 6.60368s/6.59s
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Minimal timestep for this grid iteration: 0.00130946
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Solving timestep 0 with maximum global time interval (0, 0.00185185) and minimum global time interval (0, 0.00130946)
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 2
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local cells: 1494
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local vertices: 1372
- [mac-bdz02],rank:4 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:4 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:8 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:8 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:7 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:7 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local cells: 1494
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local vertices: 1372
- [mac-bdz02],rank:2 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:2 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local cells: 1494
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local vertices: 1372
- [mac-bdz02],rank:3 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:3 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 432
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 432
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local cells: 1494
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local vertices: 1372
- [mac-bdz02],rank:5 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:5 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:9 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:9 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 1629
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 1484
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 3123
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2621
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 2
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local cells: 1458
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local vertices: 1336
- [mac-bdz02],rank:2 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:2 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:8 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:8 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local cells: 1476
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local vertices: 1351
- [mac-bdz02],rank:4 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:4 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local cells: 1458
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local vertices: 1336
- [mac-bdz02],rank:5 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:5 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:9 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:9 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local cells: 1476
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local vertices: 1351
- [mac-bdz02],rank:3 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:3 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 248
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 312
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:7 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:7 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 432
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 432
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local cells: 1440
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local vertices: 1321
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 164
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 204
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 1701
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 1550
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 2997
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2507
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Wallclock time for this grid iteration/Total runtime: 2.83556s/9.41s
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Minimal timestep for this grid iteration: 0.00185185
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Solving timestep 0 with maximum global time interval (0, 0.0037037) and minimum global time interval (0.00185185, 0)
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 2
- [mac-bdz02],rank:2 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 2 new workers on local identifier 111111111
- [mac-bdz02],rank:2 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 2->2+13 [worker's domain:[0.222222,0.222222]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:2 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 2->2+19 [worker's domain:[0.111111,0.222222]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:7 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 2 new workers on local identifier 111111111
- [mac-bdz02],rank:7 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 7->7+15 [worker's domain:[0,0.555556]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:4 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 2 new workers on local identifier 111111111
- [mac-bdz02],rank:4 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 4->4+14 [worker's domain:[0.888889,0.222222]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:5 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 1 new workers on local identifier 111111111
- [mac-bdz02],rank:7 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 7->7+23 [worker's domain:[0.111111,0.555556]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:9 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 2 new workers on local identifier 111111111
- [mac-bdz02],rank:9 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 9->9+17 [worker's domain:[0.555556,0.666667]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:3 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 1 new workers on local identifier 111111111
- [mac-bdz02],rank:4 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 4->4+21 [worker's domain:[0.777778,0.222222]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:5 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 5->5+22 [worker's domain:[0.666667,0.555556]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:8 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 3 new workers on local identifier 111111111
- [mac-bdz02],rank:3 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 3->3+20 [worker's domain:[0.555556,0]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:8 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 8->8+11 [worker's domain:[0.222222,0.888889]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:8 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 8->8+16 [worker's domain:[0.111111,0.888889]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:9 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 9->9+25 [worker's domain:[0.444444,0.666667]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:8 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 8->8+24 [worker's domain:[0,0.888889]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:13 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.222222,0.222222]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:14 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.888889,0.222222]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:15 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0,0.555556]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:17 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.555556,0.666667]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:19 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.111111,0.222222]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:21 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.777778,0.222222]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:22 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.666667,0.555556]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:23 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.111111,0.555556]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:25 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.444444,0.666667]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:11 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.222222,0.888889]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:16 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.111111,0.888889]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:20 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.555556,0]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:24 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0,0.888889]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:1 peano::grid::nodes::Refined::splitUpGrid(...)           fork has been successful with 4 new workers on local identifier 111111111
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+10 [worker's domain:[0.888889,0.888889]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+12 [worker's domain:[0.777778,0.888889]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+18 [worker's domain:[0.666667,0.888889]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:1 tarch::mpianalysis::DefaultAnalyser::addWorker(int,Vector,Vector) 1->1+26 [worker's domain:[0.666667,0.777778]x[0.111111,0.111111],level:3]
- [mac-bdz02],rank:10 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.888889,0.888889]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:12 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.777778,0.888889]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:18 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.666667,0.888889]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:26 peanoclaw::repositories::RepositorySTDStack::restart(...) start node for subdomain [0.666667,0.777778]x[0.111111,0.111111] on level 3
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 138
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 230
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 167
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 393
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 193
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 367
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 196
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 364
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 83
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 285
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 222
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 338
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 312
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 112
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 256
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 432
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 432
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local vertices: 1288
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 112
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 256
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 1710
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 1559
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 2970
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2489
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 2
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 240
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 292
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 112
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 256
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:16 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:16 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:16 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 52
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 76
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:24 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:24 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:24 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 269
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 339
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 167
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 393
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:11 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:11 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:11 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:25 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:25 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:25 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 110
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 170
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:17 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:17 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:17 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 260
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 324
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 193
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 367
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local cells: 1458
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local vertices: 1336
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 170
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 210
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 204
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local cells: 1449
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local vertices: 1330
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:19 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:19 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:19 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 107
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 161
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:13 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:13 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:13 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 104
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 152
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 295
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 365
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 196
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 364
- [mac-bdz02],rank:22 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:22 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:22 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:15 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:15 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:15 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 354
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 450
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 255
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 513
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local cells: 1458
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local vertices: 1336
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:23 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:23 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:23 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 205
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 251
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 138
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 230
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local cells: 1440
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local vertices: 1321
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 283
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 353
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 222
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 338
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local cells: 1440
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local vertices: 1321
- [mac-bdz02],rank:14 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:14 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:14 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:21 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:21 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:21 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 75
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 105
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:20 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:20 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:20 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 237
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 307
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 112
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 256
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 1647
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 1499
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 3060
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2573
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 52
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 76
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:10 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:10 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:10 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 81
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 123
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:12 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:12 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:12 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 107
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 161
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:26 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:26 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:26 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 81
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 123
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:18 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:18 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:18 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Wallclock time for this grid iteration/Total runtime: 3.77802s/13.19s
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Minimal timestep for this grid iteration: 0.00096465
- [mac-bdz02],rank:0 peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime Solving timestep 0 with maximum global time interval (0, 0.00555556) and minimum global time interval (0.0037037, 0.00096465)
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 2
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 108
- [mac-bdz02],rank:16 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:16 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:16 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 52
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 76
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 55
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 73
- [mac-bdz02],rank:24 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:24 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:24 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 107
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 161
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 152
- [mac-bdz02],rank:13 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:13 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:13 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 128
- [mac-bdz02],rank:19 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:19 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:19 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 52
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 76
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 55
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 73
- [mac-bdz02],rank:10 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:10 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:10 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 81
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 123
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 120
- [mac-bdz02],rank:12 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:12 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:12 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 81
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 123
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 120
- [mac-bdz02],rank:18 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:18 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:18 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 107
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 161
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 152
- [mac-bdz02],rank:26 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:26 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:26 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 110
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 170
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 164
- [mac-bdz02],rank:17 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:17 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:17 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 128
- [mac-bdz02],rank:25 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:25 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:25 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 108
- [mac-bdz02],rank:14 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:14 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:14 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 128
- [mac-bdz02],rank:21 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:21 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:21 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 108
- [mac-bdz02],rank:11 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:11 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:11 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 108
- [mac-bdz02],rank:15 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:15 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:15 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 128
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 269
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 339
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:9 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 360
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local cells: 1323
- [mac-bdz02],rank:9 peano::grid::nodes::Root::traverse(State)               local vertices: 1201
- [mac-bdz02],rank:9 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 31 times
- [mac-bdz02],rank:23 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:23 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:23 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 240
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 292
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 219
- [mac-bdz02],rank:8 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 313
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local cells: 1188
- [mac-bdz02],rank:8 peano::grid::nodes::Root::traverse(State)               local vertices: 1075
- [mac-bdz02],rank:8 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 28 times
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 75
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 105
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 96
- [mac-bdz02],rank:20 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:20 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:20 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 205
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 251
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 190
- [mac-bdz02],rank:4 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 266
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local cells: 1332
- [mac-bdz02],rank:4 peano::grid::nodes::Root::traverse(State)               local vertices: 1210
- [mac-bdz02],rank:4 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 31 times
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 104
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 152
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 140
- [mac-bdz02],rank:22 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:22 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:22 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 260
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 324
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 248
- [mac-bdz02],rank:5 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 336
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:5 peano::grid::nodes::Root::traverse(State)               local vertices: 1282
- [mac-bdz02],rank:5 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 170
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 210
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 164
- [mac-bdz02],rank:2 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 216
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local cells: 1332
- [mac-bdz02],rank:2 peano::grid::nodes::Root::traverse(State)               local vertices: 1210
- [mac-bdz02],rank:2 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 31 times
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 354
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 450
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 468
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local cells: 1485
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local vertices: 1363
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 283
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 353
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 274
- [mac-bdz02],rank:3 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 362
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local cells: 1404
- [mac-bdz02],rank:3 peano::grid::nodes::Root::traverse(State)               local vertices: 1282
- [mac-bdz02],rank:3 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 295
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 365
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 274
- [mac-bdz02],rank:7 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 386
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local cells: 1323
- [mac-bdz02],rank:7 peano::grid::nodes::Root::traverse(State)               local vertices: 1201
- [mac-bdz02],rank:7 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 31 times
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 237
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 307
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 219
- [mac-bdz02],rank:1 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 325
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local cells: 1251
- [mac-bdz02],rank:1 peano::grid::nodes::Root::traverse(State)               local vertices: 1115
- [mac-bdz02],rank:1 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 19 times
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 0
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local cells: 3123
- [mac-bdz02],rank:0 peano::grid::nodes::Root::traverse(State)               local vertices: 2621
- [mac-bdz02],rank:0 peano::grid::RegularGridContainer::endOfIteration()     there are no regular patches in the grid
- [mac-bdz02],rank:0 peanoclaw::mappings::Remesh::beginIteration(State)      Height of worker tree in last grid iteration was 3
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 52
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 76
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 55
- [mac-bdz02],rank:10 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 73
- [mac-bdz02],rank:10 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:10 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:10 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 81
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 123
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:12 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 120
- [mac-bdz02],rank:12 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:12 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:12 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:16 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 108
- [mac-bdz02],rank:16 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:16 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:16 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 52
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 76
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 55
- [mac-bdz02],rank:24 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 73
- [mac-bdz02],rank:24 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:24 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:24 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:15 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 108
- [mac-bdz02],rank:15 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:15 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:15 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:11 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 108
- [mac-bdz02],rank:11 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:11 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:11 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 104
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 152
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:22 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 140
- [mac-bdz02],rank:22 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:22 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:22 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 81
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 123
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:18 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 120
- [mac-bdz02],rank:18 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:18 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:18 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 110
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 170
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:17 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 164
- [mac-bdz02],rank:17 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:17 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:17 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 107
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 161
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:26 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 152
- [mac-bdz02],rank:26 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:26 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:26 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:25 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 128
- [mac-bdz02],rank:25 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:25 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:25 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:23 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 128
- [mac-bdz02],rank:23 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:23 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:23 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 75
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 105
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:20 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 96
- [mac-bdz02],rank:20 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:20 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:20 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:19 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 128
- [mac-bdz02],rank:19 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:19 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:19 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 107
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 161
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:13 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 152
- [mac-bdz02],rank:13 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:13 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:13 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 101
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 143
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 116
- [mac-bdz02],rank:21 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 128
- [mac-bdz02],rank:21 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:21 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:21 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 78
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 114
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 84
- [mac-bdz02],rank:14 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 108
- [mac-bdz02],rank:14 peano::grid::nodes::Root::traverse(State)               local cells: 315
- [mac-bdz02],rank:14 peano::grid::nodes::Root::traverse(State)               local vertices: 264
- [mac-bdz02],rank:14 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 1 times
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Parallel statistics for Iteration:
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids sent to neighbors: 354
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids sent to neighbors: 450
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Subgrids received from neighbors: 336
- [mac-bdz02],rank:6 peanoclaw::statistics::ParallelStatistics::logStatistics() Padding subgrids received from neighbors: 468
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local cells: 1440
- [mac-bdz02],rank:6 peano::grid::nodes::Root::traverse(State)               local vertices: 1321
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 1 used 40 times
- [mac-bdz02],rank:6 peano::grid::RegularGridContainer::endOfIteration()     patch of regular grid height 2 used 1 times
-Ctrl-C caught... cleaning up processes
+received q:[0,0,0],[1,1,0]
+received q:[0,0,0],[1,1,0]
+received q:[0,0,0],[1,1,0]
+received q:[0,0,0],[1,1,0]
+adding query on rank:4
+adding query on rank:6
+adding query on rank:2
+received q:[0,0,0],[1,1,0]
+adding query on rank:10
+adding query on rank:8
+received q:[0,0,0],[1,1,0]
+received q:[0,0,0],[1,1,0]
+adding query on rank:5
+received q:[0,0,0],[1,1,0]
+adding query on rank:1
+adding query on rank:9
+adding query on rank:0
+received q:[0,0,0],[1,1,0]
+received q:[0,0,0],[1,1,0]
+adding query on rank:3
+adding query on rank:7
+rank:10 sending level:3 to rank:1 on level:2
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+rank:10 sending level:3 to rank:1 on level:2
+fire 
+queries:1
+rank:1 receiving level:3 from rank:10 to level:2
+fire 
+11 total processes killed (some possibly by mpirun during cleanup)
