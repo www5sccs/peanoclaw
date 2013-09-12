@@ -63,6 +63,7 @@ peanoclaw::mappings::Query::Query() {
   logTraceIn( "Query()" );
   // @todo Insert your code here
   _sendMergedData=false;
+  _iter=0;
   //_workers=0;
   logTraceOut( "Query()" );
 }

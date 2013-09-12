@@ -284,9 +284,10 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
         _repository->switchToSolveTimestep();
       }
       _repository->iterate();
-      if(tarch::parallel::Node::getInstance().isGlobalMaster()&&c==0)      
-      sync();
-      c++;
+      if(tarch::parallel::NodePool::getInstance().areAllNodesWorking()&&c==0){      
+      	sync();
+      	c++;
+      }
       _repository->switchToQuery();
       _repository->iterate();
       	

@@ -40,6 +40,7 @@ class peanoclaw::mappings::Query {
     static tarch::logging::Log  _log;
     
     bool _sendMergedData;
+    int _iter;
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 
