@@ -1,4 +1,4 @@
-PDT_PATH=../p3/pdt
+PDT_PATH=../pdt
 
 java -jar $PDT_PATH/lib/DaStGen.jar --plugin PeanoHeapSnippetGenerator --naming PeanoHeapNameTranslator --include $PWD/../../src src/peanoclaw/dastgen/CellDescription.def src/peanoclaw/records/
 java -jar $PDT_PATH/lib/DaStGen.jar --plugin PeanoHeapSnippetGenerator --naming PeanoHeapNameTranslator --include $PWD/../../src src/peanoclaw/dastgen/VertexDescription.def src/peanoclaw/records/

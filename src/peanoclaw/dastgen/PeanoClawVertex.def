@@ -10,8 +10,4 @@ class peano::applications::peanoclaw::dastgen::Vertex {
 	parallelise persistent packed bool shouldRefine;
 	
 	parallelise persistent packed bool wasCreatedInThisIteration; 
-	
-	#ifdef Parallel
-	parallelise persistent int adjacentRanksDuringLastIteration[TWO_POWER_D];
-	#endif
 };

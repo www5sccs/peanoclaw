@@ -1,4 +1,5 @@
 #!/bin/bash
 ./generateHeapData.sh
+PDT_PATH=../pdt
 
-java -jar ../p3/pdt/pdt.jar peanoclaw.peano-specification src/peanoclaw src/peanoclaw
+java -jar $PDT_PATH/pdt.jar peanoclaw.peano-specification src/peanoclaw src/peanoclaw

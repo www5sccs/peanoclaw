@@ -114,7 +114,7 @@ class Peano(object):
                                                 ghostlayer_width,
                                                 dt_initial,
                                                 c_char_p(configuration_file),
-                                                use_dimensional_splitting_optimization,
+                                                False, #use_dimensional_splitting_optimization,
                                                 initialization_callback.get_initialization_callback(),
                                                 boundary_condition_callback.get_boundary_condition_callback(),
                                                 solver_callback.get_solver_callback(),

@@ -41,6 +41,69 @@
 
 tarch::logging::Log peanoclaw::runners::PeanoClawLibraryRunner::_log("peanoclaw::runners::PeanoClawLibraryRunner");
 
+void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
+  #if defined(Parallel)
+  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
+  }
+  tarch::parallel::NodePool::getInstance().restart();
+
+  peano::parallel::loadbalancing::Oracle::getInstance().setOracle(
+    new peano::parallel::loadbalancing::OracleForOnePhaseWithGreedyPartitioning(true)
+  );
+
+  // have to be the same for all ranks
+  peano::parallel::SendReceiveBufferPool::getInstance().setBufferSize(64);
+  peano::parallel::JoinDataBufferPool::getInstance().setBufferSize(64);
+  #endif
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::iterateInitialiseGrid() {
+  if(_validateGrid) {
+    _repository->switchToInitialiseAndValidateGrid();
+  } else {
+    _repository->switchToInitialiseGrid();
+  }
+  _repository->iterate();
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::iteratePlot() {
+  if(_validateGrid) {
+    _repository->switchToPlotAndValidateGrid();
+  } else {
+    _repository->switchToPlot();
+  }
+  _repository->iterate();
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::iterateSolveTimestep(bool plotSubsteps) {
+  if(plotSubsteps) {
+    _repository->getState().setPlotNumber(_plotNumber);
+    if(_validateGrid) {
+      _repository->switchToSolveTimestepAndPlotAndValidateGrid();
+    } else {
+      _repository->switchToSolveTimestepAndPlot();
+    }
+    _repository->iterate();
+    _plotNumber++;
+  } else {
+    if(_validateGrid) {
+      _repository->switchToSolveTimestepAndValidateGrid();
+    } else {
+      _repository->switchToSolveTimestep();
+    }
+    _repository->iterate();
+  }
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::iterateGatherSolution() {
+  if(_validateGrid) {
+    _repository->switchToGatherCurrentSolutionAndValidateGrid(); _repository->iterate();
+  } else {
+    _repository->switchToGatherCurrentSolution(); _repository->iterate();
+  }
+}
+
 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid& configuration,
   peanoclaw::Numerics& numerics,
@@ -59,7 +122,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(true)
+  _validateGrid(false)
 {
   #ifndef Asserts
   _validateGrid = false;
@@ -67,8 +130,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   //Parallel configuration
   #ifdef Parallel
-  tarch::parallel::Node::getInstance().setTimeOutWarning(10);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(20);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(45);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(90);
   #endif
 
   //Multicore configuration
@@ -131,31 +194,16 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
      tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();  
 #endif
 
-
-  if(_validateGrid) {
-    _repository->switchToInitialiseAndValidateGrid();
-  } else {
-    _repository->switchToInitialiseGrid();
-  }
-  _repository->iterate(); _repository->iterate(); _repository->iterate(); _repository->iterate();
+  iterateInitialiseGrid(); iterateInitialiseGrid(); iterateInitialiseGrid(); iterateInitialiseGrid();
   do {
     state.setInitialRefinementTriggered(false);
-    if(_validateGrid) {
-      _repository->switchToInitialiseAndValidateGrid();
-    } else {
-      _repository->switchToInitialiseGrid();
-    }
-    _repository->iterate();
+    iterateInitialiseGrid();
   } while(state.getInitialRefinementTriggered());
   state.setIsInitializing(false);
 
   _repository->getState().setPlotNumber(0);
   if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
-    if(_validateGrid) {
-      _repository->switchToPlotAndValidateGrid(); _repository->iterate();
-    } else {
-      _repository->switchToPlot(); _repository->iterate();
-    }
+    iteratePlot();
   }
 
 #ifdef Parallel
@@ -184,6 +232,10 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   cellDescriptionHeap.deleteAllData();
   dataHeap.deleteAllData();
   vertexDescriptionHeap.deleteAllData();
+
+  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
+  peano::heap::Heap<peanoclaw::records::Data>::getInstance().plotStatistics();
+  peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
 
   #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
@@ -230,23 +282,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _repository->getState().resetMinimalTimestep();
     _repository->getState().setAllPatchesEvolvedToGlobalTimestep(true);
 
-    if(plotSubsteps) {
-      _repository->getState().setPlotNumber(_plotNumber);
-      if(_validateGrid) {
-        _repository->switchToSolveTimestepAndPlotAndValidateGrid();
-      } else {
-        _repository->switchToSolveTimestepAndPlot();
-      }
-      _repository->iterate();
-      _plotNumber++;
-    } else {
-      if(_validateGrid) {
-        _repository->switchToSolveTimestepAndValidateGrid();
-      } else {
-        _repository->switchToSolveTimestep();
-      }
-      _repository->iterate();
-    }
+    iterateSolveTimestep(plotSubsteps);
 
     _repository->getState().plotStatisticsForLastGridIteration();
 
@@ -260,44 +296,24 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 
   if(_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _repository->getState().setPlotNumber(_plotNumber);
-    if(_validateGrid) {
-      _repository->switchToPlotAndValidateGrid(); _repository->iterate();
-    } else {
-      _repository->switchToPlot(); _repository->iterate();
-    }
+    iteratePlot();
     _plotNumber++;
   } else if (!_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _plotNumber++;
   }
+
+  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
+  peano::heap::Heap<peanoclaw::records::Data>::getInstance().plotStatistics();
+  peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
   logTraceOut("evolveToTime");
-}
-
-void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
-  #if defined(Parallel)
-  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-    tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
-  }
-  tarch::parallel::NodePool::getInstance().restart();
-
-  peano::parallel::loadbalancing::Oracle::getInstance().setOracle(
-    new peano::parallel::loadbalancing::OracleForOnePhaseWithGreedyPartitioning(true)
-  );
-
-  // have to be the same for all ranks
-  peano::parallel::SendReceiveBufferPool::getInstance().setBufferSize(64);
-  peano::parallel::JoinDataBufferPool::getInstance().setBufferSize(64);
-  #endif
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::gatherCurrentSolution() {
   logTraceIn("gatherCurrentSolution");
   assertion(_repository != 0);
 
-  if(_validateGrid) {
-    _repository->switchToGatherCurrentSolutionAndValidateGrid(); _repository->iterate();
-  } else {
-    _repository->switchToGatherCurrentSolution(); _repository->iterate();
-  }
+  iterateGatherSolution();
+
   logTraceOut("gatherCurrentSolution");
 }
 

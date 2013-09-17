@@ -180,22 +180,6 @@ bool peanoclaw::Vertex::shouldErase() const {
   return eraseAllSubcells;
 }
 
-void peanoclaw::Vertex::setAdjacentRanksDuringLastIteration(
-  const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksDuringCurrentIteration
-) {
-  #ifdef Parallel
-  _vertexData.setAdjacentRanksDuringLastIteration(adjacentRanksDuringCurrentIteration);
-  #endif
-}
-
-tarch::la::Vector<TWO_POWER_D,int> peanoclaw::Vertex::getAdjacentRanksDuringLastIteration() const {
-  #ifdef Parallel
-  return _vertexData.getAdjacentRanksDuringLastIteration();
-  #else
-  return tarch::la::Vector<TWO_POWER_D, int>(0);
-  #endif
-}
-
 void peanoclaw::Vertex::setWasCreatedInThisIteration(bool flag) {
   _vertexData.setWasCreatedInThisIteration(flag);
 }

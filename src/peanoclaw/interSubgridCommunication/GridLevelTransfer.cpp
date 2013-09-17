@@ -80,8 +80,8 @@ bool peanoclaw::interSubgridCommunication::GridLevelTransfer::shouldBecomeVirtua
     ) {
       createVirtualPatch = true;
     }
+    //TODO unterweg: Dokumentation
     if(!isInitializing
-      //&& finePatch.isLeaf()
       && !peano::grid::aspects::VertexStateAnalysis::doAllVerticesCarryRefinementFlag
       (
         fineGridVertices,

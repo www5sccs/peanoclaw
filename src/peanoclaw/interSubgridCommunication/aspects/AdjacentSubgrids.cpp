@@ -193,16 +193,16 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::storeAdjacencyInformation() {
   #ifdef Parallel
   //Set all adjacent patches to unsent if the adjacency information has changed
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    if(_vertex.getAdjacentRanks()(i) != _vertex.getAdjacentRanksDuringLastIteration()(i)) {
-      for(int j = 0; j < TWO_POWER_D; j++) {
-        if(_vertex.getAdjacentCellDescriptionIndex(j) != -1) {
-          ParallelSubgrid adjacentSubgrid(_vertex.getAdjacentCellDescriptionIndex(j));
-          adjacentSubgrid.markCurrentStateAsSent(false);
-        }
-      }
-    }
-  }
+//  for(int i = 0; i < TWO_POWER_D; i++) {
+//    if(_vertex.getAdjacentRanks()(i) != _vertex.getAdjacentRanksDuringLastIteration()(i)) {
+//      for(int j = 0; j < TWO_POWER_D; j++) {
+//        if(_vertex.getAdjacentCellDescriptionIndex(j) != -1) {
+//          ParallelSubgrid adjacentSubgrid(_vertex.getAdjacentCellDescriptionIndex(j));
+//          adjacentSubgrid.markCurrentStateAsSent(false);
+//        }
+//      }
+//    }
+//  }
   #endif
 }
 
