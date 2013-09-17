@@ -49,7 +49,6 @@ class Solution(pyclaw.solution.Solution):
         def callback_add_to_solution(q, qbc, ghostlayer_width, size_x, size_y, size_z, position_x, position_y, position_z, currentTime):
             dim = get_number_of_dimensions( q )
 
-            #TODO 3D: Adjust subdivision_factor to 3D
             # Set up grid information for current patch
             if dim is 2:
                 subdivision_factor_x = q.shape[1]
@@ -111,9 +110,13 @@ class Solution(pyclaw.solution.Solution):
         self.libpeano.pyclaw_peano_gatherSolution.argtypes = [c_void_p]
         self.libpeano.pyclaw_peano_gatherSolution(self.peano)
         
-        #Assemble solution and write file
-        self.domain = pyclaw.Domain(self.gathered_patches)
-        self.solution = pyclaw.Solution(self.gathered_states, self.domain)
+        if(len(self.gathered_patches) > 0):
+          #Assemble solution and write file
+          self.domain = pyclaw.Domain(self.gathered_patches)
+          self.solution = pyclaw.Solution(self.gathered_states, self.domain)
+        else:
+          self.domain = pyclaw.Domain(self.patch)
+          self.solution = pyclaw.Solution(self.state, self.domain)
         
         self.t = self.solution.t      
             
