@@ -286,7 +286,7 @@ else:
 #
 heapCompression = ARGUMENTS.get('heapCompression', 'yes')
 if heapCompression == 'no':
-  cppddefines.append('noPackedEmptyHeapMessages')
+  cppdefines.append('noPackedEmptyHeapMessages')
   filenameSuffix += '_noHeapCompression'
 elif heapComrpession == 'yes':
   pass
