@@ -313,6 +313,8 @@ buildpath = join(buildpath, compiler)
 buildpath = join(buildpath, solver)
 if scalasca == 'yes' or scalasca == 'scalasca_yes':
    buildpath = join(buildpath, 'scalasca')
+if heapCompression == 'no':
+   buildpath = join(buildpath, 'noHeapCompression') 
 
 buildpath = buildpath + '/'
    
