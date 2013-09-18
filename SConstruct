@@ -288,7 +288,7 @@ heapCompression = ARGUMENTS.get('heapCompression', 'yes')
 if heapCompression == 'no':
   cppdefines.append('noPackedEmptyHeapMessages')
   filenameSuffix += '_noHeapCompression'
-elif heapComrpession == 'yes':
+elif heapCompression == 'yes':
   pass
 else:
   raise Exception("ERROR: heapCompression must be 'yes' or 'no'")
