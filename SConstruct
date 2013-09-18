@@ -70,6 +70,8 @@ linkerflags = []
 libpath = []
 libs = []
 
+filenameSuffix = ''
+
 #Configure Peano 3
 p3Path = 'src/p3/src'
 try:
@@ -279,6 +281,15 @@ elif solver == 'swe':
   cppdefines.append('SWE')
 else:
   raise Exception("ERROR: solver must be 'pyclaw' or 'swe'")
+
+##### Determine Heap Compression
+#
+heapCompression = ARGUMENTS.get('heapCompression', 'yes')
+if heapCompression == 'no':
+  cppddefines.append('noPackedEmptyHeapMessages')
+  filenameSuffix += '_noHeapCompression'
+else:
+  raise Exception("ERROR: heapCompression must be 'yes' or 'no'")
    
 ##### Determine build path
 #
@@ -582,7 +593,7 @@ source = [
    ]
 
 if solver == 'pyclaw':
-  targetfilename = 'libpeano-claw-' + str(dim) + 'd'
+  targetfilename = 'libpeano-claw-' + str(dim) + 'd' + filenameSuffix
   target = buildpath + targetfilename
   library = env.SharedLibrary (
     target=target,

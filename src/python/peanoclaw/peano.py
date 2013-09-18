@@ -33,11 +33,13 @@ class Peano(object):
                boundary_condition_callback,
                interpolation_callback,
                restriction_callback,
-               flux_correction_callback):
+               flux_correction_callback,
+               internal_settings):
     '''
     Constructor
     '''
     dim = len(solution.state.grid.dimensions)
+    self.internal_settings = internal_settings
     
     logging.getLogger('peanoclaw').info("Loading Peano-library...")
     self.libpeano = CDLL(self.get_lib_path(dim),mode=RTLD_GLOBAL)
@@ -157,7 +159,7 @@ class Peano(object):
     else:
         raise("Unsupported operating system. Only Linux and MacOS supported currently.")
       
-    libraryFileName = os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-'+ str(dim)+ 'd.' + shared_library_extension)
+    libraryFileName = os.path.join(os.path.dirname(peanoclaw.__file__), 'libpeano-claw-'+ str(dim)+ 'd' + self.internal_settings.getFilenameSuffix() + '.' + shared_library_extension)
     logging.getLogger('peanoclaw').info(libraryFileName)
     return os.path.join(libraryFileName)
         

@@ -5,8 +5,8 @@ from setuptools.command.install import install
 from setuptools.command.develop import develop
 
 def installPeano3():
-  p3Path = 'src/p3/src'
-  p3RepositorySubpath = 'src'
+  p3Path = 'src/peano3'
+  p3RepositorySubpath = '.'
   p3Revision = 'HEAD'
   p3Build = 'release'
   global p3ParallelSupport

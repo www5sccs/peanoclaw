@@ -11,6 +11,7 @@ from peanoclaw.callbacks.interpolationcallback import InterpolationCallback
 from peanoclaw.callbacks.restrictioncallback import RestrictionCallback
 from peanoclaw.callbacks.fluxcorrectioncallback import FluxCorrectionCallback
 from peanoclaw.peano import Peano
+from peanoclaw.internalsettings import InternalSettings
 
 class Solver(Solver):
     r"""
@@ -35,7 +36,8 @@ class Solver(Solver):
                  refinement_criterion=None,
                  interpolation=None,
                  restriction=None,
-                 flux_correction=None
+                 flux_correction=None,
+                 internal_settings=InternalSettings()
                  ):
         r"""
         Initializes the Peano-solver. This keeps the Peano-spacetree internally and wraps the given PyClaw-solver.
@@ -63,6 +65,8 @@ class Solver(Solver):
         self.interpolation_callback = InterpolationCallback(interpolation, self)
         self.restriction_callback = RestrictionCallback(restriction, self)
         self.flux_correction_callback = FluxCorrectionCallback(flux_correction, self)
+        
+        self.internal_settings = internal_settings
         
     def setup(self, solution):
         r"""
@@ -95,7 +99,9 @@ class Solver(Solver):
          self.boundary_condition_callback,
          self.interpolation_callback,
          self.restriction_callback,
-         self.flux_correction_callback)
+         self.flux_correction_callback,
+         self.internal_settings
+         )
       
     def teardown(self):
         r"""
