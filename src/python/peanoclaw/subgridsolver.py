@@ -83,7 +83,11 @@ class SubgridSolver(object):
         
         while not success:
           self.solver.evolve_to_time(self.solution)
-          self.solver.dt = min(self.solver.dt_max,self.solver.dt * self.solver.cfl_desired / self.solver.cfl.get_cached_max())
+          cfl = self.solver.cfl.get_cached_max()
+          if math.abs(cfl) > 1e-12:
+            self.solver.dt = min(self.solver.dt_max,self.solver.dt * self.solver.cfl_desired / self.solver.cfl.get_cached_max())
+          else:
+            self.solver.dt = self.solver.dt_max
           success = self.solution.t > t_start
         
         return self.solution.state.q, self.number_of_rollbacks
