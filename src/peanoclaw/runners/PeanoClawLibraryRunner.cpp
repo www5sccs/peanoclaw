@@ -41,8 +41,23 @@
 
 tarch::logging::Log peanoclaw::runners::PeanoClawLibraryRunner::_log("peanoclaw::runners::PeanoClawLibraryRunner");
 
+void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
+  tarch::la::Vector<DIMENSIONS, double> domainOffset,
+  tarch::la::Vector<DIMENSIONS, double> domainSize
+) {
+  //Initialize heap data
+  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().setName("CellDescription");
+  peano::heap::Heap<peanoclaw::records::Data>::getInstance().setName("Data");
+  peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().setName("VertexDescription");
+  peano::heap::Heap<peanoclaw::statistics::LevelStatistics>::getInstance().setName("LevelStatistics");
+}
+
 void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
+  //Distributed Memory
   #if defined(Parallel)
+  tarch::parallel::Node::getInstance().setTimeOutWarning(45);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(90);
+
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
     tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
   }
@@ -56,6 +71,12 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment()
   peano::parallel::SendReceiveBufferPool::getInstance().setBufferSize(64);
   peano::parallel::JoinDataBufferPool::getInstance().setBufferSize(64);
   #endif
+
+  //Shared Memory
+  #ifdef SharedMemoryParallelisation
+  tarch::multicore::tbb::Core::getInstance().configure(1);
+  #endif
+  peano::datatraversal::autotuning::Oracle::getInstance().setOracle( new peano::datatraversal::autotuning::OracleForOnePhaseDummy(true) );
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::iterateInitialiseGrid() {
@@ -128,32 +149,14 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _validateGrid = false;
   #endif
 
-  //Parallel configuration
-  #ifdef Parallel
-  tarch::parallel::Node::getInstance().setTimeOutWarning(45);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(90);
-  #endif
-
-  //Multicore configuration
-  #ifdef SharedMemoryParallelisation
-  tarch::multicore::tbb::Core::getInstance().configure(1);
-  #endif
-
   //User interface
   peano::utils::UserInterface userInterface;
   userInterface.writeHeader();
 
-  //Initialize heap data
-  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().setName("CellDescription");
-  peano::heap::Heap<peanoclaw::records::Data>::getInstance().setName("Data");
-  peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().setName("VertexDescription");
-  peano::heap::Heap<peanoclaw::statistics::LevelStatistics>::getInstance().setName("LevelStatistics");
-
+  initializePeano(domainOffset, domainSize);
   initializeParallelEnvironment();
 
-  peano::datatraversal::autotuning::Oracle::getInstance().setOracle( new peano::datatraversal::autotuning::OracleForOnePhaseDummy(true) );
-
-  //Initialize pseudo geometry
+  //Initialize pseudo geometry (Has to be done after initializeParallelEnvironment()
   _geometry =
     new  peano::geometry::Hexahedron (
       domainSize,  // width
@@ -165,6 +168,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       domainSize,   // domainSize,
       domainOffset  // computationalDomainOffset
     );
+  assertion(_repository != 0);
 
   logInfo("PeanoClawLibraryRunner", "Initial values: "
       << "Domain size = [" << domainSize << "]"
@@ -172,7 +176,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       << ", default ghostlayer width = " << defaultGhostLayerWidth
       << ", unknowns per cell = " << unknownsPerSubcell);
 
-  assertion(_repository != 0);
   State& state = _repository->getState();
   state.setDefaultSubdivisionFactor(subdivisionFactor);
   state.setDefaultGhostLayerWidth(defaultGhostLayerWidth);
@@ -189,26 +192,114 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);
 
-#ifdef Parallel
+  #ifdef Parallel
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-     tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();  
-#endif
+   tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();
+  #endif
 
-  iterateInitialiseGrid(); iterateInitialiseGrid(); iterateInitialiseGrid(); iterateInitialiseGrid();
-  do {
-    state.setInitialRefinementTriggered(false);
-    iterateInitialiseGrid();
-  } while(state.getInitialRefinementTriggered());
-  state.setIsInitializing(false);
+   state.enableRefinementCriterion(false);
+   tarch::la::Vector<DIMENSIONS, double> currentMinimalSubcellSize;
+   int maximumLevel = 2;
+   do {
 
-  _repository->getState().setPlotNumber(0);
-  if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
-    iteratePlot();
+     logInfo("", "Iterating with maximumLevel=" << maximumLevel);
+
+     for(int d = 0; d < DIMENSIONS; d++) {
+       currentMinimalSubcellSize(d) = std::max(initialMinimalMeshWidth(d), domainSize(d) / pow(3.0, maximumLevel) / subdivisionFactor(d));
+     }
+
+     state.setIsInitializing(true);
+     do {
+       logInfo("", "Iterate");
+       iterateInitialiseGrid();
+       iterateInitialiseGrid();
+
+       logInfo("", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
+     } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+
+     maximumLevel += 2;
+   } while(tarch::la::oneGreater(currentMinimalSubcellSize, initialMinimalMeshWidth));
+
+   state.enableRefinementCriterion(true);
+   do {
+     logInfo("", "Iterate with Refinement Criterion");
+     iterateInitialiseGrid();
+     iterateInitialiseGrid();
+     iterateInitialiseGrid();
+     iterateInitialiseGrid();
+   } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+
+   _repository->getState().setPlotNumber(0);
+   if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
+     iteratePlot();
+   }
+
+//  tarch::la::Vector<DIMENSIONS, double> current_initialMinimalSubcellSize(0.1);
+//  tarch::la::Vector<DIMENSIONS, double> next_initialMinimalSubcellSize(0.1);
+//
+//  if (tarch::la::oneGreater(next_initialMinimalSubcellSize,initialMinimalSubcellSize)) {
+//        current_initialMinimalSubcellSize = next_initialMinimalSubcellSize;
+//    } else {
+//        current_initialMinimalSubcellSize = initialMinimalSubcellSize;
+//    }
+
+//#ifdef Parallel
+//  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
+//
+//    state.setIsInitializing(true);
+//    while (tarch::la::oneGreater(current_initialMinimalSubcellSize,initialMinimalSubcellSize) || initialMinimalSubcellSize == current_initialMinimalSubcellSize) {
+//        state.setInitialMinimalMeshWidth(current_initialMinimalSubcellSize);
+//
+//        bool hasChangedState = false;
+//        iterateInitialiseGrid();
+//        hasChangedState |= (!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+//
+//        _repository->switchToRemesh();
+//
+//        do {
+//            // TODO: not sure if we need all 3 iterations of them or if it is sufficient to check for a stationary grid
+//
+//            hasChangedState = false;
+//
+//            _repository->iterate();
+//            hasChangedState |= (!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+//
+//        } while (hasChangedState);
+//
+//        next_initialMinimalSubcellSize = current_initialMinimalSubcellSize * (1.0/subdivisionFactor[0]);
+//        std::cout << "next initial minimal subcell size " << next_initialMinimalSubcellSize
+//                    << " " << current_initialMinimalSubcellSize
+//                    << " " << initialMinimalSubcellSize
+//                    << std::endl;
+//
+//        if (tarch::la::oneGreater(next_initialMinimalSubcellSize,initialMinimalSubcellSize)) {
+//            current_initialMinimalSubcellSize = next_initialMinimalSubcellSize;
+//        } else if (initialMinimalSubcellSize == current_initialMinimalSubcellSize) {
+//            current_initialMinimalSubcellSize *= (1.0/3.0); // abort loop
+//        } else {
+//            current_initialMinimalSubcellSize = initialMinimalSubcellSize;
+//        }
+//    }
+//
+//      do {
+//        state.setInitialRefinementTriggered(false);
+//        iterateInitialiseGrid();
+//        std::cout << "second iteration block (1)" << _repository->getState() << std::endl;
+//      } while(state.getInitialRefinementTriggered());
+//      state.setIsInitializing(false);
+//
+//      _repository->getState().setPlotNumber(0);
+//      if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
+//        iteratePlot();
+//      }
+//  }
+//
+//  }
+//#endif
+
+  #ifdef Parallel
   }
-
-#ifdef Parallel
-  }
-#endif
+  #endif
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
@@ -267,31 +358,9 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   bool plotSubsteps = _configuration.plotSubsteps()
       || (_configuration.plotSubstepsAfterOutputTime() != -1 && _configuration.plotSubstepsAfterOutputTime() <= _plotNumber);
  
-  _repository->getState().setNumerics(_numerics);
-
-  _repository->getState().setGlobalTimestepEndTime(time);
-  _repository->getState().setNumerics(_numerics);
-  _repository->getState().setPlotNumber(_plotNumber);
+  configureGlobalTimestep(time);
   do {
-    logInfo("evolveToTime", "Solving timestep " << (_plotNumber-1) << " with maximum global time interval ("
-        << _repository->getState().getStartMaximumGlobalTimeInterval() << ", " << _repository->getState().getEndMaximumGlobalTimeInterval() << ")"
-        << " and minimum global time interval (" << _repository->getState().getStartMinimumGlobalTimeInterval() << ", " << _repository->getState().getEndMinimumGlobalTimeInterval() << ")");
-    _iterationTimer.startTimer();
-
-    _repository->getState().resetGlobalTimeIntervals();
-    _repository->getState().resetMinimalTimestep();
-    _repository->getState().setAllPatchesEvolvedToGlobalTimestep(true);
-
-    iterateSolveTimestep(plotSubsteps);
-
-    _repository->getState().plotStatisticsForLastGridIteration();
-
-    _iterationTimer.stopTimer();
-    _totalRuntime += (double)_iterationTimer.getCPUTicks() / (double)CLOCKS_PER_SEC;
-    logInfo("evolveToTime", "Wallclock time for this grid iteration/Total runtime: " << _iterationTimer.getCalendarTime() << "s/" << _totalRuntime << "s");
-    logInfo("evolveToTime", "Minimal timestep for this grid iteration: " << _repository->getState().getMinimalTimestep());
-
-    assertion(_repository->getState().getMinimalTimestep() < std::numeric_limits<double>::infinity());
+      runNextPossibleTimestep();
   } while(!_repository->getState().getAllPatchesEvolvedToGlobalTimestep());
 
   if(_configuration.plotAtOutputTimes() && !plotSubsteps) {
@@ -305,6 +374,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
   peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
   peano::heap::Heap<peanoclaw::records::Data>::getInstance().plotStatistics();
   peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
+
   logTraceOut("evolveToTime");
 }
 
@@ -346,11 +416,6 @@ int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
         }
       }
 
-      // insert your postprocessing here
-      // -------------------------------
-
-      // -------------------------------
-
       _repository->terminate();
     }
     else if ( newMasterNode == tarch::parallel::NodePool::JobRequestMessageAnswerValues::RunAllNodes ) {
@@ -361,4 +426,35 @@ int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
 
   #endif
   return 0;
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::configureGlobalTimestep(double time) {
+  _repository->getState().setGlobalTimestepEndTime(time);
+  _repository->getState().setNumerics(_numerics);
+  _repository->getState().setPlotNumber(_plotNumber);
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::runNextPossibleTimestep() {
+    bool plotSubsteps = _configuration.plotSubsteps()
+      || (_configuration.plotSubstepsAfterOutputTime() != -1 && _configuration.plotSubstepsAfterOutputTime() <= _plotNumber);
+
+    logInfo("evolveToTime", "Solving timestep " << (_plotNumber-1) << " with maximum global time interval ("
+        << _repository->getState().getStartMaximumGlobalTimeInterval() << ", " << _repository->getState().getEndMaximumGlobalTimeInterval() << ")"
+        << " and minimum global time interval (" << _repository->getState().getStartMinimumGlobalTimeInterval() << ", " << _repository->getState().getEndMinimumGlobalTimeInterval() << ")");
+    _iterationTimer.startTimer();
+
+    _repository->getState().resetGlobalTimeIntervals();
+    _repository->getState().resetMinimalTimestep();
+    _repository->getState().setAllPatchesEvolvedToGlobalTimestep(true);
+
+    iterateSolveTimestep(plotSubsteps);
+
+    _repository->getState().plotStatisticsForLastGridIteration();
+
+    _iterationTimer.stopTimer();
+    _totalRuntime += (double)_iterationTimer.getCPUTicks() / (double)CLOCKS_PER_SEC;
+    logInfo("evolveToTime", "Wallclock time for this grid iteration/Total runtime: " << _iterationTimer.getCalendarTime() << "s/" << _totalRuntime << "s");
+    logInfo("evolveToTime", "Minimal timestep for this grid iteration: " << _repository->getState().getMinimalTimestep());
+
+    assertion(_repository->getState().getMinimalTimestep() < std::numeric_limits<double>::infinity());
 }

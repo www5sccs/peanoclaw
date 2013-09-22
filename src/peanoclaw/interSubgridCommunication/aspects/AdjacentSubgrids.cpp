@@ -222,7 +222,8 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::regainTwoI
 
     peanoclaw::Vertex& coarseVertex = coarseGridVertices[coarseGridVerticesEnumerator(coarseGridPositionOfVertex)];
     if(coarseVertex.getRefinementControl() == peanoclaw::Vertex::Records::Unrefined
-        && !coarseVertex.isHangingNode()) {
+        && !coarseVertex.isHangingNode()
+        && coarseVertex.isInside()) {
       coarseVertex.refine();
     }
   }

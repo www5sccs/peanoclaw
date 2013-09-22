@@ -10,8 +10,11 @@
 
 #include "peanoclaw/Vertex.h"
 #include "peano/grid/VertexEnumerator.h"
+#include "tarch/logging/Log.h"
 
 namespace peanoclaw {
+  class Patch;
+
   namespace interSubgridCommunication {
     namespace aspects {
       class AdjacentVertices;
@@ -39,13 +42,27 @@ namespace peanoclaw {
  */
 class peanoclaw::interSubgridCommunication::aspects::AdjacentVertices {
   private:
-    peanoclaw::Vertex*             _vertices;
-    peano::grid::VertexEnumerator& _verticesEnumerator;
+    /**
+     * Logging device.
+     */
+    static tarch::logging::Log _log;
+
+    peanoclaw::Vertex* const             _vertices;
+    const peano::grid::VertexEnumerator& _verticesEnumerator;
 
   public:
     AdjacentVertices(
-      peanoclaw::Vertex*             vertices,
-      peano::grid::VertexEnumerator& verticesEnumerator
+      peanoclaw::Vertex* const             vertices,
+      const peano::grid::VertexEnumerator& verticesEnumerator
+    );
+
+    /**
+     * Refines the surrounding vertices according to
+     * the given minimal mesh width.
+     */
+    bool refineIfNecessary(
+      Patch&                                patch,
+      tarch::la::Vector<DIMENSIONS, double> minimalMeshWidth
     );
 };
 

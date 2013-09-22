@@ -1,15 +1,21 @@
 #include "peanoclaw/mappings/InitialiseGrid.h"
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/interSubgridCommunication/aspects/AdjacentVertices.h"
 
 #include "peano/utils/Loop.h"
 #include "peano/heap/Heap.h"
+
+#define TouchBasedRefinement
+#ifdef TouchBasedRefinement
+#warning Touch based refinement is on
+#endif
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
@@ -17,7 +23,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexLa
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
@@ -25,7 +31,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexFi
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
@@ -33,7 +39,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
@@ -41,7 +47,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
@@ -49,7 +55,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecifi
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
 }
 
 
@@ -142,6 +148,7 @@ void peanoclaw::mappings::InitialiseGrid::createInnerVertex(
 ) {
   logTraceInWith6Arguments( "createInnerVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
  
+//#if !defined(TouchBasedRefinement)
   assertion(!fineGridVertex.isHangingNode());
 
   //Normal refinement
@@ -151,6 +158,7 @@ void peanoclaw::mappings::InitialiseGrid::createInnerVertex(
     ) {
     fineGridVertex.refine();
   }
+//#endif
 
   logTraceOutWith1Argument( "createInnerVertex(...)", fineGridVertex );
 }
@@ -168,6 +176,7 @@ void peanoclaw::mappings::InitialiseGrid::createBoundaryVertex(
   logTraceInWith6Arguments( "createBoundaryVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
 
+//#if !defined(TouchBasedRefinement)
   assertion(!fineGridVertex.isHangingNode());
 
   //Normal refinement
@@ -177,6 +186,7 @@ void peanoclaw::mappings::InitialiseGrid::createBoundaryVertex(
   ) {
     fineGridVertex.refine();
   }
+//#endif
 
   logTraceOutWith1Argument( "createBoundaryVertex(...)", fineGridVertex );
 }
@@ -208,57 +218,36 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
 ) {
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
-  Patch patch(
-    fineGridCell
-  );
-
-  if(fineGridCell.isLeaf()) {
+ if(fineGridCell.isLeaf()) {
+    Patch patch(
+      fineGridCell
+    );
+ 
     assertion1(patch.isLeaf(), patch);
-    double demandedMeshWidth = _numerics->initializePatch(patch);
-
+    double demandedMeshWidthScalar = _numerics->initializePatch(patch);
     patch.copyUNewToUOld();
-    patch.setDemandedMeshWidth(demandedMeshWidth);
+    patch.setDemandedMeshWidth(demandedMeshWidthScalar);
 
-    #ifdef Asserts
-    dfor(subcellIndex, patch.getSubdivisionFactor()) {
-      tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex;
-      assertion3(patch.getValueUOld(subcellIndexInDestinationPatch, 0) > 0.0,
-              patch.getValueUOld(subcellIndexInDestinationPatch, 0),
-              subcellIndex,
-              subcellIndexInDestinationPatch);
-    }
-    #endif
+    if(_refinementCriterionEnabled) {
+      tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth(demandedMeshWidthScalar);
 
-    //Check for error in refinement criterion
-    if(!tarch::la::greater(demandedMeshWidth, 0.0)) {
-      logWarning("createCell(...)", "A demanded mesh width of 0.0 leads to an infinite refinement. Is the refinement criterion correct?");
-    }
-    assertion(tarch::la::greater(demandedMeshWidth, 0.0));
-
-    //Refine if necessary
-    if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(demandedMeshWidth))) {
-      for(int i = 0; i < TWO_POWER_D; i++) {
-        if (fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined
-            && !fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-          fineGridVertices[fineGridVerticesEnumerator(i)].refine();
-          _refinementTriggered = true;
-        }
+      #ifdef Asserts
+      dfor(subcellIndex, patch.getSubdivisionFactor()) {
+        tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex;
+        assertion3(patch.getValueUOld(subcellIndexInDestinationPatch, 0) > 0.0,
+                patch.getValueUOld(subcellIndexInDestinationPatch, 0),
+                subcellIndex,
+                subcellIndexInDestinationPatch);
       }
-    }
+      #endif
 
-    //Switch to refined patch if necessary
-    bool refinementTriggered = false;
-    for(int i = 0; i < TWO_POWER_D; i++) {
-      if(fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl()
-          == Vertex::Records::Refining) {
-        refinementTriggered = true;
-      }
-    }
-    if(refinementTriggered) {
-      assertion1(patch.isLeaf(), patch.toString());
-      patch.switchToVirtual();
-      patch.switchToNonVirtual();
-      assertion1(!patch.isLeaf() && !patch.isVirtual(), patch);
+  //    #if !defined(TouchBasedRefinement)
+      peanoclaw::interSubgridCommunication::aspects::AdjacentVertices adjacentVertices(
+        fineGridVertices,
+        fineGridVerticesEnumerator
+      );
+      _refinementTriggered |= adjacentVertices.refineIfNecessary(patch, demandedMeshWidth);
+  //    #endif
     }
   }
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
@@ -469,6 +458,21 @@ void peanoclaw::mappings::InitialiseGrid::touchVertexFirstTime(
 
   fineGridVertex.resetSubcellsEraseVeto();
 
+//#if defined(TouchBasedRefinement)
+  if (!fineGridVertex.isOutside()) {
+      assertion(!fineGridVertex.isHangingNode());
+
+      //Normal refinement
+      if(
+          tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth)
+          && (fineGridVertex.getRefinementControl() == Vertex::Records::Unrefined)
+        ) {
+        fineGridVertex.refine();
+      }
+  }
+//#endif
+
+
   logTraceOutWith1Argument( "touchVertexFirstTime(...)", fineGridVertex );
 }
 
@@ -498,7 +502,19 @@ void peanoclaw::mappings::InitialiseGrid::enterCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-  // @todo Insert your code here
+
+//#if !defined(TouchBasedRefinement)
+  if(fineGridCell.isInside()) {
+    Patch patch(fineGridCell);
+
+    peanoclaw::interSubgridCommunication::aspects::AdjacentVertices adjacentVertices(
+      fineGridVertices,
+      fineGridVerticesEnumerator
+    );
+    adjacentVertices.refineIfNecessary(patch, _initialMinimalMeshWidth);
+  //#endif
+  }
+  
   logTraceOutWith1Argument( "enterCell(...)", fineGridCell );
 }
 
@@ -534,6 +550,8 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
   _numerics = solverState.getNumerics();
 
   _refinementTriggered = solverState.getInitialRefinementTriggered();
+
+  _refinementCriterionEnabled = solverState.isRefinementCriterionEnabled();
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }

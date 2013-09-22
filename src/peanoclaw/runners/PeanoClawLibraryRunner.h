@@ -60,6 +60,14 @@ private:
   bool _validateGrid;
 
   /**
+   * Initializes geometry and grid.
+   */
+  void initializePeano(
+    tarch::la::Vector<DIMENSIONS, double> domainOffset,
+    tarch::la::Vector<DIMENSIONS, double> domainSize
+  );
+
+  /**
    * Initializes the MPI environment
    */
   void initializeParallelEnvironment();
@@ -104,5 +112,8 @@ public:
    */
   void gatherCurrentSolution();
   int runWorker();
+
+  void configureGlobalTimestep(double time);
+  void runNextPossibleTimestep();
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_RUNNERS_PEANOCLAWLIBRARYRUNNER_H_ */

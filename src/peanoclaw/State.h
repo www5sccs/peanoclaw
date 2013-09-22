@@ -229,6 +229,10 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       bool getIsInitializing() const;
 
+      void enableRefinementCriterion(bool enabled);
+
+      bool isRefinementCriterionEnabled() const;
+
       void setInitialRefinementTriggered(bool initialRefinementTriggered);
 
       bool getInitialRefinementTriggered() const;

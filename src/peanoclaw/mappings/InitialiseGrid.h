@@ -52,6 +52,8 @@ class peanoclaw::mappings::InitialiseGrid {
 
     bool _refinementTriggered;
 
+    bool _refinementCriterionEnabled;
+
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 

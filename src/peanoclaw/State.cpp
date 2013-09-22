@@ -237,6 +237,14 @@ bool peanoclaw::State::getIsInitializing() const {
   return _stateData.getIsInitializing();
 }
 
+void peanoclaw::State::enableRefinementCriterion(bool enabled) {
+  _stateData.setIsRefinementCriterionEnabled(enabled);
+}
+
+bool peanoclaw::State::isRefinementCriterionEnabled() const {
+  return _stateData.getIsRefinementCriterionEnabled();
+}
+
 void peanoclaw::State::setInitialRefinementTriggered(bool initialRefinementTriggered) {
   _stateData.setInitialRefinmentTriggered(initialRefinementTriggered);
 }
