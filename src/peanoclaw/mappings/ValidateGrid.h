@@ -51,7 +51,7 @@ class peanoclaw::mappings::ValidateGrid {
     tarch::la::Vector<DIMENSIONS, double>        _domainOffset;
     tarch::la::Vector<DIMENSIONS, double>        _domainSize;
     int                                          _patchDescriptionsIndex;
-    peano::heap::Heap<PatchDescription>&         _heap;
+//    peano::heap::PlainHeap<PatchDescription>&         _heap;
     peanoclaw::statistics::ParallelGridValidator _validator;
     peanoclaw::State                             _state;
 

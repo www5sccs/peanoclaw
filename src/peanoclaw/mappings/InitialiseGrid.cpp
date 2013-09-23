@@ -504,14 +504,17 @@ void peanoclaw::mappings::InitialiseGrid::enterCell(
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
 //#if !defined(TouchBasedRefinement)
-  if(fineGridCell.isInside()) {
+  if(fineGridCell.isInside() && fineGridCell.isLeaf() && _refinementCriterionEnabled) {
     Patch patch(fineGridCell);
 
     peanoclaw::interSubgridCommunication::aspects::AdjacentVertices adjacentVertices(
       fineGridVertices,
       fineGridVerticesEnumerator
     );
-    adjacentVertices.refineIfNecessary(patch, _initialMinimalMeshWidth);
+    //TODO unterweg dissertation: Restart of refinement in parallel case. Here we
+    //refine up to a certain level and stop to fork the grid on other ranks and
+    //then restart refining.
+    adjacentVertices.refineIfNecessary(patch, patch.getDemandedMeshWidth());
   //#endif
   }
   

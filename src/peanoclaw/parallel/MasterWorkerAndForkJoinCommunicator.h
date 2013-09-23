@@ -49,9 +49,9 @@ class peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator {
 
     int _level;
 
-    peano::heap::Heap<CellDescription>& _cellDescriptionHeap;
-
-    peano::heap::Heap<Data>& _dataHeap;
+//    peano::heap::Heap<CellDescription>& _cellDescriptionHeap;
+//
+//    peano::heap::Heap<Data>& _dataHeap;
 
     peano::heap::MessageType _messageType;
 

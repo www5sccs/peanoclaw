@@ -55,12 +55,13 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::descendSpecific
 tarch::logging::Log                peanoclaw::mappings::ValidateGrid::_log( "peanoclaw::mappings::ValidateGrid" ); 
 
 peanoclaw::mappings::ValidateGrid::ValidateGrid()
- : _heap(peano::heap::Heap<PatchDescription>::getInstance()),
+ :
+//   _heap(peano::heap::PlainHeap<PatchDescription>::getInstance()),
    _validator(0, 0, false)
 {
   logTraceIn( "ValidateGrid()" );
 
-  _patchDescriptionsIndex = peano::heap::Heap<PatchDescription>::getInstance().createData();
+  _patchDescriptionsIndex = peano::heap::PlainHeap<PatchDescription>::getInstance().createData();
 
   logTraceOut( "ValidateGrid()" );
 }
@@ -78,7 +79,7 @@ peanoclaw::mappings::ValidateGrid::ValidateGrid(const ValidateGrid&  masterThrea
   : _domainOffset(masterThread._domainOffset),
     _domainSize(masterThread._domainSize),
     _patchDescriptionsIndex(masterThread._patchDescriptionsIndex),
-    _heap(masterThread._heap),
+//    _heap(masterThread._heap),
     _validator(masterThread._validator),
     _state(masterThread._state)
 {
@@ -400,7 +401,7 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
   logTraceInWith2Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString() );
 
   //Assemble vector to send to master
-  std::vector<PatchDescription>& workerAndLocalData = _heap.getData(_patchDescriptionsIndex);
+  std::vector<PatchDescription>& workerAndLocalData = peano::heap::PlainHeap<PatchDescription>::getInstance().getData(_patchDescriptionsIndex);
   std::vector<PatchDescription> localData = _validator.getAllPatches();
   for(int i = 0; i < (int)localData.size(); i++) {
     workerAndLocalData.push_back(localData[i]);
@@ -409,11 +410,11 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
   //Add non-referenced patches
   int index = 0;
   int numberOfEntries = 0;
-  while(numberOfEntries < peano::heap::Heap<CellDescription>::getInstance().getNumberOfAllocatedEntries()) {
-    if(peano::heap::Heap<CellDescription>::getInstance().isValidIndex(index)) {
+  while(numberOfEntries < peano::heap::PlainHeap<CellDescription>::getInstance().getNumberOfAllocatedEntries()) {
+    if(peano::heap::PlainHeap<CellDescription>::getInstance().isValidIndex(index)) {
 //      if(_descriptions.find(index) == _descriptions.end()) {
 //        //Found non-referenced patch
-//        CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(index).at(0);
+//        CellDescription& cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(index).at(0);
 //        PatchDescription patchDescription;
 //        patchDescription.setPosition(cellDescription.getPosition());
 //        patchDescription.setSize(cellDescription.getSize());
@@ -430,7 +431,7 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
   }
 
   //Send
-  _heap.sendData(
+  peano::heap::PlainHeap<PatchDescription>::getInstance().sendData(
     _patchDescriptionsIndex,
     tarch::parallel::NodePool::getInstance().getMasterRank(),
     verticesEnumerator.getVertexPosition(0),
@@ -439,7 +440,11 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
   );
 
   //TODO unterweg debug
-  std::cout << "ValidateGrid Sent " << _heap.getData(_patchDescriptionsIndex).size() << " Data on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
+  std::cout << "ValidateGrid Sent " << peano::heap::PlainHeap<PatchDescription>::getInstance().getData(_patchDescriptionsIndex).size() << " Data on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
+
+  #ifdef Parallel
+  peano::heap::PlainHeap<PatchDescription>::getInstance().finishedToSendSynchronousData();
+  #endif
 
   logTraceOut( "prepareSendToMaster(...)" );
 }
@@ -462,19 +467,19 @@ void peanoclaw::mappings::ValidateGrid::mergeWithMaster(
 ) {
   logTraceIn( "mergeWithMaster(...)" );
 
-  std::vector<PatchDescription> remoteData = _heap.receiveData(
+  std::vector<PatchDescription> remoteData = peano::heap::PlainHeap<PatchDescription>::getInstance().receiveData(
     worker,
     fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getLevel(),
     peano::heap::MasterWorkerCommunication
   );
 
-  std::vector<PatchDescription>& localData = _heap.getData(_patchDescriptionsIndex);
+  std::vector<PatchDescription>& localData = peano::heap::PlainHeap<PatchDescription>::getInstance().getData(_patchDescriptionsIndex);
   for(int i = 0; i < (int)remoteData.size(); i++) {
     localData.push_back(remoteData[i]);
   }
 
-  logInfo("mergeWithMaster(...)", "Merged " << remoteData.size() << " patches: " << _heap.getData(_patchDescriptionsIndex).size() << " entries.");
+  logInfo("mergeWithMaster(...)", "Merged " << remoteData.size() << " patches: " << peano::heap::PlainHeap<PatchDescription>::getInstance().getData(_patchDescriptionsIndex).size() << " entries.");
 
   logTraceOut( "mergeWithMaster(...)" );
 }
@@ -609,6 +614,11 @@ void peanoclaw::mappings::ValidateGrid::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
 
+  #ifdef Parallel
+  peano::heap::PlainHeap<PatchDescription>::getInstance().startToSendSynchronousData();
+  peano::heap::PlainHeap<PatchDescription>::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
+  #endif
+
   _validator = peanoclaw::statistics::ParallelGridValidator(
     solverState.getDomainOffset(),
     solverState.getDomainSize(),
@@ -618,7 +628,7 @@ void peanoclaw::mappings::ValidateGrid::beginIteration(
   _state = solverState;
   _domainOffset = solverState.getDomainOffset();
   _domainSize = solverState.getDomainSize();
-  _heap.getData(_patchDescriptionsIndex).clear();
+  peano::heap::PlainHeap<PatchDescription>::getInstance().getData(_patchDescriptionsIndex).clear();
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
@@ -643,7 +653,7 @@ void peanoclaw::mappings::ValidateGrid::endIteration(
   ) {
 
     //Copy collected patches
-    std::vector<PatchDescription>& receivedDescriptions = _heap.getData(_patchDescriptionsIndex);
+    std::vector<PatchDescription>& receivedDescriptions = peano::heap::PlainHeap<PatchDescription>::getInstance().getData(_patchDescriptionsIndex);
     logInfo("endIteration(State)", "Received patches: " << receivedDescriptions.size());
     std::vector<PatchDescription> localDescriptions = _validator.getAllPatches();
     for(std::vector<PatchDescription>::iterator i = receivedDescriptions.begin();
@@ -661,17 +671,25 @@ void peanoclaw::mappings::ValidateGrid::endIteration(
 
     //Check for unreferenced patches
     for(int i = 0; i < (int)localDescriptions.size(); i++) {
-      if(!localDescriptions[i].getIsReferenced()) {
-        logError("endIteration", "Unreferenced Patch found: " << localDescriptions[i].toString() <<
-            ", isUnreferenced=" << database.containsPatch(localDescriptions[i].getPosition(), localDescriptions[i].getLevel(), localDescriptions[i].getRank()));
-        assertionFail("");
-      }
+      //TODO unterweg debug
+//      if(!localDescriptions[i].getIsReferenced()) {
+//        logError("endIteration", "Unreferenced Patch found: " << localDescriptions[i].toString() <<
+//            ", isUnreferenced=" << database.containsPatch(localDescriptions[i].getPosition(), localDescriptions[i].getLevel(), localDescriptions[i].getRank()));
+//        assertionFail("");
+//      }
     }
 
     _validator.validatePatches();
 
     logInfo("endIteration", "Validated " << localDescriptions.size() << " subgrids.");
   }
+
+  #ifdef Parallel
+  peano::heap::PlainHeap<PatchDescription>::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    peano::heap::PlainHeap<PatchDescription>::getInstance().finishedToSendSynchronousData();
+  }
+  #endif
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }

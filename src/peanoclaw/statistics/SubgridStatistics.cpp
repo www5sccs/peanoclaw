@@ -16,21 +16,21 @@
 tarch::logging::Log peanoclaw::statistics::SubgridStatistics::_log("peanoclaw::statistics::SubgridStatistics");
 
 void peanoclaw::statistics::SubgridStatistics::initializeLevelStatistics() {
-  peano::heap::Heap<LevelStatistics>& heap = peano::heap::Heap<LevelStatistics>::getInstance();
-  _levelStatisticsIndex = heap.createData();
-  _levelStatistics = &heap.getData(_levelStatisticsIndex);
+//  peano::heap::PlainHeap<LevelStatistics>& heap = peano::heap::PlainHeap<LevelStatistics>::getInstance();
+  _levelStatisticsIndex = peano::heap::PlainHeap<LevelStatistics>::getInstance().createData();
+  _levelStatistics = &peano::heap::PlainHeap<LevelStatistics>::getInstance().getData(_levelStatisticsIndex);
 }
 
 void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
   if(_minimalPatchIndex != -1) {
-    Patch minimalTimePatch(peano::heap::Heap<CellDescription>::getInstance().getData(_minimalPatchIndex).at(0));
+    Patch minimalTimePatch(peano::heap::PlainHeap<CellDescription>::getInstance().getData(_minimalPatchIndex).at(0));
     if(minimalTimePatch.isValid()) {
       logInfo("logStatistics()", "Minimal time subgrid" << ": " << minimalTimePatch);
 
       //Parent
       if(_minimalPatchParentIndex >= 0) {
         Patch minimalTimePatchParent(
-          peano::heap::Heap<CellDescription>::getInstance().getData(_minimalPatchParentIndex).at(0)
+          peano::heap::PlainHeap<CellDescription>::getInstance().getData(_minimalPatchParentIndex).at(0)
         );
         if(minimalTimePatchParent.isValid()) {
           logInfo("logStatistics()", "\tMinimal time subgrid parent: " << minimalTimePatchParent);
@@ -39,7 +39,7 @@ void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
 
       //Constraining patch
       if(minimalTimePatch.getConstrainingNeighborIndex() != -1) {
-        Patch constrainingPatch(peano::heap::Heap<CellDescription>::getInstance().getData(minimalTimePatch.getConstrainingNeighborIndex()).at(0));
+        Patch constrainingPatch(peano::heap::PlainHeap<CellDescription>::getInstance().getData(minimalTimePatch.getConstrainingNeighborIndex()).at(0));
         logInfo("logStatistics()", "\tConstrained by " << constrainingPatch);
       }
 
@@ -155,7 +155,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
 //}
 
 peanoclaw::statistics::SubgridStatistics::~SubgridStatistics() {
-  //peano::heap::Heap<LevelStatistics>::getInstance().deleteData(_levelStatisticsIndex);
+  //peano::heap::PlainHeap<LevelStatistics>::getInstance().deleteData(_levelStatisticsIndex);
   //_levelStatistics = 0;
 }
 
@@ -352,7 +352,7 @@ void peanoclaw::statistics::SubgridStatistics::averageTotalSimulationValues(int 
 
 #ifdef Parallel
 void peanoclaw::statistics::SubgridStatistics::sendToMaster(int masterRank) {
-  peano::heap::Heap<LevelStatistics>::getInstance().sendData(
+  peano::heap::PlainHeap<LevelStatistics>::getInstance().sendData(
     _levelStatisticsIndex,
     masterRank,
     0,
@@ -363,7 +363,7 @@ void peanoclaw::statistics::SubgridStatistics::sendToMaster(int masterRank) {
 
 void peanoclaw::statistics::SubgridStatistics::receiveFromWorker(int workerRank) {
   SubgridStatistics remoteStatistics(
-    peano::heap::Heap<LevelStatistics>::getInstance().receiveData(workerRank, 0, 0, peano::heap::MasterWorkerCommunication)
+    peano::heap::PlainHeap<LevelStatistics>::getInstance().receiveData(workerRank, 0, 0, peano::heap::MasterWorkerCommunication)
   );
   merge(remoteStatistics);
 }

@@ -59,7 +59,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   CellDescription* cellDescriptions[TWO_POWER_D];
   for(int cellIndex = 0; cellIndex < TWO_POWER_D; cellIndex++) {
     if(getAdjacentCellDescriptionIndex(cellIndex) != -1) {
-      cellDescriptions[cellIndex] = &peano::heap::Heap<CellDescription>::getInstance().getData(getAdjacentCellDescriptionIndex(cellIndex)).at(0);
+      cellDescriptions[cellIndex] = &peano::heap::PlainHeap<CellDescription>::getInstance().getData(getAdjacentCellDescriptionIndex(cellIndex)).at(0);
     }
   }
 
@@ -68,8 +68,8 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   dfor2(cellIndex)
     if(getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
 
-//      assertion4(peano::heap::Heap<Data>::getInstance().isValidIndex(cellDescriptions[cellIndexScalar]->getUNewIndex()), cellIndexScalar, getX(), level, cellDescriptions[cellIndexScalar]->getUNewIndex());
-//      assertion4(peano::heap::Heap<Data>::getInstance().isValidIndex(cellDescriptions[cellIndexScalar]->getUOldIndex()), cellIndexScalar, getX(), level, cellDescriptions[cellIndexScalar]->getUOldIndex());
+//      assertion4(peano::heap::PlainHeap<Data>::getInstance().isValidIndex(cellDescriptions[cellIndexScalar]->getUNewIndex()), cellIndexScalar, getX(), level, cellDescriptions[cellIndexScalar]->getUNewIndex());
+//      assertion4(peano::heap::PlainHeap<Data>::getInstance().isValidIndex(cellDescriptions[cellIndexScalar]->getUOldIndex()), cellIndexScalar, getX(), level, cellDescriptions[cellIndexScalar]->getUOldIndex());
 
       patches[cellIndexScalar] = Patch(
         *cellDescriptions[cellIndexScalar]
@@ -132,7 +132,7 @@ void peanoclaw::Vertex::applyFluxCorrection(
   CellDescription* cellDescriptions[TWO_POWER_D];
   for(int cellIndex = 0; cellIndex < TWO_POWER_D; cellIndex++) {
     if(getAdjacentCellDescriptionIndex(cellIndex) != -1) {
-      cellDescriptions[cellIndex] = &peano::heap::Heap<CellDescription>::getInstance().getData(getAdjacentCellDescriptionIndex(cellIndex)).at(0);
+      cellDescriptions[cellIndex] = &peano::heap::PlainHeap<CellDescription>::getInstance().getData(getAdjacentCellDescriptionIndex(cellIndex)).at(0);
     }
   }
 

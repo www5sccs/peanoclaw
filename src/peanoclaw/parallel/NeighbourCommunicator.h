@@ -61,8 +61,8 @@ class peanoclaw::parallel::NeighbourCommunicator {
     tarch::la::Vector<DIMENSIONS,double>       _position;
     int                                        _level;
     tarch::la::Vector<DIMENSIONS,double>       _subgridSize;
-    peano::heap::Heap<CellDescription>&        _cellDescriptionHeap;
-    peano::heap::Heap<Data>&                   _dataHeap;
+//    peano::heap::PlainHeap<CellDescription>&        _cellDescriptionHeap;
+//    peano::heap::PlainHeap<Data>&                   _dataHeap;
     RemoteSubgridMap&                          _remoteSubgridMap;
     peanoclaw::statistics::ParallelStatistics& _statistics;
 

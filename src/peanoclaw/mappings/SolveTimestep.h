@@ -44,6 +44,7 @@ class peanoclaw::mappings::SolveTimestep {
  
     typedef peanoclaw::records::CellDescription CellDescription;
     typedef peanoclaw::records::Data Data;
+    typedef peanoclaw::statistics::LevelStatistics LevelStatistics;
 
     peanoclaw::Numerics* _numerics;
 

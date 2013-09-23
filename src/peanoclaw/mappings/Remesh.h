@@ -56,7 +56,15 @@ class peanoclaw::mappings::Remesh {
     typedef peanoclaw::records::CellDescription CellDescription;
     typedef peanoclaw::records::VertexDescription VertexDescription;
     typedef peanoclaw::records::Data Data;
-    typedef peanoclaw::statistics::LevelStatistics LevelStatistics;
+//    typedef peanoclaw::statistics::LevelStatistics LevelStatistics;
+
+    #ifdef noPackedEmptyHeapMessages
+    typedef peano::heap::PlainHeap<CellDescription> CellDescriptionHeap;
+    typedef peano::heap::PlainHeap<Data> DataHeap;
+    #else
+    typedef peano::heap::RLEHeap<CellDescription> CellDescriptionHeap;
+    typedef peano::heap::RLEHeap<Data> DataHeap;
+    #endif
 
     /**
      * Map from a hanging node's position and level to

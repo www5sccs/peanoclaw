@@ -49,41 +49,41 @@ void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleR
   vertexEnumerator.setOffset(0.0);
 
 
-  int bottomLeftDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int bottomLeftDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription bottomLeftDescription; bottomLeftDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(bottomLeftDescriptionIndex).push_back(bottomLeftDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(bottomLeftDescriptionIndex).push_back(bottomLeftDescription);
 
-  int bottomCenterDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int bottomCenterDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription bottomCenterDescription; bottomCenterDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(bottomCenterDescriptionIndex).push_back(bottomCenterDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(bottomCenterDescriptionIndex).push_back(bottomCenterDescription);
 
-  int bottomRightDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int bottomRightDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription bottomRightDescription; bottomRightDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(bottomRightDescriptionIndex).push_back(bottomRightDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(bottomRightDescriptionIndex).push_back(bottomRightDescription);
 
-  int centerLeftDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int centerLeftDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription centerLeftDescription; centerLeftDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(centerLeftDescriptionIndex).push_back(centerLeftDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(centerLeftDescriptionIndex).push_back(centerLeftDescription);
 
-  int refinedDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int refinedDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription refinedDescription; refinedDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(refinedDescriptionIndex).push_back(refinedDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(refinedDescriptionIndex).push_back(refinedDescription);
 
-  int centerRightDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int centerRightDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription centerRightDescription; centerRightDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(centerRightDescriptionIndex).push_back(centerRightDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(centerRightDescriptionIndex).push_back(centerRightDescription);
 
-  int topLeftDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int topLeftDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription topLeftDescription; topLeftDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(topLeftDescriptionIndex).push_back(topLeftDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(topLeftDescriptionIndex).push_back(topLeftDescription);
 
-  int topCenterDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int topCenterDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription topCenterDescription; topCenterDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(topCenterDescriptionIndex).push_back(topCenterDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(topCenterDescriptionIndex).push_back(topCenterDescription);
 
-  int topRightDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
+  int topRightDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
   CellDescription topRightDescription; topRightDescription.setUNewIndex(-1);
-  peano::heap::Heap<CellDescription>::getInstance().getData(topRightDescriptionIndex).push_back(topRightDescription);
+  peano::heap::PlainHeap<CellDescription>::getInstance().getData(topRightDescriptionIndex).push_back(topRightDescription);
 
   //Vertex a
   coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(0, refinedDescriptionIndex);
@@ -260,7 +260,7 @@ void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleR
     validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
   }
 
-  peano::heap::Heap<CellDescription>::getInstance().deleteAllData();
+  peano::heap::PlainHeap<CellDescription>::getInstance().deleteAllData();
 #endif
 }
 
@@ -331,7 +331,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   int ghostlayerWidth = 2;
   int coarseSubdivisionFactor = 2;
   int fineSubdivisionFactor = 3;
-  peano::heap::Heap<CellDescription>::getInstance().deleteAllData();
+  peano::heap::PlainHeap<CellDescription>::getInstance().deleteAllData();
 
   //Create patch for neighboring coarse cell
   tarch::la::Vector<DIMENSIONS, double> coarsePosition;
@@ -352,10 +352,10 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   //Create refined cell that becomes the virtual patch
   tarch::la::Vector<DIMENSIONS, double> virtualPatchPosition;
   assignList(virtualPatchPosition) = 1.0, 0;
-  int virtualCellDescriptionIndex = peano::heap::Heap<CellDescription>::getInstance().createData();
-  std::vector<CellDescription>& virtualCellDescriptions = peano::heap::Heap<CellDescription>::getInstance().getData(virtualCellDescriptionIndex);
+  int virtualCellDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
+  std::vector<CellDescription>& virtualCellDescriptions = peano::heap::PlainHeap<CellDescription>::getInstance().getData(virtualCellDescriptionIndex);
   virtualCellDescriptions.push_back(CellDescription());
-  CellDescription& virtualCellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(virtualCellDescriptionIndex).at(0);
+  CellDescription& virtualCellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(virtualCellDescriptionIndex).at(0);
   virtualCellDescription.setSubdivisionFactor(coarseSubdivisionFactor);
   virtualCellDescription.setGhostLayerWidth(ghostlayerWidth);
   virtualCellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
@@ -500,8 +500,8 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   validateNumericalEquals(neighboringCoarsePatch.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*8.0 - 1.0/3.0 + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
 
   //Clean up
-  peano::heap::Heap<CellDescription>::getInstance().deleteAllData();
-  peano::heap::Heap<Data>::getInstance().deleteAllData();
+  peano::heap::PlainHeap<CellDescription>::getInstance().deleteAllData();
+  peano::heap::PlainHeap<Data>::getInstance().deleteAllData();
 #endif
 }
 

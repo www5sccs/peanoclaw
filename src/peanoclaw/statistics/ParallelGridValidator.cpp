@@ -282,7 +282,7 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
     if(fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
       int cellDescriptionIndex = fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i);
 
-      CellDescription& cellDescription = peano::heap::Heap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+      CellDescription& cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
       Patch adjacentPatch(cellDescription);
 
       if(adjacentPatch.getLevel() == level) {

@@ -46,10 +46,10 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
   tarch::la::Vector<DIMENSIONS, double> domainSize
 ) {
   //Initialize heap data
-  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().setName("CellDescription");
-  peano::heap::Heap<peanoclaw::records::Data>::getInstance().setName("Data");
-  peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().setName("VertexDescription");
-  peano::heap::Heap<peanoclaw::statistics::LevelStatistics>::getInstance().setName("LevelStatistics");
+  peano::heap::PlainHeap<peanoclaw::records::CellDescription>::getInstance().setName("CellDescription");
+  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().setName("Data");
+  peano::heap::PlainHeap<peanoclaw::records::VertexDescription>::getInstance().setName("VertexDescription");
+  peano::heap::PlainHeap<peanoclaw::statistics::LevelStatistics>::getInstance().setName("LevelStatistics");
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
@@ -143,7 +143,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(false)
+  _validateGrid(true)
 {
   #ifndef Asserts
   _validateGrid = false;
@@ -194,109 +194,44 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   #ifdef Parallel
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-   tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();
-  #endif
+    tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();
 
-   state.enableRefinementCriterion(false);
-   tarch::la::Vector<DIMENSIONS, double> currentMinimalSubcellSize;
-   int maximumLevel = 2;
-   do {
+    state.enableRefinementCriterion(false);
+    tarch::la::Vector<DIMENSIONS, double> currentMinimalSubcellSize;
+    int maximumLevel = 2;
+    do {
 
-     logInfo("", "Iterating with maximumLevel=" << maximumLevel);
+      logDebug("PeanoClawLibraryRunner", "Iterating with maximumLevel=" << maximumLevel);
 
-     for(int d = 0; d < DIMENSIONS; d++) {
-       currentMinimalSubcellSize(d) = std::max(initialMinimalMeshWidth(d), domainSize(d) / pow(3.0, maximumLevel) / subdivisionFactor(d));
-     }
+      for(int d = 0; d < DIMENSIONS; d++) {
+        currentMinimalSubcellSize(d) = std::max(initialMinimalMeshWidth(d), domainSize(d) / pow(3.0, maximumLevel) / subdivisionFactor(d));
+      }
 
-     state.setIsInitializing(true);
-     do {
-       logInfo("", "Iterate");
-       iterateInitialiseGrid();
-       iterateInitialiseGrid();
+      do {
+        iterateInitialiseGrid();
+        iterateInitialiseGrid();
 
-       logInfo("", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
-     } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+        logDebug("PeanoClawLibraryRunner", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
+      } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
-     maximumLevel += 2;
-   } while(tarch::la::oneGreater(currentMinimalSubcellSize, initialMinimalMeshWidth));
+      maximumLevel += 2;
+    } while(tarch::la::oneGreater(currentMinimalSubcellSize, initialMinimalMeshWidth));
+    #endif
 
-   state.enableRefinementCriterion(true);
-   do {
-     logInfo("", "Iterate with Refinement Criterion");
-     iterateInitialiseGrid();
-     iterateInitialiseGrid();
-     iterateInitialiseGrid();
-     iterateInitialiseGrid();
-   } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+    state.enableRefinementCriterion(true);
+    do {
+      logDebug("PeanoClawLibraryRunner", "Iterate with Refinement Criterion");
+      iterateInitialiseGrid();
+      iterateInitialiseGrid();
+    } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
-   _repository->getState().setPlotNumber(0);
-   if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
-     iteratePlot();
-   }
+    //Plot initial grid
+    _repository->getState().setPlotNumber(0);
+    if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
+      iteratePlot();
+    }
 
-//  tarch::la::Vector<DIMENSIONS, double> current_initialMinimalSubcellSize(0.1);
-//  tarch::la::Vector<DIMENSIONS, double> next_initialMinimalSubcellSize(0.1);
-//
-//  if (tarch::la::oneGreater(next_initialMinimalSubcellSize,initialMinimalSubcellSize)) {
-//        current_initialMinimalSubcellSize = next_initialMinimalSubcellSize;
-//    } else {
-//        current_initialMinimalSubcellSize = initialMinimalSubcellSize;
-//    }
-
-//#ifdef Parallel
-//  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-//
-//    state.setIsInitializing(true);
-//    while (tarch::la::oneGreater(current_initialMinimalSubcellSize,initialMinimalSubcellSize) || initialMinimalSubcellSize == current_initialMinimalSubcellSize) {
-//        state.setInitialMinimalMeshWidth(current_initialMinimalSubcellSize);
-//
-//        bool hasChangedState = false;
-//        iterateInitialiseGrid();
-//        hasChangedState |= (!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
-//
-//        _repository->switchToRemesh();
-//
-//        do {
-//            // TODO: not sure if we need all 3 iterations of them or if it is sufficient to check for a stationary grid
-//
-//            hasChangedState = false;
-//
-//            _repository->iterate();
-//            hasChangedState |= (!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
-//
-//        } while (hasChangedState);
-//
-//        next_initialMinimalSubcellSize = current_initialMinimalSubcellSize * (1.0/subdivisionFactor[0]);
-//        std::cout << "next initial minimal subcell size " << next_initialMinimalSubcellSize
-//                    << " " << current_initialMinimalSubcellSize
-//                    << " " << initialMinimalSubcellSize
-//                    << std::endl;
-//
-//        if (tarch::la::oneGreater(next_initialMinimalSubcellSize,initialMinimalSubcellSize)) {
-//            current_initialMinimalSubcellSize = next_initialMinimalSubcellSize;
-//        } else if (initialMinimalSubcellSize == current_initialMinimalSubcellSize) {
-//            current_initialMinimalSubcellSize *= (1.0/3.0); // abort loop
-//        } else {
-//            current_initialMinimalSubcellSize = initialMinimalSubcellSize;
-//        }
-//    }
-//
-//      do {
-//        state.setInitialRefinementTriggered(false);
-//        iterateInitialiseGrid();
-//        std::cout << "second iteration block (1)" << _repository->getState() << std::endl;
-//      } while(state.getInitialRefinementTriggered());
-//      state.setIsInitializing(false);
-//
-//      _repository->getState().setPlotNumber(0);
-//      if(_configuration.plotAtOutputTimes() || _configuration.plotSubsteps()) {
-//        iteratePlot();
-//      }
-//  }
-//
-//  }
-//#endif
-
+    state.setIsInitializing(false);
   #ifdef Parallel
   }
   #endif
@@ -308,25 +243,22 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
 //  logInfo("~PeanoClawLibraryRunner()", "Total number of cell updates: " << _repository->getState().getTotalNumberOfCellUpdates());
 
   //Delete remaining heap data
-  peano::heap::Heap<peanoclaw::records::CellDescription>& cellDescriptionHeap = peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance();
 //  if(cellDescriptionHeap.getNumberOfAllocatedEntries() > 0) {
 //    logWarning("~PeanoClawLibraryRunner()", "The heap for CellDescriptions still contains " << cellDescriptionHeap.getNumberOfAllocatedEntries() << " undeleted entries.");
 //  }
-  peano::heap::Heap<peanoclaw::records::Data>& dataHeap = peano::heap::Heap<peanoclaw::records::Data>::getInstance();
 //  if(dataHeap.getNumberOfAllocatedEntries() > 0) {
 //    logWarning("~PeanoClawLibraryRunner()", "The heap for patch data still contains " << dataHeap.getNumberOfAllocatedEntries() << " undeleted entries.");
 //  }
-  peano::heap::Heap<peanoclaw::records::VertexDescription>& vertexDescriptionHeap = peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance();
 //  if(vertexDescriptionHeap.getNumberOfAllocatedEntries() > 0) {
 //    logWarning("~PeanoClawLibraryRunner()", "The heap for VertexDescriptions still contains " << vertexDescriptionHeap.getNumberOfAllocatedEntries() << " undeleted entries.");
 //  }
-  cellDescriptionHeap.deleteAllData();
-  dataHeap.deleteAllData();
-  vertexDescriptionHeap.deleteAllData();
+  peano::heap::PlainHeap<peanoclaw::records::CellDescription>::getInstance().deleteAllData();
+  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().deleteAllData();
+  peano::heap::PlainHeap<peanoclaw::records::VertexDescription>::getInstance().deleteAllData();
 
-  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
-  peano::heap::Heap<peanoclaw::records::Data>::getInstance().plotStatistics();
-  peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
+  peano::heap::PlainHeap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
+  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().plotStatistics();
+  peano::heap::PlainHeap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
 
   #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
@@ -371,9 +303,9 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _plotNumber++;
   }
 
-  peano::heap::Heap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
-  peano::heap::Heap<peanoclaw::records::Data>::getInstance().plotStatistics();
-  peano::heap::Heap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
+  peano::heap::PlainHeap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
+  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().plotStatistics();
+  peano::heap::PlainHeap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
 
   logTraceOut("evolveToTime");
 }

@@ -19,7 +19,7 @@ peanoclaw::ParallelSubgrid::ParallelSubgrid(
 peanoclaw::ParallelSubgrid::ParallelSubgrid(
   int subgridDescriptionIndex
 ) {
-  _cellDescription = &peano::heap::Heap<CellDescription>::getInstance().getData(subgridDescriptionIndex).at(0);
+  _cellDescription = &peano::heap::PlainHeap<CellDescription>::getInstance().getData(subgridDescriptionIndex).at(0);
 }
 
 void peanoclaw::ParallelSubgrid::markCurrentStateAsSent(bool wasSent) {
