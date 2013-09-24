@@ -412,7 +412,7 @@ void peanoclaw::mappings::Remesh::destroyCell(
 
 	  //Create patch in parent cell if it doesn't exist
 	  if(!coarseGridCell.isRoot() && coarseGridCell.isInside()) {
-	    Patch coarseSubgrid(peano::heap::PlainHeap<CellDescription>::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
+	    Patch coarseSubgrid(CellDescriptionHeap::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
 	    _gridLevelTransfer->restrictDestroyedSubgrid(
 	      finePatch,
 	      coarseSubgrid,
@@ -618,7 +618,7 @@ void peanoclaw::mappings::Remesh::prepareSendToWorker(
   );
  
   assertion4(
-    peano::heap::PlainHeap<CellDescription>::getInstance().isValidIndex(fineGridCell.getCellDescriptionIndex()),
+    CellDescriptionHeap::getInstance().isValidIndex(fineGridCell.getCellDescriptionIndex()),
     fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getCellSize(),
     fineGridCell.getCellDescriptionIndex(),
@@ -650,8 +650,8 @@ void peanoclaw::mappings::Remesh::prepareSendToMaster(
     communicator.sendPatch(localCell.getCellDescriptionIndex());
   }
 
-  peano::heap::PlainHeap<CellDescription>::getInstance().finishedToSendSynchronousData();
-  peano::heap::PlainHeap<Data>::getInstance().finishedToSendSynchronousData();
+  CellDescriptionHeap::getInstance().finishedToSendSynchronousData();
+  DataHeap::getInstance().finishedToSendSynchronousData();
 
   logTraceOut( "prepareSendToMaster(...)" );
 }
@@ -688,7 +688,7 @@ void peanoclaw::mappings::Remesh::mergeWithMaster(
 
     assertionEquals1(
       fineGridCell.getCellDescriptionIndex(),
-      peano::heap::PlainHeap<CellDescription>::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0).getCellDescriptionIndex(),
+      CellDescriptionHeap::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0).getCellDescriptionIndex(),
       fineGridCell
     );
   }
@@ -724,7 +724,7 @@ void peanoclaw::mappings::Remesh::receiveDataFromMaster(
       false
     );
 
-    int temporaryCellDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
+    int temporaryCellDescriptionIndex = CellDescriptionHeap::getInstance().createData();
     CellDescription temporaryCellDescription;
     temporaryCellDescription.setUNewIndex(-1);
 //    temporaryCellDescription.setUOldIndex(-1);
@@ -734,7 +734,7 @@ void peanoclaw::mappings::Remesh::receiveDataFromMaster(
     );
     temporaryCellDescription.setSize(receivedVerticesEnumerator.getCellSize());
     temporaryCellDescription.setLevel(receivedVerticesEnumerator.getLevel());
-    peano::heap::PlainHeap<CellDescription>::getInstance().getData(temporaryCellDescriptionIndex).push_back(temporaryCellDescription);
+    CellDescriptionHeap::getInstance().getData(temporaryCellDescriptionIndex).push_back(temporaryCellDescription);
     receivedCell.setCellDescriptionIndex(temporaryCellDescriptionIndex);
 
     communicator.receivePatch(temporaryCellDescriptionIndex);
@@ -767,7 +767,7 @@ void peanoclaw::mappings::Remesh::mergeWithWorker(
 
   #ifdef Asserts
   {
-  CellDescription& localCellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCell.getCellDescriptionIndex()).at(0);
+  CellDescription& localCellDescription = CellDescriptionHeap::getInstance().getData(localCell.getCellDescriptionIndex()).at(0);
   Patch localPatch(localCellDescription);
   assertionEquals1(localPatch.getLevel(), level, localPatch);
   }
@@ -972,8 +972,8 @@ void peanoclaw::mappings::Remesh::beginIteration(
   #ifdef Parallel
   peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().startToSendSynchronousData();
   peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
-  peano::heap::PlainHeap<CellDescription>::getInstance().startToSendSynchronousData();
-  peano::heap::PlainHeap<CellDescription>::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
+  CellDescriptionHeap::getInstance().startToSendSynchronousData();
+  CellDescriptionHeap::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
 
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
     solverState.resetLocalHeightOfWorkerTree();
@@ -997,12 +997,12 @@ void peanoclaw::mappings::Remesh::endIteration(
 
   _parallelStatistics.logStatistics();
 
-  peano::heap::PlainHeap<Data>::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
-  peano::heap::PlainHeap<CellDescription>::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
+  DataHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
+  CellDescriptionHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
 
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
-    peano::heap::PlainHeap<CellDescription>::getInstance().finishedToSendSynchronousData();
-    peano::heap::PlainHeap<Data>::getInstance().finishedToSendSynchronousData();
+    CellDescriptionHeap::getInstance().finishedToSendSynchronousData();
+    DataHeap::getInstance().finishedToSendSynchronousData();
   }
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
