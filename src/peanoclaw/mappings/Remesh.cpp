@@ -1,5 +1,6 @@
 #include "peanoclaw/mappings/Remesh.h"
 
+#include "peanoclaw/Heap.h"
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/ParallelSubgrid.h"
 #include "peanoclaw/interSubgridCommunication/GridLevelTransfer.h"
@@ -276,16 +277,6 @@ void peanoclaw::mappings::Remesh::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith6Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, fineGridVerticesEnumerator.getCellCenter() );
-
-//    std::cout << "Creating cell on rank "
-//        #ifdef Parallel
-//        << tarch::parallel::Node::getInstance().getRank() << ": "
-//        #endif
-//        << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-//        << fineGridVerticesEnumerator.getCellSize()
-//        << ", index=" << fineGridCell.getCellDescriptionIndex()
-//        << ", level=" << fineGridVerticesEnumerator.getLevel()
-//        << std::endl;
  
   //Initialise new Patch
   Patch fineGridPatch = Patch(
@@ -299,6 +290,16 @@ void peanoclaw::mappings::Remesh::createCell(
     fineGridVerticesEnumerator.getLevel()
   );
   fineGridCell.setCellDescriptionIndex(fineGridPatch.getCellDescriptionIndex());
+
+  std::cout << "Creating cell on rank "
+      #ifdef Parallel
+      << tarch::parallel::Node::getInstance().getRank() << ": "
+      #endif
+      << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+      << fineGridVerticesEnumerator.getCellSize()
+      << ", index=" << fineGridCell.getCellDescriptionIndex()
+      << ", level=" << fineGridVerticesEnumerator.getLevel()
+      << std::endl;
 
   if(fineGridCell.isLeaf()) {
     assertion1(!fineGridPatch.isLeaf(), fineGridPatch);
@@ -616,16 +617,17 @@ void peanoclaw::mappings::Remesh::prepareSendToWorker(
     fineGridPositionOfCell,
     worker
   );
- 
-  assertion4(
-    CellDescriptionHeap::getInstance().isValidIndex(fineGridCell.getCellDescriptionIndex()),
-    fineGridVerticesEnumerator.getVertexPosition(0),
-    fineGridVerticesEnumerator.getCellSize(),
-    fineGridCell.getCellDescriptionIndex(),
-    worker
-  );
 
   if(fineGridCell.isInside()){
+
+    assertion4(
+      CellDescriptionHeap::getInstance().isValidIndex(fineGridCell.getCellDescriptionIndex()),
+      fineGridVerticesEnumerator.getVertexPosition(0),
+      fineGridVerticesEnumerator.getCellSize(),
+      fineGridCell.getCellDescriptionIndex(),
+      worker
+    );
+
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(worker, fineGridVerticesEnumerator.getCellCenter(), fineGridVerticesEnumerator.getLevel(), false);
     communicator.sendPatch(fineGridCell.getCellDescriptionIndex());
   }
@@ -970,8 +972,8 @@ void peanoclaw::mappings::Remesh::beginIteration(
   }
 
   #ifdef Parallel
-  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().startToSendSynchronousData();
-  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
+  DataHeap::getInstance().startToSendSynchronousData();
+  DataHeap::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
   CellDescriptionHeap::getInstance().startToSendSynchronousData();
   CellDescriptionHeap::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
 

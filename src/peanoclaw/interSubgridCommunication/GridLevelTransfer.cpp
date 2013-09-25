@@ -8,12 +8,13 @@
 
 #include <limits>
 
+#include "peanoclaw/Heap.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/Vertex.h"
 
 #include "peano/grid/VertexEnumerator.h"
-#include "peano/heap/Heap.h"
+#include "peanoclaw/Heap.h"
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 #include "peano/utils/Loop.h"
 
@@ -138,7 +139,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToAllVirtu
   //Restrict to all
   for(int i = 0;  i < (int)_virtualPatchDescriptionIndices.size(); i++) {
     int virtualSubgridDescriptionIndex = _virtualPatchDescriptionIndices[i];
-    CellDescription& virtualSubgridDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(virtualSubgridDescriptionIndex).at(0);
+    CellDescription& virtualSubgridDescription = CellDescriptionHeap::getInstance().getData(virtualSubgridDescriptionIndex).at(0);
     Patch virtualSubgrid(virtualSubgridDescription);
     if(
 //          true
@@ -181,7 +182,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSub
   int virtualPatchDescriptionIndex = _virtualPatchDescriptionIndices[_virtualPatchDescriptionIndices.size()-1];
   _virtualPatchDescriptionIndices.pop_back();
   _virtualPatchTimeConstraints.pop_back();
-  CellDescription& virtualPatchDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(virtualPatchDescriptionIndex).at(0);
+  CellDescription& virtualPatchDescription = CellDescriptionHeap::getInstance().getData(virtualPatchDescriptionIndex).at(0);
   Patch virtualPatch(virtualPatchDescription);
 
   //Assert that we're working on the correct virtual patch
@@ -247,21 +248,21 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateDu
   logTraceInWith1Argument("updatePatchStateDuringMergeWithWorker", localCellDescriptionIndex);
 
   assertion(localCellDescriptionIndex != -1);
-  CellDescription& localCellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).at(0);
+  CellDescription& localCellDescription = CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0);
   Patch localPatch(localCellDescription);
 
   if(remoteCellDescriptionIndex != -1) {
-    CellDescription& remoteCellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(remoteCellDescriptionIndex).at(0);
+    CellDescription& remoteCellDescription = CellDescriptionHeap::getInstance().getData(remoteCellDescriptionIndex).at(0);
 
     assertion1(localCellDescriptionIndex != -1, localPatch);
     if(remoteCellDescription.getUNewIndex() != -1) {
       assertion1(localPatch.isVirtual() || localPatch.isLeaf(), localPatch);
 
       //Delete current content of patch
-      peano::heap::PlainHeap<Data>::getInstance().deleteData(localPatch.getUNewIndex());
-//      peano::heap::PlainHeap<Data>::getInstance().deleteData(localPatch.getUOldIndex());
+      DataHeap::getInstance().deleteData(localPatch.getUNewIndex());
+//      DataHeap::getInstance().deleteData(localPatch.getUOldIndex());
 //      if(localPatch.getAuxIndex() != -1) {
-//        peano::heap::PlainHeap<Data>::getInstance().deleteData(localPatch.getAuxIndex());
+//        DataHeap::getInstance().deleteData(localPatch.getAuxIndex());
 //      }
 
       //Merge
@@ -270,7 +271,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateDu
 //      localCellDescription.setAuxIndex(remoteCellDescription.getAuxIndex());
     }
 
-    peano::heap::PlainHeap<CellDescription>::getInstance().deleteData(remoteCellDescriptionIndex);
+    CellDescriptionHeap::getInstance().deleteData(remoteCellDescriptionIndex);
   }
 
   logTraceOut("updatePatchStateDuringMergeWithWorker");
@@ -332,7 +333,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
   //Data from coarse patch:
   // -> Update minimal time constraint of coarse neighbors
   if(coarseCellDescriptionIndex > -1) {
-    CellDescription& coarsePatchDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(coarseCellDescriptionIndex).at(0);
+    CellDescription& coarsePatchDescription = CellDescriptionHeap::getInstance().getData(coarseCellDescriptionIndex).at(0);
     Patch coarsePatch(coarsePatchDescription);
     if(coarsePatch.shouldFineGridsSynchronize()) {
       //Set time constraint of fine grid to time of coarse grid to synch
@@ -371,7 +372,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
 
   //Update fine grid time interval on next coarser patch if possible
   if(coarseCellDescriptionIndex > 0) {
-    CellDescription& coarsePatchDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(coarseCellDescriptionIndex).at(0);
+    CellDescription& coarsePatchDescription = CellDescriptionHeap::getInstance().getData(coarseCellDescriptionIndex).at(0);
     Patch coarsePatch(coarsePatchDescription);
     coarsePatch.updateMinimalFineGridTimeInterval(finePatch.getCurrentTime(), finePatch.getTimestepSize());
   }

@@ -6,6 +6,7 @@
  */
 #include "NeighbourCommunicator.h"
 
+#include "peanoclaw/Heap.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
@@ -15,12 +16,12 @@ void peanoclaw::parallel::NeighbourCommunicator::sendCellDescription(int cellDes
 {
   logTraceInWith1Argument("sendCellDescription", cellDescriptionIndex);
   #if defined(Asserts) && defined(Parallel)
-  CellDescription& cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+  CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
   assertion1(!cellDescription.getIsPaddingSubgrid(), cellDescription.toString());
   assertion1(!cellDescription.getIsRemote(), cellDescription.toString());
   #endif
 
-  peano::heap::PlainHeap<CellDescription>::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, peano::heap::NeighbourCommunication);
   logTraceOut("sendCellDescription");
 }
 
@@ -30,7 +31,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPaddingCellDescription(
   const tarch::la::Vector<DIMENSIONS, double>& subgridSize
 ) {
   logTraceIn("sendPaddingCellDescription");
-  int cellDescriptionIndex = peano::heap::PlainHeap<CellDescription>::getInstance().createData();
+  int cellDescriptionIndex = CellDescriptionHeap::getInstance().createData();
 
 //  CellDescription paddingCellDescription;
 //  #ifdef Parallel
@@ -41,42 +42,42 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPaddingCellDescription(
 //  paddingCellDescription.setLevel(level);
 //  paddingCellDescription.setSize(subgridSize);
 //
-//  peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).push_back(paddingCellDescription);
+//  CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).push_back(paddingCellDescription);
 
-  peano::heap::PlainHeap<CellDescription>::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
-  peano::heap::PlainHeap<CellDescription>::getInstance().deleteData(cellDescriptionIndex);
+  CellDescriptionHeap::getInstance().deleteData(cellDescriptionIndex);
   logTraceOut("sendPaddingCellDescription");
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::sendDataArray(int index) {
   logTraceInWith3Arguments("sendDataArray", index, _position, _level);
-  peano::heap::PlainHeap<Data>::getInstance().sendData(index, _remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  DataHeap::getInstance().sendData(index, _remoteRank, _position, _level, peano::heap::NeighbourCommunication);
   logTraceOut("sendDataArray");
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::sendPaddingDataArray() {
   logTraceInWith2Arguments("sendPaddingDataArray", _position, _level);
-  int index = peano::heap::PlainHeap<Data>::getInstance().createData();
+  int index = DataHeap::getInstance().createData();
   sendDataArray(index);
-  peano::heap::PlainHeap<Data>::getInstance().deleteData(index);
+  DataHeap::getInstance().deleteData(index);
   logTraceOut("sendPaddingDataArray");
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::deleteArraysFromPatch(int cellDescriptionIndex) {
   logTraceInWith1Argument("deleteArraysFromPatch", cellDescriptionIndex);
   if(cellDescriptionIndex != -1) {
-    assertion2(peano::heap::PlainHeap<CellDescription>::getInstance().isValidIndex(cellDescriptionIndex), _position, _level);
-    CellDescription cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+    assertion2(CellDescriptionHeap::getInstance().isValidIndex(cellDescriptionIndex), _position, _level);
+    CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
 
     if(cellDescription.getUNewIndex() != -1) {
-      peano::heap::PlainHeap<Data>::getInstance().deleteData(cellDescription.getUNewIndex());
+      DataHeap::getInstance().deleteData(cellDescription.getUNewIndex());
     }
 //    if(cellDescription.getUOldIndex() != -1) {
-//      peano::heap::PlainHeap<Data>::getInstance().deleteData(cellDescription.getUOldIndex());
+//      DataHeap::getInstance().deleteData(cellDescription.getUOldIndex());
 //    }
 //    if(cellDescription.getAuxIndex() != -1) {
-//      peano::heap::PlainHeap<Data>::getInstance().deleteData(cellDescription.getAuxIndex());
+//      DataHeap::getInstance().deleteData(cellDescription.getAuxIndex());
 //    }
   }
   logTraceOut("deleteArraysFromPatch");
@@ -85,10 +86,10 @@ void peanoclaw::parallel::NeighbourCommunicator::deleteArraysFromPatch(int cellD
 int peanoclaw::parallel::NeighbourCommunicator::receiveDataArray() {
   logTraceIn("receiveDataArray");
 
-  std::vector<Data> remoteArray = peano::heap::PlainHeap<Data>::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  std::vector<Data> remoteArray = DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
-  int localIndex = peano::heap::PlainHeap<Data>::getInstance().createData();
-  std::vector<Data>& localArray = peano::heap::PlainHeap<Data>::getInstance().getData(localIndex);
+  int localIndex = DataHeap::getInstance().createData();
+  std::vector<Data>& localArray = DataHeap::getInstance().getData(localIndex);
 
   // Copy array
   std::vector<Data>::iterator it = remoteArray.begin();
@@ -106,7 +107,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
 
   #ifdef Asserts
   if(cellDescriptionIndex != -1) {
-    CellDescription cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+    CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
     assertion3(tarch::la::allGreater(cellDescription.getSubdivisionFactor(), 0), cellDescription.toString(), _position, _level);
   }
   #endif
@@ -116,7 +117,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   tarch::la::Vector<DIMENSIONS, double> subgridSize;
   bool sendActualPatch = true;
   if(cellDescriptionIndex != -1) {
-    CellDescription cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+    CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
     position    = cellDescription.getPosition();
     level       = cellDescription.getLevel();
     subgridSize = cellDescription.getSize();
@@ -138,7 +139,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
     }
 
     //Write changes back to heap
-    peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0) = cellDescription;
+    CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0) = cellDescription;
   } else {
     sendActualPatch = false;
   }
@@ -147,7 +148,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
     _statistics.sentNeighborData();
     sendCellDescription(cellDescriptionIndex);
 
-    CellDescription cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+    CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
 
     //TODO unterweg debug
     logDebug("", "Sending actual patch to " << _remoteRank
@@ -216,9 +217,9 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
 
   assertion(localCellDescriptionIndex > -1);
-  CellDescription localCellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).at(0);
+  CellDescription localCellDescription = CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0);
 
-  std::vector<CellDescription> remoteCellDescriptionVector = peano::heap::PlainHeap<CellDescription>::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
   //TODO unterweg debug
   logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
@@ -261,13 +262,13 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
   deleteArraysFromPatch(localCellDescriptionIndex);
   remoteCellDescription.setCellDescriptionIndex(localCellDescriptionIndex);
   remoteCellDescription.setIsRemote(true); //TODO unterweg: Remote patches are currently never destroyed.
-  peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).at(0) = remoteCellDescription;
-  assertionEquals(peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).size(), 1);
+  CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0) = remoteCellDescription;
+  assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).size(), 1);
 
   //TODO unterweg debug
-//    logInfo("", "Merged: " << peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).at(0).toString());
+//    logInfo("", "Merged: " << CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0).toString());
 
-  assertionEquals(peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
+  assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   logTraceOut("receivePatch");
   #endif
 }
@@ -281,20 +282,20 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {
   logDebug("", "Receiving padding patch from " << _remoteRank << " at " << _position << " on level " << _level);
 
   //Receive padding patch
-  std::vector<CellDescription> remoteCellDescriptionVector = peano::heap::PlainHeap<CellDescription>::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
   assertionEquals2(remoteCellDescriptionVector.size(), 0, _position, _level);
 //  assertionNumericalEquals4(remoteCellDescriptionVector[0].getPosition(), _position, remoteCellDescriptionVector[0].toString(), _position, _level, _subgridSize);
 //  assertionNumericalEquals4(remoteCellDescriptionVector[0].getSize(), _subgridSize, remoteCellDescriptionVector[0].toString(), _position, _level, _subgridSize);
 //  assertionEquals4(remoteCellDescriptionVector[0].getLevel(), _level, remoteCellDescriptionVector[0].toString(), _position, _level, _subgridSize);
 
   //Aux
-//  peano::heap::PlainHeap<Data>::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+//  DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 //
 //  //UOld
-//  peano::heap::PlainHeap<Data>::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+//  DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
   //UNew
-  peano::heap::PlainHeap<Data>::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
   #endif
   logTraceOut("receivePaddingPatch");
 }
@@ -319,8 +320,8 @@ peanoclaw::parallel::NeighbourCommunicator::NeighbourCommunicator(
     _position(position),
     _level(level),
     _subgridSize(subgridSize),
-//    _cellDescriptionHeap(peano::heap::PlainHeap<CellDescription>::getInstance()),
-//    _dataHeap(peano::heap::PlainHeap<Data>::getInstance()),
+//    _cellDescriptionHeap(CellDescriptionHeap::getInstance()),
+//    _dataHeap(DataHeap::getInstance()),
     _remoteSubgridMap(remoteSubgridMap),
     _statistics(statistics),
     //En-/Disable optimizations

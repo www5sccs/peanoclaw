@@ -18,7 +18,7 @@
 #include "peanoclaw/records/Vertex.h"
 #include "peanoclaw/statistics/LevelStatistics.h"
 
-#include "peano/heap/Heap.h"
+#include "peanoclaw/Heap.h"
 #include "peano/utils/UserInterface.h"
 #include "peano/peano.h"
 
@@ -46,10 +46,10 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
   tarch::la::Vector<DIMENSIONS, double> domainSize
 ) {
   //Initialize heap data
-  peano::heap::PlainHeap<peanoclaw::records::CellDescription>::getInstance().setName("CellDescription");
-  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().setName("Data");
-  peano::heap::PlainHeap<peanoclaw::records::VertexDescription>::getInstance().setName("VertexDescription");
-  peano::heap::PlainHeap<peanoclaw::statistics::LevelStatistics>::getInstance().setName("LevelStatistics");
+  CellDescriptionHeap::getInstance().setName("CellDescription");
+  DataHeap::getInstance().setName("Data");
+  VertexDescriptionHeap::getInstance().setName("VertexDescription");
+  LevelStatisticsHeap::getInstance().setName("LevelStatistics");
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
@@ -252,13 +252,13 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
 //  if(vertexDescriptionHeap.getNumberOfAllocatedEntries() > 0) {
 //    logWarning("~PeanoClawLibraryRunner()", "The heap for VertexDescriptions still contains " << vertexDescriptionHeap.getNumberOfAllocatedEntries() << " undeleted entries.");
 //  }
-  peano::heap::PlainHeap<peanoclaw::records::CellDescription>::getInstance().deleteAllData();
-  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().deleteAllData();
-  peano::heap::PlainHeap<peanoclaw::records::VertexDescription>::getInstance().deleteAllData();
+  CellDescriptionHeap::getInstance().deleteAllData();
+  DataHeap::getInstance().deleteAllData();
+  VertexDescriptionHeap::getInstance().deleteAllData();
 
-  peano::heap::PlainHeap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
-  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().plotStatistics();
-  peano::heap::PlainHeap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
+  CellDescriptionHeap::getInstance().plotStatistics();
+  DataHeap::getInstance().plotStatistics();
+  VertexDescriptionHeap::getInstance().plotStatistics();
 
   #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
@@ -303,9 +303,9 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _plotNumber++;
   }
 
-  peano::heap::PlainHeap<peanoclaw::records::CellDescription>::getInstance().plotStatistics();
-  peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().plotStatistics();
-  peano::heap::PlainHeap<peanoclaw::records::VertexDescription>::getInstance().plotStatistics();
+  CellDescriptionHeap::getInstance().plotStatistics();
+  DataHeap::getInstance().plotStatistics();
+  VertexDescriptionHeap::getInstance().plotStatistics();
 
   logTraceOut("evolveToTime");
 }

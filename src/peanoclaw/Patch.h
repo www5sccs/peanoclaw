@@ -12,6 +12,7 @@
 #include "records/Data.h"
 #include "records/CellDescription.h"
 
+#include "peano/heap/Heap.h"
 #include "peano/utils/Globals.h"
 #include "tarch/la/Vector.h"
 #include "tarch/logging/Log.h"
@@ -115,11 +116,10 @@ namespace peanoclaw {
 class peanoclaw::Patch {
 
 public:
+  typedef peanoclaw::records::CellDescription CellDescription;
   typedef peanoclaw::records::Data Data;
 
 private:
-  typedef peanoclaw::records::CellDescription CellDescription;
-
   /**
    * Logging device.
    */

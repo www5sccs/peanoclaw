@@ -7,6 +7,7 @@
 #include "MasterWorkerAndForkJoinCommunicator.h"
 
 #include "peanoclaw/Cell.h"
+#include "peanoclaw/Heap.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
@@ -16,24 +17,24 @@ tarch::logging::Log peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::_l
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDescription(int cellDescriptionIndex) {
   logTraceInWith1Argument("sendCellDescription", cellDescriptionIndex);
-  peano::heap::PlainHeap<CellDescription>::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, _messageType);
+  CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, _messageType);
   logTraceOut("sendCellDescription");
 }
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendDataArray(int index) {
   logTraceInWith3Arguments("sendDataArray", index, _position, _level);
-  peano::heap::PlainHeap<Data>::getInstance().sendData(index, _remoteRank, _position, _level, _messageType);
+  DataHeap::getInstance().sendData(index, _remoteRank, _position, _level, _messageType);
   logTraceOut("sendDataArray");
 }
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::deleteArraysFromPatch(int cellDescriptionIndex) {
   logTraceInWith1Argument("deleteArraysFromPatch", cellDescriptionIndex);
   if(cellDescriptionIndex != -1) {
-    assertion2(peano::heap::PlainHeap<CellDescription>::getInstance().isValidIndex(cellDescriptionIndex), _position, _level);
-    CellDescription cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+    assertion2(CellDescriptionHeap::getInstance().isValidIndex(cellDescriptionIndex), _position, _level);
+    CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
 
     if(cellDescription.getUNewIndex() != -1) {
-      peano::heap::PlainHeap<Data>::getInstance().deleteData(cellDescription.getUNewIndex());
+      DataHeap::getInstance().deleteData(cellDescription.getUNewIndex());
     }
 //    if(cellDescription.getUOldIndex() != -1) {
 //      _dataHeap.deleteData(cellDescription.getUOldIndex());
@@ -47,10 +48,10 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::deleteArraysFromP
 
 int peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receiveDataArray() {
   logTraceIn("receiveDataArray");
-  std::vector<Data> remoteArray = peano::heap::PlainHeap<Data>::getInstance().receiveData(_remoteRank, _position, _level, _messageType);
+  std::vector<Data> remoteArray = DataHeap::getInstance().receiveData(_remoteRank, _position, _level, _messageType);
 
-  int localIndex = peano::heap::PlainHeap<Data>::getInstance().createData();
-  std::vector<Data>& localArray = peano::heap::PlainHeap<Data>::getInstance().getData(localIndex);
+  int localIndex = DataHeap::getInstance().createData();
+  std::vector<Data>& localArray = DataHeap::getInstance().getData(localIndex);
 
   // Copy array
   std::vector<Data>::iterator it = remoteArray.begin();
@@ -69,8 +70,8 @@ peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::MasterWorkerAndForkJoi
 ) : _remoteRank(remoteRank),
     _position(position),
     _level(level),
-//    _cellDescriptionHeap(peano::heap::PlainHeap<CellDescription>::getInstance()),
-//    _dataHeap(peano::heap::PlainHeap<Data>::getInstance()),
+//    _cellDescriptionHeap(CellDescriptionHeap::getInstance()),
+//    _dataHeap(DataHeap::getInstance()),
     _messageType(forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication) {
   logTraceInWith3Arguments("MasterWorkerAndForkJoinCommunicator", remoteRank, position, level);
   logTraceOut("MasterWorkerAndForkJoinCommunicator");
@@ -83,22 +84,20 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendPatch(
   if(cellDescriptionIndex != -1) {
     sendCellDescription(cellDescriptionIndex);
 
-    CellDescription cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+    CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
 
     if(cellDescription.getUNewIndex() != -1) {
-//      std::vector<Data>& localMatrix = peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getUNewIndex());
-//      std::cout << "sending new data with elements: " << localMatrix.size() << std::endl;
       sendDataArray(cellDescription.getUNewIndex());
     }
 
 //    if(cellDescription.getUOldIndex() != -1) {
-//      std::vector<Data>& localMatrix = peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getUOldIndex());
+//      std::vector<Data>& localMatrix = DataHeap::getInstance().getData(cellDescription.getUOldIndex());
 ////      std::cout << "sending new data with elements: " << localMatrix.size() << std::endl;
 //      sendDataArray(cellDescription.getUOldIndex());
 //    }
 //
 //    if(cellDescription.getAuxIndex() != -1) {
-//      std::vector<Data>& localMatrix = peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance().getData(cellDescription.getAuxIndex());
+//      std::vector<Data>& localMatrix = DataHeap::getInstance().getData(cellDescription.getAuxIndex());
 ////      std::cout << "sending old data with elements: " << localMatrix.size() << std::endl;
 //      sendDataArray(cellDescription.getAuxIndex());
 //    }
@@ -109,12 +108,12 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendPatch(
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int localCellDescriptionIndex) {
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
 
-  std::vector<CellDescription> remoteCellDescriptionVector = peano::heap::PlainHeap<CellDescription>::getInstance().receiveData(_remoteRank, _position, _level, _messageType);
+  std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, _messageType);
   assertionEquals2(remoteCellDescriptionVector.size(), 1, _position, _level);
   CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
 
   assertion3(localCellDescriptionIndex >= 0, localCellDescriptionIndex, _position, _level);
-  CellDescription localCellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).at(0);
+  CellDescription localCellDescription = CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0);
   #ifdef Asserts
   assertionNumericalEquals2(remoteCellDescription.getPosition(), localCellDescription.getPosition(), localCellDescription.toString(), remoteCellDescription.toString());
   assertionNumericalEquals2(remoteCellDescription.getSize(), localCellDescription.getSize(), localCellDescription.toString(), remoteCellDescription.toString());
@@ -140,10 +139,10 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
   //Copy remote cell description to local cell description
   deleteArraysFromPatch(localCellDescriptionIndex);
   remoteCellDescription.setCellDescriptionIndex(localCellDescriptionIndex);
-  peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).at(0) = remoteCellDescription;
-  assertionEquals(peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).size(), 1);
+  CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0) = remoteCellDescription;
+  assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).size(), 1);
 
-  assertionEquals(peano::heap::PlainHeap<CellDescription>::getInstance().getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
+  assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   logTraceOut("receivePatch");
 }
 
@@ -179,7 +178,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringFo
       if(temporaryPatch.isVirtual()) {
         temporaryPatch.switchToNonVirtual();
       }
-      peano::heap::PlainHeap<CellDescription>::getInstance().deleteData(temporaryPatch.getCellDescriptionIndex());
+      CellDescriptionHeap::getInstance().deleteData(temporaryPatch.getCellDescriptionIndex());
     } else {
       assertion2(localCell.getCellDescriptionIndex() != -1, _position, _level);
 

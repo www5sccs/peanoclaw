@@ -427,7 +427,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
     }
   }
 //  std::vector<peanoclaw::records::Data>& uNewCoarse
-//    = peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance()
+//    = DataHeap::getInstance()
 //    .getData(coarsePatch.getUNewIndex());
 //  for(int i = 0; i < coarseSubdivisionFactor*coarseSubdivisionFactor*unknownsPerSubcell; i++) {
 //    uNewCoarse.push_back(peanoclaw::records::Data());
@@ -438,7 +438,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
 //    }
 //  }
 //  std::vector<peanoclaw::records::Data>& uOldCoarse
-//    = peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance()
+//    = DataHeap::getInstance()
 //    .getData(coarsePatch.getUOldIndex());
 //  for(int i = 0; i < (coarseSubdivisionFactor+2*ghostlayerWidth) * (coarseSubdivisionFactor+2*ghostlayerWidth) * unknownsPerSubcell; i++) {
 //    uOldCoarse.push_back(peanoclaw::records::Data());
@@ -488,7 +488,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
     }
   }
 //  std::vector<peanoclaw::records::Data>& uNewFine
-//    = peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance()
+//    = DataHeap::getInstance()
 //    .getData(finePatch.getUNewIndex());
 //  for(int i = 0; i < fineSubdivisionFactor*fineSubdivisionFactor*unknownsPerSubcell; i++) {
 //    uNewFine.push_back(peanoclaw::records::Data());
@@ -499,7 +499,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
 //    }
 //  }
 //  std::vector<peanoclaw::records::Data>& uOldFine
-//    = peano::heap::PlainHeap<peanoclaw::records::Data>::getInstance()
+//    = DataHeap::getInstance()
 //    .getData(finePatch.getUOldIndex());
 //  for(int i = 0; i < (fineSubdivisionFactor+2*ghostlayerWidth) * (fineSubdivisionFactor+2*ghostlayerWidth) * unknownsPerSubcell; i++) {
 //    uOldFine.push_back(peanoclaw::records::Data());

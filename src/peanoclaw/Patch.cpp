@@ -11,6 +11,7 @@
 
 #include "Area.h"
 #include "Cell.h"
+#include "Heap.h"
 #include "peano/heap/Heap.h"
 #include "peano/utils/Loop.h"
 
@@ -125,7 +126,7 @@ peanoclaw::Patch::Patch(const Cell& cell) :
     _cellDescription(0) {
   logTraceInWith1Argument("Patch(...)", cell);
 
-  _cellDescription = &peano::heap::PlainHeap<CellDescription>::getInstance().getData(
+  _cellDescription = &CellDescriptionHeap::getInstance().getData(
       cell.getCellDescriptionIndex()).at(0);
 
   loadCellDescription(cell.getCellDescriptionIndex());
@@ -162,10 +163,9 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
     int ghostLayerWidth, double initialTimestepSize, int level) {
   //Initialise Cell Description
   int cellDescriptionIndex =
-      peano::heap::PlainHeap<CellDescription>::getInstance().createData();
+      CellDescriptionHeap::getInstance().createData();
 
-  std::vector<CellDescription>& cellDescriptions = peano::heap::PlainHeap<
-      CellDescription>::getInstance().getData(cellDescriptionIndex);
+  std::vector<CellDescription>& cellDescriptions = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
 
   CellDescription cellDescription;
   cellDescription.setCellDescriptionIndex(cellDescriptionIndex);
@@ -206,7 +206,7 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   fillCaches();
 
   assertionEquals(
-      peano::heap::PlainHeap<CellDescription>::getInstance().getData(
+      CellDescriptionHeap::getInstance().getData(
           cellDescriptionIndex).size(), 1);
 }
 
@@ -215,7 +215,7 @@ peanoclaw::Patch::~Patch() {
 
 void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
 
-  _cellDescription = &peano::heap::PlainHeap<CellDescription>::getInstance().getData(
+  _cellDescription = &CellDescriptionHeap::getInstance().getData(
       cellDescriptionIndex).at(0);
 
   //Retrieve patch data
@@ -228,21 +228,21 @@ void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
 //              && _cellDescription->getUOldIndex() == -1),
 //      _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex());
   if (_cellDescription->getUNewIndex() != -1) {
-    _uNew = &peano::heap::PlainHeap<Data>::getInstance().getData(
+    _uNew = &DataHeap::getInstance().getData(
         _cellDescription->getUNewIndex());
   } else {
     _uNew = 0;
   }
 
 //  if (_cellDescription->getUOldIndex() != -1) {
-//    _uOldWithGhostlayer = &peano::heap::PlainHeap<Data>::getInstance().getData(
+//    _uOldWithGhostlayer = &DataHeap::getInstance().getData(
 //        _cellDescription->getUOldIndex());
 //  } else {
 //    _uOldWithGhostlayer = 0;
 //  }
 //
 //  if (_cellDescription->getAuxIndex() != -1) {
-//    _auxArray = &peano::heap::PlainHeap<Data>::getInstance().getData(
+//    _auxArray = &DataHeap::getInstance().getData(
 //        _cellDescription->getAuxIndex());
 //  } else {
 //    _auxArray = 0;
@@ -257,21 +257,21 @@ void peanoclaw::Patch::reloadCellDescription() {
 
 void peanoclaw::Patch::deleteData() {
   if(_cellDescription->getUNewIndex() != -1) {
-    peano::heap::PlainHeap<Data>::getInstance().deleteData(_cellDescription->getUNewIndex());
+    DataHeap::getInstance().deleteData(_cellDescription->getUNewIndex());
     _cellDescription->setUNewIndex(-1);
     _uNew = 0;
   }
 //  if(_cellDescription->getUOldIndex() != -1) {
-//    peano::heap::PlainHeap<Data>::getInstance().deleteData(_cellDescription->getUOldIndex());
+//    DataHeap::getInstance().deleteData(_cellDescription->getUOldIndex());
 //    _cellDescription->setUOldIndex(-1);
 //    _uOldWithGhostlayer = 0;
 //  }
 //  if(_cellDescription->getAuxIndex() != -1) {
-//    peano::heap::PlainHeap<Data>::getInstance().deleteData(_cellDescription->getAuxIndex());
+//    DataHeap::getInstance().deleteData(_cellDescription->getAuxIndex());
 //    _cellDescription->setAuxIndex(-1);
 //    _auxArray = 0;
 //  }
-  peano::heap::PlainHeap<CellDescription>::getInstance().deleteData(_cellDescription->getCellDescriptionIndex());
+  CellDescriptionHeap::getInstance().deleteData(_cellDescription->getCellDescriptionIndex());
   _cellDescription = 0;
 
   assertion1(!isValid(), toString());
@@ -894,10 +894,10 @@ void peanoclaw::Patch::switchToVirtual() {
   _cellDescription->setIsVirtual(true);
   //Create uNew if necessary
   if (_cellDescription->getUNewIndex() == -1) {
-    int uNewIndex = peano::heap::PlainHeap<Data>::getInstance().createData();
+    int uNewIndex = DataHeap::getInstance().createData();
     _cellDescription->setUNewIndex(uNewIndex);
     std::vector<Data>& virtualUNew =
-        peano::heap::PlainHeap<Data>::getInstance().getData(uNewIndex);
+        DataHeap::getInstance().getData(uNewIndex);
 
     size_t uNewArraySize = tarch::la::volume(
         _cellDescription->getSubdivisionFactor())
@@ -919,10 +919,10 @@ void peanoclaw::Patch::switchToVirtual() {
   //Create uOld if necessary
 //  if (_cellDescription->getUOldIndex() == -1) {
 //    int uOldWithGhostlayerIndex =
-//        peano::heap::PlainHeap<Data>::getInstance().createData();
+//        DataHeap::getInstance().createData();
 //    _cellDescription->setUOldIndex(uOldWithGhostlayerIndex);
 //    std::vector<Data>& virtualUOldWithGhostlayer =
-//        peano::heap::PlainHeap<Data>::getInstance().getData(uOldWithGhostlayerIndex);
+//        DataHeap::getInstance().getData(uOldWithGhostlayerIndex);
 //    size_t uOldWithGhostlayerArraySize = tarch::la::volume(
 //        _cellDescription->getSubdivisionFactor()
 //            + 2 * _cellDescription->getGhostLayerWidth())
@@ -935,9 +935,9 @@ void peanoclaw::Patch::switchToVirtual() {
 //  if (_cellDescription->getAuxIndex() == -1) {
 //    if (_cellDescription->getAuxiliarFieldsPerSubcell() > 0) {
 //      _cellDescription->setAuxIndex(
-//          peano::heap::PlainHeap<Data>::getInstance().createData());
+//          DataHeap::getInstance().createData());
 //      std::vector<Data>& auxArray =
-//          peano::heap::PlainHeap<Data>::getInstance().getData(
+//          DataHeap::getInstance().getData(
 //              _cellDescription->getAuxIndex());
 //      size_t auxArraySize = tarch::la::volume(
 //          _cellDescription->getSubdivisionFactor())
@@ -957,19 +957,19 @@ void peanoclaw::Patch::switchToNonVirtual() {
   assertion(!isLeaf())
   _cellDescription->setIsVirtual(false);
   if (_cellDescription->getUNewIndex() != -1) {
-    peano::heap::PlainHeap<Data>::getInstance().deleteData(getUNewIndex());
+    DataHeap::getInstance().deleteData(getUNewIndex());
     _cellDescription->setUNewIndex(-1);
     _uNew = 0;
   }
 
 //  if (_cellDescription->getUOldIndex() != -1) {
-//    peano::heap::PlainHeap<Data>::getInstance().deleteData(getUOldIndex());
+//    DataHeap::getInstance().deleteData(getUOldIndex());
 //    _cellDescription->setUOldIndex(-1);
 //    _uOldWithGhostlayer = 0;
 //  }
 //
 //  if (_cellDescription->getAuxIndex() != -1) {
-//    peano::heap::PlainHeap<Data>::getInstance().deleteData(getAuxIndex());
+//    DataHeap::getInstance().deleteData(getAuxIndex());
 //    _cellDescription->setAuxIndex(-1);
 //    _auxArray = 0;
 //  }

@@ -11,7 +11,7 @@
 #include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversal.h"
 #include "peanoclaw/interSubgridCommunication/aspects/CornerAdjacentPatchTraversal.h"
 
-#include "peano/heap/Heap.h"
+#include "peanoclaw/Heap.h"
 #include "peano/utils/Dimensions.h"
 #include "peano/utils/Loop.h"
 
@@ -282,7 +282,7 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
     if(fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
       int cellDescriptionIndex = fineGridVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i);
 
-      CellDescription& cellDescription = peano::heap::PlainHeap<CellDescription>::getInstance().getData(cellDescriptionIndex).at(0);
+      CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
       Patch adjacentPatch(cellDescription);
 
       if(adjacentPatch.getLevel() == level) {

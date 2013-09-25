@@ -6,6 +6,8 @@
  */
 #include "peanoclaw/ParallelSubgrid.h"
 
+#include "peanoclaw/Heap.h"
+
 #include "peano/heap/Heap.h"
 #include "peano/utils/Globals.h"
 
@@ -19,7 +21,7 @@ peanoclaw::ParallelSubgrid::ParallelSubgrid(
 peanoclaw::ParallelSubgrid::ParallelSubgrid(
   int subgridDescriptionIndex
 ) {
-  _cellDescription = &peano::heap::PlainHeap<CellDescription>::getInstance().getData(subgridDescriptionIndex).at(0);
+  _cellDescription = &CellDescriptionHeap::getInstance().getData(subgridDescriptionIndex).at(0);
 }
 
 void peanoclaw::ParallelSubgrid::markCurrentStateAsSent(bool wasSent) {
