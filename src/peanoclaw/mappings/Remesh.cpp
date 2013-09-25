@@ -291,15 +291,15 @@ void peanoclaw::mappings::Remesh::createCell(
   );
   fineGridCell.setCellDescriptionIndex(fineGridPatch.getCellDescriptionIndex());
 
-  std::cout << "Creating cell on rank "
-      #ifdef Parallel
-      << tarch::parallel::Node::getInstance().getRank() << ": "
-      #endif
-      << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-      << fineGridVerticesEnumerator.getCellSize()
-      << ", index=" << fineGridCell.getCellDescriptionIndex()
-      << ", level=" << fineGridVerticesEnumerator.getLevel()
-      << std::endl;
+//  std::cout << "Creating cell on rank "
+//      #ifdef Parallel
+//      << tarch::parallel::Node::getInstance().getRank() << ": "
+//      #endif
+//      << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+//      << fineGridVerticesEnumerator.getCellSize()
+//      << ", index=" << fineGridCell.getCellDescriptionIndex()
+//      << ", level=" << fineGridVerticesEnumerator.getLevel()
+//      << std::endl;
 
   if(fineGridCell.isLeaf()) {
     assertion1(!fineGridPatch.isLeaf(), fineGridPatch);

@@ -205,7 +205,9 @@ if compiler == 'gcc':
       ccflags.append('-g3')
       ccflags.append('-O0')
    elif build == 'asserts"':
-      ccflags.append('-O3') 
+      ccflags.append('-O2')
+      ccflags.append('-g3') 
+      ccflags.append('-ggdb')
    elif build == 'release':
       ccflags.append('-O3') 
    if multicore == 'openmp':
@@ -221,7 +223,7 @@ elif compiler == 'xlc':
       ccflags.append('-O0')
    elif build == 'asserts':
       ccflags.append('-qstrict')
-      ccflags.append('-O3')
+      ccflags.append('-O2')
    elif build == 'release':
       ccflags.append('-qstrict')
       ccflags.append('-O3')
@@ -242,10 +244,12 @@ elif compiler == 'icc':
       ccflags.append('-w')
       ccflags.append('-align')
       ccflags.append('-ansi-alias')
+      ccflags.append('-O2')
    elif build == 'release':
       ccflags.append('-w')
       ccflags.append('-align')
       ccflags.append('-ansi-alias')
+      ccflags.append('-O3')
    if multicore == 'openmp':
       ccflags.append('-openmp')
       linkerflags.append('-openmp')

@@ -48,7 +48,6 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
   //Initialize heap data
   CellDescriptionHeap::getInstance().setName("CellDescription");
   DataHeap::getInstance().setName("Data");
-  VertexDescriptionHeap::getInstance().setName("VertexDescription");
   LevelStatisticsHeap::getInstance().setName("LevelStatistics");
 }
 
@@ -206,6 +205,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       for(int d = 0; d < DIMENSIONS; d++) {
         currentMinimalSubcellSize(d) = std::max(initialMinimalMeshWidth(d), domainSize(d) / pow(3.0, maximumLevel) / subdivisionFactor(d));
       }
+      _repository->getState().setInitialMinimalMeshWidth(currentMinimalSubcellSize);
 
       do {
         iterateInitialiseGrid();
@@ -249,16 +249,11 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
 //  if(dataHeap.getNumberOfAllocatedEntries() > 0) {
 //    logWarning("~PeanoClawLibraryRunner()", "The heap for patch data still contains " << dataHeap.getNumberOfAllocatedEntries() << " undeleted entries.");
 //  }
-//  if(vertexDescriptionHeap.getNumberOfAllocatedEntries() > 0) {
-//    logWarning("~PeanoClawLibraryRunner()", "The heap for VertexDescriptions still contains " << vertexDescriptionHeap.getNumberOfAllocatedEntries() << " undeleted entries.");
-//  }
   CellDescriptionHeap::getInstance().deleteAllData();
   DataHeap::getInstance().deleteAllData();
-  VertexDescriptionHeap::getInstance().deleteAllData();
 
   CellDescriptionHeap::getInstance().plotStatistics();
   DataHeap::getInstance().plotStatistics();
-  VertexDescriptionHeap::getInstance().plotStatistics();
 
   #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
@@ -305,7 +300,6 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 
   CellDescriptionHeap::getInstance().plotStatistics();
   DataHeap::getInstance().plotStatistics();
-  VertexDescriptionHeap::getInstance().plotStatistics();
 
   logTraceOut("evolveToTime");
 }

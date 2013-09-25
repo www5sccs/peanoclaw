@@ -221,15 +221,13 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
 
   std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
-  //TODO unterweg debug
   logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
 
   assertionEquals2(remoteCellDescriptionVector.size(), 1, _position, _level);
   CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
   assertionEquals2(localCellDescription.getLevel(), _level, localCellDescription.toString(), tarch::parallel::Node::getInstance().getRank());
 
-  //TODO unterweg debug
-  logInfo("", "Receiving patch: " << remoteCellDescription.toString());
+  logDebug("", "Receiving patch: " << remoteCellDescription.toString());
 
   assertion6(!remoteCellDescription.getIsRemote(), localCellDescription.toString(), remoteCellDescription.toString(), _position, _level, _remoteRank, tarch::parallel::Node::getInstance().getRank());
   assertionNumericalEquals6(localCellDescription.getPosition(), remoteCellDescription.getPosition(),
@@ -278,7 +276,6 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {
   #ifdef Parallel
   _statistics.receivedPaddingNeighborData();
 
-  //TODO unterweg debug
   logDebug("", "Receiving padding patch from " << _remoteRank << " at " << _position << " on level " << _level);
 
   //Receive padding patch
