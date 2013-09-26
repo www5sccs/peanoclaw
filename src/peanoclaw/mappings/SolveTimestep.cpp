@@ -164,7 +164,7 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
   _globalTimestepEndTime(masterThread._globalTimestepEndTime),
   _domainOffset(masterThread._domainOffset),
   _domainSize(masterThread._domainSize),
-  _initialMinimalMeshWidth(masterThread._initialMinimalMeshWidth),
+  _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
   _probeList(masterThread._probeList),
   _useDimensionalSplittingOptimization(masterThread._useDimensionalSplittingOptimization),
   _subgridStatistics(masterThread._subgridStatistics)
@@ -734,7 +734,7 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();
   _domainOffset = solverState.getDomainOffset();
   _domainSize = solverState.getDomainSize();
-  _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
+  _initialMaximalSubgridSize = solverState.getInitialMaximalSubgridSize();
   _probeList = solverState.getProbeList();
   _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
   _subgridStatistics = peanoclaw::statistics::SubgridStatistics(solverState);

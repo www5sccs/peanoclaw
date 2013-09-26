@@ -56,7 +56,7 @@ class peanoclaw::mappings::SolveTimestep {
 
     peanoclaw::statistics::SubgridStatistics _subgridStatistics;
 
-    tarch::la::Vector<DIMENSIONS, double> _initialMinimalMeshWidth;
+    tarch::la::Vector<DIMENSIONS, double> _initialMaximalSubgridSize;
 
     std::vector<peanoclaw::statistics::Probe> _probeList;
 

@@ -77,12 +77,12 @@ int peanoclaw::State::getDefaultGhostLayerWidth() const {
   return _stateData.getDefaultGhostWidthLayer();
 }
 
-tarch::la::Vector<DIMENSIONS, double> peanoclaw::State::getInitialMinimalMeshWidth() const {
-  return _stateData.getInitialMinimalMeshWidth();
+tarch::la::Vector<DIMENSIONS, double> peanoclaw::State::getInitialMaximalSubgridSize() const {
+  return _stateData.getInitialMaximalSubgridSize();
 }
 
-void peanoclaw::State::setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS, double>& h) {
-  _stateData.setInitialMinimalMeshWidth(h);
+void peanoclaw::State::setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS, double>& h) {
+  _stateData.setInitialMaximalSubgridSize(h);
 }
 
 void peanoclaw::State::setInitialTimestepSize(double initialTimestepSize) {

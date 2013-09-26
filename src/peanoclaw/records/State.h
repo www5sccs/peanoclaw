@@ -34,7 +34,7 @@ namespace peanoclaw {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   20/09/2013 15:47
+    * @date   26/09/2013 11:08
     */
    class peanoclaw::records::State { 
       
@@ -50,9 +50,9 @@ namespace peanoclaw {
             int _unknownsPerSubcell;
             int _auxiliarFieldsPerSubcell;
             #ifdef UseManualAlignment
-            tarch::la::Vector<DIMENSIONS,double> _initialMinimalMeshWidth __attribute__((aligned(VectorisationAlignment)));
+            tarch::la::Vector<DIMENSIONS,double> _initialMaximalSubgridSize __attribute__((aligned(VectorisationAlignment)));
             #else
-            tarch::la::Vector<DIMENSIONS,double> _initialMinimalMeshWidth;
+            tarch::la::Vector<DIMENSIONS,double> _initialMaximalSubgridSize;
             #endif
             #ifdef UseManualAlignment
             tarch::la::Vector<DIMENSIONS,int> _defaultSubdivisionFactor __attribute__((aligned(VectorisationAlignment)));
@@ -122,7 +122,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const int& localHeightOfWorkerTree, const int& globalHeightOfWorkerTreeDuringLastIteration, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork);
+            PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const int& localHeightOfWorkerTree, const int& globalHeightOfWorkerTreeDuringLastIteration, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork);
             
             
             inline int getAdditionalLevelsForPredefinedRefinement() const 
@@ -264,12 +264,12 @@ namespace peanoclaw {
              * 
              * @see convert()
              */
-            inline tarch::la::Vector<DIMENSIONS,double> getInitialMinimalMeshWidth() const 
+            inline tarch::la::Vector<DIMENSIONS,double> getInitialMaximalSubgridSize() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-               return _initialMinimalMeshWidth;
+               return _initialMaximalSubgridSize;
             }
             
             
@@ -293,12 +293,12 @@ namespace peanoclaw {
              * 
              * @see convert()
              */
-            inline void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth) 
+            inline void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-               _initialMinimalMeshWidth = (initialMinimalMeshWidth);
+               _initialMaximalSubgridSize = (initialMaximalSubgridSize);
             }
             
             
@@ -1312,7 +1312,7 @@ namespace peanoclaw {
          /**
           * Generated
           */
-         State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const int& localHeightOfWorkerTree, const int& globalHeightOfWorkerTreeDuringLastIteration, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork);
+         State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const int& localHeightOfWorkerTree, const int& globalHeightOfWorkerTreeDuringLastIteration, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork);
          
          /**
           * Generated
@@ -1459,12 +1459,12 @@ namespace peanoclaw {
           * 
           * @see convert()
           */
-         inline tarch::la::Vector<DIMENSIONS,double> getInitialMinimalMeshWidth() const 
+         inline tarch::la::Vector<DIMENSIONS,double> getInitialMaximalSubgridSize() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-            return _persistentRecords._initialMinimalMeshWidth;
+            return _persistentRecords._initialMaximalSubgridSize;
          }
          
          
@@ -1488,37 +1488,37 @@ namespace peanoclaw {
           * 
           * @see convert()
           */
-         inline void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth) 
+         inline void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-            _persistentRecords._initialMinimalMeshWidth = (initialMinimalMeshWidth);
+            _persistentRecords._initialMaximalSubgridSize = (initialMaximalSubgridSize);
          }
          
          
          
-         inline double getInitialMinimalMeshWidth(int elementIndex) const 
+         inline double getInitialMaximalSubgridSize(int elementIndex) const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
             assertion(elementIndex>=0);
             assertion(elementIndex<DIMENSIONS);
-            return _persistentRecords._initialMinimalMeshWidth[elementIndex];
+            return _persistentRecords._initialMaximalSubgridSize[elementIndex];
             
          }
          
          
          
-         inline void setInitialMinimalMeshWidth(int elementIndex, const double& initialMinimalMeshWidth) 
+         inline void setInitialMaximalSubgridSize(int elementIndex, const double& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
             assertion(elementIndex>=0);
             assertion(elementIndex<DIMENSIONS);
-            _persistentRecords._initialMinimalMeshWidth[elementIndex]= initialMinimalMeshWidth;
+            _persistentRecords._initialMaximalSubgridSize[elementIndex]= initialMaximalSubgridSize;
             
          }
          
@@ -2715,7 +2715,7 @@ namespace peanoclaw {
        *
        * 		   build date: 12-04-2013 09:18
        *
-       * @date   20/09/2013 15:47
+       * @date   26/09/2013 11:08
        */
       class peanoclaw::records::StatePacked { 
          
@@ -2728,7 +2728,7 @@ namespace peanoclaw {
                bool _initialRefinmentTriggered;
                int _unknownsPerSubcell;
                int _auxiliarFieldsPerSubcell;
-               tarch::la::Vector<DIMENSIONS,double> _initialMinimalMeshWidth;
+               tarch::la::Vector<DIMENSIONS,double> _initialMaximalSubgridSize;
                tarch::la::Vector<DIMENSIONS,int> _defaultSubdivisionFactor;
                int _defaultGhostWidthLayer;
                double _initialTimestepSize;
@@ -2783,7 +2783,7 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const int& localHeightOfWorkerTree, const int& globalHeightOfWorkerTreeDuringLastIteration, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork);
+               PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const int& localHeightOfWorkerTree, const int& globalHeightOfWorkerTreeDuringLastIteration, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork);
                
                
                inline int getAdditionalLevelsForPredefinedRefinement() const 
@@ -2925,12 +2925,12 @@ namespace peanoclaw {
                 * 
                 * @see convert()
                 */
-               inline tarch::la::Vector<DIMENSIONS,double> getInitialMinimalMeshWidth() const 
+               inline tarch::la::Vector<DIMENSIONS,double> getInitialMaximalSubgridSize() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  return _initialMinimalMeshWidth;
+                  return _initialMaximalSubgridSize;
                }
                
                
@@ -2954,12 +2954,12 @@ namespace peanoclaw {
                 * 
                 * @see convert()
                 */
-               inline void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth) 
+               inline void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  _initialMinimalMeshWidth = (initialMinimalMeshWidth);
+                  _initialMaximalSubgridSize = (initialMaximalSubgridSize);
                }
                
                
@@ -4000,7 +4000,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const int& localHeightOfWorkerTree, const int& globalHeightOfWorkerTreeDuringLastIteration, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork);
+            StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const int& localHeightOfWorkerTree, const int& globalHeightOfWorkerTreeDuringLastIteration, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork);
             
             /**
              * Generated
@@ -4147,12 +4147,12 @@ namespace peanoclaw {
              * 
              * @see convert()
              */
-            inline tarch::la::Vector<DIMENSIONS,double> getInitialMinimalMeshWidth() const 
+            inline tarch::la::Vector<DIMENSIONS,double> getInitialMaximalSubgridSize() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-               return _persistentRecords._initialMinimalMeshWidth;
+               return _persistentRecords._initialMaximalSubgridSize;
             }
             
             
@@ -4176,37 +4176,37 @@ namespace peanoclaw {
              * 
              * @see convert()
              */
-            inline void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth) 
+            inline void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-               _persistentRecords._initialMinimalMeshWidth = (initialMinimalMeshWidth);
+               _persistentRecords._initialMaximalSubgridSize = (initialMaximalSubgridSize);
             }
             
             
             
-            inline double getInitialMinimalMeshWidth(int elementIndex) const 
+            inline double getInitialMaximalSubgridSize(int elementIndex) const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                assertion(elementIndex>=0);
                assertion(elementIndex<DIMENSIONS);
-               return _persistentRecords._initialMinimalMeshWidth[elementIndex];
+               return _persistentRecords._initialMaximalSubgridSize[elementIndex];
                
             }
             
             
             
-            inline void setInitialMinimalMeshWidth(int elementIndex, const double& initialMinimalMeshWidth) 
+            inline void setInitialMaximalSubgridSize(int elementIndex, const double& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                assertion(elementIndex>=0);
                assertion(elementIndex<DIMENSIONS);
-               _persistentRecords._initialMinimalMeshWidth[elementIndex]= initialMinimalMeshWidth;
+               _persistentRecords._initialMaximalSubgridSize[elementIndex]= initialMaximalSubgridSize;
                
             }
             
@@ -5427,7 +5427,7 @@ namespace peanoclaw {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   20/09/2013 15:47
+          * @date   26/09/2013 11:08
           */
          class peanoclaw::records::State { 
             
@@ -5443,9 +5443,9 @@ namespace peanoclaw {
                   int _unknownsPerSubcell;
                   int _auxiliarFieldsPerSubcell;
                   #ifdef UseManualAlignment
-                  tarch::la::Vector<DIMENSIONS,double> _initialMinimalMeshWidth __attribute__((aligned(VectorisationAlignment)));
+                  tarch::la::Vector<DIMENSIONS,double> _initialMaximalSubgridSize __attribute__((aligned(VectorisationAlignment)));
                   #else
-                  tarch::la::Vector<DIMENSIONS,double> _initialMinimalMeshWidth;
+                  tarch::la::Vector<DIMENSIONS,double> _initialMaximalSubgridSize;
                   #endif
                   #ifdef UseManualAlignment
                   tarch::la::Vector<DIMENSIONS,int> _defaultSubdivisionFactor __attribute__((aligned(VectorisationAlignment)));
@@ -5510,7 +5510,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                  PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                   
                   
                   inline int getAdditionalLevelsForPredefinedRefinement() const 
@@ -5652,12 +5652,12 @@ namespace peanoclaw {
                    * 
                    * @see convert()
                    */
-                  inline tarch::la::Vector<DIMENSIONS,double> getInitialMinimalMeshWidth() const 
+                  inline tarch::la::Vector<DIMENSIONS,double> getInitialMaximalSubgridSize() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     return _initialMinimalMeshWidth;
+                     return _initialMaximalSubgridSize;
                   }
                   
                   
@@ -5681,12 +5681,12 @@ namespace peanoclaw {
                    * 
                    * @see convert()
                    */
-                  inline void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth) 
+                  inline void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     _initialMinimalMeshWidth = (initialMinimalMeshWidth);
+                     _initialMaximalSubgridSize = (initialMaximalSubgridSize);
                   }
                   
                   
@@ -6600,7 +6600,7 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+               State(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                
                /**
                 * Generated
@@ -6747,12 +6747,12 @@ namespace peanoclaw {
                 * 
                 * @see convert()
                 */
-               inline tarch::la::Vector<DIMENSIONS,double> getInitialMinimalMeshWidth() const 
+               inline tarch::la::Vector<DIMENSIONS,double> getInitialMaximalSubgridSize() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  return _persistentRecords._initialMinimalMeshWidth;
+                  return _persistentRecords._initialMaximalSubgridSize;
                }
                
                
@@ -6776,37 +6776,37 @@ namespace peanoclaw {
                 * 
                 * @see convert()
                 */
-               inline void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth) 
+               inline void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  _persistentRecords._initialMinimalMeshWidth = (initialMinimalMeshWidth);
+                  _persistentRecords._initialMaximalSubgridSize = (initialMaximalSubgridSize);
                }
                
                
                
-               inline double getInitialMinimalMeshWidth(int elementIndex) const 
+               inline double getInitialMaximalSubgridSize(int elementIndex) const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                   assertion(elementIndex>=0);
                   assertion(elementIndex<DIMENSIONS);
-                  return _persistentRecords._initialMinimalMeshWidth[elementIndex];
+                  return _persistentRecords._initialMaximalSubgridSize[elementIndex];
                   
                }
                
                
                
-               inline void setInitialMinimalMeshWidth(int elementIndex, const double& initialMinimalMeshWidth) 
+               inline void setInitialMaximalSubgridSize(int elementIndex, const double& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                   assertion(elementIndex>=0);
                   assertion(elementIndex<DIMENSIONS);
-                  _persistentRecords._initialMinimalMeshWidth[elementIndex]= initialMinimalMeshWidth;
+                  _persistentRecords._initialMaximalSubgridSize[elementIndex]= initialMaximalSubgridSize;
                   
                }
                
@@ -7903,7 +7903,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   20/09/2013 15:47
+             * @date   26/09/2013 11:08
              */
             class peanoclaw::records::StatePacked { 
                
@@ -7916,7 +7916,7 @@ namespace peanoclaw {
                      bool _initialRefinmentTriggered;
                      int _unknownsPerSubcell;
                      int _auxiliarFieldsPerSubcell;
-                     tarch::la::Vector<DIMENSIONS,double> _initialMinimalMeshWidth;
+                     tarch::la::Vector<DIMENSIONS,double> _initialMaximalSubgridSize;
                      tarch::la::Vector<DIMENSIONS,int> _defaultSubdivisionFactor;
                      int _defaultGhostWidthLayer;
                      double _initialTimestepSize;
@@ -7966,7 +7966,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                     PersistentRecords(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                      
                      
                      inline int getAdditionalLevelsForPredefinedRefinement() const 
@@ -8108,12 +8108,12 @@ namespace peanoclaw {
                       * 
                       * @see convert()
                       */
-                     inline tarch::la::Vector<DIMENSIONS,double> getInitialMinimalMeshWidth() const 
+                     inline tarch::la::Vector<DIMENSIONS,double> getInitialMaximalSubgridSize() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                        return _initialMinimalMeshWidth;
+                        return _initialMaximalSubgridSize;
                      }
                      
                      
@@ -8137,12 +8137,12 @@ namespace peanoclaw {
                       * 
                       * @see convert()
                       */
-                     inline void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth) 
+                     inline void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                        _initialMinimalMeshWidth = (initialMinimalMeshWidth);
+                        _initialMaximalSubgridSize = (initialMaximalSubgridSize);
                      }
                      
                      
@@ -9074,7 +9074,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
+                  StatePacked(const int& additionalLevelsForPredefinedRefinement, const bool& isInitializing, const bool& isRefinementCriterionEnabled, const bool& initialRefinmentTriggered, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingOptimization, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const int& plotNumber, const int& subPlotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted);
                   
                   /**
                    * Generated
@@ -9221,12 +9221,12 @@ namespace peanoclaw {
                    * 
                    * @see convert()
                    */
-                  inline tarch::la::Vector<DIMENSIONS,double> getInitialMinimalMeshWidth() const 
+                  inline tarch::la::Vector<DIMENSIONS,double> getInitialMaximalSubgridSize() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     return _persistentRecords._initialMinimalMeshWidth;
+                     return _persistentRecords._initialMaximalSubgridSize;
                   }
                   
                   
@@ -9250,37 +9250,37 @@ namespace peanoclaw {
                    * 
                    * @see convert()
                    */
-                  inline void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& initialMinimalMeshWidth) 
+                  inline void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     _persistentRecords._initialMinimalMeshWidth = (initialMinimalMeshWidth);
+                     _persistentRecords._initialMaximalSubgridSize = (initialMaximalSubgridSize);
                   }
                   
                   
                   
-                  inline double getInitialMinimalMeshWidth(int elementIndex) const 
+                  inline double getInitialMaximalSubgridSize(int elementIndex) const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                      assertion(elementIndex>=0);
                      assertion(elementIndex<DIMENSIONS);
-                     return _persistentRecords._initialMinimalMeshWidth[elementIndex];
+                     return _persistentRecords._initialMaximalSubgridSize[elementIndex];
                      
                   }
                   
                   
                   
-                  inline void setInitialMinimalMeshWidth(int elementIndex, const double& initialMinimalMeshWidth) 
+                  inline void setInitialMaximalSubgridSize(int elementIndex, const double& initialMaximalSubgridSize) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
                      assertion(elementIndex>=0);
                      assertion(elementIndex<DIMENSIONS);
-                     _persistentRecords._initialMinimalMeshWidth[elementIndex]= initialMinimalMeshWidth;
+                     _persistentRecords._initialMaximalSubgridSize[elementIndex]= initialMaximalSubgridSize;
                      
                   }
                   

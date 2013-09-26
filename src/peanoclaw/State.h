@@ -113,9 +113,9 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       int getDefaultGhostLayerWidth() const;
 
-      tarch::la::Vector<DIMENSIONS, double> getInitialMinimalMeshWidth() const;
+      tarch::la::Vector<DIMENSIONS, double> getInitialMaximalSubgridSize() const;
 
-      void setInitialMinimalMeshWidth(const tarch::la::Vector<DIMENSIONS, double>& h);
+      void setInitialMaximalSubgridSize(const tarch::la::Vector<DIMENSIONS, double>& h);
 
       void setInitialTimestepSize(double initialTimestepSize);
 

@@ -41,12 +41,16 @@ void configureLogFilter() {
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
 
+  //Disable Peano
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::", true ) );
+
   //Disable minimal time subgrid
-  //tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
 
   //Selective Tracing
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelStatistics", true ) );
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::runners::PeanoClawLibraryRunner", false ) );
-  //tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel", true ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics::logLevelStatistics", false ) );
 
   std::ostringstream logFileName;
   #ifdef Parallel
@@ -77,7 +81,7 @@ tarch::la::Vector<DIMENSIONS, int> convertToVector(int v0, int v1, int v2) {
 
 extern "C"
 peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
-  double initialMinimalMeshWidthScalar,
+  double initialMaximalMeshWidthScalar,
   double domainOffsetX0,
   double domainOffsetX1,
   double domainOffsetX2,
@@ -148,12 +152,12 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   tarch::la::Vector<DIMENSIONS, double> domainOffset = convertToVector(domainOffsetX0, domainOffsetX1, domainOffsetX2);
   tarch::la::Vector<DIMENSIONS, double> domainSize = convertToVector(domainSizeX0, domainSizeX1, domainSizeX2);
   
-  tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(initialMinimalMeshWidthScalar);
+  tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(initialMaximalMeshWidthScalar);
   tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = convertToVector(subdivisionFactorX0, subdivisionFactorX1, subdivisionFactorX2);
 
   //Check parameters
   assertion1(tarch::la::greater(domainSizeX0, 0.0) && tarch::la::greater(domainSizeX1, 0.0), domainSize);
-  if(initialMinimalMeshWidthScalar > domainSizeX0 || initialMinimalMeshWidthScalar > domainSizeX1) {
+  if(initialMaximalMeshWidthScalar > domainSizeX0 || initialMaximalMeshWidthScalar > domainSizeX1) {
     logError("pyclaw_peano_new(...)", "Domainsize or initialMinimalMeshWidth not set properly.");
   }
   if(tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(1), subdivisionFactor) ) {

@@ -66,7 +66,7 @@ peanoclaw::mappings::InitialiseGrid::InitialiseGrid()
 : _defaultSubdivisionFactor(-1),
   _defaultGhostLayerWidth(-1),
   _initialTimestepSize(-1.0),
-  _initialMinimalMeshWidth(-1.0),
+  _initialMaximalSubgridSize(-1.0),
   _numerics(0),
   _refinementTriggered(false) {
   logTraceIn( "InitialiseGrid()" );
@@ -84,7 +84,7 @@ peanoclaw::mappings::InitialiseGrid::~InitialiseGrid() {
 
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  masterThread)
-:  _initialMinimalMeshWidth(masterThread._initialMinimalMeshWidth),
+:  _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
    _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
    _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
    _initialTimestepSize(masterThread._initialTimestepSize),
@@ -153,7 +153,7 @@ void peanoclaw::mappings::InitialiseGrid::createInnerVertex(
 
   //Normal refinement
   if(
-          tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth) 
+          tarch::la::oneGreater(fineGridH, _initialMaximalSubgridSize)
           && (fineGridVertex.getRefinementControl() == Vertex::Records::Unrefined)
     ) {
     fineGridVertex.refine();
@@ -181,7 +181,7 @@ void peanoclaw::mappings::InitialiseGrid::createBoundaryVertex(
 
   //Normal refinement
   if(
-      tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth)
+      tarch::la::oneGreater(fineGridH, _initialMaximalSubgridSize)
       && (fineGridVertex.getRefinementControl() == Vertex::Records::Unrefined)
   ) {
     fineGridVertex.refine();
@@ -464,7 +464,7 @@ void peanoclaw::mappings::InitialiseGrid::touchVertexFirstTime(
 
       //Normal refinement
       if(
-          tarch::la::oneGreater(fineGridH, _initialMinimalMeshWidth)
+          tarch::la::oneGreater(fineGridH, _initialMaximalSubgridSize)
           && (fineGridVertex.getRefinementControl() == Vertex::Records::Unrefined)
         ) {
         fineGridVertex.refine();
@@ -542,7 +542,7 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
   
-  _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
+  _initialMaximalSubgridSize = solverState.getInitialMaximalSubgridSize();
 
   _defaultSubdivisionFactor = solverState.getDefaultSubdivisionFactor();
 

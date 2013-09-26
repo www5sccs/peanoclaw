@@ -408,27 +408,27 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
   }
 
   //Add non-referenced patches
-  int index = 0;
-  int numberOfEntries = 0;
-  while(numberOfEntries < CellDescriptionHeap::getInstance().getNumberOfAllocatedEntries()) {
-    if(CellDescriptionHeap::getInstance().isValidIndex(index)) {
-//      if(_descriptions.find(index) == _descriptions.end()) {
-//        //Found non-referenced patch
-//        CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(index).at(0);
-//        PatchDescription patchDescription;
-//        patchDescription.setPosition(cellDescription.getPosition());
-//        patchDescription.setSize(cellDescription.getSize());
-//        patchDescription.setLevel(cellDescription.getLevel());
-//        patchDescription.setIsRemote(cellDescription.getIsRemote());
-//        patchDescription.setIsReferenced(false);
-//        patchDescription.setCellDescriptionIndex(index);
-//        patchDescription.setRank(tarch::parallel::Node::getInstance().getRank());
-//        descriptionVector.push_back(patchDescription);
-//      }
-      numberOfEntries++;
-    }
-    index++;
-  }
+//  int index = 0;
+//  int numberOfEntries = 0;
+//  while(numberOfEntries < CellDescriptionHeap::getInstance().getNumberOfAllocatedEntries()) {
+//    if(CellDescriptionHeap::getInstance().isValidIndex(index)) {
+////      if(_descriptions.find(index) == _descriptions.end()) {
+////        //Found non-referenced patch
+////        CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(index).at(0);
+////        PatchDescription patchDescription;
+////        patchDescription.setPosition(cellDescription.getPosition());
+////        patchDescription.setSize(cellDescription.getSize());
+////        patchDescription.setLevel(cellDescription.getLevel());
+////        patchDescription.setIsRemote(cellDescription.getIsRemote());
+////        patchDescription.setIsReferenced(false);
+////        patchDescription.setCellDescriptionIndex(index);
+////        patchDescription.setRank(tarch::parallel::Node::getInstance().getRank());
+////        descriptionVector.push_back(patchDescription);
+////      }
+//      numberOfEntries++;
+//    }
+//    index++;
+//  }
 
   //Send
   PatchDescriptionHeap::getInstance().sendData(
@@ -557,12 +557,6 @@ void peanoclaw::mappings::ValidateGrid::touchVertexLastTime(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-
-  //TODO unterweg debug
-//  logInfo("", "Touching vertex last time " << fineGridX << ", "
-//      << fineGridH
-//      << ",level=" << (coarseGridVerticesEnumerator.getLevel() + 1)
-//      );
 
   _validator.findAdjacentPatches(
     fineGridVertex,

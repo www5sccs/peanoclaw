@@ -15,7 +15,7 @@ class peano::applications::peanoclaw::dastgen::State {
 	//Patch configuration
 	persistent parallelise int unknownsPerSubcell;
 	persistent parallelise int auxiliarFieldsPerSubcell;
-	persistent parallelise double initialMinimalMeshWidth[DIMENSIONS];
+	persistent parallelise double initialMaximalSubgridSize[DIMENSIONS];
 	persistent parallelise int defaultSubdivisionFactor[DIMENSIONS];
 	persistent parallelise int defaultGhostWidthLayer;
 	persistent parallelise double initialTimestepSize;

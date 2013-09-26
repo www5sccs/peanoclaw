@@ -46,7 +46,7 @@ class peanoclaw::mappings::InitialiseGrid {
 
     double _initialTimestepSize;
 
-    tarch::la::Vector<DIMENSIONS, double> _initialMinimalMeshWidth;
+    tarch::la::Vector<DIMENSIONS, double> _initialMaximalSubgridSize;
 
     peanoclaw::Numerics* _numerics;
 

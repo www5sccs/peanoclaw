@@ -129,7 +129,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   peanoclaw::Numerics& numerics,
   const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
   const tarch::la::Vector<DIMENSIONS, double>& domainSize,
-  const tarch::la::Vector<DIMENSIONS, double>& initialMinimalMeshWidth,
+  const tarch::la::Vector<DIMENSIONS, double>& initialMaximalMeshWidth,
   const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
   int defaultGhostLayerWidth,
   int unknownsPerSubcell,
@@ -180,8 +180,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setDefaultGhostLayerWidth(defaultGhostLayerWidth);
   state.setUnknownsPerSubcell(unknownsPerSubcell);
   state.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
-  tarch::la::Vector<DIMENSIONS, double> initialMinimalSubcellSize = tarch::la::multiplyComponents(initialMinimalMeshWidth, subdivisionFactor.convertScalar<double>());
-  state.setInitialMinimalMeshWidth(initialMinimalSubcellSize);
   state.setNumerics(numerics);
   state.resetTotalNumberOfCellUpdates();
   state.setInitialTimestepSize(initialTimestepSize);
@@ -196,16 +194,17 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
     tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();
 
     state.enableRefinementCriterion(false);
-    tarch::la::Vector<DIMENSIONS, double> currentMinimalSubcellSize;
+    tarch::la::Vector<DIMENSIONS, double> initialMinimalSubgridSize = tarch::la::multiplyComponents(initialMaximalMeshWidth, subdivisionFactor.convertScalar<double>());
+    tarch::la::Vector<DIMENSIONS, double> currentMinimalSubgridSize;
     int maximumLevel = 2;
     do {
 
       logDebug("PeanoClawLibraryRunner", "Iterating with maximumLevel=" << maximumLevel);
 
       for(int d = 0; d < DIMENSIONS; d++) {
-        currentMinimalSubcellSize(d) = std::max(initialMinimalMeshWidth(d), domainSize(d) / pow(3.0, maximumLevel) / subdivisionFactor(d));
+        currentMinimalSubgridSize(d) = std::max(initialMinimalSubgridSize(d), domainSize(d) / pow(3.0, maximumLevel));
       }
-      _repository->getState().setInitialMinimalMeshWidth(currentMinimalSubcellSize);
+      _repository->getState().setInitialMaximalSubgridSize(currentMinimalSubgridSize);
 
       do {
         iterateInitialiseGrid();
@@ -215,13 +214,13 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
       maximumLevel += 2;
-    } while(tarch::la::oneGreater(currentMinimalSubcellSize, initialMinimalMeshWidth));
+    } while(tarch::la::oneGreater(currentMinimalSubgridSize, initialMinimalSubgridSize));
     #endif
 
     state.enableRefinementCriterion(true);
     do {
       logDebug("PeanoClawLibraryRunner", "Iterate with Refinement Criterion");
-      iterateInitialiseGrid();
+//      iterateInitialiseGrid();
       iterateInitialiseGrid();
     } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 

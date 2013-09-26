@@ -954,7 +954,7 @@ void peanoclaw::mappings::Remesh::beginIteration(
                               *_numerics
                            );
 
-  _initialMinimalMeshWidth = solverState.getInitialMinimalMeshWidth();
+  _initialMinimalMeshWidth = solverState.getInitialMaximalSubgridSize();
   _isInitializing = solverState.getIsInitializing();
   _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
   _parallelStatistics = peanoclaw::statistics::ParallelStatistics("Iteration");
@@ -980,7 +980,7 @@ void peanoclaw::mappings::Remesh::beginIteration(
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
     solverState.resetLocalHeightOfWorkerTree();
 
-    logInfo("beginIteration(State)", "Height of worker tree in last grid iteration was " << solverState.getGlobalHeightOfWorkerTreeDuringLastIteration())
+    logDebug("beginIteration(State)", "Height of worker tree in last grid iteration was " << solverState.getGlobalHeightOfWorkerTreeDuringLastIteration());
   } else {
     solverState.increaseLocalHeightOfWorkerTree();
   }
