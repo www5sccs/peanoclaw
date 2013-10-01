@@ -54,8 +54,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
 void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
   //Distributed Memory
   #if defined(Parallel)
-  tarch::parallel::Node::getInstance().setTimeOutWarning(45);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(90);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(800);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(2400);
 
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
     tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
@@ -142,7 +142,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(true)
+  _validateGrid(false)
 {
   #ifndef Asserts
   _validateGrid = false;
