@@ -6,11 +6,10 @@ Constant: DIMENSIONS;
 
 class peano::applications::peanoclaw::dastgen::State {
 
-  //Grid configuration (Provisorical)
-  persistent parallelise int additionalLevelsForPredefinedRefinement;
+  //Grid configuration
+  //persistent parallelise int additionalLevelsForPredefinedRefinement;
   persistent parallelise bool isInitializing;
   persistent parallelise bool isRefinementCriterionEnabled;
-  persistent parallelise bool initialRefinmentTriggered;
 	
 	//Patch configuration
 	persistent parallelise int unknownsPerSubcell;

@@ -132,7 +132,7 @@ class peanoclaw::repositories::RepositoryArrayStack: public peanoclaw::repositor
         
     virtual peanoclaw::State& getState();
 
-    virtual void iterate( bool reduceState = true );
+    virtual void iterate();
     
     virtual void writeCheckpoint(peano::grid::Checkpoint<peanoclaw::Vertex, peanoclaw::Cell> * const checkpoint); 
     virtual void readCheckpoint( peano::grid::Checkpoint<peanoclaw::Vertex, peanoclaw::Cell> const * const checkpoint );

@@ -5,9 +5,8 @@ peanoclaw::records::RepositoryState::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::RepositoryState::PersistentRecords::PersistentRecords(const Action& action, const bool& reduceState):
-_action(action),
-_reduceState(reduceState) {
+peanoclaw::records::RepositoryState::PersistentRecords::PersistentRecords(const Action& action):
+_action(action) {
    
 }
 
@@ -17,13 +16,13 @@ peanoclaw::records::RepositoryState::RepositoryState() {
 
 
 peanoclaw::records::RepositoryState::RepositoryState(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._action, persistentRecords._reduceState) {
+_persistentRecords(persistentRecords._action) {
    
 }
 
 
-peanoclaw::records::RepositoryState::RepositoryState(const Action& action, const bool& reduceState):
-_persistentRecords(action, reduceState) {
+peanoclaw::records::RepositoryState::RepositoryState(const Action& action):
+_persistentRecords(action) {
    
 }
 
@@ -67,8 +66,6 @@ std::string peanoclaw::records::RepositoryState::toString() const {
 void peanoclaw::records::RepositoryState::toString (std::ostream& out) const {
    out << "("; 
    out << "action:" << toString(getAction());
-   out << ",";
-   out << "reduceState:" << getReduceState();
    out <<  ")";
 }
 
@@ -79,8 +76,7 @@ peanoclaw::records::RepositoryState::PersistentRecords peanoclaw::records::Repos
 
 peanoclaw::records::RepositoryStatePacked peanoclaw::records::RepositoryState::convert() const{
    return RepositoryStatePacked(
-      getAction(),
-      getReduceState()
+      getAction()
    );
 }
 
@@ -95,16 +91,14 @@ peanoclaw::records::RepositoryStatePacked peanoclaw::records::RepositoryState::c
       {
          RepositoryState dummyRepositoryState[2];
          
-         const int Attributes = 3;
+         const int Attributes = 2;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //action
-            MPI_CHAR,		 //reduceState
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             1,		 //action
-            1,		 //reduceState
             1		 // end/displacement flag
          };
          
@@ -113,8 +107,7 @@ peanoclaw::records::RepositoryStatePacked peanoclaw::records::RepositoryState::c
          MPI_Aint base;
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[0]._persistentRecords._action))), 		&disp[0] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[0]._persistentRecords._reduceState))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[1]._persistentRecords._action))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[1]._persistentRecords._action))), 		&disp[1] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -129,16 +122,14 @@ peanoclaw::records::RepositoryStatePacked peanoclaw::records::RepositoryState::c
       {
          RepositoryState dummyRepositoryState[2];
          
-         const int Attributes = 3;
+         const int Attributes = 2;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //action
-            MPI_CHAR,		 //reduceState
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             1,		 //action
-            1,		 //reduceState
             1		 // end/displacement flag
          };
          
@@ -147,8 +138,7 @@ peanoclaw::records::RepositoryStatePacked peanoclaw::records::RepositoryState::c
          MPI_Aint base;
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[0]._persistentRecords._action))), 		&disp[0] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[0]._persistentRecords._reduceState))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[1]._persistentRecords._action))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryState[1]._persistentRecords._action))), 		&disp[1] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -365,9 +355,8 @@ peanoclaw::records::RepositoryStatePacked::PersistentRecords::PersistentRecords(
 }
 
 
-peanoclaw::records::RepositoryStatePacked::PersistentRecords::PersistentRecords(const Action& action, const bool& reduceState):
-_action(action),
-_reduceState(reduceState) {
+peanoclaw::records::RepositoryStatePacked::PersistentRecords::PersistentRecords(const Action& action):
+_action(action) {
    
 }
 
@@ -377,13 +366,13 @@ peanoclaw::records::RepositoryStatePacked::RepositoryStatePacked() {
 
 
 peanoclaw::records::RepositoryStatePacked::RepositoryStatePacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._action, persistentRecords._reduceState) {
+_persistentRecords(persistentRecords._action) {
    
 }
 
 
-peanoclaw::records::RepositoryStatePacked::RepositoryStatePacked(const Action& action, const bool& reduceState):
-_persistentRecords(action, reduceState) {
+peanoclaw::records::RepositoryStatePacked::RepositoryStatePacked(const Action& action):
+_persistentRecords(action) {
    
 }
 
@@ -409,8 +398,6 @@ std::string peanoclaw::records::RepositoryStatePacked::toString() const {
 void peanoclaw::records::RepositoryStatePacked::toString (std::ostream& out) const {
    out << "("; 
    out << "action:" << toString(getAction());
-   out << ",";
-   out << "reduceState:" << getReduceState();
    out <<  ")";
 }
 
@@ -421,8 +408,7 @@ peanoclaw::records::RepositoryStatePacked::PersistentRecords peanoclaw::records:
 
 peanoclaw::records::RepositoryState peanoclaw::records::RepositoryStatePacked::convert() const{
    return RepositoryState(
-      getAction(),
-      getReduceState()
+      getAction()
    );
 }
 
@@ -437,16 +423,14 @@ peanoclaw::records::RepositoryState peanoclaw::records::RepositoryStatePacked::c
       {
          RepositoryStatePacked dummyRepositoryStatePacked[2];
          
-         const int Attributes = 3;
+         const int Attributes = 2;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //action
-            MPI_CHAR,		 //reduceState
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             1,		 //action
-            1,		 //reduceState
             1		 // end/displacement flag
          };
          
@@ -455,8 +439,7 @@ peanoclaw::records::RepositoryState peanoclaw::records::RepositoryStatePacked::c
          MPI_Aint base;
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[0]._persistentRecords._action))), 		&disp[0] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[0]._persistentRecords._reduceState))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[1]._persistentRecords._action))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[1]._persistentRecords._action))), 		&disp[1] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -471,16 +454,14 @@ peanoclaw::records::RepositoryState peanoclaw::records::RepositoryStatePacked::c
       {
          RepositoryStatePacked dummyRepositoryStatePacked[2];
          
-         const int Attributes = 3;
+         const int Attributes = 2;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //action
-            MPI_CHAR,		 //reduceState
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             1,		 //action
-            1,		 //reduceState
             1		 // end/displacement flag
          };
          
@@ -489,8 +470,7 @@ peanoclaw::records::RepositoryState peanoclaw::records::RepositoryStatePacked::c
          MPI_Aint base;
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[0]._persistentRecords._action))), 		&disp[0] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[0]._persistentRecords._reduceState))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[1]._persistentRecords._action))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyRepositoryStatePacked[1]._persistentRecords._action))), 		&disp[1] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );

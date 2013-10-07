@@ -276,7 +276,7 @@ void peanoclaw::adapters::Remesh::mergeWithRemoteDataDueToForkOrJoin(
 
 }
 
-void peanoclaw::adapters::Remesh::prepareSendToWorker(
+bool peanoclaw::adapters::Remesh::prepareSendToWorker(
   peanoclaw::Cell&                 fineGridCell,
   peanoclaw::Vertex * const        fineGridVertices,
   const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -286,10 +286,11 @@ void peanoclaw::adapters::Remesh::prepareSendToWorker(
   const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell,
   int                                                                  worker
 ) {
+  bool result = false;
+   result |= _map2Remesh.prepareSendToWorker( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker );
 
-   _map2Remesh.prepareSendToWorker( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker );
 
-
+  return result;
 }
 
 void peanoclaw::adapters::Remesh::prepareSendToMaster(

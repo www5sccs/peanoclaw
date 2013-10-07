@@ -379,7 +379,7 @@ void peanoclaw::mappings::SolveTimestep::mergeWithRemoteDataDueToForkOrJoin(
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
 
-void peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
+bool peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
   peanoclaw::Cell&                 fineGridCell,
   peanoclaw::Vertex * const        fineGridVertices,
   const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -390,7 +390,7 @@ void peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  // @todo Insert your code here
+  return true;
   logTraceOut( "prepareSendToWorker(...)" );
 }
 
@@ -548,165 +548,169 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 ) {
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
-  //Create patch
-  Patch patch (
-    fineGridCell
-  );
+  if(fineGridCell.isInside()) {
+    //Create patch
+    Patch patch (
+      fineGridCell
+    );
 
-  //Solve timestep for this patch
-  if(fineGridCell.isLeaf()) {
+    //Solve timestep for this patch
+    if(fineGridCell.isLeaf()) {
 
-    #ifdef Asserts
-    CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0);
-    double startTime = cellDescription.getTime();
-    double endTime = cellDescription.getTime() + cellDescription.getTimestepSize();
-    assertionEquals1(patch.getCurrentTime(), startTime, patch.toString());
-    assertionEquals1(patch.getCurrentTime() + patch.getTimestepSize(), endTime, patch.toString());
-    assertion(patch.isLeaf() || patch.isVirtual());
-    #endif
+      #ifdef Asserts
+      CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0);
+      double startTime = cellDescription.getTime();
+      double endTime = cellDescription.getTime() + cellDescription.getTimestepSize();
+      assertionEquals1(patch.getCurrentTime(), startTime, patch.toString());
+      assertionEquals1(patch.getCurrentTime() + patch.getTimestepSize(), endTime, patch.toString());
+      assertion(patch.isLeaf() || patch.isVirtual());
+      #endif
 
-    //Perform timestep
-    double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
-    if(shouldAdvanceInTime(
-      patch,
-      maximumTimestepDueToGlobalTimestep,
-      fineGridVertices,
-      fineGridVerticesEnumerator,
-      coarseGridVertices,
-      coarseGridVerticesEnumerator
-    )) {
-      // Copy uNew to uOld
-      patch.copyUNewToUOld();
-
-      //Extrapolate ghostlayer if necessary
-      if(_useDimensionalSplittingOptimization) {
-        peanoclaw::interSubgridCommunication::Extrapolation extrapolation(patch);
-        extrapolation.extrapolateGhostlayer();
-      }
-
-      // Filling boundary layers for the given patch...
-      fillBoundaryLayers(
+      //Perform timestep
+      double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
+      if(shouldAdvanceInTime(
         patch,
+        maximumTimestepDueToGlobalTimestep,
         fineGridVertices,
-        fineGridVerticesEnumerator
-      );
-
-      // Do one timestep...
-      double requiredMeshWidth = _numerics->solveTimestep(
-                                              patch,
-                                              maximumTimestepDueToGlobalTimestep,
-                                              _useDimensionalSplittingOptimization
-                                            );
-      patch.setDemandedMeshWidth(requiredMeshWidth);
-
-      // Coarse grid correction
-      for(int i = 0; i < TWO_POWER_D; i++) {
-        if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-          fineGridVertices[fineGridVerticesEnumerator(i)].applyFluxCorrection(*_numerics);
-        }
-      }
-
-      //Statistics
-      assertion1(tarch::la::greater(patch.getTimestepSize(), 0.0), patch);
-      assertion1(patch.getTimestepSize() != std::numeric_limits<double>::infinity(), patch);
-      _subgridStatistics.processSubgridAfterUpdate(patch, coarseGridCell.getCellDescriptionIndex());
-
-      //Probes
-      for(std::vector<peanoclaw::statistics::Probe>::iterator i = _probeList.begin();
-          i != _probeList.end();
-          i++) {
-        i->plotDataIfContainedInPatch(patch);
-      }
-      logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
-    } else {
-      logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
-      patch.reduceGridIterationsToBeSkipped();
-
-      //Statistics
-      _subgridStatistics.processSubgrid(
-        patch,
-        coarseGridCell.getCellDescriptionIndex()
-      );
-      _subgridStatistics.updateMinimalSubgridBlockReason(
-        patch,
+        fineGridVerticesEnumerator,
         coarseGridVertices,
-        coarseGridVerticesEnumerator,
-        _globalTimestepEndTime
-      );
-    }
+        coarseGridVerticesEnumerator
+      )) {
+        // Copy uNew to uOld
+        patch.copyUNewToUOld();
 
-    //Refinement criterion
-    if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
-      // Refine
-      for(int i = 0; i < TWO_POWER_D; i++) {
-        if(!fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-          fineGridVertices[fineGridVerticesEnumerator(i)].setShouldRefine(true);
-          coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
+        //Extrapolate ghostlayer if necessary
+        if(_useDimensionalSplittingOptimization) {
+          peanoclaw::interSubgridCommunication::Extrapolation extrapolation(patch);
+          extrapolation.extrapolateGhostlayer();
         }
-      }
-    } else if (!tarch::la::oneGreater(patch.getSubcellSize() * 3.0, tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
-      // Coarsen
-    } else {
-      for(int i = 0; i < TWO_POWER_D; i++) {
-        coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
-        if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()
-            && !coarseGridVertices[coarseGridVerticesEnumerator(i)].isHangingNode()) {
-          coarseGridVertices[coarseGridVerticesEnumerator(i)].setShouldRefine(true);
-        }
-      }
-    }
 
-    assertion2(!tarch::la::smaller(patch.getCurrentTime(), startTime), patch, startTime);
-    assertion2(!tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), endTime), patch.getCurrentTime() + patch.getTimestepSize(), endTime);
+        // Filling boundary layers for the given patch...
+        fillBoundaryLayers(
+          patch,
+          fineGridVertices,
+          fineGridVerticesEnumerator
+        );
 
-    #ifdef Asserts
-    if(patch.containsNaN()) {
-      logError("", "Invalid solution"
-          << " in patch " << patch.toString()
-          << std::endl << patch.toStringUNew() << std::endl << patch.toStringUOldWithGhostLayer());
-      if(coarseGridCell.getCellDescriptionIndex() != -2) {
-        Patch coarsePatch(CellDescriptionHeap::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
-        logError("", "Coarse Patch:" << std::endl << coarsePatch.toString() << std::endl << coarsePatch.toStringUNew())
-      }
+        // Do one timestep...
+        double requiredMeshWidth = _numerics->solveTimestep(
+                                                patch,
+                                                maximumTimestepDueToGlobalTimestep,
+                                                _useDimensionalSplittingOptimization
+                                              );
+        patch.setDemandedMeshWidth(requiredMeshWidth);
 
-      for(int i = 0; i < TWO_POWER_D; i++) {
-        logError("", "Vertex" << i <<": " << fineGridVertices[fineGridVerticesEnumerator(i)].toString());
-        for(int j = 0; j < TWO_POWER_D; j++) {
-          if(fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentCellDescriptionIndex(j) != -1) {
-            CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentCellDescriptionIndex(j)).at(0);
-            Patch neighborPatch(cellDescription);
-            logError("", i << " " << j << std::endl
-                << neighborPatch.toString() << std::endl
-                << neighborPatch.toStringUNew() << std::endl
-                << neighborPatch.toStringUOldWithGhostLayer());
-          } else {
-            logError("", i << " " << j << ": Invalid patch");
+        // Coarse grid correction
+        for(int i = 0; i < TWO_POWER_D; i++) {
+          if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
+            fineGridVertices[fineGridVerticesEnumerator(i)].applyFluxCorrection(*_numerics);
           }
         }
-        //std::cout << std::endl;
+
+        //Statistics
+        assertion1(tarch::la::greater(patch.getTimestepSize(), 0.0), patch);
+        assertion1(patch.getTimestepSize() != std::numeric_limits<double>::infinity(), patch);
+        _subgridStatistics.processSubgridAfterUpdate(patch, coarseGridCell.getCellDescriptionIndex());
+
+        //Probes
+        for(std::vector<peanoclaw::statistics::Probe>::iterator i = _probeList.begin();
+            i != _probeList.end();
+            i++) {
+          i->plotDataIfContainedInPatch(patch);
+        }
+        logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
+      } else {
+        logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
+        patch.reduceGridIterationsToBeSkipped();
+
+        //Statistics
+        _subgridStatistics.processSubgrid(
+          patch,
+          coarseGridCell.getCellDescriptionIndex()
+        );
+        _subgridStatistics.updateMinimalSubgridBlockReason(
+          patch,
+          coarseGridVertices,
+          coarseGridVerticesEnumerator,
+          _globalTimestepEndTime
+        );
       }
-      //std::cout << std::endl;
-      assertion(false);
-      throw "";
+
+      //Refinement criterion
+      assertion1(tarch::la::greater(patch.getDemandedMeshWidth(), 0), patch);
+
+      if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
+        // Refine
+        for(int i = 0; i < TWO_POWER_D; i++) {
+          if(!fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
+            fineGridVertices[fineGridVerticesEnumerator(i)].setShouldRefine(true);
+            coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
+          }
+        }
+      } else if (!tarch::la::oneGreater(patch.getSubcellSize() * 3.0, tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
+        // Coarsen
+      } else {
+        for(int i = 0; i < TWO_POWER_D; i++) {
+          coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
+          if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()
+              && !coarseGridVertices[coarseGridVerticesEnumerator(i)].isHangingNode()) {
+            coarseGridVertices[coarseGridVerticesEnumerator(i)].setShouldRefine(true);
+          }
+        }
+      }
+
+      assertion2(!tarch::la::smaller(patch.getCurrentTime(), startTime), patch, startTime);
+      assertion2(!tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), endTime), patch.getCurrentTime() + patch.getTimestepSize(), endTime);
+
+      #ifdef Asserts
+      if(patch.containsNaN()) {
+        logError("", "Invalid solution"
+            << " in patch " << patch.toString()
+            << std::endl << patch.toStringUNew() << std::endl << patch.toStringUOldWithGhostLayer());
+        if(coarseGridCell.getCellDescriptionIndex() != -2) {
+          Patch coarsePatch(CellDescriptionHeap::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
+          logError("", "Coarse Patch:" << std::endl << coarsePatch.toString() << std::endl << coarsePatch.toStringUNew())
+        }
+
+        for(int i = 0; i < TWO_POWER_D; i++) {
+          logError("", "Vertex" << i <<": " << fineGridVertices[fineGridVerticesEnumerator(i)].toString());
+          for(int j = 0; j < TWO_POWER_D; j++) {
+            if(fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentCellDescriptionIndex(j) != -1) {
+              CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentCellDescriptionIndex(j)).at(0);
+              Patch neighborPatch(cellDescription);
+              logError("", i << " " << j << std::endl
+                  << neighborPatch.toString() << std::endl
+                  << neighborPatch.toStringUNew() << std::endl
+                  << neighborPatch.toStringUOldWithGhostLayer());
+            } else {
+              logError("", i << " " << j << ": Invalid patch");
+            }
+          }
+          //std::cout << std::endl;
+        }
+        //std::cout << std::endl;
+        assertion(false);
+        throw "";
+      }
+      #endif
+
+      #ifdef Parallel
+      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+      parallelSubgrid.markCurrentStateAsSent(false);
+      #endif
+
+      logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimestepSize(), cellDescription.getTime() + cellDescription.getTimestepSize() );
+    } else {
+      #ifdef Parallel
+      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+      parallelSubgrid.markCurrentStateAsSent(true);
+      #endif
+
+      logTraceOut( "enterCell(...)" );
     }
-    #endif
 
-    #ifdef Parallel
-    ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-    parallelSubgrid.markCurrentStateAsSent(false);
-    #endif
-
-    logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimestepSize(), cellDescription.getTime() + cellDescription.getTimestepSize() );
-  } else {
-    #ifdef Parallel
-    ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-    parallelSubgrid.markCurrentStateAsSent(true);
-    #endif
-
-    logTraceOut( "enterCell(...)" );
+    patch.increaseAgeByOneGridIteration();
   }
-
-  patch.increaseAgeByOneGridIteration();
 }
 
 

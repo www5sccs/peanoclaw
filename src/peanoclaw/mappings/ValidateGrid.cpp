@@ -150,12 +150,12 @@ void peanoclaw::mappings::ValidateGrid::createInnerVertex(
   logTraceInWith6Arguments( "createInnerVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-  std::cout<< "Create inner vertex " << fineGridX << ", "
-      << fineGridH
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << std::endl;
+//  std::cout<< "Create inner vertex " << fineGridX << ", "
+//      << fineGridH
+//      #ifdef Parallel
+//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//      << std::endl;
 
   logTraceOutWith1Argument( "createInnerVertex(...)", fineGridVertex );
 }
@@ -188,14 +188,14 @@ void peanoclaw::mappings::ValidateGrid::destroyVertex(
   logTraceInWith6Arguments( "destroyVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   //TODO unterweg debug
-  std::cout<< "Destroying vertex " << fineGridX << ", "
-      << fineGridH
-      << ", level=" << (coarseGridVerticesEnumerator.getLevel()+1)
-      #ifdef Parallel
-      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
-      #endif
-      << fineGridVertex.toString()
-      << std::endl;
+//  std::cout<< "Destroying vertex " << fineGridX << ", "
+//      << fineGridH
+//      << ", level=" << (coarseGridVerticesEnumerator.getLevel()+1)
+//      #ifdef Parallel
+//      << ", rank=" << tarch::parallel::Node::getInstance().getRank()
+//      #endif
+//      << fineGridVertex.toString()
+//      << std::endl;
 
   //We need to call this method here, since it seems that touchVertexLastTime
   //is not called in the iteration where a vertex is destroyed.
@@ -239,11 +239,11 @@ void peanoclaw::mappings::ValidateGrid::createCell(
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
   //TODO unterweg debug
-//  logInfo("", "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-//      << fineGridVerticesEnumerator.getCellSize()
-//      << ", index=" << fineGridCell.getCellDescriptionIndex()
-//      << ",level=" << fineGridVerticesEnumerator.getLevel()
-//      );
+  logInfo("", "Creating cell " << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+      << fineGridVerticesEnumerator.getCellSize()
+      << ", index=" << fineGridCell.getCellDescriptionIndex()
+      << ",level=" << fineGridVerticesEnumerator.getLevel()
+      );
 
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
@@ -374,7 +374,7 @@ void peanoclaw::mappings::ValidateGrid::mergeWithRemoteDataDueToForkOrJoin(
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
 
-void peanoclaw::mappings::ValidateGrid::prepareSendToWorker(
+bool peanoclaw::mappings::ValidateGrid::prepareSendToWorker(
   peanoclaw::Cell&                 fineGridCell,
   peanoclaw::Vertex * const        fineGridVertices,
   const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -385,7 +385,7 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  // @todo Insert your code here
+  return true;
   logTraceOut( "prepareSendToWorker(...)" );
 }
 
@@ -404,27 +404,37 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
   std::vector<PatchDescription>& workerAndLocalData = PatchDescriptionHeap::getInstance().getData(_patchDescriptionsIndex);
   std::vector<PatchDescription> localData = _validator.getAllPatches();
   for(int i = 0; i < (int)localData.size(); i++) {
+
+    //TODO unterweg debug
+//    assertion(localData[i].getIsReferenced());
+
     workerAndLocalData.push_back(localData[i]);
   }
+
+//  for(size_t i = 0; i < PatchDescriptionHeap::getInstance().getData(_patchDescriptionsIndex).size(); i++) {
+//    //TODO unterweg debug
+////    logError("", "Prepare Send to " << tarch::parallel::NodePool::getInstance().getMasterRank() << " -- " << i << ": " << PatchDescriptionHeap::getInstance().getData(_patchDescriptionsIndex)[i].toString());
+//    assertion(PatchDescriptionHeap::getInstance().getData(_patchDescriptionsIndex)[i].getIsReferenced());
+//  }
 
   //Add non-referenced patches
 //  int index = 0;
 //  int numberOfEntries = 0;
 //  while(numberOfEntries < CellDescriptionHeap::getInstance().getNumberOfAllocatedEntries()) {
 //    if(CellDescriptionHeap::getInstance().isValidIndex(index)) {
-////      if(_descriptions.find(index) == _descriptions.end()) {
-////        //Found non-referenced patch
-////        CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(index).at(0);
-////        PatchDescription patchDescription;
-////        patchDescription.setPosition(cellDescription.getPosition());
-////        patchDescription.setSize(cellDescription.getSize());
-////        patchDescription.setLevel(cellDescription.getLevel());
-////        patchDescription.setIsRemote(cellDescription.getIsRemote());
-////        patchDescription.setIsReferenced(false);
-////        patchDescription.setCellDescriptionIndex(index);
-////        patchDescription.setRank(tarch::parallel::Node::getInstance().getRank());
-////        descriptionVector.push_back(patchDescription);
-////      }
+//      if(_descriptions.find(index) == _descriptions.end()) {
+//        //Found non-referenced patch
+//        CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(index).at(0);
+//        PatchDescription patchDescription;
+//        patchDescription.setPosition(cellDescription.getPosition());
+//        patchDescription.setSize(cellDescription.getSize());
+//        patchDescription.setLevel(cellDescription.getLevel());
+//        patchDescription.setIsRemote(cellDescription.getIsRemote());
+//        patchDescription.setIsReferenced(false);
+//        patchDescription.setCellDescriptionIndex(index);
+//        patchDescription.setRank(tarch::parallel::Node::getInstance().getRank());
+//        descriptionVector.push_back(patchDescription);
+//      }
 //      numberOfEntries++;
 //    }
 //    index++;
@@ -438,9 +448,6 @@ void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(
     verticesEnumerator.getLevel(),
     peano::heap::MasterWorkerCommunication
   );
-
-  //TODO unterweg debug
-  std::cout << "ValidateGrid Sent " << PatchDescriptionHeap::getInstance().getData(_patchDescriptionsIndex).size() << " Data on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
 
   #ifdef Parallel
   PatchDescriptionHeap::getInstance().finishedToSendSynchronousData();
@@ -475,7 +482,13 @@ void peanoclaw::mappings::ValidateGrid::mergeWithMaster(
   );
 
   std::vector<PatchDescription>& localData = PatchDescriptionHeap::getInstance().getData(_patchDescriptionsIndex);
+  //TODO unterweg debug
   for(int i = 0; i < (int)remoteData.size(); i++) {
+
+    //TODO unterweg debug
+//    logError("", "Merge from " << worker << " -- " << i << ": " << remoteData[i].toString());
+//    assertion2(remoteData[i].getIsReferenced(), i, remoteData[i].toString());
+
     localData.push_back(remoteData[i]);
   }
 
@@ -513,7 +526,7 @@ void peanoclaw::mappings::ValidateGrid::mergeWithWorker(
   logTraceInWith2Arguments( "mergeWithWorker(...)", localCell.toString(), receivedMasterCell.toString() );
   // @todo Insert your code here
 
-  std::cout << "ValidateGrid Receive on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
+  logInfo("", "ValidateGrid Receive on rank " << tarch::parallel::Node::getInstance().getRank());
 
   logTraceOutWith1Argument( "mergeWithWorker(...)", localCell.toString() );
 }
@@ -665,12 +678,11 @@ void peanoclaw::mappings::ValidateGrid::endIteration(
 
     //Check for unreferenced patches
     for(int i = 0; i < (int)localDescriptions.size(); i++) {
-      //TODO unterweg debug
-//      if(!localDescriptions[i].getIsReferenced()) {
-//        logError("endIteration", "Unreferenced Patch found: " << localDescriptions[i].toString() <<
-//            ", isUnreferenced=" << database.containsPatch(localDescriptions[i].getPosition(), localDescriptions[i].getLevel(), localDescriptions[i].getRank()));
+      if(!localDescriptions[i].getIsReferenced()) {
+        logError("endIteration", "Unreferenced Patch found: " << localDescriptions[i].toString() <<
+            ", isUnreferenced=" << database.containsPatch(localDescriptions[i].getPosition(), localDescriptions[i].getLevel(), localDescriptions[i].getRank()));
 //        assertionFail("");
-//      }
+      }
     }
 
     _validator.validatePatches();

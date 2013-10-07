@@ -32,15 +32,8 @@ class peanoclaw::repositories::Repository {
     
     /**
      * Iterate with current active event handle.
-     *
-     * @param reduceState Desides if the state should be reduced after each 
-     *                    iteration. This parameter is ignored, if iterate() 
-     *                    is executed on a worker. In this case, the 
-     *                    repository's state determines whether to reduce data 
-     *                    or not.   
-     *                   
      */
-    virtual void iterate( bool reduceState = true ) = 0;
+    virtual void iterate() = 0;
 
     virtual peanoclaw::State& getState() = 0;
 

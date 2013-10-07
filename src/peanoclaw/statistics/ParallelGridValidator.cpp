@@ -309,6 +309,7 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
         patchDescription.setIsVirtual(adjacentPatch.isVirtual());
         patchDescription.setCellDescriptionIndex(adjacentPatch.getCellDescriptionIndex());
         patchDescription.setSkipGridIterations(adjacentPatch.shouldSkipNextGridIteration() ? -1 : 0);
+
         #ifdef Parallel
         if(localRank == tarch::parallel::Node::getInstance().getRank()) {
           patchDescription.setIsRemote(adjacentPatch.isRemote());

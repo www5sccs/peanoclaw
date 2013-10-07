@@ -50,7 +50,7 @@ class peanoclaw::mappings::InitialiseGrid {
 
     peanoclaw::Numerics* _numerics;
 
-    bool _refinementTriggered;
+//    bool _refinementTriggered;
 
     bool _refinementCriterionEnabled;
 
@@ -659,7 +659,7 @@ class peanoclaw::mappings::InitialiseGrid {
      *
      * @see peano::kernel::spacetreegrid::nodes::Node::updateCellsParallelStateAfterLoad()
      */
-    void prepareSendToWorker(
+    bool prepareSendToWorker(
       peanoclaw::Cell&                 fineGridCell,
       peanoclaw::Vertex * const        fineGridVertices,
       const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,

@@ -119,11 +119,19 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(const Area& area,
 }
 
 peanoclaw::Patch::Patch() :
-    _cellDescription(0), _uNew(0)/*, _uOldWithGhostlayer(0), _auxArray(0)*/, _uOldWithGhostlayerArrayIndex(-1), _auxArrayIndex(-1) {
+    _cellDescription(0),
+    _uNew(0),
+//    _uOldWithGhostlayer(0),
+//    _auxArray(0),
+    _uOldWithGhostlayerArrayIndex(-1),
+    _auxArrayIndex(-1)
+    {
 }
 
 peanoclaw::Patch::Patch(const Cell& cell) :
-    _cellDescription(0) {
+  _cellDescription(0),
+  _uNew(0)
+{
   logTraceInWith1Argument("Patch(...)", cell);
 
   _cellDescription = &CellDescriptionHeap::getInstance().getData(
@@ -137,7 +145,9 @@ peanoclaw::Patch::Patch(const Cell& cell) :
 }
 
 peanoclaw::Patch::Patch(CellDescription& cellDescription) :
-    _cellDescription(&cellDescription) {
+  _cellDescription(&cellDescription),
+  _uNew(0)
+{
   logTraceInWith2Arguments("Patch(CellDescription,int)", cellDescription.getPosition(), cellDescription.getLevel());
 
   assertion1(
@@ -151,7 +161,10 @@ peanoclaw::Patch::Patch(CellDescription& cellDescription) :
   logTraceOut("Patch(CellDescription,int)");
 }
 
-peanoclaw::Patch::Patch(int cellDescriptionIndex) {
+peanoclaw::Patch::Patch(int cellDescriptionIndex)
+  : _cellDescription(0),
+    _uNew(0)
+{
   loadCellDescription(cellDescriptionIndex);
   fillCaches();
 }
@@ -160,7 +173,10 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
     const tarch::la::Vector<DIMENSIONS, double>& size, int unknownsPerSubcell,
     int auxiliarFieldsPerSubcell,
     const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
-    int ghostLayerWidth, double initialTimestepSize, int level) {
+    int ghostLayerWidth, double initialTimestepSize, int level)
+: _cellDescription(0),
+  _uNew(0)
+{
   //Initialise Cell Description
   int cellDescriptionIndex =
       CellDescriptionHeap::getInstance().createData();
@@ -168,31 +184,48 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   std::vector<CellDescription>& cellDescriptions = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
 
   CellDescription cellDescription;
+  
+  //Data
   cellDescription.setCellDescriptionIndex(cellDescriptionIndex);
-  cellDescription.setGhostLayerWidth(ghostLayerWidth);
-  cellDescription.setSubdivisionFactor(subdivisionFactor);
-  cellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
-  cellDescription.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
-  cellDescription.setTime(0.0);
-  cellDescription.setTimestepSize(0.0);
-  cellDescription.setEstimatedNextTimestepSize(initialTimestepSize);
-  cellDescription.setMinimalNeighborTime(std::numeric_limits<double>::max());
-  cellDescription.setMinimalNeighborTimeConstraint(
-      std::numeric_limits<double>::max());
-  cellDescription.setConstrainingNeighborIndex(-1);
-  cellDescription.setLevel(level);
-  cellDescription.setPosition(position);
-  cellDescription.setSize(size);
-  cellDescription.setIsVirtual(false);
-  cellDescription.setSkipGridIterations(0);
-  cellDescription.setDemandedMeshWidth(size(0) / subdivisionFactor(0) * 3.0);
-  cellDescription.setAgeInGridIterations(0);
 //  cellDescription.setUOldIndex(-1);
   cellDescription.setUNewIndex(-1);
 //  cellDescription.setAuxIndex(-1);
+  
+  //Geometry
+  cellDescription.setSize(size);
+  cellDescription.setPosition(position);
+  cellDescription.setLevel(level);
+  cellDescription.setSubdivisionFactor(subdivisionFactor);
+  cellDescription.setGhostLayerWidth(ghostLayerWidth);
+  
+  //Timestepping
+  cellDescription.setTime(0.0);
+  cellDescription.setTimestepSize(0.0);
+  cellDescription.setEstimatedNextTimestepSize(initialTimestepSize);
+  cellDescription.setMinimalNeighborTimeConstraint(std::numeric_limits<double>::max());
+  cellDescription.setConstrainingNeighborIndex(-1);
+  cellDescription.setSkipGridIterations(0);
+  cellDescription.setMinimalNeighborTime(std::numeric_limits<double>::max());
+  cellDescription.setMaximalNeighborTimestep(-std::numeric_limits<double>::max());
+  cellDescription.setMaximumFineGridTime(-1.0);
+  cellDescription.setMinimumFineGridTimestep(std::numeric_limits<double>::max());
+  cellDescription.setMinimalLeafNeighborTimeConstraint(std::numeric_limits<double>::max());
+  
+  //Numerics
+  cellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
+  cellDescription.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
+    
+  //Spacetree state
+  cellDescription.setIsVirtual(false);
+  cellDescription.setAgeInGridIterations(0);
+  
+  //Refinement
+  cellDescription.setDemandedMeshWidth(size(0) / subdivisionFactor(0) * 3.0);
   cellDescription.setRestrictionLowerBounds(std::numeric_limits<double>::max());
-  cellDescription.setRestrictionUpperBounds(
-      -std::numeric_limits<double>::max());
+  cellDescription.setRestrictionUpperBounds(-std::numeric_limits<double>::max());
+  cellDescription.setSynchronizeFineGrids(false);
+  
+  //Parallel
 #ifdef Parallel
   cellDescription.setIsRemote(false);
   cellDescription.setCurrentStateWasSend(false);
@@ -389,8 +422,7 @@ int peanoclaw::Patch::getConstrainingNeighborIndex() const {
 
 void peanoclaw::Patch::resetMaximalNeighborTimeInterval() {
   _cellDescription->setMinimalNeighborTime(std::numeric_limits<double>::max());
-  _cellDescription->setMaximalNeighborTimestep(
-      -std::numeric_limits<double>::max());
+  _cellDescription->setMaximalNeighborTimestep(-std::numeric_limits<double>::max());
 }
 
 void peanoclaw::Patch::updateMaximalNeighborTimeInterval(double neighborTime,
@@ -442,11 +474,7 @@ void peanoclaw::Patch::updateMinimalFineGridTimeInterval(double fineGridTime,
 }
 
 double peanoclaw::Patch::getTimeConstraint() const {
-//  if(!isLeaf()) {
-//    return _cellDescription->getMaximumFineGridTime() + _cellDescription->getMinimumFineGridTimestep();
-//  } else {
   return _cellDescription->getTime() + _cellDescription->getTimestepSize();
-//  }
 }
 
 void peanoclaw::Patch::setFineGridsSynchronize(bool synchronizeFineGrids) {

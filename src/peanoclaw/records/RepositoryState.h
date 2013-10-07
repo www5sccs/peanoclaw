@@ -31,7 +31,7 @@ namespace peanoclaw {
  *
  * 		   build date: 12-04-2013 09:18
  *
- * @date   26/09/2013 11:08
+ * @date   06/10/2013 18:41
  */
 class peanoclaw::records::RepositoryState { 
    
@@ -45,7 +45,6 @@ class peanoclaw::records::RepositoryState {
       
       struct PersistentRecords {
          Action _action;
-         bool _reduceState;
          /**
           * Generated
           */
@@ -54,7 +53,7 @@ class peanoclaw::records::RepositoryState {
          /**
           * Generated
           */
-         PersistentRecords(const Action& action, const bool& reduceState);
+         PersistentRecords(const Action& action);
          
          
          inline Action getAction() const 
@@ -73,26 +72,6 @@ class peanoclaw::records::RepositoryState {
  #endif 
  {
             _action = action;
-         }
-         
-         
-         
-         inline bool getReduceState() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            return _reduceState;
-         }
-         
-         
-         
-         inline void setReduceState(const bool& reduceState) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            _reduceState = reduceState;
          }
          
          
@@ -116,7 +95,7 @@ class peanoclaw::records::RepositoryState {
       /**
        * Generated
        */
-      RepositoryState(const Action& action, const bool& reduceState);
+      RepositoryState(const Action& action);
       
       /**
        * Generated
@@ -140,26 +119,6 @@ class peanoclaw::records::RepositoryState {
  #endif 
  {
          _persistentRecords._action = action;
-      }
-      
-      
-      
-      inline bool getReduceState() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-         return _persistentRecords._reduceState;
-      }
-      
-      
-      
-      inline void setReduceState(const bool& reduceState) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-         _persistentRecords._reduceState = reduceState;
       }
       
       
@@ -245,7 +204,7 @@ class peanoclaw::records::RepositoryState {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   26/09/2013 11:08
+    * @date   06/10/2013 18:41
     */
    class peanoclaw::records::RepositoryStatePacked { 
       
@@ -255,7 +214,6 @@ class peanoclaw::records::RepositoryState {
          
          struct PersistentRecords {
             Action _action;
-            bool _reduceState;
             /**
              * Generated
              */
@@ -264,7 +222,7 @@ class peanoclaw::records::RepositoryState {
             /**
              * Generated
              */
-            PersistentRecords(const Action& action, const bool& reduceState);
+            PersistentRecords(const Action& action);
             
             
             inline Action getAction() const 
@@ -283,26 +241,6 @@ class peanoclaw::records::RepositoryState {
  #endif 
  {
                _action = action;
-            }
-            
-            
-            
-            inline bool getReduceState() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-               return _reduceState;
-            }
-            
-            
-            
-            inline void setReduceState(const bool& reduceState) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-               _reduceState = reduceState;
             }
             
             
@@ -326,7 +264,7 @@ class peanoclaw::records::RepositoryState {
          /**
           * Generated
           */
-         RepositoryStatePacked(const Action& action, const bool& reduceState);
+         RepositoryStatePacked(const Action& action);
          
          /**
           * Generated
@@ -350,26 +288,6 @@ class peanoclaw::records::RepositoryState {
  #endif 
  {
             _persistentRecords._action = action;
-         }
-         
-         
-         
-         inline bool getReduceState() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            return _persistentRecords._reduceState;
-         }
-         
-         
-         
-         inline void setReduceState(const bool& reduceState) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            _persistentRecords._reduceState = reduceState;
          }
          
          

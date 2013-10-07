@@ -25,6 +25,7 @@ namespace peanoclaw {
   namespace interSubgridCommunication {
     namespace aspects {
       class AdjacentSubgrids;
+      class CheckIntersectingParallelAndAdaptiveBoundaryFunctor;
     }
   }
 }
@@ -118,6 +119,44 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
       peanoclaw::Vertex * const            coarseGridVertices,
       const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
     );
+
+    /**
+     * TODO unterweg dissertation
+     * Triggers a refine when a vertex resides on both, a parallel
+     * and an adaptive boundary and two subgrids have to communicate
+     * over their vertices (or edges in 3D).
+     *
+     * Loops through dimensions and check whether the adaptive boundary
+     * is completely perpendicular to this dimension. If for one
+     * dimension this does not hold, the vertex needs to be refined.
+     */
+    void refineOnParallelAndAdaptiveBoundary();
+};
+
+/**
+ * Used to determine whether a parallel boundary coincides with a corner
+ * of an adaptive boundary, such that a refinement is required.
+ */
+class peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAndAdaptiveBoundaryFunctor {
+
+  private:
+    const tarch::la::Vector<DIMENSIONS_TIMES_TWO, int>& _adjacentRanks;
+    bool                                                _parallelBoundaryCoincidesWithAdaptiveBoundaryCorner;
+
+  public:
+    CheckIntersectingParallelAndAdaptiveBoundaryFunctor(
+      const tarch::la::Vector<DIMENSIONS_TIMES_TWO, int>& adjacentRanks
+    );
+
+    void operator() (
+      peanoclaw::Patch&                         patch1,
+      int                                       index1,
+      peanoclaw::Patch&                         patch2,
+      int                                       index2,
+      const tarch::la::Vector<DIMENSIONS, int>& direction
+    );
+
+    bool doesParallelBoundaryCoincideWithAdaptiveBoundaryCorner() const;
 };
 
 #endif /* PEANOCLAW_INTERSUBGRIDCOMMUNICATION_ADJACENTSUBGRIDS_H_ */

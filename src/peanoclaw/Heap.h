@@ -16,7 +16,7 @@
 
 #include "peano/heap/Heap.h"
 
-#define noPackedEmptyHeapMessages
+//#define noPackedEmptyHeapMessages
 
 #ifdef noPackedEmptyHeapMessages
 typedef peano::heap::PlainHeap<peanoclaw::records::CellDescription> CellDescriptionHeap;

@@ -176,8 +176,11 @@ if valgrind == 'no':
 elif valgrind == 'yes':
    ccflags.append('-g')
    cppdefines.append('USE_VALGRIND')
-   cpppath.append(os.getenv ('VALGRIND_ROOT') + "/include")
-   cpppath.append(os.getenv ('VALGRIND_ROOT') + "/callgrind")
+   valgrindRoot = os.getenv ('VALGRIND_ROOT')
+   if(valgrindRoot == None):
+     valgrindRoot = "/usr"
+   cpppath.append(join(valgrindRoot, "include"))
+   cpppath.append(join(valgrindRoot, "callgrind"))
 else:
    print "ERROR: valgrind must be = 'yes' or 'no'!"
    sys.exit(1)

@@ -3,6 +3,4 @@
 class peanoclaw::records::RepositoryState { 
   enum Action { WriteCheckpoint, ReadCheckpoint, Terminate, RunOnAllNodes,UseAdapterInitialiseGrid,UseAdapterInitialiseAndValidateGrid,UseAdapterPlot,UseAdapterPlotAndValidateGrid,UseAdapterRemesh,UseAdapterSolveTimestep,UseAdapterSolveTimestepAndValidateGrid,UseAdapterSolveTimestepAndPlot,UseAdapterSolveTimestepAndPlotAndValidateGrid,UseAdapterGatherCurrentSolution,UseAdapterGatherCurrentSolutionAndValidateGrid,UseAdapterCleanup,NumberOfAdapters};
   persistent parallelise Action action;
-
-  persistent parallelise bool reduceState;
 };

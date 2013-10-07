@@ -54,8 +54,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
 void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
   //Distributed Memory
   #if defined(Parallel)
-  tarch::parallel::Node::getInstance().setTimeOutWarning(45);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(90);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(450);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(1200);
 
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
     tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
@@ -142,7 +142,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(true)
+  _validateGrid(false)
 {
   #ifndef Asserts
   _validateGrid = false;
@@ -208,9 +208,9 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
       do {
         iterateInitialiseGrid();
-        iterateInitialiseGrid();
+        iterateInitialiseGrid(); //TODO unterweg: Raus?
 
-        logDebug("PeanoClawLibraryRunner", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
+        logInfo("PeanoClawLibraryRunner", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
       } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
       maximumLevel += 2;
@@ -222,6 +222,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       logDebug("PeanoClawLibraryRunner", "Iterate with Refinement Criterion");
 //      iterateInitialiseGrid();
       iterateInitialiseGrid();
+      iterateInitialiseGrid(); //TODO unterweg: Raus?
     } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
     //Plot initial grid
