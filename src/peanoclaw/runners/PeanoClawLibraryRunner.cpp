@@ -49,6 +49,9 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
   CellDescriptionHeap::getInstance().setName("CellDescription");
   DataHeap::getInstance().setName("Data");
   LevelStatisticsHeap::getInstance().setName("LevelStatistics");
+
+  assertionEquals(CellDescriptionHeap::getInstance().getNumberOfAllocatedEntries(), 0);
+  assertionEquals(DataHeap::getInstance().getNumberOfAllocatedEntries(), 0);
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
@@ -142,7 +145,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(false)
+  _validateGrid(true)
 {
   #ifndef Asserts
   _validateGrid = false;
@@ -181,7 +184,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setUnknownsPerSubcell(unknownsPerSubcell);
   state.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
   state.setNumerics(numerics);
-  state.resetTotalNumberOfCellUpdates();
   state.setInitialTimestepSize(initialTimestepSize);
   state.setDomain(domainOffset, domainSize);
   state.setUseDimensionalSplittingOptimization(useDimensionalSplittingOptimization && !_configuration.disableDimensionalSplittingOptimization());
@@ -204,6 +206,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       for(int d = 0; d < DIMENSIONS; d++) {
         currentMinimalSubgridSize(d) = std::max(initialMinimalSubgridSize(d), domainSize(d) / pow(3.0, maximumLevel));
       }
+
       _repository->getState().setInitialMaximalSubgridSize(currentMinimalSubgridSize);
 
       do {
