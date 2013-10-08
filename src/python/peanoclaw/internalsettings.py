@@ -6,8 +6,9 @@ Created on Sep 17, 2013
 
 class InternalSettings(object):
   
-  def __init__(self, useHeapCompression=True):
+  def __init__(self, useHeapCompression=True, enablePeanoLogging=False):
     self.useHeapCompression = useHeapCompression
+    self.enablePeanoLogging = enablePeanoLogging
     
   def getFilenameSuffix(self):
     suffix = ''

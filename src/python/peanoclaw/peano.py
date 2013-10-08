@@ -99,6 +99,7 @@ class Peano(object):
                                                 c_void_p, #Interpolation callback
                                                 c_void_p, #Restriction callback
                                                 c_void_p, #Flux correction callback
+                                                c_bool,   #Enable Peano logging
                                                 c_void_p  #rank
                                                 ] 
     self.peano = self.libpeano.pyclaw_peano_new(c_double(initial_minimal_mesh_width),
@@ -124,6 +125,7 @@ class Peano(object):
                                                 interpolation_callback.get_interpolation_callback(),
                                                 restriction_callback.get_restriction_callback(),
                                                 flux_correction_callback.get_flux_correction_callback(),
+                                                self.internal_settings.enablePeanoLogging,
                                                 byref(self.crank)
                                                 )
 
