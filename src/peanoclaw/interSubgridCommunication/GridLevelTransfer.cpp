@@ -413,47 +413,6 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
 //  finePatch.resetMinimalNeighborTimeConstraint();
 }
 
-void peanoclaw::interSubgridCommunication::GridLevelTransfer::fillAdjacentPatchIndicesFromCoarseVertices(
-  const peanoclaw::Vertex* coarseGridVertices,
-  const peano::grid::VertexEnumerator&      coarseGridVerticesEnumerator,
-  peanoclaw::Vertex&       fineGridVertex,
-  const tarch::la::Vector<DIMENSIONS,int>&                   localPositionOfHangingNode
-) {
-  logTraceInWith2Arguments( "fillAdjacentPatchIndicesFromCoarseVertices(...)", fineGridVertex, localPositionOfHangingNode );
-
-  tarch::la::Vector<DIMENSIONS,int>   fromCoarseGridVertex;
-  tarch::la::Vector<DIMENSIONS,int>   coarseGridVertexAdjacentPatchIndex;
-
-  dfor2(k)
-    for (int d=0; d<DIMENSIONS; d++) {
-      if (localPositionOfHangingNode(d)==0) {
-        fromCoarseGridVertex(d)          = 0;
-        coarseGridVertexAdjacentPatchIndex(d) = k(d);
-      }
-      else if (localPositionOfHangingNode(d)==3) {
-        fromCoarseGridVertex(d)          = 1;
-        coarseGridVertexAdjacentPatchIndex(d) = k(d);
-      }
-      else if (k(d)==0) {
-        fromCoarseGridVertex(d)          = 0;
-        coarseGridVertexAdjacentPatchIndex(d) = 1;
-      }
-      else {
-        fromCoarseGridVertex(d)          = 1;
-        coarseGridVertexAdjacentPatchIndex(d) = 0;
-      }
-    }
-    int coarseGridVertexIndex = coarseGridVerticesEnumerator(peano::utils::dLinearised(fromCoarseGridVertex,2));
-    int coarseGridVertexEntry = TWO_POWER_D_MINUS_ONE-peano::utils::dLinearised(coarseGridVertexAdjacentPatchIndex,2);
-    fineGridVertex.setAdjacentCellDescriptionIndex(
-      TWO_POWER_D_MINUS_ONE-kScalar,
-      coarseGridVertices[coarseGridVertexIndex].getAdjacentCellDescriptionIndex(coarseGridVertexEntry)
-    );
-  enddforx
-
-  logTraceOut( "fillAdjacentPatchIndicesFromCoarseVertices(...)" );
-}
-
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictRefinementFlagsToCoarseVertices(
   peanoclaw::Vertex*        coarseGridVertices,
   const peano::grid::VertexEnumerator&      coarseGridVerticesEnumerator,

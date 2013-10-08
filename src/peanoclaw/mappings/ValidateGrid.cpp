@@ -385,8 +385,8 @@ bool peanoclaw::mappings::ValidateGrid::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  return true;
   logTraceOut( "prepareSendToWorker(...)" );
+  return true;
 }
 
 void peanoclaw::mappings::ValidateGrid::prepareSendToMaster(

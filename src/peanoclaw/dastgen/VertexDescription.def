@@ -13,8 +13,6 @@ class peanoclaw::records::VertexDescription {
 
   parallelise persistent int indicesOfAdjacentCellDescriptions[TWO_POWER_D];
   
-  parallelise persistent IterationParity lastUpdateIterationParity;
-  
   parallelise persistent bool touched;
 
 };

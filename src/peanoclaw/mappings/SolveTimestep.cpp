@@ -390,8 +390,8 @@ bool peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  return true;
   logTraceOut( "prepareSendToWorker(...)" );
+  return true;
 }
 
 void peanoclaw::mappings::SolveTimestep::prepareSendToMaster(

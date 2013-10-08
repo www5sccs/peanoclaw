@@ -96,7 +96,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::createHang
   if(!tarch::la::oneGreater(domainOffset, _position)
       && !tarch::la::oneGreater(_position, domainOffset + domainSize)) {
     //Project adjacency information down from coarse grid vertex
-    gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
+    fillAdjacentPatchIndicesFromCoarseVertices(
       coarseGridVertices,
       coarseGridVerticesEnumerator,
       _vertex,
@@ -117,16 +117,13 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::createHang
         vertexDescription.setIndicesOfAdjacentCellDescriptions(i, -1);
       }
       _vertexMap[hangingVertexPosition] = vertexDescription;
-    } else {
-      //A vertex on this position existed earlier...
-      _vertex.setWasCreatedInThisIteration(false);
     }
 
     VertexDescription& hangingVertexDescription = _vertexMap[hangingVertexPosition];
     hangingVertexDescription.setTouched(true);
 
     //Copy indices from coarse level
-    gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
+    fillAdjacentPatchIndicesFromCoarseVertices(
       coarseGridVertices,
       coarseGridVerticesEnumerator,
       _vertex,
@@ -194,22 +191,6 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
   }
 }
 
-void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::storeAdjacencyInformation() {
-  #ifdef Parallel
-  //Set all adjacent patches to unsent if the adjacency information has changed
-//  for(int i = 0; i < TWO_POWER_D; i++) {
-//    if(_vertex.getAdjacentRanks()(i) != _vertex.getAdjacentRanksDuringLastIteration()(i)) {
-//      for(int j = 0; j < TWO_POWER_D; j++) {
-//        if(_vertex.getAdjacentCellDescriptionIndex(j) != -1) {
-//          ParallelSubgrid adjacentSubgrid(_vertex.getAdjacentCellDescriptionIndex(j));
-//          adjacentSubgrid.markCurrentStateAsSent(false);
-//        }
-//      }
-//    }
-//  }
-  #endif
-}
-
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::regainTwoIrregularity(
   peanoclaw::Vertex * const            coarseGridVertices,
   const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
@@ -232,9 +213,47 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::regainTwoI
       coarseVertex.refine();
     }
   }
+}
 
-  //Mark vertex as "old" (i.e. older than just created ;-))
-  _vertex.setWasCreatedInThisIteration(false);
+void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::fillAdjacentPatchIndicesFromCoarseVertices(
+  const peanoclaw::Vertex* coarseGridVertices,
+  const peano::grid::VertexEnumerator&      coarseGridVerticesEnumerator,
+  peanoclaw::Vertex&       fineGridVertex,
+  const tarch::la::Vector<DIMENSIONS,int>&                   localPositionOfHangingNode
+) {
+  logTraceInWith2Arguments( "fillAdjacentPatchIndicesFromCoarseVertices(...)", fineGridVertex, localPositionOfHangingNode );
+
+  tarch::la::Vector<DIMENSIONS,int>   fromCoarseGridVertex;
+  tarch::la::Vector<DIMENSIONS,int>   coarseGridVertexAdjacentPatchIndex;
+
+  dfor2(k)
+    for (int d=0; d<DIMENSIONS; d++) {
+      if (localPositionOfHangingNode(d)==0) {
+        fromCoarseGridVertex(d)          = 0;
+        coarseGridVertexAdjacentPatchIndex(d) = k(d);
+      }
+      else if (localPositionOfHangingNode(d)==3) {
+        fromCoarseGridVertex(d)          = 1;
+        coarseGridVertexAdjacentPatchIndex(d) = k(d);
+      }
+      else if (k(d)==0) {
+        fromCoarseGridVertex(d)          = 0;
+        coarseGridVertexAdjacentPatchIndex(d) = 1;
+      }
+      else {
+        fromCoarseGridVertex(d)          = 1;
+        coarseGridVertexAdjacentPatchIndex(d) = 0;
+      }
+    }
+    int coarseGridVertexIndex = coarseGridVerticesEnumerator(peano::utils::dLinearised(fromCoarseGridVertex,2));
+    int coarseGridVertexEntry = TWO_POWER_D_MINUS_ONE-peano::utils::dLinearised(coarseGridVertexAdjacentPatchIndex,2);
+    fineGridVertex.setAdjacentCellDescriptionIndex(
+      TWO_POWER_D_MINUS_ONE-kScalar,
+      coarseGridVertices[coarseGridVertexIndex].getAdjacentCellDescriptionIndex(coarseGridVertexEntry)
+    );
+  enddforx
+
+  logTraceOut( "fillAdjacentPatchIndicesFromCoarseVertices(...)" );
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::refineOnParallelAndAdaptiveBoundary() {
