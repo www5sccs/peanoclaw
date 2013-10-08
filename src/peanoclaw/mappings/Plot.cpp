@@ -277,7 +277,7 @@ void peanoclaw::mappings::Plot::mergeWithRemoteDataDueToForkOrJoin(
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
 
-void peanoclaw::mappings::Plot::prepareSendToWorker(
+bool peanoclaw::mappings::Plot::prepareSendToWorker(
   peanoclaw::Cell&                 fineGridCell,
   peanoclaw::Vertex * const        fineGridVertices,
   const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -288,7 +288,7 @@ void peanoclaw::mappings::Plot::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  // @todo Insert your code here
+  return true;
   logTraceOut( "prepareSendToWorker(...)" );
 }
 

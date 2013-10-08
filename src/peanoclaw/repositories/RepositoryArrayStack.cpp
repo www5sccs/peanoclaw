@@ -174,19 +174,15 @@ peanoclaw::State& peanoclaw::repositories::RepositoryArrayStack::getState() {
 }
 
    
-void peanoclaw::repositories::RepositoryArrayStack::iterate(bool reduceState) {
+void peanoclaw::repositories::RepositoryArrayStack::iterate() {
   tarch::timing::Watch watch( "peanoclaw::repositories::RepositoryArrayStack", "iterate(bool)", false);
   
   #ifdef Parallel
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-    _repositoryState.setReduceState(reduceState);
     tarch::parallel::NodePool::getInstance().broadcastToWorkingNodes(
       _repositoryState,
       peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag()
     );
-  }
-  else {
-    reduceState = _repositoryState.getReduceState();
   }
   #endif
 
@@ -196,18 +192,18 @@ void peanoclaw::repositories::RepositoryArrayStack::iterate(bool reduceState) {
   #endif
 
   switch ( _repositoryState.getAction()) {
-    case peanoclaw::records::RepositoryState::UseAdapterInitialiseGrid: watch.startTimer(); _gridWithInitialiseGrid.iterate(reduceState); watch.stopTimer(); _measureInitialiseGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterInitialiseAndValidateGrid: watch.startTimer(); _gridWithInitialiseAndValidateGrid.iterate(reduceState); watch.stopTimer(); _measureInitialiseAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterPlot: watch.startTimer(); _gridWithPlot.iterate(reduceState); watch.stopTimer(); _measurePlotCPUTime.setValue( watch.getCPUTime() ); _measurePlotCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterPlotAndValidateGrid: watch.startTimer(); _gridWithPlotAndValidateGrid.iterate(reduceState); watch.stopTimer(); _measurePlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measurePlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterRemesh: watch.startTimer(); _gridWithRemesh.iterate(reduceState); watch.stopTimer(); _measureRemeshCPUTime.setValue( watch.getCPUTime() ); _measureRemeshCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestep: watch.startTimer(); _gridWithSolveTimestep.iterate(reduceState); watch.stopTimer(); _measureSolveTimestepCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndValidateGrid: watch.startTimer(); _gridWithSolveTimestepAndValidateGrid.iterate(reduceState); watch.stopTimer(); _measureSolveTimestepAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndPlot: watch.startTimer(); _gridWithSolveTimestepAndPlot.iterate(reduceState); watch.stopTimer(); _measureSolveTimestepAndPlotCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndPlotCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndPlotAndValidateGrid: watch.startTimer(); _gridWithSolveTimestepAndPlotAndValidateGrid.iterate(reduceState); watch.stopTimer(); _measureSolveTimestepAndPlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndPlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterGatherCurrentSolution: watch.startTimer(); _gridWithGatherCurrentSolution.iterate(reduceState); watch.stopTimer(); _measureGatherCurrentSolutionCPUTime.setValue( watch.getCPUTime() ); _measureGatherCurrentSolutionCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterGatherCurrentSolutionAndValidateGrid: watch.startTimer(); _gridWithGatherCurrentSolutionAndValidateGrid.iterate(reduceState); watch.stopTimer(); _measureGatherCurrentSolutionAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureGatherCurrentSolutionAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterCleanup: watch.startTimer(); _gridWithCleanup.iterate(reduceState); watch.stopTimer(); _measureCleanupCPUTime.setValue( watch.getCPUTime() ); _measureCleanupCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterInitialiseGrid: watch.startTimer(); _gridWithInitialiseGrid.iterate(); watch.stopTimer(); _measureInitialiseGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterInitialiseAndValidateGrid: watch.startTimer(); _gridWithInitialiseAndValidateGrid.iterate(); watch.stopTimer(); _measureInitialiseAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterPlot: watch.startTimer(); _gridWithPlot.iterate(); watch.stopTimer(); _measurePlotCPUTime.setValue( watch.getCPUTime() ); _measurePlotCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterPlotAndValidateGrid: watch.startTimer(); _gridWithPlotAndValidateGrid.iterate(); watch.stopTimer(); _measurePlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measurePlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterRemesh: watch.startTimer(); _gridWithRemesh.iterate(); watch.stopTimer(); _measureRemeshCPUTime.setValue( watch.getCPUTime() ); _measureRemeshCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestep: watch.startTimer(); _gridWithSolveTimestep.iterate(); watch.stopTimer(); _measureSolveTimestepCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndValidateGrid: watch.startTimer(); _gridWithSolveTimestepAndValidateGrid.iterate(); watch.stopTimer(); _measureSolveTimestepAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndPlot: watch.startTimer(); _gridWithSolveTimestepAndPlot.iterate(); watch.stopTimer(); _measureSolveTimestepAndPlotCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndPlotCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndPlotAndValidateGrid: watch.startTimer(); _gridWithSolveTimestepAndPlotAndValidateGrid.iterate(); watch.stopTimer(); _measureSolveTimestepAndPlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndPlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterGatherCurrentSolution: watch.startTimer(); _gridWithGatherCurrentSolution.iterate(); watch.stopTimer(); _measureGatherCurrentSolutionCPUTime.setValue( watch.getCPUTime() ); _measureGatherCurrentSolutionCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterGatherCurrentSolutionAndValidateGrid: watch.startTimer(); _gridWithGatherCurrentSolutionAndValidateGrid.iterate(); watch.stopTimer(); _measureGatherCurrentSolutionAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureGatherCurrentSolutionAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+    case peanoclaw::records::RepositoryState::UseAdapterCleanup: watch.startTimer(); _gridWithCleanup.iterate(); watch.stopTimer(); _measureCleanupCPUTime.setValue( watch.getCPUTime() ); _measureCleanupCalendarTime.setValue( watch.getCalendarTime() ); break;
 
     case peanoclaw::records::RepositoryState::Terminate:
       assertionMsg( false, "this branch/state should never be reached" ); 

@@ -688,7 +688,7 @@ class peanoclaw::mappings::SolveTimestep {
      *
      * @see peano::kernel::spacetreegrid::nodes::Node::updateCellsParallelStateAfterLoad()
      */
-    void prepareSendToWorker(
+    bool prepareSendToWorker(
       peanoclaw::Cell&                 fineGridCell,
       peanoclaw::Vertex * const        fineGridVertices,
       const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,

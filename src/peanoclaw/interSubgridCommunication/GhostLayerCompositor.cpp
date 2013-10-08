@@ -99,7 +99,7 @@ peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor
   _patches(patches),
   _level(level),
   _numerics(numerics),
-  _useDimensionalSplittingOptimization(useDimensionalSplittingOptimization)
+  _useDimensionalSplittingOptimization(/*useDimensionalSplittingOptimization*/false) //TODO unterweg debug
 {
 }
 

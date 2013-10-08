@@ -62,7 +62,7 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentVertices {
      */
     bool refineIfNecessary(
       Patch&                                patch,
-      tarch::la::Vector<DIMENSIONS, double> minimalMeshWidth
+      tarch::la::Vector<DIMENSIONS, double> maximalMeshWidth
     );
 };
 

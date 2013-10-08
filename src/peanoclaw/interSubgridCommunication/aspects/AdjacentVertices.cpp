@@ -18,16 +18,16 @@ peanoclaw::interSubgridCommunication::aspects::AdjacentVertices::AdjacentVertice
 
 bool peanoclaw::interSubgridCommunication::aspects::AdjacentVertices::refineIfNecessary(
   Patch&                                patch,
-  tarch::la::Vector<DIMENSIONS, double> minimalMeshWidth
+  tarch::la::Vector<DIMENSIONS, double> maximalMeshWidth
 ) {
   //Check for error in refinement criterion
-  if(!tarch::la::allGreater(minimalMeshWidth, tarch::la::Vector<DIMENSIONS,double>(0.0))) {
+  if(!tarch::la::allGreater(maximalMeshWidth, tarch::la::Vector<DIMENSIONS,double>(0.0))) {
     logWarning("createCell(...)", "A demanded mesh width of 0.0 leads to an infinite refinement. Is the refinement criterion correct?");
   }
-  assertion(tarch::la::allGreater(minimalMeshWidth, 0.0));
+  assertion(tarch::la::allGreater(maximalMeshWidth, 0.0));
 
   //Refine if necessary
-  if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(minimalMeshWidth))) {
+  if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(maximalMeshWidth))) {
     for(int i = 0; i < TWO_POWER_D; i++) {
       if (_vertices[_verticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined
           && !_vertices[_verticesEnumerator(i)].isHangingNode()) {

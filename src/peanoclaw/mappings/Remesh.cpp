@@ -277,10 +277,10 @@ void peanoclaw::mappings::Remesh::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith6Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, fineGridVerticesEnumerator.getCellCenter() );
- 
+
   //Initialise new Patch
   Patch fineGridPatch = Patch(
-    fineGridVerticesEnumerator.getVertexPosition(),
+    fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getCellSize(),
     _unknownsPerSubcell,
     _auxiliarFieldsPerSubcell,
@@ -598,7 +598,7 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
 
-void peanoclaw::mappings::Remesh::prepareSendToWorker(
+bool peanoclaw::mappings::Remesh::prepareSendToWorker(
   peanoclaw::Cell&                 fineGridCell,
   peanoclaw::Vertex * const        fineGridVertices,
   const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -632,6 +632,7 @@ void peanoclaw::mappings::Remesh::prepareSendToWorker(
     communicator.sendPatch(fineGridCell.getCellDescriptionIndex());
   }
 
+  return true;
   logTraceOut( "prepareSendToWorker(...)" );
 }
 
@@ -825,6 +826,8 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
     coarseGridVerticesEnumerator.getLevel()+1
   );
 
+  adjacentSubgrids.refineOnParallelAndAdaptiveBoundary();
+
   adjacentSubgrids.regainTwoIrregularity(
     coarseGridVertices,
     coarseGridVerticesEnumerator
@@ -881,7 +884,6 @@ void peanoclaw::mappings::Remesh::enterCell(
     assertion1(isRefining, patch);
   }
   #endif
-
   logTraceOutWith2Arguments( "enterCell(...)", fineGridCell, patch );
 }
 

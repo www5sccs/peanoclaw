@@ -77,10 +77,21 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator()
   int                                       destinationIndex,
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
+
+  //TODO unterweg debug
+//  std::cout << "Filling ghostlayer edge from " << sourceIndex << " to " << destinationIndex
+//      << " _destinationPatchIndex=" << _destinationPatchIndex << " should transfer: " << _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination) << std::endl
+//      << "source: " << source << std::endl
+//      << "destiantion: " << destination << std::endl;
+
   if(
     (_destinationPatchIndex == -1 || _destinationPatchIndex == destinationIndex)
     && _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination)
   ) {
+
+    //TODO unterweg debug
+//    std::cout << "Interpolating ghostlayer edge" << std::endl;
+
     assertionEquals2(source.getSubdivisionFactor(), destination.getSubdivisionFactor(), source, destination);
     int ghostlayerWidth = destination.getGhostLayerWidth();
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
@@ -108,6 +119,10 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator()
         destination
       );
     } else if(source.getLevel() < destination.getLevel() && destination.getLevel() == _ghostlayerCompositor._level && source.isLeaf()) {
+
+      //TODO unterweg debug
+//      std::cout << "Interpolating ghostlayer edge from " << sourceIndex << " to " << destinationIndex << std::endl;
+
       _ghostlayerCompositor._numerics.interpolate(
         edgeSize,
         destinationOffset,
@@ -133,6 +148,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::operator
   int                                       destinationIndex,
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
+
   if(
     (_destinationPatchIndex == -1 || _destinationPatchIndex == destinationIndex)
     && _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination)

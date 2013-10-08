@@ -54,8 +54,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
 void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
   //Distributed Memory
   #if defined(Parallel)
-  tarch::parallel::Node::getInstance().setTimeOutWarning(800);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(2400);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(1800);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(4400);
 
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
     tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
@@ -208,9 +208,9 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
       do {
         iterateInitialiseGrid();
-        iterateInitialiseGrid();
+        iterateInitialiseGrid(); //TODO unterweg: Raus?
 
-        logDebug("PeanoClawLibraryRunner", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
+        logInfo("PeanoClawLibraryRunner", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
       } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
       maximumLevel += 2;
@@ -222,6 +222,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       logDebug("PeanoClawLibraryRunner", "Iterate with Refinement Criterion");
 //      iterateInitialiseGrid();
       iterateInitialiseGrid();
+      iterateInitialiseGrid(); //TODO unterweg: Raus?
     } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
     //Plot initial grid
@@ -291,7 +292,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
 
   if(_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _repository->getState().setPlotNumber(_plotNumber);
-    iteratePlot();
+    //iteratePlot();
     _plotNumber++;
   } else if (!_configuration.plotAtOutputTimes() && !plotSubsteps) {
     _plotNumber++;

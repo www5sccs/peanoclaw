@@ -6,7 +6,7 @@
    }
    
    
-   peanoclaw::records::PatchDescription::PersistentRecords::PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
+   peanoclaw::records::PatchDescription::PersistentRecords::PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
    _isReferenced(isReferenced),
    _adjacentRanks(adjacentRanks),
    _rank(rank),
@@ -19,6 +19,7 @@
    _size(size),
    _time(time),
    _timestepSize(timestepSize),
+   _hash(hash),
    _skipGridIterations(skipGridIterations),
    _demandedMeshWidth(demandedMeshWidth),
    _cellDescriptionIndex(cellDescriptionIndex) {
@@ -170,6 +171,18 @@
    
    
    
+    double peanoclaw::records::PatchDescription::PersistentRecords::getHash() const  {
+      return _hash;
+   }
+   
+   
+   
+    void peanoclaw::records::PatchDescription::PersistentRecords::setHash(const double& hash)  {
+      _hash = hash;
+   }
+   
+   
+   
     int peanoclaw::records::PatchDescription::PersistentRecords::getSkipGridIterations() const  {
       return _skipGridIterations;
    }
@@ -211,13 +224,13 @@
    
    
    peanoclaw::records::PatchDescription::PatchDescription(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._isReferenced, persistentRecords._adjacentRanks, persistentRecords._rank, persistentRecords._subdivisionFactor, persistentRecords._ghostLayerWidth, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._isRemote, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._skipGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._cellDescriptionIndex) {
+   _persistentRecords(persistentRecords._isReferenced, persistentRecords._adjacentRanks, persistentRecords._rank, persistentRecords._subdivisionFactor, persistentRecords._ghostLayerWidth, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._isRemote, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._hash, persistentRecords._skipGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._cellDescriptionIndex) {
       
    }
    
    
-   peanoclaw::records::PatchDescription::PatchDescription(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
-   _persistentRecords(isReferenced, adjacentRanks, rank, subdivisionFactor, ghostLayerWidth, level, isVirtual, isRemote, position, size, time, timestepSize, skipGridIterations, demandedMeshWidth, cellDescriptionIndex) {
+   peanoclaw::records::PatchDescription::PatchDescription(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
+   _persistentRecords(isReferenced, adjacentRanks, rank, subdivisionFactor, ghostLayerWidth, level, isVirtual, isRemote, position, size, time, timestepSize, hash, skipGridIterations, demandedMeshWidth, cellDescriptionIndex) {
       
    }
    
@@ -441,6 +454,18 @@
    
    
    
+    double peanoclaw::records::PatchDescription::getHash() const  {
+      return _persistentRecords._hash;
+   }
+   
+   
+   
+    void peanoclaw::records::PatchDescription::setHash(const double& hash)  {
+      _persistentRecords._hash = hash;
+   }
+   
+   
+   
     int peanoclaw::records::PatchDescription::getSkipGridIterations() const  {
       return _persistentRecords._skipGridIterations;
    }
@@ -526,6 +551,8 @@
       out << ",";
       out << "timestepSize:" << getTimestepSize();
       out << ",";
+      out << "hash:" << getHash();
+      out << ",";
       out << "skipGridIterations:" << getSkipGridIterations();
       out << ",";
       out << "demandedMeshWidth:" << getDemandedMeshWidth();
@@ -553,6 +580,7 @@
          getSize(),
          getTime(),
          getTimestepSize(),
+         getHash(),
          getSkipGridIterations(),
          getDemandedMeshWidth(),
          getCellDescriptionIndex()
@@ -570,7 +598,7 @@
          {
             PatchDescription dummyPatchDescription[2];
             
-            const int Attributes = 16;
+            const int Attributes = 17;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isReferenced
                MPI_INT,		 //adjacentRanks
@@ -584,6 +612,7 @@
                MPI_DOUBLE,		 //size
                MPI_DOUBLE,		 //time
                MPI_DOUBLE,		 //timestepSize
+               MPI_DOUBLE,		 //hash
                MPI_INT,		 //skipGridIterations
                MPI_DOUBLE,		 //demandedMeshWidth
                MPI_INT,		 //cellDescriptionIndex
@@ -603,6 +632,7 @@
                DIMENSIONS,		 //size
                1,		 //time
                1,		 //timestepSize
+               1,		 //hash
                1,		 //skipGridIterations
                1,		 //demandedMeshWidth
                1,		 //cellDescriptionIndex
@@ -625,10 +655,11 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._size[0]))), 		&disp[9] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._time))), 		&disp[10] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._timestepSize))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._skipGridIterations))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._demandedMeshWidth))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[1]._persistentRecords._isReferenced))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._hash))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._skipGridIterations))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._demandedMeshWidth))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[1]._persistentRecords._isReferenced))), 		&disp[16] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -643,7 +674,7 @@
          {
             PatchDescription dummyPatchDescription[2];
             
-            const int Attributes = 16;
+            const int Attributes = 17;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isReferenced
                MPI_INT,		 //adjacentRanks
@@ -657,6 +688,7 @@
                MPI_DOUBLE,		 //size
                MPI_DOUBLE,		 //time
                MPI_DOUBLE,		 //timestepSize
+               MPI_DOUBLE,		 //hash
                MPI_INT,		 //skipGridIterations
                MPI_DOUBLE,		 //demandedMeshWidth
                MPI_INT,		 //cellDescriptionIndex
@@ -676,6 +708,7 @@
                DIMENSIONS,		 //size
                1,		 //time
                1,		 //timestepSize
+               1,		 //hash
                1,		 //skipGridIterations
                1,		 //demandedMeshWidth
                1,		 //cellDescriptionIndex
@@ -698,10 +731,11 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._size[0]))), 		&disp[9] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._time))), 		&disp[10] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._timestepSize))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._skipGridIterations))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._demandedMeshWidth))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[1]._persistentRecords._isReferenced))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._hash))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._skipGridIterations))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._demandedMeshWidth))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[1]._persistentRecords._isReferenced))), 		&disp[16] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -911,7 +945,7 @@
    }
    
    
-   peanoclaw::records::PatchDescriptionPacked::PersistentRecords::PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
+   peanoclaw::records::PatchDescriptionPacked::PersistentRecords::PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
    _isReferenced(isReferenced),
    _adjacentRanks(adjacentRanks),
    _rank(rank),
@@ -924,6 +958,7 @@
    _size(size),
    _time(time),
    _timestepSize(timestepSize),
+   _hash(hash),
    _skipGridIterations(skipGridIterations),
    _demandedMeshWidth(demandedMeshWidth),
    _cellDescriptionIndex(cellDescriptionIndex) {
@@ -1075,6 +1110,18 @@
    
    
    
+    double peanoclaw::records::PatchDescriptionPacked::PersistentRecords::getHash() const  {
+      return _hash;
+   }
+   
+   
+   
+    void peanoclaw::records::PatchDescriptionPacked::PersistentRecords::setHash(const double& hash)  {
+      _hash = hash;
+   }
+   
+   
+   
     int peanoclaw::records::PatchDescriptionPacked::PersistentRecords::getSkipGridIterations() const  {
       return _skipGridIterations;
    }
@@ -1116,13 +1163,13 @@
    
    
    peanoclaw::records::PatchDescriptionPacked::PatchDescriptionPacked(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._isReferenced, persistentRecords._adjacentRanks, persistentRecords._rank, persistentRecords._subdivisionFactor, persistentRecords._ghostLayerWidth, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._isRemote, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._skipGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._cellDescriptionIndex) {
+   _persistentRecords(persistentRecords._isReferenced, persistentRecords._adjacentRanks, persistentRecords._rank, persistentRecords._subdivisionFactor, persistentRecords._ghostLayerWidth, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._isRemote, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._hash, persistentRecords._skipGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._cellDescriptionIndex) {
       
    }
    
    
-   peanoclaw::records::PatchDescriptionPacked::PatchDescriptionPacked(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
-   _persistentRecords(isReferenced, adjacentRanks, rank, subdivisionFactor, ghostLayerWidth, level, isVirtual, isRemote, position, size, time, timestepSize, skipGridIterations, demandedMeshWidth, cellDescriptionIndex) {
+   peanoclaw::records::PatchDescriptionPacked::PatchDescriptionPacked(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
+   _persistentRecords(isReferenced, adjacentRanks, rank, subdivisionFactor, ghostLayerWidth, level, isVirtual, isRemote, position, size, time, timestepSize, hash, skipGridIterations, demandedMeshWidth, cellDescriptionIndex) {
       
    }
    
@@ -1346,6 +1393,18 @@
    
    
    
+    double peanoclaw::records::PatchDescriptionPacked::getHash() const  {
+      return _persistentRecords._hash;
+   }
+   
+   
+   
+    void peanoclaw::records::PatchDescriptionPacked::setHash(const double& hash)  {
+      _persistentRecords._hash = hash;
+   }
+   
+   
+   
     int peanoclaw::records::PatchDescriptionPacked::getSkipGridIterations() const  {
       return _persistentRecords._skipGridIterations;
    }
@@ -1431,6 +1490,8 @@
       out << ",";
       out << "timestepSize:" << getTimestepSize();
       out << ",";
+      out << "hash:" << getHash();
+      out << ",";
       out << "skipGridIterations:" << getSkipGridIterations();
       out << ",";
       out << "demandedMeshWidth:" << getDemandedMeshWidth();
@@ -1458,6 +1519,7 @@
          getSize(),
          getTime(),
          getTimestepSize(),
+         getHash(),
          getSkipGridIterations(),
          getDemandedMeshWidth(),
          getCellDescriptionIndex()
@@ -1475,7 +1537,7 @@
          {
             PatchDescriptionPacked dummyPatchDescriptionPacked[2];
             
-            const int Attributes = 16;
+            const int Attributes = 17;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isReferenced
                MPI_INT,		 //adjacentRanks
@@ -1489,6 +1551,7 @@
                MPI_DOUBLE,		 //size
                MPI_DOUBLE,		 //time
                MPI_DOUBLE,		 //timestepSize
+               MPI_DOUBLE,		 //hash
                MPI_INT,		 //skipGridIterations
                MPI_DOUBLE,		 //demandedMeshWidth
                MPI_INT,		 //cellDescriptionIndex
@@ -1508,6 +1571,7 @@
                DIMENSIONS,		 //size
                1,		 //time
                1,		 //timestepSize
+               1,		 //hash
                1,		 //skipGridIterations
                1,		 //demandedMeshWidth
                1,		 //cellDescriptionIndex
@@ -1530,10 +1594,11 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._size[0]))), 		&disp[9] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._time))), 		&disp[10] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._timestepSize))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._skipGridIterations))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._demandedMeshWidth))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[1]._persistentRecords._isReferenced))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._hash))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._skipGridIterations))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._demandedMeshWidth))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._cellDescriptionIndex))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[1]._persistentRecords._isReferenced))), 		&disp[16] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -1548,7 +1613,7 @@
          {
             PatchDescriptionPacked dummyPatchDescriptionPacked[2];
             
-            const int Attributes = 16;
+            const int Attributes = 17;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isReferenced
                MPI_INT,		 //adjacentRanks
@@ -1562,6 +1627,7 @@
                MPI_DOUBLE,		 //size
                MPI_DOUBLE,		 //time
                MPI_DOUBLE,		 //timestepSize
+               MPI_DOUBLE,		 //hash
                MPI_INT,		 //skipGridIterations
                MPI_DOUBLE,		 //demandedMeshWidth
                MPI_INT,		 //cellDescriptionIndex
@@ -1581,6 +1647,7 @@
                DIMENSIONS,		 //size
                1,		 //time
                1,		 //timestepSize
+               1,		 //hash
                1,		 //skipGridIterations
                1,		 //demandedMeshWidth
                1,		 //cellDescriptionIndex
@@ -1603,10 +1670,11 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._size[0]))), 		&disp[9] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._time))), 		&disp[10] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._timestepSize))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._skipGridIterations))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._demandedMeshWidth))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[1]._persistentRecords._isReferenced))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._hash))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._skipGridIterations))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._demandedMeshWidth))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._cellDescriptionIndex))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[1]._persistentRecords._isReferenced))), 		&disp[16] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -1818,7 +1886,7 @@
    }
    
    
-   peanoclaw::records::PatchDescription::PersistentRecords::PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
+   peanoclaw::records::PatchDescription::PersistentRecords::PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
    _isReferenced(isReferenced),
    _adjacentRanks(adjacentRanks),
    _rank(rank),
@@ -1830,6 +1898,7 @@
    _size(size),
    _time(time),
    _timestepSize(timestepSize),
+   _hash(hash),
    _skipGridIterations(skipGridIterations),
    _demandedMeshWidth(demandedMeshWidth),
    _cellDescriptionIndex(cellDescriptionIndex) {
@@ -1969,6 +2038,18 @@
    
    
    
+    double peanoclaw::records::PatchDescription::PersistentRecords::getHash() const  {
+      return _hash;
+   }
+   
+   
+   
+    void peanoclaw::records::PatchDescription::PersistentRecords::setHash(const double& hash)  {
+      _hash = hash;
+   }
+   
+   
+   
     int peanoclaw::records::PatchDescription::PersistentRecords::getSkipGridIterations() const  {
       return _skipGridIterations;
    }
@@ -2010,13 +2091,13 @@
    
    
    peanoclaw::records::PatchDescription::PatchDescription(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._isReferenced, persistentRecords._adjacentRanks, persistentRecords._rank, persistentRecords._subdivisionFactor, persistentRecords._ghostLayerWidth, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._skipGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._cellDescriptionIndex) {
+   _persistentRecords(persistentRecords._isReferenced, persistentRecords._adjacentRanks, persistentRecords._rank, persistentRecords._subdivisionFactor, persistentRecords._ghostLayerWidth, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._hash, persistentRecords._skipGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._cellDescriptionIndex) {
       
    }
    
    
-   peanoclaw::records::PatchDescription::PatchDescription(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
-   _persistentRecords(isReferenced, adjacentRanks, rank, subdivisionFactor, ghostLayerWidth, level, isVirtual, position, size, time, timestepSize, skipGridIterations, demandedMeshWidth, cellDescriptionIndex) {
+   peanoclaw::records::PatchDescription::PatchDescription(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
+   _persistentRecords(isReferenced, adjacentRanks, rank, subdivisionFactor, ghostLayerWidth, level, isVirtual, position, size, time, timestepSize, hash, skipGridIterations, demandedMeshWidth, cellDescriptionIndex) {
       
    }
    
@@ -2228,6 +2309,18 @@
    
    
    
+    double peanoclaw::records::PatchDescription::getHash() const  {
+      return _persistentRecords._hash;
+   }
+   
+   
+   
+    void peanoclaw::records::PatchDescription::setHash(const double& hash)  {
+      _persistentRecords._hash = hash;
+   }
+   
+   
+   
     int peanoclaw::records::PatchDescription::getSkipGridIterations() const  {
       return _persistentRecords._skipGridIterations;
    }
@@ -2311,6 +2404,8 @@
       out << ",";
       out << "timestepSize:" << getTimestepSize();
       out << ",";
+      out << "hash:" << getHash();
+      out << ",";
       out << "skipGridIterations:" << getSkipGridIterations();
       out << ",";
       out << "demandedMeshWidth:" << getDemandedMeshWidth();
@@ -2337,6 +2432,7 @@
          getSize(),
          getTime(),
          getTimestepSize(),
+         getHash(),
          getSkipGridIterations(),
          getDemandedMeshWidth(),
          getCellDescriptionIndex()
@@ -2354,7 +2450,7 @@
          {
             PatchDescription dummyPatchDescription[2];
             
-            const int Attributes = 15;
+            const int Attributes = 16;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isReferenced
                MPI_INT,		 //adjacentRanks
@@ -2367,6 +2463,7 @@
                MPI_DOUBLE,		 //size
                MPI_DOUBLE,		 //time
                MPI_DOUBLE,		 //timestepSize
+               MPI_DOUBLE,		 //hash
                MPI_INT,		 //skipGridIterations
                MPI_DOUBLE,		 //demandedMeshWidth
                MPI_INT,		 //cellDescriptionIndex
@@ -2385,6 +2482,7 @@
                DIMENSIONS,		 //size
                1,		 //time
                1,		 //timestepSize
+               1,		 //hash
                1,		 //skipGridIterations
                1,		 //demandedMeshWidth
                1,		 //cellDescriptionIndex
@@ -2406,10 +2504,11 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._size[0]))), 		&disp[8] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._time))), 		&disp[9] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._timestepSize))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._skipGridIterations))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._demandedMeshWidth))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[1]._persistentRecords._isReferenced))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._hash))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._skipGridIterations))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._demandedMeshWidth))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[1]._persistentRecords._isReferenced))), 		&disp[15] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -2424,7 +2523,7 @@
          {
             PatchDescription dummyPatchDescription[2];
             
-            const int Attributes = 15;
+            const int Attributes = 16;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isReferenced
                MPI_INT,		 //adjacentRanks
@@ -2437,6 +2536,7 @@
                MPI_DOUBLE,		 //size
                MPI_DOUBLE,		 //time
                MPI_DOUBLE,		 //timestepSize
+               MPI_DOUBLE,		 //hash
                MPI_INT,		 //skipGridIterations
                MPI_DOUBLE,		 //demandedMeshWidth
                MPI_INT,		 //cellDescriptionIndex
@@ -2455,6 +2555,7 @@
                DIMENSIONS,		 //size
                1,		 //time
                1,		 //timestepSize
+               1,		 //hash
                1,		 //skipGridIterations
                1,		 //demandedMeshWidth
                1,		 //cellDescriptionIndex
@@ -2476,10 +2577,11 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._size[0]))), 		&disp[8] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._time))), 		&disp[9] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._timestepSize))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._skipGridIterations))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._demandedMeshWidth))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[1]._persistentRecords._isReferenced))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._hash))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._skipGridIterations))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._demandedMeshWidth))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescription[1]._persistentRecords._isReferenced))), 		&disp[15] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -2689,7 +2791,7 @@
    }
    
    
-   peanoclaw::records::PatchDescriptionPacked::PersistentRecords::PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
+   peanoclaw::records::PatchDescriptionPacked::PersistentRecords::PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
    _isReferenced(isReferenced),
    _adjacentRanks(adjacentRanks),
    _rank(rank),
@@ -2701,6 +2803,7 @@
    _size(size),
    _time(time),
    _timestepSize(timestepSize),
+   _hash(hash),
    _skipGridIterations(skipGridIterations),
    _demandedMeshWidth(demandedMeshWidth),
    _cellDescriptionIndex(cellDescriptionIndex) {
@@ -2840,6 +2943,18 @@
    
    
    
+    double peanoclaw::records::PatchDescriptionPacked::PersistentRecords::getHash() const  {
+      return _hash;
+   }
+   
+   
+   
+    void peanoclaw::records::PatchDescriptionPacked::PersistentRecords::setHash(const double& hash)  {
+      _hash = hash;
+   }
+   
+   
+   
     int peanoclaw::records::PatchDescriptionPacked::PersistentRecords::getSkipGridIterations() const  {
       return _skipGridIterations;
    }
@@ -2881,13 +2996,13 @@
    
    
    peanoclaw::records::PatchDescriptionPacked::PatchDescriptionPacked(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._isReferenced, persistentRecords._adjacentRanks, persistentRecords._rank, persistentRecords._subdivisionFactor, persistentRecords._ghostLayerWidth, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._skipGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._cellDescriptionIndex) {
+   _persistentRecords(persistentRecords._isReferenced, persistentRecords._adjacentRanks, persistentRecords._rank, persistentRecords._subdivisionFactor, persistentRecords._ghostLayerWidth, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._hash, persistentRecords._skipGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._cellDescriptionIndex) {
       
    }
    
    
-   peanoclaw::records::PatchDescriptionPacked::PatchDescriptionPacked(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
-   _persistentRecords(isReferenced, adjacentRanks, rank, subdivisionFactor, ghostLayerWidth, level, isVirtual, position, size, time, timestepSize, skipGridIterations, demandedMeshWidth, cellDescriptionIndex) {
+   peanoclaw::records::PatchDescriptionPacked::PatchDescriptionPacked(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex):
+   _persistentRecords(isReferenced, adjacentRanks, rank, subdivisionFactor, ghostLayerWidth, level, isVirtual, position, size, time, timestepSize, hash, skipGridIterations, demandedMeshWidth, cellDescriptionIndex) {
       
    }
    
@@ -3099,6 +3214,18 @@
    
    
    
+    double peanoclaw::records::PatchDescriptionPacked::getHash() const  {
+      return _persistentRecords._hash;
+   }
+   
+   
+   
+    void peanoclaw::records::PatchDescriptionPacked::setHash(const double& hash)  {
+      _persistentRecords._hash = hash;
+   }
+   
+   
+   
     int peanoclaw::records::PatchDescriptionPacked::getSkipGridIterations() const  {
       return _persistentRecords._skipGridIterations;
    }
@@ -3182,6 +3309,8 @@
       out << ",";
       out << "timestepSize:" << getTimestepSize();
       out << ",";
+      out << "hash:" << getHash();
+      out << ",";
       out << "skipGridIterations:" << getSkipGridIterations();
       out << ",";
       out << "demandedMeshWidth:" << getDemandedMeshWidth();
@@ -3208,6 +3337,7 @@
          getSize(),
          getTime(),
          getTimestepSize(),
+         getHash(),
          getSkipGridIterations(),
          getDemandedMeshWidth(),
          getCellDescriptionIndex()
@@ -3225,7 +3355,7 @@
          {
             PatchDescriptionPacked dummyPatchDescriptionPacked[2];
             
-            const int Attributes = 15;
+            const int Attributes = 16;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isReferenced
                MPI_INT,		 //adjacentRanks
@@ -3238,6 +3368,7 @@
                MPI_DOUBLE,		 //size
                MPI_DOUBLE,		 //time
                MPI_DOUBLE,		 //timestepSize
+               MPI_DOUBLE,		 //hash
                MPI_INT,		 //skipGridIterations
                MPI_DOUBLE,		 //demandedMeshWidth
                MPI_INT,		 //cellDescriptionIndex
@@ -3256,6 +3387,7 @@
                DIMENSIONS,		 //size
                1,		 //time
                1,		 //timestepSize
+               1,		 //hash
                1,		 //skipGridIterations
                1,		 //demandedMeshWidth
                1,		 //cellDescriptionIndex
@@ -3277,10 +3409,11 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._size[0]))), 		&disp[8] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._time))), 		&disp[9] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._timestepSize))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._skipGridIterations))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._demandedMeshWidth))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._cellDescriptionIndex))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[1]._persistentRecords._isReferenced))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._hash))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._skipGridIterations))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._demandedMeshWidth))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[1]._persistentRecords._isReferenced))), 		&disp[15] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -3295,7 +3428,7 @@
          {
             PatchDescriptionPacked dummyPatchDescriptionPacked[2];
             
-            const int Attributes = 15;
+            const int Attributes = 16;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isReferenced
                MPI_INT,		 //adjacentRanks
@@ -3308,6 +3441,7 @@
                MPI_DOUBLE,		 //size
                MPI_DOUBLE,		 //time
                MPI_DOUBLE,		 //timestepSize
+               MPI_DOUBLE,		 //hash
                MPI_INT,		 //skipGridIterations
                MPI_DOUBLE,		 //demandedMeshWidth
                MPI_INT,		 //cellDescriptionIndex
@@ -3326,6 +3460,7 @@
                DIMENSIONS,		 //size
                1,		 //time
                1,		 //timestepSize
+               1,		 //hash
                1,		 //skipGridIterations
                1,		 //demandedMeshWidth
                1,		 //cellDescriptionIndex
@@ -3347,10 +3482,11 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._size[0]))), 		&disp[8] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._time))), 		&disp[9] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._timestepSize))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._skipGridIterations))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._demandedMeshWidth))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._cellDescriptionIndex))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[1]._persistentRecords._isReferenced))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._hash))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._skipGridIterations))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._demandedMeshWidth))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[0]._persistentRecords._cellDescriptionIndex))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyPatchDescriptionPacked[1]._persistentRecords._isReferenced))), 		&disp[15] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );

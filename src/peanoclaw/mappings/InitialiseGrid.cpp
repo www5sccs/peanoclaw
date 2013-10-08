@@ -68,7 +68,9 @@ peanoclaw::mappings::InitialiseGrid::InitialiseGrid()
   _initialTimestepSize(-1.0),
   _initialMaximalSubgridSize(-1.0),
   _numerics(0),
-  _refinementTriggered(false) {
+  _refinementCriterionEnabled(true)
+//  _refinementTriggered(false)
+{
   logTraceIn( "InitialiseGrid()" );
   // @todo Insert your code here
   logTraceOut( "InitialiseGrid()" );
@@ -88,8 +90,8 @@ peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  maste
    _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
    _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
    _initialTimestepSize(masterThread._initialTimestepSize),
-   _numerics(masterThread._numerics),
-   _refinementTriggered(masterThread._refinementTriggered)
+   _numerics(masterThread._numerics) //,
+//   _refinementTriggered(masterThread._refinementTriggered)
 {
   logTraceIn( "InitialiseGrid(InitialiseGrid)" );
   // @todo Insert your code here
@@ -100,7 +102,7 @@ peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  maste
 void peanoclaw::mappings::InitialiseGrid::mergeWithWorkerThread(const InitialiseGrid& workerThread) {
   logTraceIn( "mergeWithWorkerThread(InitialiseGrid)" );
 
-  _refinementTriggered |= workerThread._refinementTriggered;
+//  _refinementTriggered |= workerThread._refinementTriggered;
 
   logTraceOut( "mergeWithWorkerThread(InitialiseGrid)" );
 }
@@ -250,7 +252,7 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
         fineGridVertices,
         fineGridVerticesEnumerator
       );
-      _refinementTriggered |= adjacentVertices.refineIfNecessary(patch, demandedMeshWidth);
+//      _refinementTriggered |= adjacentVertices.refineIfNecessary(patch, demandedMeshWidth);
   //    #endif
     }
   }
@@ -348,7 +350,7 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithRemoteDataDueToForkOrJoin(
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
 
-void peanoclaw::mappings::InitialiseGrid::prepareSendToWorker(
+bool peanoclaw::mappings::InitialiseGrid::prepareSendToWorker(
   peanoclaw::Cell&                 fineGridCell,
   peanoclaw::Vertex * const        fineGridVertices,
   const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
@@ -359,7 +361,7 @@ void peanoclaw::mappings::InitialiseGrid::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  // @todo Insert your code here
+  return true;
   logTraceOut( "prepareSendToWorker(...)" );
 }
 
@@ -394,12 +396,6 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithMaster(
   peanoclaw::State&                masterState
 ) {
   logTraceIn( "mergeWithMaster(...)" );
-
-  //Merge state
-  masterState.setInitialRefinementTriggered(
-    masterState.getInitialRefinementTriggered()
-    || workerState.getInitialRefinementTriggered()
-  );
 
   logTraceOut( "mergeWithMaster(...)" );
 }
@@ -508,7 +504,7 @@ void peanoclaw::mappings::InitialiseGrid::enterCell(
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
 //#if !defined(TouchBasedRefinement)
-  if(fineGridCell.isInside() && fineGridCell.isLeaf() && _refinementCriterionEnabled) {
+  if(fineGridCell.isLeaf() && _refinementCriterionEnabled) {
     Patch patch(fineGridCell);
 
     peanoclaw::interSubgridCommunication::aspects::AdjacentVertices adjacentVertices(
@@ -556,7 +552,7 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 
   _numerics = solverState.getNumerics();
 
-  _refinementTriggered = solverState.getInitialRefinementTriggered();
+//  _refinementTriggered = solverState.getInitialRefinementTriggered();
 
   _refinementCriterionEnabled = solverState.isRefinementCriterionEnabled();
 
@@ -569,7 +565,7 @@ void peanoclaw::mappings::InitialiseGrid::endIteration(
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
 
-  solverState.setInitialRefinementTriggered(solverState.getInitialRefinementTriggered() || _refinementTriggered);
+//  solverState.setInitialRefinementTriggered(solverState.getInitialRefinementTriggered() || _refinementTriggered);
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }

@@ -13,6 +13,7 @@ peanoclaw::Vertex::Vertex():
   Base() {
   _vertexData.setIndicesOfAdjacentCellDescriptions(-1);
   _vertexData.setWasCreatedInThisIteration(true);
+  _vertexData.setShouldRefine(false);
 }
 
 
@@ -80,18 +81,19 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   //TODO unterweg Debug
   #ifdef Debug
   bool plotVertex = false;
-//  plotVertex =
-//      tarch::la::equals(position(0), 48.0/81.0)
-//      && tarch::la::equals(position(1), 7.0/9.0)
-//      && level == 4
-//  ;
+  plotVertex =
+      tarch::la::equals(position(0), 1.0/9.0)
+      && tarch::la::equals(position(1), 1.0/3.0)
+      && level == 4
+  ;
 
   if(plotVertex) {
     std::cerr << "Filling vertex ("
         #ifdef Parallel
         << "rank=" << tarch::parallel::Node::getInstance().getRank() << ","
         #endif
-        <<"hanging=" << isHangingNode() << ") at " << position << " on level " << level << std::endl;
+        <<"hanging=" << isHangingNode() << ") at " << position << " on level " << level
+        <<", destinationPatch=" << destinationPatch << std::endl;
 
     for (int i = 0; i < TWO_POWER_D; i++) {
       std::cerr << " cellDescription(" << i << ")=" << getAdjacentCellDescriptionIndex(i);
@@ -115,6 +117,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   #ifdef Debug
   if(plotVertex
   ) {
+    std::cerr << "After filling:" << std::endl;
     for (int i = 0; i < TWO_POWER_D; i++) {
       if(patches[i].isValid()) {
         std::cerr << "Patch " << i << " at " << patches[i].getPosition() << " of size " << patches[i].getSize() << ": "

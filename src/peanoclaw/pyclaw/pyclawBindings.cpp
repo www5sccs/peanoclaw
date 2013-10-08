@@ -24,7 +24,7 @@
 #include "peanoclaw/pyclaw/PyClawCallbacks.h"
 
 #if USE_VALGRIND
-#include <callgrind.h>
+#include <valgrind/callgrind.h>
 #endif
 
 static bool _calledFromPython;

@@ -10,7 +10,9 @@ tarch::logging::Log peanoclaw::State::_log("peanoclaw::State");
 
 peanoclaw::State::State():
   Base(), _numerics(0) {
-  // @todo Insert your code here
+  resetGlobalTimeIntervals();
+  resetMinimalTimestep();
+  resetTotalNumberOfCellUpdates();
 }
 
 
@@ -194,9 +196,7 @@ void peanoclaw::State::resetMinimalTimestep() {
 }
 
 void peanoclaw::State::updateMinimalTimestep(double timestep) {
-  if(timestep < _stateData.getMinimalTimestep()) {
-    _stateData.setMinimalTimestep(timestep);
-  }
+  _stateData.setMinimalTimestep(std::min(timestep, _stateData.getMinimalTimestep()));
 }
 
 double peanoclaw::State::getMinimalTimestep() const {
@@ -245,13 +245,6 @@ bool peanoclaw::State::isRefinementCriterionEnabled() const {
   return _stateData.getIsRefinementCriterionEnabled();
 }
 
-void peanoclaw::State::setInitialRefinementTriggered(bool initialRefinementTriggered) {
-  _stateData.setInitialRefinmentTriggered(initialRefinementTriggered);
-}
-
-bool peanoclaw::State::getInitialRefinementTriggered() const {
-  return _stateData.getInitialRefinmentTriggered();
-}
 
 void peanoclaw::State::setUseDimensionalSplittingOptimization(bool useDimensionalSplittingOptimization) {
   _stateData.setUseDimensionalSplittingOptimization(useDimensionalSplittingOptimization);

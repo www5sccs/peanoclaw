@@ -190,7 +190,7 @@ class peanoclaw::adapters::Plot {
       int                                       level
     );
 
-    void prepareSendToWorker(
+    bool prepareSendToWorker(
       peanoclaw::Cell&                 fineGridCell,
       peanoclaw::Vertex * const        fineGridVertices,
       const peano::grid::VertexEnumerator&                fineGridVerticesEnumerator,
