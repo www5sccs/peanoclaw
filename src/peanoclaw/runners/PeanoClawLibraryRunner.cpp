@@ -57,8 +57,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
 void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
   //Distributed Memory
   #if defined(Parallel)
-  tarch::parallel::Node::getInstance().setTimeOutWarning(1800);
-  tarch::parallel::Node::getInstance().setDeadlockTimeOut(4400);
+  tarch::parallel::Node::getInstance().setTimeOutWarning(4500);
+  tarch::parallel::Node::getInstance().setDeadlockTimeOut(9000);
 
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
     tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );

@@ -632,8 +632,8 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
     communicator.sendPatch(fineGridCell.getCellDescriptionIndex());
   }
 
-  return true;
   logTraceOut( "prepareSendToWorker(...)" );
+  return true;
 }
 
 void peanoclaw::mappings::Remesh::prepareSendToMaster(
@@ -832,7 +832,6 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
     coarseGridVertices,
     coarseGridVerticesEnumerator
   );
-  adjacentSubgrids.storeAdjacencyInformation();
 
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }

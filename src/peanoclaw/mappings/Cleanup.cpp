@@ -274,8 +274,8 @@ bool peanoclaw::mappings::Cleanup::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  return true;
   logTraceOut( "prepareSendToWorker(...)" );
+  return true;
 }
 
 void peanoclaw::mappings::Cleanup::prepareSendToMaster(

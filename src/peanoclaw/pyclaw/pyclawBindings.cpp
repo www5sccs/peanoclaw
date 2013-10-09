@@ -35,26 +35,31 @@ void importArrays() {
   import_array();
 }
 
-void configureLogFilter() {
+void configureLogFilter(bool enablePeanoLogging) {
   // Configure the output
   tarch::logging::CommandLineLogger::getInstance().clearFilterList();
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", true ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
 
-  //Disable Peano
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::", true ) );
+  if(enablePeanoLogging) {
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
 
-  //Disable minimal time subgrid
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::repositories", false ) );
+    //Disable Peano
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::", true ) );
 
-  //Selective Tracing
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelStatistics", true ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::runners::PeanoClawLibraryRunner", false ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics::logLevelStatistics", false ) );
+    //Disable minimal time subgrid
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::repositories", false ) );
+
+    //Selective Tracing
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelStatistics", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::runners::PeanoClawLibraryRunner", false ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics::logLevelStatistics", false ) );
+  } else {
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "", true ) );
+  }
 
   std::ostringstream logFileName;
-  #ifdef Parallel
+#ifdef Parallel
   logFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-trace.txt";
   #endif
   tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, true, true, false, true, logFileName.str() );
@@ -105,6 +110,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   InterPatchCommunicationCallback interpolationCallback,
   InterPatchCommunicationCallback restrictionCallback,
   InterPatchCommunicationCallback fluxCorrectionCallback,
+  bool enablePeanoLogging,
   int *rank
 ) {
   peano::fillLookupTables();
@@ -133,7 +139,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   static tarch::logging::Log _log("::pyclawBindings");
   logInfo("pyclaw_peano_new(...)", "Initializing Peano");
 
-  configureLogFilter();
+  configureLogFilter(enablePeanoLogging);
 
   //Numerics -- this object is copied to the runner and is stored there.
   peanoclaw::NumericsFactory numericsFactory;

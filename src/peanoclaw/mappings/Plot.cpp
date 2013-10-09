@@ -288,8 +288,8 @@ bool peanoclaw::mappings::Plot::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  return true;
   logTraceOut( "prepareSendToWorker(...)" );
+  return true;
 }
 
 void peanoclaw::mappings::Plot::prepareSendToMaster(
