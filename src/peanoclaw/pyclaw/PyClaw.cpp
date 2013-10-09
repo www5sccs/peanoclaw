@@ -11,6 +11,8 @@
 #include "peanoclaw/pyclaw/PyClawState.h"
 #include "peanoclaw/Patch.h"
 
+#include "peano/utils/Loop.h"
+
 #include "tarch/timing/Watch.h"
 #include "tarch/parallel/Node.h"
 #include "tarch/multicore/Lock.h"
@@ -138,6 +140,11 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
       || tarch::la::equals(patch.getEstimatedNextTimestepSize(), 0.0),
       patch, maximumTimestepSize, dtAndEstimatedNextDt[1], patch.toStringUNew());
   assertion(patch.getTimestepSize() < std::numeric_limits<double>::infinity());
+
+  //Check for zeros in solution
+  dfor(subcellIndex, patch.getSubdivisionFactor()) {
+    assertion2(tarch::la::greater(patch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, patch);
+  }
 
   if (tarch::la::greater(dtAndEstimatedNextDt[0], 0.0)) {
     patch.advanceInTime();
