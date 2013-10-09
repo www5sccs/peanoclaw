@@ -127,7 +127,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     mgrid = 6
 
     # number of initial AMR grids in each dimension
-    msubgrid = 27*27 #27
+    msubgrid = 9
 
     if amr_type is not None:
         m = mgrid
@@ -184,7 +184,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
             claw.solver = amrclaw.Solver(solver
                                         ,1/(mgrid*msubgrid)
                                         ,qinit_callback
-                                        #,refinement_criterion=refinement_criterion_time_dependent
+                                        ,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
                                         #,refinement_criterion=refinement_criterion_gradient
                                         )
