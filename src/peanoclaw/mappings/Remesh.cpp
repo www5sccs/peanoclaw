@@ -833,6 +833,9 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
     coarseGridVerticesEnumerator
   );
 
+  //Mark vertex as "old" (i.e. older than just created ;-))
+  _vertex.setWasCreatedInThisIteration(false);
+
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }
 
