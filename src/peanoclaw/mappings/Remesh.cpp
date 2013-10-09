@@ -834,7 +834,7 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
   );
 
   //Mark vertex as "old" (i.e. older than just created ;-))
-  _vertex.setWasCreatedInThisIteration(false);
+  fineGridVertex.setWasCreatedInThisIteration(false);
 
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }

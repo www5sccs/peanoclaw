@@ -112,7 +112,8 @@ bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
     && patch.isAllowedToAdvanceInTime()
     && !patch.shouldSkipNextGridIteration()
     && !patchCoarsening
-    && allAdjacentVerticesValid;
+    && allAdjacentVerticesValid
+    ;
 }
 
 void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
