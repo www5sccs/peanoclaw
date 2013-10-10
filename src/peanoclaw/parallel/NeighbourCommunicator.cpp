@@ -266,8 +266,10 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
   //Check for zeros in solution
   #ifdef Asserts
   Patch remotePatch(remoteCellDescription);
-  dfor(subcellIndex, remotePatch.getSubdivisionFactor()) {
-    assertion2(tarch::la::greater(remotePatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, remotePatch);
+  if(remotePatch.isValid() && (remotePatch.isLeaf() || remotePatch.isVirtual())) {
+    dfor(subcellIndex, remotePatch.getSubdivisionFactor()) {
+      assertion2(tarch::la::greater(remotePatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, remotePatch);
+    }
   }
   #endif
 
