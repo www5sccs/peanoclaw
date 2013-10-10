@@ -109,6 +109,15 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   if(cellDescriptionIndex != -1) {
     CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
     assertion3(tarch::la::allGreater(cellDescription.getSubdivisionFactor(), 0), cellDescription.toString(), _position, _level);
+
+    //Check for zeros in transfered patch
+    Patch transferedPatch(cellDescription);
+    if(transferedPatch.isValid() && (transferedPatch.isLeaf() || transferedPatch.isVirtual())) {
+      dfor(subcellIndex, transferedPatch.getSubdivisionFactor()) {
+        assertion3(tarch::la::greater(transferedPatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, transferedPatch, transferedPatch.toStringUNew());
+        assertion3(tarch::la::greater(transferedPatch.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, transferedPatch, transferedPatch.toStringUOldWithGhostLayer());
+      }
+    }
   }
   #endif
 
@@ -263,12 +272,13 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(int localCellDescr
   CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0) = remoteCellDescription;
   assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).size(), 1);
 
-  //Check for zeros in solution
+  //Check for zeros in transfered patch
   #ifdef Asserts
   Patch remotePatch(remoteCellDescription);
   if(remotePatch.isValid() && (remotePatch.isLeaf() || remotePatch.isVirtual())) {
     dfor(subcellIndex, remotePatch.getSubdivisionFactor()) {
-      assertion2(tarch::la::greater(remotePatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, remotePatch);
+      assertion3(tarch::la::greater(remotePatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUNew());
+      assertion3(tarch::la::greater(remotePatch.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUOldWithGhostLayer());
     }
   }
   #endif
