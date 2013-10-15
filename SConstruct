@@ -123,14 +123,15 @@ else:
    
 ##### Determine MPI-Parallelization
 #
+mpiConfigurationFile = ARGUMENTS.get('mpiconfig', 'mpiConfiguration.py')
+mpiConfiguration = __import__(mpiConfigurationFile)
+
 parallel = ARGUMENTS.get('parallel', 'parallel_no')  # Read command line parameter
 if parallel == 'yes' or parallel == 'parallel_yes':
    cppdefines.append('Parallel')
-   cpppath.append('/usr/lib/openmpi/include')
-   libpath.append('/usr/lib/openmpi/lib')
-   libs.append ('mpi')
-   libs.append ('pthread')
-   cxx = 'mpicxx'
+   cpppath.extend(mpiConfiguration.getMPIIncludes())
+   libpath.extend(mpiConfiguration.getMPILibrarypaths())
+   libs.extend(mpiConfiguration.getMPILibraries())
 elif parallel == 'no' or parallel == 'parallel_no':
    pass
 else:
