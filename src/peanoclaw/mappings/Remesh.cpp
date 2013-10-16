@@ -7,9 +7,9 @@
 #include "peanoclaw/parallel/NeighbourCommunicator.h"
 #include "peanoclaw/parallel/MasterWorkerAndForkJoinCommunicator.h"
 
-#include "peano/heap/Heap.h"
-
 #include "peano/grid/aspects/VertexStateAnalysis.h"
+
+#include "tarch/parallel/Node.h"
 
 peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap peanoclaw::mappings::Remesh::_vertexPositionToIndexMap;
 peanoclaw::parallel::NeighbourCommunicator::RemoteSubgridMap               peanoclaw::mappings::Remesh::_remoteSubgridMap;

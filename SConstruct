@@ -73,7 +73,7 @@ libs = []
 filenameSuffix = ''
 
 #Configure Peano 3
-p3Path = 'src/p3/src'
+p3Path = '../peano3/src'
 try:
   import peanoConfiguration
   p3Path = peanoConfiguration.getPeano3Path()
@@ -123,7 +123,7 @@ else:
    
 ##### Determine MPI-Parallelization
 #
-mpiConfigurationFile = ARGUMENTS.get('mpiconfig', 'mpiConfiguration.py')
+mpiConfigurationFile = ARGUMENTS.get('mpiconfig', 'openMPIConfiguration')
 mpiConfiguration = __import__(mpiConfigurationFile)
 
 parallel = ARGUMENTS.get('parallel', 'parallel_no')  # Read command line parameter
