@@ -73,13 +73,13 @@ libs = []
 filenameSuffix = ''
 
 #Configure Peano 3
-p3Path = '../peano3/src'
+p3Path = '../peano3'
 try:
   import peanoConfiguration
   p3Path = peanoConfiguration.getPeano3Path()
 except ImportError:
   pass
-cpppath.append(p3Path)
+cpppath.append(join(p3Path, 'src'))
 
 # Platform specific settings
 environment = Environment()
