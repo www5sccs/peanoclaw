@@ -48,25 +48,31 @@ def parseRange(argument):
 
 def readCellsFromFile(cells, path, iteration, rank):
   import vtk
+  import os.path
   filename = path.replace('__ITERATION__', str(iteration)).replace('__RANK__', str(rank))
+  
+  if os.path.exists(filename):
+    reader = vtk.vtkDataSetReader()
+    reader.SetFileName(filename)
+    reader.SetReadAllScalars(True)
+    reader.Update()
 
-  reader = vtk.vtkDataSetReader()
-  reader.SetFileName(filename)
-  reader.SetReadAllScalars(True)
-  reader.Update()
-
-  grid = reader.GetOutput()
-  numberOfCells = grid.GetNumberOfCells()
-  cellData = grid.GetCellData()
-  qs = cellData.GetScalars("q0")
-
-  for cellId in xrange(numberOfCells):
-    vtkCell = grid.GetCell(cellId)
+    grid = reader.GetOutput()
     
-    q = qs.GetTuple(cellId)[0]
-    cells.append(Cell(vtkCell, vtkCell.GetBounds()[:], q))
-    
-  return numberOfCells
+    numberOfCells = grid.GetNumberOfCells()
+    cellData = grid.GetCellData()
+    qs = cellData.GetScalars("q0")
+
+    for cellId in xrange(numberOfCells):
+      vtkCell = grid.GetCell(cellId)
+      
+      q = qs.GetTuple(cellId)[0]
+      cells.append(Cell(vtkCell, vtkCell.GetBounds()[:], q))
+      
+    return numberOfCells
+  else:
+    return 0
+  
 
 def findClosestMatch(cell, cells):
   bestIndex = -1
