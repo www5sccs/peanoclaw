@@ -177,7 +177,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 1e-2
+    claw.tfinal = 0.2
 
     if amr_type is not None:        
         if amr_type == 'peano':
@@ -188,6 +188,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
                                         ,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
                                         #,refinement_criterion=refinement_criterion_gradient
+                                        ,internal_settings=amrclaw.InternalSettings(enablePeanoLogging=True)
                                         )
             claw.solution = amrclaw.Solution(state, domain)
         else:
