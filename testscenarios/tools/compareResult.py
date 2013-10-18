@@ -48,25 +48,31 @@ def parseRange(argument):
 
 def readCellsFromFile(cells, path, iteration, rank):
   import vtk
+  import os.path
   filename = path.replace('__ITERATION__', str(iteration)).replace('__RANK__', str(rank))
+  
+  if os.path.exists(filename):
+    reader = vtk.vtkDataSetReader()
+    reader.SetFileName(filename)
+    reader.SetReadAllScalars(True)
+    reader.Update()
 
-  reader = vtk.vtkDataSetReader()
-  reader.SetFileName(filename)
-  reader.SetReadAllScalars(True)
-  reader.Update()
-
-  grid = reader.GetOutput()
-  numberOfCells = grid.GetNumberOfCells()
-  cellData = grid.GetCellData()
-  qs = cellData.GetScalars("q0")
-
-  for cellId in xrange(numberOfCells):
-    vtkCell = grid.GetCell(cellId)
+    grid = reader.GetOutput()
     
-    q = qs.GetTuple(cellId)[0]
-    cells.append(Cell(vtkCell, vtkCell.GetBounds()[:], q))
-    
-  return numberOfCells
+    numberOfCells = grid.GetNumberOfCells()
+    cellData = grid.GetCellData()
+    qs = cellData.GetScalars("q0")
+
+    for cellId in xrange(numberOfCells):
+      vtkCell = grid.GetCell(cellId)
+      
+      q = qs.GetTuple(cellId)[0]
+      cells.append(Cell(vtkCell, vtkCell.GetBounds()[:], q))
+      
+    return numberOfCells
+  else:
+    return 0
+  
 
 def findClosestMatch(cell, cells):
   bestIndex = -1
@@ -103,13 +109,13 @@ def findCellInList(cell, cells):
 def main():
   from argparse import ArgumentParser
   parser = ArgumentParser(description='Tool for comparing vtk output of parallel runs.')
-  parser.add_argument('path1', help='The path to the first set of vtk files.')
-  parser.add_argument('path2', help='The path to the second set of vtk files.')
+  parser.add_argument('path1', help='The path to the first set of vtk files. Use __ITERATION__ for iteration number and __RANK__ for rank number.')
+  parser.add_argument('path2', help='The path to the second set of vtk files. Use __ITERATION__ for iteration number and __RANK__ for rank number.')
   parser.add_argument('iteration1', type=int, help='The iteration number of the first set of vtk files.')
-  parser.add_argument('ranks1', help='The range of ranks for the first set of vtk files.')
+  parser.add_argument('ranks1', help='The range of ranks for the first set of vtk files. Define single number or min:max.')
   parser.add_argument('iteration2', type=int, help='The iteration number of the second set of vtk files.')
-  parser.add_argument('ranks2', help='The range of ranks for the second set of vtk files.')
-  parser.add_argument('accuracy', help='The range of ranks for the second set of vtk files.', type=float, nargs='?', const='1e-5')
+  parser.add_argument('ranks2', help='The range of ranks for the second set of vtk files. Define single number or min:max.')
+  parser.add_argument('accuracy', help='The accuracy for numerical equality.', type=float, nargs='?', const='1e-5')
   arguments = parser.parse_args()
   
   global accuracy

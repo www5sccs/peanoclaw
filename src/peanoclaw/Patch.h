@@ -236,6 +236,13 @@ public:
   void reloadCellDescription();
 
   /**
+   * Initializes the patch after being transfered via MPI. So, the
+   * fields marked as non-parallel in the DaStGen-description are
+   * uninitialized and need to be initialized here.
+   */
+  void initializeNonParallelFields();
+
+  /**
    * Deletes the complete patch. After this method the patch itself
    * is not valid anymore.
    */

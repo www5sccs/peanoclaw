@@ -288,6 +288,11 @@ void peanoclaw::Patch::reloadCellDescription() {
   }
 }
 
+void peanoclaw::Patch::initializeNonParallelFields() {
+  assertion(isValid());
+  _cellDescription->setConstrainingNeighborIndex(-1);
+}
+
 void peanoclaw::Patch::deleteData() {
   if(_cellDescription->getUNewIndex() != -1) {
     DataHeap::getInstance().deleteData(_cellDescription->getUNewIndex());

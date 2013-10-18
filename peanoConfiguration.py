@@ -1,5 +1,5 @@
-p3Path='../peano3/src'
-p3RepositorySubpath='src'
+p3Path='../peano3'
+p3RepositorySubpath=''
 p3Revision='1140' #Revision number or 'HEAD'
 p3Build='release' #'debug', 'asserts', or 'release'
 p3Parallel='yes' #'yes' or 'no'

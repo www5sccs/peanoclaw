@@ -61,6 +61,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestriction::restrictArea (
 
     //Get area for single destination cell
     Area subcellArea = area.mapCellToPatch(sourcePosition, sourceSubcellSize, destinationSubcellSize, destinationSubcellIndex, destinationSubcellPosition, epsilon);
+    assertion7(tarch::la::allGreaterEquals(subcellArea._size, 0), subcellArea, sourcePosition, sourceSubcellSize, destinationSubcellSize, destinationSubcellPosition, source, destination);
 
     //TODO unterweg debug
 //    std::cout << "Restricted cells:" << tarch::la::volume(subcellArea._size) << std::endl;
@@ -147,6 +148,8 @@ void peanoclaw::interSubgridCommunication::DefaultRestriction::restrict(
     logDebug("restrict", "Restriction from patch " << source << std::endl << " to patch " << destination);
     for( int i = 0; i < numberOfAreasToProcess; i++ ) {
 
+      assertion1(tarch::la::allGreaterEquals(areas[i]._size, 0), areas[i]);
+
       logDebug("restrict", "Restricting area [" << areas[i]._offset << "], [" << areas[i]._size << "]");
       if(tarch::la::allGreater(areas[i]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
         restrictArea(source, destination, areas[i]);
@@ -222,6 +225,9 @@ int peanoclaw::interSubgridCommunication::DefaultRestriction::getAreasForRestric
         areas[2*d+1]._size(i) = sourceSubdivisionFactor(i);
         areas[2*d+1]._offset(i) = 0;
       }
+
+      assertion1(tarch::la::allGreaterEquals(areas[2*d]._size, 0), areas[2*d]);
+      assertion1(tarch::la::allGreaterEquals(areas[2*d+1]._size, 0), areas[2*d+1]);
     }
 
     return DIMENSIONS_TIMES_TWO;

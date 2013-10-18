@@ -5,9 +5,9 @@
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/interSubgridCommunication/Extrapolation.h"
 
-#include "peano/heap/Heap.h"
-
 #include "peano/grid/aspects/VertexStateAnalysis.h"
+
+#include "tarch/parallel/Node.h"
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.

@@ -56,7 +56,7 @@ void configureLogFilter(bool enablePeanoLogging) {
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics::logLevelStatistics", false ) );
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::mappings::ValidateGrid", true ) );
   } else {
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", true ) );
   }
 
   std::ostringstream logFileName;
@@ -118,6 +118,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
 
 #if defined(Parallel)
   char argv[2][256];
+  memset(argv, 0, sizeof(char) * 2 * 256);
   int argc = 1;
   //sprintf(argv[0], "%s", "peanoclaw");
   peano::initParallelEnvironment(&argc,(char ***)&argv);
