@@ -78,7 +78,7 @@ double peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumT
   }
   patch.setEstimatedNextTimestepSize(estimatedNextTimestepSize);
 
-  logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
+  logTraceOut( "solveTimestep(...)");
   return _scenario.computeDemandedMeshWidth(patch);
 }
 

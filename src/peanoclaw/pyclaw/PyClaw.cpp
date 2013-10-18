@@ -88,7 +88,8 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
 
   tarch::multicore::Lock lock(_semaphore);
 
-  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getMinimalNeighborTimeConstraint());
+  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "max. Timestepsize == 0 should be checked outside.", patch.getMinimalNeighborTimeConstraint());
+  assertion3(!patch.containsNaN(), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
 
   PyClawState state(patch);
 
@@ -143,7 +144,7 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
 
   //Check for zeros in solution
   dfor(subcellIndex, patch.getSubdivisionFactor()) {
-    assertion2(tarch::la::greater(patch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, patch);
+    assertion4(tarch::la::greater(patch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
   }
 
   if (tarch::la::greater(dtAndEstimatedNextDt[0], 0.0)) {

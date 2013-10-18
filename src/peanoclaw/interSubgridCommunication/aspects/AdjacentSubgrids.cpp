@@ -287,7 +287,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::refineOnPa
     #endif
 
     if(functor.doesParallelBoundaryCoincideWithAdaptiveBoundaryCorner()) {
-//      _vertex.refine();
+      _vertex.refine();
     }
   }
 
@@ -298,7 +298,8 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::refineOnPa
 peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAndAdaptiveBoundaryFunctor::CheckIntersectingParallelAndAdaptiveBoundaryFunctor(
   const tarch::la::Vector<DIMENSIONS_TIMES_TWO, int>& adjacentRanks
 ) : _adjacentRanks(adjacentRanks),
-    _parallelBoundaryCoincidesWithAdaptiveBoundaryCorner(false)
+    _numberOfDiagonallyAdjacentSubgrids(0),
+    _numberOfDiagonallyAdjacentRefinedSubgrids(0)
 {
 }
 
@@ -309,12 +310,16 @@ void peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAnd
   int                                       index2,
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
+  _numberOfDiagonallyAdjacentSubgrids++;
+
   if(_adjacentRanks[TWO_POWER_D - index1 - 1] != _adjacentRanks[TWO_POWER_D - index2 - 1]
-    && !patch1.isLeaf() && !patch2.isLeaf()) {
-    _parallelBoundaryCoincidesWithAdaptiveBoundaryCorner = true;
+    && patch1.isValid() && !patch1.isLeaf()
+    && patch2.isValid() && !patch2.isLeaf()) {
+    _numberOfDiagonallyAdjacentRefinedSubgrids++;
   }
 }
 
 bool peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAndAdaptiveBoundaryFunctor::doesParallelBoundaryCoincideWithAdaptiveBoundaryCorner() const {
-  return _parallelBoundaryCoincidesWithAdaptiveBoundaryCorner;
+  return _numberOfDiagonallyAdjacentRefinedSubgrids != 0
+      && _numberOfDiagonallyAdjacentRefinedSubgrids != _numberOfDiagonallyAdjacentSubgrids;
 }

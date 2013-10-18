@@ -202,6 +202,7 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
      *    inverted $k(d)$. I.e. if $k(d) = 0$ we set
      *    $coarseGridVertexAdjacentPatchIndex(d)$ to 1 and the other way around.
      *
+     * TODO unterweg dissertation
      */
     void fillAdjacentPatchIndicesFromCoarseVertices(
       const peanoclaw::Vertex* coarseGridVertices,
@@ -213,12 +214,22 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
 /**
  * Used to determine whether a parallel boundary coincides with a corner
  * of an adaptive boundary, such that a refinement is required.
+ * Therefore, all combinations of diagonally (via vertices in 2D or
+ * vertices and edges in 3D) adjacent subgrids are checked and the number
+ * of pairs are counted where both subgrids are refined.
+ *
+ * If the number is not equal to zero and not equal to the maximum amount
+ * of pairs then the vertex is located on a adaptive corner
+ * and on a parallel boundary.
+ *
+ * TODO unterweg dissertation
  */
 class peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAndAdaptiveBoundaryFunctor {
 
   private:
     const tarch::la::Vector<DIMENSIONS_TIMES_TWO, int>& _adjacentRanks;
-    bool                                                _parallelBoundaryCoincidesWithAdaptiveBoundaryCorner;
+    int                                                 _numberOfDiagonallyAdjacentSubgrids;
+    int                                                 _numberOfDiagonallyAdjacentRefinedSubgrids;
 
   public:
     CheckIntersectingParallelAndAdaptiveBoundaryFunctor(

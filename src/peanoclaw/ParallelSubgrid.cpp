@@ -8,7 +8,6 @@
 
 #include "peanoclaw/Heap.h"
 
-#include "peano/heap/Heap.h"
 #include "peano/utils/Globals.h"
 
 tarch::logging::Log peanoclaw::ParallelSubgrid::_log("peanoclaw::ParallelSubgrid");

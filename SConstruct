@@ -73,13 +73,14 @@ libs = []
 filenameSuffix = ''
 
 #Configure Peano 3
-p3Path = 'src/p3/src'
+p3Path = '../peano3'
 try:
   import peanoConfiguration
   p3Path = peanoConfiguration.getPeano3Path()
 except ImportError:
   pass
-cpppath.append(p3Path)
+p3SourcePath = join(p3Path, 'src')
+cpppath.append(p3SourcePath)
 
 # Platform specific settings
 environment = Environment()
@@ -339,7 +340,7 @@ print "Buildpath: " + buildpath
 print
 
 VariantDir (buildpath, './src', duplicate=0)  # Set build directory for PeanoClaw sources
-VariantDir (join(buildpath, 'kernel'), p3Path, duplicate=0)  # Set build directory for Peano sources
+VariantDir (join(buildpath, 'kernel'), p3SourcePath, duplicate=0)  # Set build directory for Peano sources
 if solver == 'swe':
   
   print "VariantDir(", join(buildpath, 'swe'), ",", swePath, ")"
