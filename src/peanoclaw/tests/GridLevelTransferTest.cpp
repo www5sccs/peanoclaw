@@ -12,6 +12,7 @@
 
 #include "peanoclaw/interSubgridCommunication/GridLevelTransfer.h"
 #include "peanoclaw/interSubgridCommunication/DefaultRestriction.h"
+#include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/Vertex.h"
 
@@ -35,232 +36,227 @@ tarch::logging::Log peanoclaw::tests::GridLevelTransferTest::_log("peanoclaw::te
 void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleRefinedCell() {
 #ifdef Dim2
 
-//  //  *  - a: [-1,  3,  1,  0]
-//  //  *  - b: [ 4, -1,  2,  1]
-//  //  *  - c: [ 6,  5, -1,  3]
-//  //  *  - d: [ 7,  6,  4, -1]
-//
-//  peanoclaw::Vertex coarseGridVertices[FOUR_POWER_D];
-//  peano::grid::SingleLevelEnumerator vertexEnumerator(
-//      1.0, //Coarse cell size
-//      0.0, //Domain offset
-//      0    //Coarse level
-//  );
-//  vertexEnumerator.setOffset(0.0);
-//
-//
-//  int bottomLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription bottomLeftDescription; bottomLeftDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(bottomLeftDescriptionIndex).push_back(bottomLeftDescription);
-//
-//  int bottomCenterDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription bottomCenterDescription; bottomCenterDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(bottomCenterDescriptionIndex).push_back(bottomCenterDescription);
-//
-//  int bottomRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription bottomRightDescription; bottomRightDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(bottomRightDescriptionIndex).push_back(bottomRightDescription);
-//
-//  int centerLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription centerLeftDescription; centerLeftDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(centerLeftDescriptionIndex).push_back(centerLeftDescription);
-//
-//  int refinedDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription refinedDescription; refinedDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(refinedDescriptionIndex).push_back(refinedDescription);
-//
-//  int centerRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription centerRightDescription; centerRightDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(centerRightDescriptionIndex).push_back(centerRightDescription);
-//
-//  int topLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription topLeftDescription; topLeftDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(topLeftDescriptionIndex).push_back(topLeftDescription);
-//
-//  int topCenterDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription topCenterDescription; topCenterDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(topCenterDescriptionIndex).push_back(topCenterDescription);
-//
-//  int topRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-//  CellDescription topRightDescription; topRightDescription.setUNewIndex(-1);
-//  CellDescriptionHeap::getInstance().getData(topRightDescriptionIndex).push_back(topRightDescription);
-//
-//  //Vertex a
-//  coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(0, refinedDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(1, centerLeftDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(2, bottomCenterDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(3, bottomLeftDescriptionIndex);
-//
-//  //Vertex b
-//  coarseGridVertices[vertexEnumerator(1)].setAdjacentCellDescriptionIndex(0, centerRightDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(1)].setAdjacentCellDescriptionIndex(1, refinedDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(1)].setAdjacentCellDescriptionIndex(2, bottomRightDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(1)].setAdjacentCellDescriptionIndex(3, bottomCenterDescriptionIndex);
-//
-//  //Vertex c
-//  coarseGridVertices[vertexEnumerator(2)].setAdjacentCellDescriptionIndex(0, topCenterDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(2)].setAdjacentCellDescriptionIndex(1, topLeftDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(2)].setAdjacentCellDescriptionIndex(2, refinedDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(2)].setAdjacentCellDescriptionIndex(3, centerLeftDescriptionIndex);
-//
-//  //Vertex d
-//  coarseGridVertices[vertexEnumerator(3)].setAdjacentCellDescriptionIndex(0, topRightDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(3)].setAdjacentCellDescriptionIndex(1, topCenterDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(3)].setAdjacentCellDescriptionIndex(2, centerRightDescriptionIndex);
-//  coarseGridVertices[vertexEnumerator(3)].setAdjacentCellDescriptionIndex(3, refinedDescriptionIndex);
-//
-//  //Copy to other fields
-////  for(int coarseGridVertexIndex = 0; coarseGridVertexIndex < 4; coarseGridVertexIndex++) {
-////    for(int adjacentIndex = 0; adjacentIndex < 4; adjacentIndex++) {
-////      int value = coarseGridVertices[vertexEnumerator(coarseGridVertexIndex)].getAdjacentUNewIndex(adjacentIndex);
-////      coarseGridVertices[vertexEnumerator(coarseGridVertexIndex)].setAdjacentUOldIndex(adjacentIndex, value);
-////      coarseGridVertices[vertexEnumerator(coarseGridVertexIndex)].setAdjacentCellDescriptionIndex(adjacentIndex, value);
-////    }
-////  }
-//
-//  tarch::la::Vector<DIMENSIONS, int> hangingVertexPosition;
-//  tarch::la::Vector<TWO_POWER_D, int> expectedAdjacentIndices;
-//  peanoclaw::Vertex fineGridVertex;
-//
-//  NumericsTestStump numerics;
-//
+  //  *  - a: [-1,  3,  1,  0]
+  //  *  - b: [ 4, -1,  2,  1]
+  //  *  - c: [ 6,  5, -1,  3]
+  //  *  - d: [ 7,  6,  4, -1]
+
+  peanoclaw::Vertex coarseGridVertices[FOUR_POWER_D];
+  peano::grid::SingleLevelEnumerator vertexEnumerator(
+      1.0, //Coarse cell size
+      0.0, //Domain offset
+      0    //Coarse level
+  );
+  vertexEnumerator.setOffset(0.0);
+
+
+  int bottomLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription bottomLeftDescription; bottomLeftDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(bottomLeftDescriptionIndex).push_back(bottomLeftDescription);
+
+  int bottomCenterDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription bottomCenterDescription; bottomCenterDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(bottomCenterDescriptionIndex).push_back(bottomCenterDescription);
+
+  int bottomRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription bottomRightDescription; bottomRightDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(bottomRightDescriptionIndex).push_back(bottomRightDescription);
+
+  int centerLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription centerLeftDescription; centerLeftDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(centerLeftDescriptionIndex).push_back(centerLeftDescription);
+
+  int refinedDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription refinedDescription; refinedDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(refinedDescriptionIndex).push_back(refinedDescription);
+
+  int centerRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription centerRightDescription; centerRightDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(centerRightDescriptionIndex).push_back(centerRightDescription);
+
+  int topLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription topLeftDescription; topLeftDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(topLeftDescriptionIndex).push_back(topLeftDescription);
+
+  int topCenterDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription topCenterDescription; topCenterDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(topCenterDescriptionIndex).push_back(topCenterDescription);
+
+  int topRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
+  CellDescription topRightDescription; topRightDescription.setUNewIndex(-1);
+  CellDescriptionHeap::getInstance().getData(topRightDescriptionIndex).push_back(topRightDescription);
+
+  //Vertex a
+  coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(0, refinedDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(1, centerLeftDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(2, bottomCenterDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(0)].setAdjacentCellDescriptionIndex(3, bottomLeftDescriptionIndex);
+
+  //Vertex b
+  coarseGridVertices[vertexEnumerator(1)].setAdjacentCellDescriptionIndex(0, centerRightDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(1)].setAdjacentCellDescriptionIndex(1, refinedDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(1)].setAdjacentCellDescriptionIndex(2, bottomRightDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(1)].setAdjacentCellDescriptionIndex(3, bottomCenterDescriptionIndex);
+
+  //Vertex c
+  coarseGridVertices[vertexEnumerator(2)].setAdjacentCellDescriptionIndex(0, topCenterDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(2)].setAdjacentCellDescriptionIndex(1, topLeftDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(2)].setAdjacentCellDescriptionIndex(2, refinedDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(2)].setAdjacentCellDescriptionIndex(3, centerLeftDescriptionIndex);
+
+  //Vertex d
+  coarseGridVertices[vertexEnumerator(3)].setAdjacentCellDescriptionIndex(0, topRightDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(3)].setAdjacentCellDescriptionIndex(1, topCenterDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(3)].setAdjacentCellDescriptionIndex(2, centerRightDescriptionIndex);
+  coarseGridVertices[vertexEnumerator(3)].setAdjacentCellDescriptionIndex(3, refinedDescriptionIndex);
+
+  //Copy to other fields
+//  for(int coarseGridVertexIndex = 0; coarseGridVertexIndex < 4; coarseGridVertexIndex++) {
+//    for(int adjacentIndex = 0; adjacentIndex < 4; adjacentIndex++) {
+//      int value = coarseGridVertices[vertexEnumerator(coarseGridVertexIndex)].getAdjacentUNewIndex(adjacentIndex);
+//      coarseGridVertices[vertexEnumerator(coarseGridVertexIndex)].setAdjacentUOldIndex(adjacentIndex, value);
+//      coarseGridVertices[vertexEnumerator(coarseGridVertexIndex)].setAdjacentCellDescriptionIndex(adjacentIndex, value);
+//    }
+//  }
+
+  tarch::la::Vector<DIMENSIONS, int> hangingVertexPosition;
+  tarch::la::Vector<TWO_POWER_D, int> expectedAdjacentIndices;
+  peanoclaw::Vertex fineGridVertex;
+
+  NumericsTestStump numerics;
+
 //  interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, numerics);
-//
-//  //Hanging Vertex 0, 0
-//  assignList(hangingVertexPosition) = 0, 0;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, centerLeftDescriptionIndex, bottomCenterDescriptionIndex, bottomLeftDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//
-//  //Hanging Vertex 1, 0
-//  assignList(hangingVertexPosition) = 1, 0;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, refinedDescriptionIndex, bottomCenterDescriptionIndex, bottomCenterDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 2, 0
-//  assignList(hangingVertexPosition) = 2, 0;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, refinedDescriptionIndex, bottomCenterDescriptionIndex, bottomCenterDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 3, 0
-//  assignList(hangingVertexPosition) = 3, 0;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = centerRightDescriptionIndex, refinedDescriptionIndex, bottomRightDescriptionIndex, bottomCenterDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 0, 1
-//  assignList(hangingVertexPosition) = 0, 1;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, centerLeftDescriptionIndex, refinedDescriptionIndex, centerLeftDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 3, 1
-//  assignList(hangingVertexPosition) = 3, 1;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = centerRightDescriptionIndex, refinedDescriptionIndex, centerRightDescriptionIndex, refinedDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 0, 2
-//  assignList(hangingVertexPosition) = 0, 2;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, centerLeftDescriptionIndex, refinedDescriptionIndex, centerLeftDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 3, 2
-//  assignList(hangingVertexPosition) = 3, 2;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = centerRightDescriptionIndex, refinedDescriptionIndex, centerRightDescriptionIndex, refinedDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 0, 3
-//  assignList(hangingVertexPosition) = 0, 3;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = topCenterDescriptionIndex, topLeftDescriptionIndex, refinedDescriptionIndex, centerLeftDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 1, 3
-//  assignList(hangingVertexPosition) = 1, 3;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = topCenterDescriptionIndex, topCenterDescriptionIndex, refinedDescriptionIndex, refinedDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 2, 3
-//  assignList(hangingVertexPosition) = 2, 3;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = topCenterDescriptionIndex, topCenterDescriptionIndex, refinedDescriptionIndex, refinedDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//  //Hanging Vertex 3, 3
-//  assignList(hangingVertexPosition) = 3, 3;
-//  gridLevelTransfer.fillAdjacentPatchIndicesFromCoarseVertices(
-//      coarseGridVertices,
-//      vertexEnumerator,
-//      fineGridVertex,
-//      hangingVertexPosition);
-//  assignList(expectedAdjacentIndices) = topRightDescriptionIndex, topCenterDescriptionIndex, centerRightDescriptionIndex, refinedDescriptionIndex;
-//  for(int i = 0; i < 4; i++) {
-//    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
-//  }
-//
-//  CellDescriptionHeap::getInstance().deleteAllData();
+  interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap vertexMap;
+  interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+    fineGridVertex,
+    vertexMap,
+    tarch::la::Vector<DIMENSIONS, double>(0),
+    0
+  );
+
+  //Hanging Vertex 0, 0
+  assignList(hangingVertexPosition) = 0, 0;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, centerLeftDescriptionIndex, bottomCenterDescriptionIndex, bottomLeftDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+
+  //Hanging Vertex 1, 0
+  assignList(hangingVertexPosition) = 1, 0;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, refinedDescriptionIndex, bottomCenterDescriptionIndex, bottomCenterDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 2, 0
+  assignList(hangingVertexPosition) = 2, 0;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, refinedDescriptionIndex, bottomCenterDescriptionIndex, bottomCenterDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 3, 0
+  assignList(hangingVertexPosition) = 3, 0;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = centerRightDescriptionIndex, refinedDescriptionIndex, bottomRightDescriptionIndex, bottomCenterDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 0, 1
+  assignList(hangingVertexPosition) = 0, 1;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, centerLeftDescriptionIndex, refinedDescriptionIndex, centerLeftDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 3, 1
+  assignList(hangingVertexPosition) = 3, 1;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = centerRightDescriptionIndex, refinedDescriptionIndex, centerRightDescriptionIndex, refinedDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 0, 2
+  assignList(hangingVertexPosition) = 0, 2;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = refinedDescriptionIndex, centerLeftDescriptionIndex, refinedDescriptionIndex, centerLeftDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 3, 2
+  assignList(hangingVertexPosition) = 3, 2;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = centerRightDescriptionIndex, refinedDescriptionIndex, centerRightDescriptionIndex, refinedDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 0, 3
+  assignList(hangingVertexPosition) = 0, 3;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = topCenterDescriptionIndex, topLeftDescriptionIndex, refinedDescriptionIndex, centerLeftDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 1, 3
+  assignList(hangingVertexPosition) = 1, 3;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = topCenterDescriptionIndex, topCenterDescriptionIndex, refinedDescriptionIndex, refinedDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 2, 3
+  assignList(hangingVertexPosition) = 2, 3;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = topCenterDescriptionIndex, topCenterDescriptionIndex, refinedDescriptionIndex, refinedDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+  //Hanging Vertex 3, 3
+  assignList(hangingVertexPosition) = 3, 3;
+  adjacentSubgrids.fillAdjacentPatchIndicesFromCoarseVertices(
+      coarseGridVertices,
+      vertexEnumerator,
+      hangingVertexPosition);
+  assignList(expectedAdjacentIndices) = topRightDescriptionIndex, topCenterDescriptionIndex, centerRightDescriptionIndex, refinedDescriptionIndex;
+  for(int i = 0; i < 4; i++) {
+    validateEqualsWithParams3(fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices(i), i, fineGridVertex.getAdjacentCellDescriptionIndex(i), expectedAdjacentIndices);
+  }
+
+  CellDescriptionHeap::getInstance().deleteAllData();
 #endif
 }
 
