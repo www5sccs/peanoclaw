@@ -192,8 +192,9 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::regainTwoIrregularity(
-  peanoclaw::Vertex * const            coarseGridVertices,
-  const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
+  peanoclaw::Vertex * const                coarseGridVertices,
+  const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator,
+  const tarch::la::Vector<DIMENSIONS,int>& fineGridPositionOfVertex
 ) {
   //Regain 2-irregularity if necessary
   if(_vertex.getRefinementControl() == peanoclaw::Vertex::Records::Refined

@@ -106,12 +106,20 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
     );
 
     /**
+     * TODO unterweg dissertation.
+     *
      * Triggers the refinement of vertices in such a way that the
      * grid is always at least 2-irregular.
+     *
+     * This method hooks in when a vertex is getting refined. If
+     * the responsible coarse grid vertex is not refined during
+     * this operation, then a more-than-2-irregular grid may
+     * occur.
      */
     void regainTwoIrregularity(
-      peanoclaw::Vertex * const            coarseGridVertices,
-      const peano::grid::VertexEnumerator& coarseGridVerticesEnumerator
+      peanoclaw::Vertex * const                coarseGridVertices,
+      const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator,
+      const tarch::la::Vector<DIMENSIONS,int>& fineGridPositionOfVertex
     );
 
     /**
