@@ -215,7 +215,6 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
     void fillAdjacentPatchIndicesFromCoarseVertices(
       const peanoclaw::Vertex* coarseGridVertices,
       const peano::grid::VertexEnumerator&      coarseGridVerticesEnumerator,
-      peanoclaw::Vertex&       fineGridVertex,
       const tarch::la::Vector<DIMENSIONS,int>&                   localPositionOfHangingNode
     );
 };

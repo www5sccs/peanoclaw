@@ -27,7 +27,7 @@ class peanoclaw::records::CellDescription {
   parallelise persistent bool isExclusiveMessageForSubgrid;
   
   /**
-   * Adjacent MPI rank if only one other rank is adjacent. Otherwise zero.
+   * Adjacent MPI rank if only one other rank is adjacent. Otherwise -1.
    */
   parallelise persistent int  adjacentRank;
   /**

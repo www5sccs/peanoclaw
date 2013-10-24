@@ -136,6 +136,8 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
     /**
      * Vetos the coarsening on adjacent vertices if necessary and
      * triggers the synchronization of subgrids.
+     *
+     * TODO unterweg dissertation
      */
     void vetoCoarseningIfNecessary (
       Patch&                               patch,
@@ -156,6 +158,8 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
     /**
      * Determines, whether the given subgrid should be turned into a
      * virtual subgrid.
+     *
+     * TODO unterweg debug
      */
     bool shouldBecomeVirtualSubgrid(
       const Patch&                         fineSubgrid,

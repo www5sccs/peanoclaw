@@ -210,6 +210,8 @@ void pyclaw_peano_runTests() {
     _pythonState = PyGILState_Ensure();
   }
 
+  configureLogFilter(true);
+
   tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
   if(tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().getNumberOfErrors() > 0) {
     exit(1);
