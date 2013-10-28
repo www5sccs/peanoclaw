@@ -830,7 +830,8 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
 
   adjacentSubgrids.regainTwoIrregularity(
     coarseGridVertices,
-    coarseGridVerticesEnumerator
+    coarseGridVerticesEnumerator,
+    fineGridPositionOfVertex
   );
 
   //Mark vertex as "old" (i.e. older than just created ;-))

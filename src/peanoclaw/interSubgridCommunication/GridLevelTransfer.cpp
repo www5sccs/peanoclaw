@@ -107,8 +107,9 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::switchToAndAddVirt
   tarch::multicore::Lock lock(_virtualPatchListSemaphore);
 
   //Push virtual stack
-  _virtualPatchDescriptionIndices.push_back(subgrid.getCellDescriptionIndex());
-  _virtualPatchTimeConstraints.push_back(subgrid.getMinimalNeighborTimeConstraint());
+  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> virtualSubgridKey = createVirtualSubgridKey(subgrid.getPosition(), subgrid.getLevel());
+  _virtualPatchDescriptionIndices[virtualSubgridKey] = subgrid.getCellDescriptionIndex();
+//  _virtualPatchTimeConstraints[virtualSubgridKey] = subgrid.getMinimalNeighborTimeConstraint();
 
   if(static_cast<int>(_virtualPatchDescriptionIndices.size()) > _maximumNumberOfSimultaneousVirtualPatches) {
     _maximumNumberOfSimultaneousVirtualPatches = _virtualPatchDescriptionIndices.size();
@@ -137,8 +138,11 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToAllVirtu
   tarch::multicore::Lock lock(_virtualPatchListSemaphore);
 
   //Restrict to all
-  for(int i = 0;  i < (int)_virtualPatchDescriptionIndices.size(); i++) {
-    int virtualSubgridDescriptionIndex = _virtualPatchDescriptionIndices[i];
+  //for(int i = 0;  i < (int)_virtualPatchDescriptionIndices.size(); i++) {
+  for(VirtualSubgridMap::iterator i = _virtualPatchDescriptionIndices.begin();
+      i != _virtualPatchDescriptionIndices.end();
+      i++) {
+    int virtualSubgridDescriptionIndex = i->second;
     CellDescription& virtualSubgridDescription = CellDescriptionHeap::getInstance().getData(virtualSubgridDescriptionIndex).at(0);
     Patch virtualSubgrid(virtualSubgridDescription);
     if(
@@ -179,9 +183,10 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSub
   tarch::multicore::Lock lock(_virtualPatchListSemaphore);
   assertion1(_virtualPatchDescriptionIndices.size() > 0, subgrid.toString());
 
-  int virtualPatchDescriptionIndex = _virtualPatchDescriptionIndices[_virtualPatchDescriptionIndices.size()-1];
-  _virtualPatchDescriptionIndices.pop_back();
-  _virtualPatchTimeConstraints.pop_back();
+  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> virtualSubgridKey = createVirtualSubgridKey(subgrid.getPosition(), subgrid.getLevel());
+  int virtualPatchDescriptionIndex = _virtualPatchDescriptionIndices[virtualSubgridKey];
+  _virtualPatchDescriptionIndices.erase(virtualSubgridKey);
+//  _virtualPatchTimeConstraints.erase(virtualSubgridKey);
   CellDescription& virtualPatchDescription = CellDescriptionHeap::getInstance().getData(virtualPatchDescriptionIndex).at(0);
   Patch virtualPatch(virtualPatchDescription);
 
@@ -221,6 +226,18 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSub
         fineGridVertices,
         fineGridVerticesEnumerator),
     subgrid);
+}
+
+tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> peanoclaw::interSubgridCommunication::GridLevelTransfer::createVirtualSubgridKey(
+  tarch::la::Vector<DIMENSIONS, double> position,
+  int                                   level
+) const {
+  tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> virtualSubgridKey;
+  for(int d = 0; d < DIMENSIONS; d++) {
+    virtualSubgridKey(d) = position(d);
+  }
+  virtualSubgridKey(DIMENSIONS) = level;
+  return virtualSubgridKey;
 }
 
 peanoclaw::interSubgridCommunication::GridLevelTransfer::GridLevelTransfer(

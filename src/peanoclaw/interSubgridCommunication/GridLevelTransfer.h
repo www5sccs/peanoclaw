@@ -14,8 +14,11 @@ w * GridLevelTransfer.h
 #include <vector>
 #include "peano/utils/Globals.h"
 #include "tarch/la/Vector.h"
+#include "tarch/la/VectorCompare.h"
 #include "tarch/logging/Log.h"
 #include "tarch/multicore/BooleanSemaphore.h"
+
+#define DIMENSIONS_PLUS_ONE (DIMENSIONS+1)
 
 namespace peanoclaw {
   class Numerics;
@@ -101,6 +104,7 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
 
     typedef class peanoclaw::records::Data Data;
     typedef class peanoclaw::records::CellDescription CellDescription;
+    typedef std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double>, int, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> > VirtualSubgridMap;
 
     /**
      * Virtual patches are overlapping patches to the current processed patch. They are held
@@ -109,14 +113,15 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      *
      * We use these virtual patches for restricting ghostlayer data upwards in the spacetree.
      */
-    std::vector<int> _virtualPatchDescriptionIndices;
+    //std::vector<int> _virtualPatchDescriptionIndices;
+    VirtualSubgridMap _virtualPatchDescriptionIndices;
 
     /**
      * For each virtual patch in _virtualPatchDescriptionIndices this vector holds the
      * minimum time constraint from the neighbor patches. This can be used to skip restriction
      * steps if the fine patch does not match this time constraint after updating.
      */
-    std::vector<double> _virtualPatchTimeConstraints;
+//    std::vector<double> _virtualPatchTimeConstraints;
 
     peanoclaw::Numerics& _numerics;
 
@@ -195,6 +200,11 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
       const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
       bool                                 isPeanoCellLeaf
     );
+
+    tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> createVirtualSubgridKey(
+      tarch::la::Vector<DIMENSIONS, double> position,
+      int                                   level
+    ) const;
 
   public:
     GridLevelTransfer(
