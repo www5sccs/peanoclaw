@@ -41,6 +41,7 @@ void peanoclaw::statistics::PatchDescriptionDatabase::insertPatch(
   const PatchDescription& patch
 ) {
   _database[createKey(patch.getPosition(), patch.getLevel(), patch.getRank())] = patch;
+  assertion(containsPatch(patch.getPosition(), patch.getLevel(), patch.getRank()));
 }
 
 void peanoclaw::statistics::PatchDescriptionDatabase::erasePatch(

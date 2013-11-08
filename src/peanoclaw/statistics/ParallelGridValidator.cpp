@@ -274,7 +274,7 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
     int                                              level,
     int                                              localRank
 ) {
-  logDebug("findAdjacentPatches", "Finding patches for vertex " << fineGridX << ", " << level
+  logInfo("findAdjacentPatches", "Finding patches for vertex " << fineGridX << ", " << level
           << ", hanging=" << fineGridVertex.isHangingNode()
           << ": " << fineGridVertex.toString());
 
@@ -345,10 +345,13 @@ void peanoclaw::statistics::ParallelGridValidator::findAdjacentPatches(
             );
           }
         }
+        #else
+        patchDescription.setRank(0);
+        patchDescription.setAdjacentRanks(0);
         #endif
 
         _descriptions.insertPatch(patchDescription);
-        assertion1(_descriptions.containsPatch(adjacentPatch.getPosition(), adjacentPatch.getLevel(), localRank), patchDescription.toString());
+        assertion2(_descriptions.containsPatch(adjacentPatch.getPosition(), adjacentPatch.getLevel(), localRank), patchDescription.toString(), adjacentPatch);
 
         //Keep local copy when moving patch to different node (i.e. insert another copy of
         //the patch description to the database)
