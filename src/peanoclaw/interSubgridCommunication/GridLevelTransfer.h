@@ -11,6 +11,7 @@ w * GridLevelTransfer.h
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
+#include <map>
 #include <vector>
 #include "peano/utils/Globals.h"
 #include "tarch/la/Vector.h"

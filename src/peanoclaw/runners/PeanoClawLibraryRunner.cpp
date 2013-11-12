@@ -190,13 +190,13 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);
+  tarch::la::Vector<DIMENSIONS, double> initialMaximalSubgridSize = tarch::la::multiplyComponents(initialMaximalMeshWidth, subdivisionFactor.convertScalar<double>());
 
   #ifdef Parallel
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
     tarch::parallel::NodePool::getInstance().waitForAllNodesToBecomeIdle();
 
     state.enableRefinementCriterion(false);
-    tarch::la::Vector<DIMENSIONS, double> initialMinimalSubgridSize = tarch::la::multiplyComponents(initialMaximalMeshWidth, subdivisionFactor.convertScalar<double>());
     tarch::la::Vector<DIMENSIONS, double> currentMinimalSubgridSize;
     int maximumLevel = 2;
     do {
@@ -204,7 +204,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       logDebug("PeanoClawLibraryRunner", "Iterating with maximumLevel=" << maximumLevel);
 
       for(int d = 0; d < DIMENSIONS; d++) {
-        currentMinimalSubgridSize(d) = std::max(initialMinimalSubgridSize(d), domainSize(d) / pow(3.0, maximumLevel));
+        currentMinimalSubgridSize(d) = std::max(initialMaximalSubgridSize(d), domainSize(d) / pow(3.0, maximumLevel));
       }
 
       _repository->getState().setInitialMaximalSubgridSize(currentMinimalSubgridSize);
@@ -217,10 +217,11 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
       maximumLevel += 2;
-    } while(tarch::la::oneGreater(currentMinimalSubgridSize, initialMinimalSubgridSize));
+    } while(tarch::la::oneGreater(currentMinimalSubgridSize, initialMaximalSubgridSize));
     #endif
 
     state.enableRefinementCriterion(true);
+    _repository->getState().setInitialMaximalSubgridSize(initialMaximalSubgridSize);
     do {
       logDebug("PeanoClawLibraryRunner", "Iterate with Refinement Criterion");
 //      iterateInitialiseGrid();
