@@ -288,6 +288,7 @@ elif solver == 'swe':
     pass
   cpppath.append(swePath)
   cppdefines.append('SWE')
+  cppdefines.append('NDEBUG')
 else:
   raise Exception("ERROR: solver must be 'pyclaw' or 'swe'")
 

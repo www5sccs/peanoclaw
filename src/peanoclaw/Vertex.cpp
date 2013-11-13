@@ -190,3 +190,11 @@ void peanoclaw::Vertex::setWasCreatedInThisIteration(bool flag) {
 bool peanoclaw::Vertex::wasCreatedInThisIteration() const {
   return _vertexData.getWasCreatedInThisIteration();
 }
+
+void peanoclaw::Vertex::mergeWithNeighbor(const Vertex& neighbor) {
+  //Merge vertices
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    _vertexData.setAdjacentSubcellsEraseVeto(i, _vertexData.getAdjacentSubcellsEraseVeto(i) || neighbor._vertexData.getAdjacentSubcellsEraseVeto(i));
+  }
+  setShouldRefine(shouldRefine() || neighbor.shouldRefine());
+}

@@ -159,6 +159,11 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
      * Returns, whether this vertex was just created or not.
      */
     bool wasCreatedInThisIteration() const;
+
+    /**
+     * Merges a neighbor vertex into this vertex.
+     */
+    void mergeWithNeighbor(const Vertex& neighbor);
 };
 
 
