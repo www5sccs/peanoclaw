@@ -156,10 +156,7 @@ elif multicore == 'tbb':
    # Determine tbb directory and architecture from environment variables:
    tbbDir = os.getenv ('TBB_DIR')
           
-   if (build == 'debug'):
-      libs.append ('tbb_debug')
-   else:
-      libs.append ('tbb')
+   libs.append ('tbb')
 
    cppdefines.append('SharedTBB')
 elif multicore == 'opencl':
