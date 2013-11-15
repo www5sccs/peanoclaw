@@ -60,7 +60,6 @@ class InitializationCallback(object):
             self.dim_z = pyclaw.Dimension('z',position_z,position_z + size_z,subdivision_factor_x2)
             domain = pyclaw.Domain([self.dim_x,self.dim_y,self.dim_z])
                 
-        domain = pyclaw.Domain([self.dim_x,self.dim_y])
         subgrid_state = pyclaw.State(domain, unknowns_per_subcell, aux_fields_per_subcell)
         subgrid_state.q = q
         if(aux_fields_per_subcell > 0):

@@ -132,6 +132,13 @@ void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
       && fineGridVertices[fineGridVerticesEnumerator(2)].getAdjacentCellDescriptionIndex(0) == -1) {
     _numerics->fillBoundaryLayer(patch, 1, true);
   }
+  #ifdef Dim3
+  if((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()
+      || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(0)))
+      && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(4) == -1) {
+    _numerics->fillBoundaryLayer(patch, 2, false);
+  }
+  #endif
   if((fineGridVertices[fineGridVerticesEnumerator(1)].isBoundary()
       || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(1), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(1)))
       && fineGridVertices[fineGridVerticesEnumerator(1)].getAdjacentCellDescriptionIndex(0) == -1) {
@@ -142,6 +149,13 @@ void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
       && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(2) == -1) {
     _numerics->fillBoundaryLayer(patch, 1, false);
   }
+  #ifdef Dim3
+  if((fineGridVertices[fineGridVerticesEnumerator(4)].isBoundary()
+      || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(4), _domainOffset) || !tarch::la::allGreater(_domainOffset+_domainSize, fineGridVerticesEnumerator.getVertexPosition(4)))
+      && fineGridVertices[fineGridVerticesEnumerator(4)].getAdjacentCellDescriptionIndex(0) == -1) {
+    _numerics->fillBoundaryLayer(patch, 2, true);
+  }
+  #endif
 }
 
 
