@@ -125,7 +125,7 @@ class Peano(object):
                                                 interpolation_callback.get_interpolation_callback(),
                                                 restriction_callback.get_restriction_callback(),
                                                 flux_correction_callback.get_flux_correction_callback(),
-                                                self.internal_settings.enablePeanoLogging,
+                                                self.internal_settings.enable_peano_logging,
                                                 byref(self.crank)
                                                 )
 

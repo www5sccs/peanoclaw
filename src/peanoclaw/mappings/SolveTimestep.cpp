@@ -505,22 +505,7 @@ void peanoclaw::mappings::SolveTimestep::touchVertexFirstTime(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "touchVertexFirstTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-  // @todo Insert your code here
-  logTraceOutWith1Argument( "touchVertexFirstTime(...)", fineGridVertex );
-}
 
-
-void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
-      peanoclaw::Vertex&         fineGridVertex,
-      const tarch::la::Vector<DIMENSIONS,double>&                    fineGridX,
-      const tarch::la::Vector<DIMENSIONS,double>&                    fineGridH,
-      peanoclaw::Vertex * const  coarseGridVertices,
-      const peano::grid::VertexEnumerator&          coarseGridVerticesEnumerator,
-      peanoclaw::Cell&           coarseGridCell,
-      const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
-) {
-  logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
- 
   // Application driven refinement control
   if(
       fineGridVertex.shouldRefine()
@@ -548,6 +533,21 @@ void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
   fineGridVertex.setShouldRefine(false);
   fineGridVertex.resetSubcellsEraseVeto();
 
+  logTraceOutWith1Argument( "touchVertexFirstTime(...)", fineGridVertex );
+}
+
+
+void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
+      peanoclaw::Vertex&         fineGridVertex,
+      const tarch::la::Vector<DIMENSIONS,double>&                    fineGridX,
+      const tarch::la::Vector<DIMENSIONS,double>&                    fineGridH,
+      peanoclaw::Vertex * const  coarseGridVertices,
+      const peano::grid::VertexEnumerator&          coarseGridVerticesEnumerator,
+      peanoclaw::Cell&           coarseGridCell,
+      const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
+) {
+  logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
+ 
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }
 
@@ -651,29 +651,6 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         );
       }
 
-      //Refinement criterion
-      assertion1(tarch::la::greater(patch.getDemandedMeshWidth(), 0), patch);
-
-      if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
-        // Refine
-        for(int i = 0; i < TWO_POWER_D; i++) {
-          if(!fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-            fineGridVertices[fineGridVerticesEnumerator(i)].setShouldRefine(true);
-            coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
-          }
-        }
-      } else if (!tarch::la::oneGreater(patch.getSubcellSize() * 3.0, tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
-        // Coarsen
-      } else {
-        for(int i = 0; i < TWO_POWER_D; i++) {
-          coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
-          if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()
-              && !coarseGridVertices[coarseGridVerticesEnumerator(i)].isHangingNode()) {
-            coarseGridVertices[coarseGridVerticesEnumerator(i)].setShouldRefine(true);
-          }
-        }
-      }
-
       assertion2(!tarch::la::smaller(patch.getCurrentTime(), startTime), patch, startTime);
       assertion2(!tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), endTime), patch.getCurrentTime() + patch.getTimestepSize(), endTime);
 
@@ -739,7 +716,45 @@ void peanoclaw::mappings::SolveTimestep::leaveCell(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "leaveCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-  // @todo Insert your code here
+  Patch patch(fineGridCell);
+
+  //Refinement criterion
+  assertion1(tarch::la::greater(patch.getDemandedMeshWidth(), 0), patch);
+
+  if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
+    // Refine
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      if(!fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
+        fineGridVertices[fineGridVerticesEnumerator(i)].setShouldRefine(true);
+        coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
+      }
+    }
+  } else if (!tarch::la::oneGreater(patch.getSubcellSize() * 3.0, tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
+    // Coarsen
+  } else {
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
+      if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()
+          && !coarseGridVertices[coarseGridVerticesEnumerator(i)].isHangingNode()) {
+        coarseGridVertices[coarseGridVerticesEnumerator(i)].setShouldRefine(true);
+      }
+    }
+  }
+
+  //TODO unterweg dissertation
+  //Veto Coarsening if current cell is refined or if it belongs to a remote rank.
+  //In the first case, coarsening the coarse vertices contradicts the restriction to only erase one level at a time
+  //In the second case, we can assume that the remote cell is refined (otherwise it couldn't be forked), so the same
+  //  reason as in the first case holds.
+  if(!fineGridCell.isLeaf()
+      #ifdef Parallel
+      || fineGridCell.isAssignedToRemoteRank()
+      #endif
+    ) {
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
+    }
+  }
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
 }
 

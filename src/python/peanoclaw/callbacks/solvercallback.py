@@ -37,13 +37,14 @@ class SolverCallback(object):
                             c_bool)   #use dimensional splitting
 
 
-  def __init__(self, solver, refinement_criterion, initial_minimal_mesh_width):
+  def __init__(self, solver, refinement_criterion, initial_minimal_mesh_width, fixed_timestep_size):
     '''
     Constructor
     '''
     self.solver = solver
     self.refinement_criterion = refinement_criterion
     self.initial_minimal_mesh_width = initial_minimal_mesh_width
+    self.fixed_timestep_size = fixed_timestep_size
     
     #Statistics
     self.number_of_non_disposed_cells = 0
@@ -76,9 +77,20 @@ class SolverCallback(object):
       
     # Set up grid information for current patch
     import peanoclaw as peanoclaw
-    subgridsolver = peanoclaw.SubgridSolver(self.solver.solver, self.solver.solution.state, q, qbc, aux, (position_x, position_y,position_z), (size_x, size_y,size_z), (subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2), unknowns_per_cell, aux_fields_per_cell, current_time)
+    subgridsolver = peanoclaw.SubgridSolver(
+        self.solver.solver, 
+        self.solver.solution.state, 
+        q, 
+        qbc, 
+        aux, 
+        (position_x, position_y, position_z), 
+        (size_x, size_y, size_z), 
+        (subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2), 
+        unknowns_per_cell, 
+        aux_fields_per_cell, 
+        current_time)
     
-    new_q, number_of_rollbacks = subgridsolver.step(maximum_timestep_size, estimated_next_dt)
+    new_q, number_of_rollbacks = subgridsolver.step(maximum_timestep_size, estimated_next_dt, self.fixed_timestep_size)
     
     # Copy back the array with new values    
     q[:]= new_q[:]

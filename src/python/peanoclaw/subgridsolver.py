@@ -57,7 +57,7 @@ class SubgridSolver(object):
         
         self.recover_ghostlayers = False
         
-    def step(self, maximum_timestep_size, estimated_next_dt):
+    def step(self, maximum_timestep_size, estimated_next_dt, fixed_timestep_size):
         r"""
         Performs one timestep on the subgrid. This might result in several runs of the
         solver to find the maximum allowed timestep size in terms of stability.
@@ -72,7 +72,10 @@ class SubgridSolver(object):
                                  in terms of stability and results from the cfl number of the
                                  last timestep performed on this grid.
         """
-        self.solver.dt = min(maximum_timestep_size, estimated_next_dt)
+        if fixed_timestep_size != None:
+          self.solver.dt = fixed_timestep_size
+        else:
+          self.solver.dt = min(maximum_timestep_size, estimated_next_dt)
         self.number_of_rollbacks = 0
         # Set qbc and timestep for the current patch
         self.solver.qbc = self.qbc

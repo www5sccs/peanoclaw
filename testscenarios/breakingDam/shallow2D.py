@@ -188,7 +188,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
                                         ,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
                                         #,refinement_criterion=refinement_criterion_gradient
-                                        ,internal_settings=amrclaw.InternalSettings(enablePeanoLogging=True)
+                                        ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True, fixed_timestep_size=1e-5)
                                         )
             claw.solution = amrclaw.Solution(state, domain)
         else:
