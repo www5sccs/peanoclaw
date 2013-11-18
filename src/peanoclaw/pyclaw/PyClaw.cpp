@@ -93,6 +93,9 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
 
   PyClawState state(patch);
 
+  //TODO unterweg debug
+  std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
+
   tarch::timing::Watch pyclawWatch("", "", false);
   pyclawWatch.startTimer();
   double dtAndEstimatedNextDt[2];
@@ -191,7 +194,7 @@ void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, b
 
   tarch::multicore::Lock lock(_semaphore);
 
-  logDebug("fillBoundaryLayerInPyClaw", "Setting left boundary for " << patch.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);
+  logInfo("fillBoundaryLayerInPyClaw", "Setting boundary for " << patch.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);
 
   PyClawState state(patch);
   _boundaryConditionCallback(state._q, state._qbc, dimension, setUpper ? 1 : 0);

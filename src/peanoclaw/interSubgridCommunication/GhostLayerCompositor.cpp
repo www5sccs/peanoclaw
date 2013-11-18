@@ -10,9 +10,7 @@
 #include "peanoclaw/interSubgridCommunication/GhostlayerCompositorFunctors.h"
 #include "peanoclaw/interSubgridCommunication/aspects/FaceAdjacentPatchTraversal.h"
 #include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversal.h"
-#include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversalWithCommonFaceNeighbors.h"
 #include "peanoclaw/interSubgridCommunication/aspects/CornerAdjacentPatchTraversal.h"
-#include "peanoclaw/interSubgridCommunication/aspects/CornerAdjacentPatchTraversalWithCommonFaceAndEdgeNeighbors.h"
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
@@ -104,6 +102,54 @@ peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor
 }
 
 peanoclaw::interSubgridCommunication::GhostLayerCompositor::~GhostLayerCompositor() {
+}
+
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlayerBound(
+  int updatedPatchIndex,
+  int neighborPatchIndex,
+  int dimension
+) {
+  if(neighborPatchIndex < updatedPatchIndex) {
+    updateUpperGhostlayerBound(updatedPatchIndex, neighborPatchIndex, dimension);
+  } else {
+    updateLowerGhostlayerBound(updatedPatchIndex, neighborPatchIndex, dimension);
+  }
+}
+
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlayerBound (
+  int updatedPatchIndex,
+  int neighborPatchIndex,
+  tarch::la::Vector<DIMENSIONS, int> direction
+) {
+  tarch::la::Vector<DIMENSIONS, double> lowerBounds
+    = _patches[neighborPatchIndex].getPosition()
+      - (double)(_patches[neighborPatchIndex].getGhostLayerWidth()) * _patches[neighborPatchIndex].getSubcellSize();
+  tarch::la::Vector<DIMENSIONS, double> upperBounds
+    = _patches[neighborPatchIndex].getPosition() + _patches[neighborPatchIndex].getSize()
+      + (double)(_patches[neighborPatchIndex].getGhostLayerWidth()) * _patches[neighborPatchIndex].getSubcellSize();
+
+  bool hasToUpdate = true;
+  for(int d = 0; d < DIMENSIONS; d++) {
+    if( direction(d) > 0 ) {
+      //Check upper bounds
+      hasToUpdate &= (_patches[updatedPatchIndex].getUpperNeighboringGhostlayerBounds()(d) < upperBounds(d));
+    } else if( direction(d) < 0 ) {
+      //Check lower bounds
+      hasToUpdate &= (_patches[updatedPatchIndex].getLowerNeighboringGhostlayerBounds()(d) > lowerBounds(d));
+    }
+  }
+
+  if( hasToUpdate ) {
+    for(int d = 0; d < DIMENSIONS; d++) {
+      if( direction(d) > 0 ) {
+        _patches[updatedPatchIndex].updateUpperNeighboringGhostlayerBound(d, upperBounds(d));
+        return;
+      } else if( direction(d) < 0 ) {
+        _patches[updatedPatchIndex].updateLowerNeighboringGhostlayerBound(d, lowerBounds(d));
+        return;
+      }
+    }
+  }
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateLowerGhostlayerBound(
@@ -234,7 +280,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlaye
   if(!_useDimensionalSplittingOptimization) {
     //Edges
     UpdateGhostlayerBoundsEdgeFunctor edgeFunctor(*this);
-    peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversalWithCommonFaceNeighbors<UpdateGhostlayerBoundsEdgeFunctor>(
+    peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<UpdateGhostlayerBoundsEdgeFunctor>(
       _patches,
       edgeFunctor
     );
@@ -242,7 +288,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlaye
     //Corners
     #ifdef Dim3
     UpdateGhostlayerBoundsCornerFunctor cornerFunctor(*this);
-    peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversalWithCommonFaceAndEdgeNeighbors<UpdateGhostlayerBoundsCornerFunctor>(
+    peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<UpdateGhostlayerBoundsCornerFunctor>(
       _patches,
       cornerFunctor
     );

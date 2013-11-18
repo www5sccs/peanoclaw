@@ -13,29 +13,47 @@ peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<LoopBo
   LoopBody& loopBody
 ) {
   #ifdef Dim2
-  for(int indexSource = TWO_POWER_D - 1; indexSource >= 0; indexSource--) {
-    tarch::la::Vector<DIMENSIONS, int> positionSource
-      = peano::utils::dDelinearised(TWO_POWER_D - 1 - indexSource, 2);
-    dfor(binaryOffsetDestination, 2) {
-      tarch::la::Vector<DIMENSIONS, int> offsetDestination = 2 * binaryOffsetDestination - 1;
-      tarch::la::Vector<DIMENSIONS, int> positionDestination = positionSource + offsetDestination;
+  for(int sourceIndex = TWO_POWER_D - 1; sourceIndex >= 0; sourceIndex--) {
+    tarch::la::Vector<DIMENSIONS, int> sourcePosition
+      = peano::utils::dDelinearised(TWO_POWER_D - 1 - sourceIndex, 2);
 
-      if(tarch::la::allGreaterEquals(positionDestination, tarch::la::Vector<DIMENSIONS, int>(0))
-        && tarch::la::allGreater(tarch::la::Vector<DIMENSIONS, int>(2), positionDestination)) {
-        int indexDestination = TWO_POWER_D - 1 - peano::utils::dLinearised(positionDestination, 2);
+    tarch::la::Vector<DIMENSIONS, int> destinationPosition;
+    for(int d = 0; d < DIMENSIONS; d++) {
+      destinationPosition(d) = (sourcePosition(d)+1) % 2;
+    }
+    int destinationIndex = TWO_POWER_D - 1 - peano::utils::dLinearised(destinationPosition, 2);
 
-        loopBody(
-          patches[indexSource],
-          indexSource,
-          patches[indexDestination],
-          indexDestination,
-          offsetDestination
-        );
+    loopBody(
+      patches[sourceIndex],
+      sourceIndex,
+      patches[destinationIndex],
+      destinationIndex,
+      destinationPosition - sourcePosition
+    );
+  }
+  #elif Dim3
+  for(int sourceIndex = TWO_POWER_D - 1; sourceIndex >= 0; sourceIndex--) {
+    tarch::la::Vector<DIMENSIONS, int> sourcePosition
+      = peano::utils::dDelinearised(TWO_POWER_D - 1 - sourceIndex, 2);
+
+    for(int axis = 0; axis < DIMENSIONS; axis++) {
+      tarch::la::Vector<DIMENSIONS, int> destinationPosition;
+      for(int d = 0; d < DIMENSIONS; d++) {
+        if(axis != d) {
+          destinationPosition(d) = (sourcePosition(d)+1) % 2;
+        }
       }
+      int destinationIndex = TWO_POWER_D - 1 - peano::utils::dLinearised(destinationPosition, 2);
+
+      loopBody(
+        patches[sourceIndex],
+        sourceIndex,
+        patches[destinationIndex],
+        destinationIndex,
+        destinationPosition - sourcePosition
+      );
     }
   }
-  #else
-  assertionFail("Not implemented, yet.");
   #endif
 }
 

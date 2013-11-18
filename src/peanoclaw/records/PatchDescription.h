@@ -33,7 +33,7 @@ namespace peanoclaw {
     *
     * 		   build date: 12-04-2013 09:18
     *
-    * @date   06/10/2013 18:41
+    * @date   14/11/2013 16:30
     */
    class peanoclaw::records::PatchDescription { 
       
@@ -54,7 +54,6 @@ namespace peanoclaw {
             tarch::la::Vector<DIMENSIONS,double> _size;
             double _time;
             double _timestepSize;
-            double _hash;
             int _skipGridIterations;
             double _demandedMeshWidth;
             int _cellDescriptionIndex;
@@ -66,7 +65,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
+            PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
             
             /**
              * Generated
@@ -167,16 +166,6 @@ namespace peanoclaw {
             /**
              * Generated
              */
-             double getHash() const ;
-            
-            /**
-             * Generated
-             */
-             void setHash(const double& hash) ;
-            
-            /**
-             * Generated
-             */
              int getSkipGridIterations() const ;
             
             /**
@@ -224,7 +213,7 @@ namespace peanoclaw {
          /**
           * Generated
           */
-         PatchDescription(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
+         PatchDescription(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
          
          /**
           * Generated
@@ -346,16 +335,6 @@ namespace peanoclaw {
          /**
           * Generated
           */
-          double getHash() const ;
-         
-         /**
-          * Generated
-          */
-          void setHash(const double& hash) ;
-         
-         /**
-          * Generated
-          */
           int getSkipGridIterations() const ;
          
          /**
@@ -441,7 +420,7 @@ namespace peanoclaw {
              *
              * 		   build date: 12-04-2013 09:18
              *
-             * @date   06/10/2013 18:41
+             * @date   14/11/2013 16:30
              */
             class peanoclaw::records::PatchDescriptionPacked { 
                
@@ -460,7 +439,6 @@ namespace peanoclaw {
                      tarch::la::Vector<DIMENSIONS,double> _size;
                      double _time;
                      double _timestepSize;
-                     double _hash;
                      int _skipGridIterations;
                      double _demandedMeshWidth;
                      int _cellDescriptionIndex;
@@ -472,7 +450,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
+                     PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                      
                      /**
                       * Generated
@@ -573,16 +551,6 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                      double getHash() const ;
-                     
-                     /**
-                      * Generated
-                      */
-                      void setHash(const double& hash) ;
-                     
-                     /**
-                      * Generated
-                      */
                       int getSkipGridIterations() const ;
                      
                      /**
@@ -630,7 +598,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  PatchDescriptionPacked(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
+                  PatchDescriptionPacked(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                   
                   /**
                    * Generated
@@ -752,16 +720,6 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                   double getHash() const ;
-                  
-                  /**
-                   * Generated
-                   */
-                   void setHash(const double& hash) ;
-                  
-                  /**
-                   * Generated
-                   */
                    int getSkipGridIterations() const ;
                   
                   /**
@@ -849,7 +807,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 12-04-2013 09:18
                       *
-                      * @date   06/10/2013 18:41
+                      * @date   14/11/2013 16:30
                       */
                      class peanoclaw::records::PatchDescription { 
                         
@@ -869,7 +827,6 @@ namespace peanoclaw {
                               tarch::la::Vector<DIMENSIONS,double> _size;
                               double _time;
                               double _timestepSize;
-                              double _hash;
                               int _skipGridIterations;
                               double _demandedMeshWidth;
                               int _cellDescriptionIndex;
@@ -881,7 +838,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
+                              PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                               
                               /**
                                * Generated
@@ -972,16 +929,6 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                               double getHash() const ;
-                              
-                              /**
-                               * Generated
-                               */
-                               void setHash(const double& hash) ;
-                              
-                              /**
-                               * Generated
-                               */
                                int getSkipGridIterations() const ;
                               
                               /**
@@ -1029,7 +976,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           PatchDescription(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
+                           PatchDescription(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                            
                            /**
                             * Generated
@@ -1141,16 +1088,6 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                            double getHash() const ;
-                           
-                           /**
-                            * Generated
-                            */
-                            void setHash(const double& hash) ;
-                           
-                           /**
-                            * Generated
-                            */
                             int getSkipGridIterations() const ;
                            
                            /**
@@ -1236,7 +1173,7 @@ namespace peanoclaw {
                                *
                                * 		   build date: 12-04-2013 09:18
                                *
-                               * @date   06/10/2013 18:41
+                               * @date   14/11/2013 16:30
                                */
                               class peanoclaw::records::PatchDescriptionPacked { 
                                  
@@ -1254,7 +1191,6 @@ namespace peanoclaw {
                                        tarch::la::Vector<DIMENSIONS,double> _size;
                                        double _time;
                                        double _timestepSize;
-                                       double _hash;
                                        int _skipGridIterations;
                                        double _demandedMeshWidth;
                                        int _cellDescriptionIndex;
@@ -1266,7 +1202,7 @@ namespace peanoclaw {
                                        /**
                                         * Generated
                                         */
-                                       PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
+                                       PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                                        
                                        /**
                                         * Generated
@@ -1357,16 +1293,6 @@ namespace peanoclaw {
                                        /**
                                         * Generated
                                         */
-                                        double getHash() const ;
-                                       
-                                       /**
-                                        * Generated
-                                        */
-                                        void setHash(const double& hash) ;
-                                       
-                                       /**
-                                        * Generated
-                                        */
                                         int getSkipGridIterations() const ;
                                        
                                        /**
@@ -1414,7 +1340,7 @@ namespace peanoclaw {
                                     /**
                                      * Generated
                                      */
-                                    PatchDescriptionPacked(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& hash, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
+                                    PatchDescriptionPacked(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                                     
                                     /**
                                      * Generated
@@ -1522,16 +1448,6 @@ namespace peanoclaw {
                                      * Generated
                                      */
                                      void setTimestepSize(const double& timestepSize) ;
-                                    
-                                    /**
-                                     * Generated
-                                     */
-                                     double getHash() const ;
-                                    
-                                    /**
-                                     * Generated
-                                     */
-                                     void setHash(const double& hash) ;
                                     
                                     /**
                                      * Generated

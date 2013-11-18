@@ -155,7 +155,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::operator
   ) {
     assertionEquals2(source.getSubdivisionFactor(), destination.getSubdivisionFactor(), source, destination);
     int ghostlayerWidth = destination.getGhostLayerWidth();
-    tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
+    tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = destination.getSubdivisionFactor();
     tarch::la::Vector<DIMENSIONS, int> cornerSize(ghostlayerWidth);
     tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
     tarch::la::Vector<DIMENSIONS, int> destinationOffset(0);
@@ -293,24 +293,10 @@ void peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsEdgeFunctor::op
   int                                       index1,
   peanoclaw::Patch&                         patch2,
   int                                       index2,
-  peanoclaw::Patch&                         faceNeighbor1,
-  int                                       indexFaceNeighbor1,
-  peanoclaw::Patch&                         faceNeighbor2,
-  int                                       indexFaceNeighbor2,
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
-  if((!faceNeighbor1.isValid() || !faceNeighbor1.isLeaf()) && (!faceNeighbor2.isValid() || !faceNeighbor2.isLeaf())) {
-    if(patch1.isValid() && patch2.isValid() && (patch1.getLevel() == patch2.getLevel())) {
-      for(int d = 0; d < DIMENSIONS; d++) {
-        if(direction(d) != 0) {
-          if(index1 < index2) {
-            _ghostlayerCompositor.updateUpperGhostlayerBound(index2, index1, d);
-          } else {
-            _ghostlayerCompositor.updateLowerGhostlayerBound(index2, index1, d);
-          }
-        }
-      }
-    }
+  if(patch1.isValid() && patch2.isValid() && (patch1.getLevel() == patch2.getLevel())) {
+    _ghostlayerCompositor.updateGhostlayerBound(index2, index1, direction);
   }
 }
 
@@ -324,10 +310,6 @@ void peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsCornerFunctor::
   int                                       index1,
   peanoclaw::Patch&                         patch2,
   int                                       index2,
-  peanoclaw::Patch&                         faceNeighbor1,
-  int                                       indexFaceNeighbor1,
-  peanoclaw::Patch&                         faceNeighbor2,
-  int                                       indexFaceNeighbor2,
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
   assertion("Not implemented, yet!");

@@ -786,21 +786,20 @@ double peanoclaw::Patch::getDemandedMeshWidth() const {
 
 std::string peanoclaw::Patch::toStringUNew() const {
   if (isLeaf() || isVirtual()) {
-    //Plot patch
     std::stringstream str;
+    #ifdef Dim2
+    //Plot patch
     for (int y = getSubdivisionFactor()(1) - 1; y >= 0; y--) {
       for (int x = 0; x < getSubdivisionFactor()(0); x++) {
         tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-        subcellIndex(0) = x;
-        subcellIndex(1) = y;
+        assignList(subcellIndex) = x, y;
         str << std::setw(2) << getValueUNew(subcellIndex, 0) << " ";
       }
       if (_cellDescription->getUnknownsPerSubcell() > 1) {
         str << "\t";
         for (int x = 0; x < getSubdivisionFactor()(0); x++) {
           tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-          subcellIndex(0) = x;
-          subcellIndex(1) = y;
+          assignList(subcellIndex) = x, y;
           str << std::setw(2) << getValueUNew(subcellIndex, 1) << ","
               << std::setw(2) << getValueUNew(subcellIndex, 2) << " ";
         }
@@ -808,6 +807,31 @@ std::string peanoclaw::Patch::toStringUNew() const {
       str << std::endl;
     }
     str << std::endl;
+    #elif Dim3
+    //Plot patch
+    for(int z = 0; z < getSubdivisionFactor()(2); z++) {
+      for (int y = getSubdivisionFactor()(1) - 1; y >= 0; y--) {
+        for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+          tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+          assignList(subcellIndex) = x, y, z;
+          str << std::setw(2) << getValueUNew(subcellIndex, 0) << " ";
+        }
+        if (_cellDescription->getUnknownsPerSubcell() > 1) {
+          str << "\t";
+          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+            assignList(subcellIndex) = x, y, z;
+            str << std::setw(2) << getValueUNew(subcellIndex, 1) << ","
+                << std::setw(2) << getValueUNew(subcellIndex, 2) << ","
+                << std::setw(2) << getValueUNew(subcellIndex, 3) << " ";
+          }
+        }
+        str << std::endl;
+      }
+      str << std::endl << std::endl;
+    }
+    str << std::endl;
+    #endif
     return str.str();
   } else {
     return "Is refined patch.\n";
@@ -817,6 +841,7 @@ std::string peanoclaw::Patch::toStringUNew() const {
 std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
   if (isLeaf() || isVirtual()) {
     std::stringstream str;
+    #ifdef Dim2
     for (int y = getSubdivisionFactor()(1) + getGhostLayerWidth() - 1;
         y >= -getGhostLayerWidth(); y--) {
       for (int x = -getGhostLayerWidth();
@@ -840,6 +865,34 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
       str << std::endl;
     }
     str << std::endl;
+    #elif Dim3
+    //Plot patch
+    for(int z = -getGhostLayerWidth(); z < getSubdivisionFactor()(2) + getGhostLayerWidth(); z++) {
+      str << "z==" << z << std::endl;
+      for (int y = getSubdivisionFactor()(1) + getGhostLayerWidth() - 1;
+          y >= -getGhostLayerWidth(); y--) {
+        for (int x = -getGhostLayerWidth();
+            x < getSubdivisionFactor()(0) + getGhostLayerWidth(); x++) {
+          tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+          assignList(subcellIndex) = x, y, z;
+          str << std::setw(2) << getValueUOld(subcellIndex, 0) << " ";
+        }
+        if (_cellDescription->getUnknownsPerSubcell() > 1) {
+          str << "\t";
+          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+            assignList(subcellIndex) = x, y, z;
+            str << std::setw(2) << getValueUOld(subcellIndex, 1) << ","
+                << std::setw(2) << getValueUOld(subcellIndex, 2) << ","
+                << std::setw(2) << getValueUOld(subcellIndex, 3) << " ";
+          }
+        }
+        str << std::endl;
+      }
+      str << std::endl << std::endl;
+    }
+    str << std::endl;
+    #endif
     return str.str();
   } else {
     return "Is refined patch.\n";

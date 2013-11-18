@@ -1,6 +1,6 @@
 #include "peano/utils/Globals.h"
 
-Packed-Type: short int;
+Packed-Type: int;
 
 class peano::applications::peanoclaw::dastgen::Vertex {
 	parallelise persistent int indicesOfAdjacentCellDescriptions[TWO_POWER_D];

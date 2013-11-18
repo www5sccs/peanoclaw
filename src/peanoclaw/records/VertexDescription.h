@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 12-04-2013 09:18
  *
- * @date   06/10/2013 18:41
+ * @date   14/11/2013 16:30
  */
 class peanoclaw::records::VertexDescription { 
    
@@ -46,7 +46,6 @@ class peanoclaw::records::VertexDescription {
       
       struct PersistentRecords {
          tarch::la::Vector<TWO_POWER_D,int> _indicesOfAdjacentCellDescriptions;
-         IterationParity _lastUpdateIterationParity;
          bool _touched;
          /**
           * Generated
@@ -56,21 +55,11 @@ class peanoclaw::records::VertexDescription {
          /**
           * Generated
           */
-         PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const IterationParity& lastUpdateIterationParity, const bool& touched);
+         PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched);
          
           tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const ;
          
           void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) ;
-         
-         /**
-          * Generated
-          */
-          IterationParity getLastUpdateIterationParity() const ;
-         
-         /**
-          * Generated
-          */
-          void setLastUpdateIterationParity(const IterationParity& lastUpdateIterationParity) ;
          
          /**
           * Generated
@@ -102,7 +91,7 @@ class peanoclaw::records::VertexDescription {
       /**
        * Generated
        */
-      VertexDescription(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const IterationParity& lastUpdateIterationParity, const bool& touched);
+      VertexDescription(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched);
       
       /**
        * Generated
@@ -116,16 +105,6 @@ class peanoclaw::records::VertexDescription {
        int getIndicesOfAdjacentCellDescriptions(int elementIndex) const ;
       
        void setIndicesOfAdjacentCellDescriptions(int elementIndex, const int& indicesOfAdjacentCellDescriptions) ;
-      
-      /**
-       * Generated
-       */
-       IterationParity getLastUpdateIterationParity() const ;
-      
-      /**
-       * Generated
-       */
-       void setLastUpdateIterationParity(const IterationParity& lastUpdateIterationParity) ;
       
       /**
        * Generated
@@ -205,7 +184,7 @@ class peanoclaw::records::VertexDescription {
           *
           * 		   build date: 12-04-2013 09:18
           *
-          * @date   06/10/2013 18:41
+          * @date   14/11/2013 16:30
           */
          class peanoclaw::records::VertexDescriptionPacked { 
             
@@ -215,7 +194,6 @@ class peanoclaw::records::VertexDescription {
                
                struct PersistentRecords {
                   tarch::la::Vector<TWO_POWER_D,int> _indicesOfAdjacentCellDescriptions;
-                  IterationParity _lastUpdateIterationParity;
                   bool _touched;
                   /**
                    * Generated
@@ -225,21 +203,11 @@ class peanoclaw::records::VertexDescription {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const IterationParity& lastUpdateIterationParity, const bool& touched);
+                  PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched);
                   
                    tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const ;
                   
                    void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) ;
-                  
-                  /**
-                   * Generated
-                   */
-                   IterationParity getLastUpdateIterationParity() const ;
-                  
-                  /**
-                   * Generated
-                   */
-                   void setLastUpdateIterationParity(const IterationParity& lastUpdateIterationParity) ;
                   
                   /**
                    * Generated
@@ -271,7 +239,7 @@ class peanoclaw::records::VertexDescription {
                /**
                 * Generated
                 */
-               VertexDescriptionPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const IterationParity& lastUpdateIterationParity, const bool& touched);
+               VertexDescriptionPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched);
                
                /**
                 * Generated
@@ -285,16 +253,6 @@ class peanoclaw::records::VertexDescription {
                 int getIndicesOfAdjacentCellDescriptions(int elementIndex) const ;
                
                 void setIndicesOfAdjacentCellDescriptions(int elementIndex, const int& indicesOfAdjacentCellDescriptions) ;
-               
-               /**
-                * Generated
-                */
-                IterationParity getLastUpdateIterationParity() const ;
-               
-               /**
-                * Generated
-                */
-                void setLastUpdateIterationParity(const IterationParity& lastUpdateIterationParity) ;
                
                /**
                 * Generated

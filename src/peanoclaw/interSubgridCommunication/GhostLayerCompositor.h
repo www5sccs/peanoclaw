@@ -107,6 +107,24 @@ private:
   void updateNeighborTime(int updatedPatchIndex, int neighborPatchIndex);
 
   /**
+   * Updates the appropriate ghostlayer bound for the given pair of patches.
+   * These patches are assumed to share a face (or an edge in 2D).
+   */
+  void updateGhostlayerBound(int updatedPatchIndex, int neighborPatchIndex, int dimension);
+
+  /**
+   * Updates the appropriate ghostlayer bound for the given pair of patches.
+   * These patches are assumed to share an edge (or a vertex in 2D) or a vertex (in 3D),
+   * therefore, more than one ghostlayer bound is affected by this updating, but only the
+   * required bounds are updated.
+   *
+   * The method checks for each dimension whether the already set bounds cover the given
+   * intersection. If they do, no further action is required. If they don't one of the
+   * bounds is set.
+   */
+  void updateGhostlayerBound(int updatedPatchIndex, int neighborPatchIndex, tarch::la::Vector<DIMENSIONS, int> direction);
+
+  /**
    * Updates the lower ghostlayer bound for the given pair of patches.
    */
   void updateLowerGhostlayerBound(int updatedPatchIndex, int neighborPatchIndex, int dimension);

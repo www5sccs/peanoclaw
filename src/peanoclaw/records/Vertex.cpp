@@ -498,7 +498,7 @@
    
    
    peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-      assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
       
    }
    
@@ -516,26 +516,26 @@
       setRefinementControl(refinementControl);
       setInsideOutsideDomain(insideOutsideDomain);
       setAdjacentSubtreeForksIntoOtherRank(adjacentSubtreeForksIntoOtherRank);
-      assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
       
    }
    
    peanoclaw::records::VertexPacked::VertexPacked() {
-      assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
    _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getWasCreatedInThisIteration(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._x, persistentRecords._level, persistentRecords._adjacentRanks, persistentRecords.getAdjacentSubtreeForksIntoOtherRank()) {
-      assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
    _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, wasCreatedInThisIteration, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks, adjacentSubtreeForksIntoOtherRank) {
-      assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
       
    }
    
@@ -543,7 +543,7 @@
    peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
    _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, wasCreatedInThisIteration, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level, adjacentRanks, adjacentSubtreeForksIntoOtherRank),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
    _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-      assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
       
    }
    
@@ -662,7 +662,7 @@
                MPI_DOUBLE,		 //x
                MPI_INT,		 //level
                MPI_INT,		 //adjacentRanks
-               MPI_SHORT,		 //_packedRecords0
+               MPI_INT,		 //_packedRecords0
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
             };
@@ -709,7 +709,7 @@
                MPI_DOUBLE,		 //x
                MPI_INT,		 //level
                MPI_INT,		 //adjacentRanks
-               MPI_SHORT,		 //_packedRecords0
+               MPI_INT,		 //_packedRecords0
                MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
@@ -1399,7 +1399,7 @@
    
    
    peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
       
    }
    
@@ -1413,26 +1413,26 @@
       setIsHangingNode(isHangingNode);
       setRefinementControl(refinementControl);
       setInsideOutsideDomain(insideOutsideDomain);
-      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
       
    }
    
    peanoclaw::records::VertexPacked::VertexPacked() {
-      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
    _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getWasCreatedInThisIteration(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain()) {
-      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain):
    _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, wasCreatedInThisIteration, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain) {
-      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
       
    }
    
@@ -1440,7 +1440,7 @@
    peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain):
    _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, wasCreatedInThisIteration, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
    _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-      assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+      assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
       
    }
    
@@ -1536,7 +1536,7 @@
             const int Attributes = 4;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //indicesOfAdjacentCellDescriptions
-               MPI_SHORT,		 //_packedRecords0
+               MPI_INT,		 //_packedRecords0
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
             };
@@ -1574,7 +1574,7 @@
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //indicesOfAdjacentCellDescriptions
                MPI_INT,		 //adjacentCellsHeight
-               MPI_SHORT,		 //_packedRecords0
+               MPI_INT,		 //_packedRecords0
                MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
                MPI_INT,		 //numberOfAdjacentRefinedCells
                MPI_UB		 // end/displacement flag
@@ -2286,7 +2286,7 @@ peanoclaw::records::VertexPacked peanoclaw::records::Vertex::convert() const{
 
 
 peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-   assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
    
 }
 
@@ -2302,26 +2302,26 @@ _level(level) {
    setIsHangingNode(isHangingNode);
    setRefinementControl(refinementControl);
    setInsideOutsideDomain(insideOutsideDomain);
-   assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
    
 }
 
 peanoclaw::records::VertexPacked::VertexPacked() {
-   assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
    
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
 _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getWasCreatedInThisIteration(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._x, persistentRecords._level) {
-   assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
    
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level):
 _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, wasCreatedInThisIteration, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level) {
-   assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
    
 }
 
@@ -2329,7 +2329,7 @@ _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto,
 peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level):
 _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, wasCreatedInThisIteration, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, x, level),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
 _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-   assertion((TWO_POWER_D+8 < (8 * sizeof(short int))));
+   assertion((TWO_POWER_D+8 < (8 * sizeof(int))));
    
 }
 
@@ -2437,7 +2437,7 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
             MPI_INT,		 //indicesOfAdjacentCellDescriptions
             MPI_DOUBLE,		 //x
             MPI_INT,		 //level
-            MPI_SHORT,		 //_packedRecords0
+            MPI_INT,		 //_packedRecords0
             MPI_INT,		 //numberOfAdjacentRefinedCells
             MPI_UB		 // end/displacement flag
          };
@@ -2481,7 +2481,7 @@ peanoclaw::records::Vertex peanoclaw::records::VertexPacked::convert() const{
             MPI_INT,		 //adjacentCellsHeight
             MPI_DOUBLE,		 //x
             MPI_INT,		 //level
-            MPI_SHORT,		 //_packedRecords0
+            MPI_INT,		 //_packedRecords0
             MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
             MPI_INT,		 //numberOfAdjacentRefinedCells
             MPI_UB		 // end/displacement flag
@@ -3194,7 +3194,7 @@ int peanoclaw::records::Vertex::getSenderRank() const {
 
 
 peanoclaw::records::VertexPacked::PersistentRecords::PersistentRecords() {
-assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
 
 }
 
@@ -3210,26 +3210,26 @@ setIsHangingNode(isHangingNode);
 setRefinementControl(refinementControl);
 setInsideOutsideDomain(insideOutsideDomain);
 setAdjacentSubtreeForksIntoOtherRank(adjacentSubtreeForksIntoOtherRank);
-assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
 
 }
 
 peanoclaw::records::VertexPacked::VertexPacked() {
-assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
 
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const PersistentRecords& persistentRecords):
 _persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords.getAdjacentSubcellsEraseVeto(), persistentRecords.getShouldRefine(), persistentRecords.getWasCreatedInThisIteration(), persistentRecords.getIsHangingNode(), persistentRecords.getRefinementControl(), persistentRecords._adjacentCellsHeight, persistentRecords.getInsideOutsideDomain(), persistentRecords._adjacentRanks, persistentRecords.getAdjacentSubtreeForksIntoOtherRank()) {
-assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
 
 }
 
 
 peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
 _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, wasCreatedInThisIteration, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks, adjacentSubtreeForksIntoOtherRank) {
-assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
 
 }
 
@@ -3237,7 +3237,7 @@ assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
 peanoclaw::records::VertexPacked::VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank):
 _persistentRecords(indicesOfAdjacentCellDescriptions, adjacentSubcellsEraseVeto, shouldRefine, wasCreatedInThisIteration, isHangingNode, refinementControl, adjacentCellsHeight, insideOutsideDomain, adjacentRanks, adjacentSubtreeForksIntoOtherRank),_adjacentCellsHeightOfPreviousIteration(adjacentCellsHeightOfPreviousIteration),
 _numberOfAdjacentRefinedCells(numberOfAdjacentRefinedCells) {
-assertion((TWO_POWER_D+9 < (8 * sizeof(short int))));
+assertion((TWO_POWER_D+9 < (8 * sizeof(int))));
 
 }
 
@@ -3344,7 +3344,7 @@ void peanoclaw::records::VertexPacked::initDatatype() {
       MPI_Datatype subtypes[Attributes] = {
          MPI_INT,		 //indicesOfAdjacentCellDescriptions
          MPI_INT,		 //adjacentRanks
-         MPI_SHORT,		 //_packedRecords0
+         MPI_INT,		 //_packedRecords0
          MPI_INT,		 //numberOfAdjacentRefinedCells
          MPI_UB		 // end/displacement flag
       };
@@ -3385,7 +3385,7 @@ void peanoclaw::records::VertexPacked::initDatatype() {
          MPI_INT,		 //indicesOfAdjacentCellDescriptions
          MPI_INT,		 //adjacentCellsHeight
          MPI_INT,		 //adjacentRanks
-         MPI_SHORT,		 //_packedRecords0
+         MPI_INT,		 //_packedRecords0
          MPI_INT,		 //adjacentCellsHeightOfPreviousIteration
          MPI_INT,		 //numberOfAdjacentRefinedCells
          MPI_UB		 // end/displacement flag

@@ -6,6 +6,7 @@
  */
 
 #include "tarch/Assertions.h"
+#include "peano/utils/Loop.h"
 
 template<class LoopBody>
 peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<LoopBody>::CornerAdjacentPatchTraversal(
@@ -13,7 +14,23 @@ peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<Loop
   LoopBody& loopBody
 ) {
   #ifdef Dim3
-  assertionFail("Not implemented, yet!");
+  for(int destinationIndex = 0; destinationIndex < TWO_POWER_D; destinationIndex++) {
+    int sourceIndex = TWO_POWER_D - destinationIndex - 1;
+
+    tarch::la::Vector<DIMENSIONS, int> sourcePosition
+      = peano::utils::dDelinearised(TWO_POWER_D - 1 - sourceIndex, 2);
+
+    tarch::la::Vector<DIMENSIONS, int> destinationPosition
+      = peano::utils::dDelinearised(TWO_POWER_D - 1 - destinationIndex, 2);
+
+    loopBody(
+      patches[sourceIndex],
+      sourceIndex,
+      patches[destinationIndex],
+      destinationIndex,
+      destinationPosition - sourcePosition
+    );
+  }
   #else
   assertionFail("This kind of traversal is not valid in 2D. Use EdgeAdjacentPatchTraversal instead!");
   #endif

@@ -86,8 +86,8 @@ def refinement_criterion_gradient(state):
   #max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:], dimension_x.delta, dimension_y.delta)))
   max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:])))
   
-  if max_gradient > 0.03:
-      return 1.0/(6.0*27.0)
+  if max_gradient > 0.1:
+      return 1.0/(6.0*81.0)
   elif max_gradient < 0.05:
       return 1.0/(6.0*9.0)
   else:
@@ -128,7 +128,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     mgrid = 6
 
     # number of initial AMR grids in each dimension
-    msubgrid = 27
+    msubgrid = 9
 
     if amr_type is not None:
         m = mgrid
@@ -159,7 +159,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Initial solution
     # ================
     # Riemann states of the dam break problem
-    damRadius = 0.25 #0.5
+    damRadius = 0.23 #0.5
     hl = 2.
     ul = 0.
     vl = 0.
@@ -177,7 +177,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 0.2
+    claw.tfinal = 1
 
     if amr_type is not None:        
         if amr_type == 'peano':
@@ -185,7 +185,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
             claw.solver = amrclaw.Solver(solver
                                         ,1/(mgrid*msubgrid)
                                         ,qinit_callback
-                                        ,refinement_criterion=refinement_criterion_time_dependent
+                                        #,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
                                         #,refinement_criterion=refinement_criterion_gradient
                                         ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True, fixed_timestep_size=1e-5)
@@ -204,7 +204,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     claw.output_format = None
     claw.outdir = None
 
-    claw.num_output_times = 1
+    claw.num_output_times = 100
 
     #===========================================================================
     # Plot results

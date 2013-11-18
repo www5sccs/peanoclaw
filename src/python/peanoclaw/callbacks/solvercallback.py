@@ -99,12 +99,7 @@ class SolverCallback(object):
     
     return_dt_and_estimated_next_dt[0] = self.solver.solution.t - current_time
     return_dt_and_estimated_next_dt[1] = self.solver.solver.dt
-#    cfl = self.solver.solver.cfl.get_cached_max()
-#    if(cfl == 0.0):
-#      return_dt_and_estimated_next_dt[1] = maximum_timestep_size - return_dt_and_estimated_next_dt[0]
-#    else:
-#      return_dt_and_estimated_next_dt[1] = return_dt_and_estimated_next_dt[0] * self.solver.solver.cfl_desired / cfl
-      
+
     #Clean up
     if self.number_of_non_disposed_cells >= 1e6:
       import gc

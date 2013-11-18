@@ -188,10 +188,6 @@ class peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsEdgeFunctor {
     int                                       index1,
     peanoclaw::Patch&                         patch2,
     int                                       index2,
-    peanoclaw::Patch&                         faceNeighbor1,
-    int                                       indexFaceNeighbor1,
-    peanoclaw::Patch&                         faceNeighbor2,
-    int                                       indexFaceNeighbor2,
     const tarch::la::Vector<DIMENSIONS, int>& direction
   );
 };
@@ -214,10 +210,6 @@ class peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsCornerFunctor 
     int                                       index1,
     peanoclaw::Patch&                         patch2,
     int                                       index2,
-    peanoclaw::Patch&                         faceNeighbor1,
-    int                                       indexFaceNeighbor1,
-    peanoclaw::Patch&                         faceNeighbor2,
-    int                                       indexFaceNeighbor2,
     const tarch::la::Vector<DIMENSIONS, int>& direction
   );
 };

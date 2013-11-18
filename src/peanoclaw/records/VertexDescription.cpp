@@ -5,9 +5,8 @@ peanoclaw::records::VertexDescription::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::VertexDescription::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const IterationParity& lastUpdateIterationParity, const bool& touched):
+peanoclaw::records::VertexDescription::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched):
 _indicesOfAdjacentCellDescriptions(indicesOfAdjacentCellDescriptions),
-_lastUpdateIterationParity(lastUpdateIterationParity),
 _touched(touched) {
    
 }
@@ -21,18 +20,6 @@ _touched(touched) {
 
  void peanoclaw::records::VertexDescription::PersistentRecords::setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions)  {
    _indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
-}
-
-
-
- peanoclaw::records::VertexDescription::IterationParity peanoclaw::records::VertexDescription::PersistentRecords::getLastUpdateIterationParity() const  {
-   return _lastUpdateIterationParity;
-}
-
-
-
- void peanoclaw::records::VertexDescription::PersistentRecords::setLastUpdateIterationParity(const IterationParity& lastUpdateIterationParity)  {
-   _lastUpdateIterationParity = lastUpdateIterationParity;
 }
 
 
@@ -54,13 +41,13 @@ peanoclaw::records::VertexDescription::VertexDescription() {
 
 
 peanoclaw::records::VertexDescription::VertexDescription(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords._lastUpdateIterationParity, persistentRecords._touched) {
+_persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords._touched) {
    
 }
 
 
-peanoclaw::records::VertexDescription::VertexDescription(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const IterationParity& lastUpdateIterationParity, const bool& touched):
-_persistentRecords(indicesOfAdjacentCellDescriptions, lastUpdateIterationParity, touched) {
+peanoclaw::records::VertexDescription::VertexDescription(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched):
+_persistentRecords(indicesOfAdjacentCellDescriptions, touched) {
    
 }
 
@@ -94,18 +81,6 @@ peanoclaw::records::VertexDescription::~VertexDescription() { }
    assertion(elementIndex<TWO_POWER_D);
    _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex]= indicesOfAdjacentCellDescriptions;
    
-}
-
-
-
- peanoclaw::records::VertexDescription::IterationParity peanoclaw::records::VertexDescription::getLastUpdateIterationParity() const  {
-   return _persistentRecords._lastUpdateIterationParity;
-}
-
-
-
- void peanoclaw::records::VertexDescription::setLastUpdateIterationParity(const IterationParity& lastUpdateIterationParity)  {
-   _persistentRecords._lastUpdateIterationParity = lastUpdateIterationParity;
 }
 
 
@@ -148,8 +123,6 @@ void peanoclaw::records::VertexDescription::toString (std::ostream& out) const {
    }
    out << getIndicesOfAdjacentCellDescriptions(TWO_POWER_D-1) << "]";
    out << ",";
-   out << "lastUpdateIterationParity:" << toString(getLastUpdateIterationParity());
-   out << ",";
    out << "touched:" << getTouched();
    out <<  ")";
 }
@@ -162,7 +135,6 @@ peanoclaw::records::VertexDescription::PersistentRecords peanoclaw::records::Ver
 peanoclaw::records::VertexDescriptionPacked peanoclaw::records::VertexDescription::convert() const{
    return VertexDescriptionPacked(
       getIndicesOfAdjacentCellDescriptions(),
-      getLastUpdateIterationParity(),
       getTouched()
    );
 }
@@ -178,17 +150,15 @@ peanoclaw::records::VertexDescriptionPacked peanoclaw::records::VertexDescriptio
       {
          VertexDescription dummyVertexDescription[2];
          
-         const int Attributes = 4;
+         const int Attributes = 3;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //indicesOfAdjacentCellDescriptions
-            MPI_INT,		 //lastUpdateIterationParity
             MPI_CHAR,		 //touched
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             TWO_POWER_D,		 //indicesOfAdjacentCellDescriptions
-            1,		 //lastUpdateIterationParity
             1,		 //touched
             1		 // end/displacement flag
          };
@@ -198,9 +168,8 @@ peanoclaw::records::VertexDescriptionPacked peanoclaw::records::VertexDescriptio
          MPI_Aint base;
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]._persistentRecords._indicesOfAdjacentCellDescriptions[0]))), 		&disp[0] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]._persistentRecords._lastUpdateIterationParity))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]._persistentRecords._touched))), 		&disp[2] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertexDescription[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[3] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]._persistentRecords._touched))), 		&disp[1] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertexDescription[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[2] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -215,17 +184,15 @@ peanoclaw::records::VertexDescriptionPacked peanoclaw::records::VertexDescriptio
       {
          VertexDescription dummyVertexDescription[2];
          
-         const int Attributes = 4;
+         const int Attributes = 3;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //indicesOfAdjacentCellDescriptions
-            MPI_INT,		 //lastUpdateIterationParity
             MPI_CHAR,		 //touched
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             TWO_POWER_D,		 //indicesOfAdjacentCellDescriptions
-            1,		 //lastUpdateIterationParity
             1,		 //touched
             1		 // end/displacement flag
          };
@@ -235,9 +202,8 @@ peanoclaw::records::VertexDescriptionPacked peanoclaw::records::VertexDescriptio
          MPI_Aint base;
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]._persistentRecords._indicesOfAdjacentCellDescriptions[0]))), 		&disp[0] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]._persistentRecords._lastUpdateIterationParity))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]._persistentRecords._touched))), 		&disp[2] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertexDescription[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[3] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescription[0]._persistentRecords._touched))), 		&disp[1] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertexDescription[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[2] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -447,9 +413,8 @@ peanoclaw::records::VertexDescriptionPacked::PersistentRecords::PersistentRecord
 }
 
 
-peanoclaw::records::VertexDescriptionPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const IterationParity& lastUpdateIterationParity, const bool& touched):
+peanoclaw::records::VertexDescriptionPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched):
 _indicesOfAdjacentCellDescriptions(indicesOfAdjacentCellDescriptions),
-_lastUpdateIterationParity(lastUpdateIterationParity),
 _touched(touched) {
    
 }
@@ -463,18 +428,6 @@ _touched(touched) {
 
  void peanoclaw::records::VertexDescriptionPacked::PersistentRecords::setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions)  {
    _indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
-}
-
-
-
- peanoclaw::records::VertexDescription::IterationParity peanoclaw::records::VertexDescriptionPacked::PersistentRecords::getLastUpdateIterationParity() const  {
-   return _lastUpdateIterationParity;
-}
-
-
-
- void peanoclaw::records::VertexDescriptionPacked::PersistentRecords::setLastUpdateIterationParity(const IterationParity& lastUpdateIterationParity)  {
-   _lastUpdateIterationParity = lastUpdateIterationParity;
 }
 
 
@@ -496,13 +449,13 @@ peanoclaw::records::VertexDescriptionPacked::VertexDescriptionPacked() {
 
 
 peanoclaw::records::VertexDescriptionPacked::VertexDescriptionPacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords._lastUpdateIterationParity, persistentRecords._touched) {
+_persistentRecords(persistentRecords._indicesOfAdjacentCellDescriptions, persistentRecords._touched) {
    
 }
 
 
-peanoclaw::records::VertexDescriptionPacked::VertexDescriptionPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const IterationParity& lastUpdateIterationParity, const bool& touched):
-_persistentRecords(indicesOfAdjacentCellDescriptions, lastUpdateIterationParity, touched) {
+peanoclaw::records::VertexDescriptionPacked::VertexDescriptionPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched):
+_persistentRecords(indicesOfAdjacentCellDescriptions, touched) {
    
 }
 
@@ -536,18 +489,6 @@ peanoclaw::records::VertexDescriptionPacked::~VertexDescriptionPacked() { }
    assertion(elementIndex<TWO_POWER_D);
    _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex]= indicesOfAdjacentCellDescriptions;
    
-}
-
-
-
- peanoclaw::records::VertexDescription::IterationParity peanoclaw::records::VertexDescriptionPacked::getLastUpdateIterationParity() const  {
-   return _persistentRecords._lastUpdateIterationParity;
-}
-
-
-
- void peanoclaw::records::VertexDescriptionPacked::setLastUpdateIterationParity(const IterationParity& lastUpdateIterationParity)  {
-   _persistentRecords._lastUpdateIterationParity = lastUpdateIterationParity;
 }
 
 
@@ -587,8 +528,6 @@ void peanoclaw::records::VertexDescriptionPacked::toString (std::ostream& out) c
    }
    out << getIndicesOfAdjacentCellDescriptions(TWO_POWER_D-1) << "]";
    out << ",";
-   out << "lastUpdateIterationParity:" << toString(getLastUpdateIterationParity());
-   out << ",";
    out << "touched:" << getTouched();
    out <<  ")";
 }
@@ -601,7 +540,6 @@ peanoclaw::records::VertexDescriptionPacked::PersistentRecords peanoclaw::record
 peanoclaw::records::VertexDescription peanoclaw::records::VertexDescriptionPacked::convert() const{
    return VertexDescription(
       getIndicesOfAdjacentCellDescriptions(),
-      getLastUpdateIterationParity(),
       getTouched()
    );
 }
@@ -617,17 +555,15 @@ peanoclaw::records::VertexDescription peanoclaw::records::VertexDescriptionPacke
       {
          VertexDescriptionPacked dummyVertexDescriptionPacked[2];
          
-         const int Attributes = 4;
+         const int Attributes = 3;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //indicesOfAdjacentCellDescriptions
-            MPI_INT,		 //lastUpdateIterationParity
             MPI_CHAR,		 //touched
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             TWO_POWER_D,		 //indicesOfAdjacentCellDescriptions
-            1,		 //lastUpdateIterationParity
             1,		 //touched
             1		 // end/displacement flag
          };
@@ -637,9 +573,8 @@ peanoclaw::records::VertexDescription peanoclaw::records::VertexDescriptionPacke
          MPI_Aint base;
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]._persistentRecords._indicesOfAdjacentCellDescriptions[0]))), 		&disp[0] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]._persistentRecords._lastUpdateIterationParity))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]._persistentRecords._touched))), 		&disp[2] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertexDescriptionPacked[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[3] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]._persistentRecords._touched))), 		&disp[1] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertexDescriptionPacked[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[2] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -654,17 +589,15 @@ peanoclaw::records::VertexDescription peanoclaw::records::VertexDescriptionPacke
       {
          VertexDescriptionPacked dummyVertexDescriptionPacked[2];
          
-         const int Attributes = 4;
+         const int Attributes = 3;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //indicesOfAdjacentCellDescriptions
-            MPI_INT,		 //lastUpdateIterationParity
             MPI_CHAR,		 //touched
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             TWO_POWER_D,		 //indicesOfAdjacentCellDescriptions
-            1,		 //lastUpdateIterationParity
             1,		 //touched
             1		 // end/displacement flag
          };
@@ -674,9 +607,8 @@ peanoclaw::records::VertexDescription peanoclaw::records::VertexDescriptionPacke
          MPI_Aint base;
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]._persistentRecords._indicesOfAdjacentCellDescriptions[0]))), 		&disp[0] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]._persistentRecords._lastUpdateIterationParity))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]._persistentRecords._touched))), 		&disp[2] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertexDescriptionPacked[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[3] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyVertexDescriptionPacked[0]._persistentRecords._touched))), 		&disp[1] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyVertexDescriptionPacked[1]._persistentRecords._indicesOfAdjacentCellDescriptions[0])), 		&disp[2] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );

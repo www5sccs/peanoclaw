@@ -24,6 +24,9 @@ namespace peanoclaw {
  * This class is only valid in 3D. In 2D patches adjacent via a corner can be
  * traversed via the EdgeAdjacentPatchTraversal class (since the terminology is
  * based on 3D).
+ *
+ * The source index goes from TWO_POWER_D-1 to 0. By this we ensure that the patches
+ * are traversed in increasing order with respect to their position.
  */
 template<class LoopBody>
 class peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal {

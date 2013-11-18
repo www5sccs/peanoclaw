@@ -22,6 +22,7 @@ namespace peanoclaw {
 
   namespace tests {
     class GhostLayerCompositorTest;
+    class TestCornerAdjacentPatchTraversalFunctor;
     class TestEdgeAdjacentPatchTraversalFunctor;
     class TestFaceAdjacentPatchTraversalFunctor;
   }
@@ -277,6 +278,18 @@ private:
    */
   void testEdgeAdjacentPatchTraversal2D();
 
+  /**
+   * Tests whether the correct patches are traversed in 3d
+   * when looking for patches adjacent via edges.
+   */
+  void testEdgeAdjacentPatchTraversal3D();
+
+  /**
+   * Tests whether the correct patches are traversed in 3d
+   * when looking for patches adjacent via corners.
+   */
+  void testCornerAdjacentPatchTraversal3D();
+
 public:
   GhostLayerCompositorTest();
 
@@ -285,6 +298,22 @@ public:
   virtual void run();
 
   void virtual setUp();
+};
+
+/**
+ * Helper class for testing CornerAdjacentPatchTraversal.
+ */
+class peanoclaw::tests::TestCornerAdjacentPatchTraversalFunctor {
+  public:
+    std::vector<std::vector<int> > _calls;
+
+    void operator()(
+      peanoclaw::Patch&                  patch1,
+      int                                index1,
+      peanoclaw::Patch&                  patch2,
+      int                                index2,
+      tarch::la::Vector<DIMENSIONS, int> direction
+    );
 };
 
 /**
