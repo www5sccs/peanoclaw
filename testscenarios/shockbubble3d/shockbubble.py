@@ -10,6 +10,19 @@ x0=0.5; y0=0.; z0=0.; r0=0.2
 xshock = 0.2
 pinf=5.
 
+def refinement_criterion_gradient(state):
+  import numpy
+  dimension_x = state.patch.dimensions[0]
+  dimension_y = state.patch.dimensions[1]
+  max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:,:])))
+  
+  if max_gradient > 0.1:
+      return 2.0/(4.0*27.0)
+  elif max_gradient < 0.05:
+      return 2.0/(4.0*3.0)
+  else:
+      return dimension_x.delta
+
 def meshgrid2(*arrs):
     arrs = tuple(reversed(arrs))  #edit
     lens = map(len, arrs)
@@ -141,7 +154,7 @@ def shockbubble(use_petsc=False,iplot=False,htmlplot=False,outdir='./_output',so
     
     # Initialize domain
     factor = 1
-    mx=16*factor; my=8*factor; mz=8*factor
+    mx=8*factor; my=4*factor; mz=4*factor
     
     # number of initial AMR grids in each dimension
     msubgrid = 3
@@ -171,7 +184,7 @@ def shockbubble(use_petsc=False,iplot=False,htmlplot=False,outdir='./_output',so
     
     claw = pyclaw.Controller()
     claw.tfinal = 1
-    claw.num_output_times = 10
+    claw.num_output_times = 50
     claw.outdir = outdir
     
     if amr_type is not None:        
@@ -180,6 +193,7 @@ def shockbubble(use_petsc=False,iplot=False,htmlplot=False,outdir='./_output',so
         claw.solver = amrclaw.Solver(solver,
                                     (x.upper-x.lower)/(mx*msubgrid),
                                     qinit
+                                    ,refinement_criterion=refinement_criterion_gradient
                                     ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True))
         claw.solution = amrclaw.Solution(state, domain)
       else:
