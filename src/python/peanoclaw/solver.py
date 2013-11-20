@@ -68,6 +68,8 @@ class Solver(Solver):
         
         self.internal_settings = internal_settings
         
+        self._is_set_up = False
+        
     def setup(self, solution):
         r"""
         Initialize a Solver object. This method loads the library of Peano and prepares the initial mesh.
@@ -82,6 +84,8 @@ class Solver(Solver):
         self.solution = solution
         
         self.peano = self.setup_peano(solution)
+        
+        self._is_set_up = True
         
     def run_tests(self, solution):
       self.peano = self.setup_peano(solution)
