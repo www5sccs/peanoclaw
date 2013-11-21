@@ -17,6 +17,8 @@
 #include "tarch/parallel/Node.h"
 #include "tarch/multicore/Lock.h"
 
+#include "tarch/Assertions.h"
+
 tarch::logging::Log peanoclaw::pyclaw::PyClaw::_log("peanoclaw::pyclaw::PyClaw");
 
 peanoclaw::pyclaw::PyClaw::PyClaw(
@@ -92,9 +94,6 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   assertion3(!patch.containsNaN(), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
 
   PyClawState state(patch);
-
-  //TODO unterweg debug
-//  std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
 
   tarch::timing::Watch pyclawWatch("", "", false);
   pyclawWatch.startTimer();
