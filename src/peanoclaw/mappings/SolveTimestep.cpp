@@ -687,15 +687,15 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       #endif
 
       #ifdef Parallel
-      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-      parallelSubgrid.markCurrentStateAsSent(false);
+//      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+//      parallelSubgrid.markCurrentStateAsSent(false);
       #endif
 
       logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimestepSize(), cellDescription.getTime() + cellDescription.getTimestepSize() );
     } else {
       #ifdef Parallel
-      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-      parallelSubgrid.markCurrentStateAsSent(true);
+//      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+//      parallelSubgrid.markCurrentStateAsSent(true);
       #endif
 
       logTraceOut( "enterCell(...)" );

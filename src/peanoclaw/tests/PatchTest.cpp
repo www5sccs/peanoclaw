@@ -215,6 +215,10 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
   Vertex vertices[TWO_POWER_D];
   TestVertexEnumerator enumerator(1.0);
 
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    vertices[i].switchToNonhangingNode();
+  }
+
   vertices[0].setAdjacentRank(0, 0);
   vertices[0].setAdjacentRank(1, 0);
   vertices[0].setAdjacentRank(2, 0);
@@ -239,7 +243,7 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
 
   //Test
   peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
-  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag(vertices, enumerator);
+  parallelSubgrid.countNumberOfAdjacentParallelSubgrids(vertices, enumerator);
 
   validateEquals(parallelSubgrid.getAdjacentRank(), 1);
   validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), 2);
@@ -275,10 +279,10 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeig
 
   //Test
   peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
-  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag(vertices, enumerator);
+  parallelSubgrid.countNumberOfAdjacentParallelSubgrids(vertices, enumerator);
 
   validateEquals(parallelSubgrid.getAdjacentRank(), -1);
-  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), -1);
+  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), 0);
   #endif
 }
 

@@ -131,6 +131,7 @@ class peanoclaw::repositories::RepositoryArrayStack: public peanoclaw::repositor
     virtual void terminate();
         
     virtual peanoclaw::State& getState();
+    virtual const peanoclaw::State& getState() const;
 
     virtual void iterate();
     

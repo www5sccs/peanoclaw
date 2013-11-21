@@ -43,12 +43,12 @@ class peanoclaw::ParallelSubgrid {
   /**
    * Sets whether this patch was sent to the neighbor ranks since the last time step.
    */
-  void markCurrentStateAsSent(bool wasSent);
-
-  /**
-   * Returns whether this patch was sent to the neighbor ranks since the last time step.
-   */
-  bool wasCurrentStateSent() const;
+//  void markCurrentStateAsSent(bool wasSent);
+//
+//  /**
+//   * Returns whether this patch was sent to the neighbor ranks since the last time step.
+//   */
+//  bool wasCurrentStateSent() const;
 
   /**
    * Decreases the number of shared adjacent vertices by one.
@@ -70,10 +70,22 @@ class peanoclaw::ParallelSubgrid {
   int getNumberOfSharedAdjacentVertices() const;
 
   /**
+   * Returns the number of additional transfers for this subgrid that have to
+   * be skipped.
+   */
+  int getNumberOfTransfersToBeSkipped() const;
+
+  /**
+   * Decreases the number of additional transfers for this subgrid that have to
+   * be skipped.
+   */
+  void decreaseNumberOfTransfersToBeSkipped();
+
+  /**
    * Counts how many of the adjacent subgrids belong to a different MPI rank
    * and how many vertices are involved in the communication.
    */
-  void countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag(
+  void countNumberOfAdjacentParallelSubgrids(
     peanoclaw::Vertex * const            vertices,
     const peano::grid::VertexEnumerator& verticesEnumerator
   );

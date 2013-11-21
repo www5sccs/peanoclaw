@@ -470,27 +470,6 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
 ) {
   logTraceInWith6Arguments( "mergeWithNeighbour(...)", vertex, neighbour, fromRank, fineGridX, fineGridH, level );
 
-  //Prepare adjacent subgrids
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    if(!tarch::parallel::Node::getInstance().isGlobalMaster() != 0 && fromRank != 0) {
-      if(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) == -1 && vertex.getAdjacentRanks()(i) != 0) {
-        //Create remote patch if it does not exist and it belongs to a rank other than global master (which would be outside of the domain)
-        tarch::la::Vector<DIMENSIONS, double> subgridPosition = fineGridX + tarch::la::multiplyComponents(fineGridH, peano::utils::dDelinearised(i, 2).convertScalar<double>() - 1.0);
-        Patch outsidePatch(
-          subgridPosition,
-          fineGridH,
-          _unknownsPerSubcell,
-          _auxiliarFieldsPerSubcell,
-          _defaultSubdivisionFactor,
-          _defaultGhostLayerWidth,
-          _initialTimestepSize,
-          level
-        );
-        vertex.setAdjacentCellDescriptionIndexInPeanoOrder(i, outsidePatch.getCellDescriptionIndex());
-      }
-    }
-  }
-
   peanoclaw::parallel::NeighbourCommunicator communicator(fromRank, fineGridX, level, fineGridH, _remoteSubgridMap, _parallelStatistics);
   communicator.receiveSubgridsForVertex(
     vertex,
@@ -921,20 +900,14 @@ void peanoclaw::mappings::Remesh::leaveCell(
   assertionEquals1(finePatch.isLeaf(), fineGridCell.isLeaf(), finePatch);
   assertionEquals1(finePatch.getLevel(), fineGridVerticesEnumerator.getLevel(), finePatch.toString());
 
-  //TODO unterweg: Braucht man das wirklich nicht mehr?
-//  for(int i = 0; i < TWO_POWER_D; i++) {
-//    fineGridVertices[fineGridVerticesEnumerator(i)].setAdjacentCellDescriptionIndex(
-//      i,
-//      fineGridCell.getCellDescriptionIndex()
-//    );
-//  }
-
-  //Count number of adjacent subgrids
-  ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndResetExclusiveFlag(
-    fineGridVertices,
-    fineGridVerticesEnumerator
-  );
+  if(!fineGridCell.isAssignedToRemoteRank()) {
+    //Count number of adjacent subgrids
+    ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+    parallelSubgrid.countNumberOfAdjacentParallelSubgrids(
+      fineGridVertices,
+      fineGridVerticesEnumerator
+    );
+  }
 
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
 }

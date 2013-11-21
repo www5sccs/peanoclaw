@@ -132,7 +132,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::switchToAndAddVirt
   }
 }
 
-void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToAllVirtualSubgrids(
+void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToOverlappingVirtualSubgrids(
   const Patch& fineSubgrid
 ) {
   tarch::multicore::Lock lock(_virtualPatchListSemaphore);
@@ -145,22 +145,19 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToAllVirtu
     int virtualSubgridDescriptionIndex = i->second;
     CellDescription& virtualSubgridDescription = CellDescriptionHeap::getInstance().getData(virtualSubgridDescriptionIndex).at(0);
     Patch virtualSubgrid(virtualSubgridDescription);
+
+    // Restrict only if coarse patches can advance in time
+    bool areAllCoarseSubgridsBlocked = tarch::la::smaller(fineSubgrid.getCurrentTime() + fineSubgrid.getTimestepSize(), virtualSubgrid.getMinimalLeafNeighborTimeConstraint());
+    // Restrict only if this patch is overlapped by neighboring ghostlayers
+    bool isOverlappedByCoarseGhostlayers
+      = tarch::la::oneGreater(virtualSubgrid.getUpperNeighboringGhostlayerBounds(), fineSubgrid.getPosition())
+        || tarch::la::oneGreater(fineSubgrid.getPosition() + fineSubgrid.getSize(), virtualSubgrid.getLowerNeighboringGhostlayerBounds());
+
     if(
-//          true
-        // Restrict if virtual patch is coarsening
-        virtualSubgrid.willCoarsen()
-        #ifdef Dim2
-        || (
-          // Restrict only if coarse patches can advance in time
-          (tarch::la::greaterEquals(fineSubgrid.getCurrentTime() + fineSubgrid.getTimestepSize(), virtualSubgrid.getMinimalLeafNeighborTimeConstraint()))
-        &&
-          // Restrict only if this patch is overlapped by neighboring ghostlayers
-          (tarch::la::oneGreater(virtualSubgrid.getUpperNeighboringGhostlayerBounds(), fineSubgrid.getPosition())
-          || tarch::la::oneGreater(fineSubgrid.getPosition() + fineSubgrid.getSize(), virtualSubgrid.getLowerNeighboringGhostlayerBounds()))
-        )
-        #else
-         || true
-        #endif
+      // Restrict if virtual subgrid is coarsening or if the data on the virtual subgrid is required for timestepping
+      virtualSubgrid.willCoarsen()
+      || (!areAllCoarseSubgridsBlocked && isOverlappedByCoarseGhostlayers)
+      //|| true
     ) {
       assertion2(virtualSubgrid.isVirtual(), fineSubgrid.toString(), virtualSubgrid.toString());
       assertion2(!tarch::la::oneGreater(virtualSubgrid.getPosition(), fineSubgrid.getPosition())
@@ -395,7 +392,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
   }
 
   if(finePatch.isLeaf()) {
-    restrictToAllVirtualSubgrids(finePatch);
+    restrictToOverlappingVirtualSubgrids(finePatch);
 
     //TODO unterweg dissertation:
     //If the patch is leaf, but the Peano cell is not, it got refined.
@@ -480,3 +477,5 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictDestroyedS
   //the coarse patch might get refined immediately.
   coarseSubgrid.setDemandedMeshWidth(coarseSubgrid.getSubcellSize()(0));
 }
+
+

@@ -183,10 +183,25 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
     );
 
     /**
-     * Restricts to all subgrids that are in the path from the root of
-     * the spacetree to the current subgrid.
+     * Restricts to virtual subgrids that overlap with the current
+     * subgrid.
+     *
+     * While basically this should restrict to all
+     * overlapping virtual subgrids for optimization reasons this is
+     * not true. Restriction can be omitted if the virtual subgrid
+     * (or the part of it that is overlapped by the current subgrid)
+     * for sure will not be required in the current grid iteration.
+     *
+     * This, for example, is true if the timestepping of all
+     * affected coarse subgrids will be blocked by the current subgrid.
+     *
+     * It also is true if no ghostlayer overlaps with the current
+     * subgrid.
+     *
+     * TODO unterweg dissertation Optimierung für Restriktion siehe oben.
+     *
      */
-    void restrictToAllVirtualSubgrids(
+    void restrictToOverlappingVirtualSubgrids(
       const Patch& subgrid
     );
 

@@ -70,16 +70,16 @@ class peanoclaw::parallel::NeighbourCommunicator {
      * Determines whether subgrids should be sent always despite if they
      * have been updated since the last sending or not.
      */
-    bool                                       _avoidSendingSubgridsThatAlreadyHaveBeenSent;
+    const bool                                       _avoidMultipleTransferOfSubgridsIfPossible;
     /**
      * Tries to find the minimal number of padding subgrids to be sent to match the
      * number of received subgrids.
      */
-    bool                                       _reduceNumberOfPaddingSubgrids;
+    const bool                                       _reduceNumberOfPaddingSubgrids;
     /**
      * Tries to send subgrids only once per iteration.
      */
-    bool                                       _reduceMultipleSends;
+    const bool                                       _reduceMultipleSends;
 
     void sendCellDescription(int cellDescriptionIndex);
 
@@ -105,7 +105,7 @@ class peanoclaw::parallel::NeighbourCommunicator {
     /**
      * Deletes the cell description and the according arrays.
      */
-    void deleteArraysFromPatch(int cellDescriptionIndex);
+    void deleteArraysFromPatch(Patch& subgrid);
 
     /**
      * Receives an data array, copies it to a local heap array
@@ -122,15 +122,28 @@ class peanoclaw::parallel::NeighbourCommunicator {
      *
      */
     void receivePatch(
-      int localCellDescriptionIndex
+      Patch& localSubgrid
     );
 
     void receivePaddingPatch();
 
     /**
+     * Creates a remote subgrid before merging a received subgrid
+     * from a neighboring rank.
+     */
+    void createOrFindRemoteSubgrid(
+      Vertex& localVertex,
+      int     adjacentSubgridIndexInPeanoOrder,
+      const tarch::la::Vector<DIMENSIONS, double>& subgridSize
+    );
+
+    /**
      * Creates the key for the remote-subgrid-map.
      */
-    tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> createRemoteSubgridKey() const;
+    tarch::la::Vector<DIMENSIONS_PLUS_ONE, double> createRemoteSubgridKey(
+      const tarch::la::Vector<DIMENSIONS, double> subgridPosition,
+      int                                         level
+    ) const;
 
   public:
     NeighbourCommunicator(
@@ -147,7 +160,7 @@ class peanoclaw::parallel::NeighbourCommunicator {
      * cell description index.
      */
     void sendPatch(
-      int cellDescriptionIndex
+      const Patch& transferedSubgrid
     );
 
     void sendPaddingPatch(

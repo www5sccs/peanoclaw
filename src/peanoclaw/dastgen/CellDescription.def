@@ -1,40 +1,39 @@
-Packed-Type: short int;
+Packed-Type: int;
 
 #include "peano/utils/Globals.h"
 
 Constant: DIMENSIONS;
 Constant: DIMENSIONS_TIMES_TWO;
+Constant: TWO_POWER_D;
 
 class peanoclaw::records::CellDescription {
   parallelise persistent int  subdivisionFactor[DIMENSIONS];
-  parallelise persistent int  ghostLayerWidth;
-  parallelise persistent int  unknownsPerSubcell;
-  parallelise persistent int  auxiliarFieldsPerSubcell;
-  parallelise persistent int  level;
-  parallelise persistent bool isVirtual;
+  parallelise packed persistent int  ghostLayerWidth from 0 to 15;
+  parallelise packed persistent int  unknownsPerSubcell from 0 to 15;
+  parallelise packed persistent int  auxiliarFieldsPerSubcell from 0 to 15;
+  parallelise packed persistent int  level from 0 to 63;
+  parallelise packed persistent bool isVirtual;
   
   #ifdef Parallel
-  parallelise persistent bool isRemote;
-  parallelise persistent bool currentStateWasSend;
-  parallelise persistent bool isPaddingSubgrid;
-  parallelise persistent bool avoidedMultipleSentsOfSubgrid;
+  parallelise packed persistent bool isRemote;
+  parallelise packed persistent bool isPaddingSubgrid;
   
   /**
-   * States that this MPI message is the only MPI message for this
-   * subgrid in this grid iteration. All following pontential messages
-   * for this subgrid are padding messages.
+   * States the number of transfers for this subgrid that
+   * have been avoided. I.e. if this number is n, then the
+   * next n receives for this subgrid will be padding subgrids.
    */
-  parallelise persistent bool isExclusiveMessageForSubgrid;
+  parallelise packed persistent int numberOfSkippedTransfers from 0 to 8;
   
   /**
    * Adjacent MPI rank if only one other rank is adjacent. Otherwise -1.
    */
-  parallelise persistent int  adjacentRank;
+  persistent int adjacentRank;
   /**
    * Number adjacent vertices that are shared between the local and the
    * remote rank. This number is only valid if there is only one rank adjacent.
    */
-  parallelise persistent int  numberOfSharedAdjacentVertices;
+  persistent int numberOfSharedAdjacentVertices;
   #endif
 
   parallelise persistent double position[DIMENSIONS];
@@ -72,13 +71,13 @@ class peanoclaw::records::CellDescription {
    * This field indicates whether the fine grids of this
    * grid should synchronize in time to be coarsened.
    */
-  parallelise persistent bool synchronizeFineGrids;
+  parallelise packed persistent bool synchronizeFineGrids;
   
   /**
    * This field indicates whether this patch will coarsen
    * in this iteration.
    */
-  parallelise persistent bool willCoarsen;  
+  parallelise packed persistent bool willCoarsen;  
   
   /**
    * The constraining time for a patch to perform a timestep.
@@ -122,7 +121,7 @@ class peanoclaw::records::CellDescription {
    * grid iterations. This is due to the fact that the ghostlayer has
    * to be filled correctly first.
    */
-  parallelise persistent int skipGridIterations;
+  parallelise packed persistent int skipGridIterations from 0 to 15;
   
   /**
    * The age of this patch in terms of grid iterations. This means

@@ -164,12 +164,17 @@ void peanoclaw::repositories::RepositoryArrayStack::terminate() {
   _gridWithGatherCurrentSolutionAndValidateGrid.terminate();
   _gridWithCleanup.terminate();
 
+ 
   logTraceOut( "terminate()" );
 }
 
 
 peanoclaw::State& peanoclaw::repositories::RepositoryArrayStack::getState() {
-  logInfo( "terminate()", "rank has terminated" );
+  return _solverState;
+}
+
+
+const peanoclaw::State& peanoclaw::repositories::RepositoryArrayStack::getState() const {
   return _solverState;
 }
 

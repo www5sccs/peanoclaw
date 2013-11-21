@@ -215,9 +215,9 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::regainTwoI
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::fillAdjacentPatchIndicesFromCoarseVertices(
-  const peanoclaw::Vertex* coarseGridVertices,
-  const peano::grid::VertexEnumerator&      coarseGridVerticesEnumerator,
-  const tarch::la::Vector<DIMENSIONS,int>&                   localPositionOfHangingNode
+  const peanoclaw::Vertex*                 coarseGridVertices,
+  const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator,
+  const tarch::la::Vector<DIMENSIONS,int>& localPositionOfHangingNode
 ) {
   logTraceInWith1Argument( "fillAdjacentPatchIndicesFromCoarseVertices(...)", localPositionOfHangingNode );
 
@@ -297,7 +297,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::refineOnPa
 }
 
 peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAndAdaptiveBoundaryFunctor::CheckIntersectingParallelAndAdaptiveBoundaryFunctor(
-  const tarch::la::Vector<DIMENSIONS_TIMES_TWO, int>& adjacentRanks
+  const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks
 ) : _adjacentRanks(adjacentRanks),
     _numberOfDiagonallyAdjacentSubgrids(0),
     _numberOfDiagonallyAdjacentRefinedSubgrids(0)
