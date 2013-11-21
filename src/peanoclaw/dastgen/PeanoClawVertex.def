@@ -6,6 +6,10 @@ class peano::applications::peanoclaw::dastgen::Vertex {
 	parallelise persistent int indicesOfAdjacentCellDescriptions[TWO_POWER_D];
 
   parallelise persistent packed bool adjacentSubcellsEraseVeto[TWO_POWER_D];
+  
+  persistent int adjacentRanksInFormerIteration[TWO_POWER_D];
+  
+  discard packed bool adjacentRanksChanged; 
 	
 	parallelise persistent packed bool shouldRefine;
 	

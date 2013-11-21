@@ -581,6 +581,11 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       assertion(patch.isLeaf() || patch.isVirtual());
       #endif
 
+      #ifdef Parallel
+      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+      parallelSubgrid.markCurrentStateAsSent(true);
+      #endif
+
       //Perform timestep
       double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (patch.getCurrentTime() + patch.getTimestepSize());
       if(shouldAdvanceInTime(
@@ -614,6 +619,11 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
                                                 _useDimensionalSplittingOptimization
                                               );
         patch.setDemandedMeshWidth(requiredMeshWidth);
+
+        #ifdef Parallel
+        ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
+        parallelSubgrid.markCurrentStateAsSent(false);
+        #endif
 
         // Coarse grid correction
         for(int i = 0; i < TWO_POWER_D; i++) {
@@ -686,18 +696,8 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       }
       #endif
 
-      #ifdef Parallel
-//      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-//      parallelSubgrid.markCurrentStateAsSent(false);
-      #endif
-
       logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimestepSize(), cellDescription.getTime() + cellDescription.getTimestepSize() );
     } else {
-      #ifdef Parallel
-//      ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-//      parallelSubgrid.markCurrentStateAsSent(true);
-      #endif
-
       logTraceOut( "enterCell(...)" );
     }
 

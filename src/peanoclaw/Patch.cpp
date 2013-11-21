@@ -231,7 +231,7 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setIsPaddingSubgrid(false);
   cellDescription.setNumberOfSharedAdjacentVertices(0);
   cellDescription.setNumberOfSkippedTransfers(0);
-//  cellDescription.setCurrentStateWasSend(false);
+  cellDescription.setCurrentStateWasSend(false);
 #endif
 
   cellDescriptions.push_back(cellDescription);

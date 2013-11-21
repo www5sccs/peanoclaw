@@ -177,60 +177,66 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
 
   logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
 
-  assertionEquals3(remoteCellDescriptionVector.size(), 1, _position, _level, localSubgrid);
-  CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
-  assertionEquals2(localSubgrid.getLevel(), _level, localSubgrid, tarch::parallel::Node::getInstance().getRank());
+  if(!_onlySendSubgridsAfterChange || remoteCellDescriptionVector.size() > 0) {
+    assertionEquals3(remoteCellDescriptionVector.size(), 1, _position, _level, localSubgrid);
+    CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
+    assertionEquals2(localSubgrid.getLevel(), _level, localSubgrid, tarch::parallel::Node::getInstance().getRank());
 
-  logDebug("", "Receiving patch: " << remoteCellDescription.toString());
+    logDebug("", "Receiving patch: " << remoteCellDescription.toString());
 
-  assertion6(!remoteCellDescription.getIsRemote(), localSubgrid, remoteCellDescription.toString(), _position, _level, _remoteRank, tarch::parallel::Node::getInstance().getRank());
-  assertionNumericalEquals6(localSubgrid.getPosition(), remoteCellDescription.getPosition(),
-      localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank, _position, _level);
-  assertionNumericalEquals4(localSubgrid.getSize(), remoteCellDescription.getSize(),
-      localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank);
-  assertionEquals4(localSubgrid.getLevel(), remoteCellDescription.getLevel(),
-      localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank);
+    assertion6(!remoteCellDescription.getIsRemote(), localSubgrid, remoteCellDescription.toString(), _position, _level, _remoteRank, tarch::parallel::Node::getInstance().getRank());
+    assertionNumericalEquals6(localSubgrid.getPosition(), remoteCellDescription.getPosition(),
+        localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank, _position, _level);
+    assertionNumericalEquals4(localSubgrid.getSize(), remoteCellDescription.getSize(),
+        localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank);
+    assertionEquals4(localSubgrid.getLevel(), remoteCellDescription.getLevel(),
+        localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank);
 
-  _statistics.receivedNeighborData();
-  //Load arrays and stores according indices in cell description
-//    if(remoteCellDescription.getAuxIndex() != -1) {
-//      remoteCellDescription.setAuxIndex(receiveDataArray());
-//    } else {
-//      receiveDataArray();
-//    }
-//    if(remoteCellDescription.getUOldIndex() != -1) {
-//      remoteCellDescription.setUOldIndex(receiveDataArray());
-//    } else {
-//      receiveDataArray();
-//    }
-  if(remoteCellDescription.getUNewIndex() != -1) {
-    remoteCellDescription.setUNewIndex(receiveDataArray());
-  } else {
-    receiveDataArray();
-  }
-
-  //Copy remote cell description to local cell description
-  deleteArraysFromPatch(localSubgrid);
-  remoteCellDescription.setCellDescriptionIndex(localSubgrid.getCellDescriptionIndex());
-  remoteCellDescription.setIsRemote(true); //TODO unterweg: Remote patches are currently never destroyed.
-  CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).at(0) = remoteCellDescription;
-  assertionEquals(CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).size(), 1);
-
-  //Initialize non-parallel fields
-  Patch remotePatch(remoteCellDescription);
-  remotePatch.initializeNonParallelFields();
-
-  //Check for zeros in transfered patch
-  #ifdef Asserts
-  if(remotePatch.isValid() && remotePatch.isLeaf()) {
-    dfor(subcellIndex, remotePatch.getSubdivisionFactor()) {
-      assertion3(tarch::la::greater(remotePatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUNew());
-      assertion3(tarch::la::greater(remotePatch.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUOldWithGhostLayer());
+    _statistics.receivedNeighborData();
+    //Load arrays and stores according indices in cell description
+  //    if(remoteCellDescription.getAuxIndex() != -1) {
+  //      remoteCellDescription.setAuxIndex(receiveDataArray());
+  //    } else {
+  //      receiveDataArray();
+  //    }
+  //    if(remoteCellDescription.getUOldIndex() != -1) {
+  //      remoteCellDescription.setUOldIndex(receiveDataArray());
+  //    } else {
+  //      receiveDataArray();
+  //    }
+    if(remoteCellDescription.getUNewIndex() != -1) {
+      remoteCellDescription.setUNewIndex(receiveDataArray());
+    } else {
+      receiveDataArray();
     }
-  }
-  #endif
 
-  assertionEquals(CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).at(0).getCellDescriptionIndex(), localSubgrid.getCellDescriptionIndex());
+    //Copy remote cell description to local cell description
+    deleteArraysFromPatch(localSubgrid);
+    remoteCellDescription.setCellDescriptionIndex(localSubgrid.getCellDescriptionIndex());
+    remoteCellDescription.setIsRemote(true); //TODO unterweg: Remote patches are currently never destroyed.
+    CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).at(0) = remoteCellDescription;
+    assertionEquals(CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).size(), 1);
+
+    //Initialize non-parallel fields
+    Patch remotePatch(remoteCellDescription);
+    remotePatch.initializeNonParallelFields();
+
+    //Check for zeros in transfered patch
+    #ifdef Asserts
+    if(remotePatch.isValid() && remotePatch.isLeaf()) {
+      dfor(subcellIndex, remotePatch.getSubdivisionFactor()) {
+        assertion3(tarch::la::greater(remotePatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUNew());
+        assertion3(tarch::la::greater(remotePatch.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUOldWithGhostLayer());
+      }
+    }
+    #endif
+
+    assertionEquals(CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).at(0).getCellDescriptionIndex(), localSubgrid.getCellDescriptionIndex());
+  } else {
+    //Padding patch received -> receive padding data
+    DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+  }
+
   logTraceOut("receivePatch");
   #endif
 }
@@ -307,14 +313,12 @@ peanoclaw::parallel::NeighbourCommunicator::NeighbourCommunicator(
     _position(position),
     _level(level),
     _subgridSize(subgridSize),
-//    _cellDescriptionHeap(CellDescriptionHeap::getInstance()),
-//    _dataHeap(DataHeap::getInstance()),
     _remoteSubgridMap(remoteSubgridMap),
     _statistics(statistics),
     //En-/Disable optimizations
     _avoidMultipleTransferOfSubgridsIfPossible(true),
     _reduceNumberOfPaddingSubgrids(false),
-    _reduceMultipleSends(false) {
+    _onlySendSubgridsAfterChange(false) {
   logTraceInWith3Arguments("NeighbourCommunicator", remoteRank, position, level);
 
   logTraceOut("NeighbourCommunicator");
@@ -330,35 +334,37 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
   if(!tarch::parallel::Node::getInstance().isGlobalMaster() && _remoteRank != 0) {
     int localRank = tarch::parallel::Node::getInstance().getRank();
 
-
     for(int i = 0; i < TWO_POWER_D; i++) {
       bool sentSubgrid = false;
       if(vertex.getAdjacentRanks()(i) == localRank && vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
         Patch           localSubgrid(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i));
         ParallelSubgrid localParallelSubgrid(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i));
 
-        if(
-            localParallelSubgrid.getAdjacentRank() == -1
-            || localParallelSubgrid.getNumberOfSharedAdjacentVertices() == 1
-            || !_avoidMultipleTransferOfSubgridsIfPossible
+        if(!localParallelSubgrid.wasCurrentStateSent() || vertex.wereAdjacentRanksChanged() || !_onlySendSubgridsAfterChange) {
+
+          if(
+              localParallelSubgrid.getAdjacentRank() == -1
+              || localParallelSubgrid.getNumberOfSharedAdjacentVertices() == 1
+              || !_avoidMultipleTransferOfSubgridsIfPossible
           ) {
-          assertion3(
-            localParallelSubgrid.getAdjacentRank() == _remoteRank || localParallelSubgrid.getAdjacentRank() == -1,
-            _remoteRank,
-            localSubgrid,
-            vertex.getAdjacentRanks()
-          );
+            assertion3(
+              localParallelSubgrid.getAdjacentRank() == _remoteRank || localParallelSubgrid.getAdjacentRank() == -1,
+              _remoteRank,
+              localSubgrid,
+              vertex.getAdjacentRanks()
+            );
 
-          logDebug("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << localSubgrid << " for vertex " << _position);
+            logDebug("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << localSubgrid << " for vertex " << _position);
 
-          sendPatch(localSubgrid);
+            sendPatch(localSubgrid);
 
-          sentSubgrid = true;
-        } else {
-          logDebug("sendSubgridsForVertex", "(Skipped) Sending subgrid to rank " << _remoteRank << ": " << localSubgrid
-              << " for vertex " << _position << ", getNumberOfSharedAdjacentVertices=" << localParallelSubgrid.getNumberOfSharedAdjacentVertices());
+            sentSubgrid = true;
+          } else {
+            logDebug("sendSubgridsForVertex", "(Skipped) Sending subgrid to rank " << _remoteRank << ": " << localSubgrid
+                << " for vertex " << _position << ", getNumberOfSharedAdjacentVertices=" << localParallelSubgrid.getNumberOfSharedAdjacentVertices());
+          }
+          localParallelSubgrid.decreaseNumberOfSharedAdjacentVertices();
         }
-        localParallelSubgrid.decreaseNumberOfSharedAdjacentVertices();
       }
 
       if(!sentSubgrid) {

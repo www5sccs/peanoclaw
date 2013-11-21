@@ -34,7 +34,7 @@ namespace peanoclaw {
     *
     * 		   build date: 22-10-2013 20:59
     *
-    * @date   21/11/2013 14:28
+    * @date   21/11/2013 19:18
     */
    class peanoclaw::records::Vertex { 
       
@@ -60,6 +60,11 @@ namespace peanoclaw {
             std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto __attribute__((aligned(VectorisationAlignment)));
             #else
             std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto;
+            #endif
+            #ifdef UseManualAlignment
+            tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration __attribute__((aligned(VectorisationAlignment)));
+            #else
+            tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration;
             #endif
             bool _shouldRefine;
             bool _wasCreatedInThisIteration;
@@ -87,7 +92,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+            PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             
             /**
@@ -202,6 +207,64 @@ namespace peanoclaw {
  #endif 
  {
                _adjacentSubcellsEraseVeto = (adjacentSubcellsEraseVeto);
+            }
+            
+            
+            
+            /**
+             * Generated and optimized
+             * 
+             * If you realise a for loop using exclusively arrays (vectors) and compile 
+             * with -DUseManualAlignment you may add 
+             * \code
+             #pragma vector aligned
+             #pragma simd
+             \endcode to this for loop to enforce your compiler to use SSE/AVX.
+             * 
+             * The alignment is tied to the unpacked records, i.e. for packed class
+             * variants the machine's natural alignment is switched off to recude the  
+             * memory footprint. Do not use any SSE/AVX operations or 
+             * vectorisation on the result for the packed variants, as the data is misaligned. 
+             * If you rely on vectorisation, convert the underlying record 
+             * into the unpacked version first. 
+             * 
+             * @see convert()
+             */
+            inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _adjacentRanksInFormerIteration;
+            }
+            
+            
+            
+            /**
+             * Generated and optimized
+             * 
+             * If you realise a for loop using exclusively arrays (vectors) and compile 
+             * with -DUseManualAlignment you may add 
+             * \code
+             #pragma vector aligned
+             #pragma simd
+             \endcode to this for loop to enforce your compiler to use SSE/AVX.
+             * 
+             * The alignment is tied to the unpacked records, i.e. for packed class
+             * variants the machine's natural alignment is switched off to recude the  
+             * memory footprint. Do not use any SSE/AVX operations or 
+             * vectorisation on the result for the packed variants, as the data is misaligned. 
+             * If you rely on vectorisation, convert the underlying record 
+             * into the unpacked version first. 
+             * 
+             * @see convert()
+             */
+            inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
             }
             
             
@@ -486,6 +549,7 @@ namespace peanoclaw {
          
       private: 
          PersistentRecords _persistentRecords;
+         bool _adjacentRanksChanged;
          int _adjacentCellsHeightOfPreviousIteration;
          int _numberOfAdjacentRefinedCells;
          
@@ -503,12 +567,12 @@ namespace peanoclaw {
          /**
           * Generated
           */
-         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
          
          /**
           * Generated
           */
-         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+         Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& adjacentRanksChanged, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
          
          /**
           * Generated
@@ -692,6 +756,110 @@ namespace peanoclaw {
             assertion(elementIndex>=0);
             assertion(elementIndex<TWO_POWER_D);
             _persistentRecords._adjacentSubcellsEraseVeto.flip(elementIndex);
+         }
+         
+         
+         
+         /**
+          * Generated and optimized
+          * 
+          * If you realise a for loop using exclusively arrays (vectors) and compile 
+          * with -DUseManualAlignment you may add 
+          * \code
+          #pragma vector aligned
+          #pragma simd
+          \endcode to this for loop to enforce your compiler to use SSE/AVX.
+          * 
+          * The alignment is tied to the unpacked records, i.e. for packed class
+          * variants the machine's natural alignment is switched off to recude the  
+          * memory footprint. Do not use any SSE/AVX operations or 
+          * vectorisation on the result for the packed variants, as the data is misaligned. 
+          * If you rely on vectorisation, convert the underlying record 
+          * into the unpacked version first. 
+          * 
+          * @see convert()
+          */
+         inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._adjacentRanksInFormerIteration;
+         }
+         
+         
+         
+         /**
+          * Generated and optimized
+          * 
+          * If you realise a for loop using exclusively arrays (vectors) and compile 
+          * with -DUseManualAlignment you may add 
+          * \code
+          #pragma vector aligned
+          #pragma simd
+          \endcode to this for loop to enforce your compiler to use SSE/AVX.
+          * 
+          * The alignment is tied to the unpacked records, i.e. for packed class
+          * variants the machine's natural alignment is switched off to recude the  
+          * memory footprint. Do not use any SSE/AVX operations or 
+          * vectorisation on the result for the packed variants, as the data is misaligned. 
+          * If you rely on vectorisation, convert the underlying record 
+          * into the unpacked version first. 
+          * 
+          * @see convert()
+          */
+         inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
+         }
+         
+         
+         
+         inline int getAdjacentRanksInFormerIteration(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<TWO_POWER_D);
+            return _persistentRecords._adjacentRanksInFormerIteration[elementIndex];
+            
+         }
+         
+         
+         
+         inline void setAdjacentRanksInFormerIteration(int elementIndex, const int& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<TWO_POWER_D);
+            _persistentRecords._adjacentRanksInFormerIteration[elementIndex]= adjacentRanksInFormerIteration;
+            
+         }
+         
+         
+         
+         inline bool getAdjacentRanksChanged() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _adjacentRanksChanged;
+         }
+         
+         
+         
+         inline void setAdjacentRanksChanged(const bool& adjacentRanksChanged) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _adjacentRanksChanged = adjacentRanksChanged;
          }
          
          
@@ -1155,7 +1323,7 @@ namespace peanoclaw {
        *
        * 		   build date: 22-10-2013 20:59
        *
-       * @date   21/11/2013 14:28
+       * @date   21/11/2013 19:18
        */
       class peanoclaw::records::VertexPacked { 
          
@@ -1167,6 +1335,7 @@ namespace peanoclaw {
             
             struct PersistentRecords {
                tarch::la::Vector<TWO_POWER_D,int> _indicesOfAdjacentCellDescriptions;
+               tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration;
                int _adjacentCellsHeight;
                tarch::la::Vector<DIMENSIONS,double> _x;
                int _level;
@@ -1192,7 +1361,7 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+               PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                
                
                /**
@@ -1315,6 +1484,64 @@ namespace peanoclaw {
                   mask = static_cast<int>(mask << (0));
                   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
                   _packedRecords0 = static_cast<int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+               }
+               
+               
+               
+               /**
+                * Generated and optimized
+                * 
+                * If you realise a for loop using exclusively arrays (vectors) and compile 
+                * with -DUseManualAlignment you may add 
+                * \code
+                #pragma vector aligned
+                #pragma simd
+                \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                * 
+                * The alignment is tied to the unpacked records, i.e. for packed class
+                * variants the machine's natural alignment is switched off to recude the  
+                * memory footprint. Do not use any SSE/AVX operations or 
+                * vectorisation on the result for the packed variants, as the data is misaligned. 
+                * If you rely on vectorisation, convert the underlying record 
+                * into the unpacked version first. 
+                * 
+                * @see convert()
+                */
+               inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _adjacentRanksInFormerIteration;
+               }
+               
+               
+               
+               /**
+                * Generated and optimized
+                * 
+                * If you realise a for loop using exclusively arrays (vectors) and compile 
+                * with -DUseManualAlignment you may add 
+                * \code
+                #pragma vector aligned
+                #pragma simd
+                \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                * 
+                * The alignment is tied to the unpacked records, i.e. for packed class
+                * variants the machine's natural alignment is switched off to recude the  
+                * memory footprint. Do not use any SSE/AVX operations or 
+                * vectorisation on the result for the packed variants, as the data is misaligned. 
+                * If you rely on vectorisation, convert the underlying record 
+                * into the unpacked version first. 
+                * 
+                * @see convert()
+                */
+               inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
                }
                
                
@@ -1632,6 +1859,13 @@ namespace peanoclaw {
             int _adjacentCellsHeightOfPreviousIteration;
             int _numberOfAdjacentRefinedCells;
             
+            /** mapping of records:
+            || Member 	|| startbit 	|| length
+             |  adjacentRanksChanged	| startbit 0	| #bits 1
+             */
+            int _packedRecords0;
+            
+            
          public:
             /**
              * Generated
@@ -1646,12 +1880,12 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             /**
              * Generated
              */
-            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+            VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& adjacentRanksChanged, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
             
             /**
              * Generated
@@ -1850,6 +2084,113 @@ namespace peanoclaw {
                int mask = 1 << (0);
                mask = mask << elementIndex;
                _persistentRecords._packedRecords0^= mask;
+            }
+            
+            
+            
+            /**
+             * Generated and optimized
+             * 
+             * If you realise a for loop using exclusively arrays (vectors) and compile 
+             * with -DUseManualAlignment you may add 
+             * \code
+             #pragma vector aligned
+             #pragma simd
+             \endcode to this for loop to enforce your compiler to use SSE/AVX.
+             * 
+             * The alignment is tied to the unpacked records, i.e. for packed class
+             * variants the machine's natural alignment is switched off to recude the  
+             * memory footprint. Do not use any SSE/AVX operations or 
+             * vectorisation on the result for the packed variants, as the data is misaligned. 
+             * If you rely on vectorisation, convert the underlying record 
+             * into the unpacked version first. 
+             * 
+             * @see convert()
+             */
+            inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _persistentRecords._adjacentRanksInFormerIteration;
+            }
+            
+            
+            
+            /**
+             * Generated and optimized
+             * 
+             * If you realise a for loop using exclusively arrays (vectors) and compile 
+             * with -DUseManualAlignment you may add 
+             * \code
+             #pragma vector aligned
+             #pragma simd
+             \endcode to this for loop to enforce your compiler to use SSE/AVX.
+             * 
+             * The alignment is tied to the unpacked records, i.e. for packed class
+             * variants the machine's natural alignment is switched off to recude the  
+             * memory footprint. Do not use any SSE/AVX operations or 
+             * vectorisation on the result for the packed variants, as the data is misaligned. 
+             * If you rely on vectorisation, convert the underlying record 
+             * into the unpacked version first. 
+             * 
+             * @see convert()
+             */
+            inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _persistentRecords._adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
+            }
+            
+            
+            
+            inline int getAdjacentRanksInFormerIteration(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               assertion(elementIndex>=0);
+               assertion(elementIndex<TWO_POWER_D);
+               return _persistentRecords._adjacentRanksInFormerIteration[elementIndex];
+               
+            }
+            
+            
+            
+            inline void setAdjacentRanksInFormerIteration(int elementIndex, const int& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               assertion(elementIndex>=0);
+               assertion(elementIndex<TWO_POWER_D);
+               _persistentRecords._adjacentRanksInFormerIteration[elementIndex]= adjacentRanksInFormerIteration;
+               
+            }
+            
+            
+            
+            inline bool getAdjacentRanksChanged() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               int mask = 1 << (0);
+   int tmp = static_cast<int>(_packedRecords0 & mask);
+   return (tmp != 0);
+            }
+            
+            
+            
+            inline void setAdjacentRanksChanged(const bool& adjacentRanksChanged) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               int mask = 1 << (0);
+   _packedRecords0 = static_cast<int>( adjacentRanksChanged ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
             }
             
             
@@ -2340,7 +2681,7 @@ namespace peanoclaw {
           *
           * 		   build date: 22-10-2013 20:59
           *
-          * @date   21/11/2013 14:28
+          * @date   21/11/2013 19:18
           */
          class peanoclaw::records::Vertex { 
             
@@ -2367,6 +2708,11 @@ namespace peanoclaw {
                   #else
                   std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto;
                   #endif
+                  #ifdef UseManualAlignment
+                  tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration __attribute__((aligned(VectorisationAlignment)));
+                  #else
+                  tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration;
+                  #endif
                   bool _shouldRefine;
                   bool _wasCreatedInThisIteration;
                   bool _isHangingNode;
@@ -2381,7 +2727,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
+                  PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
                   
                   
                   /**
@@ -2496,6 +2842,64 @@ namespace peanoclaw {
  #endif 
  {
                      _adjacentSubcellsEraseVeto = (adjacentSubcellsEraseVeto);
+                  }
+                  
+                  
+                  
+                  /**
+                   * Generated and optimized
+                   * 
+                   * If you realise a for loop using exclusively arrays (vectors) and compile 
+                   * with -DUseManualAlignment you may add 
+                   * \code
+                   #pragma vector aligned
+                   #pragma simd
+                   \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                   * 
+                   * The alignment is tied to the unpacked records, i.e. for packed class
+                   * variants the machine's natural alignment is switched off to recude the  
+                   * memory footprint. Do not use any SSE/AVX operations or 
+                   * vectorisation on the result for the packed variants, as the data is misaligned. 
+                   * If you rely on vectorisation, convert the underlying record 
+                   * into the unpacked version first. 
+                   * 
+                   * @see convert()
+                   */
+                  inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _adjacentRanksInFormerIteration;
+                  }
+                  
+                  
+                  
+                  /**
+                   * Generated and optimized
+                   * 
+                   * If you realise a for loop using exclusively arrays (vectors) and compile 
+                   * with -DUseManualAlignment you may add 
+                   * \code
+                   #pragma vector aligned
+                   #pragma simd
+                   \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                   * 
+                   * The alignment is tied to the unpacked records, i.e. for packed class
+                   * variants the machine's natural alignment is switched off to recude the  
+                   * memory footprint. Do not use any SSE/AVX operations or 
+                   * vectorisation on the result for the packed variants, as the data is misaligned. 
+                   * If you rely on vectorisation, convert the underlying record 
+                   * into the unpacked version first. 
+                   * 
+                   * @see convert()
+                   */
+                  inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
                   }
                   
                   
@@ -2624,6 +3028,7 @@ namespace peanoclaw {
                
             private: 
                PersistentRecords _persistentRecords;
+               bool _adjacentRanksChanged;
                int _adjacentCellsHeightOfPreviousIteration;
                int _numberOfAdjacentRefinedCells;
                
@@ -2641,12 +3046,12 @@ namespace peanoclaw {
                /**
                 * Generated
                 */
-               Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
+               Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
                
                /**
                 * Generated
                 */
-               Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain);
+               Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& adjacentRanksChanged, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain);
                
                /**
                 * Generated
@@ -2830,6 +3235,110 @@ namespace peanoclaw {
                   assertion(elementIndex>=0);
                   assertion(elementIndex<TWO_POWER_D);
                   _persistentRecords._adjacentSubcellsEraseVeto.flip(elementIndex);
+               }
+               
+               
+               
+               /**
+                * Generated and optimized
+                * 
+                * If you realise a for loop using exclusively arrays (vectors) and compile 
+                * with -DUseManualAlignment you may add 
+                * \code
+                #pragma vector aligned
+                #pragma simd
+                \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                * 
+                * The alignment is tied to the unpacked records, i.e. for packed class
+                * variants the machine's natural alignment is switched off to recude the  
+                * memory footprint. Do not use any SSE/AVX operations or 
+                * vectorisation on the result for the packed variants, as the data is misaligned. 
+                * If you rely on vectorisation, convert the underlying record 
+                * into the unpacked version first. 
+                * 
+                * @see convert()
+                */
+               inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._adjacentRanksInFormerIteration;
+               }
+               
+               
+               
+               /**
+                * Generated and optimized
+                * 
+                * If you realise a for loop using exclusively arrays (vectors) and compile 
+                * with -DUseManualAlignment you may add 
+                * \code
+                #pragma vector aligned
+                #pragma simd
+                \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                * 
+                * The alignment is tied to the unpacked records, i.e. for packed class
+                * variants the machine's natural alignment is switched off to recude the  
+                * memory footprint. Do not use any SSE/AVX operations or 
+                * vectorisation on the result for the packed variants, as the data is misaligned. 
+                * If you rely on vectorisation, convert the underlying record 
+                * into the unpacked version first. 
+                * 
+                * @see convert()
+                */
+               inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
+               }
+               
+               
+               
+               inline int getAdjacentRanksInFormerIteration(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  assertion(elementIndex>=0);
+                  assertion(elementIndex<TWO_POWER_D);
+                  return _persistentRecords._adjacentRanksInFormerIteration[elementIndex];
+                  
+               }
+               
+               
+               
+               inline void setAdjacentRanksInFormerIteration(int elementIndex, const int& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  assertion(elementIndex>=0);
+                  assertion(elementIndex<TWO_POWER_D);
+                  _persistentRecords._adjacentRanksInFormerIteration[elementIndex]= adjacentRanksInFormerIteration;
+                  
+               }
+               
+               
+               
+               inline bool getAdjacentRanksChanged() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _adjacentRanksChanged;
+               }
+               
+               
+               
+               inline void setAdjacentRanksChanged(const bool& adjacentRanksChanged) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _adjacentRanksChanged = adjacentRanksChanged;
                }
                
                
@@ -3085,7 +3594,7 @@ namespace peanoclaw {
              *
              * 		   build date: 22-10-2013 20:59
              *
-             * @date   21/11/2013 14:28
+             * @date   21/11/2013 19:18
              */
             class peanoclaw::records::VertexPacked { 
                
@@ -3097,6 +3606,7 @@ namespace peanoclaw {
                   
                   struct PersistentRecords {
                      tarch::la::Vector<TWO_POWER_D,int> _indicesOfAdjacentCellDescriptions;
+                     tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration;
                      int _adjacentCellsHeight;
                      
                      /** mapping of records:
@@ -3118,7 +3628,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
+                     PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
                      
                      
                      /**
@@ -3241,6 +3751,64 @@ namespace peanoclaw {
                         mask = static_cast<int>(mask << (0));
                         _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
                         _packedRecords0 = static_cast<int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                     }
+                     
+                     
+                     
+                     /**
+                      * Generated and optimized
+                      * 
+                      * If you realise a for loop using exclusively arrays (vectors) and compile 
+                      * with -DUseManualAlignment you may add 
+                      * \code
+                      #pragma vector aligned
+                      #pragma simd
+                      \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                      * 
+                      * The alignment is tied to the unpacked records, i.e. for packed class
+                      * variants the machine's natural alignment is switched off to recude the  
+                      * memory footprint. Do not use any SSE/AVX operations or 
+                      * vectorisation on the result for the packed variants, as the data is misaligned. 
+                      * If you rely on vectorisation, convert the underlying record 
+                      * into the unpacked version first. 
+                      * 
+                      * @see convert()
+                      */
+                     inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _adjacentRanksInFormerIteration;
+                     }
+                     
+                     
+                     
+                     /**
+                      * Generated and optimized
+                      * 
+                      * If you realise a for loop using exclusively arrays (vectors) and compile 
+                      * with -DUseManualAlignment you may add 
+                      * \code
+                      #pragma vector aligned
+                      #pragma simd
+                      \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                      * 
+                      * The alignment is tied to the unpacked records, i.e. for packed class
+                      * variants the machine's natural alignment is switched off to recude the  
+                      * memory footprint. Do not use any SSE/AVX operations or 
+                      * vectorisation on the result for the packed variants, as the data is misaligned. 
+                      * If you rely on vectorisation, convert the underlying record 
+                      * into the unpacked version first. 
+                      * 
+                      * @see convert()
+                      */
+                     inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
                      }
                      
                      
@@ -3399,6 +3967,13 @@ namespace peanoclaw {
                   int _adjacentCellsHeightOfPreviousIteration;
                   int _numberOfAdjacentRefinedCells;
                   
+                  /** mapping of records:
+                  || Member 	|| startbit 	|| length
+                   |  adjacentRanksChanged	| startbit 0	| #bits 1
+                   */
+                  int _packedRecords0;
+                  
+                  
                public:
                   /**
                    * Generated
@@ -3413,12 +3988,12 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
+                  VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain);
                   
                   /**
                    * Generated
                    */
-                  VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain);
+                  VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& adjacentRanksChanged, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain);
                   
                   /**
                    * Generated
@@ -3617,6 +4192,113 @@ namespace peanoclaw {
                      int mask = 1 << (0);
                      mask = mask << elementIndex;
                      _persistentRecords._packedRecords0^= mask;
+                  }
+                  
+                  
+                  
+                  /**
+                   * Generated and optimized
+                   * 
+                   * If you realise a for loop using exclusively arrays (vectors) and compile 
+                   * with -DUseManualAlignment you may add 
+                   * \code
+                   #pragma vector aligned
+                   #pragma simd
+                   \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                   * 
+                   * The alignment is tied to the unpacked records, i.e. for packed class
+                   * variants the machine's natural alignment is switched off to recude the  
+                   * memory footprint. Do not use any SSE/AVX operations or 
+                   * vectorisation on the result for the packed variants, as the data is misaligned. 
+                   * If you rely on vectorisation, convert the underlying record 
+                   * into the unpacked version first. 
+                   * 
+                   * @see convert()
+                   */
+                  inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._adjacentRanksInFormerIteration;
+                  }
+                  
+                  
+                  
+                  /**
+                   * Generated and optimized
+                   * 
+                   * If you realise a for loop using exclusively arrays (vectors) and compile 
+                   * with -DUseManualAlignment you may add 
+                   * \code
+                   #pragma vector aligned
+                   #pragma simd
+                   \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                   * 
+                   * The alignment is tied to the unpacked records, i.e. for packed class
+                   * variants the machine's natural alignment is switched off to recude the  
+                   * memory footprint. Do not use any SSE/AVX operations or 
+                   * vectorisation on the result for the packed variants, as the data is misaligned. 
+                   * If you rely on vectorisation, convert the underlying record 
+                   * into the unpacked version first. 
+                   * 
+                   * @see convert()
+                   */
+                  inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
+                  }
+                  
+                  
+                  
+                  inline int getAdjacentRanksInFormerIteration(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<TWO_POWER_D);
+                     return _persistentRecords._adjacentRanksInFormerIteration[elementIndex];
+                     
+                  }
+                  
+                  
+                  
+                  inline void setAdjacentRanksInFormerIteration(int elementIndex, const int& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<TWO_POWER_D);
+                     _persistentRecords._adjacentRanksInFormerIteration[elementIndex]= adjacentRanksInFormerIteration;
+                     
+                  }
+                  
+                  
+                  
+                  inline bool getAdjacentRanksChanged() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     int mask = 1 << (0);
+   int tmp = static_cast<int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                  }
+                  
+                  
+                  
+                  inline void setAdjacentRanksChanged(const bool& adjacentRanksChanged) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     int mask = 1 << (0);
+   _packedRecords0 = static_cast<int>( adjacentRanksChanged ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                   }
                   
                   
@@ -3897,7 +4579,7 @@ namespace peanoclaw {
              *
              * 		   build date: 22-10-2013 20:59
              *
-             * @date   21/11/2013 14:28
+             * @date   21/11/2013 19:18
              */
             class peanoclaw::records::Vertex { 
                
@@ -3924,6 +4606,11 @@ namespace peanoclaw {
                      #else
                      std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto;
                      #endif
+                     #ifdef UseManualAlignment
+                     tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration __attribute__((aligned(VectorisationAlignment)));
+                     #else
+                     tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration;
+                     #endif
                      bool _shouldRefine;
                      bool _wasCreatedInThisIteration;
                      bool _isHangingNode;
@@ -3944,7 +4631,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                     PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                      
                      
                      /**
@@ -4059,6 +4746,64 @@ namespace peanoclaw {
  #endif 
  {
                         _adjacentSubcellsEraseVeto = (adjacentSubcellsEraseVeto);
+                     }
+                     
+                     
+                     
+                     /**
+                      * Generated and optimized
+                      * 
+                      * If you realise a for loop using exclusively arrays (vectors) and compile 
+                      * with -DUseManualAlignment you may add 
+                      * \code
+                      #pragma vector aligned
+                      #pragma simd
+                      \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                      * 
+                      * The alignment is tied to the unpacked records, i.e. for packed class
+                      * variants the machine's natural alignment is switched off to recude the  
+                      * memory footprint. Do not use any SSE/AVX operations or 
+                      * vectorisation on the result for the packed variants, as the data is misaligned. 
+                      * If you rely on vectorisation, convert the underlying record 
+                      * into the unpacked version first. 
+                      * 
+                      * @see convert()
+                      */
+                     inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _adjacentRanksInFormerIteration;
+                     }
+                     
+                     
+                     
+                     /**
+                      * Generated and optimized
+                      * 
+                      * If you realise a for loop using exclusively arrays (vectors) and compile 
+                      * with -DUseManualAlignment you may add 
+                      * \code
+                      #pragma vector aligned
+                      #pragma simd
+                      \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                      * 
+                      * The alignment is tied to the unpacked records, i.e. for packed class
+                      * variants the machine's natural alignment is switched off to recude the  
+                      * memory footprint. Do not use any SSE/AVX operations or 
+                      * vectorisation on the result for the packed variants, as the data is misaligned. 
+                      * If you rely on vectorisation, convert the underlying record 
+                      * into the unpacked version first. 
+                      * 
+                      * @see convert()
+                      */
+                     inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
                      }
                      
                      
@@ -4265,6 +5010,7 @@ namespace peanoclaw {
                   
                private: 
                   PersistentRecords _persistentRecords;
+                  bool _adjacentRanksChanged;
                   int _adjacentCellsHeightOfPreviousIteration;
                   int _numberOfAdjacentRefinedCells;
                   
@@ -4282,12 +5028,12 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                  Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                   
                   /**
                    * Generated
                    */
-                  Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                  Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& adjacentRanksChanged, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                   
                   /**
                    * Generated
@@ -4471,6 +5217,110 @@ namespace peanoclaw {
                      assertion(elementIndex>=0);
                      assertion(elementIndex<TWO_POWER_D);
                      _persistentRecords._adjacentSubcellsEraseVeto.flip(elementIndex);
+                  }
+                  
+                  
+                  
+                  /**
+                   * Generated and optimized
+                   * 
+                   * If you realise a for loop using exclusively arrays (vectors) and compile 
+                   * with -DUseManualAlignment you may add 
+                   * \code
+                   #pragma vector aligned
+                   #pragma simd
+                   \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                   * 
+                   * The alignment is tied to the unpacked records, i.e. for packed class
+                   * variants the machine's natural alignment is switched off to recude the  
+                   * memory footprint. Do not use any SSE/AVX operations or 
+                   * vectorisation on the result for the packed variants, as the data is misaligned. 
+                   * If you rely on vectorisation, convert the underlying record 
+                   * into the unpacked version first. 
+                   * 
+                   * @see convert()
+                   */
+                  inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._adjacentRanksInFormerIteration;
+                  }
+                  
+                  
+                  
+                  /**
+                   * Generated and optimized
+                   * 
+                   * If you realise a for loop using exclusively arrays (vectors) and compile 
+                   * with -DUseManualAlignment you may add 
+                   * \code
+                   #pragma vector aligned
+                   #pragma simd
+                   \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                   * 
+                   * The alignment is tied to the unpacked records, i.e. for packed class
+                   * variants the machine's natural alignment is switched off to recude the  
+                   * memory footprint. Do not use any SSE/AVX operations or 
+                   * vectorisation on the result for the packed variants, as the data is misaligned. 
+                   * If you rely on vectorisation, convert the underlying record 
+                   * into the unpacked version first. 
+                   * 
+                   * @see convert()
+                   */
+                  inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
+                  }
+                  
+                  
+                  
+                  inline int getAdjacentRanksInFormerIteration(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<TWO_POWER_D);
+                     return _persistentRecords._adjacentRanksInFormerIteration[elementIndex];
+                     
+                  }
+                  
+                  
+                  
+                  inline void setAdjacentRanksInFormerIteration(int elementIndex, const int& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<TWO_POWER_D);
+                     _persistentRecords._adjacentRanksInFormerIteration[elementIndex]= adjacentRanksInFormerIteration;
+                     
+                  }
+                  
+                  
+                  
+                  inline bool getAdjacentRanksChanged() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _adjacentRanksChanged;
+                  }
+                  
+                  
+                  
+                  inline void setAdjacentRanksChanged(const bool& adjacentRanksChanged) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _adjacentRanksChanged = adjacentRanksChanged;
                   }
                   
                   
@@ -4830,7 +5680,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 22-10-2013 20:59
                 *
-                * @date   21/11/2013 14:28
+                * @date   21/11/2013 19:18
                 */
                class peanoclaw::records::VertexPacked { 
                   
@@ -4842,6 +5692,7 @@ namespace peanoclaw {
                      
                      struct PersistentRecords {
                         tarch::la::Vector<TWO_POWER_D,int> _indicesOfAdjacentCellDescriptions;
+                        tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration;
                         int _adjacentCellsHeight;
                         tarch::la::Vector<DIMENSIONS,double> _x;
                         int _level;
@@ -4865,7 +5716,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                         
                         
                         /**
@@ -4988,6 +5839,64 @@ namespace peanoclaw {
                            mask = static_cast<int>(mask << (0));
                            _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
                            _packedRecords0 = static_cast<int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                        }
+                        
+                        
+                        
+                        /**
+                         * Generated and optimized
+                         * 
+                         * If you realise a for loop using exclusively arrays (vectors) and compile 
+                         * with -DUseManualAlignment you may add 
+                         * \code
+                         #pragma vector aligned
+                         #pragma simd
+                         \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                         * 
+                         * The alignment is tied to the unpacked records, i.e. for packed class
+                         * variants the machine's natural alignment is switched off to recude the  
+                         * memory footprint. Do not use any SSE/AVX operations or 
+                         * vectorisation on the result for the packed variants, as the data is misaligned. 
+                         * If you rely on vectorisation, convert the underlying record 
+                         * into the unpacked version first. 
+                         * 
+                         * @see convert()
+                         */
+                        inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           return _adjacentRanksInFormerIteration;
+                        }
+                        
+                        
+                        
+                        /**
+                         * Generated and optimized
+                         * 
+                         * If you realise a for loop using exclusively arrays (vectors) and compile 
+                         * with -DUseManualAlignment you may add 
+                         * \code
+                         #pragma vector aligned
+                         #pragma simd
+                         \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                         * 
+                         * The alignment is tied to the unpacked records, i.e. for packed class
+                         * variants the machine's natural alignment is switched off to recude the  
+                         * memory footprint. Do not use any SSE/AVX operations or 
+                         * vectorisation on the result for the packed variants, as the data is misaligned. 
+                         * If you rely on vectorisation, convert the underlying record 
+                         * into the unpacked version first. 
+                         * 
+                         * @see convert()
+                         */
+                        inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           _adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
                         }
                         
                         
@@ -5224,6 +6133,13 @@ namespace peanoclaw {
                      int _adjacentCellsHeightOfPreviousIteration;
                      int _numberOfAdjacentRefinedCells;
                      
+                     /** mapping of records:
+                     || Member 	|| startbit 	|| length
+                      |  adjacentRanksChanged	| startbit 0	| #bits 1
+                      */
+                     int _packedRecords0;
+                     
+                     
                   public:
                      /**
                       * Generated
@@ -5238,12 +6154,12 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                     VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                      
                      /**
                       * Generated
                       */
-                     VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
+                     VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& adjacentRanksChanged, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<DIMENSIONS,double>& x, const int& level);
                      
                      /**
                       * Generated
@@ -5442,6 +6358,113 @@ namespace peanoclaw {
                         int mask = 1 << (0);
                         mask = mask << elementIndex;
                         _persistentRecords._packedRecords0^= mask;
+                     }
+                     
+                     
+                     
+                     /**
+                      * Generated and optimized
+                      * 
+                      * If you realise a for loop using exclusively arrays (vectors) and compile 
+                      * with -DUseManualAlignment you may add 
+                      * \code
+                      #pragma vector aligned
+                      #pragma simd
+                      \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                      * 
+                      * The alignment is tied to the unpacked records, i.e. for packed class
+                      * variants the machine's natural alignment is switched off to recude the  
+                      * memory footprint. Do not use any SSE/AVX operations or 
+                      * vectorisation on the result for the packed variants, as the data is misaligned. 
+                      * If you rely on vectorisation, convert the underlying record 
+                      * into the unpacked version first. 
+                      * 
+                      * @see convert()
+                      */
+                     inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _persistentRecords._adjacentRanksInFormerIteration;
+                     }
+                     
+                     
+                     
+                     /**
+                      * Generated and optimized
+                      * 
+                      * If you realise a for loop using exclusively arrays (vectors) and compile 
+                      * with -DUseManualAlignment you may add 
+                      * \code
+                      #pragma vector aligned
+                      #pragma simd
+                      \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                      * 
+                      * The alignment is tied to the unpacked records, i.e. for packed class
+                      * variants the machine's natural alignment is switched off to recude the  
+                      * memory footprint. Do not use any SSE/AVX operations or 
+                      * vectorisation on the result for the packed variants, as the data is misaligned. 
+                      * If you rely on vectorisation, convert the underlying record 
+                      * into the unpacked version first. 
+                      * 
+                      * @see convert()
+                      */
+                     inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _persistentRecords._adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
+                     }
+                     
+                     
+                     
+                     inline int getAdjacentRanksInFormerIteration(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        assertion(elementIndex>=0);
+                        assertion(elementIndex<TWO_POWER_D);
+                        return _persistentRecords._adjacentRanksInFormerIteration[elementIndex];
+                        
+                     }
+                     
+                     
+                     
+                     inline void setAdjacentRanksInFormerIteration(int elementIndex, const int& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        assertion(elementIndex>=0);
+                        assertion(elementIndex<TWO_POWER_D);
+                        _persistentRecords._adjacentRanksInFormerIteration[elementIndex]= adjacentRanksInFormerIteration;
+                        
+                     }
+                     
+                     
+                     
+                     inline bool getAdjacentRanksChanged() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        int mask = 1 << (0);
+   int tmp = static_cast<int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                     }
+                     
+                     
+                     
+                     inline void setAdjacentRanksChanged(const bool& adjacentRanksChanged) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        int mask = 1 << (0);
+   _packedRecords0 = static_cast<int>( adjacentRanksChanged ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                      }
                      
                      
@@ -5826,7 +6849,7 @@ namespace peanoclaw {
                 *
                 * 		   build date: 22-10-2013 20:59
                 *
-                * @date   21/11/2013 14:28
+                * @date   21/11/2013 19:18
                 */
                class peanoclaw::records::Vertex { 
                   
@@ -5853,6 +6876,11 @@ namespace peanoclaw {
                         #else
                         std::bitset<TWO_POWER_D> _adjacentSubcellsEraseVeto;
                         #endif
+                        #ifdef UseManualAlignment
+                        tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration __attribute__((aligned(VectorisationAlignment)));
+                        #else
+                        tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration;
+                        #endif
                         bool _shouldRefine;
                         bool _wasCreatedInThisIteration;
                         bool _isHangingNode;
@@ -5873,7 +6901,7 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                        PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         
                         /**
@@ -5988,6 +7016,64 @@ namespace peanoclaw {
  #endif 
  {
                            _adjacentSubcellsEraseVeto = (adjacentSubcellsEraseVeto);
+                        }
+                        
+                        
+                        
+                        /**
+                         * Generated and optimized
+                         * 
+                         * If you realise a for loop using exclusively arrays (vectors) and compile 
+                         * with -DUseManualAlignment you may add 
+                         * \code
+                         #pragma vector aligned
+                         #pragma simd
+                         \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                         * 
+                         * The alignment is tied to the unpacked records, i.e. for packed class
+                         * variants the machine's natural alignment is switched off to recude the  
+                         * memory footprint. Do not use any SSE/AVX operations or 
+                         * vectorisation on the result for the packed variants, as the data is misaligned. 
+                         * If you rely on vectorisation, convert the underlying record 
+                         * into the unpacked version first. 
+                         * 
+                         * @see convert()
+                         */
+                        inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           return _adjacentRanksInFormerIteration;
+                        }
+                        
+                        
+                        
+                        /**
+                         * Generated and optimized
+                         * 
+                         * If you realise a for loop using exclusively arrays (vectors) and compile 
+                         * with -DUseManualAlignment you may add 
+                         * \code
+                         #pragma vector aligned
+                         #pragma simd
+                         \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                         * 
+                         * The alignment is tied to the unpacked records, i.e. for packed class
+                         * variants the machine's natural alignment is switched off to recude the  
+                         * memory footprint. Do not use any SSE/AVX operations or 
+                         * vectorisation on the result for the packed variants, as the data is misaligned. 
+                         * If you rely on vectorisation, convert the underlying record 
+                         * into the unpacked version first. 
+                         * 
+                         * @see convert()
+                         */
+                        inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           _adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
                         }
                         
                         
@@ -6194,6 +7280,7 @@ namespace peanoclaw {
                      
                   private: 
                      PersistentRecords _persistentRecords;
+                     bool _adjacentRanksChanged;
                      int _adjacentCellsHeightOfPreviousIteration;
                      int _numberOfAdjacentRefinedCells;
                      
@@ -6211,12 +7298,12 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                      
                      /**
                       * Generated
                       */
-                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                     Vertex(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& adjacentRanksChanged, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                      
                      /**
                       * Generated
@@ -6400,6 +7487,110 @@ namespace peanoclaw {
                         assertion(elementIndex>=0);
                         assertion(elementIndex<TWO_POWER_D);
                         _persistentRecords._adjacentSubcellsEraseVeto.flip(elementIndex);
+                     }
+                     
+                     
+                     
+                     /**
+                      * Generated and optimized
+                      * 
+                      * If you realise a for loop using exclusively arrays (vectors) and compile 
+                      * with -DUseManualAlignment you may add 
+                      * \code
+                      #pragma vector aligned
+                      #pragma simd
+                      \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                      * 
+                      * The alignment is tied to the unpacked records, i.e. for packed class
+                      * variants the machine's natural alignment is switched off to recude the  
+                      * memory footprint. Do not use any SSE/AVX operations or 
+                      * vectorisation on the result for the packed variants, as the data is misaligned. 
+                      * If you rely on vectorisation, convert the underlying record 
+                      * into the unpacked version first. 
+                      * 
+                      * @see convert()
+                      */
+                     inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _persistentRecords._adjacentRanksInFormerIteration;
+                     }
+                     
+                     
+                     
+                     /**
+                      * Generated and optimized
+                      * 
+                      * If you realise a for loop using exclusively arrays (vectors) and compile 
+                      * with -DUseManualAlignment you may add 
+                      * \code
+                      #pragma vector aligned
+                      #pragma simd
+                      \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                      * 
+                      * The alignment is tied to the unpacked records, i.e. for packed class
+                      * variants the machine's natural alignment is switched off to recude the  
+                      * memory footprint. Do not use any SSE/AVX operations or 
+                      * vectorisation on the result for the packed variants, as the data is misaligned. 
+                      * If you rely on vectorisation, convert the underlying record 
+                      * into the unpacked version first. 
+                      * 
+                      * @see convert()
+                      */
+                     inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _persistentRecords._adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
+                     }
+                     
+                     
+                     
+                     inline int getAdjacentRanksInFormerIteration(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        assertion(elementIndex>=0);
+                        assertion(elementIndex<TWO_POWER_D);
+                        return _persistentRecords._adjacentRanksInFormerIteration[elementIndex];
+                        
+                     }
+                     
+                     
+                     
+                     inline void setAdjacentRanksInFormerIteration(int elementIndex, const int& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        assertion(elementIndex>=0);
+                        assertion(elementIndex<TWO_POWER_D);
+                        _persistentRecords._adjacentRanksInFormerIteration[elementIndex]= adjacentRanksInFormerIteration;
+                        
+                     }
+                     
+                     
+                     
+                     inline bool getAdjacentRanksChanged() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _adjacentRanksChanged;
+                     }
+                     
+                     
+                     
+                     inline void setAdjacentRanksChanged(const bool& adjacentRanksChanged) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _adjacentRanksChanged = adjacentRanksChanged;
                      }
                      
                      
@@ -6759,7 +7950,7 @@ namespace peanoclaw {
                    *
                    * 		   build date: 22-10-2013 20:59
                    *
-                   * @date   21/11/2013 14:28
+                   * @date   21/11/2013 19:18
                    */
                   class peanoclaw::records::VertexPacked { 
                      
@@ -6771,6 +7962,7 @@ namespace peanoclaw {
                         
                         struct PersistentRecords {
                            tarch::la::Vector<TWO_POWER_D,int> _indicesOfAdjacentCellDescriptions;
+                           tarch::la::Vector<TWO_POWER_D,int> _adjacentRanksInFormerIteration;
                            int _adjacentCellsHeight;
                            tarch::la::Vector<TWO_POWER_D,int> _adjacentRanks;
                            
@@ -6794,7 +7986,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                           PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                            
                            
                            /**
@@ -6917,6 +8109,64 @@ namespace peanoclaw {
                               mask = static_cast<int>(mask << (0));
                               _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
                               _packedRecords0 = static_cast<int>(_packedRecords0 | adjacentSubcellsEraseVeto.to_ulong() << (0));
+                           }
+                           
+                           
+                           
+                           /**
+                            * Generated and optimized
+                            * 
+                            * If you realise a for loop using exclusively arrays (vectors) and compile 
+                            * with -DUseManualAlignment you may add 
+                            * \code
+                            #pragma vector aligned
+                            #pragma simd
+                            \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                            * 
+                            * The alignment is tied to the unpacked records, i.e. for packed class
+                            * variants the machine's natural alignment is switched off to recude the  
+                            * memory footprint. Do not use any SSE/AVX operations or 
+                            * vectorisation on the result for the packed variants, as the data is misaligned. 
+                            * If you rely on vectorisation, convert the underlying record 
+                            * into the unpacked version first. 
+                            * 
+                            * @see convert()
+                            */
+                           inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _adjacentRanksInFormerIteration;
+                           }
+                           
+                           
+                           
+                           /**
+                            * Generated and optimized
+                            * 
+                            * If you realise a for loop using exclusively arrays (vectors) and compile 
+                            * with -DUseManualAlignment you may add 
+                            * \code
+                            #pragma vector aligned
+                            #pragma simd
+                            \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                            * 
+                            * The alignment is tied to the unpacked records, i.e. for packed class
+                            * variants the machine's natural alignment is switched off to recude the  
+                            * memory footprint. Do not use any SSE/AVX operations or 
+                            * vectorisation on the result for the packed variants, as the data is misaligned. 
+                            * If you rely on vectorisation, convert the underlying record 
+                            * into the unpacked version first. 
+                            * 
+                            * @see convert()
+                            */
+                           inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
                            }
                            
                            
@@ -7156,6 +8406,13 @@ namespace peanoclaw {
                         int _adjacentCellsHeightOfPreviousIteration;
                         int _numberOfAdjacentRefinedCells;
                         
+                        /** mapping of records:
+                        || Member 	|| startbit 	|| length
+                         |  adjacentRanksChanged	| startbit 0	| #bits 1
+                         */
+                        int _packedRecords0;
+                        
+                        
                      public:
                         /**
                          * Generated
@@ -7170,12 +8427,12 @@ namespace peanoclaw {
                         /**
                          * Generated
                          */
-                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         /**
                          * Generated
                          */
-                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
+                        VertexPacked(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const std::bitset<TWO_POWER_D>& adjacentSubcellsEraseVeto, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration, const bool& adjacentRanksChanged, const bool& shouldRefine, const bool& wasCreatedInThisIteration, const bool& isHangingNode, const RefinementControl& refinementControl, const int& adjacentCellsHeight, const int& adjacentCellsHeightOfPreviousIteration, const int& numberOfAdjacentRefinedCells, const InsideOutsideDomain& insideOutsideDomain, const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanks, const bool& adjacentSubtreeForksIntoOtherRank);
                         
                         /**
                          * Generated
@@ -7374,6 +8631,113 @@ namespace peanoclaw {
                            int mask = 1 << (0);
                            mask = mask << elementIndex;
                            _persistentRecords._packedRecords0^= mask;
+                        }
+                        
+                        
+                        
+                        /**
+                         * Generated and optimized
+                         * 
+                         * If you realise a for loop using exclusively arrays (vectors) and compile 
+                         * with -DUseManualAlignment you may add 
+                         * \code
+                         #pragma vector aligned
+                         #pragma simd
+                         \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                         * 
+                         * The alignment is tied to the unpacked records, i.e. for packed class
+                         * variants the machine's natural alignment is switched off to recude the  
+                         * memory footprint. Do not use any SSE/AVX operations or 
+                         * vectorisation on the result for the packed variants, as the data is misaligned. 
+                         * If you rely on vectorisation, convert the underlying record 
+                         * into the unpacked version first. 
+                         * 
+                         * @see convert()
+                         */
+                        inline tarch::la::Vector<TWO_POWER_D,int> getAdjacentRanksInFormerIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           return _persistentRecords._adjacentRanksInFormerIteration;
+                        }
+                        
+                        
+                        
+                        /**
+                         * Generated and optimized
+                         * 
+                         * If you realise a for loop using exclusively arrays (vectors) and compile 
+                         * with -DUseManualAlignment you may add 
+                         * \code
+                         #pragma vector aligned
+                         #pragma simd
+                         \endcode to this for loop to enforce your compiler to use SSE/AVX.
+                         * 
+                         * The alignment is tied to the unpacked records, i.e. for packed class
+                         * variants the machine's natural alignment is switched off to recude the  
+                         * memory footprint. Do not use any SSE/AVX operations or 
+                         * vectorisation on the result for the packed variants, as the data is misaligned. 
+                         * If you rely on vectorisation, convert the underlying record 
+                         * into the unpacked version first. 
+                         * 
+                         * @see convert()
+                         */
+                        inline void setAdjacentRanksInFormerIteration(const tarch::la::Vector<TWO_POWER_D,int>& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           _persistentRecords._adjacentRanksInFormerIteration = (adjacentRanksInFormerIteration);
+                        }
+                        
+                        
+                        
+                        inline int getAdjacentRanksInFormerIteration(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           assertion(elementIndex>=0);
+                           assertion(elementIndex<TWO_POWER_D);
+                           return _persistentRecords._adjacentRanksInFormerIteration[elementIndex];
+                           
+                        }
+                        
+                        
+                        
+                        inline void setAdjacentRanksInFormerIteration(int elementIndex, const int& adjacentRanksInFormerIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           assertion(elementIndex>=0);
+                           assertion(elementIndex<TWO_POWER_D);
+                           _persistentRecords._adjacentRanksInFormerIteration[elementIndex]= adjacentRanksInFormerIteration;
+                           
+                        }
+                        
+                        
+                        
+                        inline bool getAdjacentRanksChanged() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           int mask = 1 << (0);
+   int tmp = static_cast<int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                        }
+                        
+                        
+                        
+                        inline void setAdjacentRanksChanged(const bool& adjacentRanksChanged) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                           int mask = 1 << (0);
+   _packedRecords0 = static_cast<int>( adjacentRanksChanged ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
                         }
                         
                         

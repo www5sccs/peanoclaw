@@ -782,7 +782,15 @@ void peanoclaw::mappings::Remesh::touchVertexFirstTime(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "touchVertexFirstTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
-  // @todo Insert your code here
+
+  peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+    fineGridVertex,
+    _vertexPositionToIndexMap,
+    fineGridX,
+    coarseGridVerticesEnumerator.getLevel()+1
+  );
+  adjacentSubgrids.checkForChangesInAdjacentRanks();
+
   logTraceOutWith1Argument( "touchVertexFirstTime(...)", fineGridVertex );
 }
 

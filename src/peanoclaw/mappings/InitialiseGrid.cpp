@@ -6,11 +6,6 @@
 #include "peano/utils/Loop.h"
 #include "peano/heap/Heap.h"
 
-#define TouchBasedRefinement
-#ifdef TouchBasedRefinement
-#warning Touch based refinement is on
-#endif
-
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
@@ -150,7 +145,6 @@ void peanoclaw::mappings::InitialiseGrid::createInnerVertex(
 ) {
   logTraceInWith6Arguments( "createInnerVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
  
-//#if !defined(TouchBasedRefinement)
   assertion(!fineGridVertex.isHangingNode());
 
   //Normal refinement
@@ -160,7 +154,6 @@ void peanoclaw::mappings::InitialiseGrid::createInnerVertex(
     ) {
     fineGridVertex.refine();
   }
-//#endif
 
   logTraceOutWith1Argument( "createInnerVertex(...)", fineGridVertex );
 }
@@ -178,7 +171,6 @@ void peanoclaw::mappings::InitialiseGrid::createBoundaryVertex(
   logTraceInWith6Arguments( "createBoundaryVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
 
-//#if !defined(TouchBasedRefinement)
   assertion(!fineGridVertex.isHangingNode());
 
   //Normal refinement
@@ -188,7 +180,6 @@ void peanoclaw::mappings::InitialiseGrid::createBoundaryVertex(
   ) {
     fineGridVertex.refine();
   }
-//#endif
 
   logTraceOutWith1Argument( "createBoundaryVertex(...)", fineGridVertex );
 }
@@ -247,13 +238,10 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
       }
       #endif
 
-  //    #if !defined(TouchBasedRefinement)
       peanoclaw::interSubgridCommunication::aspects::AdjacentVertices adjacentVertices(
         fineGridVertices,
         fineGridVerticesEnumerator
       );
-//      _refinementTriggered |= adjacentVertices.refineIfNecessary(patch, demandedMeshWidth);
-  //    #endif
     }
   }
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
@@ -458,7 +446,6 @@ void peanoclaw::mappings::InitialiseGrid::touchVertexFirstTime(
 
   fineGridVertex.resetSubcellsEraseVeto();
 
-//#if defined(TouchBasedRefinement)
   if (!fineGridVertex.isOutside()) {
       assertion(!fineGridVertex.isHangingNode());
 
@@ -470,8 +457,6 @@ void peanoclaw::mappings::InitialiseGrid::touchVertexFirstTime(
         fineGridVertex.refine();
       }
   }
-//#endif
-
 
   logTraceOutWith1Argument( "touchVertexFirstTime(...)", fineGridVertex );
 }
@@ -503,7 +488,6 @@ void peanoclaw::mappings::InitialiseGrid::enterCell(
 ) {
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
-//#if !defined(TouchBasedRefinement)
   if(fineGridCell.isLeaf() && _refinementCriterionEnabled) {
     Patch patch(fineGridCell);
 
@@ -515,7 +499,6 @@ void peanoclaw::mappings::InitialiseGrid::enterCell(
     //refine up to a certain level and stop to fork the grid on other ranks and
     //then restart refining.
     adjacentVertices.refineIfNecessary(patch, patch.getDemandedMeshWidth());
-  //#endif
   }
   
   logTraceOutWith1Argument( "enterCell(...)", fineGridCell );

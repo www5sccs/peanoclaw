@@ -198,3 +198,21 @@ void peanoclaw::Vertex::mergeWithNeighbor(const Vertex& neighbor) {
   }
   setShouldRefine(shouldRefine() || neighbor.shouldRefine());
 }
+
+void peanoclaw::Vertex::setAdjacentRanksInFormerGridIteration(const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanksInFormerGridIteration) {
+  _vertexData.setAdjacentRanksInFormerIteration(adjacentRanksInFormerGridIteration);
+}
+
+tarch::la::Vector<TWO_POWER_D, int> peanoclaw::Vertex::getAdjacentRanksInFormerGridIteration() const {
+  return _vertexData.getAdjacentRanksInFormerIteration();
+}
+
+void peanoclaw::Vertex::setWhetherAdjacentRanksChanged(bool adjacentRanksChanged) {
+  _vertexData.setAdjacentRanksChanged(adjacentRanksChanged);
+}
+
+bool peanoclaw::Vertex::wereAdjacentRanksChanged() const {
+  return _vertexData.getAdjacentRanksChanged();
+}
+
+

@@ -296,6 +296,17 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::refineOnPa
   logTraceOut("refineOnParallelBoundary(...)");
 }
 
+void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::checkForChangesInAdjacentRanks() {
+  _vertex.setWhetherAdjacentRanksChanged(false);
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    if(_vertex.getAdjacentRanks()(i) != _vertex.getAdjacentRanksInFormerGridIteration()(i)) {
+      _vertex.setWhetherAdjacentRanksChanged(true);
+      break;
+    }
+  }
+  _vertex.setAdjacentRanksInFormerGridIteration(_vertex.getAdjacentRanks());
+}
+
 peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAndAdaptiveBoundaryFunctor::CheckIntersectingParallelAndAdaptiveBoundaryFunctor(
   const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks
 ) : _adjacentRanks(adjacentRanks),

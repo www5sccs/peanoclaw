@@ -164,6 +164,29 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
      * Merges a neighbor vertex into this vertex.
      */
     void mergeWithNeighbor(const Vertex& neighbor);
+
+    /**
+     * Sets the ranks in the former grid iteration.
+     */
+    void setAdjacentRanksInFormerGridIteration(const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanksInFormerGridIteration);
+
+    /**
+     * Returns the ranks adjacent to this vertex during the last grid
+     * iteration.
+     */
+    tarch::la::Vector<TWO_POWER_D, int> getAdjacentRanksInFormerGridIteration() const;
+
+    /**
+     * Sets whether the ranks adjacent to this vertex changed in this
+     * grid iteration.
+     */
+    void setWhetherAdjacentRanksChanged(bool adjacentRanksChanged);
+
+    /**
+     * Returns whether the ranks adjacent to this vertex got changed in
+     * this grid iteration.
+     */
+    bool wereAdjacentRanksChanged() const;
 };
 
 

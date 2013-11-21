@@ -217,6 +217,12 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
       const peano::grid::VertexEnumerator&      coarseGridVerticesEnumerator,
       const tarch::la::Vector<DIMENSIONS,int>&  localPositionOfHangingNode
     );
+
+    /**
+     * Checks whether the adjacent ranks for this vertex changed and store
+     * this information in the vertex.
+     */
+    void checkForChangesInAdjacentRanks();
 };
 
 /**

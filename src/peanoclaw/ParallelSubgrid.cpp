@@ -23,19 +23,19 @@ peanoclaw::ParallelSubgrid::ParallelSubgrid(
   _cellDescription = &CellDescriptionHeap::getInstance().getData(subgridDescriptionIndex).at(0);
 }
 
-//void peanoclaw::ParallelSubgrid::markCurrentStateAsSent(bool wasSent) {
-//  #ifdef Parallel
-//  _cellDescription->setCurrentStateWasSend(wasSent);
-//  #endif
-//}
-//
-//bool peanoclaw::ParallelSubgrid::wasCurrentStateSent() const {
-//  #ifdef Parallel
-//  return _cellDescription->getCurrentStateWasSend();
-//  #else
-//  return false;
-//  #endif
-//}
+void peanoclaw::ParallelSubgrid::markCurrentStateAsSent(bool wasSent) {
+  #ifdef Parallel
+  _cellDescription->setCurrentStateWasSend(wasSent);
+  #endif
+}
+
+bool peanoclaw::ParallelSubgrid::wasCurrentStateSent() const {
+  #ifdef Parallel
+  return _cellDescription->getCurrentStateWasSend();
+  #else
+  return false;
+  #endif
+}
 
 void peanoclaw::ParallelSubgrid::decreaseNumberOfSharedAdjacentVertices() {
   #ifdef Parallel

@@ -61,14 +61,11 @@ class peanoclaw::parallel::NeighbourCommunicator {
     tarch::la::Vector<DIMENSIONS,double>       _position;
     int                                        _level;
     tarch::la::Vector<DIMENSIONS,double>       _subgridSize;
-//    CellDescriptionHeap&        _cellDescriptionHeap;
-//    DataHeap&                   _dataHeap;
     RemoteSubgridMap&                          _remoteSubgridMap;
     peanoclaw::statistics::ParallelStatistics& _statistics;
 
     /**
-     * Determines whether subgrids should be sent always despite if they
-     * have been updated since the last sending or not.
+     * Tries to send subgrids only once per iteration.
      */
     const bool                                       _avoidMultipleTransferOfSubgridsIfPossible;
     /**
@@ -76,10 +73,12 @@ class peanoclaw::parallel::NeighbourCommunicator {
      * number of received subgrids.
      */
     const bool                                       _reduceNumberOfPaddingSubgrids;
+
     /**
-     * Tries to send subgrids only once per iteration.
+     * Determines whether subgrids should be sent always despite if they
+     * have been updated since the last sending or not.
      */
-    const bool                                       _reduceMultipleSends;
+    const bool                                       _onlySendSubgridsAfterChange;
 
     void sendCellDescription(int cellDescriptionIndex);
 

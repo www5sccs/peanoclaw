@@ -43,12 +43,12 @@ class peanoclaw::ParallelSubgrid {
   /**
    * Sets whether this patch was sent to the neighbor ranks since the last time step.
    */
-//  void markCurrentStateAsSent(bool wasSent);
-//
-//  /**
-//   * Returns whether this patch was sent to the neighbor ranks since the last time step.
-//   */
-//  bool wasCurrentStateSent() const;
+  void markCurrentStateAsSent(bool wasSent);
+
+  /**
+   * Returns whether this patch was sent to the neighbor ranks since the last time step.
+   */
+  bool wasCurrentStateSent() const;
 
   /**
    * Decreases the number of shared adjacent vertices by one.

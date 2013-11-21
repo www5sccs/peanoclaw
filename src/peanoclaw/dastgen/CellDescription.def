@@ -11,7 +11,7 @@ class peanoclaw::records::CellDescription {
   parallelise packed persistent int  ghostLayerWidth from 0 to 15;
   parallelise packed persistent int  unknownsPerSubcell from 0 to 15;
   parallelise packed persistent int  auxiliarFieldsPerSubcell from 0 to 15;
-  parallelise packed persistent int  level from 0 to 63;
+  parallelise packed persistent int  level from 0 to 31;
   parallelise packed persistent bool isVirtual;
   
   #ifdef Parallel
@@ -34,6 +34,18 @@ class peanoclaw::records::CellDescription {
    * remote rank. This number is only valid if there is only one rank adjacent.
    */
   persistent int numberOfSharedAdjacentVertices;
+  
+  /**
+   * Indicates, whether the current state of the subgrid has been send to 
+   * all adjacent neighbors.
+   */
+  persistent packed bool currentStateWasSend;
+  
+  /**
+   * Indicates, whether the adjacent ranks changed, i.e. the parallel topology
+   * of the grid changed.
+   */
+  persistent packed bool adjacentRanksChanged;
   #endif
 
   parallelise persistent double position[DIMENSIONS];
@@ -121,7 +133,7 @@ class peanoclaw::records::CellDescription {
    * grid iterations. This is due to the fact that the ghostlayer has
    * to be filled correctly first.
    */
-  parallelise packed persistent int skipGridIterations from 0 to 15;
+  parallelise packed persistent int skipGridIterations from 0 to 7;
   
   /**
    * The age of this patch in terms of grid iterations. This means
