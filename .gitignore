@@ -44,3 +44,4 @@ PeanoClaw.egg-info
 testscenarios/breakingDam/rank-*-trace.txt
 testscenarios/breakingDam/vtkOutput/*.vtk
 testscenarios/communicationOptimization/rank-*-trace.txt
+testscenarios/shockbubble3d/vtkOutput/*.vtk

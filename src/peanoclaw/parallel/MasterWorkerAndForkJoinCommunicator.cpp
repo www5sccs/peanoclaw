@@ -107,6 +107,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendPatch(
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int localCellDescriptionIndex) {
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
+  #ifdef Parallel
 
   std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, _messageType);
   assertionEquals2(remoteCellDescriptionVector.size(), 1, _position, _level);
@@ -136,6 +137,9 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
 //    remoteCellDescription.setAuxIndex(receiveDataArray());
 //  }
 
+  //Reset undesired values
+  remoteCellDescription.setNumberOfSkippedTransfers(0);
+
   //Copy remote cell description to local cell description
   deleteArraysFromPatch(localCellDescriptionIndex);
   remoteCellDescription.setCellDescriptionIndex(localCellDescriptionIndex);
@@ -143,6 +147,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
   assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).size(), 1);
 
   assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
+  #endif
   logTraceOut("receivePatch");
 }
 

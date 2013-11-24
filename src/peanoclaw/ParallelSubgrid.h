@@ -40,6 +40,10 @@ class peanoclaw::ParallelSubgrid {
     int subgridDescriptionIndex
   );
 
+  ParallelSubgrid(
+    const Cell& cell
+  );
+
   /**
    * Sets whether this patch was sent to the neighbor ranks since the last time step.
    */
@@ -80,6 +84,11 @@ class peanoclaw::ParallelSubgrid {
    * be skipped.
    */
   void decreaseNumberOfTransfersToBeSkipped();
+
+  /**
+   * Resets the number to zero.
+   */
+  void resetNumberOfTransfersToBeSkipped();
 
   /**
    * Counts how many of the adjacent subgrids belong to a different MPI rank

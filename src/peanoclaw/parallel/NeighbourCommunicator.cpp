@@ -11,6 +11,8 @@
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
+#include "peano/utils/Loop.h"
+
 tarch::logging::Log peanoclaw::parallel::NeighbourCommunicator::_log("peanoclaw::parallel::NeighbourCommunicator");
 
 void peanoclaw::parallel::NeighbourCommunicator::sendCellDescription(int cellDescriptionIndex)
@@ -250,7 +252,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {
 
   //Receive padding patch
   std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
-  assertionEquals2(remoteCellDescriptionVector.size(), 0, _position, _level);
+  assertionEquals3(remoteCellDescriptionVector.size(), 0, _position, _level, _remoteRank);
 
   //Aux
 //  DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
@@ -316,9 +318,9 @@ peanoclaw::parallel::NeighbourCommunicator::NeighbourCommunicator(
     _remoteSubgridMap(remoteSubgridMap),
     _statistics(statistics),
     //En-/Disable optimizations
-    _avoidMultipleTransferOfSubgridsIfPossible(true),
+    _avoidMultipleTransferOfSubgridsIfPossible(false),
     _reduceNumberOfPaddingSubgrids(false),
-    _onlySendSubgridsAfterChange(false) {
+    _onlySendSubgridsAfterChange(true) {
   logTraceInWith3Arguments("NeighbourCommunicator", remoteRank, position, level);
 
   logTraceOut("NeighbourCommunicator");
@@ -340,7 +342,17 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
         Patch           localSubgrid(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i));
         ParallelSubgrid localParallelSubgrid(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i));
 
-        if(!localParallelSubgrid.wasCurrentStateSent() || vertex.wereAdjacentRanksChanged() || !_onlySendSubgridsAfterChange) {
+        if(
+            !localParallelSubgrid.wasCurrentStateSent()
+            || vertex.wereAdjacentRanksChanged()
+            || vertex.getAgeInGridIterations() <= 1
+            //TODO unterweg dissertion
+            //Warum kann ich nicht einfach den Status der Feingitter restringieren, ob die sich geändert haben?
+            //Gibt es da einen Zusammenhang zwischen Zeitschritten der benachbarten Grobgitter und den Zeitschritten
+            //der Feingitter, den ich hier nicht erkenne?
+            //TODO unterweg debug
+            || !localSubgrid.isLeaf()
+            || !_onlySendSubgridsAfterChange) {
 
           if(
               localParallelSubgrid.getAdjacentRank() == -1
@@ -411,6 +423,9 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
             logDebug("receiveSubgridsForVertex", "Received subgrid from rank " << _remoteRank << ": " << localSubgrid
                 << " for vertex " << _position);
           } else {
+
+            assertion1(localSubgrid.isRemote(), localSubgrid);
+
             localParallelSubgrid.decreaseNumberOfTransfersToBeSkipped();
 
             logDebug("receiveSubgridsForVertex", "(Skipped) Received subgrid from rank " << _remoteRank << ": " << localSubgrid

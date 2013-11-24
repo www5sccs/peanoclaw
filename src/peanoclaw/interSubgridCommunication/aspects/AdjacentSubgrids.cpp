@@ -55,7 +55,16 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertPer
 
   //Copy adjacency information from destroyed vertex to hanging vertex description
   for(int i = 0; i < TWO_POWER_D; i++) {
-    vertexDescription.setIndicesOfAdjacentCellDescriptions(i, _vertex.getAdjacentCellDescriptionIndex(i));
+    if(_vertex.getAdjacentCellDescriptionIndex(i) != -1) {
+      Patch subgrid(_vertex.getAdjacentCellDescriptionIndex(i));
+      if(!subgrid.isRemote()) {
+        vertexDescription.setIndicesOfAdjacentCellDescriptions(i, _vertex.getAdjacentCellDescriptionIndex(i));
+      } else {
+        vertexDescription.setIndicesOfAdjacentCellDescriptions(i, -1);
+      }
+    } else {
+      vertexDescription.setIndicesOfAdjacentCellDescriptions(i, -1);
+    }
   }
 }
 
@@ -82,7 +91,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertHan
     }
   }
 
-  _vertex.setWasCreatedInThisIteration(true);
+  _vertex.resetAgeInGridIterations();
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::createHangingVertex(
@@ -297,6 +306,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::refineOnPa
 }
 
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::checkForChangesInAdjacentRanks() {
+  #ifdef Parallel
   _vertex.setWhetherAdjacentRanksChanged(false);
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(_vertex.getAdjacentRanks()(i) != _vertex.getAdjacentRanksInFormerGridIteration()(i)) {
@@ -305,6 +315,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::checkForCh
     }
   }
   _vertex.setAdjacentRanksInFormerGridIteration(_vertex.getAdjacentRanks());
+  #endif
 }
 
 peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAndAdaptiveBoundaryFunctor::CheckIntersectingParallelAndAdaptiveBoundaryFunctor(

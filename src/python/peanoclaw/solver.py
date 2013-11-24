@@ -70,6 +70,9 @@ class Solver(Solver):
         
         self._is_set_up = False
         
+    def _del_(self):
+      self.teardown()
+        
     def setup(self, solution):
         r"""
         Initialize a Solver object. This method loads the library of Peano and prepares the initial mesh.

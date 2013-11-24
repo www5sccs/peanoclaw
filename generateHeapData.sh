@@ -5,3 +5,4 @@ java -jar $PDT_PATH/lib/DaStGen.jar --plugin PeanoHeapSnippetGenerator --naming 
 java -jar $PDT_PATH/lib/DaStGen.jar --plugin PeanoHeapSnippetGenerator --naming PeanoHeapNameTranslator --include $PWD/../../src src/peanoclaw/dastgen/Data.def src/peanoclaw/records/
 java -jar $PDT_PATH/lib/DaStGen.jar --plugin PeanoHeapSnippetGenerator --naming PeanoHeapNameTranslator --include $PWD/../../src src/peanoclaw/dastgen/PatchDescription.def src/peanoclaw/records/
 java -jar $PDT_PATH/lib/DaStGen.jar --plugin PeanoHeapSnippetGenerator --naming PeanoHeapNameTranslator --include $PWD/../../src src/peanoclaw/dastgen/LevelStatistics.def src/peanoclaw/statistics/
+java -jar $PDT_PATH/lib/DaStGen.jar --plugin PeanoHeapSnippetGenerator --naming PeanoHeapNameTranslator --include $PWD/../../src src/peanoclaw/dastgen/TimeIntervalStatistics.def src/peanoclaw/statistics/

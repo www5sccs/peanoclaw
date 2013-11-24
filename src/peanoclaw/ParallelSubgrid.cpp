@@ -23,6 +23,12 @@ peanoclaw::ParallelSubgrid::ParallelSubgrid(
   _cellDescription = &CellDescriptionHeap::getInstance().getData(subgridDescriptionIndex).at(0);
 }
 
+peanoclaw::ParallelSubgrid::ParallelSubgrid(
+  const Cell& cell
+) {
+  _cellDescription = &CellDescriptionHeap::getInstance().getData(cell.getCellDescriptionIndex()).at(0);
+}
+
 void peanoclaw::ParallelSubgrid::markCurrentStateAsSent(bool wasSent) {
   #ifdef Parallel
   _cellDescription->setCurrentStateWasSend(wasSent);
@@ -70,6 +76,12 @@ int peanoclaw::ParallelSubgrid::getNumberOfTransfersToBeSkipped() const {
 void peanoclaw::ParallelSubgrid::decreaseNumberOfTransfersToBeSkipped() {
   #ifdef Parallel
   _cellDescription->setNumberOfSkippedTransfers(_cellDescription->getNumberOfSkippedTransfers() - 1);
+  #endif
+}
+
+void peanoclaw::ParallelSubgrid::resetNumberOfTransfersToBeSkipped() {
+  #ifdef Parallel
+  _cellDescription->setNumberOfSkippedTransfers(0);
   #endif
 }
 

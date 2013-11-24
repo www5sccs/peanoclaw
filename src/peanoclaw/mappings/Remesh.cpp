@@ -133,7 +133,7 @@ void peanoclaw::mappings::Remesh::createHangingVertex(
   logTraceInWith6Arguments( "createHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   fineGridVertex.setShouldRefine(false);
-  fineGridVertex.resetSubcellsEraseVeto();
+  fineGridVertex.setAllSubcellEraseVetos();
 
   peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
     fineGridVertex,
@@ -203,7 +203,7 @@ void peanoclaw::mappings::Remesh::createInnerVertex(
   logTraceInWith6Arguments( "createInnerVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
   fineGridVertex.setShouldRefine(false);
-  fineGridVertex.resetSubcellsEraseVeto();
+  fineGridVertex.setAllSubcellEraseVetos();
 
   peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
     fineGridVertex,
@@ -229,7 +229,7 @@ void peanoclaw::mappings::Remesh::createBoundaryVertex(
   logTraceInWith6Arguments( "createBoundaryVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
  
   fineGridVertex.setShouldRefine(false);
-  fineGridVertex.resetSubcellsEraseVeto();
+  fineGridVertex.setAllSubcellEraseVetos();
 
   peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
     fineGridVertex,
@@ -277,6 +277,9 @@ void peanoclaw::mappings::Remesh::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith6Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell, fineGridVerticesEnumerator.getCellCenter() );
+
+  //TODO unterweg debug
+//  std::cout << "Creating cell at " << fineGridVerticesEnumerator.getVertexPosition() << " on level " << fineGridVerticesEnumerator.getLevel() << " on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
 
   //Initialise new Patch
   Patch fineGridPatch = Patch(
@@ -382,6 +385,9 @@ void peanoclaw::mappings::Remesh::destroyCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "destroyCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
+
+  //TODO unterweg debug
+//  std::cout << "Destroy cell at " << fineGridVerticesEnumerator.getVertexPosition() << " on level " << fineGridVerticesEnumerator.getLevel() << " on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
 
   assertion5(
     fineGridCell.getCellDescriptionIndex() != -2,
@@ -537,6 +543,8 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
     //Switch to remote after having sent the patch away...
     Patch patch(localCell);
     patch.setIsRemote(true);
+    ParallelSubgrid parallelSubgrid(localCell);
+    parallelSubgrid.resetNumberOfTransfersToBeSkipped();
   }
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -573,6 +581,15 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
     cellSize,
     *_state
   );
+
+  //TODO unterweg debug
+  #ifdef Asserts
+  if(localCell.getCellDescriptionIndex() >= 0) {
+    ParallelSubgrid parallelSubgrid(localCell);
+    Patch subgrid(localCell);
+    assertion1(parallelSubgrid.getNumberOfTransfersToBeSkipped() == 0, subgrid);
+  }
+  #endif
 
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
@@ -821,8 +838,7 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
     fineGridPositionOfVertex
   );
 
-  //Mark vertex as "old" (i.e. older than just created ;-))
-  fineGridVertex.setWasCreatedInThisIteration(false);
+  fineGridVertex.increaseAgeInGridIterations();
 
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }
@@ -896,10 +912,14 @@ void peanoclaw::mappings::Remesh::leaveCell(
   Patch finePatch(
     fineGridCell
   );
+  ParallelSubgrid fineParallelSubgrid(
+    fineGridCell
+  );
 
   _gridLevelTransfer->stepUp(
     coarseGridCell.getCellDescriptionIndex(),
     finePatch,
+    fineParallelSubgrid,
     fineGridCell.isLeaf(),
     fineGridVertices,
     fineGridVerticesEnumerator

@@ -13,6 +13,7 @@
 #include "peanoclaw/interSubgridCommunication/GridLevelTransfer.h"
 #include "peanoclaw/interSubgridCommunication/DefaultRestriction.h"
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
+#include "peanoclaw/ParallelSubgrid.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/Vertex.h"
 
@@ -472,8 +473,9 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   virtualPatch = Patch(virtualCellDescription);
   validate(virtualPatch.isVirtual());
 
-  gridLevelTransfer.stepUp(-1, finePatch, true, 0, enumerator);
-  gridLevelTransfer.stepUp(-1, virtualPatch, false, coarseVertices, enumerator);
+  ParallelSubgrid parallelSubgrid(finePatch.getCellDescriptionIndex());
+  gridLevelTransfer.stepUp(-1, finePatch, parallelSubgrid, true, 0, enumerator);
+  gridLevelTransfer.stepUp(-1, virtualPatch, parallelSubgrid, false, coarseVertices, enumerator);
 
   //Recreate virtual patch to assure that the created data arrays are involved
   virtualPatch = Patch (

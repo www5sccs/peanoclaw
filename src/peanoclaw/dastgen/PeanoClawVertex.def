@@ -13,5 +13,5 @@ class peano::applications::peanoclaw::dastgen::Vertex {
 	
 	parallelise persistent packed bool shouldRefine;
 	
-	parallelise persistent packed bool wasCreatedInThisIteration; 
+	parallelise persistent int ageInGridIterations;
 };

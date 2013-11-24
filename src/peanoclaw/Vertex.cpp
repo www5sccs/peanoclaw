@@ -12,7 +12,8 @@ tarch::logging::Log peanoclaw::Vertex::_log("peanoclaw::Vertex");
 peanoclaw::Vertex::Vertex():
   Base() {
   _vertexData.setIndicesOfAdjacentCellDescriptions(-1);
-  _vertexData.setWasCreatedInThisIteration(true);
+  //_vertexData.setWasCreatedInThisIteration(true);
+  _vertexData.setAgeInGridIterations(0);
   _vertexData.setShouldRefine(false);
 }
 
@@ -174,6 +175,13 @@ void peanoclaw::Vertex::setSubcellEraseVeto(
   _vertexData.setAdjacentSubcellsEraseVeto(cellIndex, true);
 }
 
+
+void peanoclaw::Vertex::setAllSubcellEraseVetos() {
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    setSubcellEraseVeto(i);
+  }
+}
+
 bool peanoclaw::Vertex::shouldErase() const {
   bool eraseAllSubcells = true;
   for(int i = 0; i < TWO_POWER_D; i++) {
@@ -183,12 +191,16 @@ bool peanoclaw::Vertex::shouldErase() const {
   return eraseAllSubcells;
 }
 
-void peanoclaw::Vertex::setWasCreatedInThisIteration(bool flag) {
-  _vertexData.setWasCreatedInThisIteration(flag);
+void peanoclaw::Vertex::increaseAgeInGridIterations() {
+  _vertexData.setAgeInGridIterations(_vertexData.getAgeInGridIterations() + 1);
 }
 
-bool peanoclaw::Vertex::wasCreatedInThisIteration() const {
-  return _vertexData.getWasCreatedInThisIteration();
+int peanoclaw::Vertex::getAgeInGridIterations() const {
+  return _vertexData.getAgeInGridIterations();
+}
+
+void peanoclaw::Vertex::resetAgeInGridIterations() {
+  _vertexData.setAgeInGridIterations(0);
 }
 
 void peanoclaw::Vertex::mergeWithNeighbor(const Vertex& neighbor) {

@@ -8,6 +8,8 @@ w * GridLevelTransfer.h
 #ifndef PEANO_APPLICATIONS_PEANOCLAW_GRIDLEVELTRANSFER_H_
 #define PEANO_APPLICATIONS_PEANOCLAW_GRIDLEVELTRANSFER_H_
 
+#include "peanoclaw/ParallelSubgrid.h"
+#include "peanoclaw/Patch.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
@@ -202,7 +204,8 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      *
      */
     void restrictToOverlappingVirtualSubgrids(
-      const Patch& subgrid
+      const Patch&           subgrid,
+      const ParallelSubgrid& fineParallelSubgrid
     );
 
     /**
@@ -266,6 +269,7 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
     void stepUp(
       int                                  coarseCellDescriptionIndex,
       Patch&                               finePatch,
+      ParallelSubgrid&                     fineParallelSubgrid,
       bool                                 isPeanoCellLeaf,
       peanoclaw::Vertex * const            fineGridVertices,
       const peano::grid::VertexEnumerator& fineGridVerticesEnumerator

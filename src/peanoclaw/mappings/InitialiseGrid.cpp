@@ -444,7 +444,7 @@ void peanoclaw::mappings::InitialiseGrid::touchVertexFirstTime(
 ) {
   logTraceInWith6Arguments( "touchVertexFirstTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
-  fineGridVertex.resetSubcellsEraseVeto();
+//  fineGridVertex.resetSubcellsEraseVeto();
 
   if (!fineGridVertex.isOutside()) {
       assertion(!fineGridVertex.isHangingNode());

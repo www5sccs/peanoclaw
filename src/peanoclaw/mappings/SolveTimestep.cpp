@@ -68,11 +68,19 @@ bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
   const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator
 ) {
   //Does Patch coarsen?
-  bool patchCoarsening = peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+  bool patchCoarsening = (peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
                           (
                             coarseGridVertices,
                             coarseGridVerticesEnumerator,
                             peanoclaw::records::Vertex::Erasing
+                          )
+                          ||
+                          peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                                                    (
+                                                      coarseGridVertices,
+                                                      coarseGridVerticesEnumerator,
+                                                      peanoclaw::records::Vertex::EraseTriggered
+                                                    )
                           )
                           &&
                           !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
@@ -87,13 +95,20 @@ bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
                             coarseGridVertices,
                             coarseGridVerticesEnumerator,
                             peanoclaw::records::Vertex::Refining
+                          )
+                          &&
+                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                          (
+                            coarseGridVertices,
+                            coarseGridVerticesEnumerator,
+                            peanoclaw::records::Vertex::RefinementTriggered
                           );
 
   //Are all adjacent vertices set correctly?
   bool allAdjacentVerticesValid = true;
   for(int i = 0; i < TWO_POWER_D; i++) {
     peanoclaw::Vertex& vertex = fineGridVertices[fineGridVerticesEnumerator(i)];
-    allAdjacentVerticesValid &= !vertex.wasCreatedInThisIteration() || vertex.isHangingNode();
+    allAdjacentVerticesValid &= (vertex.getAgeInGridIterations() > 0) || vertex.isHangingNode();
   }
 
   //Statistics
@@ -112,8 +127,7 @@ bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
     && patch.isAllowedToAdvanceInTime()
     && !patch.shouldSkipNextGridIteration()
     && !patchCoarsening
-    && allAdjacentVerticesValid
-    ;
+    && allAdjacentVerticesValid;
 }
 
 void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
@@ -520,7 +534,8 @@ void peanoclaw::mappings::SolveTimestep::touchVertexFirstTime(
     fineGridVertex.refine();
   } else if (
       fineGridVertex.shouldErase()
-      && fineGridVertex.getCurrentAdjacentCellsHeight() == 1
+      && fineGridVertex.getRefinementControl() == peanoclaw::Vertex::Records::Refined
+//      && fineGridVertex.getCurrentAdjacentCellsHeight() == 1
     ) {
     //TODO unterweg debug
 //    logInfo("", "Erasing vertex at " << fineGridX << " on level " << (coarseGridVerticesEnumerator.getLevel()+1)
@@ -776,6 +791,8 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   #ifdef Parallel
   LevelStatisticsHeap::getInstance().startToSendSynchronousData();
   LevelStatisticsHeap::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
+  TimeIntervalStatisticsHeap::getInstance().startToSendSynchronousData();
+  TimeIntervalStatisticsHeap::getInstance().startToSendSynchronousData();
   #endif
  
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
@@ -792,6 +809,10 @@ void peanoclaw::mappings::SolveTimestep::endIteration(
   LevelStatisticsHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
     LevelStatisticsHeap::getInstance().finishedToSendSynchronousData();
+  }
+  TimeIntervalStatisticsHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    TimeIntervalStatisticsHeap::getInstance().finishedToSendSynchronousData();
   }
 
 
