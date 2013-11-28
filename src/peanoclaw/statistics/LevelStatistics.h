@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 22-10-2013 20:59
  *
- * @date   23/11/2013 18:01
+ * @date   28/11/2013 11:13
  */
 class peanoclaw::statistics::LevelStatistics { 
    
@@ -367,7 +367,7 @@ class peanoclaw::statistics::LevelStatistics {
           *
           * 		   build date: 22-10-2013 20:59
           *
-          * @date   23/11/2013 18:01
+          * @date   28/11/2013 11:13
           */
          class peanoclaw::statistics::LevelStatisticsPacked { 
             

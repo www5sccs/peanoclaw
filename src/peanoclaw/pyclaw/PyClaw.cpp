@@ -97,7 +97,11 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
 
   tarch::timing::Watch pyclawWatch("", "", false);
   pyclawWatch.startTimer();
+
   double dtAndEstimatedNextDt[2];
+  dtAndEstimatedNextDt[0] = 0.0;
+  dtAndEstimatedNextDt[1] = 0.0;
+
   double requiredMeshWidth
     = _solverCallback(
       dtAndEstimatedNextDt,

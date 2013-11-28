@@ -56,6 +56,11 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertPer
   //Copy adjacency information from destroyed vertex to hanging vertex description
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(_vertex.getAdjacentCellDescriptionIndex(i) != -1) {
+
+      //TODO unterweg dissertation: Wenn ein echter Vertex zu einem hängenden wird müssen alle
+      //adjazenten remote-Subgrids aus der Adjazenzinformation gestrichen werden. Ansonsten kann
+      //es sein, dass der Vertex ein schon lange gecoarstes Subgrid als Nachbarn hält, das damit
+      //das Timestepping blockiert.
       Patch subgrid(_vertex.getAdjacentCellDescriptionIndex(i));
       if(!subgrid.isRemote()) {
         vertexDescription.setIndicesOfAdjacentCellDescriptions(i, _vertex.getAdjacentCellDescriptionIndex(i));

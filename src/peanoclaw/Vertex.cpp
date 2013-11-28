@@ -15,6 +15,9 @@ peanoclaw::Vertex::Vertex():
   //_vertexData.setWasCreatedInThisIteration(true);
   _vertexData.setAgeInGridIterations(0);
   _vertexData.setShouldRefine(false);
+  #ifdef Parallel
+  _vertexData.setAdjacentRanksChanged(false);
+  #endif
 }
 
 

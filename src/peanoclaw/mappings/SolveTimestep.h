@@ -64,6 +64,12 @@ class peanoclaw::mappings::SolveTimestep {
 
     /**
      * Determines whether the given patch should be advanced in time.
+     *
+     * TODO unterweg debug
+     * Here we may not block timestepping if a coarse vertex has
+     * an Erase_Triggered but only if it is Erasing. In serial both
+     * works but in parallel a triggered erase may be postboned due
+     * to the parallel grid topology.
      */
     bool shouldAdvanceInTime(
       const peanoclaw::Patch&                  patch,

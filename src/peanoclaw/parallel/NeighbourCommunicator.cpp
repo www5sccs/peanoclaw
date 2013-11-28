@@ -234,6 +234,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
     #endif
 
     assertionEquals(CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).at(0).getCellDescriptionIndex(), localSubgrid.getCellDescriptionIndex());
+    assertion1(!tarch::la::smaller(remotePatch.getTimestepSize(), 0.0) || !remotePatch.isLeaf(), remotePatch);
   } else {
     //Padding patch received -> receive padding data
     DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
@@ -352,6 +353,8 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
             //der Feingitter, den ich hier nicht erkenne?
             //TODO unterweg debug
             || !localSubgrid.isLeaf()
+            //TODO unterweg debug
+            || localSubgrid.getLevel() <= 3
             || !_onlySendSubgridsAfterChange) {
 
           if(

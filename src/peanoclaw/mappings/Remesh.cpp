@@ -187,6 +187,14 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
     _domainSize
   );
 
+  //TODO unterweg debug
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    if(fineGridVertex.getAdjacentCellDescriptionIndex(i) != -1) {
+      Patch subgrid(fineGridVertex.getAdjacentCellDescriptionIndex(i));
+      assertion1(!subgrid.isRemote() || subgrid.getLevel() <= coarseGridVerticesEnumerator.getLevel(), subgrid);
+    }
+  }
+
   logTraceOutWith1Argument( "destroyHangingVertex(...)", fineGridVertex );
 }
 
@@ -387,7 +395,8 @@ void peanoclaw::mappings::Remesh::destroyCell(
   logTraceInWith4Arguments( "destroyCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
   //TODO unterweg debug
-//  std::cout << "Destroy cell at " << fineGridVerticesEnumerator.getVertexPosition() << " on level " << fineGridVerticesEnumerator.getLevel() << " on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
+//  std::cout << "Destroy cell at " << fineGridVerticesEnumerator.getVertexPosition() << " on level " << fineGridVerticesEnumerator.getLevel() << " on rank " << tarch::parallel::Node::getInstance().getRank()
+//      << " copying: " << fineGridCell.isAssignedToRemoteRank() << std::endl;
 
   assertion5(
     fineGridCell.getCellDescriptionIndex() != -2,
@@ -484,6 +493,15 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
     fineGridH,
     level
   );
+
+  #ifdef Asserts
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    if(vertex.getAdjacentCellDescriptionIndex(i) != -1) {
+      Patch subgrid(vertex.getAdjacentCellDescriptionIndex(i));
+      assertion1(!tarch::la::smaller(subgrid.getTimestepSize(), 0.0) || !subgrid.isLeaf(), subgrid);
+    }
+  }
+  #endif
 
   logTraceOut( "mergeWithNeighbour(...)" );
 }

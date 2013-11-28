@@ -224,6 +224,7 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setRestrictionLowerBounds(std::numeric_limits<double>::max());
   cellDescription.setRestrictionUpperBounds(-std::numeric_limits<double>::max());
   cellDescription.setSynchronizeFineGrids(false);
+  cellDescription.setWillCoarsen(false);
   
   //Parallel
 #ifdef Parallel

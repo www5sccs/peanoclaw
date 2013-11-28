@@ -69,40 +69,40 @@ bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
 ) {
   //Does Patch coarsen?
   bool patchCoarsening = (peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                          (
-                            coarseGridVertices,
-                            coarseGridVerticesEnumerator,
-                            peanoclaw::records::Vertex::Erasing
-                          )
-                          ||
-                          peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                                                    (
-                                                      coarseGridVertices,
-                                                      coarseGridVerticesEnumerator,
-                                                      peanoclaw::records::Vertex::EraseTriggered
-                                                    )
-                          )
-                          &&
-                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                          (
-                            coarseGridVertices,
-                            coarseGridVerticesEnumerator,
-                            peanoclaw::records::Vertex::Refined
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Erasing
+                            )
+//                          ||
+//                          peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+//                            (
+//                              coarseGridVertices,
+//                              coarseGridVerticesEnumerator,
+//                              peanoclaw::records::Vertex::EraseTriggered
+//                            )
                           )
                           &&
                           !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                          (
-                            coarseGridVertices,
-                            coarseGridVerticesEnumerator,
-                            peanoclaw::records::Vertex::Refining
-                          )
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Refined
+                            )
                           &&
                           !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                          (
-                            coarseGridVertices,
-                            coarseGridVerticesEnumerator,
-                            peanoclaw::records::Vertex::RefinementTriggered
-                          );
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Refining
+                            )
+                          &&
+                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::RefinementTriggered
+                            );
 
   //Are all adjacent vertices set correctly?
   bool allAdjacentVerticesValid = true;
@@ -121,6 +121,11 @@ bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
   } else if (patchCoarsening) {
     _subgridStatistics.addBlockedPatchDueToCoarsening(patch);
   }
+
+  //TODO unterweg debug
+  logInfo("", "globalTimestep: " << tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)
+              << ", allowed: " << patch.isAllowedToAdvanceInTime() << ", skip: " << patch.shouldSkipNextGridIteration()
+              << ", coarsening: " << patchCoarsening << ", allAdjacentVerticesValid: " << allAdjacentVerticesValid);
 
   return
     tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)
@@ -658,10 +663,24 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
             i++) {
           i->plotDataIfContainedInPatch(patch);
         }
+
+        //TODO unterweg debug
+        logInfo("enterCell", "Processing subgrid(0): " << patch);
+
         logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
       } else {
         logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getCurrentTime() << ", " << (patch.getCurrentTime() + patch.getTimestepSize()) << "]");
         patch.reduceGridIterationsToBeSkipped();
+
+        //TODO unterweg debug
+        logInfo("enterCell", "Processing subgrid(1): " << patch
+            << ", coarsening: " << peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+            (
+              coarseGridVertices,
+              coarseGridVerticesEnumerator,
+              peanoclaw::records::Vertex::Erasing
+            )
+        << ", global: " << tarch::la::greaterEquals(patch.getCurrentTime() + patch.getTimestepSize(), _globalTimestepEndTime));
 
         //Statistics
         _subgridStatistics.processSubgrid(
@@ -717,6 +736,9 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
     }
 
     patch.increaseAgeByOneGridIteration();
+
+    //TODO unterweg debug
+    assertion1(!tarch::la::smaller(patch.getTimestepSize(), 0.0) || !patch.isLeaf(), patch);
   }
 }
 

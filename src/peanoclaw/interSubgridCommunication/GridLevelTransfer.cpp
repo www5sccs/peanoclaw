@@ -213,6 +213,8 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSub
   if(isPeanoCellLeaf) {
     assertion1(tarch::la::greaterEquals(subgrid.getTimestepSize(), 0.0), subgrid);
     subgrid.switchToLeaf();
+    ParallelSubgrid parallelSubgrid(subgrid);
+    parallelSubgrid.markCurrentStateAsSent(false);
   } else {
     if(!isPatchAdjacentToRemoteRank(
       fineGridVertices,
@@ -356,7 +358,10 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
     if(coarsePatch.shouldFineGridsSynchronize()) {
       //Set time constraint of fine grid to time of coarse grid to synch
       //on that time.
-      fineSubgrid.updateMinimalNeighborTimeConstraint(coarsePatch.getCurrentTime(), coarsePatch.getCellDescriptionIndex());
+      fineSubgrid.updateMinimalNeighborTimeConstraint(
+        coarsePatch.getCurrentTime() + coarsePatch.getTimestepSize(),
+        coarsePatch.getCellDescriptionIndex()
+      );
     }
   }
 }

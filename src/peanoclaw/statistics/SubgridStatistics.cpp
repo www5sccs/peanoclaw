@@ -41,6 +41,11 @@ void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
       if(minimalTimePatch.getConstrainingNeighborIndex() != -1) {
         Patch constrainingPatch(CellDescriptionHeap::getInstance().getData(minimalTimePatch.getConstrainingNeighborIndex()).at(0));
         logInfo("logStatistics()", "\tConstrained by " << constrainingPatch);
+
+        if(constrainingPatch.getConstrainingNeighborIndex() != -1) {
+          Patch constrainingConstrainingPatch(CellDescriptionHeap::getInstance().getData(constrainingPatch.getConstrainingNeighborIndex()).at(0));
+          logInfo("logStatistics()", "\t\tConstrained^2 by " << constrainingConstrainingPatch);
+        }
       }
 
       logInfo("logStatistics()", "Minimal time subgrid blocked due to coarsening: " << _minimalPatchBlockedDueToCoarsening);
@@ -172,10 +177,6 @@ void peanoclaw::statistics::SubgridStatistics::processSubgrid(
 
   //Stopping criterion for global timestep
   if(tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), _globalTimestepEndTime)) {
-
-    //TODO unterweg debug
-    logInfo("", "Blocking global timestep: " << patch);
-
     _allPatchesEvolvedToGlobalTimestep = false;
   }
 

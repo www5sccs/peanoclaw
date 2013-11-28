@@ -9,7 +9,7 @@ class peano::applications::peanoclaw::dastgen::Vertex {
   
   persistent int adjacentRanksInFormerIteration[TWO_POWER_D];
   
-  discard packed bool adjacentRanksChanged; 
+  parallelise persistent packed bool adjacentRanksChanged;
 	
 	parallelise persistent packed bool shouldRefine;
 	
