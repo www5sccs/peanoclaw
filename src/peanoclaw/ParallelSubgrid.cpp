@@ -29,6 +29,12 @@ peanoclaw::ParallelSubgrid::ParallelSubgrid(
   _cellDescription = &CellDescriptionHeap::getInstance().getData(cell.getCellDescriptionIndex()).at(0);
 }
 
+peanoclaw::ParallelSubgrid::ParallelSubgrid(
+  Patch& subgrid
+) {
+  _cellDescription = &CellDescriptionHeap::getInstance().getData(subgrid.getCellDescriptionIndex()).at(0);
+}
+
 void peanoclaw::ParallelSubgrid::markCurrentStateAsSent(bool wasSent) {
   #ifdef Parallel
   _cellDescription->setCurrentStateWasSend(wasSent);

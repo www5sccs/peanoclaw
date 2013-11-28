@@ -507,7 +507,8 @@ void peanoclaw::Patch::switchValuesAndTimeIntervalToMinimalFineGridTimeInterval(
 
   _cellDescription->setTime(_cellDescription->getMaximumFineGridTime());
   _cellDescription->setTimestepSize(
-      _cellDescription->getMinimumFineGridTimestep());
+    _cellDescription->getMinimumFineGridTimestep()
+  );
 
   //Interpolate patch values from former [time, time+timestepSize] to new [time, time+timestepSize]
 //  if(isVirtual() || willCoarsen()) {
@@ -934,6 +935,7 @@ std::string peanoclaw::Patch::toString() const {
         << _cellDescription->getMinimumFineGridTimestep()
         << ",estimatedNextTimestepSize="
         << _cellDescription->getEstimatedNextTimestepSize()
+        << ",synchronizeFineGrids=" << _cellDescription->getSynchronizeFineGrids()
         << ",demandedMeshWidth=" << _cellDescription->getDemandedMeshWidth()
         << ",lowerGhostlayerBounds="
         << _cellDescription->getRestrictionLowerBounds()
@@ -1075,6 +1077,8 @@ void peanoclaw::Patch::switchToLeaf() {
   assertion(isVirtual() || isLeaf());
   assertion1(!tarch::la::smaller(_cellDescription->getTimestepSize(), 0.0),
       toString());
+  assertion1(!tarch::la::smaller(_cellDescription->getMinimumFineGridTimestep(), 0.0),
+      toString());
   _cellDescription->setIsVirtual(false);
 
   //TODO unterweg restricting to interval [0, 1]
@@ -1094,17 +1098,20 @@ void peanoclaw::Patch::switchToLeaf() {
   area._size = getSubdivisionFactor();
   switchAreaToMinimalFineGridTimeInterval(area, factorForUOld, factorForUNew);
 
+  assertion1(!tarch::la::smaller(_cellDescription->getTimestepSize(), 0.0),
+      toString());
+
 #ifdef Asserts
   //Check uNew
   dfor(subcellIndex, getSubdivisionFactor()){
-  assertion2(getValueUNew(subcellIndex, 0) >= 0.0,
+    assertion2(getValueUNew(subcellIndex, 0) >= 0.0,
       toString(), subcellIndex);
-}
-//Check uOld
+  }
+  //Check uOld
   dfor(subcellIndex, getSubdivisionFactor() + 2 * getGhostLayerWidth()){
-  assertion2(getValueUOld(subcellIndex - getGhostLayerWidth(), 0) >= 0.0,
+    assertion2(getValueUOld(subcellIndex - getGhostLayerWidth(), 0) >= 0.0,
       toString(), subcellIndex);
-}
+  }
 #endif
 
   assertion(isLeaf());

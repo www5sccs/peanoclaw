@@ -9,6 +9,7 @@
 #define PEANOCLAW_PARALLELSUBGRID_H_
 
 #include "peanoclaw/Cell.h"
+#include "peanoclaw/Patch.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
@@ -42,6 +43,10 @@ class peanoclaw::ParallelSubgrid {
 
   ParallelSubgrid(
     const Cell& cell
+  );
+
+  ParallelSubgrid(
+    Patch& subgrid
   );
 
   /**
