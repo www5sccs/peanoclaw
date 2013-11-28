@@ -494,6 +494,8 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
     level
   );
 
+  vertex.mergeWithNeighbor(neighbour);
+
   #ifdef Asserts
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(vertex.getAdjacentCellDescriptionIndex(i) != -1) {
