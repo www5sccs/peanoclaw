@@ -92,6 +92,8 @@ class peanoclaw::mappings::Remesh {
 
     peanoclaw::State const* _state;
 
+    int _iterationNumber;
+
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 

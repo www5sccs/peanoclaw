@@ -30,6 +30,7 @@
 #include "tarch/parallel/FCFSNodePoolStrategy.h"
 #include "peano/parallel/loadbalancing/Oracle.h"
 #include "peano/parallel/loadbalancing/OracleForOnePhaseWithGreedyPartitioning.h"
+#include "mpibalancing/OracleForOnePhaseControlLoopWrapper.h"
 #endif
 
 #ifdef SharedTBB
@@ -66,7 +67,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment()
   tarch::parallel::NodePool::getInstance().restart();
 
   peano::parallel::loadbalancing::Oracle::getInstance().setOracle(
-    new peano::parallel::loadbalancing::OracleForOnePhaseWithGreedyPartitioning(true)
+    //new peano::parallel::loadbalancing::OracleForOnePhaseWithGreedyPartitioning(true)
+    new mpibalancing::OracleForOnePhaseControlLoopWrapper(true, _controlLoopLoadBalancer)
   );
 
   // have to be the same for all ranks
@@ -87,6 +89,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::iterateInitialiseGrid() {
   } else {
     _repository->switchToInitialiseGrid();
   }
+  updateOracle();
   _repository->iterate();
 }
 
@@ -96,6 +99,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::iteratePlot() {
   } else {
     _repository->switchToPlot();
   }
+  updateOracle();
   _repository->iterate();
 }
 
@@ -107,6 +111,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::iterateSolveTimestep(bool plotS
     } else {
       _repository->switchToSolveTimestepAndPlot();
     }
+    updateOracle();
     _repository->iterate();
     _plotNumber++;
   } else {
@@ -115,16 +120,19 @@ void peanoclaw::runners::PeanoClawLibraryRunner::iterateSolveTimestep(bool plotS
     } else {
       _repository->switchToSolveTimestep();
     }
+    updateOracle();
     _repository->iterate();
   }
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::iterateGatherSolution() {
   if(_validateGrid) {
-    _repository->switchToGatherCurrentSolutionAndValidateGrid(); _repository->iterate();
+    _repository->switchToGatherCurrentSolutionAndValidateGrid();
   } else {
-    _repository->switchToGatherCurrentSolution(); _repository->iterate();
+    _repository->switchToGatherCurrentSolution();
   }
+  updateOracle();
+  _repository->iterate();
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
@@ -331,10 +339,13 @@ int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
         forkMessage.getPositionOfFineGridCellRelativeToCoarseGridCell()
       );
 
+      _controlLoopLoadBalancer.reset();
+
       bool continueToIterate = true;
       while (continueToIterate) {
         switch (_repository->continueToIterate()) {
           case peanoclaw::repositories::Repository::Continue:
+            updateOracle();
             _repository->iterate();
             break;
           case peanoclaw::repositories::Repository::Terminate:
@@ -387,4 +398,14 @@ void peanoclaw::runners::PeanoClawLibraryRunner::runNextPossibleTimestep() {
     logInfo("evolveToTime", "Minimal timestep for this grid iteration: " << _repository->getState().getMinimalTimestep());
 
     assertion(_repository->getState().getMinimalTimestep() < std::numeric_limits<double>::infinity());
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::updateOracle() {
+    #ifdef Parallel
+    _controlLoopLoadBalancer.getGridStateHistory().getCurrentItem().setTraversalInverted(_repository->getState().isTraversalInverted());
+    _controlLoopLoadBalancer.getGridStateHistory().getCurrentItem().setGridStationary(_repository->getState().isGridStationary());
+    _controlLoopLoadBalancer.getGridStateHistory().getCurrentItem().setGridBalanced(_repository->getState().isGridBalanced());
+    _controlLoopLoadBalancer.getGridStateHistory().getCurrentItem().setCouldNotEraseDueToDecomposition(_repository->getState().getCouldNotEraseDueToDecompositionFlag());
+    _controlLoopLoadBalancer.getGridStateHistory().getCurrentItem().setSubWorkerIsInvolvedInJoinOrFork(_repository->getState().hasSubworkerRebalanced());
+    #endif
 }

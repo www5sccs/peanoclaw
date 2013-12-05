@@ -12,6 +12,7 @@
 #include "tarch/la/Vector.h"
 
 #include "peanoclaw/repositories/Repository.h"
+#include "peanoclaw/parallel/PeanoClawControlLoopLoadBalancer.h"
 
 #include "tarch/logging/Log.h"
 #include "tarch/timing/Watch.h"
@@ -58,6 +59,8 @@ private:
   peanoclaw::Numerics& _numerics;
 
   bool _validateGrid;
+
+  peanoclaw::parallel::PeanoClawControlLoopLoadBalancer _controlLoopLoadBalancer;
 
   /**
    * Initializes geometry and grid.
@@ -115,5 +118,7 @@ public:
 
   void configureGlobalTimestep(double time);
   void runNextPossibleTimestep();
+
+  void updateOracle();
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_RUNNERS_PEANOCLAWLIBRARYRUNNER_H_ */

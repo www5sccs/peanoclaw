@@ -149,9 +149,7 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   assertion(patch.getTimestepSize() < std::numeric_limits<double>::infinity());
 
   //Check for zeros in solution
-  dfor(subcellIndex, patch.getSubdivisionFactor()) {
-    assertion4(tarch::la::greater(patch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
-  }
+  assertion3(!patch.containsNonPositiveNumberInUnknown(0), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
 
   if (tarch::la::greater(dtAndEstimatedNextDt[0], 0.0)) {
     patch.advanceInTime();

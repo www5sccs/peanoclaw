@@ -9,6 +9,7 @@
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/Heap.h"
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/ParallelSubgrid.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
@@ -67,7 +68,8 @@ peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::MasterWorkerAndForkJoi
   const tarch::la::Vector<DIMENSIONS,double> position,
   int level,
   bool forkOrJoin
-) : _remoteRank(remoteRank),
+) : _subgridCommunicator(remoteRank, position, level, forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication),
+    _remoteRank(remoteRank),
     _position(position),
     _level(level),
 //    _cellDescriptionHeap(CellDescriptionHeap::getInstance()),
@@ -149,6 +151,23 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
   assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   #endif
   logTraceOut("receivePatch");
+}
+
+void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDuringForkOrJoin(
+  const Cell& localCell,
+  const tarch::la::Vector<DIMENSIONS, double>& position,
+  const tarch::la::Vector<DIMENSIONS, double>& size,
+  const State state
+) {
+  if(localCell.isInside() && localCell.getRankOfRemoteNode() == _remoteRank) {
+    sendPatch(localCell.getCellDescriptionIndex());
+
+    //Switch to remote after having sent the patch away...
+    Patch patch(localCell);
+    patch.setIsRemote(true);
+    ParallelSubgrid parallelSubgrid(localCell);
+    parallelSubgrid.resetNumberOfTransfersToBeSkipped();
+  }
 }
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringForkOrJoin(

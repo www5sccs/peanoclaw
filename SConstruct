@@ -80,7 +80,9 @@ try:
 except ImportError:
   pass
 p3SourcePath = join(p3Path, 'src')
+toolboxSourcePath = join(p3Path, 'toolboxes')
 cpppath.append(p3SourcePath)
+cpppath.append(toolboxSourcePath)
 
 # Platform specific settings
 environment = Environment()
@@ -339,6 +341,7 @@ print
 
 VariantDir (buildpath, './src', duplicate=0)  # Set build directory for PeanoClaw sources
 VariantDir (join(buildpath, 'kernel'), p3SourcePath, duplicate=0)  # Set build directory for Peano sources
+VariantDir (join(buildpath, 'toolboxes'), toolboxSourcePath, duplicate=0)  # Set build directory for Toolbox sources
 if solver == 'swe':
   
   print "VariantDir(", join(buildpath, 'swe'), ",", swePath, ")"
@@ -550,11 +553,9 @@ sourcesPeanoBase = [
 ]
 
 sourcesToolBox = [
-  Glob(join(buildpath, 'kernel/peano/toolbox/solver/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/toolbox/solver/configurations/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/toolbox/solver/tests/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/toolbox/stencil/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/toolbox/refinement/*.cpp'))
+  Glob(join(buildpath, 'toolboxes/mpibalancing/*.cpp')),
+  Glob(join(buildpath, 'toolboxes/mpibalancing/ControlLoopLoadBalancer/*.cpp')),
+  Glob(join(buildpath, 'toolboxes/mpibalancing/ControlLoopLoadBalancer/strategies/*.cpp'))
 ]
 
 sourcesToolBoxVHH = [
@@ -600,7 +601,8 @@ source = [
    sourcesTComponents,
    sourcesPeanoBase,
    sourcesPeanoClaw,
-   sourcesParallel
+   sourcesParallel,
+   sourcesToolBox
    ]
 
 if solver == 'pyclaw':

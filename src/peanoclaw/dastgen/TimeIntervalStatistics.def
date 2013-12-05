@@ -1,0 +1,26 @@
+Packed-Type: short int;
+
+#include "peano/utils/Globals.h"
+
+Constant: DIMENSIONS;
+Constant: DIMENSIONS_TIMES_TWO;
+
+/**
+ * This class is generated via DaStGen.
+ */
+class peanoclaw::statistics::TimeIntervalStatistics {
+  parallelise persistent int         minimalPatchIndex;
+  parallelise persistent int         minimalPatchParentIndex;
+  parallelise persistent double      minimalPatchTime;
+  parallelise persistent double      startMaximumLocalTimeInterval;
+  parallelise persistent double      endMaximumLocalTimeInterval;
+  parallelise persistent double      startMinimumLocalTimeInterval;
+  parallelise persistent double      endMinimumLocalTimeInterval;
+  parallelise persistent double      minimalTimestep;
+  parallelise persistent packed bool allPatchesEvolvedToGlobalTimestep;
+  parallelise persistent double      averageGlobalTimeInterval;
+  parallelise persistent double      globalTimestepEndTime;
+
+  parallelise persistent packed bool minimalPatchBlockedDueToCoarsening;
+  parallelise persistent packed bool minimalPatchBlockedDueToGlobalTimestep; 
+};

@@ -48,18 +48,6 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   } else {
     _subgridCommunicator.sendPaddingDataArray();
   }
-
-//    if(cellDescription.getUOldIndex() != -1) {
-//      sendDataArray(cellDescription.getUOldIndex());
-//    } else {
-//      sendPaddingDataArray();
-//    }
-//
-//    if(cellDescription.getAuxIndex() != -1) {
-//      sendDataArray(cellDescription.getAuxIndex());
-//    } else {
-//      sendPaddingDataArray();
-//    }
   #endif
   logTraceOut("sendPatch");
 }
@@ -88,11 +76,9 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
   #ifdef Parallel
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
 
-  //CellDescription localCellDescription = CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0);
-
   std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
-  logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
+  logDebug("", "Receiving patch from " << _remoteRank << " at " << localSubgrid.getPosition() << " on level " << localSubgrid.getLevel());
 
   if(!_onlySendSubgridsAfterChange || remoteCellDescriptionVector.size() > 0) {
     assertionEquals3(remoteCellDescriptionVector.size(), 1, _position, _level, localSubgrid);
@@ -111,16 +97,6 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
 
     _statistics.receivedNeighborData();
     //Load arrays and stores according indices in cell description
-  //    if(remoteCellDescription.getAuxIndex() != -1) {
-  //      remoteCellDescription.setAuxIndex(receiveDataArray());
-  //    } else {
-  //      receiveDataArray();
-  //    }
-  //    if(remoteCellDescription.getUOldIndex() != -1) {
-  //      remoteCellDescription.setUOldIndex(receiveDataArray());
-  //    } else {
-  //      receiveDataArray();
-  //    }
     if(remoteCellDescription.getUNewIndex() != -1) {
       remoteCellDescription.setUNewIndex(_subgridCommunicator.receiveDataArray());
     } else {
@@ -246,7 +222,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
   #ifdef Parallel
 
   //TODO unterweg debug
-  logDebug("sendSubgridsForVertex", "Sending subgrids to rank " << _remoteRank
+  logInfo("sendSubgridsForVertex", "Sending subgrids to rank " << _remoteRank
       << " for vertex " << vertexPosition << " on level " << level << " adj:" << vertex.getAdjacentRanks());
 
   if(!tarch::parallel::Node::getInstance().isGlobalMaster() && _remoteRank != 0) {
@@ -284,7 +260,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
               vertex.getAdjacentRanks()
             );
 
-            logDebug("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << localSubgrid << " for vertex " << _position);
+            logInfo("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << localSubgrid << " for vertex " << _position);
 
             sendPatch(localSubgrid);
 
@@ -298,7 +274,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
       }
 
       if(!sentSubgrid) {
-        logDebug("sendSubgridsForVertex", "Sending padding subgrid to rank " << _remoteRank
+        logInfo("sendSubgridsForVertex", "Sending padding subgrid to rank " << _remoteRank
             << " at " << (_position + _subgridSize * (peano::utils::dDelinearised(i, 2).convertScalar<double>()*2.0-1.0)) << " on level " << _level);
 
         sendPaddingPatch(_position, _level, _subgridSize);
@@ -318,7 +294,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
   #ifdef Parallel
 
   //TODO unterweg debug
-  logDebug("receiveSubgridsForVertex", "Receiving subgrids from rank " << _remoteRank
+  logInfo("receiveSubgridsForVertex", "Receiving subgrids from rank " << _remoteRank
       << " for vertex " << vertexPosition << " on level " << level << " adj(local):" << localVertex.getAdjacentRanks() << " adj(remote):" << remoteVertex.getAdjacentRanks());
 
   if(!tarch::parallel::Node::getInstance().isGlobalMaster() && _remoteRank != 0) {
@@ -346,7 +322,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
             receivedSubgrid = true;
 
             localSubgrid.reloadCellDescription();
-            logDebug("receiveSubgridsForVertex", "Received subgrid from rank " << _remoteRank << ": " << localSubgrid
+            logInfo("receiveSubgridsForVertex", "Received subgrid from rank " << _remoteRank << ": " << localSubgrid
                 << " for vertex " << _position);
           } else {
 
@@ -359,12 +335,11 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
           }
       }
 
-
       if(!receivedSubgrid) {
         //Receive dummy message
         receivePaddingPatch();
 
-        logDebug("receiveSubgridsForVertex", "Received padding subgrid from rank " << _remoteRank
+        logInfo("receiveSubgridsForVertex", "Received padding subgrid from rank " << _remoteRank
             << " at "  << (_position + _subgridSize * (peano::utils::dDelinearised(i, 2).convertScalar<double>()*2.0-1.0)) << " on level " << _level);
       }
     }

@@ -84,20 +84,6 @@ class peanoclaw::parallel::NeighbourCommunicator {
     const bool                                       _onlySendSubgridsAfterChange;
 
     /**
-     * Receives all necessary information for a patch defined
-     * by its cell description index.
-     *
-     * @param localCellDescriptionIndex The current cell description
-     * index for the local patch.
-     *
-     */
-    void receivePatch(
-      Patch& localSubgrid
-    );
-
-    void receivePaddingPatch();
-
-    /**
      * Creates a remote subgrid before merging a received subgrid
      * from a neighboring rank.
      */
@@ -114,6 +100,23 @@ class peanoclaw::parallel::NeighbourCommunicator {
       const tarch::la::Vector<DIMENSIONS, double> subgridPosition,
       int                                         level
     ) const;
+
+    /**
+     * Receives all necessary information for a subgrid defined
+     * by its cell description index.
+     *
+     * @param localCellDescriptionIndex The current cell description
+     * index for the local patch.
+     *
+     */
+    void receivePatch(
+      Patch& localSubgrid
+    );
+
+    /**
+     * Receives a padding subgrid and discards it.
+     */
+    void receivePaddingPatch();
 
   public:
     NeighbourCommunicator(
@@ -138,6 +141,7 @@ class peanoclaw::parallel::NeighbourCommunicator {
       int                                          level = 0,
       const tarch::la::Vector<DIMENSIONS, double>& subgridSize = 0
     );
+
 
     /**
      * Send all required adjacent subgrids for a vertex.

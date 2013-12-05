@@ -74,7 +74,8 @@ peanoclaw::mappings::Remesh::Remesh()
   _isInitializing(false),
   _useDimensionalSplittingOptimization(false),
   _parallelStatistics(""),
-  _state() {
+  _state(),
+  _iterationNumber(0) {
   logTraceIn( "Remesh()" );
   // @todo Insert your code here
   logTraceOut( "Remesh()" );
@@ -545,27 +546,26 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
 ) {
   logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
 
-  if(localCell.isInside() && localCell.getRankOfRemoteNode() == toRank) {
-   assertion7(
-     localCell.getCellDescriptionIndex() >= 0,
-     localCell.getCellDescriptionIndex(),
-     cellCentre - cellSize / 2.0,
-     cellSize,
-     level,
-     localCell.isInside(),
-     localCell.getRankOfRemoteNode(),
-     localCell.isAssignedToRemoteRank()
-   );
+  logInfo("prepareCopyToRemoteNode", "Copying data from rank " << tarch::parallel::Node::getInstance().getRank() << " to " << toRank
+      << " position:" << (cellCentre - cellSize / 2.0) << ", level:" << level
+      << ", isInside:" << localCell.isInside()
+      << ", assignedToRemoteRank:" << localCell.isAssignedToRemoteRank()
+      << ", assignedRank:" << localCell.getRankOfRemoteNode()
+      << ", isRemote:" << localCell.isRemote(*_state, false, false)
+      << ", sending:" << (localCell.isInside() && localCell.getRankOfRemoteNode() == toRank && !localCell.isRemote(*_state, false, false))
+      << ", index:" << localCell.getCellDescriptionIndex()
+      << ", valid: " << CellDescriptionHeap::getInstance().isValidIndex(localCell.getCellDescriptionIndex())
+      << ", iteration:" << _iterationNumber
+  );
 
-    peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, cellCentre, level, true);
-    communicator.sendPatch(localCell.getCellDescriptionIndex());
+  peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, cellCentre, level, true);
+  communicator.sendCellDuringForkOrJoin(
+    localCell,
+    (cellCentre - cellSize*0.5),
+    cellSize,
+    *_state
+  );
 
-    //Switch to remote after having sent the patch away...
-    Patch patch(localCell);
-    patch.setIsRemote(true);
-    ParallelSubgrid parallelSubgrid(localCell);
-    parallelSubgrid.resetNumberOfTransfersToBeSkipped();
-  }
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
 
@@ -591,6 +591,19 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
   int                                       level
 ) {
   logTraceInWith6Arguments( "mergeWithRemoteDataDueToForkOrJoin(...)", localCell, masterOrWorkerCell, fromRank, cellCentre, cellSize, level );
+
+  logInfo("mergeWithRemoteDataDueToForkOrJoin", "Merging data from rank " << fromRank << " on " << tarch::parallel::Node::getInstance().getRank()
+      << " position:" << (cellCentre - cellSize / 2.0) << ", level:" << level
+      << ", isInside(local):" << localCell.isInside()
+      << ", isInside(remote):" << masterOrWorkerCell.isInside()
+      << ", assignedToRemoteRank(local):" << localCell.isAssignedToRemoteRank()
+      << ", assignedToRemoteRank(remote):" << masterOrWorkerCell.isAssignedToRemoteRank()
+      << ", assignedRank(local):" << localCell.getRankOfRemoteNode()
+      << ", assignedRank(remote):" << masterOrWorkerCell.getRankOfRemoteNode()
+      << ", isRemote(local):" << localCell.isRemote(*_state, false, false)
+      << ", isRemote(remote):" << masterOrWorkerCell.isRemote(*_state, false, false)
+      << ", iteration:" << _iterationNumber
+  );
 
   assertion3(localCell.isAssignedToRemoteRank() || localCell.getCellDescriptionIndex() != -2, localCell.toString(), cellCentre, cellSize);
 
@@ -875,6 +888,15 @@ void peanoclaw::mappings::Remesh::enterCell(
 ) {
   logTraceInWith5Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, coarseGridVerticesEnumerator.toString(), fineGridPositionOfCell );
 
+  assertion6(CellDescriptionHeap::getInstance().isValidIndex(fineGridCell.getCellDescriptionIndex()),
+    fineGridCell.getCellDescriptionIndex(),
+    fineGridVerticesEnumerator.getVertexPosition(0),
+    fineGridVerticesEnumerator.getCellSize(),
+    fineGridVerticesEnumerator.getLevel(),
+    fineGridCell.toString(),
+    _iterationNumber
+  );
+
   Patch patch(
     fineGridCell
   );
@@ -965,6 +987,23 @@ void peanoclaw::mappings::Remesh::beginIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
+
+  //TODO unterweg debug
+  if(solverState.isJoinWithMasterTriggered()) {
+    logInfo("beginIteration", "Join triggered: "
+        << tarch::parallel::Node::getInstance().getRank() << "+" << tarch::parallel::NodePool::getInstance().getMasterRank()
+        << "->" << tarch::parallel::NodePool::getInstance().getMasterRank());
+  }
+  if(solverState.isJoinWithMasterTriggered()) {
+    logInfo("beginIteration", "Joining: "
+        << tarch::parallel::Node::getInstance().getRank() << "+" << tarch::parallel::NodePool::getInstance().getMasterRank()
+        << "->" << tarch::parallel::NodePool::getInstance().getMasterRank());
+  }
+
+  _iterationNumber++;
+
+  //TODO unterweg debug
+  logInfo("beginIteration", "Beginning Iteration " << _iterationNumber);
 
   _unknownsPerSubcell       = solverState.getUnknownsPerSubcell();
   _auxiliarFieldsPerSubcell = solverState.getAuxiliarFieldsPerSubcell();

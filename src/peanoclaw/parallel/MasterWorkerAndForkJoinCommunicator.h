@@ -8,6 +8,8 @@
 #ifndef PEANOCLAW_PARALLEL_MASTERWORKERANDFORKJOINCOMMUNICATOR_H_
 #define PEANOCLAW_PARALLEL_MASTERWORKERANDFORKJOINCOMMUNICATOR_H_
 
+#include "peanoclaw/parallel/SubgridCommunicator.h"
+
 #include "peanoclaw/State.h"
 #include "peano/heap/Heap.h"
 #include "peano/utils/Dimensions.h"
@@ -42,6 +44,8 @@ class peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator {
      * Logging device.
      */
     static tarch::logging::Log _log;
+
+    SubgridCommunicator _subgridCommunicator;
 
     int _remoteRank;
 
@@ -93,6 +97,13 @@ class peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator {
      */
     void receivePatch(
       int localCellDescriptionIndex
+    );
+
+    void sendCellDuringForkOrJoin(
+        const Cell& localCell,
+        const tarch::la::Vector<DIMENSIONS, double>& position,
+        const tarch::la::Vector<DIMENSIONS, double>& size,
+        const State state
     );
 
     /**
