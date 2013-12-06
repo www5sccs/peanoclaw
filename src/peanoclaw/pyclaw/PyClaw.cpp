@@ -90,7 +90,7 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
 
   tarch::multicore::Lock lock(_semaphore);
 
-  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "max. Timestepsize == 0 should be checked outside.", patch.getMinimalNeighborTimeConstraint());
+  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "max. Timestepsize == 0 should be checked outside.", patch.getTimeIntervals().getMinimalNeighborTimeConstraint());
   assertion3(!patch.containsNaN(), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
 
   PyClawState state(patch);
@@ -131,9 +131,9 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
       #else
       0,
       #endif
-      patch.getCurrentTime() + patch.getTimestepSize(),
+      patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(),
       maximumTimestepSize,
-      patch.getEstimatedNextTimestepSize(),
+      patch.getTimeIntervals().getEstimatedNextTimestepSize(),
       useDimensionalSplitting
     );
 
@@ -141,21 +141,20 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   _totalSolverCallbackTime += pyclawWatch.getCalendarTime();
 
   assertion4(
-      tarch::la::greater(patch.getTimestepSize(), 0.0)
+      tarch::la::greater(patch.getTimeIntervals().getTimestepSize(), 0.0)
       || tarch::la::greater(dtAndEstimatedNextDt[1], 0.0)
       || tarch::la::equals(maximumTimestepSize, 0.0)
-      || tarch::la::equals(patch.getEstimatedNextTimestepSize(), 0.0),
+      || tarch::la::equals(patch.getTimeIntervals().getEstimatedNextTimestepSize(), 0.0),
       patch, maximumTimestepSize, dtAndEstimatedNextDt[1], patch.toStringUNew());
-  assertion(patch.getTimestepSize() < std::numeric_limits<double>::infinity());
+  assertion(patch.getTimeIntervals().getTimestepSize() < std::numeric_limits<double>::infinity());
 
   //Check for zeros in solution
   assertion3(!patch.containsNonPositiveNumberInUnknown(0), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
 
   if (tarch::la::greater(dtAndEstimatedNextDt[0], 0.0)) {
-    patch.advanceInTime();
-    patch.setTimestepSize(dtAndEstimatedNextDt[0]);
+    patch.getTimeIntervals().advanceInTime();
+    patch.getTimeIntervals().setTimestepSize(dtAndEstimatedNextDt[0]);
   }
-  patch.setEstimatedNextTimestepSize(dtAndEstimatedNextDt[1]);
 
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
   return requiredMeshWidth;
@@ -186,7 +185,7 @@ void peanoclaw::pyclaw::PyClaw::addPatchToSolution(Patch& patch) {
     #else
     0,
     #endif
-    patch.getCurrentTime()+patch.getTimestepSize()
+    patch.getTimeIntervals().getCurrentTime()+patch.getTimeIntervals().getTimestepSize()
   );
 }
 

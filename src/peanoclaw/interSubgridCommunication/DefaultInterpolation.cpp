@@ -32,13 +32,13 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
 
   //Factor for interpolation in time
   double timeFactor;
-  if(tarch::la::equals(source.getTimestepSize(), 0.0)) {
+  if(tarch::la::equals(source.getTimeIntervals().getTimestepSize(), 0.0)) {
     timeFactor = 1.0;
   } else {
     if(interpolateToCurrentTime) {
-      timeFactor = (destination.getTimeUOld() - source.getTimeUOld()) / (source.getTimeUNew() - source.getTimeUOld());
+      timeFactor = (destination.getTimeIntervals().getTimeUOld() - source.getTimeIntervals().getTimeUOld()) / (source.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld());
     } else {
-      timeFactor = (destination.getTimeUNew() - source.getTimeUOld()) / (source.getTimeUNew() - source.getTimeUOld());
+      timeFactor = (destination.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld()) / (source.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld());
     }
   }
 
@@ -133,10 +133,10 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
             << " and source position " << source.getSubcellCenter(neighborIndexInSourcePatch)
             << " and source.subcellsize=" << sourceSubcellSize << " and offset=" << offset);
         logDebug("", "\ttimeFactor=" << timeFactor
-            << " due to destination time " << destination.getCurrentTime()
-            << " and destination timestep size " << destination.getTimestepSize()
-            << " and source time " << source.getCurrentTime()
-            << " and source timestep size " << source.getTimestepSize());
+            << " due to destination time " << destination.getTimeIntervals().getCurrentTime()
+            << " and destination timestep size " << destination.getTimeIntervals().getTimestepSize()
+            << " and source time " << source.getTimeIntervals().getCurrentTime()
+            << " and source timestep size " << source.getTimeIntervals().getTimestepSize());
 
         if(interpolateToUOld) {
           logDebug("", "\tAdding UOld value " << sourceUOld << " and UNew value " << sourceUNew

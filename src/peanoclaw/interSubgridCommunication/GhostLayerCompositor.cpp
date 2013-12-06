@@ -32,11 +32,11 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
   double timeFactor;
   if(source.isVirtual()) {
     //TODO unterweg: Restricting to interval [0, 1]
-    //timeFactor = (destination.getTimeUNew() - 0.0) / (1.0 - source.getTimeUOld());
-    timeFactor = (destination.getTimeUNew() - 0.0) / 1.0;
+    //timeFactor = (destination.getTimeIntervals().getTimeUNew() - 0.0) / (1.0 - source.getTimeIntervals().getTimeUOld());
+    timeFactor = (destination.getTimeIntervals().getTimeUNew() - 0.0) / 1.0;
   } else {
-    if(tarch::la::greater(source.getTimeUNew() - source.getTimeUOld(), 0.0)) {
-      timeFactor = (destination.getTimeUNew() - source.getTimeUOld()) / (source.getTimeUNew() - source.getTimeUOld());
+    if(tarch::la::greater(source.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld(), 0.0)) {
+      timeFactor = (destination.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld()) / (source.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld());
     } else {
       timeFactor = 1.0;
     }
@@ -84,8 +84,8 @@ bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferG
   bool sourceHoldsGridData = (source.isVirtual() || source.isLeaf());
   return destination.isLeaf()
             && (( sourceHoldsGridData
-                && !tarch::la::greater(destination.getCurrentTime() + destination.getTimestepSize(), source.getCurrentTime() + source.getTimestepSize()))
-            || (source.isLeaf() && destination.isAllowedToAdvanceInTime()));
+                && !tarch::la::greater(destination.getTimeIntervals().getCurrentTime() + destination.getTimeIntervals().getTimestepSize(), source.getTimeIntervals().getCurrentTime() + source.getTimeIntervals().getTimestepSize()))
+            || (source.isLeaf() && destination.getTimeIntervals().isAllowedToAdvanceInTime()));
 }
 
 peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor(
@@ -186,17 +186,17 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateUpperGhos
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborTime(int updatedPatchIndex, int neighborPatchIndex) {
   if(_patches[updatedPatchIndex].isValid() && _patches[neighborPatchIndex].isValid()) {
-    _patches[updatedPatchIndex].updateMinimalNeighborTimeConstraint(
-      _patches[neighborPatchIndex].getTimeConstraint(),
+    _patches[updatedPatchIndex].getTimeIntervals().updateMinimalNeighborTimeConstraint(
+      _patches[neighborPatchIndex].getTimeIntervals().getTimeConstraint(),
       _patches[neighborPatchIndex].getCellDescriptionIndex()
     );
-    _patches[updatedPatchIndex].updateMaximalNeighborTimeInterval(
-      _patches[neighborPatchIndex].getCurrentTime(),
-      _patches[neighborPatchIndex].getTimestepSize()
+    _patches[updatedPatchIndex].getTimeIntervals().updateMaximalNeighborTimeInterval(
+      _patches[neighborPatchIndex].getTimeIntervals().getCurrentTime(),
+      _patches[neighborPatchIndex].getTimeIntervals().getTimestepSize()
     );
 
     if(_patches[neighborPatchIndex].isLeaf()) {
-      _patches[updatedPatchIndex].updateMinimalLeafNeighborTimeConstraint(_patches[neighborPatchIndex].getTimeConstraint());
+      _patches[updatedPatchIndex].getTimeIntervals().updateMinimalLeafNeighborTimeConstraint(_patches[neighborPatchIndex].getTimeIntervals().getTimeConstraint());
     }
   }
 }

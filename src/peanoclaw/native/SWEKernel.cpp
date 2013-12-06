@@ -65,12 +65,12 @@ double peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumT
   _totalSolverCallbackTime += pyclawWatch.getCalendarTime();
 
   assertion4(
-      tarch::la::greater(patch.getTimestepSize(), 0.0)
+      tarch::la::greater(patch.getTimeIntervals().getTimestepSize(), 0.0)
       || tarch::la::greater(estimatedNextTimestepSize, 0.0)
       || tarch::la::equals(maximumTimestepSize, 0.0)
       || tarch::la::equals(patch.getEstimatedNextTimestepSize(), 0.0),
       patch, maximumTimestepSize, estimatedNextTimestepSize, patch.toStringUNew());
-  assertion(patch.getTimestepSize() < std::numeric_limits<double>::infinity());
+  assertion(patch.getTimeIntervals().getTimestepSize() < std::numeric_limits<double>::infinity());
 
   if (tarch::la::greater(dt, 0.0)) {
     patch.advanceInTime();

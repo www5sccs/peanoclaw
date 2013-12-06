@@ -171,43 +171,43 @@ void peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
   }
 
   //Prepare fine patches
-  finePatches[0].setCurrentTime(1.0);
-  finePatches[0].setTimestepSize(2.0);
+  finePatches[0].getTimeIntervals().setCurrentTime(1.0);
+  finePatches[0].getTimeIntervals().setTimestepSize(2.0);
 
-  finePatches[1].setCurrentTime(1.0);
-  finePatches[1].setTimestepSize(2.0);
+  finePatches[1].getTimeIntervals().setCurrentTime(1.0);
+  finePatches[1].getTimeIntervals().setTimestepSize(2.0);
 
-  finePatches[2].setCurrentTime(1.0);
-  finePatches[2].setTimestepSize(3.0);
+  finePatches[2].getTimeIntervals().setCurrentTime(1.0);
+  finePatches[2].getTimeIntervals().setTimestepSize(3.0);
 
-  finePatches[3].setCurrentTime(0.0);
-  finePatches[3].setTimestepSize(3.0);
+  finePatches[3].getTimeIntervals().setCurrentTime(0.0);
+  finePatches[3].getTimeIntervals().setTimestepSize(3.0);
 
-  finePatches[4].setCurrentTime(1.0);
-  finePatches[4].setTimestepSize(1.7);
+  finePatches[4].getTimeIntervals().setCurrentTime(1.0);
+  finePatches[4].getTimeIntervals().setTimestepSize(1.7);
 
-  finePatches[5].setCurrentTime(0.0);
-  finePatches[5].setTimestepSize(4.0);
+  finePatches[5].getTimeIntervals().setCurrentTime(0.0);
+  finePatches[5].getTimeIntervals().setTimestepSize(4.0);
 
-  finePatches[6].setCurrentTime(0.0);
-  finePatches[6].setTimestepSize(3.0);
+  finePatches[6].getTimeIntervals().setCurrentTime(0.0);
+  finePatches[6].getTimeIntervals().setTimestepSize(3.0);
 
-  finePatches[7].setCurrentTime(1.0);
-  finePatches[7].setTimestepSize(2.0);
+  finePatches[7].getTimeIntervals().setCurrentTime(1.0);
+  finePatches[7].getTimeIntervals().setTimestepSize(2.0);
 
-  finePatches[8].setCurrentTime(2.5);
-  finePatches[8].setTimestepSize(1.5);
+  finePatches[8].getTimeIntervals().setCurrentTime(2.5);
+  finePatches[8].getTimeIntervals().setTimestepSize(1.5);
 
   //execute methods
-  coarsePatch.resetMinimalFineGridTimeInterval();
+  coarsePatch.getTimeIntervals().resetMinimalFineGridTimeInterval();
   for(int i = 0; i < THREE_POWER_D; i++) {
-    coarsePatch.updateMinimalFineGridTimeInterval(finePatches[i].getCurrentTime(), finePatches[i].getTimestepSize());
+    coarsePatch.getTimeIntervals().updateMinimalFineGridTimeInterval(finePatches[i].getTimeIntervals().getCurrentTime(), finePatches[i].getTimeIntervals().getTimestepSize());
   }
   coarsePatch.switchValuesAndTimeIntervalToMinimalFineGridTimeInterval();
 
   //Check
-  validateNumericalEquals(coarsePatch.getCurrentTime(), 2.5);
-  validateNumericalEquals(coarsePatch.getTimestepSize(), 0.2);
+  validateNumericalEquals(coarsePatch.getTimeIntervals().getCurrentTime(), 2.5);
+  validateNumericalEquals(coarsePatch.getTimeIntervals().getTimestepSize(), 0.2);
 }
 
 void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {

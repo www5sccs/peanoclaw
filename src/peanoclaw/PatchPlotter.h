@@ -89,6 +89,13 @@ private:
    */
   tarch::plotter::griddata::Writer::CellDataWriter*                                             _cellAgeWriter;
 
+  #ifdef Parallel
+  /**
+   * Writes the current MPI rank of the cell.
+   */
+  tarch::plotter::griddata::Writer::CellDataWriter*                                             _cellRankWriter;
+  #endif
+
   double _gap;
 
 public:

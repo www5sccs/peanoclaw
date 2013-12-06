@@ -28,6 +28,8 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::operator()
     (_destinationPatchIndex == -1 || _destinationPatchIndex == destinationIndex)
     && _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination)
   ) {
+    assertion1(source.isLeaf() || source.isVirtual(), source);
+
     int dimension = -1;
     int offset = 0;
     for(int d = 0; d < DIMENSIONS; d++) {
@@ -203,17 +205,19 @@ void peanoclaw::interSubgridCommunication::UpdateNeighborTimeFunctor::operator()
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
   if(updatedPatch.isValid() && neighborPatch.isValid()) {
-    updatedPatch.updateMinimalNeighborTimeConstraint(
-      neighborPatch.getTimeConstraint(),
+    updatedPatch.getTimeIntervals().updateMinimalNeighborTimeConstraint(
+      neighborPatch.getTimeIntervals().getTimeConstraint(),
       neighborPatch.getCellDescriptionIndex()
     );
-    updatedPatch.updateMaximalNeighborTimeInterval(
-      neighborPatch.getCurrentTime(),
-      neighborPatch.getTimestepSize()
+    updatedPatch.getTimeIntervals().updateMaximalNeighborTimeInterval(
+      neighborPatch.getTimeIntervals().getCurrentTime(),
+      neighborPatch.getTimeIntervals().getTimestepSize()
     );
 
     if(neighborPatch.isLeaf()) {
-      updatedPatch.updateMinimalLeafNeighborTimeConstraint(neighborPatch.getTimeConstraint());
+      updatedPatch.getTimeIntervals().updateMinimalLeafNeighborTimeConstraint(
+        neighborPatch.getTimeIntervals().getTimeConstraint()
+      );
     }
   }
 }

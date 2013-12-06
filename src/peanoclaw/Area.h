@@ -9,7 +9,7 @@
 #define PENAO_APPLICATIONS_PEANOCLAW_AREA_H_
 
 #include "tarch/la/Vector.h"
-#include "peano/utils/Dimensions.h"
+#include "peano/utils/Globals.h"
 
 namespace peanoclaw {
   /**
@@ -59,6 +59,22 @@ class peanoclaw::Area {
       const tarch::la::Vector<DIMENSIONS, double>& coarseSubcellPosition,
       const double& epsilon = 1e-12
     ) const;
+
+    /**
+     * Creates the data for the 2*d areas that are overlapped by ghostlayers of
+     * neighboring subgrids.
+     * Returns the number of areas that are required to represent the overlapped
+     * parts of the subgrid.
+     */
+    static int getAreasOverlappedByNeighboringGhostlayers(
+      const tarch::la::Vector<DIMENSIONS, double>& lowerNeighboringGhostlayerBounds,
+      const tarch::la::Vector<DIMENSIONS, double>& upperNeighboringGhostlayerBounds,
+      const tarch::la::Vector<DIMENSIONS, double>& sourcePosition,
+      const tarch::la::Vector<DIMENSIONS, double>& sourceSize,
+      const tarch::la::Vector<DIMENSIONS, double>& sourceSubcellSize,
+      const tarch::la::Vector<DIMENSIONS, int>&    sourceSubdivisionFactor,
+      Area areas[DIMENSIONS_TIMES_TWO]
+    );
 };
 
 std::ostream& operator<<(std::ostream& out, const peanoclaw::Area& area);

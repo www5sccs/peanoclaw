@@ -264,12 +264,12 @@ void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleR
 void peanoclaw::tests::GridLevelTransferTest::testUpdateMinimalNeighborTime() {
   peanoclaw::Patch finePatch;
 
-  finePatch.resetMinimalNeighborTimeConstraint();
-  validate(finePatch.getMinimalNeighborTimeConstraint() > 1e20);
+  finePatch.getTimeIntervals().resetMinimalNeighborTimeConstraint();
+  validate(finePatch.getTimeIntervals().getMinimalNeighborTimeConstraint() > 1e20);
 
-  finePatch.updateMinimalNeighborTimeConstraint(1.0, 1);
+  finePatch.getTimeIntervals().updateMinimalNeighborTimeConstraint(1.0, 1);
 
-  validateEquals(finePatch.getMinimalNeighborTimeConstraint(), 1.0);
+  validateEquals(finePatch.getTimeIntervals().getMinimalNeighborTimeConstraint(), 1.0);
 }
 
 

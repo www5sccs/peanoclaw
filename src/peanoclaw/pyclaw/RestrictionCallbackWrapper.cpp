@@ -49,8 +49,8 @@ void peanoclaw::pyclaw::RestrictionCallbackWrapper::restrict(
     #else
     0.0,
     #endif
-    source.getCurrentTime(),
-    source.getTimestepSize(),
+    source.getTimeIntervals().getCurrentTime(),
+    source.getTimeIntervals().getTimestepSize(),
 
     destinationState._q,
     destinationState._qbc,
@@ -76,8 +76,8 @@ void peanoclaw::pyclaw::RestrictionCallbackWrapper::restrict(
     #else
     0.0,
     #endif
-    destination.getCurrentTime(),
-    destination.getTimestepSize(),
+    destination.getTimeIntervals().getCurrentTime(),
+    destination.getTimeIntervals().getTimestepSize(),
     source.getUnknownsPerSubcell(),
     source.getAuxiliarFieldsPerSubcell()
   );

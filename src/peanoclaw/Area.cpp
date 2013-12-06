@@ -97,6 +97,77 @@ peanoclaw::Area peanoclaw::Area::mapCellToPatch(
   return cellArea;
 }
 
+
+int peanoclaw::Area::getAreasOverlappedByNeighboringGhostlayers (
+  const tarch::la::Vector<DIMENSIONS, double>& lowerNeighboringGhostlayerBounds,
+  const tarch::la::Vector<DIMENSIONS, double>& upperNeighboringGhostlayerBounds,
+  const tarch::la::Vector<DIMENSIONS, double>& sourcePosition,
+  const tarch::la::Vector<DIMENSIONS, double>& sourceSize,
+  const tarch::la::Vector<DIMENSIONS, double>& sourceSubcellSize,
+  const tarch::la::Vector<DIMENSIONS, int>& sourceSubdivisionFactor,
+  Area areas[DIMENSIONS_TIMES_TWO]
+) {
+
+  //Check if bounds overlap
+  if(tarch::la::oneGreater(upperNeighboringGhostlayerBounds + sourceSubcellSize, lowerNeighboringGhostlayerBounds)
+    || tarch::la::oneGreaterEquals(upperNeighboringGhostlayerBounds, sourcePosition + sourceSize)
+    || !tarch::la::allGreater(lowerNeighboringGhostlayerBounds, sourcePosition)) {
+    //If whole patch is overlapped -> One area holds whole patch, others are empty
+    areas[0]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+    areas[0]._size = sourceSubdivisionFactor;
+    areas[1]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+    areas[1]._size = tarch::la::Vector<DIMENSIONS, int>(0);
+    for(int d = 1; d < DIMENSIONS; d++) {
+      areas[2*d]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+      areas[2*d]._size = tarch::la::Vector<DIMENSIONS, int>(0);
+      areas[2*d + 1]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+      areas[2*d + 1]._size = tarch::la::Vector<DIMENSIONS, int>(0);
+    }
+    return 1;
+  } else {
+    double epsilon = 1e-12;
+    tarch::la::Vector<DIMENSIONS, double> doubleLowerBoundsInSourcePatch = tarch::la::multiplyComponents((lowerNeighboringGhostlayerBounds - sourcePosition), tarch::la::invertEntries(sourceSubcellSize)) + epsilon;
+    tarch::la::Vector<DIMENSIONS, double> doubleUpperBoundsInSourcePatch = tarch::la::multiplyComponents((upperNeighboringGhostlayerBounds - sourcePosition), tarch::la::invertEntries(sourceSubcellSize)) - epsilon;
+    tarch::la::Vector<DIMENSIONS, int> lowerBoundsInSourcePatch;
+    tarch::la::Vector<DIMENSIONS, int> upperBoundsInSourcePatch;
+
+    for(int d = 0; d < DIMENSIONS; d++) {
+      //TODO unterweg: The constants +/-1e10 are choosen sufficiently large -> need a good heuristic for this...
+      doubleLowerBoundsInSourcePatch(d) = std::min((double)std::numeric_limits<int>::max(), doubleLowerBoundsInSourcePatch(d));
+      doubleUpperBoundsInSourcePatch(d) = std::max((double)std::numeric_limits<int>::min(), doubleUpperBoundsInSourcePatch(d));
+      lowerBoundsInSourcePatch(d) = std::max(std::min((int)std::floor(doubleLowerBoundsInSourcePatch(d)), sourceSubdivisionFactor(d)), -1);
+      upperBoundsInSourcePatch(d) = std::max(std::min((int)std::floor(doubleUpperBoundsInSourcePatch(d)), sourceSubdivisionFactor(d)), -1);
+    }
+
+    for(int d = 0; d < DIMENSIONS; d++) {
+      areas[2*d]._size(d) = upperBoundsInSourcePatch(d) + 1;
+      areas[2*d]._offset(d) = 0;
+      areas[2*d+1]._size(d) = sourceSubdivisionFactor(d) - lowerBoundsInSourcePatch(d);
+      areas[2*d+1]._offset(d) = lowerBoundsInSourcePatch(d);
+
+      //Restricted on lower dimensions
+      for(int i = 0; i < d; i++) {
+        areas[2*d]._size(i) = -upperBoundsInSourcePatch(i) - 1 + lowerBoundsInSourcePatch(i);
+        areas[2*d]._offset(i) = upperBoundsInSourcePatch(i) + 1;
+        areas[2*d+1]._size(i) = areas[2*d]._size(i);
+        areas[2*d+1]._offset(i) = areas[2*d]._offset(i);
+      }
+      //Spread over whole patch in higher dimensions
+      for(int i = d + 1; i < DIMENSIONS; i++) {
+        areas[2*d]._size(i) = sourceSubdivisionFactor(i);
+        areas[2*d]._offset(i) = 0;
+        areas[2*d+1]._size(i) = sourceSubdivisionFactor(i);
+        areas[2*d+1]._offset(i) = 0;
+      }
+
+      assertion1(tarch::la::allGreaterEquals(areas[2*d]._size, 0), areas[2*d]);
+      assertion1(tarch::la::allGreaterEquals(areas[2*d+1]._size, 0), areas[2*d+1]);
+    }
+
+    return DIMENSIONS_TIMES_TWO;
+  }
+}
+
 std::ostream& operator<<(std::ostream& out, const peanoclaw::Area& area){
   out << "offset=[" << area._offset << "],size=[" << area._size << "]" << std::endl;
   return out;

@@ -325,18 +325,18 @@ void peanoclaw::mappings::Remesh::createCell(
     Patch coarseGridPatch(
       coarseGridCell
     );
-    assertion1(tarch::la::greaterEquals(coarseGridPatch.getTimestepSize(), 0.0) || coarseGridPatch.isVirtual(), coarseGridPatch);
+    assertion1(tarch::la::greaterEquals(coarseGridPatch.getTimeIntervals().getTimestepSize(), 0.0) || coarseGridPatch.isVirtual(), coarseGridPatch);
 
     if(!_isInitializing && (coarseGridPatch.isVirtual() || coarseGridPatch.isLeaf())) {
       //TODO unterweg dissertation: The grid is skipped directly after the creation in enterCell.
       //Therefore, we need to skip at least two iterations to ensure that all ghostlayers have been set.
       fineGridPatch.setSkipNextGridIteration(2);
 
-      fineGridPatch.setCurrentTime(coarseGridPatch.getCurrentTime());
-      fineGridPatch.setTimestepSize(coarseGridPatch.getTimestepSize());
-      fineGridPatch.setEstimatedNextTimestepSize(coarseGridPatch.getEstimatedNextTimestepSize());
-      fineGridPatch.updateMinimalNeighborTimeConstraint(
-        coarseGridPatch.getMinimalNeighborTimeConstraint(),
+      fineGridPatch.getTimeIntervals().setCurrentTime(coarseGridPatch.getTimeIntervals().getCurrentTime());
+      fineGridPatch.getTimeIntervals().setTimestepSize(coarseGridPatch.getTimeIntervals().getTimestepSize());
+      fineGridPatch.getTimeIntervals().setEstimatedNextTimestepSize(coarseGridPatch.getTimeIntervals().getEstimatedNextTimestepSize());
+      fineGridPatch.getTimeIntervals().updateMinimalNeighborTimeConstraint(
+        coarseGridPatch.getTimeIntervals().getMinimalNeighborTimeConstraint(),
         coarseGridPatch.getCellDescriptionIndex()
       );
 
@@ -501,7 +501,7 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(vertex.getAdjacentCellDescriptionIndex(i) != -1) {
       Patch subgrid(vertex.getAdjacentCellDescriptionIndex(i));
-      assertion1(!tarch::la::smaller(subgrid.getTimestepSize(), 0.0) || !subgrid.isLeaf(), subgrid);
+      assertion1(!tarch::la::smaller(subgrid.getTimeIntervals().getTimestepSize(), 0.0) || !subgrid.isLeaf(), subgrid);
     }
   }
   #endif

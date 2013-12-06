@@ -37,6 +37,9 @@ peanoclaw::PatchPlotter::PatchPlotter(
   _cellTimeNewWriter           = _vtkWriter.createCellDataWriter("timeNew", 1);
   _cellDemandedMeshWidthWriter = _vtkWriter.createCellDataWriter("demandedMeshWidth", 1);
   _cellAgeWriter               = _vtkWriter.createCellDataWriter("age", 1);
+  #ifdef Parallel
+  _cellRankWriter               = _vtkWriter.createCellDataWriter("rank", 1);
+  #endif
 }
 
 peanoclaw::PatchPlotter::~PatchPlotter() {
@@ -54,6 +57,9 @@ peanoclaw::PatchPlotter::~PatchPlotter() {
   delete _cellTimeNewWriter;
   delete _cellDemandedMeshWidthWriter;
   delete _cellAgeWriter;
+  #ifdef Parallel
+  delete _cellRankWriter;
+  #endif
 }
 
 void peanoclaw::PatchPlotter::plotPatch(
@@ -109,8 +115,8 @@ void peanoclaw::PatchPlotter::plotPatch(
       // for(int i = 0; i < _cellAuxWriter.size(); i++) {
       //   _cellAuxWriter[i]->plotCell(number, patch.getValueAux(subcellIndex, i));
       // }
-      // _cellTimeOldWriter->plotCell(number, patch.getCurrentTime());
-      // _cellTimeNewWriter->plotCell(number, patch.getCurrentTime() + patch.getTimestepSize());
+      // _cellTimeOldWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime());
+      // _cellTimeNewWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
       // _cellDemandedMeshWidthWriter->plotCell(number, patch.getDemandedMeshWidth());
 #elif Dim3
 
@@ -127,11 +133,16 @@ void peanoclaw::PatchPlotter::plotPatch(
       for(int i = 0; i < (int)_cellAuxWriter.size(); i++) {
         _cellAuxWriter[i]->plotCell(number, patch.getValueAux(subcellIndex, i));
       }
-      _cellTimeOldWriter->plotCell(number, patch.getCurrentTime());
-      _cellTimeNewWriter->plotCell(number, patch.getCurrentTime() + patch.getTimestepSize());
+      _cellTimeOldWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime());
+      _cellTimeNewWriter->plotCell(number,
+          patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
       _cellDemandedMeshWidthWriter->plotCell(number, patch.getDemandedMeshWidth());
 
       _cellAgeWriter->plotCell(number, patch.getAge());
+
+      #ifdef Parallel
+      _cellRankWriter->plotCell(number, tarch::parallel::Node::getInstance().getRank());
+      #endif
 
   }
 }
@@ -151,6 +162,7 @@ void peanoclaw::PatchPlotter::close() {
   _cellTimeNewWriter->close();
   _cellDemandedMeshWidthWriter->close();
   _cellAgeWriter->close();
+  _cellRankWriter->close();
 }
 
 

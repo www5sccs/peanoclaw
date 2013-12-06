@@ -102,20 +102,44 @@ void peanoclaw::Patch::fillCaches() {
 void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(const Area& area,
     double factorForUOld, double factorForUNew) {
   dfor(subcellIndex, area._size){
-  int linearIndexUOld = getLinearIndexUOld(subcellIndex + area._offset);
-  int linearIndexUNew = getLinearIndexUNew(subcellIndex + area._offset);
+    int linearIndexUOld = getLinearIndexUOld(subcellIndex + area._offset);
+    int linearIndexUNew = getLinearIndexUNew(subcellIndex + area._offset);
 
-  for(int unknown = 0; unknown < _cellDescription->getUnknownsPerSubcell(); unknown++) {
-    double valueUOld = getValueUOld(linearIndexUOld, unknown);
-    double valueUNew = getValueUNew(linearIndexUNew, unknown);
+    for(int unknown = 0; unknown < _cellDescription->getUnknownsPerSubcell(); unknown++) {
+      double valueUOld = getValueUOld(linearIndexUOld, unknown);
+      double valueUNew = getValueUNew(linearIndexUNew, unknown);
 
-    //UOld
-    setValueUOld(linearIndexUOld, unknown, valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld);
+      //UOld
+      setValueUOld(linearIndexUOld, unknown, valueUOld * (1.0 - factorForUOld) + valueUNew * factorForUOld);
 
-    //UNew
-    setValueUNew(linearIndexUNew, unknown, valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew);
+      //UNew
+      setValueUNew(linearIndexUNew, unknown, valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew);
+    }
   }
 }
+
+bool peanoclaw::Patch::isValid(const CellDescription* cellDescription) {
+  return (cellDescription != 0)
+      && tarch::la::allGreater(cellDescription->getSubdivisionFactor(),
+          tarch::la::Vector<DIMENSIONS, int>(-1));
+}
+
+bool peanoclaw::Patch::isLeaf(const CellDescription* cellDescription) {
+  return (cellDescription != 0) && !cellDescription->getIsVirtual()
+      && (cellDescription->getUNewIndex() != -1);
+}
+
+bool peanoclaw::Patch::isVirtual(const CellDescription* cellDescription) {
+  if (cellDescription == 0) {
+    return false;
+  }
+  assertion6(
+      (!cellDescription->getIsVirtual()
+          || ( cellDescription->getUNewIndex() != -1 )), cellDescription->getPosition(),
+      cellDescription->getSize(), cellDescription->getIsVirtual(), cellDescription->getUNewIndex(),
+      cellDescription->getUNewIndex(),
+      cellDescription->getCellDescriptionIndex());
+  return cellDescription->getIsVirtual();
 }
 
 peanoclaw::Patch::Patch() :
@@ -249,40 +273,27 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
 peanoclaw::Patch::~Patch() {
 }
 
+const peanoclaw::grid::TimeIntervals& peanoclaw::Patch::getTimeIntervals() const {
+  return _timeIntervals;
+}
+
+peanoclaw::grid::TimeIntervals& peanoclaw::Patch::getTimeIntervals() {
+  return _timeIntervals;
+}
+
 void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
 
   _cellDescription = &CellDescriptionHeap::getInstance().getData(
       cellDescriptionIndex).at(0);
 
-  //Retrieve patch data
-//  assertion2(
-//      (_cellDescription->getUNewIndex() == -1
-//          && _cellDescription->getUOldIndex() == -1)
-//          || (_cellDescription->getUNewIndex() != -1
-//              && _cellDescription->getUOldIndex() != -1)
-//          || (_cellDescription->getUNewIndex() != -1
-//              && _cellDescription->getUOldIndex() == -1),
-//      _cellDescription->getUNewIndex(), _cellDescription->getUOldIndex());
+  _timeIntervals = peanoclaw::grid::TimeIntervals(_cellDescription);
+
   if (_cellDescription->getUNewIndex() != -1) {
     _uNew = &DataHeap::getInstance().getData(
         _cellDescription->getUNewIndex());
   } else {
     _uNew = 0;
   }
-
-//  if (_cellDescription->getUOldIndex() != -1) {
-//    _uOldWithGhostlayer = &DataHeap::getInstance().getData(
-//        _cellDescription->getUOldIndex());
-//  } else {
-//    _uOldWithGhostlayer = 0;
-//  }
-//
-//  if (_cellDescription->getAuxIndex() != -1) {
-//    _auxArray = &DataHeap::getInstance().getData(
-//        _cellDescription->getAuxIndex());
-//  } else {
-//    _auxArray = 0;
-//  }
 }
 
 void peanoclaw::Patch::reloadCellDescription() {
@@ -302,16 +313,6 @@ void peanoclaw::Patch::deleteData() {
     _cellDescription->setUNewIndex(-1);
     _uNew = 0;
   }
-//  if(_cellDescription->getUOldIndex() != -1) {
-//    DataHeap::getInstance().deleteData(_cellDescription->getUOldIndex());
-//    _cellDescription->setUOldIndex(-1);
-//    _uOldWithGhostlayer = 0;
-//  }
-//  if(_cellDescription->getAuxIndex() != -1) {
-//    DataHeap::getInstance().deleteData(_cellDescription->getAuxIndex());
-//    _cellDescription->setAuxIndex(-1);
-//    _auxArray = 0;
-//  }
   CellDescriptionHeap::getInstance().deleteData(_cellDescription->getCellDescriptionIndex());
   _cellDescription = 0;
 
@@ -342,155 +343,8 @@ int peanoclaw::Patch::getGhostLayerWidth() const {
   return _cellDescription->getGhostLayerWidth();
 }
 
-double peanoclaw::Patch::getCurrentTime() const {
-  return _cellDescription->getTime();
-}
-
-void peanoclaw::Patch::setCurrentTime(double currentTime) {
-  _cellDescription->setTime(currentTime);
-}
-
-double peanoclaw::Patch::getTimeUOld() const {
-  assertion1(isLeaf() || isVirtual(), toString());
-  if (isLeaf()) {
-    return _cellDescription->getTime();
-  } else {
-    return _cellDescription->getMinimalNeighborTime();
-  }
-}
-
-double peanoclaw::Patch::getTimeUNew() const {
-  assertion(isLeaf() || isVirtual());
-  if (isLeaf()) {
-    return _cellDescription->getTime() + _cellDescription->getTimestepSize();
-  } else {
-    return _cellDescription->getMinimalNeighborTime()
-        + _cellDescription->getMaximalNeighborTimestep();
-  }
-}
-
-void peanoclaw::Patch::advanceInTime() {
-  _cellDescription->setTime(
-      _cellDescription->getTime() + _cellDescription->getTimestepSize());
-}
-
-double peanoclaw::Patch::getTimestepSize() const {
-  return _cellDescription->getTimestepSize();
-}
-
-void peanoclaw::Patch::setTimestepSize(double timestepSize) {
-  _cellDescription->setTimestepSize(timestepSize);
-}
-
-double peanoclaw::Patch::getEstimatedNextTimestepSize() const {
-  return _cellDescription->getEstimatedNextTimestepSize();
-}
-
-void peanoclaw::Patch::setEstimatedNextTimestepSize(
-    double estimatedNextTimestepSize) {
-  _cellDescription->setEstimatedNextTimestepSize(estimatedNextTimestepSize);
-}
-
-double peanoclaw::Patch::getMinimalNeighborTimeConstraint() const {
-  return _cellDescription->getMinimalNeighborTimeConstraint();
-}
-
-double peanoclaw::Patch::getMinimalLeafNeighborTimeConstraint() const {
-  return _cellDescription->getMinimalLeafNeighborTimeConstraint();
-}
-
-void peanoclaw::Patch::updateMinimalNeighborTimeConstraint(
-    double neighborTimeConstraint, int neighborIndex) {
-  if (tarch::la::smaller(neighborTimeConstraint,
-      _cellDescription->getMinimalNeighborTimeConstraint())) {
-    _cellDescription->setMinimalNeighborTimeConstraint(neighborTimeConstraint);
-    _cellDescription->setConstrainingNeighborIndex(neighborIndex);
-  }
-}
-
-void peanoclaw::Patch::updateMinimalLeafNeighborTimeConstraint(
-    double leafNeighborTime) {
-  if (tarch::la::smaller(leafNeighborTime,
-      _cellDescription->getMinimalLeafNeighborTimeConstraint())) {
-    _cellDescription->setMinimalLeafNeighborTimeConstraint(leafNeighborTime);
-  }
-}
-
-void peanoclaw::Patch::resetMinimalNeighborTimeConstraint() {
-  _cellDescription->setMinimalNeighborTimeConstraint(
-      std::numeric_limits<double>::max());
-  _cellDescription->setMinimalLeafNeighborTimeConstraint(
-      std::numeric_limits<double>::max());
-  _cellDescription->setConstrainingNeighborIndex(-1);
-}
-
-int peanoclaw::Patch::getConstrainingNeighborIndex() const {
-  return _cellDescription->getConstrainingNeighborIndex();
-}
-
-void peanoclaw::Patch::resetMaximalNeighborTimeInterval() {
-  _cellDescription->setMinimalNeighborTime(std::numeric_limits<double>::max());
-  _cellDescription->setMaximalNeighborTimestep(-std::numeric_limits<double>::max());
-}
-
-void peanoclaw::Patch::updateMaximalNeighborTimeInterval(double neighborTime,
-    double neighborTimestepSize) {
-  if (neighborTime + neighborTimestepSize
-      > _cellDescription->getMinimalNeighborTime()
-          + _cellDescription->getMaximalNeighborTimestep()) {
-    _cellDescription->setMaximalNeighborTimestep(
-        neighborTime + neighborTimestepSize
-            - _cellDescription->getMinimalNeighborTime());
-  }
-
-  if (neighborTime < _cellDescription->getMinimalNeighborTime()) {
-    _cellDescription->setMaximalNeighborTimestep(
-        _cellDescription->getMaximalNeighborTimestep()
-            + _cellDescription->getMinimalNeighborTime() - neighborTime);
-    _cellDescription->setMinimalNeighborTime(neighborTime);
-  }
-}
-
-bool peanoclaw::Patch::isAllowedToAdvanceInTime() const {
-  return !tarch::la::greater(
-      _cellDescription->getTime() + _cellDescription->getTimestepSize(),
-      _cellDescription->getMinimalNeighborTimeConstraint());
-}
-
 int peanoclaw::Patch::getLevel() const {
   return _cellDescription->getLevel();
-}
-
-void peanoclaw::Patch::resetMinimalFineGridTimeInterval() {
-  _cellDescription->setMaximumFineGridTime(-1.0);
-  _cellDescription->setMinimumFineGridTimestep(
-      std::numeric_limits<double>::max());
-}
-
-void peanoclaw::Patch::updateMinimalFineGridTimeInterval(double fineGridTime,
-    double fineGridTimestepSize) {
-  if (fineGridTime > _cellDescription->getMaximumFineGridTime()) {
-    _cellDescription->setMinimumFineGridTimestep(
-        _cellDescription->getMinimumFineGridTimestep()
-            - (fineGridTime - _cellDescription->getMaximumFineGridTime()));
-    _cellDescription->setMaximumFineGridTime(fineGridTime);
-  }
-  _cellDescription->setMinimumFineGridTimestep(
-      std::min(_cellDescription->getMinimumFineGridTimestep(),
-          (fineGridTime + fineGridTimestepSize
-              - _cellDescription->getMaximumFineGridTime())));
-}
-
-double peanoclaw::Patch::getTimeConstraint() const {
-  return _cellDescription->getTime() + _cellDescription->getTimestepSize();
-}
-
-void peanoclaw::Patch::setFineGridsSynchronize(bool synchronizeFineGrids) {
-  _cellDescription->setSynchronizeFineGrids(synchronizeFineGrids);
-}
-
-bool peanoclaw::Patch::shouldFineGridsSynchronize() const {
-  return _cellDescription->getSynchronizeFineGrids();
 }
 
 void peanoclaw::Patch::setWillCoarsen(bool willCoarsen) {
@@ -768,14 +622,6 @@ int peanoclaw::Patch::getUNewIndex() const {
   return _cellDescription->getUNewIndex();
 }
 
-//int peanoclaw::Patch::getUOldIndex() const {
-//  return _cellDescription->getUOldIndex();
-//}
-//
-//int peanoclaw::Patch::getAuxIndex() const {
-//  return _cellDescription->getAuxIndex();
-//}
-
 int peanoclaw::Patch::getCellDescriptionIndex() const {
   return _cellDescription->getCellDescriptionIndex();
 }
@@ -921,10 +767,9 @@ std::string peanoclaw::Patch::toString() const {
 //        << ((_uOldWithGhostlayer == 0) ? 0 : (int) _uOldWithGhostlayer->size())
         << ((_uNew == 0) ? 0 : (_auxArrayIndex - _uOldWithGhostlayerArrayIndex))
         << ",age=" << _cellDescription->getAgeInGridIterations()
-        << ",currentTime=" << _cellDescription->getTime() << ",timestepSize="
-        << _cellDescription->getTimestepSize()
-        << ",minimalNeighborTimeConstraint="
-        << _cellDescription->getMinimalNeighborTimeConstraint()
+
+        << "," << _timeIntervals.toString()
+
         << ",constrainingIndex=" << _cellDescription->getConstrainingNeighborIndex()
         << ",skipNextGridIteration="
         << _cellDescription->getSkipGridIterations() << ",minimalNeighborTime="
@@ -956,31 +801,19 @@ std::string peanoclaw::Patch::toString() const {
 }
 
 bool peanoclaw::Patch::isValid() const {
-  return (_cellDescription != 0)
-      && tarch::la::allGreater(_cellDescription->getSubdivisionFactor(),
-          tarch::la::Vector<DIMENSIONS, int>(-1));
+  return isValid(_cellDescription);
 }
 
 bool peanoclaw::Patch::isLeaf() const {
-  if (isValid()) {
+  if(isValid()) {
     assertionEquals2((_uNew == 0), (_cellDescription->getUNewIndex() == -1),
         _uNew, _cellDescription->getUNewIndex());
   }
-  return (_cellDescription != 0) && !_cellDescription->getIsVirtual()
-      && (_uNew != 0 /*&& _uOldWithGhostlayer != 0*/);
+  return isLeaf(_cellDescription);
 }
 
 bool peanoclaw::Patch::isVirtual() const {
-  if (_cellDescription == 0) {
-    return false;
-  }
-  assertion6(
-      (!_cellDescription->getIsVirtual()
-          || (_uNew != 0 /*&& _uOldWithGhostlayer != 0*/)), getPosition(),
-      getSize(), _cellDescription->getIsVirtual(), _uNew, /*_uOldWithGhostlayer,*/
-      _cellDescription->getUNewIndex(), /*_cellDescription->getUOldIndex(),*/
-      _cellDescription->getCellDescriptionIndex());
-  return _cellDescription->getIsVirtual();
+  return isVirtual(_cellDescription);
 }
 
 void peanoclaw::Patch::switchToVirtual() {
@@ -1010,41 +843,7 @@ void peanoclaw::Patch::switchToVirtual() {
     _uNew = &virtualUNew;
   }
 
-  //Create uOld if necessary
-//  if (_cellDescription->getUOldIndex() == -1) {
-//    int uOldWithGhostlayerIndex =
-//        DataHeap::getInstance().createData();
-//    _cellDescription->setUOldIndex(uOldWithGhostlayerIndex);
-//    std::vector<Data>& virtualUOldWithGhostlayer =
-//        DataHeap::getInstance().getData(uOldWithGhostlayerIndex);
-//    size_t uOldWithGhostlayerArraySize = tarch::la::volume(
-//        _cellDescription->getSubdivisionFactor()
-//            + 2 * _cellDescription->getGhostLayerWidth())
-//        * _cellDescription->getUnknownsPerSubcell();
-//    virtualUOldWithGhostlayer.resize(uOldWithGhostlayerArraySize, 0.0);
-//    _uOldWithGhostlayer = &virtualUOldWithGhostlayer;
-//  }
-
-  //Initialise aux array
-//  if (_cellDescription->getAuxIndex() == -1) {
-//    if (_cellDescription->getAuxiliarFieldsPerSubcell() > 0) {
-//      _cellDescription->setAuxIndex(
-//          DataHeap::getInstance().createData());
-//      std::vector<Data>& auxArray =
-//          DataHeap::getInstance().getData(
-//              _cellDescription->getAuxIndex());
-//      size_t auxArraySize = tarch::la::volume(
-//          _cellDescription->getSubdivisionFactor())
-//          * _cellDescription->getAuxiliarFieldsPerSubcell();
-//      auxArray.resize(auxArraySize, -1.0);
-//      _auxArray = &auxArray;
-//    } else {
-//      _cellDescription->setAuxIndex(-1);
-//    }
-//  }
-
   assertion1(_uNew != 0 && _cellDescription->getUNewIndex() != -1, toString());
-  //assertion1(_uOldWithGhostlayer != 0 && _cellDescription->getUOldIndex() != -1, toString());
 }
 
 void peanoclaw::Patch::switchToNonVirtual() {
@@ -1056,21 +855,7 @@ void peanoclaw::Patch::switchToNonVirtual() {
     _uNew = 0;
   }
 
-//  if (_cellDescription->getUOldIndex() != -1) {
-//    DataHeap::getInstance().deleteData(getUOldIndex());
-//    _cellDescription->setUOldIndex(-1);
-//    _uOldWithGhostlayer = 0;
-//  }
-//
-//  if (_cellDescription->getAuxIndex() != -1) {
-//    DataHeap::getInstance().deleteData(getAuxIndex());
-//    _cellDescription->setAuxIndex(-1);
-//    _auxArray = 0;
-//  }
-
   assertionEquals1(_uNew, 0, toString());
-  //assertionEquals1(_uOldWithGhostlayer, 0, toString());
-  //assertionEquals1(_auxArray, 0, toString());
   assertion(!isLeaf() && !isVirtual());
 }
 

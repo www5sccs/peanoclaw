@@ -56,21 +56,6 @@ class peanoclaw::interSubgridCommunication::DefaultRestriction
     }
 
     /**
-     * Creates the data for the 2*d areas that need to be restricted.
-     * Returns the number of areas that should be processed to restrict
-     * all necessary cells.
-     */
-    int getAreasForRestriction (
-        const tarch::la::Vector<DIMENSIONS, double>& lowerNeighboringGhostlayerBounds,
-        const tarch::la::Vector<DIMENSIONS, double>& upperNeighboringGhostlayerBounds,
-        const tarch::la::Vector<DIMENSIONS, double>& sourcePosition,
-        const tarch::la::Vector<DIMENSIONS, double>& sourceSize,
-        const tarch::la::Vector<DIMENSIONS, double>& sourceSubcellSize,
-        const tarch::la::Vector<DIMENSIONS, int>&    sourceSubdivisionFactor,
-        Area areas[DIMENSIONS_TIMES_TWO]
-    );
-
-    /**
      * Restricts the data from the given source to the destination averaging
      * over the source cells that overlap with a destination cell.
      *

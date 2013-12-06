@@ -159,7 +159,15 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDuringFor
   const tarch::la::Vector<DIMENSIONS, double>& size,
   const State state
 ) {
-  if(localCell.isInside() && localCell.getRankOfRemoteNode() == _remoteRank) {
+  bool isForking = tarch::parallel::Node::getInstance().isGlobalMaster()
+                   || _remoteRank != tarch::parallel::NodePool::getInstance().getMasterRank();
+
+  if(localCell.isInside()
+      && (
+           (isForking && localCell.getRankOfRemoteNode() == _remoteRank)
+        || (!isForking && !localCell.isAssignedToRemoteRank())
+      )
+    ) {
     sendPatch(localCell.getCellDescriptionIndex());
 
     //Switch to remote after having sent the patch away...
@@ -177,7 +185,15 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringFo
   const peanoclaw::State&               state
 ) {
   #ifdef Parallel
-  if(localCell.isInside() && !remoteCell.isAssignedToRemoteRank()) {
+  bool isForking = !tarch::parallel::Node::getInstance().isGlobalMaster()
+                   && _remoteRank == tarch::parallel::NodePool::getInstance().getMasterRank();
+
+  if(localCell.isInside()
+      && (
+           ( isForking && !remoteCell.isAssignedToRemoteRank())
+        || (!isForking && remoteCell.getRankOfRemoteNode() == _remoteRank)
+      )
+    ) {
     if(localCell.isRemote(state, false, false)) {
       if(tarch::parallel::NodePool::getInstance().getMasterRank() != 0) {
         assertionEquals2(localCell.getCellDescriptionIndex(), -2, _position, _level);

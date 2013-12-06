@@ -109,8 +109,8 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
         double coarseGridFlux = coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) * coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 1 + dimension) * interfaceArea;
 
         //Estimate the according transfered volume during the fine patch's timestep
-        double transferedVolumeFineGrid = fineGridFlux * finePatch.getTimestepSize();
-        double transferedVolumeCoarseGrid = coarseGridFlux * finePatch.getTimestepSize();
+        double transferedVolumeFineGrid = fineGridFlux * finePatch.getTimeIntervals().getTimestepSize();
+        double transferedVolumeCoarseGrid = coarseGridFlux * finePatch.getTimeIntervals().getTimestepSize();
 
         //        double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / coarseSubcellSize(dimension) / refinementFactor;
         double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / refinementFactor;

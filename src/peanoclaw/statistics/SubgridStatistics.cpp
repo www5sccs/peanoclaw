@@ -38,12 +38,16 @@ void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
       }
 
       //Constraining patch
-      if(minimalTimePatch.getConstrainingNeighborIndex() != -1) {
-        Patch constrainingPatch(CellDescriptionHeap::getInstance().getData(minimalTimePatch.getConstrainingNeighborIndex()).at(0));
+      if(minimalTimePatch.getTimeIntervals().getConstrainingNeighborIndex() != -1) {
+        Patch constrainingPatch(CellDescriptionHeap::getInstance().getData(
+          minimalTimePatch.getTimeIntervals().getConstrainingNeighborIndex()).at(0)
+        );
         logInfo("logStatistics()", "\tConstrained by " << constrainingPatch);
 
-        if(constrainingPatch.getConstrainingNeighborIndex() != -1) {
-          Patch constrainingConstrainingPatch(CellDescriptionHeap::getInstance().getData(constrainingPatch.getConstrainingNeighborIndex()).at(0));
+        if(constrainingPatch.getTimeIntervals().getConstrainingNeighborIndex() != -1) {
+          Patch constrainingConstrainingPatch(
+            CellDescriptionHeap::getInstance().getData(constrainingPatch.getTimeIntervals().getConstrainingNeighborIndex()).at(0)
+          );
           logInfo("logStatistics()", "\t\tConstrained^2 by " << constrainingConstrainingPatch);
         }
       }
@@ -170,24 +174,24 @@ void peanoclaw::statistics::SubgridStatistics::processSubgrid(
 ) {
   addSubgridToLevelStatistics(patch);
 
-  if(patch.getCurrentTime() + patch.getTimestepSize() < _minimalPatchTime) {
+  if(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize() < _minimalPatchTime) {
     _minimalPatchIndex = patch.getCellDescriptionIndex();
     _minimalPatchParentIndex = parentIndex;
   }
 
   //Stopping criterion for global timestep
-  if(tarch::la::smaller(patch.getCurrentTime() + patch.getTimestepSize(), _globalTimestepEndTime)) {
+  if(tarch::la::smaller(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), _globalTimestepEndTime)) {
     _allPatchesEvolvedToGlobalTimestep = false;
   }
 
-  _startMaximumLocalTimeInterval = std::min(patch.getCurrentTime(), _startMaximumLocalTimeInterval);
-  _endMaximumLocalTimeInterval = std::max(patch.getCurrentTime() + patch.getTimestepSize(), _endMaximumLocalTimeInterval);
-  _startMinimumLocalTimeInterval = std::max(patch.getCurrentTime(), _startMinimumLocalTimeInterval);
-  _endMinimumLocalTimeInterval = std::min(patch.getCurrentTime() + patch.getTimestepSize(), _endMinimumLocalTimeInterval);
+  _startMaximumLocalTimeInterval = std::min(patch.getTimeIntervals().getCurrentTime(), _startMaximumLocalTimeInterval);
+  _endMaximumLocalTimeInterval = std::max(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), _endMaximumLocalTimeInterval);
+  _startMinimumLocalTimeInterval = std::max(patch.getTimeIntervals().getCurrentTime(), _startMinimumLocalTimeInterval);
+  _endMinimumLocalTimeInterval = std::min(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), _endMinimumLocalTimeInterval);
 }
 
 void peanoclaw::statistics::SubgridStatistics::processSubgridAfterUpdate(const peanoclaw::Patch& patch, int parentIndex) {
-  _minimalTimestep = std::min(_minimalTimestep, patch.getTimestepSize());
+  _minimalTimestep = std::min(_minimalTimestep, patch.getTimeIntervals().getTimestepSize());
 
   processSubgrid(patch, parentIndex);
   LevelStatistics& level = _levelStatistics->at(patch.getLevel()-1);
@@ -210,7 +214,7 @@ void peanoclaw::statistics::SubgridStatistics::updateMinimalSubgridBlockReason(
                               peanoclaw::records::Vertex::Erasing
                             );
     _minimalPatchBlockedDueToGlobalTimestep
-      = tarch::la::greaterEquals(subgrid.getCurrentTime() + subgrid.getTimestepSize(), globalTimestep);
+      = tarch::la::greaterEquals(subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize(), globalTimestep);
   }
 }
 

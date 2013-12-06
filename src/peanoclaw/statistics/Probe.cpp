@@ -25,7 +25,7 @@ void peanoclaw::statistics::Probe::plotDataIfContainedInPatch(
   if(!tarch::la::oneGreater(patch.getPosition(), _position)
     && !tarch::la::oneGreater(_position, patch.getPosition() + patch.getSize())) {
     std::stringstream stringstream;
-    stringstream << _name << " " << _position << " " << (patch.getCurrentTime() + patch.getTimestepSize()) << " ";
+    stringstream << _name << " " << _position << " " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << " ";
 
     if(_unknown == -1) {
       for(int unknown = 0; unknown < patch.getUnknownsPerSubcell(); unknown++) {

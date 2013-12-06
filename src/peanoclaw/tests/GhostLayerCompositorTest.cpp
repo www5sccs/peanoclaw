@@ -93,7 +93,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
            );
 
     for(int i = 0; i < TWO_POWER_D; i++) {
-      patches[i].resetMinimalNeighborTimeConstraint();
+      patches[i].getTimeIntervals().resetMinimalNeighborTimeConstraint();
       validate(patches[i].isValid());
     }
 
@@ -110,11 +110,11 @@ void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
 
     for(int cellIndex = 0; cellIndex < 4; cellIndex++) {
       if(cellIndex == vetoIndex) {
-        validateNumericalEqualsWithParams2(patches[cellIndex].getMinimalNeighborTimeConstraint(), 1.0, vetoIndex, cellIndex);
-        validateNumericalEqualsWithParams2(patches[cellIndex].isAllowedToAdvanceInTime(), false, vetoIndex, cellIndex);
+        validateNumericalEqualsWithParams2(patches[cellIndex].getTimeIntervals().getMinimalNeighborTimeConstraint(), 1.0, vetoIndex, cellIndex);
+        validateNumericalEqualsWithParams2(patches[cellIndex].getTimeIntervals().isAllowedToAdvanceInTime(), false, vetoIndex, cellIndex);
       } else {
-        validateNumericalEqualsWithParams2(patches[cellIndex].getMinimalNeighborTimeConstraint(), 1.0, vetoIndex, cellIndex);
-        validateNumericalEqualsWithParams2(patches[cellIndex].isAllowedToAdvanceInTime(), true, vetoIndex, cellIndex);
+        validateNumericalEqualsWithParams2(patches[cellIndex].getTimeIntervals().getMinimalNeighborTimeConstraint(), 1.0, vetoIndex, cellIndex);
+        validateNumericalEqualsWithParams2(patches[cellIndex].getTimeIntervals().isAllowedToAdvanceInTime(), true, vetoIndex, cellIndex);
       }
     }
   }
@@ -616,9 +616,8 @@ void peanoclaw::tests::GhostLayerCompositorTest::testRestrictionWithOverlappingB
   tarch::la::Vector<DIMENSIONS, double> sourceSize(2.2);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(20);
 
-  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
   peanoclaw::Area areas[TWO_POWER_D];
-  defaultRestriction.getAreasForRestriction(
+  Area::getAreasOverlappedByNeighboringGhostlayers(
     lowerNeighboringGhostlayerBounds,
     upperNeighboringGhostlayerBounds,
     sourcePosition,
@@ -653,9 +652,8 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreas() {
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(0.1);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(10);
 
-  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
   peanoclaw::Area areas[TWO_POWER_D];
-  defaultRestriction.getAreasForRestriction(
+  Area::getAreasOverlappedByNeighboringGhostlayers(
     lowerNeighboringGhostlayerBounds,
     upperNeighboringGhostlayerBounds,
     sourcePosition,
@@ -699,9 +697,8 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreasWith
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(1.0/27.0/6.0);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(6);
 
-  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
   peanoclaw::Area areas[TWO_POWER_D];
-  defaultRestriction.getAreasForRestriction(
+  Area::getAreasOverlappedByNeighboringGhostlayers(
       lowerNeighboringGhostlayerBounds,
       upperNeighboringGhostlayerBounds,
       sourcePosition,

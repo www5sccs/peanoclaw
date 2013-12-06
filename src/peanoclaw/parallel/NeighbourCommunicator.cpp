@@ -23,6 +23,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
 
   #ifdef Asserts
   assertion3(tarch::la::allGreater(transferedSubgrid.getSubdivisionFactor(), 0), transferedSubgrid.toString(), _position, _level);
+  assertion1(!transferedSubgrid.isRemote(), transferedSubgrid);
 
   //Check for zeros in transfered patch
   if(transferedSubgrid.isValid() && transferedSubgrid.isLeaf()) {
@@ -33,13 +34,6 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   }
   #endif
 
-  tarch::la::Vector<DIMENSIONS, double> position;
-  tarch::la::Vector<DIMENSIONS, double> subgridSize;
-  position    = transferedSubgrid.getPosition();
-  subgridSize = transferedSubgrid.getSize();
-
-  assertion1(!transferedSubgrid.isRemote(), transferedSubgrid);
-
   _statistics.sentNeighborData();
   _subgridCommunicator.sendCellDescription(transferedSubgrid.getCellDescriptionIndex());
 
@@ -48,18 +42,6 @@ void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
   } else {
     _subgridCommunicator.sendPaddingDataArray();
   }
-
-//    if(cellDescription.getUOldIndex() != -1) {
-//      sendDataArray(cellDescription.getUOldIndex());
-//    } else {
-//      sendPaddingDataArray();
-//    }
-//
-//    if(cellDescription.getAuxIndex() != -1) {
-//      sendDataArray(cellDescription.getAuxIndex());
-//    } else {
-//      sendPaddingDataArray();
-//    }
   #endif
   logTraceOut("sendPatch");
 }
@@ -88,8 +70,6 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
   #ifdef Parallel
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
 
-  //CellDescription localCellDescription = CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0);
-
   std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
 
   logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
@@ -99,8 +79,8 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
     CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
     assertionEquals2(localSubgrid.getLevel(), _level, localSubgrid, tarch::parallel::Node::getInstance().getRank());
 
+    #ifdef Asserts
     logDebug("", "Receiving patch: " << remoteCellDescription.toString());
-
     assertion6(!remoteCellDescription.getIsRemote(), localSubgrid, remoteCellDescription.toString(), _position, _level, _remoteRank, tarch::parallel::Node::getInstance().getRank());
     assertionNumericalEquals6(localSubgrid.getPosition(), remoteCellDescription.getPosition(),
         localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank, _position, _level);
@@ -108,19 +88,9 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
         localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank);
     assertionEquals4(localSubgrid.getLevel(), remoteCellDescription.getLevel(),
         localSubgrid, remoteCellDescription.toString(), tarch::parallel::Node::getInstance().getRank(), _remoteRank);
+    #endif
 
     _statistics.receivedNeighborData();
-    //Load arrays and stores according indices in cell description
-  //    if(remoteCellDescription.getAuxIndex() != -1) {
-  //      remoteCellDescription.setAuxIndex(receiveDataArray());
-  //    } else {
-  //      receiveDataArray();
-  //    }
-  //    if(remoteCellDescription.getUOldIndex() != -1) {
-  //      remoteCellDescription.setUOldIndex(receiveDataArray());
-  //    } else {
-  //      receiveDataArray();
-  //    }
     if(remoteCellDescription.getUNewIndex() != -1) {
       remoteCellDescription.setUNewIndex(_subgridCommunicator.receiveDataArray());
     } else {
@@ -146,10 +116,9 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
         assertion3(tarch::la::greater(remotePatch.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUOldWithGhostLayer());
       }
     }
-    #endif
-
     assertionEquals(CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).at(0).getCellDescriptionIndex(), localSubgrid.getCellDescriptionIndex());
-    assertion1(!tarch::la::smaller(remotePatch.getTimestepSize(), 0.0) || !remotePatch.isLeaf(), remotePatch);
+    assertion1(!tarch::la::smaller(remotePatch.getTimeIntervals().getTimestepSize(), 0.0) || !remotePatch.isLeaf(), remotePatch);
+    #endif
   } else {
     //Padding patch received -> receive padding data
     DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);

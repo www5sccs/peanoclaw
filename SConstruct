@@ -570,6 +570,7 @@ sourcesPeanoClaw = [
   Glob(join(buildpath, 'peanoclaw/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/adapters/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/configurations/*.cpp')),
+  Glob(join(buildpath, 'peanoclaw/grid/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/interSubgridCommunication/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/interSubgridCommunication/aspects/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/mappings/*.cpp')),
