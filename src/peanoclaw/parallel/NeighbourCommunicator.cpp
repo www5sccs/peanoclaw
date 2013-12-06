@@ -232,7 +232,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
             || vertex.wereAdjacentRanksChanged()
             || vertex.getAgeInGridIterations() <= 1
             //TODO unterweg dissertion
-            //Warum kann ich nicht einfach den Status der Feingitter restringieren, ob die sich geändert haben?
+            //Warum kann ich nicht einfach den Status der Feingitter restringieren, ob die sich ge��ndert haben?
             //Gibt es da einen Zusammenhang zwischen Zeitschritten der benachbarten Grobgitter und den Zeitschritten
             //der Feingitter, den ich hier nicht erkenne?
             //TODO unterweg debug

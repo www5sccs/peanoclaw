@@ -17,9 +17,9 @@ def refinement_criterion_gradient(state):
   max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:,:])))
   
   if max_gradient > 0.1:
-      return 2.0/(4.0*27.0)
+      return 2.0/(12.0*9.0)
   elif max_gradient < 0.05:
-      return 2.0/(4.0*3.0)
+      return 2.0/(12.0*9.0)
   else:
       return dimension_x.delta
 
@@ -151,13 +151,14 @@ def shockbubble(use_petsc=False,iplot=False,htmlplot=False,outdir='./_output',so
     solver.bc_upper[1]=pyclaw.BC.extrap
     solver.bc_lower[2]=pyclaw.BC.extrap
     solver.bc_upper[2]=pyclaw.BC.extrap
+
     
     # Initialize domain
     factor = 1
-    mx=8*factor; my=4*factor; mz=4*factor
+    mx=12*factor; my=6*factor; mz=6*factor
     
     # number of initial AMR grids in each dimension
-    msubgrid = 3
+    msubgrid = 9
     
     if amr_type is None:
         # number of Domain grid cells expressed as the product of
@@ -168,8 +169,8 @@ def shockbubble(use_petsc=False,iplot=False,htmlplot=False,outdir='./_output',so
         mz = mz*msubgrid
     
     x = pyclaw.Dimension('x', 0.0,2.0,mx)
-    y = pyclaw.Dimension('y',-0.5,0.5,my)
-    z = pyclaw.Dimension('z',-0.5,0.5,mz)
+    y = pyclaw.Dimension('y',0,1,my)
+    z = pyclaw.Dimension('z',0,1,mz)
     domain = pyclaw.Domain([x,y,z])
     num_eqn = 5
     state = pyclaw.State(domain,num_eqn)
@@ -193,7 +194,7 @@ def shockbubble(use_petsc=False,iplot=False,htmlplot=False,outdir='./_output',so
         claw.solver = amrclaw.Solver(solver,
                                     (x.upper-x.lower)/(mx*msubgrid),
                                     qinit
-                                    ,refinement_criterion=refinement_criterion_gradient
+                                    #,refinement_criterion=refinement_criterion_gradient
                                     ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True))
         claw.solution = amrclaw.Solution(state, domain)
       else:

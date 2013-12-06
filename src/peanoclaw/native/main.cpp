@@ -34,11 +34,11 @@ class BreakingDam_SWEKernelScenario : public peanoclaw::native::SWEKernelScenari
 
         virtual void initializePatch(peanoclaw::Patch& patch) {
             // dam coordinates
-            double x0=0.5;
-            double y0=0.5;
+            double x0=10/3.0;
+            double y0=10/3.0;
             
             // Riemann states of the dam break problem
-            double radDam = 0.1;
+            double radDam = 1;
             double hl = 2.;
             double ul = 0.;
             double vl = 0.;
@@ -94,17 +94,18 @@ class BreakingDam_SWEKernelScenario : public peanoclaw::native::SWEKernelScenari
                     double q0_x =  (patch.getValueUNew(next_subcellIndex_x, 0) - q0) / meshWidth(0);
                     double q0_y =  (patch.getValueUNew(next_subcellIndex_y, 0) - q0) / meshWidth(1);
 
-                    max_gradient = fmax(max_gradient, q0_x);
-                    max_gradient = fmax(max_gradient, q0_y);
+                    max_gradient = fmax(max_gradient, sqrt(fabs(q0_x)*fabs(q0_x) + fabs(q0_y)*fabs(q0_y)));
                 }
             }
           
-            double demandedMeshWidth = 0;
-            if (max_gradient > 0.05) {
+            double demandedMeshWidth = patch.getSubcellSize()(0);
+            if (max_gradient > 1) {
                 //demandedMeshWidth = 1.0/243;
-                demandedMeshWidth = 1.0/81;
+                demandedMeshWidth = 10.0/27/6;
+            } else if (max_gradient < 0.5) {
+                demandedMeshWidth = 10.0/9/6;
             } else {
-                demandedMeshWidth = 1.0/81;
+              demandedMeshWidth = patch.getSubcellSize()(0);
             }
 
             return demandedMeshWidth;
@@ -195,9 +196,9 @@ int main(int argc, char **argv) {
 
   //Construct parameters
   tarch::la::Vector<DIMENSIONS, double> domainOffset(0);
-  tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);
-  tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(0.05);
-  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(9);
+  tarch::la::Vector<DIMENSIONS, double> domainSize(10.0);
+  tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(10.0/9.0/6.0);
+  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
   int ghostlayerWidth = 1;
   int unknownsPerSubcell = 3;
   int auxiliarFieldsPerSubcell = 0;
@@ -239,7 +240,7 @@ int main(int argc, char **argv) {
  
   // run experiment
   double timestep = 0.01;
-  double endtime = 2.0;
+  double endtime = 1.0; //2.0;
 #if defined(Parallel)
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
 #endif

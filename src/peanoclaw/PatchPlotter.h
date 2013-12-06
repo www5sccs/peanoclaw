@@ -98,6 +98,26 @@ private:
 
   double _gap;
 
+  /**
+   * Plots a single subcell.
+   */
+  void plotSubcell(
+    const Patch&                         patch,
+    tarch::la::Vector<DIMENSIONS, int>   subcellIndex,
+    peanoclaw::Vertex * const            vertices,
+    const peano::grid::VertexEnumerator& enumerator
+  );
+
+  /**
+   * Computes the gradient for a subcell within the given
+   * subgrid.
+   */
+  tarch::la::Vector<DIMENSIONS, double> computeGradient(
+    const Patch&                       patch,
+    tarch::la::Vector<DIMENSIONS, int> subcellIndex,
+    int                                unknown
+  );
+
 public:
   PatchPlotter(
     tarch::plotter::griddata::unstructured::vtk::VTKTextFileWriter& vtkWriter,
@@ -108,7 +128,7 @@ public:
   ~PatchPlotter();
 
   void plotPatch(
-    Patch& patch,
+    const Patch& patch,
     peanoclaw::Vertex * const        vertices,
     const peano::grid::VertexEnumerator&              enumerator
   );
