@@ -35,19 +35,35 @@ void peanoclaw::PatchPlotter::plotSubcell(
 #elif Dim3
     number = _cellWriter->plotHexahedron(vertexIndices);
 #endif
-    _cellSubdivisionFactorWriter->plotCell(number, patch.getSubdivisionFactor()(0));
-    _cellGhostLayerWidthWriter->plotCell(number, patch.getGhostLayerWidth());
-    for(int i = 0; i < (int)_cellQWriter.size(); i++) {
-      _cellQWriter[i]->plotCell(number, patch.getValueUNew(subcellIndex, i));
-    }
-    for(int i = 0; i < (int)_cellAuxWriter.size(); i++) {
-      _cellAuxWriter[i]->plotCell(number, patch.getValueAux(subcellIndex, i));
-    }
-    _cellTimeOldWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime());
-    _cellTimeNewWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
-    _cellDemandedMeshWidthWriter->plotCell(number, patch.getDemandedMeshWidth());
 
-    _cellAgeWriter->plotCell(number, patch.getAge());
+    int qWriterIndex = 0;
+    for(int i = 0; i < (int)_cellQWriter.size(); i++) {
+      if(_plotQ.empty() || _plotQ.find(i) != _plotQ.end()) {
+        _cellQWriter[qWriterIndex]->plotCell(number, patch.getValueUNew(subcellIndex, i));
+        qWriterIndex++;
+      }
+    }
+
+    int auxWriterIndex = 0;
+    for(int i = 0; i < (int)_cellAuxWriter.size(); i++) {
+      if(_plotAux.empty() || _plotAux.find(i) != _plotAux.end()) {
+        _cellAuxWriter[i]->plotCell(number, patch.getValueAux(subcellIndex, i));
+        auxWriterIndex++;
+      }
+    }
+
+    if(_plotMetainformation) {
+      _cellSubdivisionFactorWriter->plotCell(number, patch.getSubdivisionFactor()(0));
+      _cellGhostLayerWidthWriter->plotCell(number, patch.getGhostLayerWidth());
+      _cellTimeOldWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime());
+      _cellTimeNewWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
+      _cellDemandedMeshWidthWriter->plotCell(number, patch.getDemandedMeshWidth());
+      _cellAgeWriter->plotCell(number, patch.getAge());
+
+      #ifdef Parallel
+      _cellRankWriter->plotCell(number, tarch::parallel::Node::getInstance().getRank());
+      #endif
+    }
 }
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::PatchPlotter::computeGradient(
@@ -69,52 +85,65 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::PatchPlotter::computeGradient(
 peanoclaw::PatchPlotter::PatchPlotter(
   tarch::plotter::griddata::unstructured::vtk::VTKTextFileWriter& vtkWriter,
   int unknownsPerSubcell,
-  int auxFieldsPerSubcell
-) : _vtkWriter(vtkWriter), _gap(0.01) {
+  int auxFieldsPerSubcell,
+  std::set<int> plotQ,
+  std::set<int> plotAux,
+  bool plotMetainformation
+) : _vtkWriter(vtkWriter), _gap(0.0), _plotQ(plotQ), _plotAux(plotAux), _plotMetainformation(plotMetainformation) {
 
   _vertex2IndexMap.clear();
   _vertexWriter     = _vtkWriter.createVertexWriter();
   _cellWriter       = _vtkWriter.createCellWriter();
 
-  _cellSubdivisionFactorWriter = _vtkWriter.createCellDataWriter("SubdivisionFactor",1);
-  _cellGhostLayerWidthWriter   = _vtkWriter.createCellDataWriter("GhostlayerWidth",1);
   for(int i = 0; i < unknownsPerSubcell; i++) {
-    std::stringstream stringstream;
-    stringstream << "q" << i;
-    _cellQWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+    if(_plotQ.empty() || _plotQ.find(i) != _plotQ.end()) {
+      std::stringstream stringstream;
+      stringstream << "q" << i;
+      _cellQWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+    }
   }
   for(int i = 0; i < auxFieldsPerSubcell; i++) {
-    std::stringstream stringstream;
-    stringstream << "aux" << i;
-    _cellAuxWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+    if(_plotAux.empty() || _plotAux.find(i) != _plotAux.end()) {
+      std::stringstream stringstream;
+      stringstream << "aux" << i;
+      _cellAuxWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+    }
   }
-  _cellTimeOldWriter           = _vtkWriter.createCellDataWriter("timeOld", 1);
-  _cellTimeNewWriter           = _vtkWriter.createCellDataWriter("timeNew", 1);
-  _cellDemandedMeshWidthWriter = _vtkWriter.createCellDataWriter("demandedMeshWidth", 1);
-  _cellAgeWriter               = _vtkWriter.createCellDataWriter("age", 1);
-  #ifdef Parallel
-  _cellRankWriter               = _vtkWriter.createCellDataWriter("rank", 1);
-  #endif
+
+  if(_plotMetainformation) {
+    _cellSubdivisionFactorWriter = _vtkWriter.createCellDataWriter("SubdivisionFactor",1);
+    _cellGhostLayerWidthWriter   = _vtkWriter.createCellDataWriter("GhostlayerWidth",1);
+    _cellTimeOldWriter           = _vtkWriter.createCellDataWriter("timeOld", 1);
+    _cellTimeNewWriter           = _vtkWriter.createCellDataWriter("timeNew", 1);
+    _cellDemandedMeshWidthWriter = _vtkWriter.createCellDataWriter("demandedMeshWidth", 1);
+    _cellAgeWriter               = _vtkWriter.createCellDataWriter("age", 1);
+    #ifdef Parallel
+    _cellRankWriter               = _vtkWriter.createCellDataWriter("rank", 1);
+    #endif
+  }
 }
 
 peanoclaw::PatchPlotter::~PatchPlotter() {
   delete _vertexWriter;
   delete _cellWriter;
-  delete _cellSubdivisionFactorWriter;
-  delete _cellGhostLayerWidthWriter;
   for(unsigned int i = 0; i < _cellQWriter.size(); i++) {
     delete _cellQWriter.at(i);
   }
   for(unsigned int i = 0; i < _cellAuxWriter.size(); i++) {
     delete _cellAuxWriter.at(i);
   }
-  delete _cellTimeOldWriter;
-  delete _cellTimeNewWriter;
-  delete _cellDemandedMeshWidthWriter;
-  delete _cellAgeWriter;
-  #ifdef Parallel
-  delete _cellRankWriter;
-  #endif
+
+  if(_plotMetainformation) {
+    delete _cellSubdivisionFactorWriter;
+    delete _cellGhostLayerWidthWriter;
+    delete _cellTimeOldWriter;
+    delete _cellTimeNewWriter;
+    delete _cellDemandedMeshWidthWriter;
+    delete _cellAgeWriter;
+    #ifdef Parallel
+    delete _cellRankWriter;
+    #endif
+  }
 }
 
 void peanoclaw::PatchPlotter::plotPatch(
@@ -155,21 +184,23 @@ void peanoclaw::PatchPlotter::plotPatch(
 void peanoclaw::PatchPlotter::close() {
   _vertexWriter->close();
   _cellWriter->close();
-  _cellSubdivisionFactorWriter->close();
-  _cellGhostLayerWidthWriter->close();
   for(std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>::iterator i = _cellQWriter.begin(); i != _cellQWriter.end(); i++) {
     (*i)->close();
   }
   for(std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>::iterator i = _cellAuxWriter.begin(); i != _cellAuxWriter.end(); i++) {
     (*i)->close();
   }
-  _cellTimeOldWriter->close();
-  _cellTimeNewWriter->close();
-  _cellDemandedMeshWidthWriter->close();
-  _cellAgeWriter->close();
-  #ifdef Parallel
-  _cellRankWriter->close();
-  #endif
+  if(_plotMetainformation) {
+    _cellSubdivisionFactorWriter->close();
+    _cellGhostLayerWidthWriter->close();
+    _cellTimeOldWriter->close();
+    _cellTimeNewWriter->close();
+    _cellDemandedMeshWidthWriter->close();
+    _cellAgeWriter->close();
+    #ifdef Parallel
+    _cellRankWriter->close();
+    #endif
+  }
 }
 
 

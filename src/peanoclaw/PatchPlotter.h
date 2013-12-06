@@ -20,6 +20,7 @@
 
 #include <memory>
 #include <map>
+#include <set>
 #include <vector>
 
 #ifdef SharedTBB
@@ -98,6 +99,12 @@ private:
 
   double _gap;
 
+  std::set<int> _plotQ;
+
+  std::set<int> _plotAux;
+
+  bool _plotMetainformation;
+
   /**
    * Plots a single subcell.
    */
@@ -119,10 +126,18 @@ private:
   );
 
 public:
+  /**
+   * @param plotQ A list containing the indices of the q fields
+   * that should be plotted. An empty vector is currently considered as
+   * plotting all values.
+   */
   PatchPlotter(
     tarch::plotter::griddata::unstructured::vtk::VTKTextFileWriter& vtkWriter,
     int unknownsPerSubcell,
-    int auxFieldsPerSubcell
+    int auxFieldsPerSubcell,
+    std::set<int> plotQ = std::set<int>(),
+    std::set<int> plotAux = std::set<int>(),
+    bool plotMetainformation = true
   );
 
   ~PatchPlotter();
