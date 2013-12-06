@@ -133,6 +133,14 @@ class peanoclaw::parallel::NeighbourCommunicator {
       const Patch& transferedSubgrid
     );
 
+    /**
+     * Sends the parts of the given subgrid that is overlapped by
+     * the neighboring subgrids.
+     */
+    void sendOverlap(
+      const Patch& transferedSubgrid
+    );
+
     void sendPaddingPatch(
       const tarch::la::Vector<DIMENSIONS, double>& position = 0,
       int                                          level = 0,

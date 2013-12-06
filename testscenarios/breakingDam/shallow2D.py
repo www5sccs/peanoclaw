@@ -69,8 +69,8 @@ def refinement_criterion_time_dependent(state):
         or distance_to_circle2 < (dimension_x.upper - dimension_x.lower) / 2
         or distance_to_circle3 < (dimension_x.upper - dimension_x.lower) / 2
         ):
-        #return 1.0/(6.0*27.0)
-        return 1.0/(6.0*81.0)
+        return 1.0/(6.0*27.0)
+        #return 1.0/(6.0*81.0)
     elif (distance_to_circle1 > (dimension_x.upper - dimension_x.lower) * 1.5 
         and distance_to_circle2 > (dimension_x.upper - dimension_x.lower) * 1.5
         and distance_to_circle3 > (dimension_x.upper - dimension_x.lower) * 1.5
@@ -177,7 +177,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 1
+    claw.tfinal = 0.5
 
     if amr_type is not None:        
         if amr_type == 'peano':
@@ -185,10 +185,10 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
             claw.solver = amrclaw.Solver(solver
                                         ,1/(mgrid*msubgrid)
                                         ,qinit_callback
-                                        #,refinement_criterion=refinement_criterion_time_dependent
+                                        ,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
                                         #,refinement_criterion=refinement_criterion_gradient
-                                        ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True, fixed_timestep_size=1e-5)
+                                        ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True)
                                         )
             claw.solution = amrclaw.Solution(state, domain)
         else:
@@ -204,7 +204,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     claw.output_format = None
     claw.outdir = None
 
-    claw.num_output_times = 100
+    claw.num_output_times = 20
 
     #===========================================================================
     # Plot results
