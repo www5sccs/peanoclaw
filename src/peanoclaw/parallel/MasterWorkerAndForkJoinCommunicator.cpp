@@ -13,6 +13,8 @@
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
+#include "tarch/parallel/Node.h"
+#include "tarch/parallel/NodePool.h"
 
 tarch::logging::Log peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::_log("peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator");
 
@@ -159,6 +161,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDuringFor
   const tarch::la::Vector<DIMENSIONS, double>& size,
   const State state
 ) {
+  #ifdef Parallel
   bool isForking = tarch::parallel::Node::getInstance().isGlobalMaster()
                    || _remoteRank != tarch::parallel::NodePool::getInstance().getMasterRank();
 
@@ -176,6 +179,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDuringFor
     ParallelSubgrid parallelSubgrid(localCell);
     parallelSubgrid.resetNumberOfTransfersToBeSkipped();
   }
+  #endif
 }
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringForkOrJoin(
@@ -237,7 +241,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringFo
       assertion1(!localPatch.isRemote(), localPatch);
 
       //TODO unterweg dissertation: Wenn auf dem neuen Knoten die Adjazenzinformationen auf den
-      // Vertices noch nicht richtig gesetzt sind können wir nicht gleich voranschreiten.
+      // Vertices noch nicht richtig gesetzt sind k��nnen wir nicht gleich voranschreiten.
       // U.U. brauchen wir sogar 2 Iterationen ohne Aktion... (Wegen hin- und herlaufen).
       localPatch.setSkipNextGridIteration(2);
 

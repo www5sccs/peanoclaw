@@ -61,12 +61,16 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertPer
       //adjazenten remote-Subgrids aus der Adjazenzinformation gestrichen werden. Ansonsten kann
       //es sein, dass der Vertex ein schon lange gecoarstes Subgrid als Nachbarn hält, das damit
       //das Timestepping blockiert.
+      #ifdef Parallel
       Patch subgrid(_vertex.getAdjacentCellDescriptionIndex(i));
       if(!subgrid.isRemote()) {
         vertexDescription.setIndicesOfAdjacentCellDescriptions(i, _vertex.getAdjacentCellDescriptionIndex(i));
       } else {
         vertexDescription.setIndicesOfAdjacentCellDescriptions(i, -1);
       }
+      #else
+      vertexDescription.setIndicesOfAdjacentCellDescriptions(i, _vertex.getAdjacentCellDescriptionIndex(i));
+      #endif
     } else {
       vertexDescription.setIndicesOfAdjacentCellDescriptions(i, -1);
     }

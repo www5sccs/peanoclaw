@@ -189,12 +189,14 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
   );
 
   //TODO unterweg debug
+  #ifdef Parallel
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(fineGridVertex.getAdjacentCellDescriptionIndex(i) != -1) {
       Patch subgrid(fineGridVertex.getAdjacentCellDescriptionIndex(i));
       assertion1(!subgrid.isRemote() || subgrid.getLevel() <= coarseGridVerticesEnumerator.getLevel(), subgrid);
     }
   }
+  #endif
 
   logTraceOutWith1Argument( "destroyHangingVertex(...)", fineGridVertex );
 }
@@ -989,6 +991,7 @@ void peanoclaw::mappings::Remesh::beginIteration(
   logTraceInWith1Argument( "beginIteration(State)", solverState );
 
   //TODO unterweg debug
+  #ifdef Parallel
   if(solverState.isJoinWithMasterTriggered()) {
     logInfo("beginIteration", "Join triggered: "
         << tarch::parallel::Node::getInstance().getRank() << "+" << tarch::parallel::NodePool::getInstance().getMasterRank()
@@ -999,6 +1002,7 @@ void peanoclaw::mappings::Remesh::beginIteration(
         << tarch::parallel::Node::getInstance().getRank() << "+" << tarch::parallel::NodePool::getInstance().getMasterRank()
         << "->" << tarch::parallel::NodePool::getInstance().getMasterRank());
   }
+  #endif
 
   _iterationNumber++;
 

@@ -43,8 +43,8 @@ void peanoclaw::PatchPlotter::plotSubcell(
     for(int i = 0; i < (int)_cellAuxWriter.size(); i++) {
       _cellAuxWriter[i]->plotCell(number, patch.getValueAux(subcellIndex, i));
     }
-    _cellTimeOldWriter->plotCell(number, patch.getCurrentTime());
-    _cellTimeNewWriter->plotCell(number, patch.getCurrentTime() + patch.getTimestepSize());
+    _cellTimeOldWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime());
+    _cellTimeNewWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
     _cellDemandedMeshWidthWriter->plotCell(number, patch.getDemandedMeshWidth());
 
     _cellAgeWriter->plotCell(number, patch.getAge());
@@ -167,7 +167,9 @@ void peanoclaw::PatchPlotter::close() {
   _cellTimeNewWriter->close();
   _cellDemandedMeshWidthWriter->close();
   _cellAgeWriter->close();
+  #ifdef Parallel
   _cellRankWriter->close();
+  #endif
 }
 
 
