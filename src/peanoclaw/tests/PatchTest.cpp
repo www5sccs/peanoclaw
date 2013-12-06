@@ -60,6 +60,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
     0.0  //Minimal neighbor time
   );
 
+  #ifdef Dim2
   for(int unknown = 0; unknown < 2; unknown++) {
     for(int x = 0; x < 3; x++) {
       for(int y = 0; y < 3; y++) {
@@ -69,6 +70,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
       }
     }
   }
+  #endif
 
   //TODO unterweg fixen!
 //  double uNewArray[3*3*2];
@@ -115,6 +117,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
 //    uOld.push_back(data);
 //  }
 
+  #ifdef Dim2
   int counter = 0;
   for(int unknown = 0; unknown < 2; unknown++) {
     for(int x = -1; x < 3 + 1; x++) {
@@ -125,6 +128,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
       }
     }
   }
+  #endif
 
   //TODO unterweg fixen!
 //  double uOldArray[5*5*2];
@@ -197,6 +201,11 @@ void peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
 
   finePatches[8].getTimeIntervals().setCurrentTime(2.5);
   finePatches[8].getTimeIntervals().setTimestepSize(1.5);
+
+  for(int i = 9; i < THREE_POWER_D; i++) {
+    finePatches[i].getTimeIntervals().setCurrentTime(0.0);
+    finePatches[i].getTimeIntervals().setTimestepSize(3.0);
+  }
 
   //execute methods
   coarsePatch.getTimeIntervals().resetMinimalFineGridTimeInterval();

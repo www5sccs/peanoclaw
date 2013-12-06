@@ -53,6 +53,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::run() {
   testMethod( testPartialRestrictionAreasWithInfiniteLowerBounds );
   testMethod( testFaceAdjacentPatchTraversal2D );
   testMethod( testEdgeAdjacentPatchTraversal2D );
+  testMethod( testEdgeAdjacentPatchTraversal3D );
 }
 
 void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
@@ -840,30 +841,47 @@ void peanoclaw::tests::GhostLayerCompositorTest::testEdgeAdjacentPatchTraversal3
 
   validateEquals(functor._calls.size(), 4*6);
 
-  //7 <-> 6
-  validateEquals(functor._calls[0][0], 15);
-  validateEquals(functor._calls[0][1], 12);
-  validateEquals(functor._calls[0][2], 1);
+  //7 <-> 1
+  validateEquals(functor._calls[0][0], 7);
+  validateEquals(functor._calls[0][1], 1);
+  validateEquals(functor._calls[0][2], 0);
   validateEquals(functor._calls[0][3], 1);
-  validateEquals(functor._calls[0][4], 0);
+  validateEquals(functor._calls[0][4], 1);
 
-  //Lower-right <-> Upper-left
-//  validateEquals(functor._calls[1][0], 2);
-//  validateEquals(functor._calls[1][1], 1);
-//  validateEquals(functor._calls[1][2], -1);
-//  validateEquals(functor._calls[1][3], 1);
+  //7 <-> 4
+  validateEquals(functor._calls[1][0], 7);
+  validateEquals(functor._calls[1][1], 2);
+  validateEquals(functor._calls[1][2], 1);
+  validateEquals(functor._calls[1][3], 0);
+  validateEquals(functor._calls[1][4], 1);
 
-  //Upper-left <-> Lower-right
-//  validateEquals(functor._calls[2][0], 1);
-//  validateEquals(functor._calls[2][1], 2);
-//  validateEquals(functor._calls[2][2], 1);
-//  validateEquals(functor._calls[2][3], -1);
+  //7 <-> 2
+  validateEquals(functor._calls[2][0], 7);
+  validateEquals(functor._calls[2][1], 4);
+  validateEquals(functor._calls[2][2], 1);
+  validateEquals(functor._calls[2][3], 1);
+  validateEquals(functor._calls[2][4], 0);
 
-  //Upper-right <-> Lower-left
-//  validateEquals(functor._calls[3][0], 0);
-//  validateEquals(functor._calls[3][1], 3);
-//  validateEquals(functor._calls[3][2], -1);
-//  validateEquals(functor._calls[3][3], -1);
+  //6 <-> 0
+  validateEquals(functor._calls[3][0], 6);
+  validateEquals(functor._calls[3][1], 0);
+  validateEquals(functor._calls[3][2], 0);
+  validateEquals(functor._calls[3][3], 1);
+  validateEquals(functor._calls[3][4], 1);
+
+  //6 <-> 3
+  validateEquals(functor._calls[4][0], 6);
+  validateEquals(functor._calls[4][1], 3);
+  validateEquals(functor._calls[4][2], -1);
+  validateEquals(functor._calls[4][3], 0);
+  validateEquals(functor._calls[4][4], 1);
+
+  //6 <-> 5
+  validateEquals(functor._calls[5][0], 6);
+  validateEquals(functor._calls[5][1], 5);
+  validateEquals(functor._calls[5][2], -1);
+  validateEquals(functor._calls[5][3], 1);
+  validateEquals(functor._calls[5][4], 0);
   #endif
 }
 

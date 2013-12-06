@@ -33,13 +33,31 @@ void peanoclaw::tests::StatisticsTest::setUp() {
 
 void peanoclaw::tests::StatisticsTest::testGetNeighborPositionOnSameLevel() {
   tarch::la::Vector<DIMENSIONS, double> position;
-  assignList(position) = 2.0/3.0, 1.0/3.0;
+  assignList(position) =
+      2.0/3.0
+      ,1.0/3.0
+      #ifdef Dim3
+      ,1.0/3.0
+      #endif
+      ;
   tarch::la::Vector<DIMENSIONS, double> size(1.0/3.0);
   int level = 2;
   tarch::la::Vector<DIMENSIONS, double> expectedNeighborPosition;
-  assignList(expectedNeighborPosition) = 1.0, 0.0;
+  assignList(expectedNeighborPosition) =
+      1.0
+      ,0.0
+      #ifdef Dim3
+      ,0.0
+      #endif
+      ;
   tarch::la::Vector<DIMENSIONS, int> discreteNeighborPosition;
-  assignList(discreteNeighborPosition) = 1, 0;
+  assignList(discreteNeighborPosition) =
+      1
+      ,0
+      #ifdef Dim3
+      ,0
+      #endif
+      ;
 
   tarch::la::Vector<DIMENSIONS, double> domainOffset(0.0);
   tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);
@@ -62,9 +80,21 @@ void peanoclaw::tests::StatisticsTest::testGetNeighborPositionOnDifferentLevel()
   tarch::la::Vector<DIMENSIONS, double> size(1.0/3.0);
   int level = 2;
   tarch::la::Vector<DIMENSIONS, double> expectedNeighborPosition;
-  assignList(expectedNeighborPosition) = 2.0/3.0, 0.0;
+  assignList(expectedNeighborPosition) =
+      2.0/3.0
+      ,0.0
+      #ifdef Dim3
+      ,0.0
+      #endif
+      ;
   tarch::la::Vector<DIMENSIONS, int> discreteNeighborPosition;
-  assignList(discreteNeighborPosition) = 1, -1;
+  assignList(discreteNeighborPosition) =
+      1
+      ,-1
+      #ifdef Dim3
+      ,-1
+      #endif
+      ;
 
   tarch::la::Vector<DIMENSIONS, double> domainOffset(0.0);
   tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);
@@ -84,19 +114,55 @@ void peanoclaw::tests::StatisticsTest::testGetNeighborPositionOnDifferentLevel()
 
 void peanoclaw::tests::StatisticsTest::testGetNeighborPositionOnRectangularDomainWithOffset() {
   tarch::la::Vector<DIMENSIONS, double> position;
-  assignList(position) = 2.0/3.0 + 1.0, 1.0/3.0 + 2.0;
+  assignList(position) =
+      2.0/3.0 + 1.0
+      ,1.0/3.0 + 2.0
+      #ifdef Dim3
+      ,1.0/3.0 + 2.0
+      #endif
+      ;
   tarch::la::Vector<DIMENSIONS, double> size;
-  assignList(size) = 2.0/3.0, 1.0/3.0;
+  assignList(size) =
+      2.0/3.0
+      ,1.0/3.0
+      #ifdef Dim3
+      ,1.0/3.0
+      #endif
+      ;
   int level = 2;
   tarch::la::Vector<DIMENSIONS, double> expectedNeighborPosition;
-  assignList(expectedNeighborPosition) = 4.0/3.0 + 1.0, 2.0;
+  assignList(expectedNeighborPosition) =
+      4.0/3.0 + 1.0
+      ,2.0
+      #ifdef Dim3
+      ,2.0
+      #endif
+      ;
   tarch::la::Vector<DIMENSIONS, int> discreteNeighborPosition;
-  assignList(discreteNeighborPosition) = 1, -1;
+  assignList(discreteNeighborPosition) =
+      1
+      ,-1
+      #ifdef Dim3
+      ,-1
+      #endif
+      ;
 
   tarch::la::Vector<DIMENSIONS, double> domainOffset;
-  assignList(domainOffset) = 1.0, 2.0;
+  assignList(domainOffset) =
+      1.0
+      ,2.0
+      #ifdef Dim3
+      ,2.0
+      #endif
+      ;
   tarch::la::Vector<DIMENSIONS, double> domainSize;
-  assignList(domainSize) = 2.0, 1.0;
+  assignList(domainSize) =
+      2.0
+      ,1.0
+      #ifdef Dim3
+      ,1.0
+      #endif
+      ;
   peanoclaw::statistics::ParallelGridValidator validator(domainOffset, domainSize, false);
 
   tarch::la::Vector<DIMENSIONS, double> neighborPosition
@@ -116,9 +182,21 @@ void peanoclaw::tests::StatisticsTest::testRootPatch() {
   tarch::la::Vector<DIMENSIONS, double> size(1.0);
   int level = 1;
   tarch::la::Vector<DIMENSIONS, double> expectedNeighborPosition;
-  assignList(expectedNeighborPosition) = -1.0, -1.0;
+  assignList(expectedNeighborPosition) =
+      -1.0
+      ,-1.0
+      #ifdef Dim3
+      ,-1.0
+      #endif
+      ;
   tarch::la::Vector<DIMENSIONS, int> discreteNeighborPosition;
-  assignList(discreteNeighborPosition) = -1, -1;
+  assignList(discreteNeighborPosition) =
+      -1
+      ,-1
+      #ifdef Dim3
+      ,-1
+      #endif
+      ;
 
   tarch::la::Vector<DIMENSIONS, double> domainOffset(0.0);
   tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);

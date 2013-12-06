@@ -15,6 +15,9 @@
 #include "peano/heap/Heap.h"
 #include "peano/utils/Loop.h"
 
+//#define PATCH_VALUE_FORMAT std::setprecision(2) << std::scientific
+#define PATCH_VALUE_FORMAT std::setprecision(2)
+
 tarch::logging::Log peanoclaw::Patch::_log("peanoclaw::Patch");
 
 int peanoclaw::Patch::linearize(int unknown,
@@ -643,15 +646,15 @@ std::string peanoclaw::Patch::toStringUNew() const {
       for (int x = 0; x < getSubdivisionFactor()(0); x++) {
         tarch::la::Vector<DIMENSIONS, int> subcellIndex;
         assignList(subcellIndex) = x, y;
-        str << std::setw(2) << getValueUNew(subcellIndex, 0) << " ";
+        str << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 0) << " ";
       }
       if (_cellDescription->getUnknownsPerSubcell() > 1) {
         str << "\t";
         for (int x = 0; x < getSubdivisionFactor()(0); x++) {
           tarch::la::Vector<DIMENSIONS, int> subcellIndex;
           assignList(subcellIndex) = x, y;
-          str << std::setw(2) << getValueUNew(subcellIndex, 1) << ","
-              << std::setw(2) << getValueUNew(subcellIndex, 2) << " ";
+          str << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 1) << ","
+              << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 2) << " ";
         }
       }
       str << std::endl;
@@ -664,18 +667,18 @@ std::string peanoclaw::Patch::toStringUNew() const {
         for (int x = 0; x < getSubdivisionFactor()(0); x++) {
           tarch::la::Vector<DIMENSIONS, int> subcellIndex;
           assignList(subcellIndex) = x, y, z;
-          str << std::setw(2) << getValueUNew(subcellIndex, 0) << " ";
+          str << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 0) << " ";
         }
-        if (_cellDescription->getUnknownsPerSubcell() > 1) {
-          str << "\t";
-          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
-            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-            assignList(subcellIndex) = x, y, z;
-            str << std::setw(2) << getValueUNew(subcellIndex, 1) << ","
-                << std::setw(2) << getValueUNew(subcellIndex, 2) << ","
-                << std::setw(2) << getValueUNew(subcellIndex, 3) << " ";
-          }
-        }
+//        if (_cellDescription->getUnknownsPerSubcell() > 1) {
+//          str << "\t";
+//          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+//            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+//            assignList(subcellIndex) = x, y, z;
+//            str << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 1) << ","
+//                << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 2) << ","
+//                << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 3) << " ";
+//          }
+//        }
         str << std::endl;
       }
       str << std::endl << std::endl;
@@ -699,7 +702,7 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
         tarch::la::Vector<DIMENSIONS, int> subcellIndex;
         subcellIndex(0) = x;
         subcellIndex(1) = y;
-        str << std::setw(2) << getValueUOld(subcellIndex, 0) << " ";
+        str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 0) << " ";
       }
       if (_cellDescription->getUnknownsPerSubcell() > 1) {
         str << "\t";
@@ -708,8 +711,8 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
           tarch::la::Vector<DIMENSIONS, int> subcellIndex;
           subcellIndex(0) = x;
           subcellIndex(1) = y;
-          str << std::setw(2) << getValueUOld(subcellIndex, 1) << ","
-              << std::setw(2) << getValueUOld(subcellIndex, 2) << " ";
+          str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 1) << ","
+              << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 2) << " ";
         }
       }
       str << std::endl;
@@ -725,18 +728,18 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
             x < getSubdivisionFactor()(0) + getGhostLayerWidth(); x++) {
           tarch::la::Vector<DIMENSIONS, int> subcellIndex;
           assignList(subcellIndex) = x, y, z;
-          str << std::setw(2) << getValueUOld(subcellIndex, 0) << " ";
+          str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 0) << " ";
         }
-        if (_cellDescription->getUnknownsPerSubcell() > 1) {
-          str << "\t";
-          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
-            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-            assignList(subcellIndex) = x, y, z;
-            str << std::setw(2) << getValueUOld(subcellIndex, 1) << ","
-                << std::setw(2) << getValueUOld(subcellIndex, 2) << ","
-                << std::setw(2) << getValueUOld(subcellIndex, 3) << " ";
-          }
-        }
+//        if (_cellDescription->getUnknownsPerSubcell() > 1) {
+//          str << "\t";
+//          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+//            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+//            assignList(subcellIndex) = x, y, z;
+//            str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 1) << ","
+//                << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 2) << ","
+//                << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 3) << " ";
+//          }
+//        }
         str << std::endl;
       }
       str << std::endl << std::endl;

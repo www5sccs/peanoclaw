@@ -86,9 +86,10 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   #ifdef Debug
   bool plotVertex = false;
   plotVertex =
-      tarch::la::equals(position(0), 1.0/9.0)
-      && tarch::la::equals(position(1), 1.0/3.0)
-      && level == 4
+      tarch::la::equals(position(0), 2.0/9.0)
+      && tarch::la::equals(position(1), 1.0/9.0)
+      && tarch::la::equals(position(2), 1.0/9.0)
+      && level == 3
   ;
 
   if(plotVertex) {

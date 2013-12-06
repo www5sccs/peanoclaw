@@ -104,18 +104,12 @@ class SubgridSolver(object):
                 qbc[:,:,0:mbc] = self.qbc[:,:,0:mbc]                
 
         elif len(self.domain.patch.dimensions) is 3:
-#            if dim == self.domain.patch.dimensions[0]:
-#                qbc[:,0:mbc,:,:] = self.qbc[:,0:mbc,:,:]
-#            elif dim == self.domain.patch.dimensions[1]:
-#                qbc[:,:,0:mbc,:] = self.qbc[:,:,0:mbc,:] 
-#            elif dim == self.domain.patch.dimensions[2]:
-#                qbc[:,:,:,0:mbc] = self.qbc[:,:,:,0:mbc]
             if dim == self.domain.patch.dimensions[0]:
-                qbc[:,0:mbc,:,:] = -10
+                qbc[:,0:mbc,:,:] = self.qbc[:,0:mbc,:,:]
             elif dim == self.domain.patch.dimensions[1]:
-                qbc[:,:,0:mbc,:] = -10 
+                qbc[:,:,0:mbc,:] = self.qbc[:,:,0:mbc,:] 
             elif dim == self.domain.patch.dimensions[2]:
-                qbc[:,:,:,0:mbc] = -10
+                qbc[:,:,:,0:mbc] = self.qbc[:,:,:,0:mbc]
         
     def user_bc_upper(self, grid,dim,t,qbc,mbc):
 
@@ -133,15 +127,9 @@ class SubgridSolver(object):
             shifty = self.domain.patch.dimensions[1].num_cells+mbc
             shiftz = self.domain.patch.dimensions[2].num_cells+mbc
 
-#            if dim == self.domain.patch.dimensions[0]:
-#                qbc[:,shiftx+0:shiftx+mbc,:,:] = self.qbc[:,shiftx+0:shiftx+mbc,:,:]
-#            elif dim == self.domain.patch.dimensions[1]:
-#                qbc[:,:,shifty+0:shifty+mbc,:] = self.qbc[:,:,shifty+0:shifty+mbc,:]
-#            elif dim == self.domain.patch.dimensions[2]:
-#                qbc[:,:,:,shiftz+0:shiftz+mbc] = self.qbc[:,:,:,shiftz+0:shiftz+mbc]
             if dim == self.domain.patch.dimensions[0]:
-                qbc[:,shiftx+0:shiftx+mbc,:,:] = -1
+                qbc[:,shiftx+0:shiftx+mbc,:,:] = self.qbc[:,shiftx+0:shiftx+mbc,:,:]
             elif dim == self.domain.patch.dimensions[1]:
-                qbc[:,:,shifty+0:shifty+mbc,:] = -1
+                qbc[:,:,shifty+0:shifty+mbc,:] = self.qbc[:,:,shifty+0:shifty+mbc,:]
             elif dim == self.domain.patch.dimensions[2]:
-                qbc[:,:,:,shiftz+0:shiftz+mbc] = -1
+                qbc[:,:,:,shiftz+0:shiftz+mbc] = self.qbc[:,:,:,shiftz+0:shiftz+mbc]

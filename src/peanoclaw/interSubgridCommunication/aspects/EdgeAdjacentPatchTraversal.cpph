@@ -37,12 +37,13 @@ peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<LoopBo
       = peano::utils::dDelinearised(TWO_POWER_D - 1 - sourceIndex, 2);
 
     for(int axis = 0; axis < DIMENSIONS; axis++) {
-      tarch::la::Vector<DIMENSIONS, int> destinationPosition;
+      tarch::la::Vector<DIMENSIONS, int> destinationPosition = sourcePosition;
       for(int d = 0; d < DIMENSIONS; d++) {
         if(axis != d) {
           destinationPosition(d) = (sourcePosition(d)+1) % 2;
         }
       }
+
       int destinationIndex = TWO_POWER_D - 1 - peano::utils::dLinearised(destinationPosition, 2);
 
       loopBody(
