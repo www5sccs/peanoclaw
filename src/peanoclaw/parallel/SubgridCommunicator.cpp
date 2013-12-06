@@ -74,14 +74,21 @@ void peanoclaw::parallel::SubgridCommunicator::sendPaddingDataArray() {
 int peanoclaw::parallel::SubgridCommunicator::receiveDataArray() {
   logTraceIn("receiveDataArray");
 
-  std::vector<Data> remoteArray = DataHeap::getInstance().receiveData(_remoteRank, _position, _level, _messageType);
-
   int localIndex = DataHeap::getInstance().createData();
-  std::vector<Data>& localArray = DataHeap::getInstance().getData(localIndex);
+  DataHeap::getInstance().receiveData(
+    localIndex,
+    _remoteRank,
+    _position,
+    _level,
+    _messageType
+  );
+
+
+  //std::vector<Data>& localArray = DataHeap::getInstance().getData(localIndex);
 
   // Copy array
-  std::vector<Data>::iterator it = remoteArray.begin();
-  localArray.assign(it, remoteArray.end());
+//  std::vector<Data>::iterator it = remoteArray.begin();
+//  localArray.assign(it, remoteArray.end());
 
   logTraceOut("receiveDataArray");
   return localIndex;

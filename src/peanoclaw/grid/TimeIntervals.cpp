@@ -171,7 +171,7 @@ bool peanoclaw::grid::TimeIntervals::shouldFineGridsSynchronize() const {
 std::string peanoclaw::grid::TimeIntervals::toString() const {
   std::stringstream str;
   if (_cellDescription != 0) {
-    str << ",currentTime=" << _cellDescription->getTime() << ",timestepSize="
+    str << "currentTime=" << _cellDescription->getTime() << ",timestepSize="
     << _cellDescription->getTimestepSize()
     << ",minimalNeighborTimeConstraint="
     << _cellDescription->getMinimalNeighborTimeConstraint();

@@ -37,7 +37,8 @@ void peanoclaw::PatchPlotter::plotSubcell(
 #endif
 
     int qWriterIndex = 0;
-    for(int i = 0; i < (int)_cellQWriter.size(); i++) {
+    //for(int i = 0; i < (int)_cellQWriter.size(); i++) {
+    for(int i = 0; i < patch.getUnknownsPerSubcell(); i++) {
       if(_plotQ.empty() || _plotQ.find(i) != _plotQ.end()) {
         _cellQWriter[qWriterIndex]->plotCell(number, patch.getValueUNew(subcellIndex, i));
         qWriterIndex++;
@@ -45,9 +46,10 @@ void peanoclaw::PatchPlotter::plotSubcell(
     }
 
     int auxWriterIndex = 0;
-    for(int i = 0; i < (int)_cellAuxWriter.size(); i++) {
+    //for(int i = 0; i < (int)_cellAuxWriter.size(); i++) {
+    for(int i = 0; i < patch.getAuxiliarFieldsPerSubcell(); i++) {
       if(_plotAux.empty() || _plotAux.find(i) != _plotAux.end()) {
-        _cellAuxWriter[i]->plotCell(number, patch.getValueAux(subcellIndex, i));
+        _cellAuxWriter[auxWriterIndex]->plotCell(number, patch.getValueAux(subcellIndex, i));
         auxWriterIndex++;
       }
     }
