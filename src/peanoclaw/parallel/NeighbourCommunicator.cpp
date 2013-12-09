@@ -246,8 +246,9 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
               || localParallelSubgrid.getNumberOfSharedAdjacentVertices() == 1
               || !_avoidMultipleTransferOfSubgridsIfPossible
           ) {
-            assertion3(
-              localParallelSubgrid.getAdjacentRank() == _remoteRank || localParallelSubgrid.getAdjacentRank() == -1,
+            assertion4(
+              localParallelSubgrid.getAdjacentRank() == _remoteRank || localParallelSubgrid.getAdjacentRank() == -1 || !_avoidMultipleTransferOfSubgridsIfPossible,
+              localParallelSubgrid.getAdjacentRank(),
               _remoteRank,
               localSubgrid,
               vertex.getAdjacentRanks()
