@@ -577,12 +577,11 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellSize() const {
 
 void peanoclaw::Patch::copyUNewToUOld() {
   assertion1(isLeaf() || isVirtual(), toString());
-  for (int unknown = 0; unknown < _cellDescription->getUnknownsPerSubcell();
-      unknown++) {
+  for (int unknown = 0; unknown < _cellDescription->getUnknownsPerSubcell(); unknown++) {
     dfor(subcellIndex, _cellDescription->getSubdivisionFactor()){
-    setValueUOld(subcellIndex, unknown, getValueUNew(subcellIndex, unknown));
+      setValueUOld(subcellIndex, unknown, getValueUNew(subcellIndex, unknown));
+    }
   }
-}
 }
 
 void peanoclaw::Patch::clearRegion(tarch::la::Vector<DIMENSIONS, int> offset,

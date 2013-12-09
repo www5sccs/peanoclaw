@@ -17,7 +17,7 @@ def refinement_criterion_gradient(state):
   max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0, :, :, :])))
   
   if max_gradient > 0.1:
-      return 2.0/(12.0*9.0)
+      return 2.0/(12.0*27.0)
   elif max_gradient < 0.05:
       return 2.0/(12.0*9.0)
   else:
@@ -153,7 +153,6 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     solver.bc_upper[1]=pyclaw.BC.extrap
     solver.bc_lower[2]=pyclaw.BC.extrap
     solver.bc_upper[2]=pyclaw.BC.extrap
-
     
     # Initialize domain
     factor = 1
@@ -170,11 +169,10 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
         my = my * msubgrid
         mz = mz * msubgrid
     
-    x = pyclaw.Dimension('x', 0.0, 2.0, mx)
-    y = pyclaw.Dimension('y', -0.5, 0.5, my)
-    z = pyclaw.Dimension('z', -0.5, 0.5, mz)
-    domain = pyclaw.Domain([x, y, z])
-
+    x = pyclaw.Dimension('x', 0.0,2.0,mx)
+    y = pyclaw.Dimension('y',-0.5,0.5,my)
+    z = pyclaw.Dimension('z',-0.5,0.5,mz)
+    domain = pyclaw.Domain([x,y,z])
     num_eqn = 5
     state = pyclaw.State(domain, num_eqn)
     
