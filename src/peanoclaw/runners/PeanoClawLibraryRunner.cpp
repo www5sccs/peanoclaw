@@ -217,16 +217,16 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
       _repository->getState().setInitialMaximalSubgridSize(currentMinimalSubgridSize);
 
+      logInfo("PeanoClawLibraryRunner", "Creating grid up to level " << maximumLevel << "...");
       do {
-        logInfo("PeanoClawLibraryRunner", "Creating grid up to level " << maximumLevel << "...");
-
+        logInfo("PeanoClawLibraryRunner", "Initialize iteration...");
         iterateInitialiseGrid();
         iterateInitialiseGrid(); //TODO unterweg: Raus?
 
 //        logInfo("PeanoClawLibraryRunner", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
       } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
-      maximumLevel += 2;
+      maximumLevel += 1;
     } while(tarch::la::oneGreater(currentMinimalSubgridSize, initialMaximalSubgridSize));
     #endif
 
