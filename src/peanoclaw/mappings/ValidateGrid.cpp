@@ -10,7 +10,7 @@
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -18,7 +18,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexLast
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -26,7 +26,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexFirs
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -34,7 +34,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::enterCellSpecif
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -42,7 +42,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::leaveCellSpecif
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -50,7 +50,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::ascendSpecifica
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 

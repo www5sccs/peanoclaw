@@ -18,7 +18,7 @@ peanoclaw::parallel::NeighbourCommunicator::RemoteSubgridMap               peano
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -26,7 +26,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexLastTimeSp
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -34,7 +34,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexFirstTimeS
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -42,7 +42,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::enterCellSpecificatio
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -50,7 +50,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::leaveCellSpecificatio
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 
@@ -58,7 +58,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::ascendSpecification()
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
 }
 
 tarch::logging::Log                peanoclaw::mappings::Remesh::_log( "peanoclaw::mappings::Remesh" ); 
@@ -678,6 +678,19 @@ void peanoclaw::mappings::Remesh::prepareSendToMaster(
 ) {
   logTraceInWith3Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString(), verticesEnumerator.getVertexPosition(0) );
   
+//  logInfo("prepareCopyToRemoteNode", "Sending data from rank " << tarch::parallel::Node::getInstance().getRank() << " to master " << tarch::parallel::NodePool::getInstance().getMasterRank()
+//      << " position:" << (coarseGridVerticesEnumerator.getVertexPosition() + tarch::la::multiplyComponents(fineGridPositionOfCell.convertScalar<double>(), coarseGridVerticesEnumerator.getCellSize()/3.0))
+//      << ", level:" << (coarseGridVerticesEnumerator.getLevel() + 1)
+//      << ", isInside:" << localCell.isInside()
+//      << ", assignedToRemoteRank:" << localCell.isAssignedToRemoteRank()
+//      << ", assignedRank:" << localCell.getRankOfRemoteNode()
+//      << ", isRemote:" << localCell.isRemote(*_state, false, false)
+//      << ", sending:" << (localCell.isInside() && localCell.getRankOfRemoteNode() == tarch::parallel::NodePool::getInstance().getMasterRank() && !localCell.isRemote(*_state, false, false))
+//      << ", index:" << localCell.getCellDescriptionIndex()
+//      << ", valid: " << CellDescriptionHeap::getInstance().isValidIndex(localCell.getCellDescriptionIndex())
+//      << ", iteration:" << _iterationNumber
+//  );
+
   int toRank = tarch::parallel::NodePool::getInstance().getMasterRank();
   if(localCell.isInside()){
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, verticesEnumerator.getCellCenter(), verticesEnumerator.getLevel(), false);
