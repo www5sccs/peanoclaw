@@ -4,6 +4,10 @@
 peanoclaw::Cell::Cell():
   Base() {
   _cellData.setCellDescriptionIndex(-2);
+
+  #ifdef Parallel
+  setCellIsAForkCandidate(false);
+  #endif
 }
 
 
