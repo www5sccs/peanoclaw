@@ -244,6 +244,13 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
       );
     }
   }
+
+  #ifdef Parallel
+  if(!tarch::la::oneGreater(fineGridVerticesEnumerator.getCellSize(), _initialMaximalSubgridSize)
+     || _refinementCriterionEnabled) {
+    fineGridCell.setCellIsAForkCandidate(true);
+  }
+  #endif
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
 
