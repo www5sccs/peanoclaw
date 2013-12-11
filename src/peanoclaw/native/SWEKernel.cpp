@@ -46,7 +46,7 @@ double peanoclaw::native::SWEKernel::initializePatch(
 double peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
 
-  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getMinimalNeighborTimeConstraint());
+  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getTimeIntervals().getMinimalNeighborTimeConstraint());
 
   tarch::timing::Watch pyclawWatch("", "", false);
   pyclawWatch.startTimer();
@@ -68,15 +68,15 @@ double peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumT
       tarch::la::greater(patch.getTimeIntervals().getTimestepSize(), 0.0)
       || tarch::la::greater(estimatedNextTimestepSize, 0.0)
       || tarch::la::equals(maximumTimestepSize, 0.0)
-      || tarch::la::equals(patch.getEstimatedNextTimestepSize(), 0.0),
+      || tarch::la::equals(patch.getTimeIntervals().getEstimatedNextTimestepSize(), 0.0),
       patch, maximumTimestepSize, estimatedNextTimestepSize, patch.toStringUNew());
   assertion(patch.getTimeIntervals().getTimestepSize() < std::numeric_limits<double>::infinity());
 
   if (tarch::la::greater(dt, 0.0)) {
-    patch.advanceInTime();
-    patch.setTimestepSize(dt);
+    patch.getTimeIntervals().advanceInTime();
+    patch.getTimeIntervals().setTimestepSize(dt);
   }
-  patch.setEstimatedNextTimestepSize(estimatedNextTimestepSize);
+  patch.getTimeIntervals().setEstimatedNextTimestepSize(estimatedNextTimestepSize);
 
   logTraceOut( "solveTimestep(...)");
   return _scenario.computeDemandedMeshWidth(patch);
