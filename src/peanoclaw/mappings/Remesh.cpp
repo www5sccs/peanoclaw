@@ -322,7 +322,7 @@ void peanoclaw::mappings::Remesh::createCell(
   }
 
   //Transfer data from coarse to fine patch
-  if(!coarseGridCell.isRoot()) {
+  if(!coarseGridCell.isRoot() && !coarseGridCell.isRemote(*_state, true, true)) {
     assertion4(coarseGridCell.getCellDescriptionIndex() > -1, coarseGridCell.getCellDescriptionIndex(), fineGridVerticesEnumerator.getCellSize(), fineGridVerticesEnumerator.getLevel(), fineGridVerticesEnumerator.getVertexPosition());
     Patch coarseGridPatch(
       coarseGridCell
