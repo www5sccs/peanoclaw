@@ -321,8 +321,12 @@ void peanoclaw::mappings::Remesh::createCell(
     fineGridPatch.switchToLeaf();
   }
 
+  bool isCreatingDueToForkOrJoin = peano::grid::aspects::VertexStateAnalysis::doesNoVertexCarryRefinementFlag(
+                                     coarseGridVertices, coarseGridVerticesEnumerator, peanoclaw::Vertex::Records::Refining
+                                   );
+
   //Transfer data from coarse to fine patch
-  if(!coarseGridCell.isRoot() && !coarseGridCell.isRemote(*_state, true, true)) {
+  if(!coarseGridCell.isRoot() && !isCreatingDueToForkOrJoin) {
     assertion4(coarseGridCell.getCellDescriptionIndex() > -1, coarseGridCell.getCellDescriptionIndex(), fineGridVerticesEnumerator.getCellSize(), fineGridVerticesEnumerator.getLevel(), fineGridVerticesEnumerator.getVertexPosition());
     Patch coarseGridPatch(
       coarseGridCell
