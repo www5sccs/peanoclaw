@@ -1079,10 +1079,12 @@ void peanoclaw::mappings::Remesh::endIteration(
   DataHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
   CellDescriptionHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
 
+  #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster() || _state->isJoiningWithMaster()) {
     CellDescriptionHeap::getInstance().finishedToSendSynchronousData();
     DataHeap::getInstance().finishedToSendSynchronousData();
   }
+  #endif
 
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }
