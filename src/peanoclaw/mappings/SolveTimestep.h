@@ -18,6 +18,8 @@
 #include "peanoclaw/statistics/LevelStatistics.h"
 #include "peanoclaw/statistics/SubgridStatistics.h"
 
+#include <map>
+
 namespace peanoclaw {
   namespace mappings {
     class SolveTimestep;
@@ -61,6 +63,8 @@ class peanoclaw::mappings::SolveTimestep {
     std::vector<peanoclaw::statistics::Probe> _probeList;
 
     bool _useDimensionalSplittingOptimization;
+
+    std::map<int, int> _estimatedRemainingIterationsUntilGlobalTimestep;
 
     /**
      * Determines whether the given patch should be advanced in time.

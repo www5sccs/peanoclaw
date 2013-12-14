@@ -109,6 +109,7 @@ void peanoclaw::adapters::SolveTimestepAndPlot::createHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                   fineGridPositionOfVertex
 ) {
 
+
   _map2Remesh.createHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2SolveTimestep.createHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2Plot.createHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
@@ -126,10 +127,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::destroyHangingVertex(
       peanoclaw::Cell&           coarseGridCell,
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
-
   _map2Remesh.destroyHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2SolveTimestep.destroyHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2Plot.destroyHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
+
 
 
 }
@@ -145,10 +146,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::createInnerVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
+
   _map2Remesh.createInnerVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2SolveTimestep.createInnerVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2Plot.createInnerVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
-
 
 }
 
@@ -163,10 +164,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::createBoundaryVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
+
   _map2Remesh.createBoundaryVertex( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2SolveTimestep.createBoundaryVertex( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2Plot.createBoundaryVertex( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
-
 
 }
 
@@ -199,10 +200,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
 
+
   _map2Remesh.createCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
   _map2SolveTimestep.createCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
   _map2Plot.createCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
-
 
 }
 
@@ -234,10 +235,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::mergeWithNeighbour(
   int                                           level
 ) {
 
+
    _map2Remesh.mergeWithNeighbour( vertex, neighbour, fromRank, fineGridX, fineGridH, level );
    _map2SolveTimestep.mergeWithNeighbour( vertex, neighbour, fromRank, fineGridX, fineGridH, level );
    _map2Plot.mergeWithNeighbour( vertex, neighbour, fromRank, fineGridX, fineGridH, level );
-
 
 }
 
@@ -248,7 +249,6 @@ void peanoclaw::adapters::SolveTimestepAndPlot::prepareSendToNeighbour(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-
    _map2Remesh.prepareSendToNeighbour( vertex, toRank, x, h, level );
    _map2SolveTimestep.prepareSendToNeighbour( vertex, toRank, x, h, level );
    _map2Plot.prepareSendToNeighbour( vertex, toRank, x, h, level );
@@ -263,7 +263,6 @@ void peanoclaw::adapters::SolveTimestepAndPlot::prepareCopyToRemoteNode(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-
    _map2Remesh.prepareCopyToRemoteNode( localVertex, toRank, x, h, level );
    _map2SolveTimestep.prepareCopyToRemoteNode( localVertex, toRank, x, h, level );
    _map2Plot.prepareCopyToRemoteNode( localVertex, toRank, x, h, level );
@@ -278,7 +277,6 @@ void peanoclaw::adapters::SolveTimestepAndPlot::prepareCopyToRemoteNode(
       const tarch::la::Vector<DIMENSIONS,double>&   h,
       int                                           level
 ) {
-
    _map2Remesh.prepareCopyToRemoteNode( localCell, toRank, x, h, level );
    _map2SolveTimestep.prepareCopyToRemoteNode( localCell, toRank, x, h, level );
    _map2Plot.prepareCopyToRemoteNode( localCell, toRank, x, h, level );
@@ -295,10 +293,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::mergeWithRemoteDataDueToForkOrJo
   int                                       level
 ) {
 
+
    _map2Remesh.mergeWithRemoteDataDueToForkOrJoin( localVertex, masterOrWorkerVertex, fromRank, x, h, level );
    _map2SolveTimestep.mergeWithRemoteDataDueToForkOrJoin( localVertex, masterOrWorkerVertex, fromRank, x, h, level );
    _map2Plot.mergeWithRemoteDataDueToForkOrJoin( localVertex, masterOrWorkerVertex, fromRank, x, h, level );
-
 
 }
 
@@ -311,10 +309,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::mergeWithRemoteDataDueToForkOrJo
   int                                       level
 ) {
 
+
    _map2Remesh.mergeWithRemoteDataDueToForkOrJoin( localCell, masterOrWorkerCell, fromRank, x, h, level );
    _map2SolveTimestep.mergeWithRemoteDataDueToForkOrJoin( localCell, masterOrWorkerCell, fromRank, x, h, level );
    _map2Plot.mergeWithRemoteDataDueToForkOrJoin( localCell, masterOrWorkerCell, fromRank, x, h, level );
-
 
 }
 
@@ -370,10 +368,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::mergeWithMaster(
   peanoclaw::State&                masterState
 ) {
 
+
    _map2Remesh.mergeWithMaster( workerGridCell, workerGridVertices, workerEnumerator, fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker, workerState, masterState );
    _map2SolveTimestep.mergeWithMaster( workerGridCell, workerGridVertices, workerEnumerator, fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker, workerState, masterState );
    _map2Plot.mergeWithMaster( workerGridCell, workerGridVertices, workerEnumerator, fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker, workerState, masterState );
-
 
 }
 
@@ -390,10 +388,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::receiveDataFromMaster(
       const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
 
+
    _map2Remesh.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
    _map2SolveTimestep.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
    _map2Plot.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
-
 
 }
 
@@ -406,10 +404,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::mergeWithWorker(
   int                                          level
 ) {
 
+
    _map2Remesh.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
    _map2SolveTimestep.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
    _map2Plot.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
-
 
 }
 
@@ -439,10 +437,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::touchVertexFirstTime(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
+
   _map2Remesh.touchVertexFirstTime( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2SolveTimestep.touchVertexFirstTime( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2Plot.touchVertexFirstTime( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
-
 
 }
 
@@ -475,10 +473,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::enterCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
 
+
   _map2Remesh.enterCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
   _map2SolveTimestep.enterCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
   _map2Plot.enterCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
-
 
 }
 
@@ -505,10 +503,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::beginIteration(
   peanoclaw::State&  solverState
 ) {
 
+
   _map2Remesh.beginIteration( solverState );
   _map2SolveTimestep.beginIteration( solverState );
   _map2Plot.beginIteration( solverState );
-
 
 }
 
@@ -536,10 +534,10 @@ void peanoclaw::adapters::SolveTimestepAndPlot::descend(
   peanoclaw::Cell&                 coarseGridCell
 ) {
 
+
   _map2Remesh.descend( fineGridCells, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell );
   _map2SolveTimestep.descend( fineGridCells, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell );
   _map2Plot.descend( fineGridCells, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell );
-
 
 }
 

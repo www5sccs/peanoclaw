@@ -74,6 +74,12 @@ class peanoclaw::statistics::SubgridStatistics {
       const Patch& subgrid
     );
 
+    /**
+     * Gives an estimate on how many iterations have to be done for this subgrid
+     * to reach the global timestep.
+     */
+    int estimateRemainingIterationsUntilGlobalSubgrid(Patch subgrid) const;
+
   public:
     /**
      * Default destructor. Objects build with this constructor
@@ -93,9 +99,9 @@ class peanoclaw::statistics::SubgridStatistics {
     SubgridStatistics(const std::vector<LevelStatistics>& levelStatistics);
 
     /**
-     * Copy-constructor.
+     * Constructs a SubgridStatistics by receiving it from the worker.
      */
-//    SubgridStatistics(const SubgridStatistics& toCopy);
+    SubgridStatistics(int workerRank);
 
     /**
      * Destructor.
@@ -166,9 +172,10 @@ class peanoclaw::statistics::SubgridStatistics {
     void sendToMaster(int masterRank);
 
     /**
-     * Receives the level statistics from a worker rank.
+     * Returns the estimated number of iterations to reach the global timestep
+     * with all subgrids.
      */
-    void receiveFromWorker(int workerRank);
+    int getEstimatedIterationsUntilGlobalTimestep() const;
     #endif
 };
 #endif /* PEANOCLAW_STATISTICS_SUBGRIDSTATISTICS_H_ */

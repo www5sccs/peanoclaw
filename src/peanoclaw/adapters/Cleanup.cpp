@@ -93,6 +93,7 @@ void peanoclaw::adapters::Cleanup::createHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                   fineGridPositionOfVertex
 ) {
 
+
   _map2Cleanup.createHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
 
 
@@ -108,8 +109,8 @@ void peanoclaw::adapters::Cleanup::destroyHangingVertex(
       peanoclaw::Cell&           coarseGridCell,
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
-
   _map2Cleanup.destroyHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
+
 
 
 }
@@ -125,8 +126,8 @@ void peanoclaw::adapters::Cleanup::createInnerVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
-  _map2Cleanup.createInnerVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
 
+  _map2Cleanup.createInnerVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
 
 }
 
@@ -141,8 +142,8 @@ void peanoclaw::adapters::Cleanup::createBoundaryVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
-  _map2Cleanup.createBoundaryVertex( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
 
+  _map2Cleanup.createBoundaryVertex( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
 
 }
 
@@ -173,8 +174,8 @@ void peanoclaw::adapters::Cleanup::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
 
-  _map2Cleanup.createCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
 
+  _map2Cleanup.createCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
 
 }
 
@@ -204,8 +205,8 @@ void peanoclaw::adapters::Cleanup::mergeWithNeighbour(
   int                                           level
 ) {
 
-   _map2Cleanup.mergeWithNeighbour( vertex, neighbour, fromRank, fineGridX, fineGridH, level );
 
+   _map2Cleanup.mergeWithNeighbour( vertex, neighbour, fromRank, fineGridX, fineGridH, level );
 
 }
 
@@ -216,7 +217,6 @@ void peanoclaw::adapters::Cleanup::prepareSendToNeighbour(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-
    _map2Cleanup.prepareSendToNeighbour( vertex, toRank, x, h, level );
 
 
@@ -229,7 +229,6 @@ void peanoclaw::adapters::Cleanup::prepareCopyToRemoteNode(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-
    _map2Cleanup.prepareCopyToRemoteNode( localVertex, toRank, x, h, level );
 
 
@@ -242,7 +241,6 @@ void peanoclaw::adapters::Cleanup::prepareCopyToRemoteNode(
       const tarch::la::Vector<DIMENSIONS,double>&   h,
       int                                           level
 ) {
-
    _map2Cleanup.prepareCopyToRemoteNode( localCell, toRank, x, h, level );
 
 
@@ -257,8 +255,8 @@ void peanoclaw::adapters::Cleanup::mergeWithRemoteDataDueToForkOrJoin(
   int                                       level
 ) {
 
-   _map2Cleanup.mergeWithRemoteDataDueToForkOrJoin( localVertex, masterOrWorkerVertex, fromRank, x, h, level );
 
+   _map2Cleanup.mergeWithRemoteDataDueToForkOrJoin( localVertex, masterOrWorkerVertex, fromRank, x, h, level );
 
 }
 
@@ -271,8 +269,8 @@ void peanoclaw::adapters::Cleanup::mergeWithRemoteDataDueToForkOrJoin(
   int                                       level
 ) {
 
-   _map2Cleanup.mergeWithRemoteDataDueToForkOrJoin( localCell, masterOrWorkerCell, fromRank, x, h, level );
 
+   _map2Cleanup.mergeWithRemoteDataDueToForkOrJoin( localCell, masterOrWorkerCell, fromRank, x, h, level );
 
 }
 
@@ -324,8 +322,8 @@ void peanoclaw::adapters::Cleanup::mergeWithMaster(
   peanoclaw::State&                masterState
 ) {
 
-   _map2Cleanup.mergeWithMaster( workerGridCell, workerGridVertices, workerEnumerator, fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker, workerState, masterState );
 
+   _map2Cleanup.mergeWithMaster( workerGridCell, workerGridVertices, workerEnumerator, fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker, workerState, masterState );
 
 }
 
@@ -342,8 +340,8 @@ void peanoclaw::adapters::Cleanup::receiveDataFromMaster(
       const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
 
-   _map2Cleanup.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
 
+   _map2Cleanup.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
 
 }
 
@@ -356,8 +354,8 @@ void peanoclaw::adapters::Cleanup::mergeWithWorker(
   int                                          level
 ) {
 
-   _map2Cleanup.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
 
+   _map2Cleanup.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
 
 }
 
@@ -385,8 +383,8 @@ void peanoclaw::adapters::Cleanup::touchVertexFirstTime(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
-  _map2Cleanup.touchVertexFirstTime( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
 
+  _map2Cleanup.touchVertexFirstTime( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
 
 }
 
@@ -417,8 +415,8 @@ void peanoclaw::adapters::Cleanup::enterCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
 
-  _map2Cleanup.enterCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
 
+  _map2Cleanup.enterCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
 
 }
 
@@ -443,8 +441,8 @@ void peanoclaw::adapters::Cleanup::beginIteration(
   peanoclaw::State&  solverState
 ) {
 
-  _map2Cleanup.beginIteration( solverState );
 
+  _map2Cleanup.beginIteration( solverState );
 
 }
 
@@ -470,8 +468,8 @@ void peanoclaw::adapters::Cleanup::descend(
   peanoclaw::Cell&                 coarseGridCell
 ) {
 
-  _map2Cleanup.descend( fineGridCells, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell );
 
+  _map2Cleanup.descend( fineGridCells, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell );
 
 }
 

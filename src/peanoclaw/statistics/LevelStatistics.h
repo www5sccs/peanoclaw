@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 22-10-2013 20:59
  *
- * @date   02/12/2013 13:51
+ * @date   13/12/2013 17:50
  */
 class peanoclaw::statistics::LevelStatistics { 
    
@@ -52,6 +52,7 @@ class peanoclaw::statistics::LevelStatistics {
          double _patchesBlockedDueToGlobalTimestep;
          double _patchesSkippingIteration;
          double _patchesCoarsening;
+         int _estimatedNumberOfRemainingIterationsToGlobalTimestep;
          /**
           * Generated
           */
@@ -60,7 +61,7 @@ class peanoclaw::statistics::LevelStatistics {
          /**
           * Generated
           */
-         PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening);
+         PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
          
          /**
           * Generated
@@ -172,6 +173,16 @@ class peanoclaw::statistics::LevelStatistics {
           */
           void setPatchesCoarsening(const double& patchesCoarsening) ;
          
+         /**
+          * Generated
+          */
+          int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const ;
+         
+         /**
+          * Generated
+          */
+          void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) ;
+         
          
       };
       
@@ -192,7 +203,7 @@ class peanoclaw::statistics::LevelStatistics {
       /**
        * Generated
        */
-      LevelStatistics(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening);
+      LevelStatistics(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
       
       /**
        * Generated
@@ -312,6 +323,16 @@ class peanoclaw::statistics::LevelStatistics {
       /**
        * Generated
        */
+       int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const ;
+      
+      /**
+       * Generated
+       */
+       void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) ;
+      
+      /**
+       * Generated
+       */
       std::string toString() const;
       
       /**
@@ -367,7 +388,7 @@ class peanoclaw::statistics::LevelStatistics {
           *
           * 		   build date: 22-10-2013 20:59
           *
-          * @date   02/12/2013 13:51
+          * @date   13/12/2013 17:50
           */
          class peanoclaw::statistics::LevelStatisticsPacked { 
             
@@ -385,6 +406,7 @@ class peanoclaw::statistics::LevelStatistics {
                   double _patchesBlockedDueToGlobalTimestep;
                   double _patchesSkippingIteration;
                   double _patchesCoarsening;
+                  int _estimatedNumberOfRemainingIterationsToGlobalTimestep;
                   /**
                    * Generated
                    */
@@ -393,7 +415,7 @@ class peanoclaw::statistics::LevelStatistics {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening);
+                  PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
                   
                   /**
                    * Generated
@@ -505,6 +527,16 @@ class peanoclaw::statistics::LevelStatistics {
                    */
                    void setPatchesCoarsening(const double& patchesCoarsening) ;
                   
+                  /**
+                   * Generated
+                   */
+                   int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const ;
+                  
+                  /**
+                   * Generated
+                   */
+                   void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) ;
+                  
                   
                };
                
@@ -525,7 +557,7 @@ class peanoclaw::statistics::LevelStatistics {
                /**
                 * Generated
                 */
-               LevelStatisticsPacked(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening);
+               LevelStatisticsPacked(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
                
                /**
                 * Generated
@@ -641,6 +673,16 @@ class peanoclaw::statistics::LevelStatistics {
                 * Generated
                 */
                 void setPatchesCoarsening(const double& patchesCoarsening) ;
+               
+               /**
+                * Generated
+                */
+                int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const ;
+               
+               /**
+                * Generated
+                */
+                void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) ;
                
                /**
                 * Generated

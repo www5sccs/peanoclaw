@@ -101,6 +101,7 @@ void peanoclaw::adapters::GatherCurrentSolution::createHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                   fineGridPositionOfVertex
 ) {
 
+
   _map2Remesh.createHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2GatherCurrentSolution.createHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
 
@@ -117,9 +118,9 @@ void peanoclaw::adapters::GatherCurrentSolution::destroyHangingVertex(
       peanoclaw::Cell&           coarseGridCell,
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
-
   _map2Remesh.destroyHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2GatherCurrentSolution.destroyHangingVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
+
 
 
 }
@@ -135,9 +136,9 @@ void peanoclaw::adapters::GatherCurrentSolution::createInnerVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
+
   _map2Remesh.createInnerVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2GatherCurrentSolution.createInnerVertex(fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
-
 
 }
 
@@ -152,9 +153,9 @@ void peanoclaw::adapters::GatherCurrentSolution::createBoundaryVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
+
   _map2Remesh.createBoundaryVertex( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2GatherCurrentSolution.createBoundaryVertex( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
-
 
 }
 
@@ -186,9 +187,9 @@ void peanoclaw::adapters::GatherCurrentSolution::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
 
+
   _map2Remesh.createCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
   _map2GatherCurrentSolution.createCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
-
 
 }
 
@@ -219,9 +220,9 @@ void peanoclaw::adapters::GatherCurrentSolution::mergeWithNeighbour(
   int                                           level
 ) {
 
+
    _map2Remesh.mergeWithNeighbour( vertex, neighbour, fromRank, fineGridX, fineGridH, level );
    _map2GatherCurrentSolution.mergeWithNeighbour( vertex, neighbour, fromRank, fineGridX, fineGridH, level );
-
 
 }
 
@@ -232,7 +233,6 @@ void peanoclaw::adapters::GatherCurrentSolution::prepareSendToNeighbour(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-
    _map2Remesh.prepareSendToNeighbour( vertex, toRank, x, h, level );
    _map2GatherCurrentSolution.prepareSendToNeighbour( vertex, toRank, x, h, level );
 
@@ -246,7 +246,6 @@ void peanoclaw::adapters::GatherCurrentSolution::prepareCopyToRemoteNode(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-
    _map2Remesh.prepareCopyToRemoteNode( localVertex, toRank, x, h, level );
    _map2GatherCurrentSolution.prepareCopyToRemoteNode( localVertex, toRank, x, h, level );
 
@@ -260,7 +259,6 @@ void peanoclaw::adapters::GatherCurrentSolution::prepareCopyToRemoteNode(
       const tarch::la::Vector<DIMENSIONS,double>&   h,
       int                                           level
 ) {
-
    _map2Remesh.prepareCopyToRemoteNode( localCell, toRank, x, h, level );
    _map2GatherCurrentSolution.prepareCopyToRemoteNode( localCell, toRank, x, h, level );
 
@@ -276,9 +274,9 @@ void peanoclaw::adapters::GatherCurrentSolution::mergeWithRemoteDataDueToForkOrJ
   int                                       level
 ) {
 
+
    _map2Remesh.mergeWithRemoteDataDueToForkOrJoin( localVertex, masterOrWorkerVertex, fromRank, x, h, level );
    _map2GatherCurrentSolution.mergeWithRemoteDataDueToForkOrJoin( localVertex, masterOrWorkerVertex, fromRank, x, h, level );
-
 
 }
 
@@ -291,9 +289,9 @@ void peanoclaw::adapters::GatherCurrentSolution::mergeWithRemoteDataDueToForkOrJ
   int                                       level
 ) {
 
+
    _map2Remesh.mergeWithRemoteDataDueToForkOrJoin( localCell, masterOrWorkerCell, fromRank, x, h, level );
    _map2GatherCurrentSolution.mergeWithRemoteDataDueToForkOrJoin( localCell, masterOrWorkerCell, fromRank, x, h, level );
-
 
 }
 
@@ -347,9 +345,9 @@ void peanoclaw::adapters::GatherCurrentSolution::mergeWithMaster(
   peanoclaw::State&                masterState
 ) {
 
+
    _map2Remesh.mergeWithMaster( workerGridCell, workerGridVertices, workerEnumerator, fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker, workerState, masterState );
    _map2GatherCurrentSolution.mergeWithMaster( workerGridCell, workerGridVertices, workerEnumerator, fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell, worker, workerState, masterState );
-
 
 }
 
@@ -366,9 +364,9 @@ void peanoclaw::adapters::GatherCurrentSolution::receiveDataFromMaster(
       const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
 
+
    _map2Remesh.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
    _map2GatherCurrentSolution.receiveDataFromMaster( receivedCell, receivedVertices, receivedVerticesEnumerator, receivedCoarseGridVertices, receivedCoarseGridVerticesEnumerator, receivedCoarseGridCell, workersCoarseGridVertices, workersCoarseGridVerticesEnumerator, workersCoarseGridCell, fineGridPositionOfCell );
-
 
 }
 
@@ -381,9 +379,9 @@ void peanoclaw::adapters::GatherCurrentSolution::mergeWithWorker(
   int                                          level
 ) {
 
+
    _map2Remesh.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
    _map2GatherCurrentSolution.mergeWithWorker( localCell, receivedMasterCell, cellCentre, cellSize, level );
-
 
 }
 
@@ -412,9 +410,9 @@ void peanoclaw::adapters::GatherCurrentSolution::touchVertexFirstTime(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfVertex
 ) {
 
+
   _map2Remesh.touchVertexFirstTime( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
   _map2GatherCurrentSolution.touchVertexFirstTime( fineGridVertex, fineGridX, fineGridH, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfVertex );
-
 
 }
 
@@ -446,9 +444,9 @@ void peanoclaw::adapters::GatherCurrentSolution::enterCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
 
+
   _map2Remesh.enterCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
   _map2GatherCurrentSolution.enterCell( fineGridCell, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell, fineGridPositionOfCell );
-
 
 }
 
@@ -474,9 +472,9 @@ void peanoclaw::adapters::GatherCurrentSolution::beginIteration(
   peanoclaw::State&  solverState
 ) {
 
+
   _map2Remesh.beginIteration( solverState );
   _map2GatherCurrentSolution.beginIteration( solverState );
-
 
 }
 
@@ -503,9 +501,9 @@ void peanoclaw::adapters::GatherCurrentSolution::descend(
   peanoclaw::Cell&                 coarseGridCell
 ) {
 
+
   _map2Remesh.descend( fineGridCells, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell );
   _map2GatherCurrentSolution.descend( fineGridCells, fineGridVertices, fineGridVerticesEnumerator, coarseGridVertices, coarseGridVerticesEnumerator, coarseGridCell );
-
 
 }
 

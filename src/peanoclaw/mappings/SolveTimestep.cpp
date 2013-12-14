@@ -123,9 +123,9 @@ bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
   }
 
   //TODO unterweg debug
-  logInfo("", "globalTimestep: " << tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)
-              << ", allowed: " << patch.getTimeIntervals().isAllowedToAdvanceInTime() << ", skip: " << patch.shouldSkipNextGridIteration()
-              << ", coarsening: " << patchCoarsening << ", allAdjacentVerticesValid: " << allAdjacentVerticesValid);
+//  logInfo("", "globalTimestep: " << tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)
+//              << ", allowed: " << patch.getTimeIntervals().isAllowedToAdvanceInTime() << ", skip: " << patch.shouldSkipNextGridIteration()
+//              << ", coarsening: " << patchCoarsening << ", allAdjacentVerticesValid: " << allAdjacentVerticesValid);
 
   return
     tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)
@@ -424,8 +424,24 @@ bool peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
+
+  if(_estimatedRemainingIterationsUntilGlobalTimestep.find(worker) == _estimatedRemainingIterationsUntilGlobalTimestep.end()) {
+    _estimatedRemainingIterationsUntilGlobalTimestep[worker] = 1;
+  }
+
   logTraceOut( "prepareSendToWorker(...)" );
-  return true;
+
+  //TODO unterweg debug
+//  std::cout << "Estimated iterations: " << _estimatedRemainingIterationsUntilGlobalTimestep[worker] << std::endl;
+
+  if(_estimatedRemainingIterationsUntilGlobalTimestep[worker] == 0) {
+    return false;
+  } else {
+    assertion(_estimatedRemainingIterationsUntilGlobalTimestep[worker] > 0);
+    _estimatedRemainingIterationsUntilGlobalTimestep[worker]--;
+    return (_estimatedRemainingIterationsUntilGlobalTimestep[worker] == 0);
+  }
+//  return true;
 }
 
 void peanoclaw::mappings::SolveTimestep::prepareSendToMaster(
@@ -438,6 +454,10 @@ void peanoclaw::mappings::SolveTimestep::prepareSendToMaster(
   const tarch::la::Vector<DIMENSIONS,int>&   fineGridPositionOfCell
 ) {
   logTraceInWith2Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString() );
+
+
+  //TODO unterweg debug
+//  std::cout << "Estimated on worker: " << _subgridStatistics.getEstimatedIterationsUntilGlobalTimestep() << std::endl;
 
   _subgridStatistics.sendToMaster(tarch::parallel::NodePool::getInstance().getMasterRank());
 
@@ -464,7 +484,22 @@ void peanoclaw::mappings::SolveTimestep::mergeWithMaster(
 ) {
   logTraceIn( "mergeWithMaster(...)" );
 
-  _subgridStatistics.receiveFromWorker(worker);
+  //TODO unterweg debug
+//  std::cout << "Merging on Master" << std::endl;
+
+  peanoclaw::statistics::SubgridStatistics workerSubgridStatistics(worker);
+  _subgridStatistics.merge(workerSubgridStatistics);
+
+  //Reduction of reduction ;-)
+  assertion1(_estimatedRemainingIterationsUntilGlobalTimestep.find(worker) != _estimatedRemainingIterationsUntilGlobalTimestep.end(), worker);
+  _estimatedRemainingIterationsUntilGlobalTimestep[worker] = std::max(1, workerSubgridStatistics.getEstimatedIterationsUntilGlobalTimestep() / 27);
+
+  //TODO unterweg debug
+//  std::cout << "Estimated iterations on worker: " << workerSubgridStatistics.getEstimatedIterationsUntilGlobalTimestep() << std::endl;
+
+  if(workerState.isJoiningWithMaster()) {
+    _estimatedRemainingIterationsUntilGlobalTimestep.erase(worker);
+  }
 
   logTraceOut( "mergeWithMaster(...)" );
 }
@@ -664,23 +699,20 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
           i->plotDataIfContainedInPatch(patch);
         }
 
-        //TODO unterweg debug
-        logInfo("enterCell", "Processing subgrid(0): " << patch);
-
         logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getTimeIntervals().getCurrentTime() << ", " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << "]");
       } else {
         logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getTimeIntervals().getCurrentTime() << ", " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << "]");
         patch.reduceGridIterationsToBeSkipped();
 
-        //TODO unterweg debug
-        logInfo("enterCell", "Processing subgrid(1): " << patch
-            << ", coarsening: " << peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-            (
-              coarseGridVertices,
-              coarseGridVerticesEnumerator,
-              peanoclaw::records::Vertex::Erasing
-            )
-        << ", global: " << tarch::la::greaterEquals(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), _globalTimestepEndTime));
+//        //TODO unterweg debug
+//        logInfo("enterCell", "Processing subgrid(1): " << patch
+//            << ", coarsening: " << peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+//            (
+//              coarseGridVertices,
+//              coarseGridVerticesEnumerator,
+//              peanoclaw::records::Vertex::Erasing
+//            )
+//        << ", global: " << tarch::la::greaterEquals(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), _globalTimestepEndTime));
 
         //Statistics
         _subgridStatistics.processSubgrid(
@@ -800,9 +832,16 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
+
+  if(!tarch::la::equals(_globalTimestepEndTime, solverState.getGlobalTimestepEndTime())) {
+    _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();
+
+    for(std::map<int, int>::iterator i = _estimatedRemainingIterationsUntilGlobalTimestep.begin(); i != _estimatedRemainingIterationsUntilGlobalTimestep.end(); i++) {
+      i->second = 1;
+    }
+  }
  
   _numerics = solverState.getNumerics();
-  _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();
   _domainOffset = solverState.getDomainOffset();
   _domainSize = solverState.getDomainSize();
   _initialMaximalSubgridSize = solverState.getInitialMaximalSubgridSize();

@@ -5,7 +5,7 @@ peanoclaw::statistics::LevelStatistics::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::statistics::LevelStatistics::PersistentRecords::PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening):
+peanoclaw::statistics::LevelStatistics::PersistentRecords::PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep):
 _area(area),
 _level(level),
 _numberOfPatches(numberOfPatches),
@@ -16,7 +16,8 @@ _destroyedPatches(destroyedPatches),
 _patchesBlockedDueToNeighbors(patchesBlockedDueToNeighbors),
 _patchesBlockedDueToGlobalTimestep(patchesBlockedDueToGlobalTimestep),
 _patchesSkippingIteration(patchesSkippingIteration),
-_patchesCoarsening(patchesCoarsening) {
+_patchesCoarsening(patchesCoarsening),
+_estimatedNumberOfRemainingIterationsToGlobalTimestep(estimatedNumberOfRemainingIterationsToGlobalTimestep) {
    
 }
 
@@ -152,19 +153,31 @@ _patchesCoarsening(patchesCoarsening) {
 }
 
 
+
+ int peanoclaw::statistics::LevelStatistics::PersistentRecords::getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const  {
+   return _estimatedNumberOfRemainingIterationsToGlobalTimestep;
+}
+
+
+
+ void peanoclaw::statistics::LevelStatistics::PersistentRecords::setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep)  {
+   _estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+}
+
+
 peanoclaw::statistics::LevelStatistics::LevelStatistics() {
    
 }
 
 
 peanoclaw::statistics::LevelStatistics::LevelStatistics(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._area, persistentRecords._level, persistentRecords._numberOfPatches, persistentRecords._numberOfCells, persistentRecords._numberOfCellUpdates, persistentRecords._createdPatches, persistentRecords._destroyedPatches, persistentRecords._patchesBlockedDueToNeighbors, persistentRecords._patchesBlockedDueToGlobalTimestep, persistentRecords._patchesSkippingIteration, persistentRecords._patchesCoarsening) {
+_persistentRecords(persistentRecords._area, persistentRecords._level, persistentRecords._numberOfPatches, persistentRecords._numberOfCells, persistentRecords._numberOfCellUpdates, persistentRecords._createdPatches, persistentRecords._destroyedPatches, persistentRecords._patchesBlockedDueToNeighbors, persistentRecords._patchesBlockedDueToGlobalTimestep, persistentRecords._patchesSkippingIteration, persistentRecords._patchesCoarsening, persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep) {
    
 }
 
 
-peanoclaw::statistics::LevelStatistics::LevelStatistics(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening):
-_persistentRecords(area, level, numberOfPatches, numberOfCells, numberOfCellUpdates, createdPatches, destroyedPatches, patchesBlockedDueToNeighbors, patchesBlockedDueToGlobalTimestep, patchesSkippingIteration, patchesCoarsening) {
+peanoclaw::statistics::LevelStatistics::LevelStatistics(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep):
+_persistentRecords(area, level, numberOfPatches, numberOfCells, numberOfCellUpdates, createdPatches, destroyedPatches, patchesBlockedDueToNeighbors, patchesBlockedDueToGlobalTimestep, patchesSkippingIteration, patchesCoarsening, estimatedNumberOfRemainingIterationsToGlobalTimestep) {
    
 }
 
@@ -304,6 +317,18 @@ peanoclaw::statistics::LevelStatistics::~LevelStatistics() { }
 
 
 
+ int peanoclaw::statistics::LevelStatistics::getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const  {
+   return _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep;
+}
+
+
+
+ void peanoclaw::statistics::LevelStatistics::setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep)  {
+   _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+}
+
+
+
 
 std::string peanoclaw::statistics::LevelStatistics::toString() const {
    std::ostringstream stringstr;
@@ -313,27 +338,29 @@ std::string peanoclaw::statistics::LevelStatistics::toString() const {
 
 void peanoclaw::statistics::LevelStatistics::toString (std::ostream& out) const {
    out << "("; 
-   out << "_area:" << getArea();
+   out << "area:" << getArea();
    out << ",";
-   out << "_level:" << getLevel();
+   out << "level:" << getLevel();
    out << ",";
-   out << "_numberOfPatches:" << getNumberOfPatches();
+   out << "numberOfPatches:" << getNumberOfPatches();
    out << ",";
-   out << "_numberOfCells:" << getNumberOfCells();
+   out << "numberOfCells:" << getNumberOfCells();
    out << ",";
-   out << "_numberOfCellUpdates:" << getNumberOfCellUpdates();
+   out << "numberOfCellUpdates:" << getNumberOfCellUpdates();
    out << ",";
-   out << "_createdPatches:" << getCreatedPatches();
+   out << "createdPatches:" << getCreatedPatches();
    out << ",";
-   out << "_destroyedPatches:" << getDestroyedPatches();
+   out << "destroyedPatches:" << getDestroyedPatches();
    out << ",";
-   out << "_patchesBlockedDueToNeighbors:" << getPatchesBlockedDueToNeighbors();
+   out << "patchesBlockedDueToNeighbors:" << getPatchesBlockedDueToNeighbors();
    out << ",";
-   out << "_patchesBlockedDueToGlobalTimestep:" << getPatchesBlockedDueToGlobalTimestep();
+   out << "patchesBlockedDueToGlobalTimestep:" << getPatchesBlockedDueToGlobalTimestep();
    out << ",";
-   out << "_patchesSkippingIteration:" << getPatchesSkippingIteration();
+   out << "patchesSkippingIteration:" << getPatchesSkippingIteration();
    out << ",";
-   out << "_patchesCoarsening:" << getPatchesCoarsening();
+   out << "patchesCoarsening:" << getPatchesCoarsening();
+   out << ",";
+   out << "estimatedNumberOfRemainingIterationsToGlobalTimestep:" << getEstimatedNumberOfRemainingIterationsToGlobalTimestep();
    out <<  ")";
 }
 
@@ -354,7 +381,8 @@ peanoclaw::statistics::LevelStatisticsPacked peanoclaw::statistics::LevelStatist
       getPatchesBlockedDueToNeighbors(),
       getPatchesBlockedDueToGlobalTimestep(),
       getPatchesSkippingIteration(),
-      getPatchesCoarsening()
+      getPatchesCoarsening(),
+      getEstimatedNumberOfRemainingIterationsToGlobalTimestep()
    );
 }
 
@@ -369,34 +397,36 @@ peanoclaw::statistics::LevelStatisticsPacked peanoclaw::statistics::LevelStatist
       {
          LevelStatistics dummyLevelStatistics[2];
          
-         const int Attributes = 12;
+         const int Attributes = 13;
          MPI_Datatype subtypes[Attributes] = {
-            MPI_DOUBLE,		 //_area
-            MPI_INT,		 //_level
-            MPI_DOUBLE,		 //_numberOfPatches
-            MPI_DOUBLE,		 //_numberOfCells
-            MPI_DOUBLE,		 //_numberOfCellUpdates
-            MPI_DOUBLE,		 //_createdPatches
-            MPI_DOUBLE,		 //_destroyedPatches
-            MPI_DOUBLE,		 //_patchesBlockedDueToNeighbors
-            MPI_DOUBLE,		 //_patchesBlockedDueToGlobalTimestep
-            MPI_DOUBLE,		 //_patchesSkippingIteration
-            MPI_DOUBLE,		 //_patchesCoarsening
+            MPI_DOUBLE,		 //area
+            MPI_INT,		 //level
+            MPI_DOUBLE,		 //numberOfPatches
+            MPI_DOUBLE,		 //numberOfCells
+            MPI_DOUBLE,		 //numberOfCellUpdates
+            MPI_DOUBLE,		 //createdPatches
+            MPI_DOUBLE,		 //destroyedPatches
+            MPI_DOUBLE,		 //patchesBlockedDueToNeighbors
+            MPI_DOUBLE,		 //patchesBlockedDueToGlobalTimestep
+            MPI_DOUBLE,		 //patchesSkippingIteration
+            MPI_DOUBLE,		 //patchesCoarsening
+            MPI_INT,		 //estimatedNumberOfRemainingIterationsToGlobalTimestep
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
-            1,		 //_area
-            1,		 //_level
-            1,		 //_numberOfPatches
-            1,		 //_numberOfCells
-            1,		 //_numberOfCellUpdates
-            1,		 //_createdPatches
-            1,		 //_destroyedPatches
-            1,		 //_patchesBlockedDueToNeighbors
-            1,		 //_patchesBlockedDueToGlobalTimestep
-            1,		 //_patchesSkippingIteration
-            1,		 //_patchesCoarsening
+            1,		 //area
+            1,		 //level
+            1,		 //numberOfPatches
+            1,		 //numberOfCells
+            1,		 //numberOfCellUpdates
+            1,		 //createdPatches
+            1,		 //destroyedPatches
+            1,		 //patchesBlockedDueToNeighbors
+            1,		 //patchesBlockedDueToGlobalTimestep
+            1,		 //patchesSkippingIteration
+            1,		 //patchesCoarsening
+            1,		 //estimatedNumberOfRemainingIterationsToGlobalTimestep
             1		 // end/displacement flag
          };
          
@@ -415,7 +445,8 @@ peanoclaw::statistics::LevelStatisticsPacked peanoclaw::statistics::LevelStatist
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[0]._persistentRecords._patchesBlockedDueToGlobalTimestep))), 		&disp[8] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[0]._persistentRecords._patchesSkippingIteration))), 		&disp[9] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[0]._persistentRecords._patchesCoarsening))), 		&disp[10] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[1]._persistentRecords._area))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[0]._persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[1]._persistentRecords._area))), 		&disp[12] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -430,34 +461,36 @@ peanoclaw::statistics::LevelStatisticsPacked peanoclaw::statistics::LevelStatist
       {
          LevelStatistics dummyLevelStatistics[2];
          
-         const int Attributes = 12;
+         const int Attributes = 13;
          MPI_Datatype subtypes[Attributes] = {
-            MPI_DOUBLE,		 //_area
-            MPI_INT,		 //_level
-            MPI_DOUBLE,		 //_numberOfPatches
-            MPI_DOUBLE,		 //_numberOfCells
-            MPI_DOUBLE,		 //_numberOfCellUpdates
-            MPI_DOUBLE,		 //_createdPatches
-            MPI_DOUBLE,		 //_destroyedPatches
-            MPI_DOUBLE,		 //_patchesBlockedDueToNeighbors
-            MPI_DOUBLE,		 //_patchesBlockedDueToGlobalTimestep
-            MPI_DOUBLE,		 //_patchesSkippingIteration
-            MPI_DOUBLE,		 //_patchesCoarsening
+            MPI_DOUBLE,		 //area
+            MPI_INT,		 //level
+            MPI_DOUBLE,		 //numberOfPatches
+            MPI_DOUBLE,		 //numberOfCells
+            MPI_DOUBLE,		 //numberOfCellUpdates
+            MPI_DOUBLE,		 //createdPatches
+            MPI_DOUBLE,		 //destroyedPatches
+            MPI_DOUBLE,		 //patchesBlockedDueToNeighbors
+            MPI_DOUBLE,		 //patchesBlockedDueToGlobalTimestep
+            MPI_DOUBLE,		 //patchesSkippingIteration
+            MPI_DOUBLE,		 //patchesCoarsening
+            MPI_INT,		 //estimatedNumberOfRemainingIterationsToGlobalTimestep
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
-            1,		 //_area
-            1,		 //_level
-            1,		 //_numberOfPatches
-            1,		 //_numberOfCells
-            1,		 //_numberOfCellUpdates
-            1,		 //_createdPatches
-            1,		 //_destroyedPatches
-            1,		 //_patchesBlockedDueToNeighbors
-            1,		 //_patchesBlockedDueToGlobalTimestep
-            1,		 //_patchesSkippingIteration
-            1,		 //_patchesCoarsening
+            1,		 //area
+            1,		 //level
+            1,		 //numberOfPatches
+            1,		 //numberOfCells
+            1,		 //numberOfCellUpdates
+            1,		 //createdPatches
+            1,		 //destroyedPatches
+            1,		 //patchesBlockedDueToNeighbors
+            1,		 //patchesBlockedDueToGlobalTimestep
+            1,		 //patchesSkippingIteration
+            1,		 //patchesCoarsening
+            1,		 //estimatedNumberOfRemainingIterationsToGlobalTimestep
             1		 // end/displacement flag
          };
          
@@ -476,7 +509,8 @@ peanoclaw::statistics::LevelStatisticsPacked peanoclaw::statistics::LevelStatist
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[0]._persistentRecords._patchesBlockedDueToGlobalTimestep))), 		&disp[8] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[0]._persistentRecords._patchesSkippingIteration))), 		&disp[9] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[0]._persistentRecords._patchesCoarsening))), 		&disp[10] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[1]._persistentRecords._area))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[0]._persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatistics[1]._persistentRecords._area))), 		&disp[12] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -686,7 +720,7 @@ peanoclaw::statistics::LevelStatisticsPacked::PersistentRecords::PersistentRecor
 }
 
 
-peanoclaw::statistics::LevelStatisticsPacked::PersistentRecords::PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening):
+peanoclaw::statistics::LevelStatisticsPacked::PersistentRecords::PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep):
 _area(area),
 _level(level),
 _numberOfPatches(numberOfPatches),
@@ -697,7 +731,8 @@ _destroyedPatches(destroyedPatches),
 _patchesBlockedDueToNeighbors(patchesBlockedDueToNeighbors),
 _patchesBlockedDueToGlobalTimestep(patchesBlockedDueToGlobalTimestep),
 _patchesSkippingIteration(patchesSkippingIteration),
-_patchesCoarsening(patchesCoarsening) {
+_patchesCoarsening(patchesCoarsening),
+_estimatedNumberOfRemainingIterationsToGlobalTimestep(estimatedNumberOfRemainingIterationsToGlobalTimestep) {
    
 }
 
@@ -833,19 +868,31 @@ _patchesCoarsening(patchesCoarsening) {
 }
 
 
+
+ int peanoclaw::statistics::LevelStatisticsPacked::PersistentRecords::getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const  {
+   return _estimatedNumberOfRemainingIterationsToGlobalTimestep;
+}
+
+
+
+ void peanoclaw::statistics::LevelStatisticsPacked::PersistentRecords::setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep)  {
+   _estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+}
+
+
 peanoclaw::statistics::LevelStatisticsPacked::LevelStatisticsPacked() {
    
 }
 
 
 peanoclaw::statistics::LevelStatisticsPacked::LevelStatisticsPacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._area, persistentRecords._level, persistentRecords._numberOfPatches, persistentRecords._numberOfCells, persistentRecords._numberOfCellUpdates, persistentRecords._createdPatches, persistentRecords._destroyedPatches, persistentRecords._patchesBlockedDueToNeighbors, persistentRecords._patchesBlockedDueToGlobalTimestep, persistentRecords._patchesSkippingIteration, persistentRecords._patchesCoarsening) {
+_persistentRecords(persistentRecords._area, persistentRecords._level, persistentRecords._numberOfPatches, persistentRecords._numberOfCells, persistentRecords._numberOfCellUpdates, persistentRecords._createdPatches, persistentRecords._destroyedPatches, persistentRecords._patchesBlockedDueToNeighbors, persistentRecords._patchesBlockedDueToGlobalTimestep, persistentRecords._patchesSkippingIteration, persistentRecords._patchesCoarsening, persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep) {
    
 }
 
 
-peanoclaw::statistics::LevelStatisticsPacked::LevelStatisticsPacked(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening):
-_persistentRecords(area, level, numberOfPatches, numberOfCells, numberOfCellUpdates, createdPatches, destroyedPatches, patchesBlockedDueToNeighbors, patchesBlockedDueToGlobalTimestep, patchesSkippingIteration, patchesCoarsening) {
+peanoclaw::statistics::LevelStatisticsPacked::LevelStatisticsPacked(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep):
+_persistentRecords(area, level, numberOfPatches, numberOfCells, numberOfCellUpdates, createdPatches, destroyedPatches, patchesBlockedDueToNeighbors, patchesBlockedDueToGlobalTimestep, patchesSkippingIteration, patchesCoarsening, estimatedNumberOfRemainingIterationsToGlobalTimestep) {
    
 }
 
@@ -985,6 +1032,18 @@ peanoclaw::statistics::LevelStatisticsPacked::~LevelStatisticsPacked() { }
 
 
 
+ int peanoclaw::statistics::LevelStatisticsPacked::getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const  {
+   return _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep;
+}
+
+
+
+ void peanoclaw::statistics::LevelStatisticsPacked::setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep)  {
+   _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+}
+
+
+
 
 std::string peanoclaw::statistics::LevelStatisticsPacked::toString() const {
    std::ostringstream stringstr;
@@ -994,27 +1053,29 @@ std::string peanoclaw::statistics::LevelStatisticsPacked::toString() const {
 
 void peanoclaw::statistics::LevelStatisticsPacked::toString (std::ostream& out) const {
    out << "("; 
-   out << "_area:" << getArea();
+   out << "area:" << getArea();
    out << ",";
-   out << "_level:" << getLevel();
+   out << "level:" << getLevel();
    out << ",";
-   out << "_numberOfPatches:" << getNumberOfPatches();
+   out << "numberOfPatches:" << getNumberOfPatches();
    out << ",";
-   out << "_numberOfCells:" << getNumberOfCells();
+   out << "numberOfCells:" << getNumberOfCells();
    out << ",";
-   out << "_numberOfCellUpdates:" << getNumberOfCellUpdates();
+   out << "numberOfCellUpdates:" << getNumberOfCellUpdates();
    out << ",";
-   out << "_createdPatches:" << getCreatedPatches();
+   out << "createdPatches:" << getCreatedPatches();
    out << ",";
-   out << "_destroyedPatches:" << getDestroyedPatches();
+   out << "destroyedPatches:" << getDestroyedPatches();
    out << ",";
-   out << "_patchesBlockedDueToNeighbors:" << getPatchesBlockedDueToNeighbors();
+   out << "patchesBlockedDueToNeighbors:" << getPatchesBlockedDueToNeighbors();
    out << ",";
-   out << "_patchesBlockedDueToGlobalTimestep:" << getPatchesBlockedDueToGlobalTimestep();
+   out << "patchesBlockedDueToGlobalTimestep:" << getPatchesBlockedDueToGlobalTimestep();
    out << ",";
-   out << "_patchesSkippingIteration:" << getPatchesSkippingIteration();
+   out << "patchesSkippingIteration:" << getPatchesSkippingIteration();
    out << ",";
-   out << "_patchesCoarsening:" << getPatchesCoarsening();
+   out << "patchesCoarsening:" << getPatchesCoarsening();
+   out << ",";
+   out << "estimatedNumberOfRemainingIterationsToGlobalTimestep:" << getEstimatedNumberOfRemainingIterationsToGlobalTimestep();
    out <<  ")";
 }
 
@@ -1035,7 +1096,8 @@ peanoclaw::statistics::LevelStatistics peanoclaw::statistics::LevelStatisticsPac
       getPatchesBlockedDueToNeighbors(),
       getPatchesBlockedDueToGlobalTimestep(),
       getPatchesSkippingIteration(),
-      getPatchesCoarsening()
+      getPatchesCoarsening(),
+      getEstimatedNumberOfRemainingIterationsToGlobalTimestep()
    );
 }
 
@@ -1050,34 +1112,36 @@ peanoclaw::statistics::LevelStatistics peanoclaw::statistics::LevelStatisticsPac
       {
          LevelStatisticsPacked dummyLevelStatisticsPacked[2];
          
-         const int Attributes = 12;
+         const int Attributes = 13;
          MPI_Datatype subtypes[Attributes] = {
-            MPI_DOUBLE,		 //_area
-            MPI_INT,		 //_level
-            MPI_DOUBLE,		 //_numberOfPatches
-            MPI_DOUBLE,		 //_numberOfCells
-            MPI_DOUBLE,		 //_numberOfCellUpdates
-            MPI_DOUBLE,		 //_createdPatches
-            MPI_DOUBLE,		 //_destroyedPatches
-            MPI_DOUBLE,		 //_patchesBlockedDueToNeighbors
-            MPI_DOUBLE,		 //_patchesBlockedDueToGlobalTimestep
-            MPI_DOUBLE,		 //_patchesSkippingIteration
-            MPI_DOUBLE,		 //_patchesCoarsening
+            MPI_DOUBLE,		 //area
+            MPI_INT,		 //level
+            MPI_DOUBLE,		 //numberOfPatches
+            MPI_DOUBLE,		 //numberOfCells
+            MPI_DOUBLE,		 //numberOfCellUpdates
+            MPI_DOUBLE,		 //createdPatches
+            MPI_DOUBLE,		 //destroyedPatches
+            MPI_DOUBLE,		 //patchesBlockedDueToNeighbors
+            MPI_DOUBLE,		 //patchesBlockedDueToGlobalTimestep
+            MPI_DOUBLE,		 //patchesSkippingIteration
+            MPI_DOUBLE,		 //patchesCoarsening
+            MPI_INT,		 //estimatedNumberOfRemainingIterationsToGlobalTimestep
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
-            1,		 //_area
-            1,		 //_level
-            1,		 //_numberOfPatches
-            1,		 //_numberOfCells
-            1,		 //_numberOfCellUpdates
-            1,		 //_createdPatches
-            1,		 //_destroyedPatches
-            1,		 //_patchesBlockedDueToNeighbors
-            1,		 //_patchesBlockedDueToGlobalTimestep
-            1,		 //_patchesSkippingIteration
-            1,		 //_patchesCoarsening
+            1,		 //area
+            1,		 //level
+            1,		 //numberOfPatches
+            1,		 //numberOfCells
+            1,		 //numberOfCellUpdates
+            1,		 //createdPatches
+            1,		 //destroyedPatches
+            1,		 //patchesBlockedDueToNeighbors
+            1,		 //patchesBlockedDueToGlobalTimestep
+            1,		 //patchesSkippingIteration
+            1,		 //patchesCoarsening
+            1,		 //estimatedNumberOfRemainingIterationsToGlobalTimestep
             1		 // end/displacement flag
          };
          
@@ -1096,7 +1160,8 @@ peanoclaw::statistics::LevelStatistics peanoclaw::statistics::LevelStatisticsPac
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[0]._persistentRecords._patchesBlockedDueToGlobalTimestep))), 		&disp[8] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[0]._persistentRecords._patchesSkippingIteration))), 		&disp[9] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[0]._persistentRecords._patchesCoarsening))), 		&disp[10] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[1]._persistentRecords._area))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[0]._persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[1]._persistentRecords._area))), 		&disp[12] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -1111,34 +1176,36 @@ peanoclaw::statistics::LevelStatistics peanoclaw::statistics::LevelStatisticsPac
       {
          LevelStatisticsPacked dummyLevelStatisticsPacked[2];
          
-         const int Attributes = 12;
+         const int Attributes = 13;
          MPI_Datatype subtypes[Attributes] = {
-            MPI_DOUBLE,		 //_area
-            MPI_INT,		 //_level
-            MPI_DOUBLE,		 //_numberOfPatches
-            MPI_DOUBLE,		 //_numberOfCells
-            MPI_DOUBLE,		 //_numberOfCellUpdates
-            MPI_DOUBLE,		 //_createdPatches
-            MPI_DOUBLE,		 //_destroyedPatches
-            MPI_DOUBLE,		 //_patchesBlockedDueToNeighbors
-            MPI_DOUBLE,		 //_patchesBlockedDueToGlobalTimestep
-            MPI_DOUBLE,		 //_patchesSkippingIteration
-            MPI_DOUBLE,		 //_patchesCoarsening
+            MPI_DOUBLE,		 //area
+            MPI_INT,		 //level
+            MPI_DOUBLE,		 //numberOfPatches
+            MPI_DOUBLE,		 //numberOfCells
+            MPI_DOUBLE,		 //numberOfCellUpdates
+            MPI_DOUBLE,		 //createdPatches
+            MPI_DOUBLE,		 //destroyedPatches
+            MPI_DOUBLE,		 //patchesBlockedDueToNeighbors
+            MPI_DOUBLE,		 //patchesBlockedDueToGlobalTimestep
+            MPI_DOUBLE,		 //patchesSkippingIteration
+            MPI_DOUBLE,		 //patchesCoarsening
+            MPI_INT,		 //estimatedNumberOfRemainingIterationsToGlobalTimestep
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
-            1,		 //_area
-            1,		 //_level
-            1,		 //_numberOfPatches
-            1,		 //_numberOfCells
-            1,		 //_numberOfCellUpdates
-            1,		 //_createdPatches
-            1,		 //_destroyedPatches
-            1,		 //_patchesBlockedDueToNeighbors
-            1,		 //_patchesBlockedDueToGlobalTimestep
-            1,		 //_patchesSkippingIteration
-            1,		 //_patchesCoarsening
+            1,		 //area
+            1,		 //level
+            1,		 //numberOfPatches
+            1,		 //numberOfCells
+            1,		 //numberOfCellUpdates
+            1,		 //createdPatches
+            1,		 //destroyedPatches
+            1,		 //patchesBlockedDueToNeighbors
+            1,		 //patchesBlockedDueToGlobalTimestep
+            1,		 //patchesSkippingIteration
+            1,		 //patchesCoarsening
+            1,		 //estimatedNumberOfRemainingIterationsToGlobalTimestep
             1		 // end/displacement flag
          };
          
@@ -1157,7 +1224,8 @@ peanoclaw::statistics::LevelStatistics peanoclaw::statistics::LevelStatisticsPac
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[0]._persistentRecords._patchesBlockedDueToGlobalTimestep))), 		&disp[8] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[0]._persistentRecords._patchesSkippingIteration))), 		&disp[9] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[0]._persistentRecords._patchesCoarsening))), 		&disp[10] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[1]._persistentRecords._area))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[0]._persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep))), 		&disp[11] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyLevelStatisticsPacked[1]._persistentRecords._area))), 		&disp[12] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );

@@ -9,15 +9,16 @@ Constant: DIMENSIONS_TIMES_TWO;
  * This class is generated via DaStGen.
  */
 class peanoclaw::statistics::LevelStatistics {
-  parallelise persistent double _area;
-  parallelise persistent int    _level;
-  parallelise persistent double _numberOfPatches;
-  parallelise persistent double _numberOfCells;
-  parallelise persistent double _numberOfCellUpdates;
-  parallelise persistent double _createdPatches;
-  parallelise persistent double _destroyedPatches;
-  parallelise persistent double _patchesBlockedDueToNeighbors;
-  parallelise persistent double _patchesBlockedDueToGlobalTimestep;
-  parallelise persistent double _patchesSkippingIteration;
-  parallelise persistent double _patchesCoarsening;
+  parallelise persistent double area;
+  parallelise persistent int    level;
+  parallelise persistent double numberOfPatches;
+  parallelise persistent double numberOfCells;
+  parallelise persistent double numberOfCellUpdates;
+  parallelise persistent double createdPatches;
+  parallelise persistent double destroyedPatches;
+  parallelise persistent double patchesBlockedDueToNeighbors;
+  parallelise persistent double patchesBlockedDueToGlobalTimestep;
+  parallelise persistent double patchesSkippingIteration;
+  parallelise persistent double patchesCoarsening;
+  parallelise persistent int    estimatedNumberOfRemainingIterationsToGlobalTimestep; 
 };
