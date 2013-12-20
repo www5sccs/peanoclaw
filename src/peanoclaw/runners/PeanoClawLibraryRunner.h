@@ -99,7 +99,7 @@ public:
     int auxiliarFieldsPerSubcell,
     double initialTimestepSize,
     bool useDimensionalSplitting,
-    int  forkLevelIncrement
+    int  forkLevelIncrement = 1
   );
 
   virtual ~PeanoClawLibraryRunner();
