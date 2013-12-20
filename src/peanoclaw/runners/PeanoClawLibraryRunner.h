@@ -98,7 +98,8 @@ public:
     int unknownsPerSubcell,
     int auxiliarFieldsPerSubcell,
     double initialTimestepSize,
-    bool useDimensionalSplitting
+    bool useDimensionalSplitting,
+    int  forkLevelIncrement
   );
 
   virtual ~PeanoClawLibraryRunner();

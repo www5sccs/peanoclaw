@@ -146,7 +146,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   int unknownsPerSubcell,
   int auxiliarFieldsPerSubcell,
   double initialTimestepSize,
-  bool useDimensionalSplittingOptimization
+  bool useDimensionalSplittingOptimization,
+  int  forkLevelIncrement
 ) :
   _plotNumber(1),
   _configuration(configuration),
@@ -206,7 +207,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
     state.enableRefinementCriterion(false);
     tarch::la::Vector<DIMENSIONS, double> currentMinimalSubgridSize;
-    int maximumLevel = 2;
+    int maximumLevel = 1;
     do {
 
       logDebug("PeanoClawLibraryRunner", "Iterating with maximumLevel=" << maximumLevel);
@@ -226,7 +227,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 //        logInfo("PeanoClawLibraryRunner", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
       } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
-      maximumLevel += 1;
+      maximumLevel += forkLevelIncrement;
     } while(tarch::la::oneGreater(currentMinimalSubgridSize, initialMaximalSubgridSize));
     #endif
 

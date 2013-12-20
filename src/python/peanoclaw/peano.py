@@ -126,6 +126,7 @@ class Peano(object):
                                                 restriction_callback.get_restriction_callback(),
                                                 flux_correction_callback.get_flux_correction_callback(),
                                                 self.internal_settings.enable_peano_logging,
+                                                self.internal_settings.fork_level_increment,
                                                 byref(self.crank)
                                                 )
 

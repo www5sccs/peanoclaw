@@ -40,7 +40,7 @@ void configureLogFilter(bool enablePeanoLogging) {
   tarch::logging::CommandLineLogger::getInstance().clearFilterList();
 
   if(enablePeanoLogging) {
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
 
     //Disable Peano
@@ -52,7 +52,7 @@ void configureLogFilter(bool enablePeanoLogging) {
 
     //Disable minimal time subgrid
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::repositories", false ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::repositories", true ) );
 
     //Selective Tracing
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelStatistics", true ) );
@@ -116,6 +116,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   InterPatchCommunicationCallback restrictionCallback,
   InterPatchCommunicationCallback fluxCorrectionCallback,
   bool enablePeanoLogging,
+  int forkLevelIncrement,
   int *rank
 ) {
   peano::fillLookupTables();
@@ -190,7 +191,8 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     unknownsPerSubcell,
     auxiliarFieldsPerSubcell,
     initialTimestepSize,
-    useDimensionalSplittingOptimization
+    useDimensionalSplittingOptimization,
+    forkLevelIncrement
   );
 
   assertion(runner != 0);
