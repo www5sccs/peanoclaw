@@ -10,6 +10,7 @@
 
 #include "peanoclaw/parallel/SubgridCommunicator.h"
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/State.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/statistics/ParallelStatistics.h"
 
@@ -71,11 +72,6 @@ class peanoclaw::parallel::NeighbourCommunicator {
      * Tries to send subgrids only once per iteration.
      */
     const bool                                       _avoidMultipleTransferOfSubgridsIfPossible;
-    /**
-     * Tries to find the minimal number of padding subgrids to be sent to match the
-     * number of received subgrids.
-     */
-    const bool                                       _reduceNumberOfPaddingSubgrids;
 
     /**
      * Determines whether subgrids should be sent always despite if they
@@ -154,7 +150,8 @@ class peanoclaw::parallel::NeighbourCommunicator {
       peanoclaw::Vertex&                           vertex,
       const tarch::la::Vector<DIMENSIONS, double>& vertexPosition,
       const tarch::la::Vector<DIMENSIONS, double>& adjacentSubgridSize,
-      int                                          level
+      int                                          level,
+      const peanoclaw::State&                      state
     );
 
     /**

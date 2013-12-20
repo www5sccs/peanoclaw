@@ -193,7 +193,7 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(fineGridVertex.getAdjacentCellDescriptionIndex(i) != -1) {
       Patch subgrid(fineGridVertex.getAdjacentCellDescriptionIndex(i));
-      assertion1(!subgrid.isRemote() || subgrid.getLevel() <= coarseGridVerticesEnumerator.getLevel(), subgrid);
+      assertion2(!subgrid.isRemote() || subgrid.getLevel() <= coarseGridVerticesEnumerator.getLevel(), subgrid, fineGridVertex);
     }
   }
   #endif
@@ -525,7 +525,7 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
   logTraceInWith3Arguments( "prepareSendToNeighbour(...)", vertex, toRank, level );
 
   peanoclaw::parallel::NeighbourCommunicator communicator(toRank, x, level, h, _remoteSubgridMap, _parallelStatistics);
-  communicator.sendSubgridsForVertex(vertex, x, h, level);
+  communicator.sendSubgridsForVertex(vertex, x, h, level, *_state);
 
   logTraceOut( "prepareSendToNeighbour(...)" );
 }
@@ -552,7 +552,7 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
 ) {
   logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
 
-  logInfo("prepareCopyToRemoteNode", "Copying data from rank " << tarch::parallel::Node::getInstance().getRank() << " to " << toRank
+  logDebug("prepareCopyToRemoteNode", "Copying data from rank " << tarch::parallel::Node::getInstance().getRank() << " to " << toRank
       << " position:" << (cellCentre - cellSize / 2.0) << ", level:" << level
       << ", isInside:" << localCell.isInside()
       << ", assignedToRemoteRank:" << localCell.isAssignedToRemoteRank()
@@ -643,6 +643,7 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
     fineGridPositionOfCell,
     worker
   );
+  bool requiresReduction = false;
 
   if(fineGridCell.isInside()){
 
@@ -656,10 +657,13 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
 
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(worker, fineGridVerticesEnumerator.getCellCenter(), fineGridVerticesEnumerator.getLevel(), false);
     communicator.sendPatch(fineGridCell.getCellDescriptionIndex());
+
+    Patch subgrid(fineGridCell);
+    requiresReduction = subgrid.isVirtual();
   }
 
   logTraceOut( "prepareSendToWorker(...)" );
-  return true;
+  return false;
 }
 
 void peanoclaw::mappings::Remesh::prepareSendToMaster(
@@ -914,6 +918,10 @@ void peanoclaw::mappings::Remesh::enterCell(
   assertion(patch.isLeaf() || !patch.isLeaf());
 
   #ifdef Parallel
+  if(!_isInitializing) {
+    fineGridCell.setCellIsAForkCandidate(true);
+  }
+
   assertionEquals4(patch.getLevel(),
     fineGridVerticesEnumerator.getLevel(),
     patch,

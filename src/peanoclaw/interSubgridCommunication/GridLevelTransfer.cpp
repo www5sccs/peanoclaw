@@ -455,7 +455,6 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictRefinement
   logTraceInWith2Arguments( "restrictRefinementFlagsToCoarseVertices(...)", fineGridVertex, localPositionOfHangingNode );
 
   tarch::la::Vector<DIMENSIONS,int>   toCoarseGridVertex;
-
   for (int d=0; d<DIMENSIONS; d++) {
     if(localPositionOfHangingNode(d) < 2) {
       toCoarseGridVertex(d) = 0;
@@ -496,5 +495,4 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictDestroyedS
   //the coarse patch might get refined immediately.
   coarseSubgrid.setDemandedMeshWidth(coarseSubgrid.getSubcellSize()(0));
 }
-
 

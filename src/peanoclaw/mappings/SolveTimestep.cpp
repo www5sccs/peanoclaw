@@ -435,10 +435,22 @@ bool peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
 //  std::cout << "Estimated iterations: " << _estimatedRemainingIterationsUntilGlobalTimestep[worker] << std::endl;
 
   if(_estimatedRemainingIterationsUntilGlobalTimestep[worker] == 0) {
+
+    //TODO unterweg debug
+//    std::cout << "Avoiding 0" << std::endl;
+
     return false;
   } else {
     assertion(_estimatedRemainingIterationsUntilGlobalTimestep[worker] > 0);
     _estimatedRemainingIterationsUntilGlobalTimestep[worker]--;
+
+    //TODO unterweg debug
+//    if(_estimatedRemainingIterationsUntilGlobalTimestep[worker] == 0) {
+//      std::cout << "Reducing" << std::endl;
+//    } else {
+//      std::cout << "Avoiding 1" << std::endl;
+//    }
+
     return (_estimatedRemainingIterationsUntilGlobalTimestep[worker] == 0);
   }
 //  return true;
@@ -492,10 +504,10 @@ void peanoclaw::mappings::SolveTimestep::mergeWithMaster(
 
   //Reduction of reduction ;-)
   assertion1(_estimatedRemainingIterationsUntilGlobalTimestep.find(worker) != _estimatedRemainingIterationsUntilGlobalTimestep.end(), worker);
-  _estimatedRemainingIterationsUntilGlobalTimestep[worker] = std::max(1, workerSubgridStatistics.getEstimatedIterationsUntilGlobalTimestep() / 27);
+  _estimatedRemainingIterationsUntilGlobalTimestep[worker] = std::max(1, workerSubgridStatistics.getEstimatedIterationsUntilGlobalTimestep());
 
   //TODO unterweg debug
-//  std::cout << "Estimated iterations on worker: " << workerSubgridStatistics.getEstimatedIterationsUntilGlobalTimestep() << std::endl;
+//  std::cout << "Estimated iterations on worker " << worker << ": " << workerSubgridStatistics.getEstimatedIterationsUntilGlobalTimestep() << std::endl;
 
   if(workerState.isJoiningWithMaster()) {
     _estimatedRemainingIterationsUntilGlobalTimestep.erase(worker);

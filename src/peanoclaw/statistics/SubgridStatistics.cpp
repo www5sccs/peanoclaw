@@ -90,9 +90,9 @@ int peanoclaw::statistics::SubgridStatistics::estimateRemainingIterationsUntilGl
     assertion2(tarch::la::greaterEquals(timeToGlobalTimestep, 0.0), timeToGlobalTimestep, subgrid);
 
     //TODO unterweg debug
-    std::cout << "Estimated: " << subgrid.getTimeIntervals().getCurrentTime() << ", " << subgrid.getTimeIntervals().getTimestepSize() << ", "
-        << timeToGlobalTimestep << ", " << _globalTimestepEndTime << ", "
-        << (int)(std::ceil(timeToGlobalTimestep / subgrid.getTimeIntervals().getTimestepSize() * numberOfRestrictingSubgrids)) << std::endl;
+//    std::cout << "Estimated: " << subgrid.getTimeIntervals().getCurrentTime() << ", " << subgrid.getTimeIntervals().getTimestepSize() << ", "
+//        << timeToGlobalTimestep << ", " << _globalTimestepEndTime << ", "
+//        << (int)(std::ceil(timeToGlobalTimestep / subgrid.getTimeIntervals().getTimestepSize() * numberOfRestrictingSubgrids)) << std::endl;
 
      return (int)(std::ceil(timeToGlobalTimestep / subgrid.getTimeIntervals().getTimestepSize() * numberOfRestrictingSubgrids));
   } else {

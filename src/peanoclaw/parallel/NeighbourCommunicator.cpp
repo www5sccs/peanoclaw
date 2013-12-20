@@ -75,7 +75,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
   logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
 
   if(!_onlySendSubgridsAfterChange || remoteCellDescriptionVector.size() > 0) {
-    assertionEquals3(remoteCellDescriptionVector.size(), 1, _position, _level, localSubgrid);
+    assertionEquals4(remoteCellDescriptionVector.size(), 1, _position, _level, _remoteRank, localSubgrid);
     CellDescription remoteCellDescription = remoteCellDescriptionVector[0];
     assertionEquals2(localSubgrid.getLevel(), _level, localSubgrid, tarch::parallel::Node::getInstance().getRank());
 
@@ -199,7 +199,6 @@ peanoclaw::parallel::NeighbourCommunicator::NeighbourCommunicator(
     _statistics(statistics),
     //En-/Disable optimizations
     _avoidMultipleTransferOfSubgridsIfPossible(false),
-    _reduceNumberOfPaddingSubgrids(false),
     _onlySendSubgridsAfterChange(false) {
   logTraceInWith3Arguments("NeighbourCommunicator", remoteRank, position, level);
 
@@ -210,20 +209,29 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
   peanoclaw::Vertex&                           vertex,
   const tarch::la::Vector<DIMENSIONS, double>& vertexPosition,
   const tarch::la::Vector<DIMENSIONS, double>& adjacentSubgridSize,
-  int                                          level
+  int                                          level,
+  const State&                                 state
 ) {
   #ifdef Parallel
 
   //TODO unterweg debug
   logDebug("sendSubgridsForVertex", "Sending subgrids to rank " << _remoteRank
-      << " for vertex " << vertexPosition << " on level " << level << " adj:" << vertex.getAdjacentRanks());
+      << " for vertex " << vertexPosition << " on level " << level << " adj:" << vertex.getAdjacentRanks()
+      << " joining:" << state.isJoiningWithMaster() << " " << state.isJoinTriggered() << " " << state.isJoinWithMasterTriggered()
+      << " " << state.isJoiningWithWorker() << " " << state.isInvolvedInJoinOrFork()
+      << " master:" << (tarch::parallel::Node::getInstance().isGlobalMaster() ? -1 : tarch::parallel::NodePool::getInstance().getMasterRank()));
 
   if(!tarch::parallel::Node::getInstance().isGlobalMaster() && _remoteRank != 0) {
     int localRank = tarch::parallel::Node::getInstance().getRank();
 
     for(int i = 0; i < TWO_POWER_D; i++) {
+      int localSubgridRank = vertex.getAdjacentRanks()(i);
+      if(state.isJoinWithMasterTriggered() && localSubgridRank == localRank) {
+        localSubgridRank = tarch::parallel::NodePool::getInstance().getMasterRank();
+      }
+
       bool sentSubgrid = false;
-      if(vertex.getAdjacentRanks()(i) == localRank && vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
+      if(localSubgridRank == localRank && vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
         Patch           localSubgrid(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i));
         ParallelSubgrid localParallelSubgrid(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i));
 
@@ -232,7 +240,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
             || vertex.wereAdjacentRanksChanged()
             || vertex.getAgeInGridIterations() <= 1
             //TODO unterweg dissertion
-            //Warum kann ich nicht einfach den Status der Feingitter restringieren, ob die sich ge��ndert haben?
+            //Warum kann ich nicht einfach den Status der Feingitter restringieren, ob die sich geändert haben?
             //Gibt es da einen Zusammenhang zwischen Zeitschritten der benachbarten Grobgitter und den Zeitschritten
             //der Feingitter, den ich hier nicht erkenne?
             //TODO unterweg debug
@@ -297,7 +305,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
       int remoteAdjacentCellDescriptionIndex = remoteVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i);
 
       bool receivedSubgrid = false;
-      if(localVertex.getAdjacentRanks()(i) == _remoteRank && remoteAdjacentCellDescriptionIndex != -1) {
+      if(remoteVertex.getAdjacentRanks()(i) == _remoteRank && remoteAdjacentCellDescriptionIndex != -1) {
 
           //Create remote subgrid if necessary
           if(localVertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) == -1 && localVertex.getAdjacentRanks()(i) != 0) {
