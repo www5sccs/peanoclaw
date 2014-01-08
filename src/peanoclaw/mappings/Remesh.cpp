@@ -658,12 +658,14 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(worker, fineGridVerticesEnumerator.getCellCenter(), fineGridVerticesEnumerator.getLevel(), false);
     communicator.sendPatch(fineGridCell.getCellDescriptionIndex());
 
+    //TODO unterweg dissertation: Subgitter müssen auch auf virtuell geschaltet werden, wenn sie
+    //von einer Ghostlayer überlappt werden und mit einem Worker geshared sind.
     Patch subgrid(fineGridCell);
     requiresReduction = subgrid.isVirtual();
   }
 
   logTraceOut( "prepareSendToWorker(...)" );
-  return false;
+  return requiresReduction;
 }
 
 void peanoclaw::mappings::Remesh::prepareSendToMaster(

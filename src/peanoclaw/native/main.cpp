@@ -101,7 +101,7 @@ class BreakingDam_SWEKernelScenario : public peanoclaw::native::SWEKernelScenari
             double demandedMeshWidth = patch.getSubcellSize()(0);
             if (max_gradient > 1) {
                 //demandedMeshWidth = 1.0/243;
-                demandedMeshWidth = 10.0/27/6;
+                demandedMeshWidth = 10.0/9/6;
             } else if (max_gradient < 0.5) {
                 demandedMeshWidth = 10.0/9/6;
             } else {
@@ -120,32 +120,8 @@ static peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid* _confi
 }*/
 
 int main(int argc, char **argv) {
- /* double initialMinimalMeshWidthScalar,
-  double domainOffsetX0,
-  double domainOffsetX1,
-  double domainOffsetX2,
-  double domainSizeX0,
-  double domainSizeX1,
-  double domainSizeX2,
-  int subdivisionFactorX0,
-  int subdivisionFactorX1,
-  int subdivisionFactorX2,
-  int unknownsPerSubcell,
-  int auxiliarFieldsPerSubcell,
-  int ghostlayerWidth,
-  double initialTimestepSize,
-  char* configurationFile,
-  bool useDimensionalSplittingOptimization,
-  InitializationCallback initializationCallback,
-  BoundaryConditionCallback boundaryConditionCallback,
-  SolverCallback solverCallback,
-  AddPatchToSolutionCallback addPatchToSolutionCallback,
-  InterPatchCommunicationCallback interpolationCallback,
-  InterPatchCommunicationCallback restrictionCallback,
-  InterPatchCommunicationCallback fluxCorrectionCallback,
-  int *rank
-) {*/
   peano::fillLookupTables();
+
 
 #if defined(Parallel)
   int parallelSetup = peano::initParallelEnvironment(&argc,(char ***)&argv);
@@ -215,8 +191,6 @@ int main(int argc, char **argv) {
   }
  
   //Create runner
- 
- 
   peanoclaw::runners::PeanoClawLibraryRunner* runner
     = new peanoclaw::runners::PeanoClawLibraryRunner(
     *_configuration,
@@ -229,7 +203,8 @@ int main(int argc, char **argv) {
     unknownsPerSubcell,
     auxiliarFieldsPerSubcell,
     initialTimestepSize,
-    useDimensionalSplittingOptimization
+    useDimensionalSplittingOptimization,
+    1
   );
 
 #if defined(Parallel) 

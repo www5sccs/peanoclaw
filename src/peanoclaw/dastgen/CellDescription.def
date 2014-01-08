@@ -7,7 +7,7 @@ Constant: DIMENSIONS_TIMES_TWO;
 Constant: TWO_POWER_D;
 
 class peanoclaw::records::CellDescription {
-  parallelise persistent int  subdivisionFactor[DIMENSIONS];
+  parallelise persistent int  subdivisionFactor[DIMENSIONS] from -1 to 1048575;
   parallelise packed persistent int  ghostLayerWidth from 0 to 15;
   parallelise packed persistent int  unknownsPerSubcell from 0 to 15;
   parallelise packed persistent int  auxiliarFieldsPerSubcell from 0 to 15;
@@ -46,6 +46,18 @@ class peanoclaw::records::CellDescription {
    * of the grid changed.
    */
   persistent packed bool adjacentRanksChanged;
+  
+  /**
+   * States the overlap of a neighboring subgrid that resides on a different
+   * MPI rank. Only subgrids on the same level are taken into account.
+   */
+  persistent parallelise int upperOverlapByRemoteGhostlayer[DIMENSIONS];
+
+  /**
+   * States the overlap of a neighboring subgrid that resides on a different
+   * MPI rank. Only subgrids on the same level are taken into account.
+   */  
+  persistent parallelise int lowerOverlapByRemoteGhostlayer[DIMENSIONS];
   #endif
 
   parallelise persistent double position[DIMENSIONS];
