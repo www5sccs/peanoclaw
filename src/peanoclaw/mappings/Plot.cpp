@@ -56,7 +56,7 @@ tarch::logging::Log                peanoclaw::mappings::Plot::_log( "peanoclaw::
 
 void peanoclaw::mappings::Plot::plotFile(int plotNumber) {
   std::ostringstream snapshotFileName;
-  snapshotFileName << "vtkOutput/adaptive-"
+  snapshotFileName << "/tmp/lu26his2/adaptive-"
                    #ifdef Parallel
                    << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-"
                    #endif
@@ -456,8 +456,8 @@ void peanoclaw::mappings::Plot::beginIteration(
   _vtkWriter.clear();
 
   std::set<int> plotQ;
-//  plotQ.insert(0);
-//  plotQ.insert(4);
+  plotQ.insert(0);
+  plotQ.insert(4);
   std::set<int> plotAux;
 
   _patchPlotter = new PatchPlotter(
@@ -466,7 +466,8 @@ void peanoclaw::mappings::Plot::beginIteration(
     solverState.getAuxiliarFieldsPerSubcell(),
     plotQ,
     plotAux,
-    false
+    true
+    //false
   );
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);

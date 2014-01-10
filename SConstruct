@@ -132,6 +132,8 @@ mpiConfiguration = __import__(mpiConfigurationFile)
 parallel = ARGUMENTS.get('parallel', 'parallel_no')  # Read command line parameter
 if parallel == 'yes' or parallel == 'parallel_yes':
    cppdefines.append('Parallel')
+   cppdefines.append('MPICH_IGNORE_CXX_SEEK')
+   cppdefines.append('MPICH_SKIP_MPICXX')
    cpppath.extend(mpiConfiguration.getMPIIncludes())
    libpath.extend(mpiConfiguration.getMPILibrarypaths())
    libs.extend(mpiConfiguration.getMPILibraries())

@@ -244,6 +244,7 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
       );
     }
   }
+
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
 

@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 import numpy as np
-from scipy import integrate
+#from scipy import integrate
 
 gamma = 1.4
 gamma1 = gamma - 1.
@@ -155,11 +155,11 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     solver.bc_upper[2]=pyclaw.BC.extrap
     
     # Initialize domain
-    factor = 1
-    mx=12*factor; my=6*factor; mz=6*factor
+    factor = 1 #2.0/3.0+1e-10#1.5+1e-10 
+    mx=int(12*factor); my=int(6*factor); mz=int(6*factor)
     
     # number of initial AMR grids in each dimension
-    msubgrid = 9
+    msubgrid = 9 #27
     
     if amr_type is None:
         # number of Domain grid cells expressed as the product of
@@ -185,8 +185,8 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     solver.user_bc_lower = shockbc
     
     claw = pyclaw.Controller()
-    claw.tfinal = 1
-    claw.num_output_times = 50
+    claw.tfinal = 0.1 #1
+    claw.num_output_times = 1 #50
     claw.outdir = outdir
     
     if amr_type is not None:        
@@ -196,7 +196,7 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
                                     (x.upper - x.lower) / (mx * msubgrid),
                                     qinit
                                     #,refinement_criterion=refinement_criterion_gradient
-                                    ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True))
+                                    ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True,fork_level_increment=2))
         claw.solution = amrclaw.Solution(state, domain)
       else:
         raise Exception('unsupported amr_type %s' % amr_type)
