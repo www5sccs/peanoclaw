@@ -289,9 +289,7 @@ void peanoclaw::repositories::RepositorySTDStack::runGlobalStep() {
     intermediateStateForWorkingNodes,
     peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag()
   );
-  tarch::parallel::NodePool::getInstance().activateIdleNodes(
-    peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag()
-  );
+  tarch::parallel::NodePool::getInstance().activateIdleNodes();
 }
 
 
