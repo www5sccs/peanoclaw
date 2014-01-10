@@ -999,6 +999,23 @@ void peanoclaw::mappings::Remesh::leaveCell(
     );
   }
 
+  //Avoid erasing when one coarse grid vertex is refining.
+  if(peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag(
+       coarseGridVertices,
+       coarseGridVerticesEnumerator,
+       peanoclaw::Vertex::Records::RefinementTriggered
+     )
+     ||
+     peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag(
+       coarseGridVertices,
+       coarseGridVerticesEnumerator,
+       peanoclaw::Vertex::Records::Refining
+     )) {
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
+    }
+  }
+
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
 }
 

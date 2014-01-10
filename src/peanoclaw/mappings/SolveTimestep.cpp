@@ -68,7 +68,8 @@ bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
   const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator
 ) {
   //Does Patch coarsen?
-  bool patchCoarsening = (peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+  bool patchCoarsening =
+                          (peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
                             (
                               coarseGridVertices,
                               coarseGridVerticesEnumerator,
@@ -430,10 +431,6 @@ bool peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
 //  std::cout << "Estimated iterations: " << _estimatedRemainingIterationsUntilGlobalTimestep[worker] << std::endl;
 
   if(_estimatedRemainingIterationsUntilGlobalTimestep[worker] == 0) {
-
-    //TODO unterweg debug
-//    std::cout << "Avoiding 0" << std::endl;
-
     return false;
   } else {
     assertion(_estimatedRemainingIterationsUntilGlobalTimestep[worker] > 0);
@@ -806,7 +803,7 @@ void peanoclaw::mappings::SolveTimestep::leaveCell(
       }
     }
   } else if (!tarch::la::oneGreater(patch.getSubcellSize() * 3.0, tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
-    // Coarsen
+    // Coarsen -> default behavior is to coarsen, so do nothing here (i.e. don't set an erase/coarsen veto)
   } else {
     for(int i = 0; i < TWO_POWER_D; i++) {
       coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);

@@ -199,11 +199,12 @@ void peanoclaw::statistics::SubgridStatistics::processSubgrid(
   if(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize() < _minimalPatchTime) {
     _minimalPatchIndex = patch.getCellDescriptionIndex();
     _minimalPatchParentIndex = parentIndex;
-  }
+    _minimalPatchTime = patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize();
 
-  //Stopping criterion for global timestep
-  if(tarch::la::smaller(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), _globalTimestepEndTime)) {
-    _allPatchesEvolvedToGlobalTimestep = false;
+    //Stopping criterion for global timestep
+    if(tarch::la::smaller(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), _globalTimestepEndTime)) {
+      _allPatchesEvolvedToGlobalTimestep = false;
+    }
   }
 
   _startMaximumLocalTimeInterval = std::min(patch.getTimeIntervals().getCurrentTime(), _startMaximumLocalTimeInterval);
