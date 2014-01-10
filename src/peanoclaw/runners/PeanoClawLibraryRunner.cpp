@@ -207,13 +207,13 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 
     state.enableRefinementCriterion(false);
     tarch::la::Vector<DIMENSIONS, double> currentMinimalSubgridSize;
-    int maximumLevel = 1;
+    int maximumLevel = 2;
     do {
 
       logDebug("PeanoClawLibraryRunner", "Iterating with maximumLevel=" << maximumLevel);
 
       for(int d = 0; d < DIMENSIONS; d++) {
-        currentMinimalSubgridSize(d) = std::max(initialMaximalSubgridSize(d), domainSize(d) / pow(3.0, maximumLevel));
+        currentMinimalSubgridSize(d) = std::max(initialMaximalSubgridSize(d), domainSize(d) / pow(3.0, maximumLevel - 1));
       }
 
       _repository->getState().setInitialMaximalSubgridSize(currentMinimalSubgridSize);
