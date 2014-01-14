@@ -176,6 +176,15 @@ class peanoclaw::statistics::SubgridStatistics {
      * with all subgrids.
      */
     int getEstimatedIterationsUntilGlobalTimestep() const;
+
+    /**
+     * States that the restriktion of a worker was skipped. I.e. there is no
+     * information whether this worker has evolved completely to the global
+     * timestep and the statistics assumes that this is not the case.
+     * Hence, as long as restrictions are skipped, the current global timestep
+     * cannot be finished.
+     */
+    void restrictionFromWorkerSkipped();
     #endif
 };
 #endif /* PEANOCLAW_STATISTICS_SUBGRIDSTATISTICS_H_ */

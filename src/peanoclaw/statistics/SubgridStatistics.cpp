@@ -403,4 +403,8 @@ int peanoclaw::statistics::SubgridStatistics::getEstimatedIterationsUntilGlobalT
   }
   return maximumEstimationOfLevels;
 }
+
+void peanoclaw::statistics::SubgridStatistics::restrictionFromWorkerSkipped() {
+  _allPatchesEvolvedToGlobalTimestep = false;
+}
 #endif

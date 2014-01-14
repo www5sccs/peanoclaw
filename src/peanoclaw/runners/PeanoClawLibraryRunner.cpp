@@ -273,10 +273,10 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
   #endif
-    _repository->getState().plotTotalStatistics();
+  _repository->getState().plotTotalStatistics();
 
-    _repository->logIterationStatistics();
-    _repository->terminate();
+  _repository->logIterationStatistics();
+  _repository->terminate();
   #ifdef Parallel
   }
   #endif

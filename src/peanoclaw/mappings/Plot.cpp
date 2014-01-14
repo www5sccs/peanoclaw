@@ -467,7 +467,6 @@ void peanoclaw::mappings::Plot::beginIteration(
     plotQ,
     plotAux,
     true
-    //false
   );
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);

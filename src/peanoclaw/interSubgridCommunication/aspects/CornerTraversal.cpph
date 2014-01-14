@@ -12,7 +12,7 @@
 template<class LoopBody>
 peanoclaw::interSubgridCommunication::aspects::CornerTraversal<LoopBody>::CornerTraversal(
   Patch& patch,
-  const LoopBody& loopBody
+  LoopBody& loopBody
 ) {
 
   tarch::la::Vector<DIMENSIONS,int> size(patch.getGhostLayerWidth());

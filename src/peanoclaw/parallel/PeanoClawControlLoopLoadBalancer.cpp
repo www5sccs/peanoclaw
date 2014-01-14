@@ -22,7 +22,7 @@ int peanoclaw::parallel::PeanoClawStrategy::run( int worker ) {
     int result = peano::parallel::loadbalancing::Continue;
     const WorkerData& workerData = _workerHistorySet.getHistory(worker).getPastItem(1);
     const GridStateData& gridStateData = _gridStateHistory.getPastItem(1);
-    const WorkerData& masterData = _masterHistory.getCurrentItem();
+    //const WorkerData& masterData = _masterHistory.getCurrentItem();
 
     mpibalancing::ControlLoopLoadBalancer::strategies::RetryStrategy _retryStrategy(_workerHistorySet);
     mpibalancing::ControlLoopLoadBalancer::strategies::JoinDueToEraseStrategy _joinDueToEraseStrategy(_masterHistory, _workerHistorySet, _gridStateHistory);

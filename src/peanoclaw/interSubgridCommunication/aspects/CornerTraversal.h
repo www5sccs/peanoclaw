@@ -28,7 +28,7 @@ class peanoclaw::interSubgridCommunication::aspects::CornerTraversal {
      */
     CornerTraversal(
       Patch& patch,
-      const LoopBody& loopBody
+      LoopBody& loopBody
     );
 };
 

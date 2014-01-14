@@ -13,7 +13,9 @@ void peanoclaw::interSubgridCommunication::CornerExtrapolation::operator()(
   peanoclaw::Patch& patch,
   const peanoclaw::Area& area,
   const tarch::la::Vector<DIMENSIONS,int> cornerIndex
-) const {
+) {
+  _maximumGradient = 0.0;
+
   dfor(subcellIndexInArea, area._size) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndex = subcellIndexInArea + area._offset;
     int linearIndexSubcell = patch.getLinearIndexUOld(subcellIndex);
@@ -44,24 +46,35 @@ void peanoclaw::interSubgridCommunication::CornerExtrapolation::operator()(
 //          << std::endl;
 
       for(int unknown = 0; unknown < patch.getUnknownsPerSubcell(); unknown++) {
+        double v1 = patch.getValueUOld(linearIndexSupport1, unknown);
+        double v2 = patch.getValueUOld(linearIndexSupport2, unknown);
         patch.setValueUOld(linearIndexSubcell, unknown, patch.getValueUOld(linearIndexSubcell, unknown)
-            + (patch.getValueUOld(linearIndexSupport1, unknown) * (distanceSupport1+1)
-             - patch.getValueUOld(linearIndexSupport2, unknown) * (distanceSupport2-1))
+            + (v1 * (distanceSupport1+1)
+             - v2 * (distanceSupport2-1))
              / (double)DIMENSIONS);
+
+        _maximumGradient = std::max(_maximumGradient, std::abs((v1-v2)/patch.getSubcellSize()(d)));
       }
     }
   }
 }
 
-void peanoclaw::interSubgridCommunication::Extrapolation::extrapolateEdges() {
-  assertionFail("Not implemented yet!");
+double peanoclaw::interSubgridCommunication::CornerExtrapolation::getMaximumGradient() const {
+  return _maximumGradient;
 }
 
-void peanoclaw::interSubgridCommunication::Extrapolation::extrapolateCorners() {
+double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateEdges() {
+  assertionFail("Not implemented yet!");
+  return 0;
+}
+
+double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateCorners() {
+  CornerExtrapolation cornerExtrapolation;
   peanoclaw::interSubgridCommunication::aspects::CornerTraversal<CornerExtrapolation> cornerTraversal(
     _patch,
-    CornerExtrapolation()
+    cornerExtrapolation
   );
+  return cornerExtrapolation.getMaximumGradient();
 }
 
 peanoclaw::interSubgridCommunication::Extrapolation::Extrapolation(
@@ -69,11 +82,14 @@ peanoclaw::interSubgridCommunication::Extrapolation::Extrapolation(
 ) : _patch(patch) {
 }
 
-void peanoclaw::interSubgridCommunication::Extrapolation::extrapolateGhostlayer() {
+double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateGhostlayer() {
+  double maximumGradient = 0;
   #ifdef Dim3
-  extrapolateEdges();
+  maximumGradient = std::abs(extrapolateEdges());
   #endif
-  extrapolateCorners();
+  maximumGradient = std::max(maximumGradient, std::abs(extrapolateCorners()));
+
+  return maximumGradient;
 }
 
 

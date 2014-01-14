@@ -21,12 +21,17 @@ namespace peanoclaw {
  * Functor for traversing the corners of a patch and interpolating the ghostlayer values.
  */
 class peanoclaw::interSubgridCommunication::CornerExtrapolation {
+  private:
+    double _maximumGradient;
+
   public:
     void operator()(
       peanoclaw::Patch& patch,
       const peanoclaw::Area& area,
       const tarch::la::Vector<DIMENSIONS,int> cornerIndex
-    ) const;
+    );
+
+    double getMaximumGradient() const;
 };
 
 /**
@@ -44,12 +49,12 @@ class peanoclaw::interSubgridCommunication::Extrapolation {
      * Extrapolates the values from the ghostlayer faces to the edges.
      * In 2D this operation does nothing.
      */
-    void extrapolateEdges();
+    double extrapolateEdges();
 
     /**
      * Extrapolates the values from the ghostlayer faces/edges to the corners.
      */
-    void extrapolateCorners();
+    double extrapolateCorners();
 
   public:
     Extrapolation(Patch& patch);
@@ -57,8 +62,10 @@ class peanoclaw::interSubgridCommunication::Extrapolation {
     /**
      * Extrapolates the ghostlayer from the faces to the edges or corners depending
      * on the dimensionality.
+     *
+     * Returns an estimate of the maximum gradient used for extrapolation.
      */
-    void extrapolateGhostlayer();
+    double extrapolateGhostlayer();
 };
 
 

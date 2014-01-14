@@ -101,9 +101,9 @@ class BreakingDam_SWEKernelScenario : public peanoclaw::native::SWEKernelScenari
             double demandedMeshWidth = patch.getSubcellSize()(0);
             if (max_gradient > 1) {
                 //demandedMeshWidth = 1.0/243;
-                demandedMeshWidth = 10.0/9/6;
+                demandedMeshWidth = 10.0/27/6;
             } else if (max_gradient < 0.5) {
-                demandedMeshWidth = 10.0/9/6;
+                demandedMeshWidth = 10.0/27/6;
             } else {
               demandedMeshWidth = patch.getSubcellSize()(0);
             }
@@ -136,10 +136,12 @@ int main(int argc, char **argv) {
 
   // Configure the output
   tarch::logging::CommandLineLogger::getInstance().clearFilterList();
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "", true ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", true ) );
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
+  //tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
 //  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", true ) );
+
+  //Validation
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelGridValidator", true ) );
 
   //Selective Tracing
 //  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh", false ) );
@@ -215,7 +217,7 @@ int main(int argc, char **argv) {
  
   // run experiment
   double timestep = 0.01;
-  double endtime = 1.0; //2.0;
+  double endtime = 0.1; //1.0; //2.0;
 #if defined(Parallel)
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
 #endif
