@@ -59,78 +59,6 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::descendSpecifi
 
 tarch::logging::Log                peanoclaw::mappings::SolveTimestep::_log( "peanoclaw::mappings::SolveTimestep" );
 
-bool peanoclaw::mappings::SolveTimestep::shouldAdvanceInTime(
-  const peanoclaw::Patch&                  patch,
-  double                                   maximumTimestepDueToGlobalTimestep,
-  peanoclaw::Vertex * const                fineGridVertices,
-  const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator,
-  peanoclaw::Vertex * const                coarseGridVertices,
-  const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator
-) {
-  //Does Patch coarsen?
-  bool patchCoarsening =
-                          (peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::Erasing
-                            )
-                          ||
-                          peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::EraseTriggered
-                            )
-                          )
-                          &&
-                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::Refined
-                            )
-                          &&
-                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::Refining
-                            )
-                          &&
-                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
-                            (
-                              coarseGridVertices,
-                              coarseGridVerticesEnumerator,
-                              peanoclaw::records::Vertex::RefinementTriggered
-                            );
-
-  //Are all adjacent vertices set correctly?
-  bool allAdjacentVerticesValid = true;
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    peanoclaw::Vertex& vertex = fineGridVertices[fineGridVerticesEnumerator(i)];
-    allAdjacentVerticesValid &= (vertex.getAgeInGridIterations() > 0) || vertex.isHangingNode();
-  }
-
-  //Statistics
-  if(!tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)) {
-    _subgridStatistics.addBlockedPatchDueToGlobalTimestep(patch);
-  } else if (!patch.getTimeIntervals().isAllowedToAdvanceInTime()) {
-    _subgridStatistics.addBlockedPatchDueToNeighborTimeConstraint(patch);
-  } else if (patch.shouldSkipNextGridIteration()) {
-    _subgridStatistics.addBlockedPatchDueToSkipIteration(patch);
-  } else if (patchCoarsening) {
-    _subgridStatistics.addBlockedPatchDueToCoarsening(patch);
-  }
-
-  return
-    tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)
-    && patch.getTimeIntervals().isAllowedToAdvanceInTime()
-    && !patch.shouldSkipNextGridIteration()
-    && !patchCoarsening
-    && allAdjacentVerticesValid;
-}
-
 void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
   peanoclaw::Patch& patch,
   peanoclaw::Vertex * const                fineGridVertices,
@@ -651,8 +579,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
       //Perform timestep
       double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
-      if(shouldAdvanceInTime(
-        patch,
+      if(patch.getTimeIntervals().isAllowedToAdvanceInTime(
         maximumTimestepDueToGlobalTimestep,
         fineGridVertices,
         fineGridVerticesEnumerator,

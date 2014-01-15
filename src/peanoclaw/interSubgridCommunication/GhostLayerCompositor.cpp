@@ -85,7 +85,7 @@ bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferG
   return destination.isLeaf()
             && (( sourceHoldsGridData
                 && !tarch::la::greater(destination.getTimeIntervals().getCurrentTime() + destination.getTimeIntervals().getTimestepSize(), source.getTimeIntervals().getCurrentTime() + source.getTimeIntervals().getTimestepSize()))
-            || (source.isLeaf() && destination.getTimeIntervals().isAllowedToAdvanceInTime()));
+            || (source.isLeaf() && !destination.getTimeIntervals().isBlockedByNeighbors()));
 }
 
 peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor(

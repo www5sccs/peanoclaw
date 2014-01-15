@@ -21,6 +21,84 @@ peanoclaw::grid::TimeIntervals::TimeIntervals(
 {
 }
 
+bool peanoclaw::grid::TimeIntervals::isAllowedToAdvanceInTime(
+  double                                   maximumTimestepDueToGlobalTimestep,
+  peanoclaw::Vertex * const                fineGridVertices,
+  const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator,
+  peanoclaw::Vertex * const                coarseGridVertices,
+  const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator
+) {
+  //Does Patch coarsen?
+  bool patchCoarsening =
+                          (peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Erasing
+                            )
+                          ||
+                          peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::EraseTriggered
+                            )
+                          )
+                          &&
+                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Refined
+                            )
+                          &&
+                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::Refining
+                            )
+                          &&
+                          !peano::grid::aspects::VertexStateAnalysis::doesOneVertexCarryRefinementFlag
+                            (
+                              coarseGridVertices,
+                              coarseGridVerticesEnumerator,
+                              peanoclaw::records::Vertex::RefinementTriggered
+                            );
+
+  //Are all adjacent vertices set correctly?
+  bool allAdjacentVerticesValid = true;
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    peanoclaw::Vertex& vertex = fineGridVertices[fineGridVerticesEnumerator(i)];
+    allAdjacentVerticesValid &= (vertex.getAgeInGridIterations() > 0) || vertex.isHangingNode();
+  }
+
+  //Statistics
+//  if(!tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)) {
+//    _subgridStatistics.addBlockedPatchDueToGlobalTimestep(patch);
+//  } else if (!patch.getTimeIntervals().isAllowedToAdvanceInTime()) {
+//    _subgridStatistics.addBlockedPatchDueToNeighborTimeConstraint(patch);
+//  } else if (patch.shouldSkipNextGridIteration()) {
+//    _subgridStatistics.addBlockedPatchDueToSkipIteration(patch);
+//  } else if (patchCoarsening) {
+//    _subgridStatistics.addBlockedPatchDueToCoarsening(patch);
+//  }
+
+  return
+    tarch::la::greater(maximumTimestepDueToGlobalTimestep, 0.0)
+    && !isBlockedByNeighbors()
+    && !_cellDescription->getSkipGridIterations() > 0
+    && !patchCoarsening
+    && allAdjacentVerticesValid;
+}
+
+bool peanoclaw::grid::TimeIntervals::isBlockedByNeighbors() const {
+  return tarch::la::greater(
+        _cellDescription->getTime() + _cellDescription->getTimestepSize(),
+        _cellDescription->getMinimalNeighborTimeConstraint());
+}
+
+
 double peanoclaw::grid::TimeIntervals::getCurrentTime() const {
   return _cellDescription->getTime();
 }
@@ -128,12 +206,6 @@ void peanoclaw::grid::TimeIntervals::updateMaximalNeighborTimeInterval(double ne
             + _cellDescription->getMinimalNeighborTime() - neighborTime);
     _cellDescription->setMinimalNeighborTime(neighborTime);
   }
-}
-
-bool peanoclaw::grid::TimeIntervals::isAllowedToAdvanceInTime() const {
-  return !tarch::la::greater(
-      _cellDescription->getTime() + _cellDescription->getTimestepSize(),
-      _cellDescription->getMinimalNeighborTimeConstraint());
 }
 
 void peanoclaw::grid::TimeIntervals::resetMinimalFineGridTimeInterval() {

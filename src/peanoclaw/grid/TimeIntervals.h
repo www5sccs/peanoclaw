@@ -8,7 +8,10 @@
 #ifndef PEANOCLAW_SUBGRID_TIMEINTERVALS_H_
 #define PEANOCLAW_SUBGRID_TIMEINTERVALS_H_
 
+#include "peanoclaw/Vertex.h"
 #include "peanoclaw/records/CellDescription.h"
+
+#include "peano/grid/aspects/VertexStateAnalysis.h"
 
 #include "tarch/logging/Log.h"
 
@@ -41,6 +44,29 @@ class peanoclaw::grid::TimeIntervals {
     TimeIntervals(
       CellDescription* cellDescription
     );
+
+    /**
+     * Determines whether the given patch should be advanced in time.
+     *
+     * TODO unterweg debug
+     * Here we may not block timestepping if a coarse vertex has
+     * an Erase_Triggered but only if it is Erasing. In serial both
+     * works but in parallel a triggered erase may be postboned due
+     * to the parallel grid topology.
+     */
+    bool isAllowedToAdvanceInTime(
+      double                                   maximumTimestepDueToGlobalTimestep,
+      peanoclaw::Vertex * const                fineGridVertices,
+      const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator,
+      peanoclaw::Vertex * const                coarseGridVertices,
+      const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator
+    );
+
+    /**
+     * Returns wether this patch currently is allowed to advance
+     * in time, depending on the neighbor patches.
+     */
+    bool isBlockedByNeighbors() const;
 
     /**
      * The current time refers to the lower end of the time interval spanned
@@ -154,12 +180,6 @@ class peanoclaw::grid::TimeIntervals {
      * are restricted to the maximal neighbor time interval.
      */
   //  void setTimeIntervalToMaximalNeighborTimeInterval();
-
-    /**
-     * Returns wether this patch currently is allowed to advance
-     * in time, depending on the neighbor patches.
-     */
-    bool isAllowedToAdvanceInTime() const;
 
     /**
      * Prepares the values for the maximum/minimum search in the fine

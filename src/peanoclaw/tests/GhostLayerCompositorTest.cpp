@@ -112,10 +112,10 @@ void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
     for(int cellIndex = 0; cellIndex < 4; cellIndex++) {
       if(cellIndex == vetoIndex) {
         validateNumericalEqualsWithParams2(patches[cellIndex].getTimeIntervals().getMinimalNeighborTimeConstraint(), 1.0, vetoIndex, cellIndex);
-        validateNumericalEqualsWithParams2(patches[cellIndex].getTimeIntervals().isAllowedToAdvanceInTime(), false, vetoIndex, cellIndex);
+        validateNumericalEqualsWithParams2(!patches[cellIndex].getTimeIntervals().isBlockedByNeighbors(), false, vetoIndex, cellIndex);
       } else {
         validateNumericalEqualsWithParams2(patches[cellIndex].getTimeIntervals().getMinimalNeighborTimeConstraint(), 1.0, vetoIndex, cellIndex);
-        validateNumericalEqualsWithParams2(patches[cellIndex].getTimeIntervals().isAllowedToAdvanceInTime(), true, vetoIndex, cellIndex);
+        validateNumericalEqualsWithParams2(!patches[cellIndex].getTimeIntervals().isBlockedByNeighbors(), true, vetoIndex, cellIndex);
       }
     }
   }

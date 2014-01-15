@@ -67,24 +67,6 @@ class peanoclaw::mappings::SolveTimestep {
     std::map<int, int> _estimatedRemainingIterationsUntilGlobalTimestep;
 
     /**
-     * Determines whether the given patch should be advanced in time.
-     *
-     * TODO unterweg debug
-     * Here we may not block timestepping if a coarse vertex has
-     * an Erase_Triggered but only if it is Erasing. In serial both
-     * works but in parallel a triggered erase may be postboned due
-     * to the parallel grid topology.
-     */
-    bool shouldAdvanceInTime(
-      const peanoclaw::Patch&                  patch,
-      double                                   maximumTimestepDueToGlobalTimestep,
-      peanoclaw::Vertex * const                fineGridVertices,
-      const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator,
-      peanoclaw::Vertex * const                coarseGridVertices,
-      const peano::grid::VertexEnumerator&     coarseGridVerticesEnumerator
-    );
-
-    /**
      * Fills the boundary layers of the given patch.
      */
     void fillBoundaryLayers(
