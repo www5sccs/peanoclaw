@@ -86,7 +86,7 @@ def refinement_criterion_gradient(state):
   #max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:], dimension_x.delta, dimension_y.delta)))
   max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:])))
   
-  if max_gradient > 0.025:
+  if max_gradient > 0.25:
       return 1.0/(6.0*81.0)
   elif max_gradient < 0.001:
       return 1.0/(6.0*9.0)
@@ -177,7 +177,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 1e-8 #0.5
+    claw.tfinal = 0.5
 
     if amr_type is not None:        
         if amr_type == 'peano':
@@ -204,7 +204,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     claw.output_format = None
     claw.outdir = None
 
-    claw.num_output_times = 100
+    claw.num_output_times = 20
 
     #===========================================================================
     # Plot results

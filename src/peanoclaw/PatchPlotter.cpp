@@ -91,7 +91,7 @@ peanoclaw::PatchPlotter::PatchPlotter(
   std::set<int> plotQ,
   std::set<int> plotAux,
   bool plotMetainformation
-) : _vtkWriter(vtkWriter), _gap(0.0), _plotQ(plotQ), _plotAux(plotAux), _plotMetainformation(plotMetainformation) {
+) : _vtkWriter(vtkWriter), _gap(0.015), _plotQ(plotQ), _plotAux(plotAux), _plotMetainformation(plotMetainformation) {
 
   _vertex2IndexMap.clear();
   _vertexWriter     = _vtkWriter.createVertexWriter();

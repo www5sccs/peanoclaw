@@ -99,7 +99,7 @@ class BreakingDam_SWEKernelScenario : public peanoclaw::native::SWEKernelScenari
             }
           
             double demandedMeshWidth = patch.getSubcellSize()(0);
-            if (max_gradient > 1) {
+            if (max_gradient > 0.1) {
                 //demandedMeshWidth = 1.0/243;
                 demandedMeshWidth = 10.0/27/6;
             } else if (max_gradient < 0.5) {
