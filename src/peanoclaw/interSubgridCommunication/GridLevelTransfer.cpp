@@ -489,7 +489,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictDestroyedS
   }
 
   //Skip update for coarse patch in next grid iteration
-  coarseSubgrid.setSkipNextGridIteration(1);
+  coarseSubgrid.setSkipNextGridIteration(2);
 
   //Set demanded mesh width for coarse cell to coarse cell size. Otherwise
   //the coarse patch might get refined immediately.

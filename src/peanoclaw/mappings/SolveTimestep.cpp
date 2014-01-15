@@ -357,6 +357,7 @@ bool peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
 
   //TODO unterweg debug
 //  std::cout << "Estimated iterations: " << _estimatedRemainingIterationsUntilGlobalTimestep[worker] << std::endl;
+  return true;
 
   if(_estimatedRemainingIterationsUntilGlobalTimestep[worker] == 0) {
     return false;
