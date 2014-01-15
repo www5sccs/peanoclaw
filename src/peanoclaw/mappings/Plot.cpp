@@ -56,7 +56,7 @@ tarch::logging::Log                peanoclaw::mappings::Plot::_log( "peanoclaw::
 
 void peanoclaw::mappings::Plot::plotFile(int plotNumber) {
   std::ostringstream snapshotFileName;
-  snapshotFileName << "/tmp/lu26his2/adaptive-"
+  snapshotFileName << "vtkOutput/adaptive-"
                    #ifdef Parallel
                    << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-"
                    #endif
