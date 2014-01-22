@@ -86,9 +86,9 @@ def refinement_criterion_gradient(state):
   #max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:], dimension_x.delta, dimension_y.delta)))
   max_gradient = numpy.max(numpy.abs(numpy.gradient(state.q[0,:,:])))
   
-  if max_gradient > 0.1:
+  if max_gradient > 0.025:
       return 1.0/(6.0*81.0)
-  elif max_gradient < 0.05:
+  elif max_gradient < 0.001:
       return 1.0/(6.0*9.0)
   else:
       return dimension_x.delta
@@ -204,7 +204,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     claw.output_format = None
     claw.outdir = None
 
-    claw.num_output_times = 20
+    claw.num_output_times = 100
 
     #===========================================================================
     # Plot results
