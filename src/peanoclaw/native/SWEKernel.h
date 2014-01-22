@@ -8,6 +8,8 @@
 #ifndef PEANOCLAW_NATIVE_SWEKERNEL_H_
 #define PEANOCLAW_NATIVE_SWEKERNEL_H_
 
+#define WAVE_PROPAGATION_SOLVER 3
+
 #include "tarch/logging/Log.h"
 #include "tarch/la/Vector.h"
 #include "peano/utils/Dimensions.h"

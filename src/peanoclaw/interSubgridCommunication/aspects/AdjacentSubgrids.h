@@ -223,6 +223,12 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
      * this information in the vertex.
      */
     void checkForChangesInAdjacentRanks();
+
+    /**
+     * Checks for each adjacent subgrid that belongs to the local rank whether
+     * it is overlapped by a ghostlayer of a remote adjacent subgrid.
+     */
+    void setOverlapOfRemoteGhostlayers();
 };
 
 /**

@@ -128,7 +128,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     mgrid = 6
 
     # number of initial AMR grids in each dimension
-    msubgrid = 27
+    msubgrid = 9
 
     if amr_type is not None:
         m = mgrid
