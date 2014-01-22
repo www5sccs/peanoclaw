@@ -5,6 +5,7 @@ Packed-Type: int;
 Constant: DIMENSIONS;
 Constant: DIMENSIONS_TIMES_TWO;
 Constant: TWO_POWER_D;
+Constant: THREE_POWER_D_MINUS_ONE;
 
 class peanoclaw::records::CellDescription {
   parallelise persistent int  subdivisionFactor[DIMENSIONS] from -1 to 1048575;
@@ -28,12 +29,12 @@ class peanoclaw::records::CellDescription {
   /**
    * Adjacent MPI rank if only one other rank is adjacent. Otherwise -1.
    */
-  persistent int adjacentRank;
+  //persistent int adjacentRank;
   /**
    * Number adjacent vertices that are shared between the local and the
    * remote rank. This number is only valid if there is only one rank adjacent.
    */
-  persistent int numberOfSharedAdjacentVertices;
+  persistent int numberOfSharedAdjacentVertices[THREE_POWER_D_MINUS_ONE] from 1 to 8;
   
   /**
    * Indicates, whether the current state of the subgrid has been send to 
@@ -48,16 +49,16 @@ class peanoclaw::records::CellDescription {
   persistent packed bool adjacentRanksChanged;
   
   /**
-   * States the overlap of a neighboring subgrid that resides on a different
-   * MPI rank. Only subgrids on the same level are taken into account.
+   * Holds for every adajcent subgrid on the same level to which rank it
+   * belongs.
    */
-  persistent parallelise int upperOverlapByRemoteGhostlayer[DIMENSIONS];
-
+  persistent int adjacentRanks[THREE_POWER_D_MINUS_ONE];
+  
   /**
-   * States the overlap of a neighboring subgrid that resides on a different
-   * MPI rank. Only subgrids on the same level are taken into account.
-   */  
-  persistent parallelise int lowerOverlapByRemoteGhostlayer[DIMENSIONS];
+   * Holds the number of cells that are overlapped by an adjacent subgrid
+   * held on a different rank.
+   */
+  persistent int overlapByRemoteGhostlayer[THREE_POWER_D_MINUS_ONE];
   #endif
 
   parallelise persistent double position[DIMENSIONS];
@@ -175,7 +176,5 @@ class peanoclaw::records::CellDescription {
    * Heap data indices
    */
   parallelise persistent int cellDescriptionIndex;
-  //parallelise persistent int uOldIndex;
-  parallelise persistent int uNewIndex;
-  //parallelise persistent int auxIndex;
+  parallelise persistent int uIndex;
 };

@@ -108,6 +108,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   double initialTimestepSize,
   char* configurationFile,
   bool useDimensionalSplittingOptimization,
+  bool reduceReductions,
   InitializationCallback initializationCallback,
   BoundaryConditionCallback boundaryConditionCallback,
   SolverCallback solverCallback,
@@ -192,6 +193,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     auxiliarFieldsPerSubcell,
     initialTimestepSize,
     useDimensionalSplittingOptimization,
+    reduceReductions,
     forkLevelIncrement
   );
 

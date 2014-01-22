@@ -118,6 +118,7 @@ class Peano(object):
                                                 dt_initial,
                                                 c_char_p(configuration_file),
                                                 False, #use_dimensional_splitting_optimization,
+                                                self.internal_settings.reduce_reductions,
                                                 initialization_callback.get_initialization_callback(),
                                                 boundary_condition_callback.get_boundary_condition_callback(),
                                                 solver_callback.get_solver_callback(),
@@ -170,12 +171,7 @@ class Peano(object):
   def evolve_to_time(self, tend):
     self.libpeano.pyclaw_peano_evolveToTime(
       tend, 
-      self.peano#, 
-      #self.boundary_condition_callback.get_boundary_condition_callback(), 
-      #self.solver_callback.get_solver_callback(),
-      #self.interpolation_callback.get_interpolation_callback(),
-      #self.restriction_callback.get_restriction_callback(),
-      #self.flux_correction_callback.get_flux_correction_callback()
+      self.peano
     )
 
   def teardown(self):

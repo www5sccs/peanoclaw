@@ -254,8 +254,14 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
   peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
   parallelSubgrid.countNumberOfAdjacentParallelSubgrids(vertices, enumerator);
 
-  validateEquals(parallelSubgrid.getAdjacentRank(), 1);
-  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), 2);
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(0), 1, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(1), -1, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(2), -1, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(3), -1, parallelSubgrid.getAdjacentRanks());
+  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices()(0), 2);
+  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices()(1), 0);
+  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices()(2), 0);
+  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices()(3), 0);
   #endif
 }
 
@@ -290,8 +296,14 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeig
   peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
   parallelSubgrid.countNumberOfAdjacentParallelSubgrids(vertices, enumerator);
 
-  validateEquals(parallelSubgrid.getAdjacentRank(), -1);
-  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices(), 0);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(0), 3);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(1), 4);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(2), 2);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(3), 1);
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(0), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(1), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(2), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(3), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
   #endif
 }
 
