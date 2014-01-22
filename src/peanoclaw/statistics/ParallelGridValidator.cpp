@@ -142,6 +142,7 @@ bool peanoclaw::statistics::ParallelGridValidator::validateNeighborPatchOnRemote
   return false;
 #else
   assertionFail("Should not be called in non-parallel run.");
+  return true;
 #endif
 }
 

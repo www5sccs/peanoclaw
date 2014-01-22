@@ -129,7 +129,7 @@ bool peanoclaw::Patch::isValid(const CellDescription* cellDescription) {
 
 bool peanoclaw::Patch::isLeaf(const CellDescription* cellDescription) {
   return (cellDescription != 0) && !cellDescription->getIsVirtual()
-      && (cellDescription->getUNewIndex() != -1);
+      && (cellDescription->getUIndex() != -1);
 }
 
 bool peanoclaw::Patch::isVirtual(const CellDescription* cellDescription) {
@@ -138,9 +138,9 @@ bool peanoclaw::Patch::isVirtual(const CellDescription* cellDescription) {
   }
   assertion6(
       (!cellDescription->getIsVirtual()
-          || ( cellDescription->getUNewIndex() != -1 )), cellDescription->getPosition(),
-      cellDescription->getSize(), cellDescription->getIsVirtual(), cellDescription->getUNewIndex(),
-      cellDescription->getUNewIndex(),
+          || ( cellDescription->getUIndex() != -1 )), cellDescription->getPosition(),
+      cellDescription->getSize(), cellDescription->getIsVirtual(), cellDescription->getUIndex(),
+      cellDescription->getUIndex(),
       cellDescription->getCellDescriptionIndex());
   return cellDescription->getIsVirtual();
 }
@@ -215,7 +215,7 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   //Data
   cellDescription.setCellDescriptionIndex(cellDescriptionIndex);
 //  cellDescription.setUOldIndex(-1);
-  cellDescription.setUNewIndex(-1);
+  cellDescription.setUIndex(-1);
 //  cellDescription.setAuxIndex(-1);
   
   //Geometry
@@ -291,9 +291,9 @@ void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
 
   _timeIntervals = peanoclaw::grid::TimeIntervals(_cellDescription);
 
-  if (_cellDescription->getUNewIndex() != -1) {
+  if (_cellDescription->getUIndex() != -1) {
     _uNew = &DataHeap::getInstance().getData(
-        _cellDescription->getUNewIndex());
+        _cellDescription->getUIndex());
   } else {
     _uNew = 0;
   }
@@ -311,9 +311,9 @@ void peanoclaw::Patch::initializeNonParallelFields() {
 }
 
 void peanoclaw::Patch::deleteData() {
-  if(_cellDescription->getUNewIndex() != -1) {
-    DataHeap::getInstance().deleteData(_cellDescription->getUNewIndex());
-    _cellDescription->setUNewIndex(-1);
+  if(_cellDescription->getUIndex() != -1) {
+    DataHeap::getInstance().deleteData(_cellDescription->getUIndex());
+    _cellDescription->setUIndex(-1);
     _uNew = 0;
   }
   CellDescriptionHeap::getInstance().deleteData(_cellDescription->getCellDescriptionIndex());
@@ -621,7 +621,7 @@ double* peanoclaw::Patch::getAuxArray() const {
 }
 
 int peanoclaw::Patch::getUNewIndex() const {
-  return _cellDescription->getUNewIndex();
+  return _cellDescription->getUIndex();
 }
 
 int peanoclaw::Patch::getCellDescriptionIndex() const {
@@ -791,7 +791,7 @@ std::string peanoclaw::Patch::toString() const {
         << _cellDescription->getRestrictionUpperBounds()
 #ifdef Parallel
         << ",isRemote=" << _cellDescription->getIsRemote()
-        << ",adjacentRank=" << _cellDescription->getAdjacentRank()
+        << ",adjacentRanks=" << _cellDescription->getAdjacentRanks()
         << ",numberOfSkippedTransfers=" << _cellDescription->getNumberOfSkippedTransfers()
         << ",numberOfAdjacentSharedVertices=" << _cellDescription->getNumberOfSharedAdjacentVertices()
 #endif
@@ -808,8 +808,8 @@ bool peanoclaw::Patch::isValid() const {
 
 bool peanoclaw::Patch::isLeaf() const {
   if(isValid()) {
-    assertionEquals2((_uNew == 0), (_cellDescription->getUNewIndex() == -1),
-        _uNew, _cellDescription->getUNewIndex());
+    assertionEquals2((_uNew == 0), (_cellDescription->getUIndex() == -1),
+        _uNew, _cellDescription->getUIndex());
   }
   return isLeaf(_cellDescription);
 }
@@ -822,9 +822,9 @@ void peanoclaw::Patch::switchToVirtual() {
 
   _cellDescription->setIsVirtual(true);
   //Create uNew if necessary
-  if (_cellDescription->getUNewIndex() == -1) {
+  if (_cellDescription->getUIndex() == -1) {
     int uNewIndex = DataHeap::getInstance().createData();
-    _cellDescription->setUNewIndex(uNewIndex);
+    _cellDescription->setUIndex(uNewIndex);
     std::vector<Data>& virtualUNew =
         DataHeap::getInstance().getData(uNewIndex);
 
@@ -845,15 +845,15 @@ void peanoclaw::Patch::switchToVirtual() {
     _uNew = &virtualUNew;
   }
 
-  assertion1(_uNew != 0 && _cellDescription->getUNewIndex() != -1, toString());
+  assertion1(_uNew != 0 && _cellDescription->getUIndex() != -1, toString());
 }
 
 void peanoclaw::Patch::switchToNonVirtual() {
   assertion(!isLeaf())
   _cellDescription->setIsVirtual(false);
-  if (_cellDescription->getUNewIndex() != -1) {
+  if (_cellDescription->getUIndex() != -1) {
     DataHeap::getInstance().deleteData(getUNewIndex());
-    _cellDescription->setUNewIndex(-1);
+    _cellDescription->setUIndex(-1);
     _uNew = 0;
   }
 

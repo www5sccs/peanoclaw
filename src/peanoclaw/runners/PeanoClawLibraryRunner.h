@@ -99,6 +99,7 @@ public:
     int auxiliarFieldsPerSubcell,
     double initialTimestepSize,
     bool useDimensionalSplitting,
+    bool reduceReductions,
     int  forkLevelIncrement = 1
   );
 

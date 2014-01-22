@@ -36,15 +36,9 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::deleteArraysFromP
     assertion2(CellDescriptionHeap::getInstance().isValidIndex(cellDescriptionIndex), _position, _level);
     CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
 
-    if(cellDescription.getUNewIndex() != -1) {
-      DataHeap::getInstance().deleteData(cellDescription.getUNewIndex());
+    if(cellDescription.getUIndex() != -1) {
+      DataHeap::getInstance().deleteData(cellDescription.getUIndex());
     }
-//    if(cellDescription.getUOldIndex() != -1) {
-//      _dataHeap.deleteData(cellDescription.getUOldIndex());
-//    }
-//    if(cellDescription.getAuxIndex() != -1) {
-//      _dataHeap.deleteData(cellDescription.getAuxIndex());
-//    }
   }
   logTraceOut("deleteArraysFromPatch");
 }
@@ -90,21 +84,9 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendPatch(
 
     CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
 
-    if(cellDescription.getUNewIndex() != -1) {
-      sendDataArray(cellDescription.getUNewIndex());
+    if(cellDescription.getUIndex() != -1) {
+      sendDataArray(cellDescription.getUIndex());
     }
-
-//    if(cellDescription.getUOldIndex() != -1) {
-//      std::vector<Data>& localMatrix = DataHeap::getInstance().getData(cellDescription.getUOldIndex());
-////      std::cout << "sending new data with elements: " << localMatrix.size() << std::endl;
-//      sendDataArray(cellDescription.getUOldIndex());
-//    }
-//
-//    if(cellDescription.getAuxIndex() != -1) {
-//      std::vector<Data>& localMatrix = DataHeap::getInstance().getData(cellDescription.getAuxIndex());
-////      std::cout << "sending old data with elements: " << localMatrix.size() << std::endl;
-//      sendDataArray(cellDescription.getAuxIndex());
-//    }
   }
   logTraceOut("sendPatch");
 }
@@ -129,17 +111,9 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
 //  std::cout << "Received cell description: " << remoteCellDescription.toString() << std::endl;
 
   //Load arrays and stores according indices in cell description
-  if(remoteCellDescription.getUNewIndex() != -1) {
-    remoteCellDescription.setUNewIndex(receiveDataArray());
+  if(remoteCellDescription.getUIndex() != -1) {
+    remoteCellDescription.setUIndex(receiveDataArray());
   }
-
-//  if(remoteCellDescription.getUOldIndex() != -1) {
-//    remoteCellDescription.setUOldIndex(receiveDataArray());
-//  }
-//
-//  if(remoteCellDescription.getAuxIndex() != -1) {
-//    remoteCellDescription.setAuxIndex(receiveDataArray());
-//  }
 
   //Reset undesired values
   remoteCellDescription.setNumberOfSkippedTransfers(0);

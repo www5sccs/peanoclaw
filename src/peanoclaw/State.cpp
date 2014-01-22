@@ -292,3 +292,18 @@ int peanoclaw::State::getGlobalHeightOfWorkerTreeDuringLastIteration() const {
   return 0;
   #endif
 }
+
+
+void peanoclaw::State::setReduceReductions(bool reduceReductions) {
+  #ifdef Parallel
+  _stateData.setReduceReductions(reduceReductions);
+  #endif
+}
+
+bool peanoclaw::State::shouldReduceReductions() const {
+  #ifdef Parallel
+  return _stateData.getReduceReductions();
+  #else
+  return true;
+  #endif
+}

@@ -281,20 +281,14 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateDu
     CellDescription& remoteCellDescription = CellDescriptionHeap::getInstance().getData(remoteCellDescriptionIndex).at(0);
 
     assertion1(localCellDescriptionIndex != -1, localPatch);
-    if(remoteCellDescription.getUNewIndex() != -1) {
+    if(remoteCellDescription.getUIndex() != -1) {
       assertion1(localPatch.isVirtual() || localPatch.isLeaf(), localPatch);
 
       //Delete current content of patch
       DataHeap::getInstance().deleteData(localPatch.getUNewIndex());
-//      DataHeap::getInstance().deleteData(localPatch.getUOldIndex());
-//      if(localPatch.getAuxIndex() != -1) {
-//        DataHeap::getInstance().deleteData(localPatch.getAuxIndex());
-//      }
 
       //Merge
-      localCellDescription.setUNewIndex(remoteCellDescription.getUNewIndex());
-//      localCellDescription.setUOldIndex(remoteCellDescription.getUOldIndex());
-//      localCellDescription.setAuxIndex(remoteCellDescription.getAuxIndex());
+      localCellDescription.setUIndex(remoteCellDescription.getUIndex());
     }
 
     CellDescriptionHeap::getInstance().deleteData(remoteCellDescriptionIndex);

@@ -266,6 +266,18 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        * Returns the global height of the worker tree during the last grid iteration.
        */
       int getGlobalHeightOfWorkerTreeDuringLastIteration() const;
+
+      /**
+       * Sets whether reductions should be reduced as far as possible by determining
+       * the number of remaining iterations.
+       */
+      void setReduceReductions(bool reduceReductions);
+
+      /**
+       * Returns whether reductions should be reduced as far as possible by determining
+       * the number of remaining iterations.
+       */
+      bool shouldReduceReductions() const;
 };
 
 

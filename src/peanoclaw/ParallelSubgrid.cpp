@@ -49,21 +49,28 @@ bool peanoclaw::ParallelSubgrid::wasCurrentStateSent() const {
   #endif
 }
 
-void peanoclaw::ParallelSubgrid::decreaseNumberOfSharedAdjacentVertices() {
+void peanoclaw::ParallelSubgrid::decreaseNumberOfSharedAdjacentVertices(int remoteRank) {
   #ifdef Parallel
-  _cellDescription->setNumberOfSharedAdjacentVertices(_cellDescription->getNumberOfSharedAdjacentVertices() - 1);
+  for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+    if(_cellDescription->getAdjacentRanks(i) == remoteRank) {
+      _cellDescription->setNumberOfSharedAdjacentVertices(
+        i, _cellDescription->getNumberOfSharedAdjacentVertices(i) - 1
+      );
+      break;
+    }
+  }
   #endif
 }
 
-int peanoclaw::ParallelSubgrid::getAdjacentRank() const {
+tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getAdjacentRanks() const {
   #ifdef Parallel
-  return _cellDescription->getAdjacentRank();
+  return _cellDescription->getAdjacentRanks();
   #else
-  return -1;
+  return tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>(-1);
   #endif
 }
 
-int peanoclaw::ParallelSubgrid::getNumberOfSharedAdjacentVertices() const {
+tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getNumberOfSharedAdjacentVertices() const {
   #ifdef Parallel
   return _cellDescription->getNumberOfSharedAdjacentVertices();
   #else
@@ -96,54 +103,37 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
   const peano::grid::VertexEnumerator& verticesEnumerator
 ) {
   #ifdef Parallel
-//  assertion1(_cellDescription->getNumberOfSharedAdjacentVertices() <= 0, _cellDescription->toString());
+  for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+    _cellDescription->setAdjacentRanks(i, -1);
+    _cellDescription->setNumberOfSharedAdjacentVertices(i, 0);
+  }
+  for(int vertexIndex = 0; vertexIndex < TWO_POWER_D; vertexIndex++) {
+    bool setRanks[THREE_POWER_D_MINUS_ONE];
+    for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+      setRanks[i] = false;
+    }
 
-  int adjacentRank = -1;
-  int localRank = tarch::parallel::Node::getInstance().getRank();
-  int numberOfSharedAdjacentVertices = 0;
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    Vertex& vertex = vertices[verticesEnumerator(i)];
+    for(int subgridIndex = 0; subgridIndex < TWO_POWER_D; subgridIndex++) {
+      int adjacentRank = vertices[verticesEnumerator(vertexIndex)].getAdjacentRanks()(subgridIndex);
 
-    if(!vertex.isHangingNode()) {
-      bool oneAdjacentRemoteRank = false;
-      bool moreThanOneAdjacentRemoteRanks = false;
-
-      for(int j = 0; j < TWO_POWER_D; j++) {
-        if(
-            vertex.getAdjacentRanks()(j) != localRank
-            && vertex.getAdjacentRanks()(j) != 0
-          ) {
-          if(adjacentRank == -1) {
-            adjacentRank = vertex.getAdjacentRanks()(j);
-            oneAdjacentRemoteRank = true;
-          } else if(vertex.getAdjacentRanks()(j) == adjacentRank) {
-            oneAdjacentRemoteRank = true;
-          } else {
-            moreThanOneAdjacentRemoteRanks = true;
+      if(adjacentRank != tarch::parallel::Node::getInstance().getRank()) {
+        //Search slot to store remote rank
+        for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+          if(_cellDescription->getAdjacentRanks(i) == adjacentRank
+             || _cellDescription->getAdjacentRanks(i) == -1) {
+            _cellDescription->setAdjacentRanks(i, adjacentRank);
+            if(!setRanks[i]) {
+              setRanks[i] = true;
+              _cellDescription->setNumberOfSharedAdjacentVertices(i,
+                _cellDescription->getNumberOfSharedAdjacentVertices(i) + 1
+              );
+            }
             break;
           }
         }
       }
-
-      if(oneAdjacentRemoteRank && !moreThanOneAdjacentRemoteRanks) {
-        numberOfSharedAdjacentVertices++;
-      } else if (moreThanOneAdjacentRemoteRanks) {
-        adjacentRank = -1;
-        numberOfSharedAdjacentVertices = -1;
-      }
-    }
-
-    if(numberOfSharedAdjacentVertices == -1) {
-      //There are more than one adjacent ranks
-      break;
     }
   }
-
-  assertion2(numberOfSharedAdjacentVertices <= TWO_POWER_D, numberOfSharedAdjacentVertices, _cellDescription->toString());
-
-  _cellDescription->setAdjacentRank(adjacentRank);
-  _cellDescription->setNumberOfSharedAdjacentVertices(numberOfSharedAdjacentVertices);
-  _cellDescription->setNumberOfSkippedTransfers(std::max(0, numberOfSharedAdjacentVertices-1));
   #endif
 }
 
@@ -165,17 +155,28 @@ bool peanoclaw::ParallelSubgrid::isAdjacentToLocalSubdomain(
   #endif
 }
 
-//bool isAdjacentToRemoteSubdomain(
-//  peanoclaw::Vertex * const            fineGridVertices,
-//  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
-//) {
-//  #ifdef Parallel
-//  bool isAdjacentToRemoteRank = false;
-//  for(int i = 0; i < TWO_POWER_D; i++) {
-//    isAdjacentToRemoteRank |= fineGridVertices[fineGridVerticesEnumerator(i)].isAdjacentToRemoteRank();
-//  }
-//  return isAdjacentToRemoteRank;
-//  #else
-//  return false;
-//  #endif
-//}
+void peanoclaw::ParallelSubgrid::setAdjacentRanksAndRemoteGhostlayerOverlap(
+  peanoclaw::Vertex * const            fineGridVertices,
+  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
+) {
+  #ifdef Parallel
+  int entry = 0;
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    for(int j = i; j < TWO_POWER_D; j++) {
+      int adjacentRank = fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentRanks()(j);
+      int adjacentCellDescriptionIndex = fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentCellDescriptionIndexInPeanoOrder(j);
+      if(i != TWO_POWER_D-1
+          && adjacentRank != tarch::parallel::Node::getInstance().getRank()
+          && adjacentCellDescriptionIndex != -1) {
+        ParallelSubgrid remoteSubgrid(
+          adjacentCellDescriptionIndex
+        );
+
+        _cellDescription->setAdjacentRanks(entry, adjacentRank);
+
+        entry++;
+      }
+    }
+  }
+  #endif
+}

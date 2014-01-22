@@ -43,6 +43,7 @@ class peanoclaw::dastgen::State {
 	#ifdef Parallel
 	persistent parallelise int localHeightOfWorkerTree;
 	persistent parallelise int globalHeightOfWorkerTreeDuringLastIteration;
+	persistent parallelise bool reduceReductions;
 	#endif
 };
 	

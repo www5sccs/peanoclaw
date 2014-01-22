@@ -91,8 +91,8 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
     #endif
 
     _statistics.receivedNeighborData();
-    if(remoteCellDescription.getUNewIndex() != -1) {
-      remoteCellDescription.setUNewIndex(_subgridCommunicator.receiveDataArray());
+    if(remoteCellDescription.getUIndex() != -1) {
+      remoteCellDescription.setUIndex(_subgridCommunicator.receiveDataArray());
     } else {
       _subgridCommunicator.receiveDataArray();
     }
@@ -249,19 +249,22 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
             || localSubgrid.getLevel() <= 3
             || !_onlySendSubgridsAfterChange) {
 
-          if(
-              localParallelSubgrid.getAdjacentRank() == -1
-              || localParallelSubgrid.getNumberOfSharedAdjacentVertices() == 1
-              || !_avoidMultipleTransferOfSubgridsIfPossible
-          ) {
-            assertion4(
-              localParallelSubgrid.getAdjacentRank() == _remoteRank || localParallelSubgrid.getAdjacentRank() == -1 || !_avoidMultipleTransferOfSubgridsIfPossible,
-              localParallelSubgrid.getAdjacentRank(),
-              _remoteRank,
-              localSubgrid,
-              vertex.getAdjacentRanks()
-            );
+          //Find adjacent rank
+          bool isSingleTransferOfSubgridToRank = false;
+          tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> adjacentRanks = localParallelSubgrid.getAdjacentRanks();
+          for(int i = 0; i < THREE_POWER_D_DIVIDED_BY_THREE; i++) {
+            if(adjacentRanks(i) == _remoteRank) {
+              if(localParallelSubgrid.getNumberOfSharedAdjacentVertices()(i) == 1) {
+                isSingleTransferOfSubgridToRank = true;
+              }
+              break;
+            }
+          }
 
+          if(
+            isSingleTransferOfSubgridToRank
+            || !_avoidMultipleTransferOfSubgridsIfPossible
+          ) {
             logDebug("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << localSubgrid << " for vertex " << _position);
 
             sendPatch(localSubgrid);
@@ -271,7 +274,7 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
             logDebug("sendSubgridsForVertex", "(Skipped) Sending subgrid to rank " << _remoteRank << ": " << localSubgrid
                 << " for vertex " << _position << ", getNumberOfSharedAdjacentVertices=" << localParallelSubgrid.getNumberOfSharedAdjacentVertices());
           }
-          localParallelSubgrid.decreaseNumberOfSharedAdjacentVertices();
+          localParallelSubgrid.decreaseNumberOfSharedAdjacentVertices(_remoteRank);
         }
       }
 

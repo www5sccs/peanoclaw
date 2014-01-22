@@ -62,13 +62,13 @@ class peanoclaw::ParallelSubgrid {
   /**
    * Decreases the number of shared adjacent vertices by one.
    */
-  void decreaseNumberOfSharedAdjacentVertices();
+  void decreaseNumberOfSharedAdjacentVertices(int remoteRank);
 
   /**
    * Returns the adjacent rank or -1 if no or more than one ranks are adjacent
    * to this subgrid.
    */
-  int getAdjacentRank() const;
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> getAdjacentRanks() const;
 
   /**
    * Returns the number of adjacent vertices that are shared between this and
@@ -76,7 +76,7 @@ class peanoclaw::ParallelSubgrid {
    * Returns 0 if no ranks are adjacent.
    * Returns -1 if more than one ranks are adjacent.
    */
-  int getNumberOfSharedAdjacentVertices() const;
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> getNumberOfSharedAdjacentVertices() const;
 
   /**
    * Returns the number of additional transfers for this subgrid that have to
@@ -115,13 +115,14 @@ class peanoclaw::ParallelSubgrid {
   );
 
   /**
-   * Determines whether the subgrid is adjacent to a remote subdomain. I.e.
-   * if one of the adjacent vertices is shared with a remote rank.
+   * Checks for all adjacent subgrids that reside on the same level whether
+   * they belong to a remote rank. If they do, the rank is set to the current
+   * subgrid and the overlap of the ghostlayer is stored as well.
    */
-//  bool isAdjacentToRemoteSubdomain(
-//    peanoclaw::Vertex * const            fineGridVertices,
-//    const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
-//  );
+  void setAdjacentRanksAndRemoteGhostlayerOverlap(
+    peanoclaw::Vertex * const            fineGridVertices,
+    const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
+  );
 };
 
 #endif /* PEANOCLAW_PARALLELSUBGRID_H_ */

@@ -52,39 +52,39 @@ void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleR
 
 
   int bottomLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription bottomLeftDescription; bottomLeftDescription.setUNewIndex(-1);
+  CellDescription bottomLeftDescription; bottomLeftDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(bottomLeftDescriptionIndex).push_back(bottomLeftDescription);
 
   int bottomCenterDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription bottomCenterDescription; bottomCenterDescription.setUNewIndex(-1);
+  CellDescription bottomCenterDescription; bottomCenterDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(bottomCenterDescriptionIndex).push_back(bottomCenterDescription);
 
   int bottomRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription bottomRightDescription; bottomRightDescription.setUNewIndex(-1);
+  CellDescription bottomRightDescription; bottomRightDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(bottomRightDescriptionIndex).push_back(bottomRightDescription);
 
   int centerLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription centerLeftDescription; centerLeftDescription.setUNewIndex(-1);
+  CellDescription centerLeftDescription; centerLeftDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(centerLeftDescriptionIndex).push_back(centerLeftDescription);
 
   int refinedDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription refinedDescription; refinedDescription.setUNewIndex(-1);
+  CellDescription refinedDescription; refinedDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(refinedDescriptionIndex).push_back(refinedDescription);
 
   int centerRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription centerRightDescription; centerRightDescription.setUNewIndex(-1);
+  CellDescription centerRightDescription; centerRightDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(centerRightDescriptionIndex).push_back(centerRightDescription);
 
   int topLeftDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription topLeftDescription; topLeftDescription.setUNewIndex(-1);
+  CellDescription topLeftDescription; topLeftDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(topLeftDescriptionIndex).push_back(topLeftDescription);
 
   int topCenterDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription topCenterDescription; topCenterDescription.setUNewIndex(-1);
+  CellDescription topCenterDescription; topCenterDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(topCenterDescriptionIndex).push_back(topCenterDescription);
 
   int topRightDescriptionIndex = CellDescriptionHeap::getInstance().createData();
-  CellDescription topRightDescription; topRightDescription.setUNewIndex(-1);
+  CellDescription topRightDescription; topRightDescription.setUIndex(-1);
   CellDescriptionHeap::getInstance().getData(topRightDescriptionIndex).push_back(topRightDescription);
 
   //Vertex a
@@ -365,7 +365,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   virtualCellDescription.setMinimumFineGridTimestep(1.0+4.0/3.0);
   virtualCellDescription.setMinimalNeighborTime(0.0);
   virtualCellDescription.setMaximalNeighborTimestep(1.0+4.0/3.0);
-  virtualCellDescription.setUNewIndex(-1);
+  virtualCellDescription.setUIndex(-1);
 //  virtualCellDescription.setUOldIndex(-1);
 //  virtualCellDescription.setAuxIndex(-1);
   virtualCellDescription.setCellDescriptionIndex(virtualCellDescriptionIndex);

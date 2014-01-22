@@ -774,9 +774,7 @@ void peanoclaw::mappings::Remesh::receiveDataFromMaster(
 
     int temporaryCellDescriptionIndex = CellDescriptionHeap::getInstance().createData();
     CellDescription temporaryCellDescription;
-    temporaryCellDescription.setUNewIndex(-1);
-//    temporaryCellDescription.setUOldIndex(-1);
-//    temporaryCellDescription.setAuxIndex(-1);
+    temporaryCellDescription.setUIndex(-1);
     temporaryCellDescription.setPosition(
       receivedVerticesEnumerator.getVertexPosition(tarch::la::Vector<DIMENSIONS, int>(0))
     );
@@ -994,6 +992,10 @@ void peanoclaw::mappings::Remesh::leaveCell(
     //Count number of adjacent subgrids
     ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
     parallelSubgrid.countNumberOfAdjacentParallelSubgrids(
+      fineGridVertices,
+      fineGridVerticesEnumerator
+    );
+    parallelSubgrid.setAdjacentRanksAndRemoteGhostlayerOverlap(
       fineGridVertices,
       fineGridVerticesEnumerator
     );

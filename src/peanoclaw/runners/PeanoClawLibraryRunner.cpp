@@ -147,6 +147,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   int auxiliarFieldsPerSubcell,
   double initialTimestepSize,
   bool useDimensionalSplittingOptimization,
+  bool reduceReductions,
   int  forkLevelIncrement
 ) :
   _plotNumber(1),
@@ -196,6 +197,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setInitialTimestepSize(initialTimestepSize);
   state.setDomain(domainOffset, domainSize);
   state.setUseDimensionalSplittingOptimization(useDimensionalSplittingOptimization && !_configuration.disableDimensionalSplittingOptimization());
+  state.setReduceReductions(reduceReductions);
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);
