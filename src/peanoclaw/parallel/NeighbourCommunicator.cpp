@@ -198,8 +198,8 @@ peanoclaw::parallel::NeighbourCommunicator::NeighbourCommunicator(
     _remoteSubgridMap(remoteSubgridMap),
     _statistics(statistics),
     //En-/Disable optimizations
-    _avoidMultipleTransferOfSubgridsIfPossible(false),
-    _onlySendSubgridsAfterChange(false) {
+    _avoidMultipleTransferOfSubgridsIfPossible(true),
+    _onlySendSubgridsAfterChange(true) {
   logTraceInWith3Arguments("NeighbourCommunicator", remoteRank, position, level);
 
   logTraceOut("NeighbourCommunicator");
@@ -245,8 +245,6 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
             //der Feingitter, den ich hier nicht erkenne?
             //TODO unterweg debug
             || !localSubgrid.isLeaf()
-            //TODO unterweg debug
-            || localSubgrid.getLevel() <= 3
             || !_onlySendSubgridsAfterChange) {
 
           //Find adjacent rank
@@ -260,6 +258,10 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
               break;
             }
           }
+
+//          logInfo("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << " at " << localSubgrid.getPosition() << " on level " << localSubgrid.getLevel()
+//              << " adjacentRanks: " << localParallelSubgrid.getAdjacentRanks() << " shared: " << localParallelSubgrid.getNumberOfSharedAdjacentVertices()
+//              << " isSingleTransfer: " << isSingleTransferOfSubgridToRank << " transferToSkip: " << localParallelSubgrid.getNumberOfTransfersToBeSkipped());
 
           if(
             isSingleTransferOfSubgridToRank
@@ -319,6 +321,11 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
           assertion(localAdjacentCellDescriptionIndex != -1);
           Patch           localSubgrid(localAdjacentCellDescriptionIndex);
           ParallelSubgrid localParallelSubgrid(localAdjacentCellDescriptionIndex);
+
+//          logInfo("receiveSubgridsForVertex", "Receiving subgrid from rank " << _remoteRank << " at " << localSubgrid.getPosition() << " on level " << localSubgrid.getLevel()
+//              << " transfersToSkip: " << localParallelSubgrid.getNumberOfTransfersToBeSkipped() << " adjacentRanks: " << localParallelSubgrid.getAdjacentRanks()
+//              << " transfersToSkip: " << localParallelSubgrid.getNumberOfTransfersToBeSkipped()
+//              );
 
           //Only receive if the incoming transfer was not skipped to avoid multiple send of the subgrid.
           if(localParallelSubgrid.getNumberOfTransfersToBeSkipped() == 0 || !_avoidMultipleTransferOfSubgridsIfPossible) {

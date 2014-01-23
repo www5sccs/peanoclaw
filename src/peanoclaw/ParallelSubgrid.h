@@ -84,15 +84,15 @@ class peanoclaw::ParallelSubgrid {
   /**
    * Returns the number of adjacent vertices that are shared between this and
    * the adjacent rank.
-   * Returns 0 if no ranks are adjacent.
-   * Returns -1 if more than one ranks are adjacent.
    */
   tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> getNumberOfSharedAdjacentVertices() const;
+  int getNumberOfSharedAdjacentVertices(int remoteRank) const;
 
   /**
    * Returns the number of additional transfers for this subgrid that have to
    * be skipped.
    */
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> getAllNumbersOfTransfersToBeSkipped() const;
   int getNumberOfTransfersToBeSkipped() const;
 
   /**

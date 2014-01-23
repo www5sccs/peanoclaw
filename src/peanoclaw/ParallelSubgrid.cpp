@@ -98,9 +98,37 @@ tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getN
   #endif
 }
 
+int peanoclaw::ParallelSubgrid::getNumberOfSharedAdjacentVertices(int remoteRank) const {
+  #ifdef Parallel
+  for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+    if(_cellDescription->getAdjacentRanks(i) == remoteRank) {
+      _cellDescription->getNumberOfSharedAdjacentVertices(i);
+    }
+  }
+  assertionFail("Should not occur!");
+  return -1;
+  #else
+  return 0;
+  #endif
+}
+
+tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getAllNumbersOfTransfersToBeSkipped() const {
+  #ifdef Parallel
+  return _cellDescription->getNumberOfTransfersToBeSkipped();
+  #else
+  return 0;
+  #endif
+}
+
 int peanoclaw::ParallelSubgrid::getNumberOfTransfersToBeSkipped() const {
   #ifdef Parallel
-  return _cellDescription->getNumberOfSkippedTransfers();
+  int localRank = tarch::parallel::Node::getInstance().getRank();
+  for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+    if(_cellDescription->getAdjacentRanks(i) == localRank) {
+      return _cellDescription->getNumberOfTransfersToBeSkipped(i);
+    }
+  }
+  return 0;
   #else
   return 0;
   #endif
@@ -108,13 +136,21 @@ int peanoclaw::ParallelSubgrid::getNumberOfTransfersToBeSkipped() const {
 
 void peanoclaw::ParallelSubgrid::decreaseNumberOfTransfersToBeSkipped() {
   #ifdef Parallel
-  _cellDescription->setNumberOfSkippedTransfers(_cellDescription->getNumberOfSkippedTransfers() - 1);
+  int localRank = tarch::parallel::Node::getInstance().getRank();
+  for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+    if(_cellDescription->getAdjacentRanks(i) == localRank) {
+      _cellDescription->setNumberOfTransfersToBeSkipped(
+        _cellDescription->getNumberOfTransfersToBeSkipped() - 1
+      );
+      break;
+    }
+  }
   #endif
 }
 
 void peanoclaw::ParallelSubgrid::resetNumberOfTransfersToBeSkipped() {
   #ifdef Parallel
-  _cellDescription->setNumberOfSkippedTransfers(0);
+  _cellDescription->setNumberOfTransfersToBeSkipped(0);
   #endif
 }
 
@@ -156,6 +192,8 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndSetGhos
       }
     }
   }
+
+  _cellDescription->setNumberOfTransfersToBeSkipped(_cellDescription->getNumberOfSharedAdjacentVertices() - 1);
   #endif
 }
 

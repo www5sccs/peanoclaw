@@ -258,7 +258,7 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setIsRemote(false);
   cellDescription.setIsPaddingSubgrid(false);
   cellDescription.setNumberOfSharedAdjacentVertices(0);
-  cellDescription.setNumberOfSkippedTransfers(0);
+  cellDescription.setNumberOfTransfersToBeSkipped(0);
   cellDescription.setCurrentStateWasSend(false);
 #endif
 
@@ -792,7 +792,7 @@ std::string peanoclaw::Patch::toString() const {
 #ifdef Parallel
         << ",isRemote=" << _cellDescription->getIsRemote()
         << ",adjacentRanks=" << _cellDescription->getAdjacentRanks()
-        << ",numberOfSkippedTransfers=" << _cellDescription->getNumberOfSkippedTransfers()
+        << ",numberOfTransfersToBeSkipped=" << _cellDescription->getNumberOfTransfersToBeSkipped()
         << ",numberOfAdjacentSharedVertices=" << _cellDescription->getNumberOfSharedAdjacentVertices()
 #endif
         ;

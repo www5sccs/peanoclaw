@@ -116,7 +116,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
   }
 
   //Reset undesired values
-  remoteCellDescription.setNumberOfSkippedTransfers(0);
+  remoteCellDescription.setNumberOfTransfersToBeSkipped(0);
 
   //Copy remote cell description to local cell description
   deleteArraysFromPatch(localCellDescriptionIndex);
