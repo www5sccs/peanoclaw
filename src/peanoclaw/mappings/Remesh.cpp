@@ -991,11 +991,7 @@ void peanoclaw::mappings::Remesh::leaveCell(
   if(!fineGridCell.isAssignedToRemoteRank()) {
     //Count number of adjacent subgrids
     ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-    parallelSubgrid.countNumberOfAdjacentParallelSubgrids(
-      fineGridVertices,
-      fineGridVerticesEnumerator
-    );
-    parallelSubgrid.setAdjacentRanksAndRemoteGhostlayerOverlap(
+    parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap(
       fineGridVertices,
       fineGridVerticesEnumerator
     );

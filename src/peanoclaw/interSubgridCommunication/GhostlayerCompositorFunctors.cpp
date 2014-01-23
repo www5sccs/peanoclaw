@@ -43,14 +43,14 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::operator()
     assertionEquals2(destination.getSubdivisionFactor(), source.getSubdivisionFactor(), source, destination);
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
     tarch::la::Vector<DIMENSIONS, int> faceSize(subdivisionFactor);
-    faceSize(dimension) = destination.getGhostLayerWidth();
+    faceSize(dimension) = destination.getGhostlayerWidth();
     tarch::la::Vector<DIMENSIONS, int> destinationOffset(0);
-    destinationOffset(dimension) = (offset==1) ? -destination.getGhostLayerWidth() : subdivisionFactor(dimension);
+    destinationOffset(dimension) = (offset==1) ? -destination.getGhostlayerWidth() : subdivisionFactor(dimension);
 
     if(source.getLevel() == destination.getLevel() && source.getLevel() == _ghostlayerCompositor._level) {
       tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
       sourceOffset(dimension)
-        = (offset==1) ? (source.getSubdivisionFactor()(dimension) - source.getGhostLayerWidth()) : 0;
+        = (offset==1) ? (source.getSubdivisionFactor()(dimension) - source.getGhostlayerWidth()) : 0;
 
       _ghostlayerCompositor.copyGhostLayerDataBlock(faceSize, sourceOffset, destinationOffset, source, destination);
     } else if(source.getLevel() < destination.getLevel() && destination.getLevel() == _ghostlayerCompositor._level && source.isLeaf()) {
@@ -95,7 +95,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator()
 //    std::cout << "Interpolating ghostlayer edge" << std::endl;
 
     assertionEquals2(source.getSubdivisionFactor(), destination.getSubdivisionFactor(), source, destination);
-    int ghostlayerWidth = destination.getGhostLayerWidth();
+    int ghostlayerWidth = destination.getGhostlayerWidth();
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
     tarch::la::Vector<DIMENSIONS, int> edgeSize(ghostlayerWidth);
     tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);
@@ -156,7 +156,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::operator
     && _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination)
   ) {
     assertionEquals2(source.getSubdivisionFactor(), destination.getSubdivisionFactor(), source, destination);
-    int ghostlayerWidth = destination.getGhostLayerWidth();
+    int ghostlayerWidth = destination.getGhostlayerWidth();
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = destination.getSubdivisionFactor();
     tarch::la::Vector<DIMENSIONS, int> cornerSize(ghostlayerWidth);
     tarch::la::Vector<DIMENSIONS, int> sourceOffset(0);

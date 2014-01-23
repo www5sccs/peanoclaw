@@ -26,7 +26,7 @@ peanoclaw::pyclaw::PyClawState::PyClawState(const Patch& patch) {
   sizeUOldWithGhostlayer[0] = patch.getUnknownsPerSubcell();
   int elementsUOldWithGhostlayer = sizeUOldWithGhostlayer[0];
   for(int d = 0; d < DIMENSIONS; d++) {
-    sizeUOldWithGhostlayer[1 + d] = patch.getSubdivisionFactor()(d) + 2*patch.getGhostLayerWidth();
+    sizeUOldWithGhostlayer[1 + d] = patch.getSubdivisionFactor()(d) + 2*patch.getGhostlayerWidth();
     elementsUOldWithGhostlayer *= sizeUOldWithGhostlayer[1 + d];
   }
 

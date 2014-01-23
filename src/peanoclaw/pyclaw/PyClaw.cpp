@@ -170,7 +170,7 @@ void peanoclaw::pyclaw::PyClaw::addPatchToSolution(Patch& patch) {
   _addPatchToSolutionCallback(
     state._q,
     state._qbc,
-    patch.getGhostLayerWidth(),
+    patch.getGhostlayerWidth(),
     patch.getSize()(0),
     patch.getSize()(1),
     #ifdef Dim3

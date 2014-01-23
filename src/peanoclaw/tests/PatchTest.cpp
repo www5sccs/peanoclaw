@@ -252,7 +252,7 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
 
   //Test
   peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
-  parallelSubgrid.countNumberOfAdjacentParallelSubgrids(vertices, enumerator);
+  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap(vertices, enumerator);
 
   validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(0), 1, parallelSubgrid.getAdjacentRanks());
   validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(1), -1, parallelSubgrid.getAdjacentRanks());
@@ -294,7 +294,7 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeig
 
   //Test
   peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
-  parallelSubgrid.countNumberOfAdjacentParallelSubgrids(vertices, enumerator);
+  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap(vertices, enumerator);
 
   validateEquals(parallelSubgrid.getAdjacentRanks()(0), 3);
   validateEquals(parallelSubgrid.getAdjacentRanks()(1), 4);

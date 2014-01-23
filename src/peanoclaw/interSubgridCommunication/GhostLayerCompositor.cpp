@@ -123,10 +123,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlaye
 ) {
   tarch::la::Vector<DIMENSIONS, double> lowerBounds
     = _patches[neighborPatchIndex].getPosition()
-      - (double)(_patches[neighborPatchIndex].getGhostLayerWidth()) * _patches[neighborPatchIndex].getSubcellSize();
+      - (double)(_patches[neighborPatchIndex].getGhostlayerWidth()) * _patches[neighborPatchIndex].getSubcellSize();
   tarch::la::Vector<DIMENSIONS, double> upperBounds
     = _patches[neighborPatchIndex].getPosition() + _patches[neighborPatchIndex].getSize()
-      + (double)(_patches[neighborPatchIndex].getGhostLayerWidth()) * _patches[neighborPatchIndex].getSubcellSize();
+      + (double)(_patches[neighborPatchIndex].getGhostlayerWidth()) * _patches[neighborPatchIndex].getSubcellSize();
 
   bool hasToUpdate = true;
   for(int d = 0; d < DIMENSIONS; d++) {
@@ -160,7 +160,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateLowerGhos
   _patches[updatedPatchIndex].updateLowerNeighboringGhostlayerBound(
     dimension,
     _patches[neighborPatchIndex].getPosition()(dimension)
-    - _patches[neighborPatchIndex].getGhostLayerWidth() * _patches[neighborPatchIndex].getSubcellSize()(dimension)
+    - _patches[neighborPatchIndex].getGhostlayerWidth() * _patches[neighborPatchIndex].getSubcellSize()(dimension)
   );
 
   logDebug("updateLowerGhostlayerBound", "Updating lower ghostlayer from patch " << _patches[neighborPatchIndex]
@@ -176,7 +176,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateUpperGhos
   _patches[updatedPatchIndex].updateUpperNeighboringGhostlayerBound(
     dimension,
     _patches[neighborPatchIndex].getPosition()(dimension) + _patches[neighborPatchIndex].getSize()(dimension)
-    + _patches[neighborPatchIndex].getGhostLayerWidth() * _patches[neighborPatchIndex].getSubcellSize()(dimension)
+    + _patches[neighborPatchIndex].getGhostlayerWidth() * _patches[neighborPatchIndex].getSubcellSize()(dimension)
   );
 
   logDebug("updateUpperGhostlayerBound", "Updating upper ghostlayer from patch " << _patches[neighborPatchIndex]

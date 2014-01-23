@@ -30,7 +30,7 @@ peanoclaw::Patch peanoclaw::tests::createPatch(
   cellDescriptions.push_back(peanoclaw::records::CellDescription());
   peanoclaw::records::CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
   cellDescription.setSubdivisionFactor(subdivisionFactor);
-  cellDescription.setGhostLayerWidth(ghostlayerWidth);
+  cellDescription.setGhostlayerWidth(ghostlayerWidth);
   cellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
   cellDescription.setSize(size);
   cellDescription.setPosition(position);

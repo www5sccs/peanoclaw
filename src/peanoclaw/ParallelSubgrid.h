@@ -32,6 +32,17 @@ class peanoclaw::ParallelSubgrid {
 
     CellDescription* _cellDescription;
 
+    /**
+     * Inserts the given remote rank into the list of adjacent
+     * ranks. Furthermore, it adds the vertex to the number
+     * of shared vertices with this remote rank as long as this
+     * has not been done already.
+     */
+    void listRemoteRankAndAddSharedVertex(
+      int  remoteRank,
+      bool setRanks[THREE_POWER_D_MINUS_ONE]
+    );
+
   public:
   ParallelSubgrid(
     CellDescription& cellDescription
@@ -98,8 +109,12 @@ class peanoclaw::ParallelSubgrid {
   /**
    * Counts how many of the adjacent subgrids belong to a different MPI rank
    * and how many vertices are involved in the communication.
+   *
+   * Also, it checks for all adjacent subgrids that reside on the same level
+   * whether they belong to a remote rank. If they do, the rank is set to
+   * the current subgrid and the overlap of the ghostlayer is stored as well.
    */
-  void countNumberOfAdjacentParallelSubgrids(
+  void countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap(
     peanoclaw::Vertex * const            vertices,
     const peano::grid::VertexEnumerator& verticesEnumerator
   );
@@ -110,16 +125,6 @@ class peanoclaw::ParallelSubgrid {
    */
   bool isAdjacentToLocalSubdomain(
     const peanoclaw::Cell&               coarseGridCell,
-    peanoclaw::Vertex * const            fineGridVertices,
-    const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
-  );
-
-  /**
-   * Checks for all adjacent subgrids that reside on the same level whether
-   * they belong to a remote rank. If they do, the rank is set to the current
-   * subgrid and the overlap of the ghostlayer is stored as well.
-   */
-  void setAdjacentRanksAndRemoteGhostlayerOverlap(
     peanoclaw::Vertex * const            fineGridVertices,
     const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
   );

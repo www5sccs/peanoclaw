@@ -9,7 +9,7 @@ Constant: THREE_POWER_D_MINUS_ONE;
 
 class peanoclaw::records::CellDescription {
   parallelise persistent int  subdivisionFactor[DIMENSIONS] from -1 to 1048575;
-  parallelise packed persistent int  ghostLayerWidth from 0 to 15;
+  parallelise packed persistent int  ghostlayerWidth from 0 to 15;
   parallelise packed persistent int  unknownsPerSubcell from 0 to 15;
   parallelise packed persistent int  auxiliarFieldsPerSubcell from 0 to 15;
   parallelise packed persistent int  level from 0 to 31;

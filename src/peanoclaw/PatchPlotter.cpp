@@ -56,7 +56,7 @@ void peanoclaw::PatchPlotter::plotSubcell(
 
     if(_plotMetainformation) {
       _cellSubdivisionFactorWriter->plotCell(number, patch.getSubdivisionFactor()(0));
-      _cellGhostLayerWidthWriter->plotCell(number, patch.getGhostLayerWidth());
+      _cellGhostLayerWidthWriter->plotCell(number, patch.getGhostlayerWidth());
       _cellTimeOldWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime());
       _cellTimeNewWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
       _cellDemandedMeshWidthWriter->plotCell(number, patch.getDemandedMeshWidth());

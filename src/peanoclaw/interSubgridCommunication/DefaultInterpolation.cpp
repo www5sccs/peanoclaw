@@ -61,9 +61,9 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
   #ifdef Asserts
   for(int d = 0; d < DIMENSIONS; d++) {
     assertionMsg(
-        tarch::la::smallerEquals(source.getPosition()(d) - source.getGhostLayerWidth() * destination.getSubcellSize()(d),
+        tarch::la::smallerEquals(source.getPosition()(d) - source.getGhostlayerWidth() * destination.getSubcellSize()(d),
             destination.getPosition()(d) + destination.getSubcellSize()(d) * destinationOffset(d))
-        && tarch::la::greaterEquals(source.getPosition()(d) + source.getSize()(d) + source.getGhostLayerWidth() * destination.getSubcellSize()(d),
+        && tarch::la::greaterEquals(source.getPosition()(d) + source.getSize()(d) + source.getGhostlayerWidth() * destination.getSubcellSize()(d),
             destination.getPosition()(d) + destination.getSubcellSize()(d) * (destinationOffset(d) + destinationSize(d))),
         "The kernel of the destination block must be totally included in the source patch."
         << "\nd=" << d

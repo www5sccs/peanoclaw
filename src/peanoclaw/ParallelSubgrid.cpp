@@ -12,6 +12,26 @@
 
 tarch::logging::Log peanoclaw::ParallelSubgrid::_log("peanoclaw::ParallelSubgrid");
 
+void peanoclaw::ParallelSubgrid::listRemoteRankAndAddSharedVertex(
+  int  remoteRank,
+  bool setRanks[THREE_POWER_D_MINUS_ONE]
+) {
+  //Search slot to store remote rank
+  for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+    if(_cellDescription->getAdjacentRanks(i) == remoteRank
+       || _cellDescription->getAdjacentRanks(i) == -1) {
+      _cellDescription->setAdjacentRanks(i, remoteRank);
+      if(!setRanks[i]) {
+        setRanks[i] = true;
+        _cellDescription->setNumberOfSharedAdjacentVertices(i,
+          _cellDescription->getNumberOfSharedAdjacentVertices(i) + 1
+        );
+      }
+      break;
+    }
+  }
+}
+
 peanoclaw::ParallelSubgrid::ParallelSubgrid(
   CellDescription& cellDescription
 ) : _cellDescription(&cellDescription) {
@@ -98,7 +118,7 @@ void peanoclaw::ParallelSubgrid::resetNumberOfTransfersToBeSkipped() {
   #endif
 }
 
-void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
+void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap (
   peanoclaw::Vertex * const            vertices,
   const peano::grid::VertexEnumerator& verticesEnumerator
 ) {
@@ -107,6 +127,8 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
     _cellDescription->setAdjacentRanks(i, -1);
     _cellDescription->setNumberOfSharedAdjacentVertices(i, 0);
   }
+
+  int entry = 0;
   for(int vertexIndex = 0; vertexIndex < TWO_POWER_D; vertexIndex++) {
     bool setRanks[THREE_POWER_D_MINUS_ONE];
     for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
@@ -117,19 +139,19 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
       int adjacentRank = vertices[verticesEnumerator(vertexIndex)].getAdjacentRanks()(subgridIndex);
 
       if(adjacentRank != tarch::parallel::Node::getInstance().getRank()) {
-        //Search slot to store remote rank
-        for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
-          if(_cellDescription->getAdjacentRanks(i) == adjacentRank
-             || _cellDescription->getAdjacentRanks(i) == -1) {
-            _cellDescription->setAdjacentRanks(i, adjacentRank);
-            if(!setRanks[i]) {
-              setRanks[i] = true;
-              _cellDescription->setNumberOfSharedAdjacentVertices(i,
-                _cellDescription->getNumberOfSharedAdjacentVertices(i) + 1
-              );
-            }
-            break;
-          }
+
+        //Count shared vertices and add adjacent ranks
+        listRemoteRankAndAddSharedVertex(adjacentRank, setRanks);
+
+        int adjacentSubgridDescriptionIndex
+          = vertices[verticesEnumerator(vertexIndex)].getAdjacentCellDescriptionIndexInPeanoOrder(subgridIndex);
+        if(adjacentSubgridDescriptionIndex == -1) {
+          //No adjacent subgrid present. -> Not copied from the remote rank, yet. -> Copy complete ghostlayer.
+
+        } else {
+          Patch adjacentSubgrid(adjacentSubgridDescriptionIndex);
+          tarch::la::Vector<DIMENSIONS, double> continuousGhostlayerWidth
+            = (double)adjacentSubgrid.getGhostlayerWidth() * adjacentSubgrid.getSubcellSize();
         }
       }
     }
@@ -155,28 +177,3 @@ bool peanoclaw::ParallelSubgrid::isAdjacentToLocalSubdomain(
   #endif
 }
 
-void peanoclaw::ParallelSubgrid::setAdjacentRanksAndRemoteGhostlayerOverlap(
-  peanoclaw::Vertex * const            fineGridVertices,
-  const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
-) {
-  #ifdef Parallel
-  int entry = 0;
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    for(int j = i; j < TWO_POWER_D; j++) {
-      int adjacentRank = fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentRanks()(j);
-      int adjacentCellDescriptionIndex = fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentCellDescriptionIndexInPeanoOrder(j);
-      if(i != TWO_POWER_D-1
-          && adjacentRank != tarch::parallel::Node::getInstance().getRank()
-          && adjacentCellDescriptionIndex != -1) {
-        ParallelSubgrid remoteSubgrid(
-          adjacentCellDescriptionIndex
-        );
-
-        _cellDescription->setAdjacentRanks(entry, adjacentRank);
-
-        entry++;
-      }
-    }
-  }
-  #endif
-}

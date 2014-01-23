@@ -354,7 +354,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   virtualCellDescriptions.push_back(CellDescription());
   CellDescription& virtualCellDescription = CellDescriptionHeap::getInstance().getData(virtualCellDescriptionIndex).at(0);
   virtualCellDescription.setSubdivisionFactor(coarseSubdivisionFactor);
-  virtualCellDescription.setGhostLayerWidth(ghostlayerWidth);
+  virtualCellDescription.setGhostlayerWidth(ghostlayerWidth);
   virtualCellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
   virtualCellDescription.setSize(1.0);
   virtualCellDescription.setPosition(0.0);

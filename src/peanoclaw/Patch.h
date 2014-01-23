@@ -166,7 +166,7 @@ private:
   #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
   {
     int index = 0;
-    int ghostlayerWidth = _cellDescription->getGhostLayerWidth();
+    int ghostlayerWidth = _cellDescription->getGhostlayerWidth();
 
     for(int d = 0; d < DIMENSIONS; d++) {
       index += (subcellIndex(d) + ghostlayerWidth) * uOldStrideCache[d+1];
@@ -278,7 +278,7 @@ public:
 
   tarch::la::Vector<DIMENSIONS, int> getSubdivisionFactor() const;
 
-  int getGhostLayerWidth() const;
+  int getGhostlayerWidth() const;
 
   /**
    * Returns the level on which this patch resides.
