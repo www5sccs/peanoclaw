@@ -31,6 +31,13 @@ class peanoclaw::statistics::ParallelStatistics {
     int _receivedNeighborData;
     int _receivedPaddingNeighborData;
 
+    double _waitingTimeMasterWorkerSpacetreeCommunication;
+    int    _samplesMasterWorkerSpacetreeCommunication;
+    double _waitingTimeMasterWorkerSubgridCommunication;
+    int    _samplesMasterWorkerSubgridCommunication;
+    double _waitingTimeNeighborSubgridCommunication;
+    int    _samplesNeighborSubgridCommunication;
+
   public:
     /**
      * Constructor sets all counters to zero.
@@ -58,9 +65,39 @@ class peanoclaw::statistics::ParallelStatistics {
     void receivedPaddingNeighborData(int numberOfReceivedSubgrids=1);
 
     /**
-     * Logs the statistics.
+     * Adds the measured waiting time to the statistics of the vertical
+     * spacetree communication. This is the time for the communication
+     * performed in Peano along the tree.
      */
-    void logStatistics() const;
+    void addWaitingTimeForMasterWorkerSpacetreeCommunication(double time);
+
+    /**
+     * This can not be measured directly.
+     */
+    //void addWaitingTimeForNeighborSpacetreeCommunication(double time);
+
+    /**
+     * Adds the measured waiting time to the statistics of the vertical
+     * subgrid communication. This is the time for the communication
+     * of subgrid data, i.e. done via peano::heap.
+     */
+    void addWaitingTimeForMasterWorkerSubgridCommunication(double time);
+
+    /**
+     * Adds the measured waiting time to the statistics of the communication
+     * of subgrids to the neighbors, i.e. done via peano::heap.
+     */
+    void addWaitingTimeForNeighborSubgridCommunication(double time);
+
+    /**
+     * Logs the statistics for the last iteration.
+     */
+    void logIterationStatistics() const;
+
+    /**
+     * Logs the statistics for the complete simulation.
+     */
+    void logTotalStatistics() const;
 
     /**
      * Merges two statistics objects.

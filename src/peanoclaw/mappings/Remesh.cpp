@@ -75,7 +75,8 @@ peanoclaw::mappings::Remesh::Remesh()
   _useDimensionalSplittingOptimization(false),
   _parallelStatistics(""),
   _state(),
-  _iterationNumber(0) {
+  _iterationNumber(0),
+  _spacetreeCommunicationWaitingTimeWatch("", "", false){
   logTraceIn( "Remesh()" );
   // @todo Insert your code here
   logTraceOut( "Remesh()" );
@@ -84,7 +85,9 @@ peanoclaw::mappings::Remesh::Remesh()
 
 peanoclaw::mappings::Remesh::~Remesh() {
   logTraceIn( "~Remesh()" );
-  // @todo Insert your code here
+
+  _parallelStatistics.logTotalStatistics();
+
   logTraceOut( "~Remesh()" );
 }
 
@@ -783,7 +786,10 @@ void peanoclaw::mappings::Remesh::receiveDataFromMaster(
     CellDescriptionHeap::getInstance().getData(temporaryCellDescriptionIndex).push_back(temporaryCellDescription);
     receivedCell.setCellDescriptionIndex(temporaryCellDescriptionIndex);
 
+    tarch::timing::Watch masterWorkerSubgridCommunicationWatch("", "", false);
     communicator.receivePatch(temporaryCellDescriptionIndex);
+    masterWorkerSubgridCommunicationWatch.stopTimer();
+    _parallelStatistics.addWaitingTimeForMasterWorkerSubgridCommunication(masterWorkerSubgridCommunicationWatch.getCalendarTime());
   } else {
     receivedCell.setCellDescriptionIndex(-1);
   }
@@ -1022,6 +1028,9 @@ void peanoclaw::mappings::Remesh::beginIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
+  _spacetreeCommunicationWaitingTimeWatch.stopTimer();
+  _parallelStatistics = peanoclaw::statistics::ParallelStatistics("Iteration");
+  _parallelStatistics.addWaitingTimeForMasterWorkerSpacetreeCommunication(_spacetreeCommunicationWaitingTimeWatch.getCalendarTime());
 
   //TODO unterweg debug
   #ifdef Parallel
@@ -1059,7 +1068,6 @@ void peanoclaw::mappings::Remesh::beginIteration(
   _initialMinimalMeshWidth = solverState.getInitialMaximalSubgridSize();
   _isInitializing = solverState.getIsInitializing();
   _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
-  _parallelStatistics = peanoclaw::statistics::ParallelStatistics("Iteration");
   _state = &solverState;
 
   //Reset touched for all hanging vertex descriptions
@@ -1074,10 +1082,13 @@ void peanoclaw::mappings::Remesh::beginIteration(
   }
 
   #ifdef Parallel
+  tarch::timing::Watch neighborSubgridCommunicationWatch("", "", false);
   DataHeap::getInstance().startToSendSynchronousData();
   DataHeap::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
   CellDescriptionHeap::getInstance().startToSendSynchronousData();
   CellDescriptionHeap::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
+  neighborSubgridCommunicationWatch.stopTimer();
+  _parallelStatistics.addWaitingTimeForNeighborSubgridCommunication(neighborSubgridCommunicationWatch.getCalendarTime());
 
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
     solverState.resetLocalHeightOfWorkerTree();
@@ -1099,7 +1110,7 @@ void peanoclaw::mappings::Remesh::endIteration(
 
   delete _gridLevelTransfer;
 
-  _parallelStatistics.logStatistics();
+  _parallelStatistics.logIterationStatistics();
 
   DataHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
   CellDescriptionHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
@@ -1111,6 +1122,7 @@ void peanoclaw::mappings::Remesh::endIteration(
   }
   #endif
 
+  _spacetreeCommunicationWaitingTimeWatch.startTimer();
   logTraceOutWith1Argument( "endIteration(State)", solverState);
 }
 

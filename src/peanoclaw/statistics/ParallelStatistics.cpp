@@ -32,12 +32,45 @@ void peanoclaw::statistics::ParallelStatistics::receivedPaddingNeighborData( int
   _receivedPaddingNeighborData += 1; //numberOfReceivedSubgrids;
 }
 
-void peanoclaw::statistics::ParallelStatistics::logStatistics() const {
+void peanoclaw::statistics::ParallelStatistics::addWaitingTimeForMasterWorkerSpacetreeCommunication(
+  double time
+) {
+  _waitingTimeMasterWorkerSpacetreeCommunication += time;
+  _samplesMasterWorkerSpacetreeCommunication++;
+}
+
+void peanoclaw::statistics::ParallelStatistics::addWaitingTimeForMasterWorkerSubgridCommunication(
+  double time
+) {
+  _waitingTimeMasterWorkerSubgridCommunication += time;
+  _samplesMasterWorkerSubgridCommunication++;
+}
+
+void peanoclaw::statistics::ParallelStatistics::addWaitingTimeForNeighborSubgridCommunication(
+  double time
+) {
+  _waitingTimeNeighborSubgridCommunication += time;
+  _samplesNeighborSubgridCommunication++;
+}
+
+void peanoclaw::statistics::ParallelStatistics::logIterationStatistics() const {
   logInfo("logStatistics()", "Parallel statistics for " << _name << ":");
   logInfo("logStatistics()", "Subgrids sent to neighbors: " << _sentNeighborData);
   logInfo("logStatistics()", "Padding subgrids sent to neighbors: " << _sentPaddingNeighborData);
   logInfo("logStatistics()", "Subgrids received from neighbors: " << _receivedNeighborData);
   logInfo("logStatistics()", "Padding subgrids received from neighbors: " << _receivedPaddingNeighborData);
+}
+
+void peanoclaw::statistics::ParallelStatistics::logTotalStatistics() const {
+  logInfo("logStatistics()", "Waiting time for master-worker spacetree communication: "
+      << _waitingTimeMasterWorkerSpacetreeCommunication << " (total), "
+      << (_waitingTimeMasterWorkerSpacetreeCommunication / _samplesMasterWorkerSpacetreeCommunication) << " (average)");
+  logInfo("logStatistics()", "Waiting time for master-worker subgrid communication: "
+      << _waitingTimeMasterWorkerSubgridCommunication << " (total), "
+      << (_waitingTimeMasterWorkerSubgridCommunication / _samplesMasterWorkerSubgridCommunication) << " (average)");
+  logInfo("logStatistics()", "Waiting time for neighbor subgrid communication: "
+      << _waitingTimeNeighborSubgridCommunication << " (total), "
+      << (_waitingTimeNeighborSubgridCommunication / _samplesNeighborSubgridCommunication) << " (average)");
 }
 
 void peanoclaw::statistics::ParallelStatistics::merge(const ParallelStatistics& otherStatistics) {

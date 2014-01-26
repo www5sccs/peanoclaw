@@ -94,6 +94,9 @@ class peanoclaw::mappings::Remesh {
 
     int _iterationNumber;
 
+    //Watches
+    tarch::timing::Watch _spacetreeCommunicationWaitingTimeWatch;
+
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 
