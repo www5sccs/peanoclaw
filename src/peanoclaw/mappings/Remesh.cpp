@@ -76,9 +76,12 @@ peanoclaw::mappings::Remesh::Remesh()
   _parallelStatistics(""),
   _state(),
   _iterationNumber(0),
-  _spacetreeCommunicationWaitingTimeWatch("", "", false){
+  _spacetreeCommunicationWaitingTimeWatch("", "", false),
+  _totalParallelStatistics("Simulation") {
   logTraceIn( "Remesh()" );
-  // @todo Insert your code here
+
+  _spacetreeCommunicationWaitingTimeWatch.stopTimer();
+
   logTraceOut( "Remesh()" );
 }
 
@@ -86,7 +89,7 @@ peanoclaw::mappings::Remesh::Remesh()
 peanoclaw::mappings::Remesh::~Remesh() {
   logTraceIn( "~Remesh()" );
 
-  _parallelStatistics.logTotalStatistics();
+  _totalParallelStatistics.logTotalStatistics();
 
   logTraceOut( "~Remesh()" );
 }
@@ -1111,6 +1114,7 @@ void peanoclaw::mappings::Remesh::endIteration(
   delete _gridLevelTransfer;
 
   _parallelStatistics.logIterationStatistics();
+  _totalParallelStatistics.merge(_parallelStatistics);
 
   DataHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
   CellDescriptionHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
