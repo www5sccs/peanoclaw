@@ -3,17 +3,26 @@ import re
 
 FLOAT_PATTERN = "[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?"
 
-def addTime(times, rank, time):
+class Entry:
+  def __init__(self, time, samples):
+    self.time = time
+    self.samples = samples
+
+def addTime(times, rank, time, samples):
   if not times.has_key(rank):
-    times[rank] = 0.0
+    times[rank] = Entry(0.0, 0)
     
-  times[rank] += time
+  times[rank].time += time
+  times[rank].samples += samples
   
 def processLine(line, times):
   rank = int(re.search("rank:(\d*)", line).group(1))
   time = float(re.search("(" + FLOAT_PATTERN + ") \(total\)", line).group(1))
-  
-  addTime(times, rank, time)
+  samples = int(re.search("(\d*) samples", line).group(1))
+
+  print line
+    
+  addTime(times, rank, time, samples)
 
 def main():
   masterWorkerSpacetreeTimes = dict()
@@ -33,7 +42,7 @@ def main():
   ranks = masterWorkerSubgridTimes.keys()
   ranks.sort()
   for rank in ranks:
-    print str(rank) + ",\t" + str(masterWorkerSpacetreeTimes[rank]) + ",\t" + str(masterWorkerSubgridTimes[rank]) + ",\t" + str(neighborSubgridTimes[rank])
+    print str(rank) + ",\t" + str(masterWorkerSpacetreeTimes[rank].time) + ",\t" + str(masterWorkerSubgridTimes[rank].time) + ",\t" + str(neighborSubgridTimes[rank].time) + ",\t" + str(masterWorkerSubgridTimes[rank].samples)
  
 if __name__ == "__main__":
     main()
