@@ -89,6 +89,7 @@ class peanoclaw::mappings::Remesh {
     bool _useDimensionalSplittingOptimization;
 
     peanoclaw::statistics::ParallelStatistics _parallelStatistics;
+    peanoclaw::statistics::ParallelStatistics _totalParallelStatistics;
 
     peanoclaw::State const* _state;
 
