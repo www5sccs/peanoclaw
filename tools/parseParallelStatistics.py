@@ -15,11 +15,13 @@ def addTime(times, rank, time, samples):
   times[rank].time += time
   times[rank].samples += samples
   
+  print "samples:" + str(times[rank].samples)
+  
 def processLine(line, times):
   rank = int(re.search("rank:(\d*)", line).group(1))
   time = float(re.search("(" + FLOAT_PATTERN + ") \(total\)", line).group(1))
   samples = int(re.search("(\d*) samples", line).group(1))
-
+  
   addTime(times, rank, time, samples)
 
 def main():
@@ -40,7 +42,7 @@ def main():
   ranks = masterWorkerSubgridTimes.keys()
   ranks.sort()
   for rank in ranks:
-    print str(rank) + ",\t" + str(masterWorkerSpacetreeTimes[rank].time) + ",\t" + str(masterWorkerSubgridTimes[rank].time) + ",\t" + str(neighborSubgridTimes[rank].time) + ",\t" + str(masterWorkerSubgridTimes[rank].samples)
+    print str(rank) + ",\t" + str(masterWorkerSpacetreeTimes[rank].time) + ",\t" + str(masterWorkerSubgridTimes[rank].time) + ",\t" + str(neighborSubgridTimes[rank].time) + ",\t" + str(masterWorkerSpacetreeTimes[rank].samples)
  
 if __name__ == "__main__":
     main()
