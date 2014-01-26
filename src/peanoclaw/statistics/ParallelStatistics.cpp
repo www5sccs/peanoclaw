@@ -13,7 +13,13 @@ peanoclaw::statistics::ParallelStatistics::ParallelStatistics(std::string name)
    _sentNeighborData(0),
    _sentPaddingNeighborData(0),
    _receivedNeighborData(0),
-   _receivedPaddingNeighborData(0) {
+   _receivedPaddingNeighborData(0),
+   _waitingTimeMasterWorkerSpacetreeCommunication(0.0),
+   _samplesMasterWorkerSpacetreeCommunication(0),
+   _waitingTimeMasterWorkerSubgridCommunication(0.0),
+   _samplesMasterWorkerSubgridCommunication(0),
+   _waitingTimeNeighborSubgridCommunication(0.0),
+   _samplesNeighborSubgridCommunication(0) {
 }
 
 void peanoclaw::statistics::ParallelStatistics::sentNeighborData( int numberOfSentSubgrids ) {
@@ -64,15 +70,15 @@ void peanoclaw::statistics::ParallelStatistics::logIterationStatistics() const {
 void peanoclaw::statistics::ParallelStatistics::logTotalStatistics() const {
   logInfo("logStatistics()", "Waiting time for master-worker spacetree communication: "
       << _waitingTimeMasterWorkerSpacetreeCommunication << " (total), "
-      << (_waitingTimeMasterWorkerSpacetreeCommunication / _samplesMasterWorkerSpacetreeCommunication) << " (average)"
+      << (_waitingTimeMasterWorkerSpacetreeCommunication / _samplesMasterWorkerSpacetreeCommunication) << " (average) "
       << _samplesMasterWorkerSpacetreeCommunication << " samples");
   logInfo("logStatistics()", "Waiting time for master-worker subgrid communication: "
       << _waitingTimeMasterWorkerSubgridCommunication << " (total), "
-      << (_waitingTimeMasterWorkerSubgridCommunication / _samplesMasterWorkerSubgridCommunication) << " (average)"
+      << (_waitingTimeMasterWorkerSubgridCommunication / _samplesMasterWorkerSubgridCommunication) << " (average) "
       << _samplesMasterWorkerSubgridCommunication << " samples");
   logInfo("logStatistics()", "Waiting time for neighbor subgrid communication: "
       << _waitingTimeNeighborSubgridCommunication << " (total), "
-      << (_waitingTimeNeighborSubgridCommunication / _samplesNeighborSubgridCommunication) << " (average)"
+      << (_waitingTimeNeighborSubgridCommunication / _samplesNeighborSubgridCommunication) << " (average) "
       << _samplesNeighborSubgridCommunication << " samples");
 }
 
