@@ -20,8 +20,6 @@ def processLine(line, times):
   time = float(re.search("(" + FLOAT_PATTERN + ") \(total\)", line).group(1))
   samples = int(re.search("(\d*) samples", line).group(1))
 
-  print line
-    
   addTime(times, rank, time, samples)
 
 def main():
