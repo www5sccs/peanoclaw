@@ -74,10 +74,10 @@ peanoclaw::mappings::Remesh::Remesh()
   _isInitializing(false),
   _useDimensionalSplittingOptimization(false),
   _parallelStatistics(""),
+  _totalParallelStatistics("Simulation"),
   _state(),
   _iterationNumber(0),
-  _spacetreeCommunicationWaitingTimeWatch("", "", false),
-  _totalParallelStatistics("Simulation") {
+  _spacetreeCommunicationWaitingTimeWatch("", "", false) {
   logTraceIn( "Remesh()" );
 
   _spacetreeCommunicationWaitingTimeWatch.stopTimer();
