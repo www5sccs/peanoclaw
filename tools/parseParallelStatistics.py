@@ -15,8 +15,6 @@ def addTime(times, rank, time, samples):
   times[rank].time += time
   times[rank].samples += samples
   
-  print "samples:" + str(times[rank].samples)
-  
 def processLine(line, times):
   rank = int(re.search("rank:(\d*)", line).group(1))
   time = float(re.search("(" + FLOAT_PATTERN + ") \(total\)", line).group(1))
