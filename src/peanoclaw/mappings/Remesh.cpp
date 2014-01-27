@@ -1097,13 +1097,13 @@ void peanoclaw::mappings::Remesh::beginIteration(
   neighborSubgridCommunicationWatch.stopTimer();
   _parallelStatistics.addWaitingTimeForNeighborSubgridCommunication(neighborSubgridCommunicationWatch.getCalendarTime());
 
-  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
-    solverState.resetLocalHeightOfWorkerTree();
-
-    logDebug("beginIteration(State)", "Height of worker tree in last grid iteration was " << solverState.getGlobalHeightOfWorkerTreeDuringLastIteration());
-  } else {
-    solverState.increaseLocalHeightOfWorkerTree();
-  }
+//  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+//    solverState.resetLocalHeightOfWorkerTree();
+//
+//    logDebug("beginIteration(State)", "Height of worker tree in last grid iteration was " << solverState.getGlobalHeightOfWorkerTreeDuringLastIteration());
+//  } else {
+//    solverState.increaseLocalHeightOfWorkerTree();
+//  }
   #endif
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);

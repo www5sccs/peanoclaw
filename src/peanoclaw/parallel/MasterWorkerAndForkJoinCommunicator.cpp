@@ -249,6 +249,6 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeWorkerStateI
 
   masterState.setAllPatchesEvolvedToGlobalTimestep(allPatchesEvolvedToGlobalTimestep);
 
-  masterState.updateLocalHeightOfWorkerTree(workerState.getLocalHeightOfWorkerTree());
+//  masterState.updateLocalHeightOfWorkerTree(workerState.getLocalHeightOfWorkerTree());
   #endif
 }

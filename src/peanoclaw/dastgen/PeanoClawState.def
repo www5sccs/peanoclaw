@@ -1,22 +1,21 @@
 #include "peano/utils/Globals.h"
 
-Packed-Type: short int;
+Packed-Type: int;
 
 Constant: DIMENSIONS;
 
 class peanoclaw::dastgen::State {
 
   //Grid configuration
-  //persistent parallelise int additionalLevelsForPredefinedRefinement;
-  persistent parallelise bool isInitializing;
-  persistent parallelise bool isRefinementCriterionEnabled;
+  persistent parallelise packed bool isInitializing;
+  persistent parallelise packed bool isRefinementCriterionEnabled;
 	
 	//Patch configuration
-	persistent parallelise int unknownsPerSubcell;
-	persistent parallelise int auxiliarFieldsPerSubcell;
+	persistent parallelise packed int unknownsPerSubcell from 0 to 7;
+	persistent parallelise packed int auxiliarFieldsPerSubcell from 0 to 7;
 	persistent parallelise double initialMaximalSubgridSize[DIMENSIONS];
 	persistent parallelise int defaultSubdivisionFactor[DIMENSIONS];
-	persistent parallelise int defaultGhostWidthLayer;
+	persistent parallelise packed int defaultGhostWidthLayer from 0 to 7;
 	persistent parallelise double initialTimestepSize;
 	persistent parallelise bool useDimensionalSplittingOptimization;
 
@@ -30,7 +29,6 @@ class peanoclaw::dastgen::State {
 	
 	//Plotting
 	persistent parallelise int plotNumber;
-	persistent parallelise int subPlotNumber;
 	
 	//Statistics
 	persistent parallelise double startMaximumGlobalTimeInterval;
@@ -41,9 +39,9 @@ class peanoclaw::dastgen::State {
 	persistent parallelise double totalNumberOfCellUpdates;
 		
 	#ifdef Parallel
-	persistent parallelise int localHeightOfWorkerTree;
-	persistent parallelise int globalHeightOfWorkerTreeDuringLastIteration;
-	persistent parallelise bool reduceReductions;
+	//persistent parallelise int localHeightOfWorkerTree;
+	//persistent parallelise int globalHeightOfWorkerTreeDuringLastIteration;
+	persistent parallelise packed bool reduceReductions;
 	#endif
 };
 	

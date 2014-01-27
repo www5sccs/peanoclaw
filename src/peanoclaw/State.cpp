@@ -39,14 +39,6 @@ void peanoclaw::State::setPlotNumber(int plotNumber) {
   _stateData.setPlotNumber(plotNumber);
 }
 
-int peanoclaw::State::getSubPlotNumber() const {
-  return _stateData.getSubPlotNumber();
-}
-
-void peanoclaw::State::setSubPlotNumber(int subPlotNumber) {
-  _stateData.setSubPlotNumber(subPlotNumber);
-}
-
 void peanoclaw::State::setUnknownsPerSubcell(int unknownsPerSubcell) {
   _stateData.setUnknownsPerSubcell(unknownsPerSubcell);
 }
@@ -254,44 +246,44 @@ bool peanoclaw::State::useDimensionalSplittingOptimization() const {
   return _stateData.getUseDimensionalSplittingOptimization();
 }
 
-void peanoclaw::State::resetLocalHeightOfWorkerTree() {
-  #ifdef Parallel
-  _stateData.setGlobalHeightOfWorkerTreeDuringLastIteration(
-    _stateData.getLocalHeightOfWorkerTree()
-  );
-  _stateData.setLocalHeightOfWorkerTree(0);
-  #endif
-}
-
-void peanoclaw::State::increaseLocalHeightOfWorkerTree() {
-  #ifdef Parallel
-  _stateData.setLocalHeightOfWorkerTree(_stateData.getLocalHeightOfWorkerTree() + 1);
-  #endif
-}
-
-void peanoclaw::State::updateLocalHeightOfWorkerTree(int localHeightOfWorkerTree) {
-  #ifdef Parallel
-  _stateData.setLocalHeightOfWorkerTree(
-    std::max(_stateData.getLocalHeightOfWorkerTree(), localHeightOfWorkerTree)
-  );
-  #endif
-}
-
-int peanoclaw::State::getLocalHeightOfWorkerTree() const {
-  #ifdef Parallel
-  return _stateData.getLocalHeightOfWorkerTree();
-  #else
-  return 0;
-  #endif
-}
-
-int peanoclaw::State::getGlobalHeightOfWorkerTreeDuringLastIteration() const {
-  #ifdef Parallel
-  return _stateData.getGlobalHeightOfWorkerTreeDuringLastIteration();
-  #else
-  return 0;
-  #endif
-}
+//void peanoclaw::State::resetLocalHeightOfWorkerTree() {
+//  #ifdef Parallel
+//  _stateData.setGlobalHeightOfWorkerTreeDuringLastIteration(
+//    _stateData.getLocalHeightOfWorkerTree()
+//  );
+//  _stateData.setLocalHeightOfWorkerTree(0);
+//  #endif
+//}
+//
+//void peanoclaw::State::increaseLocalHeightOfWorkerTree() {
+//  #ifdef Parallel
+//  _stateData.setLocalHeightOfWorkerTree(_stateData.getLocalHeightOfWorkerTree() + 1);
+//  #endif
+//}
+//
+//void peanoclaw::State::updateLocalHeightOfWorkerTree(int localHeightOfWorkerTree) {
+//  #ifdef Parallel
+//  _stateData.setLocalHeightOfWorkerTree(
+//    std::max(_stateData.getLocalHeightOfWorkerTree(), localHeightOfWorkerTree)
+//  );
+//  #endif
+//}
+//
+//int peanoclaw::State::getLocalHeightOfWorkerTree() const {
+//  #ifdef Parallel
+//  return _stateData.getLocalHeightOfWorkerTree();
+//  #else
+//  return 0;
+//  #endif
+//}
+//
+//int peanoclaw::State::getGlobalHeightOfWorkerTreeDuringLastIteration() const {
+//  #ifdef Parallel
+//  return _stateData.getGlobalHeightOfWorkerTreeDuringLastIteration();
+//  #else
+//  return 0;
+//  #endif
+//}
 
 
 void peanoclaw::State::setReduceReductions(bool reduceReductions) {
