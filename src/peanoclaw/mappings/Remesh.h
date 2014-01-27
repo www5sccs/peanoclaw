@@ -96,7 +96,7 @@ class peanoclaw::mappings::Remesh {
     int _iterationNumber;
 
     //Watches
-    tarch::timing::Watch _spacetreeCommunicationWaitingTimeWatch;
+    static tarch::timing::Watch _spacetreeCommunicationWaitingTimeWatch;
 
   public:
     /**

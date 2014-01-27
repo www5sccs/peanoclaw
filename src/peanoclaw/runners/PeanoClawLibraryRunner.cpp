@@ -155,7 +155,9 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(true)
+  _validateGrid(true),
+  _initializationWatch("Total initialization", "", false),
+  _simulationWatch("Total simulation", "", false)
 {
   #ifndef Asserts
   _validateGrid = false;
@@ -252,6 +254,9 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   #ifdef Parallel
   }
   #endif
+
+  _initializationWatch.stopTimer();
+  _iterationTimer.startTimer();
 }
 
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
@@ -271,6 +276,12 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
 
   CellDescriptionHeap::getInstance().plotStatistics();
   DataHeap::getInstance().plotStatistics();
+
+  _simulationWatch.stopTimer();
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    logInfo("~PeanoClawLibraryRunner", "Time for initialization: " << _initializationWatch.getCalendarTime());
+    logInfo("~PeanoClawLibraryRunner", "Time for simulation: " << _simulationWatch.getCalendarTime());
+  }
 
   #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {

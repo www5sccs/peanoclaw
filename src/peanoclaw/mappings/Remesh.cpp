@@ -14,6 +14,8 @@
 peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap peanoclaw::mappings::Remesh::_vertexPositionToIndexMap;
 peanoclaw::parallel::NeighbourCommunicator::RemoteSubgridMap               peanoclaw::mappings::Remesh::_remoteSubgridMap;
 
+tarch::timing::Watch peanoclaw::mappings::Remesh::_spacetreeCommunicationWaitingTimeWatch("", "", false);
+
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
@@ -76,8 +78,7 @@ peanoclaw::mappings::Remesh::Remesh()
   _parallelStatistics(""),
   _totalParallelStatistics("Simulation"),
   _state(),
-  _iterationNumber(0),
-  _spacetreeCommunicationWaitingTimeWatch("", "", false) {
+  _iterationNumber(0) {
   logTraceIn( "Remesh()" );
 
   _spacetreeCommunicationWaitingTimeWatch.stopTimer();
@@ -1032,8 +1033,11 @@ void peanoclaw::mappings::Remesh::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
   _spacetreeCommunicationWaitingTimeWatch.stopTimer();
+
   _parallelStatistics = peanoclaw::statistics::ParallelStatistics("Iteration");
-  _parallelStatistics.addWaitingTimeForMasterWorkerSpacetreeCommunication(_spacetreeCommunicationWaitingTimeWatch.getCalendarTime());
+  if(_iterationNumber > 0) {
+    _parallelStatistics.addWaitingTimeForMasterWorkerSpacetreeCommunication(_spacetreeCommunicationWaitingTimeWatch.getCalendarTime());
+  }
 
   //TODO unterweg debug
   #ifdef Parallel

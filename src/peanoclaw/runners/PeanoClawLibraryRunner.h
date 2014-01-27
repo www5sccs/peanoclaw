@@ -62,6 +62,9 @@ private:
 
   peanoclaw::parallel::PeanoClawControlLoopLoadBalancer _controlLoopLoadBalancer;
 
+  tarch::timing::Watch _initializationWatch;
+  tarch::timing::Watch _simulationWatch;
+
   /**
    * Initializes geometry and grid.
    */

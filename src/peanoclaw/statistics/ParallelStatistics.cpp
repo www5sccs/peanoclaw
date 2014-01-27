@@ -87,4 +87,10 @@ void peanoclaw::statistics::ParallelStatistics::merge(const ParallelStatistics& 
   _sentPaddingNeighborData     += otherStatistics._sentPaddingNeighborData;
   _receivedNeighborData        += otherStatistics._receivedNeighborData;
   _receivedPaddingNeighborData += otherStatistics._receivedPaddingNeighborData;
+  _waitingTimeMasterWorkerSpacetreeCommunication += otherStatistics._waitingTimeMasterWorkerSpacetreeCommunication;
+  _samplesMasterWorkerSpacetreeCommunication     += otherStatistics._samplesMasterWorkerSpacetreeCommunication;
+  _waitingTimeMasterWorkerSubgridCommunication   += otherStatistics._waitingTimeMasterWorkerSubgridCommunication;
+  _samplesMasterWorkerSubgridCommunication       += otherStatistics._samplesMasterWorkerSubgridCommunication;
+  _waitingTimeNeighborSubgridCommunication       += otherStatistics._waitingTimeNeighborSubgridCommunication;
+  _samplesNeighborSubgridCommunication           += otherStatistics._samplesNeighborSubgridCommunication;
 }
