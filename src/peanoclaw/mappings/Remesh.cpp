@@ -673,9 +673,7 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
 
   logTraceOut( "prepareSendToWorker(...)" );
 
-  //TODO unterweg debug
-  return true;
-  //return requiresReduction;
+  return requiresReduction;
 }
 
 void peanoclaw::mappings::Remesh::prepareSendToMaster(
