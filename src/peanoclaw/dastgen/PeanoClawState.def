@@ -17,7 +17,7 @@ class peanoclaw::dastgen::State {
 	persistent parallelise int defaultSubdivisionFactor[DIMENSIONS];
 	persistent parallelise packed int defaultGhostWidthLayer from 0 to 7;
 	persistent parallelise double initialTimestepSize;
-	persistent parallelise bool useDimensionalSplittingOptimization;
+	persistent parallelise packed bool useDimensionalSplittingOptimization;
 
 	//Global Timestepping	
 	persistent parallelise double globalTimestepEndTime;

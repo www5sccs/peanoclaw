@@ -33,7 +33,7 @@ namespace peanoclaw {
     *
     * 		   build date: 22-10-2013 20:59
     *
-    * @date   27/01/2014 14:59
+    * @date   27/01/2014 19:17
     */
    class peanoclaw::records::CellDescription { 
       
@@ -800,7 +800,7 @@ namespace peanoclaw {
              *
              * 		   build date: 22-10-2013 20:59
              *
-             * @date   27/01/2014 14:59
+             * @date   27/01/2014 19:17
              */
             class peanoclaw::records::CellDescriptionPacked { 
                
@@ -1573,7 +1573,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 22-10-2013 20:59
                       *
-                      * @date   27/01/2014 14:59
+                      * @date   27/01/2014 19:17
                       */
                      class peanoclaw::records::CellDescription { 
                         
@@ -2204,7 +2204,7 @@ namespace peanoclaw {
                                *
                                * 		   build date: 22-10-2013 20:59
                                *
-                               * @date   27/01/2014 14:59
+                               * @date   27/01/2014 19:17
                                */
                               class peanoclaw::records::CellDescriptionPacked { 
                                  

@@ -72,8 +72,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment()
   );
 
   // have to be the same for all ranks
-  peano::parallel::SendReceiveBufferPool::getInstance().setBufferSize(64);
-  peano::parallel::JoinDataBufferPool::getInstance().setBufferSize(64);
+  peano::parallel::SendReceiveBufferPool::getInstance().setBufferSize(1024);
+  peano::parallel::JoinDataBufferPool::getInstance().setBufferSize(1024);
   #endif
 
   //Shared Memory
@@ -362,7 +362,16 @@ int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
 
       bool continueToIterate = true;
       while (continueToIterate) {
-        switch (_repository->continueToIterate()) {
+
+        tarch::timing::Watch masterWorkerSpacetreeWatch("", "", false);
+        peanoclaw::repositories::Repository::ContinueCommand continueCommand = _repository->continueToIterate();
+        masterWorkerSpacetreeWatch.stopTimer();
+        logInfo("", "Waiting time for vertical spacetree communication: "
+              << masterWorkerSpacetreeWatch.getCalendarTime() << " (total), "
+              << masterWorkerSpacetreeWatch.getCalendarTime() << " (average) "
+              << 1 << " samples");
+
+        switch (continueCommand) {
           case peanoclaw::repositories::Repository::Continue:
             updateOracle();
             _repository->iterate();

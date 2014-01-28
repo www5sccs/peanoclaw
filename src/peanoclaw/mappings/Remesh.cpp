@@ -672,7 +672,10 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
   }
 
   logTraceOut( "prepareSendToWorker(...)" );
-  return requiresReduction;
+
+  //TODO unterweg debug
+  return true;
+  //return requiresReduction;
 }
 
 void peanoclaw::mappings::Remesh::prepareSendToMaster(
@@ -1032,8 +1035,8 @@ void peanoclaw::mappings::Remesh::beginIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
-  _spacetreeCommunicationWaitingTimeWatch.stopTimer();
 
+  _spacetreeCommunicationWaitingTimeWatch.stopTimer();
   _parallelStatistics = peanoclaw::statistics::ParallelStatistics("Iteration");
   if(_iterationNumber > 0) {
     _parallelStatistics.addWaitingTimeForMasterWorkerSpacetreeCommunication(_spacetreeCommunicationWaitingTimeWatch.getCalendarTime());
