@@ -78,7 +78,8 @@ peanoclaw::mappings::Remesh::Remesh()
   _parallelStatistics(""),
   _totalParallelStatistics("Simulation"),
   _state(),
-  _iterationNumber(0) {
+  _iterationNumber(0),
+  _iterationWatch("", "", false) {
   logTraceIn( "Remesh()" );
 
   _spacetreeCommunicationWaitingTimeWatch.stopTimer();
@@ -740,7 +741,11 @@ void peanoclaw::mappings::Remesh::mergeWithMaster(
   communicator.mergeWorkerStateIntoMasterState(workerState, masterState);
 
   if(fineGridCell.isInside()) {
+
+    tarch::timing::Watch masterWorkerSubgridCommunicationWatch("", "", false);
     communicator.receivePatch(fineGridCell.getCellDescriptionIndex());
+    masterWorkerSubgridCommunicationWatch.stopTimer();
+    _parallelStatistics.addWaitingTimeForMasterWorkerSubgridCommunication(masterWorkerSubgridCommunicationWatch.getCalendarTime());
 
     assertionEquals1(
       fineGridCell.getCellDescriptionIndex(),
@@ -1107,6 +1112,7 @@ void peanoclaw::mappings::Remesh::beginIteration(
 //  }
   #endif
 
+  _iterationWatch.startTimer();
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
 
@@ -1115,6 +1121,11 @@ void peanoclaw::mappings::Remesh::endIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
+  _iterationWatch.stopTimer();
+  logInfo("logStatistics()", "Waiting time for iteration: "
+      << _iterationWatch.getCalendarTime() << " (total), "
+      << _iterationWatch.getCalendarTime() << " (average) "
+      << 1 << " samples");
 
   delete _gridLevelTransfer;
 
