@@ -18,18 +18,6 @@
 
 tarch::logging::Log peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::_log("peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator");
 
-void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDescription(int cellDescriptionIndex) {
-  logTraceInWith1Argument("sendCellDescription", cellDescriptionIndex);
-  CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, _messageType);
-  logTraceOut("sendCellDescription");
-}
-
-void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendDataArray(int index) {
-  logTraceInWith3Arguments("sendDataArray", index, _position, _level);
-  DataHeap::getInstance().sendData(index, _remoteRank, _position, _level, _messageType);
-  logTraceOut("sendDataArray");
-}
-
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::deleteArraysFromPatch(int cellDescriptionIndex) {
   logTraceInWith1Argument("deleteArraysFromPatch", cellDescriptionIndex);
   if(cellDescriptionIndex != -1) {
@@ -43,52 +31,25 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::deleteArraysFromP
   logTraceOut("deleteArraysFromPatch");
 }
 
-int peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receiveDataArray() {
-  logTraceIn("receiveDataArray");
-  std::vector<Data> remoteArray = DataHeap::getInstance().receiveData(_remoteRank, _position, _level, _messageType);
-
-  int localIndex = DataHeap::getInstance().createData();
-  std::vector<Data>& localArray = DataHeap::getInstance().getData(localIndex);
-
-  // Copy array
-  std::vector<Data>::iterator it = remoteArray.begin();
-  localArray.assign(it, remoteArray.end());
-  assertionEquals2(remoteArray.size(), localArray.size(), _position, _level);
-
-  logTraceOut("receiveDataArray");
-  return localIndex;
-}
-
 peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::MasterWorkerAndForkJoinCommunicator(
   int remoteRank,
-  const tarch::la::Vector<DIMENSIONS,double> position,
+  const tarch::la::Vector<DIMENSIONS,double>& position,
   int level,
   bool forkOrJoin
-) : _subgridCommunicator(remoteRank, position, level, forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication),
+) : _subgridCommunicator(
+      remoteRank,
+      position,
+      level,
+      forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication,
+      false,
+      false
+    ),
     _remoteRank(remoteRank),
     _position(position),
     _level(level),
-//    _cellDescriptionHeap(CellDescriptionHeap::getInstance()),
-//    _dataHeap(DataHeap::getInstance()),
     _messageType(forkOrJoin ? peano::heap::ForkOrJoinCommunication : peano::heap::MasterWorkerCommunication) {
   logTraceInWith3Arguments("MasterWorkerAndForkJoinCommunicator", remoteRank, position, level);
   logTraceOut("MasterWorkerAndForkJoinCommunicator");
-}
-
-void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendPatch(
-  int cellDescriptionIndex
-) {
-  logTraceInWith3Arguments("sendPatch", cellDescriptionIndex, _position, _level);
-  if(cellDescriptionIndex != -1) {
-    sendCellDescription(cellDescriptionIndex);
-
-    CellDescription cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
-
-    if(cellDescription.getUIndex() != -1) {
-      sendDataArray(cellDescription.getUIndex());
-    }
-  }
-  logTraceOut("sendPatch");
 }
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int localCellDescriptionIndex) {
@@ -112,7 +73,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
 
   //Load arrays and stores according indices in cell description
   if(remoteCellDescription.getUIndex() != -1) {
-    remoteCellDescription.setUIndex(receiveDataArray());
+    remoteCellDescription.setUIndex(_subgridCommunicator.receiveDataArray());
   }
 
   //Reset undesired values
@@ -127,6 +88,14 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
   assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   #endif
   logTraceOut("receivePatch");
+}
+
+void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendSubgridBetweenMasterAndWorker(
+  Patch& subgrid
+) {
+  logTraceInWith3Arguments("sendSubgridBetweenMasterAndWorker", subgrid, position, size);
+  _subgridCommunicator.sendSubgrid(subgrid);
+  logTraceOut("sendSubgridBetweenMasterAndWorker");
 }
 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDuringForkOrJoin(
@@ -145,13 +114,15 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDuringFor
         || (!isForking && !localCell.isAssignedToRemoteRank())
       )
     ) {
-    sendPatch(localCell.getCellDescriptionIndex());
+    if(localCell.getCellDescriptionIndex() != -1) {
+      Patch subgrid(localCell);
+      _subgridCommunicator.sendSubgrid(subgrid);
 
-    //Switch to remote after having sent the patch away...
-    Patch patch(localCell);
-    patch.setIsRemote(true);
-    ParallelSubgrid parallelSubgrid(localCell);
-    parallelSubgrid.resetNumberOfTransfersToBeSkipped();
+      //Switch to remote after having sent the patch away...
+      subgrid.setIsRemote(true);
+      ParallelSubgrid parallelSubgrid(localCell);
+      parallelSubgrid.resetNumberOfTransfersToBeSkipped();
+    }
   }
   #endif
 }
@@ -215,7 +186,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringFo
       assertion1(!localPatch.isRemote(), localPatch);
 
       //TODO unterweg dissertation: Wenn auf dem neuen Knoten die Adjazenzinformationen auf den
-      // Vertices noch nicht richtig gesetzt sind k��nnen wir nicht gleich voranschreiten.
+      // Vertices noch nicht richtig gesetzt sind koennen wir nicht gleich voranschreiten.
       // U.U. brauchen wir sogar 2 Iterationen ohne Aktion... (Wegen hin- und herlaufen).
       localPatch.setSkipNextGridIteration(2);
 
@@ -248,7 +219,5 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeWorkerStateI
   allPatchesEvolvedToGlobalTimestep &= masterState.getAllPatchesEvolvedToGlobalTimestep();
 
   masterState.setAllPatchesEvolvedToGlobalTimestep(allPatchesEvolvedToGlobalTimestep);
-
-//  masterState.updateLocalHeightOfWorkerTree(workerState.getLocalHeightOfWorkerTree());
   #endif
 }

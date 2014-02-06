@@ -126,7 +126,6 @@ void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleR
 
   NumericsTestStump numerics;
 
-//  interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, numerics);
   interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap vertexMap;
   interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
     fineGridVertex,

@@ -164,6 +164,7 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndSetGhos
     _cellDescription->setNumberOfSharedAdjacentVertices(i, 0);
   }
 
+  //Count number of adjacent parallel subgrids
   int entry = 0;
   for(int vertexIndex = 0; vertexIndex < TWO_POWER_D; vertexIndex++) {
     bool setRanks[THREE_POWER_D_MINUS_ONE];
@@ -175,26 +176,25 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndSetGhos
       int adjacentRank = vertices[verticesEnumerator(vertexIndex)].getAdjacentRanks()(subgridIndex);
 
       if(adjacentRank != tarch::parallel::Node::getInstance().getRank()) {
-
         //Count shared vertices and add adjacent ranks
         listRemoteRankAndAddSharedVertex(adjacentRank, setRanks);
-
-        int adjacentSubgridDescriptionIndex
-          = vertices[verticesEnumerator(vertexIndex)].getAdjacentCellDescriptionIndexInPeanoOrder(subgridIndex);
-        if(adjacentSubgridDescriptionIndex == -1) {
-          //No adjacent subgrid present. -> Not copied from the remote rank, yet. -> Copy complete ghostlayer.
-
-        } else {
-          Patch adjacentSubgrid(adjacentSubgridDescriptionIndex);
-          tarch::la::Vector<DIMENSIONS, double> continuousGhostlayerWidth
-            = (double)adjacentSubgrid.getGhostlayerWidth() * adjacentSubgrid.getSubcellSize();
-        }
       }
     }
   }
-
   _cellDescription->setNumberOfTransfersToBeSkipped(_cellDescription->getNumberOfSharedAdjacentVertices() - 1);
   #endif
+}
+
+void peanoclaw::ParallelSubgrid::setOverlapOfRemoteGhostlayer(int subgridIndex, int overlap) {
+  _cellDescription->setOverlapByRemoteGhostlayer(subgridIndex, overlap);
+}
+
+int peanoclaw::ParallelSubgrid::getOverlapOfRemoteGhostlayer(int subgridIndex) const {
+  return _cellDescription->getOverlapByRemoteGhostlayer(subgridIndex);
+}
+
+tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getOverlapOfRemoteGhostlayers() const {
+  return _cellDescription->getOverlapByRemoteGhostlayer();
 }
 
 bool peanoclaw::ParallelSubgrid::isAdjacentToLocalSubdomain(

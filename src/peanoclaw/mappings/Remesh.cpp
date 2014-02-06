@@ -519,6 +519,15 @@ void peanoclaw::mappings::Remesh::mergeWithNeighbour(
     }
   }
   #endif
+ 
+  /*{
+      Serialization::ReceiveBuffer& recvbuffer = peano::parallel::SerializationMap::getInstance().getReceiveBuffer(fromRank);
+      assertion1(recvbuffer.isBlockAvailable(), "cannot read heap data from Serialization Buffer - not enough blocks"); 
+
+      Serialization::Block block = recvbuffer.nextBlock();
+
+      assertion2(block.size() == 1337, "wrong block size!", block.size())
+  }*/
 
   logTraceOut( "mergeWithNeighbour(...)" );
 }
@@ -534,6 +543,11 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
 
   peanoclaw::parallel::NeighbourCommunicator communicator(toRank, x, level, h, _remoteSubgridMap, _parallelStatistics);
   communicator.sendSubgridsForVertex(vertex, x, h, level, *_state);
+ 
+  /*{
+      Serialization::SendBuffer& sendbuffer = peano::parallel::SerializationMap::getInstance().getSendBuffer(toRank);
+      Serialization::Block block = sendbuffer.reserveBlock(1337);
+  }*/
 
   logTraceOut( "prepareSendToNeighbour(...)" );
 }
@@ -663,12 +677,13 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
       worker
     );
 
+    Patch subgrid(fineGridCell);
+
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(worker, fineGridVerticesEnumerator.getCellCenter(), fineGridVerticesEnumerator.getLevel(), false);
-    communicator.sendPatch(fineGridCell.getCellDescriptionIndex());
+    communicator.sendSubgridBetweenMasterAndWorker(subgrid);
 
     //TODO unterweg dissertation: Subgitter müssen auch auf virtuell geschaltet werden, wenn sie
     //von einer Ghostlayer überlappt werden und mit einem Worker geshared sind.
-    Patch subgrid(fineGridCell);
     requiresReduction = subgrid.isVirtual();
   }
 
@@ -703,8 +718,9 @@ void peanoclaw::mappings::Remesh::prepareSendToMaster(
 
   int toRank = tarch::parallel::NodePool::getInstance().getMasterRank();
   if(localCell.isInside()){
+    Patch subgrid(localCell);
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, verticesEnumerator.getCellCenter(), verticesEnumerator.getLevel(), false);
-    communicator.sendPatch(localCell.getCellDescriptionIndex());
+    communicator.sendSubgridBetweenMasterAndWorker(subgrid);
   }
 
   CellDescriptionHeap::getInstance().finishedToSendSynchronousData();
@@ -870,6 +886,7 @@ void peanoclaw::mappings::Remesh::touchVertexFirstTime(
     coarseGridVerticesEnumerator.getLevel()+1
   );
   adjacentSubgrids.checkForChangesInAdjacentRanks();
+  adjacentSubgrids.setOverlapOfRemoteGhostlayers();
 
   logTraceOutWith1Argument( "touchVertexFirstTime(...)", fineGridVertex );
 }

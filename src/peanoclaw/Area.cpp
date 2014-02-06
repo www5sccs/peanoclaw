@@ -8,12 +8,144 @@
 
 #include "Patch.h"
 
-namespace peano {
-  namespace applications {
-    namespace peanoclaw {
-      class Area;
+int peanoclaw::Area::factorial(int i) {
+  int f = 1;
+  while(i > 1) {
+    f *= i--;
+  }
+  return f;
+}
+
+void peanoclaw::Area::incrementIndices(tarch::la::Vector<DIMENSIONS, int>& indices, int highestIndex, int upperBound) {
+  int i = highestIndex;
+  do {
+    indices(i)++;
+    if(i < DIMENSIONS-1) {
+      indices(i+1) = indices(i) + 1;
+    }
+    i--;
+  } while(indices(i+1) >= upperBound && i>=0);
+}
+
+int peanoclaw::Area::getNumberOfManifolds(int dimensionality) {
+  #ifdef Dim2
+  return 4;
+  #elif Dim3
+  int s = (DIMENSIONS - dimensionality);
+  return pow(2, s) * factorial(DIMENSIONS) / (factorial(s) * factorial(DIMENSIONS-s));
+  #endif
+}
+
+tarch::la::Vector<DIMENSIONS, int> peanoclaw::Area::getManifold(int dimensionality, int index) {
+  tarch::la::Vector<DIMENSIONS, int> modifyIndices(0);
+  for(int d = 0; d < DIMENSIONS; d++) {
+    modifyIndices(d) = d;
+  }
+
+  int s = DIMENSIONS - dimensionality;
+  int combinations = pow(2, s);
+  while(index >= combinations) {
+    incrementIndices(modifyIndices, s-1, DIMENSIONS);
+    index-=combinations;
+  }
+
+  tarch::la::Vector<DIMENSIONS, int> manifoldPosition(0);
+  for(int i = 0; i < s; i++) {
+    int newEntry = ((index & (1<<i)) != 0) ? 1 : -1;
+    manifoldPosition(modifyIndices(i)) = newEntry;
+  }
+  return manifoldPosition;
+}
+
+int peanoclaw::Area::getNumberOfAdjacentManifolds(
+  const tarch::la::Vector<DIMENSIONS, int>& manifoldPosition,
+  int dimensionality,
+  int adjacentDimensionality
+) {
+  assertion1(dimensionality != adjacentDimensionality, dimensionality);
+
+  int n = 0;
+  for(int d = 0; d < DIMENSIONS; d++) {
+    n += (manifoldPosition(d) == 0) ? 1 : 0;
+  }
+
+  int s = std::abs(dimensionality - adjacentDimensionality);
+  if(dimensionality < adjacentDimensionality) {
+    return factorial(DIMENSIONS - n) / (factorial(s) * factorial(DIMENSIONS-n-s));
+  } else {
+    return std::pow(2, factorial(n) / (factorial(s) * factorial(n-s)) * s);
+  }
+}
+
+tarch::la::Vector<DIMENSIONS, int> peanoclaw::Area::getIndexOfAdjacentManifold(
+  tarch::la::Vector<DIMENSIONS, int> manifoldPosition,
+  int dimensionality,
+  int adjacentDimensionality,
+  int adjacentIndex
+) {
+  tarch::la::Vector<DIMENSIONS, int> zeroIndices(0);
+  tarch::la::Vector<DIMENSIONS, int> nonzeroIndices(0);
+  tarch::la::Vector<DIMENSIONS, int> modifyIndices(0);
+
+  int s = std::abs(dimensionality - adjacentDimensionality);
+  int n = 0;
+  for(int d = 0; d < DIMENSIONS; d++) {
+    if(manifoldPosition(d) == 0) {
+      zeroIndices(n++) = d;
+    } else {
+      nonzeroIndices(d - n) = d;
     }
   }
+  for(int i = 0; i < s; i++) {
+    modifyIndices(i) = i;
+  }
+
+  if(dimensionality < adjacentDimensionality) {
+    while(adjacentIndex > 0) {
+      incrementIndices(modifyIndices, s-1, DIMENSIONS - n);
+      adjacentIndex--;
+    }
+    for(int i = 0; i < s; i++) {
+      manifoldPosition(nonzeroIndices(modifyIndices(i))) = 0;
+    }
+    return manifoldPosition;
+  } else {
+    int combinations = pow(2, s);
+    while(adjacentIndex >= combinations) {
+      incrementIndices(modifyIndices, s-1, DIMENSIONS - n);
+      adjacentIndex -= combinations;
+    }
+    for(int i = 0; i < s; i++) {
+      int newEntry = ((adjacentIndex & (1<<i)) != 0) ? 1 : -1;
+      manifoldPosition(zeroIndices(modifyIndices(i))) = newEntry;
+    }
+
+    return manifoldPosition;
+  }
+}
+
+bool peanoclaw::Area::checkHigherDimensionalManifoldForOverlap(
+  const tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>& adjacentRanks,
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>&       overlapOfRemoteGhostlayers,
+  const tarch::la::Vector<DIMENSIONS, int>& manifoldPosition,
+  int dimensionality,
+  int manifoldEntry,
+  int rank
+) {
+  for(int adjacentDimensionality = dimensionality + 1; adjacentDimensionality < DIMENSIONS; adjacentDimensionality++) {
+    int numberOfAdjacentManifolds = getNumberOfAdjacentManifolds(manifoldPosition, dimensionality, adjacentDimensionality);
+    for(int adjacentManifoldIndex = 0; adjacentManifoldIndex < numberOfAdjacentManifolds; adjacentManifoldIndex++) {
+      tarch::la::Vector<DIMENSIONS, int> adjacentManifoldPosition = getIndexOfAdjacentManifold(manifoldPosition, dimensionality, adjacentDimensionality, adjacentManifoldIndex);
+      int adjacentManifoldEntry = linearizeManifoldPosition(adjacentManifoldPosition);
+
+      if(adjacentRanks[adjacentManifoldEntry] == rank && overlapOfRemoteGhostlayers[adjacentManifoldEntry] >= overlapOfRemoteGhostlayers[manifoldEntry]){
+        overlapOfRemoteGhostlayers[manifoldEntry] = 0;
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 peanoclaw::Area::Area() {
@@ -23,6 +155,18 @@ peanoclaw::Area::Area(
   tarch::la::Vector<DIMENSIONS, int> offset,
   tarch::la::Vector<DIMENSIONS, int> size
 ) : _offset(offset), _size(size) {
+}
+
+int peanoclaw::Area::linearizeManifoldPosition(
+  const tarch::la::Vector<DIMENSIONS, int>& manifoldPosition
+) {
+  assertion1(tarch::la::allSmaller(manifoldPosition, 2), manifoldPosition);
+
+  int entry = peano::utils::dLinearised(manifoldPosition + 1, 3);
+  if(entry > 4) {
+    entry--;
+  }
+  return entry;
 }
 
 peanoclaw::Area peanoclaw::Area::mapToPatch(
@@ -166,6 +310,102 @@ int peanoclaw::Area::getAreasOverlappedByNeighboringGhostlayers (
 
     return DIMENSIONS_TIMES_TWO;
   }
+}
+
+int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
+  const tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>& adjacentRanks,
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>        overlapOfRemoteGhostlayers,
+  const tarch::la::Vector<DIMENSIONS, int>&              subdivisionFactor,
+  int                                                    rank,
+  Area                                                   areas[THREE_POWER_D_MINUS_ONE]
+) {
+  int numberOfAreas = 0;
+
+  for(int dimensionality = 0; dimensionality < DIMENSIONS; dimensionality++) {
+    int numberOfManifolds = getNumberOfManifolds(dimensionality);
+    for(int manifoldIndex = 0; manifoldIndex < numberOfManifolds; manifoldIndex++) {
+      tarch::la::Vector<DIMENSIONS, int> manifoldPosition = getManifold(dimensionality, manifoldIndex);
+      int manifoldEntry = linearizeManifoldPosition(manifoldPosition);
+
+      if(adjacentRanks[manifoldEntry] == rank && overlapOfRemoteGhostlayers[manifoldEntry] > 0) {
+        //Reduce lower-dimensional manifolds
+        bool canBeOmitted = checkHigherDimensionalManifoldForOverlap(
+          adjacentRanks,
+          overlapOfRemoteGhostlayers,
+          manifoldPosition,
+          dimensionality,
+          manifoldEntry,
+          rank
+        );
+
+        //Restrict size and offset by higher-dimensional manifolds
+        std::cout << std::endl << "Testing manifold " << manifoldPosition << " of dimensions " << dimensionality
+            << ": " << canBeOmitted << std::endl;
+
+        if(!canBeOmitted) {
+          tarch::la::Vector<DIMENSIONS, int> size;
+          tarch::la::Vector<DIMENSIONS, int> offset;
+
+          //Initialise size and offset
+          for(int d = 0; d < DIMENSIONS; d++) {
+            size(d) = (manifoldPosition(d) == 0) ? subdivisionFactor(d) : overlapOfRemoteGhostlayers[manifoldEntry];
+            offset(d) = (manifoldPosition(d) == 1) ? subdivisionFactor(d) - size(d) : 0;
+          }
+
+          //TODO unterweg debug
+          std::cout << "offset: " << offset << ", size: " << size << std::endl;
+
+          for(int adjacentDimensionality = dimensionality - 1; adjacentDimensionality >= 0; adjacentDimensionality--) {
+            int numberOfAdjacentManifolds = getNumberOfAdjacentManifolds(manifoldPosition, dimensionality, adjacentDimensionality);
+            for(int adjacentManifoldIndex = 0; adjacentManifoldIndex < numberOfAdjacentManifolds; adjacentManifoldIndex++) {
+              tarch::la::Vector<DIMENSIONS, int> adjacentManifoldPosition = getIndexOfAdjacentManifold(
+                manifoldPosition,
+                dimensionality,
+                adjacentDimensionality,
+                adjacentManifoldIndex
+              );
+
+              //TODO unterweg debug
+              std::cout << "adj. manifold " << adjacentManifoldPosition << std::endl;
+
+              int adjacentEntry = linearizeManifoldPosition(adjacentManifoldPosition);
+
+              if(adjacentRanks[adjacentEntry] == rank) {
+                for(int d = 0; d < DIMENSIONS; d++) {
+                  if(manifoldPosition(d) == 0) {
+                    if(adjacentManifoldPosition(d) < 0) {
+                      int overlap = std::max(0, overlapOfRemoteGhostlayers[adjacentEntry] - offset(d));
+                      offset(d) += overlap;
+                      size(d) -= overlap;
+
+                      //TODO unterweg debug
+                      std::cout << "Reducing bottom " << overlap << std::endl;
+                    } else if(adjacentManifoldPosition(d) > 0) {
+                      assertion2(adjacentManifoldPosition(d) > 0, adjacentManifoldPosition, d);
+                      int overlap = std::max(0, offset(d) + size(d) - (subdivisionFactor(d) - overlapOfRemoteGhostlayers[adjacentEntry]));
+                      size(d) -= overlap;
+
+                      //TODO unterweg debug
+                      std::cout << "Reducing top " << overlap << std::endl;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          //TODO unterweg debug
+          std::cout << "offset: " << offset << ", size: " << size << std::endl;
+
+          if(tarch::la::allGreater(size, 0)) {
+            areas[numberOfAreas++] = Area(offset, size);
+          }
+        }
+      }
+    }
+  }
+
+  return numberOfAreas;
 }
 
 std::ostream& operator<<(std::ostream& out, const peanoclaw::Area& area){

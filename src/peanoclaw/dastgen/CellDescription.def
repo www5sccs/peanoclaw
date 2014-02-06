@@ -27,10 +27,6 @@ class peanoclaw::records::CellDescription {
   parallelise persistent int numberOfTransfersToBeSkipped[THREE_POWER_D_MINUS_ONE] from 0 to 8;
   
   /**
-   * Adjacent MPI rank if only one other rank is adjacent. Otherwise -1.
-   */
-  //persistent int adjacentRank;
-  /**
    * Number adjacent vertices that are shared between the local and the
    * remote rank. This number is only valid if there is only one rank adjacent.
    */
@@ -52,13 +48,13 @@ class peanoclaw::records::CellDescription {
    * Holds for every adajcent subgrid on the same level to which rank it
    * belongs.
    */
-  persistent parallelise int adjacentRanks[THREE_POWER_D_MINUS_ONE];
+  persistent parallelise int adjacentRanks[THREE_POWER_D_MINUS_ONE] from 0 to 1048575;
   
   /**
    * Holds the number of cells that are overlapped by an adjacent subgrid
    * held on a different rank.
    */
-  persistent int overlapByRemoteGhostlayer[THREE_POWER_D_MINUS_ONE];
+  persistent int overlapByRemoteGhostlayer[THREE_POWER_D_MINUS_ONE] from 0 to 1048575;
   #endif
 
   parallelise persistent double position[DIMENSIONS];
@@ -139,7 +135,7 @@ class peanoclaw::records::CellDescription {
    * The estimated timestep size for the next timestep is derived
    * from the cfl number of the current timestep.
    */
-  parallelise persistent double estimatedNextTimestepSize;
+  persistent double estimatedNextTimestepSize;
   
   /**
    * Indicates that this patch should not be advanced during the next

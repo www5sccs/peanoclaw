@@ -55,35 +55,17 @@ class peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator {
 
     peano::heap::MessageType _messageType;
 
-    void sendCellDescription(int cellDescriptionIndex);
-
-    void sendDataArray(int index);
-
     /**
      * Deletes the cell description and the according arrays.
      */
     void deleteArraysFromPatch(int cellDescriptionIndex);
 
-    /**
-     * Receives an data array, copies it to a local heap array
-     * and returns the local index.
-     */
-    int receiveDataArray();
-
   public:
     MasterWorkerAndForkJoinCommunicator(
       int remoteRank,
-      const tarch::la::Vector<DIMENSIONS,double> position,
+      const tarch::la::Vector<DIMENSIONS,double>& position,
       int level,
       bool forkOrJoin
-    );
-
-    /**
-     * Sends all necessary information for a patch defined by its
-     * cell description index.
-     */
-    void sendPatch(
-      int cellDescriptionIndex
     );
 
     /**
@@ -97,6 +79,14 @@ class peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator {
      */
     void receivePatch(
       int localCellDescriptionIndex
+    );
+
+    /**
+     * Sends a subgrid either from a master to one of its workers or
+     * from a worker to its master.
+     */
+    void sendSubgridBetweenMasterAndWorker(
+      Patch& subgrid
     );
 
     void sendCellDuringForkOrJoin(

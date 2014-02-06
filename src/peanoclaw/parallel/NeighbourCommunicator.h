@@ -59,8 +59,6 @@ class peanoclaw::parallel::NeighbourCommunicator {
      */
     static tarch::logging::Log                 _log;
 
-    SubgridCommunicator                        _subgridCommunicator;
-
     int                                        _remoteRank;
     tarch::la::Vector<DIMENSIONS,double>       _position;
     int                                        _level;
@@ -71,13 +69,23 @@ class peanoclaw::parallel::NeighbourCommunicator {
     /**
      * Tries to send subgrids only once per iteration.
      */
-    const bool                                       _avoidMultipleTransferOfSubgridsIfPossible;
+    const bool _avoidMultipleTransferOfSubgridsIfPossible;
 
     /**
      * Determines whether subgrids should be sent always despite if they
      * have been updated since the last sending or not.
      */
-    const bool                                       _onlySendSubgridsAfterChange;
+    const bool _onlySendSubgridsAfterChange;
+
+    /**
+     * Determines whether only the cells of a subgrid should be sent that
+     * are overlapped by the remote ghostlayer.
+     */
+    const bool _onlySendOverlappedCells;
+
+    const bool _packCommunication;
+
+    SubgridCommunicator                        _subgridCommunicator;
 
     /**
      * Receives all necessary information for a patch defined
@@ -90,8 +98,6 @@ class peanoclaw::parallel::NeighbourCommunicator {
     void receivePatch(
       Patch& localSubgrid
     );
-
-    void receivePaddingPatch();
 
     /**
      * Creates a remote subgrid before merging a received subgrid
@@ -125,8 +131,9 @@ class peanoclaw::parallel::NeighbourCommunicator {
      * Sends all necessary information for a patch defined by its
      * cell description index.
      */
-    void sendPatch(
-      const Patch& transferedSubgrid
+    bool sendSubgrid(
+      Patch& transferedSubgrid,
+      Vertex& vertex
     );
 
     /**
@@ -135,12 +142,6 @@ class peanoclaw::parallel::NeighbourCommunicator {
      */
     void sendOverlap(
       const Patch& transferedSubgrid
-    );
-
-    void sendPaddingPatch(
-      const tarch::la::Vector<DIMENSIONS, double>& position = 0,
-      int                                          level = 0,
-      const tarch::la::Vector<DIMENSIONS, double>& subgridSize = 0
     );
 
     /**

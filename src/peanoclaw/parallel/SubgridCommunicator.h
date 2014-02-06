@@ -44,15 +44,10 @@ class peanoclaw::parallel::SubgridCommunicator {
     const tarch::la::Vector<DIMENSIONS,double>& _position;
     int                                         _level;
     peano::heap::MessageType                    _messageType;
+    bool                                        _onlySendOverlappedCells;
+    bool                                        _packCommunication;
 
   public:
-    SubgridCommunicator(
-      int                                         remoteRank,
-      const tarch::la::Vector<DIMENSIONS,double>& position,
-      int                                         level,
-      peano::heap::MessageType                    messageType
-    );
-
     /**
      * Sends a single cell description.
      */
@@ -63,13 +58,18 @@ class peanoclaw::parallel::SubgridCommunicator {
      * of sent and received heap data messages. Sets the given position,
      * level and size for the subgrid.
      */
-    void sendPaddingCellDescription(
-      const tarch::la::Vector<DIMENSIONS, double>& position = 0,
-      int                                          level = 0,
-      const tarch::la::Vector<DIMENSIONS, double>& subgridSize = 0
-    );
+    void sendPaddingCellDescription();
 
+    /**
+     * Sends the data array with the given index.
+     */
     void sendDataArray(int index);
+
+    /**
+     * Sends the cells of the given data array that are overlapped by
+     * the corresponding remote ghostlayer.
+     */
+    void sendOverlappedCells(Patch& subgrid);
 
     /**
      * Sends an empty data array to achieve a balanced number
@@ -78,10 +78,54 @@ class peanoclaw::parallel::SubgridCommunicator {
     void sendPaddingDataArray();
 
     /**
+     * Receives and returns a CellDescription, either a normal
+     * CellDescription, so the resulting vector contains one
+     * element, or a padding CellDescription, so the result vector
+     * contains zero elements.
+     */
+    std::vector<CellDescription> receiveCellDescription();
+
+  public:
+    SubgridCommunicator(
+      int                                         remoteRank,
+      const tarch::la::Vector<DIMENSIONS,double>& position,
+      int                                         level,
+      peano::heap::MessageType                    messageType,
+      bool                                        onlySendOverlappedCells,
+      bool                                        packCommunication
+    );
+
+    /**
+     * Sends the given subgrid to the remote rank.
+     */
+    void sendSubgrid(Patch& subgrid);
+
+    /**
+     * Sends a padding subgrid to balance the number of
+     * sent messages.
+     */
+    void sendPaddingSubgrid();
+
+    /**
+     * Receives a padding subgrid that has been sent to
+     * balance the number of exchanged messages.
+     */
+    void receivePaddingSubgrid();
+
+    /**
      * Receives an data array, copies it to a local heap array
      * and returns the local index.
      */
     int receiveDataArray();
+
+    /**
+     * Receives the cells of the given subgrid that are overlapped by
+     * the corresponding remote ghostlayer.
+     */
+    void receiveOverlappedCells(
+      const CellDescription& remoteCellDescription,
+      Patch&                 subgrid
+    );
 
     /**
      * Deletes the cell description and the according arrays.

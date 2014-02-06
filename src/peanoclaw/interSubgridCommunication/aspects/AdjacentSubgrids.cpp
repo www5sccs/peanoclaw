@@ -8,12 +8,15 @@
 
 #include "peanoclaw/interSubgridCommunication/aspects/CornerAdjacentPatchTraversal.h"
 #include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversal.h"
+#include "peanoclaw/interSubgridCommunication/aspects/FaceAdjacentPatchTraversal.h"
 
+#include "peanoclaw/Area.h"
 #include "peanoclaw/Heap.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/ParallelSubgrid.h"
 
 #include "peano/heap/Heap.h"
+#include "peano/utils/Loop.h"
 
 tarch::logging::Log peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::_log("peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids");
 
@@ -327,6 +330,37 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::checkForCh
   #endif
 }
 
+void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::setOverlapOfRemoteGhostlayers() {
+  //Fill ghost layers of adjacent cells
+  //Get adjacent cell descriptions
+  CellDescription* cellDescriptions[TWO_POWER_D];
+  for(int cellIndex = 0; cellIndex < TWO_POWER_D; cellIndex++) {
+    if(_vertex.getAdjacentCellDescriptionIndex(cellIndex) != -1) {
+      cellDescriptions[cellIndex] = &CellDescriptionHeap::getInstance().getData(_vertex.getAdjacentCellDescriptionIndex(cellIndex)).at(0);
+    }
+  }
+
+  Patch patches[TWO_POWER_D];
+  dfor2(cellIndex)
+    if(_vertex.getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
+      patches[cellIndexScalar] = Patch(
+        *cellDescriptions[cellIndexScalar]
+      );
+    }
+  enddforx
+
+  SetOverlapOfRemoteGhostlayerFunctor functor(_vertex.getAdjacentRanks());
+
+  peanoclaw::interSubgridCommunication::aspects::
+    FaceAdjacentPatchTraversal<SetOverlapOfRemoteGhostlayerFunctor>(patches, functor);
+  peanoclaw::interSubgridCommunication::aspects::
+    EdgeAdjacentPatchTraversal<SetOverlapOfRemoteGhostlayerFunctor>(patches, functor);
+  #ifdef Dim3
+  peanoclaw::interSubgridCommunication::aspects::
+    CornerAdjacentPatchTraversal<SetOverlapOfRemoteGhostlayerFunctor>(patches, functor);
+  #endif
+}
+
 peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAndAdaptiveBoundaryFunctor::CheckIntersectingParallelAndAdaptiveBoundaryFunctor(
   const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks
 ) : _adjacentRanks(adjacentRanks),
@@ -355,3 +389,39 @@ bool peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAnd
   return _numberOfDiagonallyAdjacentRefinedSubgrids != 0
       && _numberOfDiagonallyAdjacentRefinedSubgrids != _numberOfDiagonallyAdjacentSubgrids;
 }
+
+peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayerFunctor::SetOverlapOfRemoteGhostlayerFunctor(
+  const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks
+) : _localRank(tarch::parallel::Node::getInstance().getRank()), _adjacentRanks(adjacentRanks) {
+}
+
+void peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayerFunctor::operator() (
+  peanoclaw::Patch&                         patch1,
+  int                                       index1,
+  peanoclaw::Patch&                         patch2,
+  int                                       index2,
+  const tarch::la::Vector<DIMENSIONS, int>& direction
+) {
+  if(_adjacentRanks[TWO_POWER_D-index1-1] != _localRank
+      && _adjacentRanks[TWO_POWER_D-index2-1] == _localRank
+      && patch2.isValid()
+  ) {
+    ParallelSubgrid parallelSubgrid2(patch2);
+    int entry = Area::linearizeManifoldPosition(-1 * direction);
+
+    if(patch1.isValid()) {
+      int maxOverlap = 0;
+      for(int d = 0; d < DIMENSIONS; d++) {
+        int overlap = std::ceil(
+                        std::abs(direction(d)) * patch1.getGhostlayerWidth() * patch1.getSubcellSize()(d) / patch2.getSubcellSize()(d)
+                        );
+        maxOverlap = std::max(maxOverlap, overlap);
+      }
+
+      parallelSubgrid2.setOverlapOfRemoteGhostlayer(entry, maxOverlap);
+    } else {
+      parallelSubgrid2.setOverlapOfRemoteGhostlayer(entry, tarch::la::max(patch2.getSubdivisionFactor()));
+    }
+  }
+}
+

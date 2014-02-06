@@ -112,6 +112,95 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
      */
     void testCountingOfAdjacentParallelSubgridsFourNeighboringRanks();
 
+    /**
+     * Tests the setting of the overlap of remote ghostlayers which is done in
+     * AdjacentSubgrids. The following setup is considered:
+     *
+     * Ranks:
+     * 0   0
+     *   v
+     * 1   2
+     *
+     * The top-left subgrid does not exist, only the top-right subgrid is considered.
+     * The subcell size is 0.1x0.1 in every case, while the ghostlayer width of
+     * rank 1 is 2 and for rank 2 is 1.
+     * The expected result in the according fields of the subgrid are:
+     *
+     *  0|   0  |0
+     * --|------|--
+     *  0|      |0
+     *   |      |
+     * --|------|--
+     *  2|   1  |0
+     */
+    void testSettingOverlapOfRemoteGhostlayer();
+
+    /**
+     * Tests the number of manifolds for a subgrid as well as the
+     * determination of the actual manifolds.
+     */
+    void testManifolds();
+
+    /**
+     * Tests the number of adjacent manifolds for a given manifold
+     * of a given dimensionality.
+     */
+    void testNumberOfAdjacentManifolds();
+
+    /**
+     * Tests the determination of adjacent manifolds for a given
+     * manifold of a given dimensionality. This operation is done
+     * in Area::getIndexOfAdjacentManifold(...)
+     *
+     *  0|   0  |0
+     * --|------|--
+     *  1|      |0
+     *   |      |
+     * --|------|--
+     *  1|   1  |0
+     */
+    void testAdjacentManifolds();
+
+    /**
+     * Tests the determination of the overlapped areas by remote
+     * ghostlayers.
+     *
+     * For 2D we test the following scenario, where the first
+     * number represents the adjacent rank and the second represents
+     * the overlap.
+     *
+     * 1/2|  2/2 |2/3
+     *  --|------|--
+     * 1/2|      |0/2
+     *    |      |
+     *  --|------|--
+     * 1/3|  1/2 |0/2
+     *
+     * The subdivision factor of the subgrid is 6. Hence, we expect
+     * the following areas for rank 1:
+     *
+     * offset, size
+     * [0, 0], [3, 3]
+     * [0, 3], [2, 3]
+     * [3, 0], [3, 2]
+     *
+     * and for rank 2:
+     *
+     * offset, size
+     * [3, 3], [3, 3]
+     * [0, 4], [3, 2]
+     *
+     *
+     * For 3D a similar setup is used, where the upper settings are mapped
+     * to the x0/x2 plane. Additionally, all corners with x1==-1 have an overlap
+     * of 3, while all corners with x1==1 have an overlap of 2.
+     * Hence, we expect the following areas for rank 1:
+     *
+     * offset,    size
+     * [0, 0, 0], [3, 3, 3]
+     * [
+     */
+    void testOverlapOfRemoteGhostlayers();
 
   public:
     PatchTest();

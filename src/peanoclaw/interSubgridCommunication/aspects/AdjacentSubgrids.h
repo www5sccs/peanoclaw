@@ -26,6 +26,7 @@ namespace peanoclaw {
     namespace aspects {
       class AdjacentSubgrids;
       class CheckIntersectingParallelAndAdaptiveBoundaryFunctor;
+      class SetOverlapOfRemoteGhostlayerFunctor;
     }
   }
 }
@@ -266,6 +267,26 @@ class peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAn
 
     bool doesParallelBoundaryCoincideWithAdaptiveBoundaryCorner() const;
 
+};
+
+class peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayerFunctor {
+
+  private:
+    const int _localRank;
+    const tarch::la::Vector<TWO_POWER_D, int>& _adjacentRanks;
+
+  public:
+    SetOverlapOfRemoteGhostlayerFunctor(
+      const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks
+    );
+
+    void operator() (
+      peanoclaw::Patch&                         patch1,
+      int                                       index1,
+      peanoclaw::Patch&                         patch2,
+      int                                       index2,
+      const tarch::la::Vector<DIMENSIONS, int>& direction
+    );
 };
 
 #endif /* PEANOCLAW_INTERSUBGRIDCOMMUNICATION_ADJACENTSUBGRIDS_H_ */

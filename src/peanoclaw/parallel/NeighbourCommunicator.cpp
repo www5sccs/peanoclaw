@@ -15,63 +15,82 @@
 
 tarch::logging::Log peanoclaw::parallel::NeighbourCommunicator::_log("peanoclaw::parallel::NeighbourCommunicator");
 
-void peanoclaw::parallel::NeighbourCommunicator::sendPatch(
-  const Patch& transferedSubgrid
+bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
+  Patch& transferedSubgrid,
+  Vertex& vertex
 ) {
   logTraceInWith3Arguments("sendPatch", cellDescriptionIndex, _position, _level);
+  bool sentSubgrid = false;
+
   #ifdef Parallel
+  ParallelSubgrid localParallelSubgrid(transferedSubgrid);
+  if(
+      !localParallelSubgrid.wasCurrentStateSent()
+      || vertex.wereAdjacentRanksChanged()
+      || vertex.getAgeInGridIterations() <= 1
+      //TODO unterweg dissertion
+      //Warum kann ich nicht einfach den Status der Feingitter restringieren, ob die sich geändert haben?
+      //Gibt es da einen Zusammenhang zwischen Zeitschritten der benachbarten Grobgitter und den Zeitschritten
+      //der Feingitter, den ich hier nicht erkenne?
+      //TODO unterweg debug
+      || !transferedSubgrid.isLeaf()
+      || !_onlySendSubgridsAfterChange) {
 
-  #ifdef Asserts
-  assertion3(tarch::la::allGreater(transferedSubgrid.getSubdivisionFactor(), 0), transferedSubgrid.toString(), _position, _level);
-  assertion1(!transferedSubgrid.isRemote(), transferedSubgrid);
-
-  //Check for zeros in transfered patch
-  if(transferedSubgrid.isValid() && transferedSubgrid.isLeaf()) {
-    dfor(subcellIndex, transferedSubgrid.getSubdivisionFactor()) {
-      assertion3(tarch::la::greater(transferedSubgrid.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, transferedSubgrid, transferedSubgrid.toStringUNew());
-      assertion3(tarch::la::greater(transferedSubgrid.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, transferedSubgrid, transferedSubgrid.toStringUOldWithGhostLayer());
+    //Find adjacent rank
+    bool isSingleTransferOfSubgridToRank = false;
+    tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> adjacentRanks = localParallelSubgrid.getAdjacentRanks();
+    for(int i = 0; i < THREE_POWER_D_DIVIDED_BY_THREE; i++) {
+      if(adjacentRanks(i) == _remoteRank) {
+        if(localParallelSubgrid.getNumberOfSharedAdjacentVertices()(i) == 1) {
+          isSingleTransferOfSubgridToRank = true;
+        }
+        break;
+      }
     }
-  }
-  #endif
 
-  _statistics.sentNeighborData();
-  _subgridCommunicator.sendCellDescription(transferedSubgrid.getCellDescriptionIndex());
+//          logInfo("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << " at " << localSubgrid.getPosition() << " on level " << localSubgrid.getLevel()
+//              << " adjacentRanks: " << localParallelSubgrid.getAdjacentRanks() << " shared: " << localParallelSubgrid.getNumberOfSharedAdjacentVertices()
+//              << " isSingleTransfer: " << isSingleTransferOfSubgridToRank << " transferToSkip: " << localParallelSubgrid.getNumberOfTransfersToBeSkipped());
 
-  if(transferedSubgrid.getUNewIndex() != -1) {
-    _subgridCommunicator.sendDataArray(transferedSubgrid.getUNewIndex());
-  } else {
-    _subgridCommunicator.sendPaddingDataArray();
+    if(
+      isSingleTransferOfSubgridToRank
+      || !_avoidMultipleTransferOfSubgridsIfPossible
+    ) {
+      logDebug("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << localSubgrid << " for vertex " << _position);
+
+      #ifdef Asserts
+      assertion3(tarch::la::allGreater(transferedSubgrid.getSubdivisionFactor(), 0), transferedSubgrid.toString(), _position, _level);
+      assertion1(!transferedSubgrid.isRemote(), transferedSubgrid);
+
+      //Check for zeros in transfered patch
+      if(transferedSubgrid.isValid() && transferedSubgrid.isLeaf()) {
+        dfor(subcellIndex, transferedSubgrid.getSubdivisionFactor()) {
+          assertion3(tarch::la::greater(transferedSubgrid.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, transferedSubgrid, transferedSubgrid.toStringUNew());
+          assertion3(tarch::la::greater(transferedSubgrid.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, transferedSubgrid, transferedSubgrid.toStringUOldWithGhostLayer());
+        }
+      }
+      #endif
+
+      _statistics.sentNeighborData();
+      _subgridCommunicator.sendSubgrid(transferedSubgrid);
+
+      sentSubgrid = true;
+    } else {
+      logDebug("sendSubgridsForVertex", "(Skipped) Sending subgrid to rank " << _remoteRank << ": " << localSubgrid
+          << " for vertex " << _position << ", getNumberOfSharedAdjacentVertices=" << localParallelSubgrid.getNumberOfSharedAdjacentVertices());
+    }
+    localParallelSubgrid.decreaseNumberOfSharedAdjacentVertices(_remoteRank);
   }
   #endif
   logTraceOut("sendPatch");
-}
-
-void peanoclaw::parallel::NeighbourCommunicator::sendPaddingPatch(
-  const tarch::la::Vector<DIMENSIONS, double>& position,
-  int                                          level,
-  const tarch::la::Vector<DIMENSIONS, double>& subgridSize
-) {
-  logTraceInWith2Arguments("sendPaddingPatch", _position, _level);
-
-  //TODO unterweg debug
-  logDebug("", "Sending padding patch to " << _remoteRank << " at " << position << " on level " << level);
-
-  _statistics.sentPaddingNeighborData();
-  _subgridCommunicator.sendPaddingCellDescription(
-    position,
-    level,
-    subgridSize
-  );
-  _subgridCommunicator.sendPaddingDataArray(); //UNew
-  logTraceOut("sendPaddingPatch");
+  return sentSubgrid;
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgrid) {
   #ifdef Parallel
   logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
 
-  std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
-
+  std::vector<CellDescription> remoteCellDescriptionVector = _subgridCommunicator.receiveCellDescription();
   logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
 
   if(!_onlySendSubgridsAfterChange || remoteCellDescriptionVector.size() > 0) {
@@ -92,13 +111,18 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
 
     _statistics.receivedNeighborData();
     if(remoteCellDescription.getUIndex() != -1) {
-      remoteCellDescription.setUIndex(_subgridCommunicator.receiveDataArray());
+      if(_onlySendOverlappedCells) {
+        _subgridCommunicator.receiveOverlappedCells(remoteCellDescription, localSubgrid);
+        remoteCellDescription.setUIndex(localSubgrid.getUNewIndex());
+      } else {
+        remoteCellDescription.setUIndex(_subgridCommunicator.receiveDataArray());
+        _subgridCommunicator.deleteArraysFromSubgrid(localSubgrid);
+      }
     } else {
       _subgridCommunicator.receiveDataArray();
     }
 
     //Copy remote cell description to local cell description
-    _subgridCommunicator.deleteArraysFromSubgrid(localSubgrid);
     remoteCellDescription.setCellDescriptionIndex(localSubgrid.getCellDescriptionIndex());
     remoteCellDescription.setIsRemote(true); //TODO unterweg: Remote patches are currently never destroyed.
     CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).at(0) = remoteCellDescription;
@@ -126,23 +150,6 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
 
   logTraceOut("receivePatch");
   #endif
-}
-
-void peanoclaw::parallel::NeighbourCommunicator::receivePaddingPatch() {
-  logTraceInWith2Arguments("receivePaddingPatch", _position, _level);
-  #ifdef Parallel
-  _statistics.receivedPaddingNeighborData();
-
-  logDebug("", "Receiving padding patch from " << _remoteRank << " at " << _position << " on level " << _level);
-
-  //Receive padding patch
-  std::vector<CellDescription> remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
-  assertionEquals4(remoteCellDescriptionVector.size(), 0, _position, _level, _remoteRank, remoteCellDescriptionVector[0].toString());
-
-  //UNew
-  DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
-  #endif
-  logTraceOut("receivePaddingPatch");
 }
 
 void peanoclaw::parallel::NeighbourCommunicator::createOrFindRemoteSubgrid(
@@ -190,8 +197,7 @@ peanoclaw::parallel::NeighbourCommunicator::NeighbourCommunicator(
   const tarch::la::Vector<DIMENSIONS,double>& subgridSize,
   RemoteSubgridMap&                           remoteSubgridMap,
   peanoclaw::statistics::ParallelStatistics&  statistics
-) : _subgridCommunicator(remoteRank, position, level, peano::heap::NeighbourCommunication),
-    _remoteRank(remoteRank),
+) : _remoteRank(remoteRank),
     _position(position),
     _level(level),
     _subgridSize(subgridSize),
@@ -199,7 +205,10 @@ peanoclaw::parallel::NeighbourCommunicator::NeighbourCommunicator(
     _statistics(statistics),
     //En-/Disable optimizations
     _avoidMultipleTransferOfSubgridsIfPossible(true),
-    _onlySendSubgridsAfterChange(true) {
+    _onlySendSubgridsAfterChange(true),
+    _onlySendOverlappedCells(true),
+    _packCommunication(false),
+    _subgridCommunicator(remoteRank, position, level, peano::heap::NeighbourCommunication, _onlySendOverlappedCells, _packCommunication) {
   logTraceInWith3Arguments("NeighbourCommunicator", remoteRank, position, level);
 
   logTraceOut("NeighbourCommunicator");
@@ -233,58 +242,15 @@ void peanoclaw::parallel::NeighbourCommunicator::sendSubgridsForVertex(
       bool sentSubgrid = false;
       if(localSubgridRank == localRank && vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i) != -1) {
         Patch           localSubgrid(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i));
-        ParallelSubgrid localParallelSubgrid(vertex.getAdjacentCellDescriptionIndexInPeanoOrder(i));
 
-        if(
-            !localParallelSubgrid.wasCurrentStateSent()
-            || vertex.wereAdjacentRanksChanged()
-            || vertex.getAgeInGridIterations() <= 1
-            //TODO unterweg dissertion
-            //Warum kann ich nicht einfach den Status der Feingitter restringieren, ob die sich geändert haben?
-            //Gibt es da einen Zusammenhang zwischen Zeitschritten der benachbarten Grobgitter und den Zeitschritten
-            //der Feingitter, den ich hier nicht erkenne?
-            //TODO unterweg debug
-            || !localSubgrid.isLeaf()
-            || !_onlySendSubgridsAfterChange) {
-
-          //Find adjacent rank
-          bool isSingleTransferOfSubgridToRank = false;
-          tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> adjacentRanks = localParallelSubgrid.getAdjacentRanks();
-          for(int i = 0; i < THREE_POWER_D_DIVIDED_BY_THREE; i++) {
-            if(adjacentRanks(i) == _remoteRank) {
-              if(localParallelSubgrid.getNumberOfSharedAdjacentVertices()(i) == 1) {
-                isSingleTransferOfSubgridToRank = true;
-              }
-              break;
-            }
-          }
-
-//          logInfo("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << " at " << localSubgrid.getPosition() << " on level " << localSubgrid.getLevel()
-//              << " adjacentRanks: " << localParallelSubgrid.getAdjacentRanks() << " shared: " << localParallelSubgrid.getNumberOfSharedAdjacentVertices()
-//              << " isSingleTransfer: " << isSingleTransferOfSubgridToRank << " transferToSkip: " << localParallelSubgrid.getNumberOfTransfersToBeSkipped());
-
-          if(
-            isSingleTransferOfSubgridToRank
-            || !_avoidMultipleTransferOfSubgridsIfPossible
-          ) {
-            logDebug("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << localSubgrid << " for vertex " << _position);
-
-            sendPatch(localSubgrid);
-
-            sentSubgrid = true;
-          } else {
-            logDebug("sendSubgridsForVertex", "(Skipped) Sending subgrid to rank " << _remoteRank << ": " << localSubgrid
-                << " for vertex " << _position << ", getNumberOfSharedAdjacentVertices=" << localParallelSubgrid.getNumberOfSharedAdjacentVertices());
-          }
-          localParallelSubgrid.decreaseNumberOfSharedAdjacentVertices(_remoteRank);
-        }
+        sentSubgrid = sendSubgrid(localSubgrid, vertex);
       }
 
       if(!sentSubgrid) {
         logDebug("sendSubgridsForVertex", "Sending padding subgrid to rank " << _remoteRank
             << " at " << (_position + _subgridSize * (peano::utils::dDelinearised(i, 2).convertScalar<double>()*2.0-1.0)) << " on level " << _level);
 
-        sendPaddingPatch(_position, _level, _subgridSize);
+        _subgridCommunicator.sendPaddingSubgrid();
       }
     }
   }
@@ -350,7 +316,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
 
       if(!receivedSubgrid) {
         //Receive dummy message
-        receivePaddingPatch();
+        _subgridCommunicator.receivePaddingSubgrid();
 
         logDebug("receiveSubgridsForVertex", "Received padding subgrid from rank " << _remoteRank
             << " at "  << (_position + _subgridSize * (peano::utils::dDelinearised(i, 2).convertScalar<double>()*2.0-1.0)) << " on level " << _level);

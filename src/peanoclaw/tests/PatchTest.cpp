@@ -7,10 +7,12 @@
 #include "peanoclaw/tests/PatchTest.h"
 
 #include "peanoclaw/ParallelSubgrid.h"
+#include "peanoclaw/Area.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/tests/Helper.h"
 #include "peanoclaw/tests/TestVertexEnumerator.h"
+#include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
 
 #include "peano/utils/Globals.h"
 
@@ -43,6 +45,11 @@ void peanoclaw::tests::PatchTest::run() {
   testMethod( testCoarsePatchTimeInterval );
   testMethod( testCountingOfAdjacentParallelSubgrids );
   testMethod( testCountingOfAdjacentParallelSubgridsFourNeighboringRanks );
+  testMethod( testSettingOverlapOfRemoteGhostlayer );
+  testMethod( testNumberOfAdjacentManifolds );
+  testMethod( testAdjacentManifolds );
+  testMethod( testManifolds );
+  testMethod( testOverlapOfRemoteGhostlayers );
 }
 
 void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
@@ -304,6 +311,434 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeig
   validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(1), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
   validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(2), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
   validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(3), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  #endif
+}
+
+void peanoclaw::tests::PatchTest::testSettingOverlapOfRemoteGhostlayer() {
+  #ifdef Dim2
+  peanoclaw::Vertex fineGridVertex;
+  fineGridVertex.setAdjacentRank(0, 1);
+  fineGridVertex.setAdjacentRank(1, 2);
+  fineGridVertex.setAdjacentRank(2, 0);
+  fineGridVertex.setAdjacentRank(3, 0);
+
+  Patch subgridRank0_1 = createPatch(
+    1, 1,
+    10, //Subdivision Factor
+    1,  //Ghostlayer width
+    tarch::la::Vector<DIMENSIONS, double>(0.0), //Position
+    tarch::la::Vector<DIMENSIONS, double>(1.0), //Size
+    0, 0.0, 0.0, 0.0, false
+  );
+  tarch::la::Vector<DIMENSIONS, double> rank0_2Position;
+  assignList(rank0_2Position) = -1.0, 0.0;
+  Patch subgridRank0_2 = createPatch(
+    1, 1,
+    10, //Subdivision Factor
+    1,  //Ghostlayer width
+    rank0_2Position,
+    tarch::la::Vector<DIMENSIONS, double>(1.0), //Size
+    0, 0.0, 0.0, 0.0, false
+  );
+  Patch subgridRank1 = createPatch(
+    1, 1,
+    10, //Subdivision Factor
+    2,  //Ghostlayer width
+    tarch::la::Vector<DIMENSIONS, double>(-1.0), //Position
+    tarch::la::Vector<DIMENSIONS, double>(1.0), //Size
+    0, 0.0, 0.0, 0.0, false
+  );
+  tarch::la::Vector<DIMENSIONS, double> rank2Position;
+  assignList(rank2Position) = 0.0, -1.0;
+  Patch subgridRank2 = createPatch(
+    1, 1,
+    10, //Subdivision Factor
+    1,  //Ghostlayer width
+    rank2Position,
+    tarch::la::Vector<DIMENSIONS, double>(1.0), //Size
+    0, 0.0, 0.0, 0.0, false
+  );
+
+  fineGridVertex.setAdjacentCellDescriptionIndexInPeanoOrder(0, subgridRank1.getCellDescriptionIndex());
+  fineGridVertex.setAdjacentCellDescriptionIndexInPeanoOrder(1, subgridRank2.getCellDescriptionIndex());
+  fineGridVertex.setAdjacentCellDescriptionIndexInPeanoOrder(2, subgridRank0_2.getCellDescriptionIndex());
+  fineGridVertex.setAdjacentCellDescriptionIndexInPeanoOrder(3, subgridRank0_1.getCellDescriptionIndex());
+
+
+  interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap vertexMap;
+  interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+    fineGridVertex,
+    vertexMap,
+    tarch::la::Vector<DIMENSIONS, double>(0),
+    0
+  );
+
+  adjacentSubgrids.setOverlapOfRemoteGhostlayers();
+
+  ParallelSubgrid parallelSubgridRank0(subgridRank0_1);
+  validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(0), 2);
+  validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(1), 1);
+  validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(2), 0);
+  validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(3), 0);
+  validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(4), 0);
+  validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(5), 0);
+  validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(6), 0);
+  validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(7), 0);
+  #endif
+}
+
+void peanoclaw::tests::PatchTest::testManifolds() {
+  tarch::la::Vector<DIMENSIONS, int> manifoldPosition;
+  #ifdef Dim2
+  validateEquals(Area::getNumberOfManifolds(0), 4);
+  validateEquals(Area::getNumberOfManifolds(1), 4);
+
+  //Vertices
+  assignList(manifoldPosition) = -1, -1;
+  validateEqualsWithParams1(Area::getManifold(0, 0), manifoldPosition, Area::getManifold(0, 0));
+
+  assignList(manifoldPosition) =  1, -1;
+  validateEqualsWithParams1(Area::getManifold(0, 1), manifoldPosition, Area::getManifold(0, 1));
+
+  assignList(manifoldPosition) = -1,  1;
+  validateEqualsWithParams1(Area::getManifold(0, 2), manifoldPosition, Area::getManifold(0, 2));
+
+  assignList(manifoldPosition) =  1,  1;
+  validateEqualsWithParams1(Area::getManifold(0, 3), manifoldPosition, Area::getManifold(0, 3));
+
+  //Edges
+  assignList(manifoldPosition) = -1,  0;
+  validateEqualsWithParams1(Area::getManifold(1, 0), manifoldPosition, Area::getManifold(1, 0));
+
+  assignList(manifoldPosition) =  1,  0;
+  validateEqualsWithParams1(Area::getManifold(1, 1), manifoldPosition, Area::getManifold(1, 1));
+
+  assignList(manifoldPosition) =  0, -1;
+  validateEqualsWithParams1(Area::getManifold(1, 2), manifoldPosition, Area::getManifold(1, 2));
+
+  assignList(manifoldPosition) =  0,  1;
+  validateEqualsWithParams1(Area::getManifold(1, 3), manifoldPosition, Area::getManifold(1, 3));
+  #elif Dim3
+  validateEqualsWithParams1(Area::getNumberOfManifolds(0),  8, Area::getNumberOfManifolds(0));
+  validateEqualsWithParams1(Area::getNumberOfManifolds(1), 12, Area::getNumberOfManifolds(1));
+  validateEqualsWithParams1(Area::getNumberOfManifolds(2),  6, Area::getNumberOfManifolds(2));
+
+  //Vertices
+  assignList(manifoldPosition) = -1, -1, -1;
+  validateEqualsWithParams1(Area::getManifold(0, 0), manifoldPosition, Area::getManifold(0, 0));
+
+  assignList(manifoldPosition) =  1, -1, -1;
+  validateEqualsWithParams1(Area::getManifold(0, 1), manifoldPosition, Area::getManifold(0, 1));
+
+  assignList(manifoldPosition) = -1,  1, -1;
+  validateEqualsWithParams1(Area::getManifold(0, 2), manifoldPosition, Area::getManifold(0, 2));
+
+  assignList(manifoldPosition) =  1,  1, -1;
+  validateEqualsWithParams1(Area::getManifold(0, 3), manifoldPosition, Area::getManifold(0, 3));
+
+  assignList(manifoldPosition) = -1, -1,  1;
+  validateEqualsWithParams1(Area::getManifold(0, 4), manifoldPosition, Area::getManifold(0, 4));
+
+  assignList(manifoldPosition) =  1, -1,  1;
+  validateEqualsWithParams1(Area::getManifold(0, 5), manifoldPosition, Area::getManifold(0, 5));
+
+  assignList(manifoldPosition) = -1,  1,  1;
+  validateEqualsWithParams1(Area::getManifold(0, 6), manifoldPosition, Area::getManifold(0, 6));
+
+  assignList(manifoldPosition) =  1,  1,  1;
+  validateEqualsWithParams1(Area::getManifold(0, 7), manifoldPosition, Area::getManifold(0, 7));
+
+  //Edges
+  assignList(manifoldPosition) = -1, -1,  0;
+  validateEqualsWithParams1(Area::getManifold(1, 0), manifoldPosition, Area::getManifold(1, 0));
+
+  assignList(manifoldPosition) =  1, -1,  0;
+  validateEqualsWithParams1(Area::getManifold(1, 1), manifoldPosition, Area::getManifold(1, 1));
+
+  assignList(manifoldPosition) = -1,  1,  0;
+  validateEqualsWithParams1(Area::getManifold(1, 2), manifoldPosition, Area::getManifold(1, 2));
+
+  assignList(manifoldPosition) =  1,  1,  0;
+  validateEqualsWithParams1(Area::getManifold(1, 3), manifoldPosition, Area::getManifold(1, 3));
+
+  assignList(manifoldPosition) = -1,  0, -1;
+  validateEqualsWithParams1(Area::getManifold(1, 4), manifoldPosition, Area::getManifold(1, 4));
+
+  assignList(manifoldPosition) =  1,  0, -1;
+  validateEqualsWithParams1(Area::getManifold(1, 5), manifoldPosition, Area::getManifold(1, 5));
+
+  assignList(manifoldPosition) =  -1,  0,  1;
+  validateEqualsWithParams1(Area::getManifold(1, 6), manifoldPosition, Area::getManifold(1, 6));
+
+  assignList(manifoldPosition) =   1,  0,  1;
+  validateEqualsWithParams1(Area::getManifold(1, 7), manifoldPosition, Area::getManifold(1, 7));
+
+  assignList(manifoldPosition) =  0, -1, -1;
+  validateEqualsWithParams1(Area::getManifold(1, 8), manifoldPosition, Area::getManifold(1, 8));
+
+  assignList(manifoldPosition) =  0,  1, -1;
+  validateEqualsWithParams1(Area::getManifold(1, 9), manifoldPosition, Area::getManifold(1, 9));
+
+  assignList(manifoldPosition) =  0, -1,  1;
+  validateEqualsWithParams1(Area::getManifold(1, 10), manifoldPosition, Area::getManifold(1, 10));
+
+  assignList(manifoldPosition) =  0,  1,  1;
+  validateEqualsWithParams1(Area::getManifold(1, 11), manifoldPosition, Area::getManifold(1, 11));
+
+  //Faces
+  assignList(manifoldPosition) = -1,  0,  0;
+  validateEqualsWithParams1(Area::getManifold(2, 0), manifoldPosition, Area::getManifold(2, 0));
+
+  assignList(manifoldPosition) =  1,  0,  0;
+  validateEqualsWithParams1(Area::getManifold(2, 1), manifoldPosition, Area::getManifold(2, 1));
+
+  assignList(manifoldPosition) =  0, -1,  0;
+  validateEqualsWithParams1(Area::getManifold(2, 2), manifoldPosition, Area::getManifold(2, 2));
+
+  assignList(manifoldPosition) =  0,  1,  0;
+  validateEqualsWithParams1(Area::getManifold(2, 3), manifoldPosition, Area::getManifold(2, 3));
+
+  assignList(manifoldPosition) =  0,  0, -1;
+  validateEqualsWithParams1(Area::getManifold(2, 4), manifoldPosition, Area::getManifold(2, 4));
+
+  assignList(manifoldPosition) =  0,  0,  1;
+  validateEqualsWithParams1(Area::getManifold(2, 5), manifoldPosition, Area::getManifold(2, 5));
+  #endif
+}
+
+void peanoclaw::tests::PatchTest::testNumberOfAdjacentManifolds() {
+  tarch::la::Vector<DIMENSIONS, int> manifoldPosition;
+  #ifdef Dim2
+  assignList(manifoldPosition) = -1, -1;
+  validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 0, 1), 2);
+
+  assignList(manifoldPosition) = -1, 0;
+  validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 1, 0), 2);
+  #elif Dim3
+  assignList(manifoldPosition) = -1, -1, -1;
+  validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 0, 1), 3);
+
+  assignList(manifoldPosition) = -1, -1, -1;
+  validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 0, 2), 3);
+
+  assignList(manifoldPosition) = -1, -1, 0;
+  validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 1, 2), 2);
+
+  assignList(manifoldPosition) = -1, 0, 0;
+  validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 2, 1), 4);
+
+  assignList(manifoldPosition) = -1, 0, 0;
+  validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 2, 0), 4);
+
+  assignList(manifoldPosition) = -1, -1, 0;
+  validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 1, 0), 2);
+  #endif
+}
+
+void peanoclaw::tests::PatchTest::testAdjacentManifolds() {
+  tarch::la::Vector<DIMENSIONS, int> manifoldPosition;
+  tarch::la::Vector<DIMENSIONS, int> adjacentManifoldPosition;
+  #ifdef Dim2
+  //Vertex to edge1
+  assignList(manifoldPosition)         = -1, -1;
+  assignList(adjacentManifoldPosition) =  0, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 0), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 0));
+
+  //Vertex to edge2
+  assignList(manifoldPosition)         = -1, -1;
+  assignList(adjacentManifoldPosition) = -1,  0;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 1), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 1));
+
+  //Edge to vertex1
+  assignList(manifoldPosition)         = -1,  0;
+  assignList(adjacentManifoldPosition) = -1, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 0, 0), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 0, 0));
+
+  //Edge to vertex2
+  assignList(manifoldPosition)         = -1, 0;
+  assignList(adjacentManifoldPosition) = -1, 1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 0, 1), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 0, 1));
+
+  #elif Dim3
+  //Vertex to edge1
+  assignList(manifoldPosition)         = -1, -1, -1;
+  assignList(adjacentManifoldPosition) =  0, -1, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 0), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 0));
+
+  //Vertex to edge1
+  assignList(manifoldPosition)         = -1, -1, -1;
+  assignList(adjacentManifoldPosition) = -1,  0, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 1), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 1));
+
+  //Vertex to edge2
+  assignList(manifoldPosition)         = -1, -1, -1;
+  assignList(adjacentManifoldPosition) = -1, -1,  0;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 2), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 1, 2));
+
+  //Vertex to face1
+  assignList(manifoldPosition)         = -1, -1, -1;
+  assignList(adjacentManifoldPosition) =  0,  0, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 2, 0), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 2, 0));
+
+  //Vertex to face2
+  assignList(manifoldPosition)         = -1, -1, -1;
+  assignList(adjacentManifoldPosition) =  0, -1,  0;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 2, 1), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 2, 1));
+
+  //Vertex to face3
+  assignList(manifoldPosition)         = -1, -1, -1;
+  assignList(adjacentManifoldPosition) = -1,  0,  0;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 2, 2), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 2, 2));
+
+  //Edge to face1
+  assignList(manifoldPosition)         = -1, -1,  0;
+  assignList(adjacentManifoldPosition) =  0, -1,  0;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 2, 0), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 2, 1));
+
+  //Edge to face2
+  assignList(manifoldPosition)         = -1, -1,  0;
+  assignList(adjacentManifoldPosition) = -1,  0,  0;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 2, 1), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 0, 2, 2));
+
+
+
+  //Face to edge0
+  assignList(manifoldPosition)         = -1,  0,  0;
+  assignList(adjacentManifoldPosition) = -1, -1,  0;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 1, 0), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 1, 0));
+
+  //Face to edge1
+  assignList(manifoldPosition)         = -1,  0,  0;
+  assignList(adjacentManifoldPosition) = -1,  1,  0;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 1, 1), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 1, 1));
+
+  //Face to edge2
+  assignList(manifoldPosition)         = -1,  0,  0;
+  assignList(adjacentManifoldPosition) = -1,  0, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 1, 2), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 1, 2));
+
+  //Face to edge3
+  assignList(manifoldPosition)         = -1,  0,  0;
+  assignList(adjacentManifoldPosition) = -1,  0,  1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 1, 3), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 1, 3));
+
+  //Face to vertex0
+  assignList(manifoldPosition)         = -1,  0,  0;
+  assignList(adjacentManifoldPosition) = -1, -1, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 0, 0), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 0, 0));
+
+  //Face to vertex1
+  assignList(manifoldPosition)         = -1,  0,  0;
+  assignList(adjacentManifoldPosition) = -1,  1, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 0, 1), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 0, 1));
+
+  //Face to vertex2
+  assignList(manifoldPosition)         = -1,  0,  0;
+  assignList(adjacentManifoldPosition) = -1, -1,  1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 0, 2), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 0, 2));
+
+  //Face to vertex3
+  assignList(manifoldPosition)         = -1,  0,  0;
+  assignList(adjacentManifoldPosition) = -1,  1,  1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 0, 3), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 2, 0, 3));
+
+  //Edge to vertex0
+  assignList(manifoldPosition)         = -1, -1,  0;
+  assignList(adjacentManifoldPosition) = -1, -1, -1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 0, 0), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 0, 0));
+
+  //Edge to vertex1
+  assignList(manifoldPosition)         = -1, -1,  0;
+  assignList(adjacentManifoldPosition) = -1, -1,  1;
+  validateEqualsWithParams1(Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 0, 1), adjacentManifoldPosition, Area::getIndexOfAdjacentManifold(manifoldPosition, 1, 0, 1));
+  #endif
+}
+
+void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers() {
+  #ifdef Dim2
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> adjacentRanks;
+  assignList(adjacentRanks)              = 1, 1, 0,   1, 0,   1, 2, 2;
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> overlapOfRemoteGhostlayers;
+  assignList(overlapOfRemoteGhostlayers) = 3, 2, 2,   2, 2,   2, 2, 3;
+  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
+
+  //Check rank 1
+  Area areas[THREE_POWER_D_MINUS_ONE];
+  int numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
+    adjacentRanks,
+    overlapOfRemoteGhostlayers,
+    subdivisionFactor,
+    1, //Rank
+    areas
+  );
+
+  tarch::la::Vector<DIMENSIONS, int> expectedOffset;
+  tarch::la::Vector<DIMENSIONS, int> expectedSize;
+
+  validateEquals(numberOfAreas, 3);
+
+  assignList(expectedOffset) = 0, 0;
+  assignList(expectedSize) = 3, 3;
+  validateWithParams1(tarch::la::equals(areas[0]._offset, expectedOffset), areas[0]._offset);
+  validateWithParams1(tarch::la::equals(areas[0]._size, expectedSize), areas[0]._size);
+
+  assignList(expectedOffset) = 0, 3;
+  assignList(expectedSize) = 2, 3;
+  validateWithParams1(tarch::la::equals(areas[1]._offset, expectedOffset), areas[1]._offset);
+  validateWithParams1(tarch::la::equals(areas[1]._size, expectedSize), areas[1]._size);
+
+  assignList(expectedOffset) = 3, 0;
+  assignList(expectedSize) = 3, 2;
+  validateWithParams1(tarch::la::equals(areas[2]._offset, expectedOffset), areas[2]._offset);
+  validateWithParams1(tarch::la::equals(areas[2]._size, expectedSize), areas[2]._size);
+
+  //Check rank 2
+  numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
+    adjacentRanks,
+    overlapOfRemoteGhostlayers,
+    subdivisionFactor,
+    2, //Rank
+    areas
+  );
+
+  validateEquals(numberOfAreas, 2);
+
+  assignList(expectedOffset) = 3, 3;
+  assignList(expectedSize) = 3, 3;
+  validateWithParams1(tarch::la::equals(areas[0]._offset, expectedOffset), areas[0]._offset);
+  validateWithParams1(tarch::la::equals(areas[0]._size, expectedSize), areas[0]._size);
+
+  assignList(expectedOffset) = 0, 4;
+  assignList(expectedSize) = 3, 2;
+  validateWithParams1(tarch::la::equals(areas[1]._offset, expectedOffset), areas[1]._offset);
+  validateWithParams1(tarch::la::equals(areas[1]._size, expectedSize), areas[1]._size);
+  #elif Dim3
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> adjacentRanks;
+  assignList(adjacentRanks)              = 1, 1, 0,   1, 1, 0,   0, 0, 0, //Lower plane
+                                           1, 1, 0,   1,    2,   1, 0, 2, //Mid plane
+                                           1, 1, 0,   1, 2, 2,   1, 2, 2; //Upper plane
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> overlapOfRemoteGhostlayers;
+  assignList(overlapOfRemoteGhostlayers) = 3, 2, 3,   2, 2, 3,   2, 2, 2, //Lower plane
+                                           2, 2, 2,   2,    2,   2, 2, 2, //Mid plane
+                                           3, 2, 3,   2, 2, 2,   2, 2, 2;
+  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
+
+  //Check rank 1
+  Area areas[THREE_POWER_D_MINUS_ONE];
+  int numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
+    adjacentRanks,
+    overlapOfRemoteGhostlayers,
+    subdivisionFactor,
+    1, //Rank
+    areas
+  );
+
+  //TODO unterweg debug
+  for(int i = 0; i < numberOfAreas; i++) {
+    std::cout << areas[i] << std::endl;
+  }
+
+  validateEquals(numberOfAreas, 5);
   #endif
 }
 

@@ -120,6 +120,23 @@ class peanoclaw::ParallelSubgrid {
   );
 
   /**
+   *
+   */
+  void setOverlapOfRemoteGhostlayer(int subgridIndex, int overlap);
+
+  /**
+   * Returns the overlap of remote ghostlayers for the given
+   * adjacent subgrid.
+   */
+  int getOverlapOfRemoteGhostlayer(int subgridIndex) const;
+
+  /**
+   * Returns all overlaps of remote ghostlayers, corresponding to the
+   * adjacent ranks.
+   */
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> getOverlapOfRemoteGhostlayers() const;
+
+  /**
    * Determines whether the subgrid is adjacent to the local subdomain. This
    * requires that the subgrid is assigned to a different rank.
    */
