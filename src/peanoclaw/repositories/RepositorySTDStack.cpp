@@ -3,6 +3,8 @@
 #include "tarch/Assertions.h"
 #include "tarch/timing/Watch.h"
 
+#include "tarch/compiler/CompilerSpecificSettings.h"
+
 #ifdef Parallel
 #include "tarch/parallel/Node.h"
 #include "tarch/parallel/NodePool.h"
@@ -306,7 +308,7 @@ peanoclaw::repositories::RepositorySTDStack::ContinueCommand peanoclaw::reposito
     int masterNode = tarch::parallel::Node::getInstance().getGlobalMasterRank();
     assertion( masterNode != -1 );
 
-    _repositoryState.receive( masterNode, peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag(), true );
+    _repositoryState.receive( masterNode, peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag(), true, ReceiveIterationControlMessagesBlocking );
 
     result = Continue;
     if (_repositoryState.getAction()==peanoclaw::records::RepositoryState::Terminate) {
