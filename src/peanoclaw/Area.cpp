@@ -319,7 +319,8 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
   int                                                    rank,
   Area                                                   areas[THREE_POWER_D_MINUS_ONE]
 ) {
-  int numberOfAreas = 0;
+  int  numberOfAreas = 0;
+  bool oneAreaCoversCompleteSubgrid = false;
 
   for(int dimensionality = 0; dimensionality < DIMENSIONS; dimensionality++) {
     int numberOfManifolds = getNumberOfManifolds(dimensionality);
@@ -339,8 +340,8 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
         );
 
         //Restrict size and offset by higher-dimensional manifolds
-        std::cout << std::endl << "Testing manifold " << manifoldPosition << " of dimensions " << dimensionality
-            << ": " << canBeOmitted << std::endl;
+//        std::cout << std::endl << "Testing manifold " << manifoldPosition << " of dimensions " << dimensionality
+//            << ": " << canBeOmitted << std::endl;
 
         if(!canBeOmitted) {
           tarch::la::Vector<DIMENSIONS, int> size;
@@ -348,12 +349,12 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
 
           //Initialise size and offset
           for(int d = 0; d < DIMENSIONS; d++) {
-            size(d) = (manifoldPosition(d) == 0) ? subdivisionFactor(d) : overlapOfRemoteGhostlayers[manifoldEntry];
+            size(d) = (manifoldPosition(d) == 0) ? subdivisionFactor(d) : std::min(subdivisionFactor(d), overlapOfRemoteGhostlayers[manifoldEntry]);
             offset(d) = (manifoldPosition(d) == 1) ? subdivisionFactor(d) - size(d) : 0;
           }
 
           //TODO unterweg debug
-          std::cout << "offset: " << offset << ", size: " << size << std::endl;
+//          std::cout << "offset: " << offset << ", size: " << size << std::endl;
 
           for(int adjacentDimensionality = dimensionality - 1; adjacentDimensionality >= 0; adjacentDimensionality--) {
             int numberOfAdjacentManifolds = getNumberOfAdjacentManifolds(manifoldPosition, dimensionality, adjacentDimensionality);
@@ -366,7 +367,7 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
               );
 
               //TODO unterweg debug
-              std::cout << "adj. manifold " << adjacentManifoldPosition << std::endl;
+//              std::cout << "adj. manifold " << adjacentManifoldPosition << std::endl;
 
               int adjacentEntry = linearizeManifoldPosition(adjacentManifoldPosition);
 
@@ -379,14 +380,14 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
                       size(d) -= overlap;
 
                       //TODO unterweg debug
-                      std::cout << "Reducing bottom " << overlap << std::endl;
+//                      std::cout << "Reducing bottom " << overlap << std::endl;
                     } else if(adjacentManifoldPosition(d) > 0) {
                       assertion2(adjacentManifoldPosition(d) > 0, adjacentManifoldPosition, d);
                       int overlap = std::max(0, offset(d) + size(d) - (subdivisionFactor(d) - overlapOfRemoteGhostlayers[adjacentEntry]));
                       size(d) -= overlap;
 
                       //TODO unterweg debug
-                      std::cout << "Reducing top " << overlap << std::endl;
+//                      std::cout << "Reducing top " << overlap << std::endl;
                     }
                   }
                 }
@@ -395,14 +396,25 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
           }
 
           //TODO unterweg debug
-          std::cout << "offset: " << offset << ", size: " << size << std::endl;
+//          std::cout << "offset: " << offset << ", size: " << size << std::endl;
 
           if(tarch::la::allGreater(size, 0)) {
             areas[numberOfAreas++] = Area(offset, size);
+
+            oneAreaCoversCompleteSubgrid |= (tarch::la::volume(size) >= tarch::la::volume(subdivisionFactor));
+
+            assertion1(tarch::la::allGreaterEquals(offset, 0), offset);
+            assertion3(tarch::la::allGreaterEquals(subdivisionFactor, offset + size), offset, size, subdivisionFactor);
           }
         }
       }
     }
+  }
+
+  //Optimize areas
+  if(oneAreaCoversCompleteSubgrid) {
+    numberOfAreas = 1;
+    areas[0] = Area(0, subdivisionFactor);
   }
 
   return numberOfAreas;

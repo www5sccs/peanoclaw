@@ -95,7 +95,7 @@ class peanoclaw::parallel::NeighbourCommunicator {
      * index for the local patch.
      *
      */
-    void receivePatch(
+    void receiveSubgrid(
       Patch& localSubgrid
     );
 

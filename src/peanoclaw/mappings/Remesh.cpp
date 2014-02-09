@@ -886,7 +886,7 @@ void peanoclaw::mappings::Remesh::touchVertexFirstTime(
     coarseGridVerticesEnumerator.getLevel()+1
   );
   adjacentSubgrids.checkForChangesInAdjacentRanks();
-  adjacentSubgrids.setOverlapOfRemoteGhostlayers();
+  //adjacentSubgrids.setOverlapOfRemoteGhostlayers();
 
   logTraceOutWith1Argument( "touchVertexFirstTime(...)", fineGridVertex );
 }
@@ -1024,10 +1024,22 @@ void peanoclaw::mappings::Remesh::leaveCell(
   if(!fineGridCell.isAssignedToRemoteRank()) {
     //Count number of adjacent subgrids
     ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-    parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap(
+    parallelSubgrid.countNumberOfAdjacentParallelSubgrids(
       fineGridVertices,
       fineGridVerticesEnumerator
     );
+
+    //Set remote overlaps
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
+        fineGridVertices[fineGridVerticesEnumerator(i)],
+        _vertexPositionToIndexMap,
+        fineGridVerticesEnumerator.getVertexPosition(i),
+        fineGridVerticesEnumerator.getLevel()
+      );
+
+      adjacentSubgrids.setOverlapOfRemoteGhostlayers(i);
+    }
   }
 
   //Avoid erasing when one coarse grid vertex is refining.

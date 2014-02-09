@@ -140,6 +140,8 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   pyclawWatch.stopTimer();
   _totalSolverCallbackTime += pyclawWatch.getCalendarTime();
 
+  assertion3(tarch::la::greater(dtAndEstimatedNextDt[0], 0.0), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
+
   assertion4(
       tarch::la::greater(patch.getTimeIntervals().getTimestepSize(), 0.0)
       || tarch::la::greater(dtAndEstimatedNextDt[1], 0.0)
@@ -151,10 +153,8 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   //Check for zeros in solution
   assertion3(!patch.containsNonPositiveNumberInUnknown(0), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
 
-  if (tarch::la::greater(dtAndEstimatedNextDt[0], 0.0)) {
-    patch.getTimeIntervals().advanceInTime();
-    patch.getTimeIntervals().setTimestepSize(dtAndEstimatedNextDt[0]);
-  }
+  patch.getTimeIntervals().advanceInTime();
+  patch.getTimeIntervals().setTimestepSize(dtAndEstimatedNextDt[0]);
 
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
   return requiredMeshWidth;

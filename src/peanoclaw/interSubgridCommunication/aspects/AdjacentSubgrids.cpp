@@ -330,7 +330,9 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::checkForCh
   #endif
 }
 
-void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::setOverlapOfRemoteGhostlayers() {
+void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::setOverlapOfRemoteGhostlayers(
+  int targetSubgridIndex
+) {
   //Fill ghost layers of adjacent cells
   //Get adjacent cell descriptions
   CellDescription* cellDescriptions[TWO_POWER_D];
@@ -349,7 +351,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::setOverlap
     }
   enddforx
 
-  SetOverlapOfRemoteGhostlayerFunctor functor(_vertex.getAdjacentRanks());
+  SetOverlapOfRemoteGhostlayerFunctor functor(_vertex.getAdjacentRanks(), targetSubgridIndex);
 
   peanoclaw::interSubgridCommunication::aspects::
     FaceAdjacentPatchTraversal<SetOverlapOfRemoteGhostlayerFunctor>(patches, functor);
@@ -391,8 +393,9 @@ bool peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAnd
 }
 
 peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayerFunctor::SetOverlapOfRemoteGhostlayerFunctor(
-  const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks
-) : _localRank(tarch::parallel::Node::getInstance().getRank()), _adjacentRanks(adjacentRanks) {
+  const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks,
+  int targetSubgridIndex
+) : _localRank(tarch::parallel::Node::getInstance().getRank()), _adjacentRanks(adjacentRanks), _targetSubgridIndex(targetSubgridIndex) {
 }
 
 void peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayerFunctor::operator() (
@@ -402,7 +405,8 @@ void peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayer
   int                                       index2,
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
-  if(_adjacentRanks[TWO_POWER_D-index1-1] != _localRank
+  if(index2 == _targetSubgridIndex
+      && _adjacentRanks[TWO_POWER_D-index1-1] != _localRank
       && _adjacentRanks[TWO_POWER_D-index2-1] == _localRank
       && patch2.isValid()
   ) {

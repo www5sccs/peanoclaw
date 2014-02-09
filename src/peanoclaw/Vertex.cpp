@@ -72,10 +72,6 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   Patch patches[TWO_POWER_D];
   dfor2(cellIndex)
     if(getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
-
-//      assertion4(DataHeap::getInstance().isValidIndex(cellDescriptions[cellIndexScalar]->getUNewIndex()), cellIndexScalar, getX(), level, cellDescriptions[cellIndexScalar]->getUNewIndex());
-//      assertion4(DataHeap::getInstance().isValidIndex(cellDescriptions[cellIndexScalar]->getUOldIndex()), cellIndexScalar, getX(), level, cellDescriptions[cellIndexScalar]->getUOldIndex());
-
       patches[cellIndexScalar] = Patch(
         *cellDescriptions[cellIndexScalar]
       );

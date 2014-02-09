@@ -59,7 +59,7 @@ void peanoclaw::tests::PeanoClawTest::testCellIndices() {
 //  cell.setUOldIndex(300);
 
   validateEquals(cell.getCellDescriptionIndex(), 100);
-//  validateEquals(cell.getUNewIndex(), 200);
+//  validateEquals(cell.getUIndex(), 200);
 //  validateEquals(cell.getUOldIndex(), 300);
 }
 

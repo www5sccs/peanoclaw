@@ -28,3 +28,7 @@ void peanoclaw::Cell::setCellDescriptionIndex(int index) {
 int peanoclaw::Cell::getCellDescriptionIndex() const {
   return _cellData.getCellDescriptionIndex();
 }
+
+bool peanoclaw::Cell::holdsSubgrid() const {
+  return _cellData.getCellDescriptionIndex() != -1;
+}

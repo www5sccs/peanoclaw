@@ -50,6 +50,7 @@ void peanoclaw::tests::PatchTest::run() {
   testMethod( testAdjacentManifolds );
   testMethod( testManifolds );
   testMethod( testOverlapOfRemoteGhostlayers );
+  testMethod( testOverlapOfRemoteGhostlayers2 );
 }
 
 void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
@@ -259,16 +260,25 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
 
   //Test
   peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
-  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap(vertices, enumerator);
+  parallelSubgrid.countNumberOfAdjacentParallelSubgrids(vertices, enumerator);
 
-  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(0), 1, parallelSubgrid.getAdjacentRanks());
-  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(1), -1, parallelSubgrid.getAdjacentRanks());
-  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(2), -1, parallelSubgrid.getAdjacentRanks());
-  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(3), -1, parallelSubgrid.getAdjacentRanks());
-  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices()(0), 2);
-  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices()(1), 0);
-  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices()(2), 0);
-  validateEquals(parallelSubgrid.getNumberOfSharedAdjacentVertices()(3), 0);
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(0), 0, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(1), 0, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(2), 0, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(3), 0, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(4), 0, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(5),  1, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(6),  1, parallelSubgrid.getAdjacentRanks());
+  validateEqualsWithParams1(parallelSubgrid.getAdjacentRanks()(7),  1, parallelSubgrid.getAdjacentRanks());
+
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(0), 4, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(1), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(2), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(3), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(4), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(5), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(6), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(7), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
   #endif
 }
 
@@ -301,16 +311,24 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeig
 
   //Test
   peanoclaw::ParallelSubgrid parallelSubgrid(cellDescription);
-  parallelSubgrid.countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap(vertices, enumerator);
+  parallelSubgrid.countNumberOfAdjacentParallelSubgrids(vertices, enumerator);
 
   validateEquals(parallelSubgrid.getAdjacentRanks()(0), 3);
-  validateEquals(parallelSubgrid.getAdjacentRanks()(1), 4);
-  validateEquals(parallelSubgrid.getAdjacentRanks()(2), 2);
-  validateEquals(parallelSubgrid.getAdjacentRanks()(3), 1);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(1), 3);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(2), 3);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(3), 4);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(4), 2);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(5), 1);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(6), 1);
+  validateEquals(parallelSubgrid.getAdjacentRanks()(7), 1);
   validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(0), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
-  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(1), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
-  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(2), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(1), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams2(parallelSubgrid.getNumberOfSharedAdjacentVertices()(2), 0, parallelSubgrid.getAdjacentRanks(), parallelSubgrid.getNumberOfSharedAdjacentVertices());
   validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(3), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(4), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(5), 2, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(6), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
+  validateEqualsWithParams1(parallelSubgrid.getNumberOfSharedAdjacentVertices()(7), 0, parallelSubgrid.getNumberOfSharedAdjacentVertices());
   #endif
 }
 
@@ -373,7 +391,7 @@ void peanoclaw::tests::PatchTest::testSettingOverlapOfRemoteGhostlayer() {
     0
   );
 
-  adjacentSubgrids.setOverlapOfRemoteGhostlayers();
+  adjacentSubgrids.setOverlapOfRemoteGhostlayers(0);
 
   ParallelSubgrid parallelSubgridRank0(subgridRank0_1);
   validateEquals(parallelSubgridRank0.getOverlapOfRemoteGhostlayer(0), 2);
@@ -739,6 +757,36 @@ void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers() {
   }
 
   validateEquals(numberOfAreas, 5);
+  #endif
+}
+
+void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers2() {
+  #ifdef Dim2
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> adjacentRanks;
+  assignList(adjacentRanks)              = 1,1,2,1,2,0,0,0;
+  tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> overlapOfRemoteGhostlayers;
+  assignList(overlapOfRemoteGhostlayers) = 0,0,2,0,2,18,18,18;
+  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(18);
+
+  //Check rank 2
+  Area areas[THREE_POWER_D_MINUS_ONE];
+  int numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
+    adjacentRanks,
+    overlapOfRemoteGhostlayers,
+    subdivisionFactor,
+    2, //Rank
+    areas
+  );
+
+  tarch::la::Vector<DIMENSIONS, int> expectedOffset;
+  tarch::la::Vector<DIMENSIONS, int> expectedSize;
+
+  validateEquals(numberOfAreas, 1);
+
+  assignList(expectedOffset) = 16, 0;
+  assignList(expectedSize) = 2, 18;
+  validateWithParams1(tarch::la::equals(areas[0]._offset, expectedOffset), areas[0]._offset);
+  validateWithParams1(tarch::la::equals(areas[0]._size, expectedSize), areas[0]._size);
   #endif
 }
 

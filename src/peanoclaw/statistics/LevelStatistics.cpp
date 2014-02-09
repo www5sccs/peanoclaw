@@ -532,159 +532,192 @@ peanoclaw::statistics::LevelStatisticsPacked peanoclaw::statistics::LevelStatist
       
    }
    
-   void peanoclaw::statistics::LevelStatistics::send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
-      MPI_Request* sendRequestHandle = new MPI_Request();
-      MPI_Status   status;
-      int          flag = 0;
-      int          result;
+   void peanoclaw::statistics::LevelStatistics::send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise, bool communicateBlocking) {
+      if (communicateBlocking) {
       
-      clock_t      timeOutWarning   = -1;
-      clock_t      timeOutShutdown  = -1;
-      bool         triggeredTimeoutWarning = false;
-      
-      if (exchangeOnlyAttributesMarkedWithParallelise) {
-         result = MPI_Isend(
-            this, 1, Datatype, destination,
-            tag, tarch::parallel::Node::getInstance().getCommunicator(),
-            sendRequestHandle
-         );
+         const int result = MPI_Send(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, destination, tag, tarch::parallel::Node::getInstance().getCommunicator());
+         if  (result!=MPI_SUCCESS) {
+            std::ostringstream msg;
+            msg << "was not able to send message peanoclaw::statistics::LevelStatistics "
+            << toString()
+            << " to node " << destination
+            << ": " << tarch::parallel::MPIReturnValueToString(result);
+            _log.error( "send(int)",msg.str() );
+         }
          
       }
       else {
-         result = MPI_Isend(
-            this, 1, FullDatatype, destination,
-            tag, tarch::parallel::Node::getInstance().getCommunicator(),
-            sendRequestHandle
-         );
-         
-      }
-      if  (result!=MPI_SUCCESS) {
-         std::ostringstream msg;
-         msg << "was not able to send message peanoclaw::statistics::LevelStatistics "
-         << toString()
-         << " to node " << destination
-         << ": " << tarch::parallel::MPIReturnValueToString(result);
-         _log.error( "send(int)",msg.str() );
-      }
-      result = MPI_Test( sendRequestHandle, &flag, &status );
-      while (!flag) {
-         if (timeOutWarning==-1)   timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
-         if (timeOutShutdown==-1)  timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
-         result = MPI_Test( sendRequestHandle, &flag, &status );
-         if (result!=MPI_SUCCESS) {
-            std::ostringstream msg;
-            msg << "testing for finished send task for peanoclaw::statistics::LevelStatistics "
-            << toString()
-            << " sent to node " << destination
-            << " failed: " << tarch::parallel::MPIReturnValueToString(result);
-            _log.error("send(int)", msg.str() );
-         }
-         
-         // deadlock aspect
-         if (
-            tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() &&
-            (clock()>timeOutWarning) &&
-            (!triggeredTimeoutWarning)
-         ) {
-            tarch::parallel::Node::getInstance().writeTimeOutWarning(
-            "peanoclaw::statistics::LevelStatistics",
-            "send(int)", destination,tag,1
-            );
-            triggeredTimeoutWarning = true;
-         }
-         if (
-            tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() &&
-            (clock()>timeOutShutdown)
-         ) {
-            tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
-            "peanoclaw::statistics::LevelStatistics",
-            "send(int)", destination,tag,1
-            );
-         }
-         tarch::parallel::Node::getInstance().receiveDanglingMessages();
-      }
       
-      delete sendRequestHandle;
-      #ifdef Debug
-      _log.debug("send(int,int)", "sent " + toString() );
-      #endif
+         MPI_Request* sendRequestHandle = new MPI_Request();
+         MPI_Status   status;
+         int          flag = 0;
+         int          result;
+         
+         clock_t      timeOutWarning   = -1;
+         clock_t      timeOutShutdown  = -1;
+         bool         triggeredTimeoutWarning = false;
+         
+         if (exchangeOnlyAttributesMarkedWithParallelise) {
+            result = MPI_Isend(
+               this, 1, Datatype, destination,
+               tag, tarch::parallel::Node::getInstance().getCommunicator(),
+               sendRequestHandle
+            );
+            
+         }
+         else {
+            result = MPI_Isend(
+               this, 1, FullDatatype, destination,
+               tag, tarch::parallel::Node::getInstance().getCommunicator(),
+               sendRequestHandle
+            );
+            
+         }
+         if  (result!=MPI_SUCCESS) {
+            std::ostringstream msg;
+            msg << "was not able to send message peanoclaw::statistics::LevelStatistics "
+            << toString()
+            << " to node " << destination
+            << ": " << tarch::parallel::MPIReturnValueToString(result);
+            _log.error( "send(int)",msg.str() );
+         }
+         result = MPI_Test( sendRequestHandle, &flag, &status );
+         while (!flag) {
+            if (timeOutWarning==-1)   timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
+            if (timeOutShutdown==-1)  timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
+            result = MPI_Test( sendRequestHandle, &flag, &status );
+            if (result!=MPI_SUCCESS) {
+               std::ostringstream msg;
+               msg << "testing for finished send task for peanoclaw::statistics::LevelStatistics "
+               << toString()
+               << " sent to node " << destination
+               << " failed: " << tarch::parallel::MPIReturnValueToString(result);
+               _log.error("send(int)", msg.str() );
+            }
+            
+            // deadlock aspect
+            if (
+               tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() &&
+               (clock()>timeOutWarning) &&
+               (!triggeredTimeoutWarning)
+            ) {
+               tarch::parallel::Node::getInstance().writeTimeOutWarning(
+               "peanoclaw::statistics::LevelStatistics",
+               "send(int)", destination,tag,1
+               );
+               triggeredTimeoutWarning = true;
+            }
+            if (
+               tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() &&
+               (clock()>timeOutShutdown)
+            ) {
+               tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
+               "peanoclaw::statistics::LevelStatistics",
+               "send(int)", destination,tag,1
+               );
+            }
+            tarch::parallel::Node::getInstance().receiveDanglingMessages();
+         }
+         
+         delete sendRequestHandle;
+         #ifdef Debug
+         _log.debug("send(int,int)", "sent " + toString() );
+         #endif
+         
+      }
       
    }
    
    
    
-   void peanoclaw::statistics::LevelStatistics::receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
-      MPI_Request* sendRequestHandle = new MPI_Request();
-      MPI_Status   status;
-      int          flag = 0;
-      int          result;
+   void peanoclaw::statistics::LevelStatistics::receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise, bool communicateBlocking) {
+      if (communicateBlocking) {
       
-      clock_t      timeOutWarning   = -1;
-      clock_t      timeOutShutdown  = -1;
-      bool         triggeredTimeoutWarning = false;
-      
-      if (exchangeOnlyAttributesMarkedWithParallelise) {
-         result = MPI_Irecv(
-            this, 1, Datatype, source, tag,
-            tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
-         );
+         MPI_Status  status;
+         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         if ( result != MPI_SUCCESS ) {
+            std::ostringstream msg;
+            msg << "failed to start to receive peanoclaw::statistics::LevelStatistics from node "
+            << source << ": " << tarch::parallel::MPIReturnValueToString(result);
+            _log.error( "receive(int)", msg.str() );
+         }
          
       }
       else {
-         result = MPI_Irecv(
-            this, 1, FullDatatype, source, tag,
-            tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
-         );
-         
-      }
-      if ( result != MPI_SUCCESS ) {
-         std::ostringstream msg;
-         msg << "failed to start to receive peanoclaw::statistics::LevelStatistics from node "
-         << source << ": " << tarch::parallel::MPIReturnValueToString(result);
-         _log.error( "receive(int)", msg.str() );
-      }
       
-      result = MPI_Test( sendRequestHandle, &flag, &status );
-      while (!flag) {
-         if (timeOutWarning==-1)   timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
-         if (timeOutShutdown==-1)  timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
-         result = MPI_Test( sendRequestHandle, &flag, &status );
-         if (result!=MPI_SUCCESS) {
+         MPI_Request* sendRequestHandle = new MPI_Request();
+         MPI_Status   status;
+         int          flag = 0;
+         int          result;
+         
+         clock_t      timeOutWarning   = -1;
+         clock_t      timeOutShutdown  = -1;
+         bool         triggeredTimeoutWarning = false;
+         
+         if (exchangeOnlyAttributesMarkedWithParallelise) {
+            result = MPI_Irecv(
+               this, 1, Datatype, source, tag,
+               tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
+            );
+            
+         }
+         else {
+            result = MPI_Irecv(
+               this, 1, FullDatatype, source, tag,
+               tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
+            );
+            
+         }
+         if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
-            msg << "testing for finished receive task for peanoclaw::statistics::LevelStatistics failed: "
-            << tarch::parallel::MPIReturnValueToString(result);
-            _log.error("receive(int)", msg.str() );
+            msg << "failed to start to receive peanoclaw::statistics::LevelStatistics from node "
+            << source << ": " << tarch::parallel::MPIReturnValueToString(result);
+            _log.error( "receive(int)", msg.str() );
          }
          
-         // deadlock aspect
-         if (
-            tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() &&
-            (clock()>timeOutWarning) &&
-            (!triggeredTimeoutWarning)
-         ) {
-            tarch::parallel::Node::getInstance().writeTimeOutWarning(
-            "peanoclaw::statistics::LevelStatistics",
-            "receive(int)", source,tag,1
-            );
-            triggeredTimeoutWarning = true;
+         result = MPI_Test( sendRequestHandle, &flag, &status );
+         while (!flag) {
+            if (timeOutWarning==-1)   timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
+            if (timeOutShutdown==-1)  timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
+            result = MPI_Test( sendRequestHandle, &flag, &status );
+            if (result!=MPI_SUCCESS) {
+               std::ostringstream msg;
+               msg << "testing for finished receive task for peanoclaw::statistics::LevelStatistics failed: "
+               << tarch::parallel::MPIReturnValueToString(result);
+               _log.error("receive(int)", msg.str() );
+            }
+            
+            // deadlock aspect
+            if (
+               tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() &&
+               (clock()>timeOutWarning) &&
+               (!triggeredTimeoutWarning)
+            ) {
+               tarch::parallel::Node::getInstance().writeTimeOutWarning(
+               "peanoclaw::statistics::LevelStatistics",
+               "receive(int)", source,tag,1
+               );
+               triggeredTimeoutWarning = true;
+            }
+            if (
+               tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() &&
+               (clock()>timeOutShutdown)
+            ) {
+               tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
+               "peanoclaw::statistics::LevelStatistics",
+               "receive(int)", source,tag,1
+               );
+            }
+            tarch::parallel::Node::getInstance().receiveDanglingMessages();
          }
-         if (
-            tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() &&
-            (clock()>timeOutShutdown)
-         ) {
-            tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
-            "peanoclaw::statistics::LevelStatistics",
-            "receive(int)", source,tag,1
-            );
-         }
-         tarch::parallel::Node::getInstance().receiveDanglingMessages();
+         
+         delete sendRequestHandle;
+         
+         #ifdef Debug
+         _log.debug("receive(int,int)", "received " + toString() ); 
+         #endif
+         
       }
-      
-      delete sendRequestHandle;
-      
-      #ifdef Debug
-      _log.debug("receive(int,int)", "received " + toString() ); 
-      #endif
       
    }
    
@@ -1247,159 +1280,192 @@ peanoclaw::statistics::LevelStatistics peanoclaw::statistics::LevelStatisticsPac
       
    }
    
-   void peanoclaw::statistics::LevelStatisticsPacked::send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
-      MPI_Request* sendRequestHandle = new MPI_Request();
-      MPI_Status   status;
-      int          flag = 0;
-      int          result;
+   void peanoclaw::statistics::LevelStatisticsPacked::send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise, bool communicateBlocking) {
+      if (communicateBlocking) {
       
-      clock_t      timeOutWarning   = -1;
-      clock_t      timeOutShutdown  = -1;
-      bool         triggeredTimeoutWarning = false;
-      
-      if (exchangeOnlyAttributesMarkedWithParallelise) {
-         result = MPI_Isend(
-            this, 1, Datatype, destination,
-            tag, tarch::parallel::Node::getInstance().getCommunicator(),
-            sendRequestHandle
-         );
+         const int result = MPI_Send(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, destination, tag, tarch::parallel::Node::getInstance().getCommunicator());
+         if  (result!=MPI_SUCCESS) {
+            std::ostringstream msg;
+            msg << "was not able to send message peanoclaw::statistics::LevelStatisticsPacked "
+            << toString()
+            << " to node " << destination
+            << ": " << tarch::parallel::MPIReturnValueToString(result);
+            _log.error( "send(int)",msg.str() );
+         }
          
       }
       else {
-         result = MPI_Isend(
-            this, 1, FullDatatype, destination,
-            tag, tarch::parallel::Node::getInstance().getCommunicator(),
-            sendRequestHandle
-         );
-         
-      }
-      if  (result!=MPI_SUCCESS) {
-         std::ostringstream msg;
-         msg << "was not able to send message peanoclaw::statistics::LevelStatisticsPacked "
-         << toString()
-         << " to node " << destination
-         << ": " << tarch::parallel::MPIReturnValueToString(result);
-         _log.error( "send(int)",msg.str() );
-      }
-      result = MPI_Test( sendRequestHandle, &flag, &status );
-      while (!flag) {
-         if (timeOutWarning==-1)   timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
-         if (timeOutShutdown==-1)  timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
-         result = MPI_Test( sendRequestHandle, &flag, &status );
-         if (result!=MPI_SUCCESS) {
-            std::ostringstream msg;
-            msg << "testing for finished send task for peanoclaw::statistics::LevelStatisticsPacked "
-            << toString()
-            << " sent to node " << destination
-            << " failed: " << tarch::parallel::MPIReturnValueToString(result);
-            _log.error("send(int)", msg.str() );
-         }
-         
-         // deadlock aspect
-         if (
-            tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() &&
-            (clock()>timeOutWarning) &&
-            (!triggeredTimeoutWarning)
-         ) {
-            tarch::parallel::Node::getInstance().writeTimeOutWarning(
-            "peanoclaw::statistics::LevelStatisticsPacked",
-            "send(int)", destination,tag,1
-            );
-            triggeredTimeoutWarning = true;
-         }
-         if (
-            tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() &&
-            (clock()>timeOutShutdown)
-         ) {
-            tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
-            "peanoclaw::statistics::LevelStatisticsPacked",
-            "send(int)", destination,tag,1
-            );
-         }
-         tarch::parallel::Node::getInstance().receiveDanglingMessages();
-      }
       
-      delete sendRequestHandle;
-      #ifdef Debug
-      _log.debug("send(int,int)", "sent " + toString() );
-      #endif
+         MPI_Request* sendRequestHandle = new MPI_Request();
+         MPI_Status   status;
+         int          flag = 0;
+         int          result;
+         
+         clock_t      timeOutWarning   = -1;
+         clock_t      timeOutShutdown  = -1;
+         bool         triggeredTimeoutWarning = false;
+         
+         if (exchangeOnlyAttributesMarkedWithParallelise) {
+            result = MPI_Isend(
+               this, 1, Datatype, destination,
+               tag, tarch::parallel::Node::getInstance().getCommunicator(),
+               sendRequestHandle
+            );
+            
+         }
+         else {
+            result = MPI_Isend(
+               this, 1, FullDatatype, destination,
+               tag, tarch::parallel::Node::getInstance().getCommunicator(),
+               sendRequestHandle
+            );
+            
+         }
+         if  (result!=MPI_SUCCESS) {
+            std::ostringstream msg;
+            msg << "was not able to send message peanoclaw::statistics::LevelStatisticsPacked "
+            << toString()
+            << " to node " << destination
+            << ": " << tarch::parallel::MPIReturnValueToString(result);
+            _log.error( "send(int)",msg.str() );
+         }
+         result = MPI_Test( sendRequestHandle, &flag, &status );
+         while (!flag) {
+            if (timeOutWarning==-1)   timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
+            if (timeOutShutdown==-1)  timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
+            result = MPI_Test( sendRequestHandle, &flag, &status );
+            if (result!=MPI_SUCCESS) {
+               std::ostringstream msg;
+               msg << "testing for finished send task for peanoclaw::statistics::LevelStatisticsPacked "
+               << toString()
+               << " sent to node " << destination
+               << " failed: " << tarch::parallel::MPIReturnValueToString(result);
+               _log.error("send(int)", msg.str() );
+            }
+            
+            // deadlock aspect
+            if (
+               tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() &&
+               (clock()>timeOutWarning) &&
+               (!triggeredTimeoutWarning)
+            ) {
+               tarch::parallel::Node::getInstance().writeTimeOutWarning(
+               "peanoclaw::statistics::LevelStatisticsPacked",
+               "send(int)", destination,tag,1
+               );
+               triggeredTimeoutWarning = true;
+            }
+            if (
+               tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() &&
+               (clock()>timeOutShutdown)
+            ) {
+               tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
+               "peanoclaw::statistics::LevelStatisticsPacked",
+               "send(int)", destination,tag,1
+               );
+            }
+            tarch::parallel::Node::getInstance().receiveDanglingMessages();
+         }
+         
+         delete sendRequestHandle;
+         #ifdef Debug
+         _log.debug("send(int,int)", "sent " + toString() );
+         #endif
+         
+      }
       
    }
    
    
    
-   void peanoclaw::statistics::LevelStatisticsPacked::receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise) {
-      MPI_Request* sendRequestHandle = new MPI_Request();
-      MPI_Status   status;
-      int          flag = 0;
-      int          result;
+   void peanoclaw::statistics::LevelStatisticsPacked::receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise, bool communicateBlocking) {
+      if (communicateBlocking) {
       
-      clock_t      timeOutWarning   = -1;
-      clock_t      timeOutShutdown  = -1;
-      bool         triggeredTimeoutWarning = false;
-      
-      if (exchangeOnlyAttributesMarkedWithParallelise) {
-         result = MPI_Irecv(
-            this, 1, Datatype, source, tag,
-            tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
-         );
+         MPI_Status  status;
+         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         if ( result != MPI_SUCCESS ) {
+            std::ostringstream msg;
+            msg << "failed to start to receive peanoclaw::statistics::LevelStatisticsPacked from node "
+            << source << ": " << tarch::parallel::MPIReturnValueToString(result);
+            _log.error( "receive(int)", msg.str() );
+         }
          
       }
       else {
-         result = MPI_Irecv(
-            this, 1, FullDatatype, source, tag,
-            tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
-         );
-         
-      }
-      if ( result != MPI_SUCCESS ) {
-         std::ostringstream msg;
-         msg << "failed to start to receive peanoclaw::statistics::LevelStatisticsPacked from node "
-         << source << ": " << tarch::parallel::MPIReturnValueToString(result);
-         _log.error( "receive(int)", msg.str() );
-      }
       
-      result = MPI_Test( sendRequestHandle, &flag, &status );
-      while (!flag) {
-         if (timeOutWarning==-1)   timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
-         if (timeOutShutdown==-1)  timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
-         result = MPI_Test( sendRequestHandle, &flag, &status );
-         if (result!=MPI_SUCCESS) {
+         MPI_Request* sendRequestHandle = new MPI_Request();
+         MPI_Status   status;
+         int          flag = 0;
+         int          result;
+         
+         clock_t      timeOutWarning   = -1;
+         clock_t      timeOutShutdown  = -1;
+         bool         triggeredTimeoutWarning = false;
+         
+         if (exchangeOnlyAttributesMarkedWithParallelise) {
+            result = MPI_Irecv(
+               this, 1, Datatype, source, tag,
+               tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
+            );
+            
+         }
+         else {
+            result = MPI_Irecv(
+               this, 1, FullDatatype, source, tag,
+               tarch::parallel::Node::getInstance().getCommunicator(), sendRequestHandle
+            );
+            
+         }
+         if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
-            msg << "testing for finished receive task for peanoclaw::statistics::LevelStatisticsPacked failed: "
-            << tarch::parallel::MPIReturnValueToString(result);
-            _log.error("receive(int)", msg.str() );
+            msg << "failed to start to receive peanoclaw::statistics::LevelStatisticsPacked from node "
+            << source << ": " << tarch::parallel::MPIReturnValueToString(result);
+            _log.error( "receive(int)", msg.str() );
          }
          
-         // deadlock aspect
-         if (
-            tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() &&
-            (clock()>timeOutWarning) &&
-            (!triggeredTimeoutWarning)
-         ) {
-            tarch::parallel::Node::getInstance().writeTimeOutWarning(
-            "peanoclaw::statistics::LevelStatisticsPacked",
-            "receive(int)", source,tag,1
-            );
-            triggeredTimeoutWarning = true;
+         result = MPI_Test( sendRequestHandle, &flag, &status );
+         while (!flag) {
+            if (timeOutWarning==-1)   timeOutWarning   = tarch::parallel::Node::getInstance().getDeadlockWarningTimeStamp();
+            if (timeOutShutdown==-1)  timeOutShutdown  = tarch::parallel::Node::getInstance().getDeadlockTimeOutTimeStamp();
+            result = MPI_Test( sendRequestHandle, &flag, &status );
+            if (result!=MPI_SUCCESS) {
+               std::ostringstream msg;
+               msg << "testing for finished receive task for peanoclaw::statistics::LevelStatisticsPacked failed: "
+               << tarch::parallel::MPIReturnValueToString(result);
+               _log.error("receive(int)", msg.str() );
+            }
+            
+            // deadlock aspect
+            if (
+               tarch::parallel::Node::getInstance().isTimeOutWarningEnabled() &&
+               (clock()>timeOutWarning) &&
+               (!triggeredTimeoutWarning)
+            ) {
+               tarch::parallel::Node::getInstance().writeTimeOutWarning(
+               "peanoclaw::statistics::LevelStatisticsPacked",
+               "receive(int)", source,tag,1
+               );
+               triggeredTimeoutWarning = true;
+            }
+            if (
+               tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() &&
+               (clock()>timeOutShutdown)
+            ) {
+               tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
+               "peanoclaw::statistics::LevelStatisticsPacked",
+               "receive(int)", source,tag,1
+               );
+            }
+            tarch::parallel::Node::getInstance().receiveDanglingMessages();
          }
-         if (
-            tarch::parallel::Node::getInstance().isTimeOutDeadlockEnabled() &&
-            (clock()>timeOutShutdown)
-         ) {
-            tarch::parallel::Node::getInstance().triggerDeadlockTimeOut(
-            "peanoclaw::statistics::LevelStatisticsPacked",
-            "receive(int)", source,tag,1
-            );
-         }
-         tarch::parallel::Node::getInstance().receiveDanglingMessages();
+         
+         delete sendRequestHandle;
+         
+         #ifdef Debug
+         _log.debug("receive(int,int)", "received " + toString() ); 
+         #endif
+         
       }
-      
-      delete sendRequestHandle;
-      
-      #ifdef Debug
-      _log.debug("receive(int,int)", "received " + toString() ); 
-      #endif
       
    }
    

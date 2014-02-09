@@ -114,7 +114,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendCellDuringFor
         || (!isForking && !localCell.isAssignedToRemoteRank())
       )
     ) {
-    if(localCell.getCellDescriptionIndex() != -1) {
+    if(localCell.holdsSubgrid()) {
       Patch subgrid(localCell);
       _subgridCommunicator.sendSubgrid(subgrid);
 
@@ -175,7 +175,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringFo
 
       assertion2(
         (!localPatch.isLeaf() && !localPatch.isVirtual())
-        || localPatch.getUNewIndex() >= 0,
+        || localPatch.getUIndex() >= 0,
         _position,
         _level
       );

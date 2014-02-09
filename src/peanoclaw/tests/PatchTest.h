@@ -202,6 +202,24 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
      */
     void testOverlapOfRemoteGhostlayers();
 
+    /**
+     * A second testcase for a problem that occured in 2D:
+     *
+     *0/18| 0/18 |0/18
+     *  --|------|--
+     * 1/0|      |2/2
+     *    |      |
+     *  --|------|--
+     * 1/0|  1/0 |2/2
+     *
+     * The subdivision factor is 18.
+     * For rank 2 there is only one area expected:
+     *
+     * offset,  size
+     * [16, 0], [2, 18]
+     */
+    void testOverlapOfRemoteGhostlayers2();
+
   public:
     PatchTest();
     virtual ~PatchTest();

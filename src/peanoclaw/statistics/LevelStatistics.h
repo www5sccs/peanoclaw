@@ -30,9 +30,9 @@ namespace peanoclaw {
  * 		   2007-2009 Wolfgang Eckhardt
  * 		   2012      Tobias Weinzierl
  *
- * 		   build date: 22-10-2013 20:59
+ * 		   build date: 04-02-2014 16:40
  *
- * @date   27/01/2014 19:17
+ * @date   07/02/2014 10:53
  */
 class peanoclaw::statistics::LevelStatistics { 
    
@@ -370,9 +370,9 @@ class peanoclaw::statistics::LevelStatistics {
          
          static void shutdownDatatype();
          
-         void send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise);
+         void send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise, bool communicateBlocking);
          
-         void receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise);
+         void receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise, bool communicateBlocking);
          
          static bool isMessageInQueue(int tag, bool exchangeOnlyAttributesMarkedWithParallelise);
          
@@ -386,9 +386,9 @@ class peanoclaw::statistics::LevelStatistics {
           * 		   2007-2009 Wolfgang Eckhardt
           * 		   2012      Tobias Weinzierl
           *
-          * 		   build date: 22-10-2013 20:59
+          * 		   build date: 04-02-2014 16:40
           *
-          * @date   27/01/2014 19:17
+          * @date   07/02/2014 10:53
           */
          class peanoclaw::statistics::LevelStatisticsPacked { 
             
@@ -724,9 +724,9 @@ class peanoclaw::statistics::LevelStatistics {
                   
                   static void shutdownDatatype();
                   
-                  void send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise);
+                  void send(int destination, int tag, bool exchangeOnlyAttributesMarkedWithParallelise, bool communicateBlocking);
                   
-                  void receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise);
+                  void receive(int source, int tag, bool exchangeOnlyAttributesMarkedWithParallelise, bool communicateBlocking);
                   
                   static bool isMessageInQueue(int tag, bool exchangeOnlyAttributesMarkedWithParallelise);
                   

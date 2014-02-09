@@ -6,9 +6,11 @@
  */
 #include "peanoclaw/ParallelSubgrid.h"
 
+#include "peanoclaw/Area.h"
 #include "peanoclaw/Heap.h"
 
 #include "peano/utils/Globals.h"
+#include "peano/utils/Loop.h"
 
 tarch::logging::Log peanoclaw::ParallelSubgrid::_log("peanoclaw::ParallelSubgrid");
 
@@ -69,6 +71,14 @@ bool peanoclaw::ParallelSubgrid::wasCurrentStateSent() const {
   #endif
 }
 
+tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getAdjacentRanks() const {
+  #ifdef Parallel
+  return _cellDescription->getAdjacentRanks();
+  #else
+  return tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>(-1);
+  #endif
+}
+
 void peanoclaw::ParallelSubgrid::decreaseNumberOfSharedAdjacentVertices(int remoteRank) {
   #ifdef Parallel
   for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
@@ -79,14 +89,6 @@ void peanoclaw::ParallelSubgrid::decreaseNumberOfSharedAdjacentVertices(int remo
       break;
     }
   }
-  #endif
-}
-
-tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getAdjacentRanks() const {
-  #ifdef Parallel
-  return _cellDescription->getAdjacentRanks();
-  #else
-  return tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>(-1);
   #endif
 }
 
@@ -102,14 +104,12 @@ int peanoclaw::ParallelSubgrid::getNumberOfSharedAdjacentVertices(int remoteRank
   #ifdef Parallel
   for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
     if(_cellDescription->getAdjacentRanks(i) == remoteRank) {
-      _cellDescription->getNumberOfSharedAdjacentVertices(i);
+     return _cellDescription->getNumberOfSharedAdjacentVertices(i);
     }
   }
-  assertionFail("Should not occur!");
-  return -1;
-  #else
-  return 0;
+  assertionFail("Should not occur! remoteRank=" << remoteRank << ", adjacentRanks=" << _cellDescription->getAdjacentRanks());
   #endif
+  return -1;
 }
 
 tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getAllNumbersOfTransfersToBeSkipped() const {
@@ -139,8 +139,8 @@ void peanoclaw::ParallelSubgrid::decreaseNumberOfTransfersToBeSkipped() {
   int localRank = tarch::parallel::Node::getInstance().getRank();
   for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
     if(_cellDescription->getAdjacentRanks(i) == localRank) {
-      _cellDescription->setNumberOfTransfersToBeSkipped(
-        _cellDescription->getNumberOfTransfersToBeSkipped() - 1
+      _cellDescription->setNumberOfTransfersToBeSkipped(i,
+        _cellDescription->getNumberOfTransfersToBeSkipped(i) - 1
       );
       break;
     }
@@ -154,7 +154,7 @@ void peanoclaw::ParallelSubgrid::resetNumberOfTransfersToBeSkipped() {
   #endif
 }
 
-void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap (
+void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
   peanoclaw::Vertex * const            vertices,
   const peano::grid::VertexEnumerator& verticesEnumerator
 ) {
@@ -164,20 +164,48 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgridsAndSetGhos
     _cellDescription->setNumberOfSharedAdjacentVertices(i, 0);
   }
 
-  //Count number of adjacent parallel subgrids
-  int entry = 0;
+  //Set adjacent ranks
   for(int vertexIndex = 0; vertexIndex < TWO_POWER_D; vertexIndex++) {
-    bool setRanks[THREE_POWER_D_MINUS_ONE];
-    for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
-      setRanks[i] = false;
-    }
+    tarch::la::Vector<DIMENSIONS, int> vertexPosition = peano::utils::dDelinearised(vertexIndex, 2);
+
+    for(int subgridIndex = 0; subgridIndex < TWO_POWER_D; subgridIndex++) {
+      tarch::la::Vector<DIMENSIONS, int> subgridPosition = (2*vertexPosition + 2*peano::utils::dDelinearised(subgridIndex, 2)) / 2 - 1;
+
+      if(!tarch::la::equals(subgridPosition, 0)) {
+        int entry = Area::linearizeManifoldPosition(subgridPosition);
+        int adjacentRank = vertices[verticesEnumerator(vertexIndex)].getAdjacentRanks()(subgridIndex);
+
+        _cellDescription->setAdjacentRanks(entry, adjacentRank);
+        }
+      }
+  }
+
+  //Count shared vertices
+  for(int vertexIndex = 0; vertexIndex < TWO_POWER_D; vertexIndex++) {
+    tarch::la::Vector<TWO_POWER_D, int> countedForRanks(-1);
 
     for(int subgridIndex = 0; subgridIndex < TWO_POWER_D; subgridIndex++) {
       int adjacentRank = vertices[verticesEnumerator(vertexIndex)].getAdjacentRanks()(subgridIndex);
 
-      if(adjacentRank != tarch::parallel::Node::getInstance().getRank()) {
-        //Count shared vertices and add adjacent ranks
-        listRemoteRankAndAddSharedVertex(adjacentRank, setRanks);
+      bool counted = false;
+      for(int i = 0; i < TWO_POWER_D; i++) {
+        counted |= (countedForRanks(i) == adjacentRank);
+      }
+
+      if(!counted) {
+        for(int i = 0; i < TWO_POWER_D; i++) {
+          if(countedForRanks(i) == -1 || countedForRanks(i) == adjacentRank) {
+            countedForRanks(i) = adjacentRank;
+            break;
+          }
+        }
+        for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+          if(_cellDescription->getAdjacentRanks(i) == -1 || _cellDescription->getAdjacentRanks(i) == adjacentRank) {
+            _cellDescription->setAdjacentRanks(i, adjacentRank);
+            _cellDescription->setNumberOfSharedAdjacentVertices(i, _cellDescription->getNumberOfSharedAdjacentVertices(i) + 1);
+            break;
+          }
+        }
       }
     }
   }

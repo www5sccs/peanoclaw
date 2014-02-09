@@ -71,15 +71,15 @@ class peanoclaw::ParallelSubgrid {
   bool wasCurrentStateSent() const;
 
   /**
-   * Decreases the number of shared adjacent vertices by one.
-   */
-  void decreaseNumberOfSharedAdjacentVertices(int remoteRank);
-
-  /**
    * Returns the adjacent rank or -1 if no or more than one ranks are adjacent
    * to this subgrid.
    */
   tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> getAdjacentRanks() const;
+
+  /**
+   * Decreases the number of shared adjacent vertices by one.
+   */
+  void decreaseNumberOfSharedAdjacentVertices(int remoteRank);
 
   /**
    * Returns the number of adjacent vertices that are shared between this and
@@ -112,9 +112,9 @@ class peanoclaw::ParallelSubgrid {
    *
    * Also, it checks for all adjacent subgrids that reside on the same level
    * whether they belong to a remote rank. If they do, the rank is set to
-   * the current subgrid and the overlap of the ghostlayer is stored as well.
+   * the current subgrid.
    */
-  void countNumberOfAdjacentParallelSubgridsAndSetGhostlayerOverlap(
+  void countNumberOfAdjacentParallelSubgrids(
     peanoclaw::Vertex * const            vertices,
     const peano::grid::VertexEnumerator& verticesEnumerator
   );

@@ -27,6 +27,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 ) {
   logTraceInWith3Arguments("copyGhostLayerDataBlock", size, sourceOffset, destinationOffset);
 
+  //TODO unterweg debug
+//  std::cout << "Copying from " << source << std::endl << " to " << destination << std::endl
+//      << " size=" << size << " sourceOffset=" << sourceOffset << " destinationOffset=" << destinationOffset << std::endl;
+
   assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
 
   double timeFactor;
@@ -47,6 +51,9 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
     int linearSourceUNewIndex = source.getLinearIndexUNew(subcellindex + sourceOffset);
     int linearSourceUOldIndex = source.getLinearIndexUOld(subcellindex + sourceOffset);
     int linearDestinationUOldIndex = destination.getLinearIndexUOld(subcellindex + destinationOffset);
+
+    //TODO unterweg debug
+//    std::cout << "Copying " << (subcellindex + sourceOffset) << std::endl;
 
     for(int unknown = 0; unknown < sourceUnknownsPerSubcell; unknown++) {
       double valueUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
@@ -82,7 +89,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 
 bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferGhostlayerData(Patch& source, Patch& destination) {
   bool sourceHoldsGridData = (source.isVirtual() || source.isLeaf());
-  return destination.isLeaf()
+  return destination.isLeaf() && !destination.isRemote()
             && (( sourceHoldsGridData
                 && !tarch::la::greater(destination.getTimeIntervals().getCurrentTime() + destination.getTimeIntervals().getTimestepSize(), source.getTimeIntervals().getCurrentTime() + source.getTimeIntervals().getTimestepSize()))
             || (source.isLeaf() && !destination.getTimeIntervals().isBlockedByNeighbors()));

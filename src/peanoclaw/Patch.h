@@ -423,10 +423,13 @@ public:
   double getValueUNew(int linearIndex, int unknown) const
   #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
   {
-    int index = linearIndex + uNewStrideCache[0] * unknown;
+    size_t index = linearIndex + uNewStrideCache[0] * unknown;
     #ifdef PATCH_RANGE_CHECK
     return _uNew->at(index).getU();
     #else
+
+    assertion3(index < _uNew->size(), index, _uNew->size(), toString());
+
     return (*_uNew)[index].getU();
     #endif
   }
@@ -447,6 +450,12 @@ public:
   #else
   ;
   #endif
+
+  /**
+   * Sets the given value in the appropriate cell in the uNew array. If necessary
+   * the array is resized to contain the specified cell.
+   */
+  void setValueUNewAndResize(int linearIndex, int unknown, double value);
 
   double getValueUOld(int linearIndex, int unknown) const
   #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
@@ -476,7 +485,33 @@ public:
   ;
   #endif
 
+  /**
+   * Sets the given value in the appropriate cell in the uOld array. If necessary
+   * the array is resized to contain the specified cell.
+   */
+  void setValueUOldAndResize(int linearIndex, int unknown, double value);
+
   double getValueAux(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int auxField) const;
+
+  /**
+   * Returns whether the subcell is actually stored in the subgrid. I.e. this
+   * does not only refer to whether the subcell lies within the outline of the
+   * subgrid, but also whether it is actually represented in the container used
+   * for storing the grid data.
+   *
+   * For non-remote subgrids this method simply returns whether
+   *
+   * $0 <= subcellIndex(i) < subdivisionFactor(i)$ for all $i$.
+   *
+   * For remote subgrids this also takes into account wether the
+   * subcell were transfered from the responsible rank.
+   */
+//  bool storesCellInUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const;
+
+  /**
+   * @see storesCellInUNew
+   */
+//  bool storesCellInUOld(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const;
 
   tarch::la::Vector<DIMENSIONS, double> getSubcellCenter(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const;
 
@@ -518,17 +553,13 @@ public:
   /**
    * Returns the index for the uNew array.
    */
-  int getUNewIndex() const;
+  int getUIndex() const;
 
   /**
-   * Returns the index for the uOld array.
+   * Returns the size of the vector containing the grid values.
+   * This method is just for debugging and assertions.
    */
-//  int getUOldIndex() const;
-
-  /**
-   * Returns the index for the aux array.
-   */
-//  int getAuxIndex() const;
+  size_t getUSize() const;
 
   /**
    * Returns the index for the CellDescription. Not always valid,

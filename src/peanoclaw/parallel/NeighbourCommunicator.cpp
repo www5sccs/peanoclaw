@@ -36,22 +36,12 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
       || !transferedSubgrid.isLeaf()
       || !_onlySendSubgridsAfterChange) {
 
-    //Find adjacent rank
-    bool isSingleTransferOfSubgridToRank = false;
-    tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> adjacentRanks = localParallelSubgrid.getAdjacentRanks();
-    for(int i = 0; i < THREE_POWER_D_DIVIDED_BY_THREE; i++) {
-      if(adjacentRanks(i) == _remoteRank) {
-        if(localParallelSubgrid.getNumberOfSharedAdjacentVertices()(i) == 1) {
-          isSingleTransferOfSubgridToRank = true;
-        }
-        break;
-      }
-    }
-
 //          logInfo("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << " at " << localSubgrid.getPosition() << " on level " << localSubgrid.getLevel()
 //              << " adjacentRanks: " << localParallelSubgrid.getAdjacentRanks() << " shared: " << localParallelSubgrid.getNumberOfSharedAdjacentVertices()
 //              << " isSingleTransfer: " << isSingleTransferOfSubgridToRank << " transferToSkip: " << localParallelSubgrid.getNumberOfTransfersToBeSkipped());
 
+    //Find adjacent rank
+    bool isSingleTransferOfSubgridToRank = (localParallelSubgrid.getNumberOfSharedAdjacentVertices(_remoteRank) == 1);
     if(
       isSingleTransferOfSubgridToRank
       || !_avoidMultipleTransferOfSubgridsIfPossible
@@ -86,9 +76,9 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
   return sentSubgrid;
 }
 
-void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgrid) {
+void peanoclaw::parallel::NeighbourCommunicator::receiveSubgrid(Patch& localSubgrid) {
   #ifdef Parallel
-  logTraceInWith3Arguments("receivePatch", localCellDescriptionIndex, _position, _level);
+  logTraceInWith3Arguments("receiveSubgrid(Subgrid)", localCellDescriptionIndex, _position, _level);
 
   std::vector<CellDescription> remoteCellDescriptionVector = _subgridCommunicator.receiveCellDescription();
   logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
@@ -112,8 +102,16 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
     _statistics.receivedNeighborData();
     if(remoteCellDescription.getUIndex() != -1) {
       if(_onlySendOverlappedCells) {
+        if(!localSubgrid.isLeaf() && !localSubgrid.isVirtual()) {
+          localSubgrid.switchToVirtual();
+        }
+
+        remoteCellDescription.setUIndex(localSubgrid.getUIndex());
+        remoteCellDescription.setCellDescriptionIndex(localSubgrid.getCellDescriptionIndex());
+        CellDescriptionHeap::getInstance().getData(localSubgrid.getCellDescriptionIndex()).at(0) = remoteCellDescription;
+        localSubgrid.reloadCellDescription();
         _subgridCommunicator.receiveOverlappedCells(remoteCellDescription, localSubgrid);
-        remoteCellDescription.setUIndex(localSubgrid.getUNewIndex());
+        assertion(remoteCellDescription.getUIndex() != -1);
       } else {
         remoteCellDescription.setUIndex(_subgridCommunicator.receiveDataArray());
         _subgridCommunicator.deleteArraysFromSubgrid(localSubgrid);
@@ -134,7 +132,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
 
     //Check for zeros in transfered patch
     #ifdef Asserts
-    if(remotePatch.isValid() && remotePatch.isLeaf()) {
+    if(remotePatch.isValid() && remotePatch.isLeaf() && !_onlySendOverlappedCells) {
       dfor(subcellIndex, remotePatch.getSubdivisionFactor()) {
         assertion3(tarch::la::greater(remotePatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUNew());
         assertion3(tarch::la::greater(remotePatch.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUOldWithGhostLayer());
@@ -148,7 +146,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receivePatch(Patch& localSubgri
     DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
   }
 
-  logTraceOut("receivePatch");
+  logTraceOut("receiveSubgrid(Subgrid)");
   #endif
 }
 
@@ -296,7 +294,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgridsForVertex(
           //Only receive if the incoming transfer was not skipped to avoid multiple send of the subgrid.
           if(localParallelSubgrid.getNumberOfTransfersToBeSkipped() == 0 || !_avoidMultipleTransferOfSubgridsIfPossible) {
 
-            receivePatch(localSubgrid);
+            receiveSubgrid(localSubgrid);
             receivedSubgrid = true;
 
             localSubgrid.reloadCellDescription();

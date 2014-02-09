@@ -78,12 +78,27 @@ class peanoclaw::parallel::SubgridCommunicator {
     void sendPaddingDataArray();
 
     /**
+     * Receives an data array, copies it to a local heap array
+     * and returns the local index.
+     */
+    int receiveDataArray();
+
+    /**
      * Receives and returns a CellDescription, either a normal
      * CellDescription, so the resulting vector contains one
      * element, or a padding CellDescription, so the result vector
      * contains zero elements.
      */
     std::vector<CellDescription> receiveCellDescription();
+
+    /**
+     * Receives the cells of the given subgrid that are overlapped by
+     * the corresponding remote ghostlayer.
+     */
+    void receiveOverlappedCells(
+      const CellDescription& remoteCellDescription,
+      Patch&                 subgrid
+    );
 
   public:
     SubgridCommunicator(
@@ -113,19 +128,10 @@ class peanoclaw::parallel::SubgridCommunicator {
     void receivePaddingSubgrid();
 
     /**
-     * Receives an data array, copies it to a local heap array
-     * and returns the local index.
+     * Receives a subgrid from the remote rank and merges
+     * it with the given local subgrid.
      */
-    int receiveDataArray();
-
-    /**
-     * Receives the cells of the given subgrid that are overlapped by
-     * the corresponding remote ghostlayer.
-     */
-    void receiveOverlappedCells(
-      const CellDescription& remoteCellDescription,
-      Patch&                 subgrid
-    );
+    void receiveAndMergeSubgrid(Patch& subgrid);
 
     /**
      * Deletes the cell description and the according arrays.

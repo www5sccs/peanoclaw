@@ -136,12 +136,13 @@ bool peanoclaw::Patch::isVirtual(const CellDescription* cellDescription) {
   if (cellDescription == 0) {
     return false;
   }
-  assertion6(
-      (!cellDescription->getIsVirtual()
-          || ( cellDescription->getUIndex() != -1 )), cellDescription->getPosition(),
-      cellDescription->getSize(), cellDescription->getIsVirtual(), cellDescription->getUIndex(),
-      cellDescription->getUIndex(),
-      cellDescription->getCellDescriptionIndex());
+  assertion5(
+      (!cellDescription->getIsVirtual() || ( cellDescription->getUIndex() != -1 )),
+        cellDescription->getPosition(),
+        cellDescription->getSize(),
+        cellDescription->getIsVirtual(),
+        cellDescription->getUIndex(),
+        cellDescription->getCellDescriptionIndex());
   return cellDescription->getIsVirtual();
 }
 
@@ -166,8 +167,6 @@ peanoclaw::Patch::Patch(const Cell& cell) :
 
   loadCellDescription(cell.getCellDescriptionIndex());
 
-  fillCaches();
-
   logTraceOutWith1Argument("Patch(...)", _cellDescription);
 }
 
@@ -183,8 +182,6 @@ peanoclaw::Patch::Patch(CellDescription& cellDescription) :
 
   loadCellDescription(cellDescription.getCellDescriptionIndex());
 
-  fillCaches();
-
   logTraceOut("Patch(CellDescription,int)");
 }
 
@@ -193,7 +190,6 @@ peanoclaw::Patch::Patch(int cellDescriptionIndex)
     _uNew(0)
 {
   loadCellDescription(cellDescriptionIndex);
-  fillCaches();
 }
 
 peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
@@ -266,8 +262,6 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
 
   loadCellDescription(cellDescriptionIndex);
 
-  fillCaches();
-
   assertionEquals(
       CellDescriptionHeap::getInstance().getData(
           cellDescriptionIndex).size(), 1);
@@ -297,6 +291,8 @@ void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
   } else {
     _uNew = 0;
   }
+
+  fillCaches();
 }
 
 void peanoclaw::Patch::reloadCellDescription() {
@@ -522,6 +518,14 @@ void peanoclaw::Patch::setValueUNew(int linearIndex, int unknown, double value) 
 }
 #endif
 
+void peanoclaw::Patch::setValueUNewAndResize(int linearIndex, int unknown, double value) {
+  size_t index = linearIndex + uNewStrideCache[0] * unknown;
+  if(index + 1 > _uNew->size()) {
+    _uNew->resize(index + 1);
+  }
+  _uNew->at(index) = value;
+}
+
 #ifndef PATCH_INLINE_GETTERS_AND_SETTERS
 double peanoclaw::Patch::getValueUOld(int linearIndex, int unknown) const {
   int index = linearIndex + uOldStrideCache[0] * unknown;
@@ -543,6 +547,14 @@ void peanoclaw::Patch::setValueUOld(int linearIndex, int unknown, double value) 
 #endif
 }
 #endif
+
+void peanoclaw::Patch::setValueUOldAndResize(int linearIndex, int unknown, double value) {
+  int index = linearIndex + uOldStrideCache[0] * unknown;
+  if(_uOldWithGhostlayerArrayIndex + index + 1 > _uNew->size()) {
+    _uNew->resize(_uOldWithGhostlayerArrayIndex + index + 1);
+  }
+  _uNew->at(_uOldWithGhostlayerArrayIndex + index) = value;
+}
 
 double peanoclaw::Patch::getValueAux(
     tarch::la::Vector<DIMENSIONS, int> subcellIndex, int auxField) const {
@@ -620,8 +632,12 @@ double* peanoclaw::Patch::getAuxArray() const {
   return reinterpret_cast<double*>(&(_uNew->at(_auxArrayIndex)));
 }
 
-int peanoclaw::Patch::getUNewIndex() const {
+int peanoclaw::Patch::getUIndex() const {
   return _cellDescription->getUIndex();
+}
+
+size_t peanoclaw::Patch::getUSize() const {
+  return _uNew->size();
 }
 
 int peanoclaw::Patch::getCellDescriptionIndex() const {
@@ -761,12 +777,9 @@ std::string peanoclaw::Patch::toString() const {
         << ",ghostlayerWidth=" << getGhostlayerWidth()
         << ",unknownsPerSubcell=" << _cellDescription->getUnknownsPerSubcell()
         << ",cellDescriptionIndex=" << getCellDescriptionIndex()
-        << ",uNewIndex=" << getUNewIndex()
-//        << ",uOldIndex=" << getUOldIndex()
-//        << ",elements in uNew=" << ((_uNew == 0) ? 0 : (int) _uNew->size())
+        << ",uIndex=" << getUIndex()
         << ",elements in uNew=" << ((_uNew == 0) ? 0 : _uOldWithGhostlayerArrayIndex)
         << ",elements in uOld="
-//        << ((_uOldWithGhostlayer == 0) ? 0 : (int) _uOldWithGhostlayer->size())
         << ((_uNew == 0) ? 0 : (_auxArrayIndex - _uOldWithGhostlayerArrayIndex))
         << ",age=" << _cellDescription->getAgeInGridIterations()
 
@@ -792,6 +805,7 @@ std::string peanoclaw::Patch::toString() const {
 #ifdef Parallel
         << ",isRemote=" << _cellDescription->getIsRemote()
         << ",adjacentRanks=" << _cellDescription->getAdjacentRanks()
+        << ",overlapOfRemoteGhostlayers=" << _cellDescription->getOverlapByRemoteGhostlayer()
         << ",numberOfTransfersToBeSkipped=" << _cellDescription->getNumberOfTransfersToBeSkipped()
         << ",numberOfAdjacentSharedVertices=" << _cellDescription->getNumberOfSharedAdjacentVertices()
 #endif
@@ -852,7 +866,7 @@ void peanoclaw::Patch::switchToNonVirtual() {
   assertion(!isLeaf())
   _cellDescription->setIsVirtual(false);
   if (_cellDescription->getUIndex() != -1) {
-    DataHeap::getInstance().deleteData(getUNewIndex());
+    DataHeap::getInstance().deleteData(getUIndex());
     _cellDescription->setUIndex(-1);
     _uNew = 0;
   }

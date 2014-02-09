@@ -229,7 +229,7 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids {
      * Checks for each adjacent subgrid that belongs to the local rank whether
      * it is overlapped by a ghostlayer of a remote adjacent subgrid.
      */
-    void setOverlapOfRemoteGhostlayers();
+    void setOverlapOfRemoteGhostlayers(int targetSubgridIndex);
 };
 
 /**
@@ -274,10 +274,12 @@ class peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlaye
   private:
     const int _localRank;
     const tarch::la::Vector<TWO_POWER_D, int>& _adjacentRanks;
+    const int _targetSubgridIndex;
 
   public:
     SetOverlapOfRemoteGhostlayerFunctor(
-      const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks
+      const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks,
+      int targetSubgridIndex
     );
 
     void operator() (

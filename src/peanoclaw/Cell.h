@@ -58,6 +58,13 @@ class peanoclaw::Cell: public peano::grid::Cell< peanoclaw::records::Cell > {
     void setCellDescriptionIndex(int index);
 
     int getCellDescriptionIndex() const;
+
+    /**
+     * Returns whether the subgrid represented by
+     * this cell is valid. This corresponds to whether
+     * the cell-description index is valid.
+     */
+    bool holdsSubgrid() const;
 };
 
 

@@ -202,7 +202,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSub
   assertionNumericalEquals(subgrid.getPosition(), virtualPatch.getPosition());
   assertionNumericalEquals(subgrid.getSize(), virtualPatch.getSize());
   assertionEquals(subgrid.getLevel(), virtualPatch.getLevel());
-  assertionEquals(subgrid.getUNewIndex(), virtualPatch.getUNewIndex());
+  assertionEquals(subgrid.getUIndex(), virtualPatch.getUIndex());
 //    assertionEquals(finePatch.getUOldIndex(), virtualPatch.getUOldIndex());
 
   //Fill ghostlayer
@@ -285,7 +285,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateDu
       assertion1(localPatch.isVirtual() || localPatch.isLeaf(), localPatch);
 
       //Delete current content of patch
-      DataHeap::getInstance().deleteData(localPatch.getUNewIndex());
+      DataHeap::getInstance().deleteData(localPatch.getUIndex());
 
       //Merge
       localCellDescription.setUIndex(remoteCellDescription.getUIndex());
