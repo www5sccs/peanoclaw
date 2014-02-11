@@ -13,12 +13,57 @@
 namespace peanoclaw {
   namespace interSubgridCommunication {
     class CornerExtrapolation;
+    class EdgeExtrapolation;
     class Extrapolation;
+    class ExtrapolationAxis;
   }
 }
 
+class peanoclaw::interSubgridCommunication::ExtrapolationAxis {
+
+  private:
+    const Patch& _subgrid;
+    int          _axis;
+    int          _linearSubcellIndex;
+    int          _linearIndexSupport0;
+    int          _linearIndexSupport1;
+    int          _distanceSupport0;
+    int          _distanceSupport1;
+    double       _maximumGradient;
+
+  public:
+    /**
+     * @param subcellIndex The index of the subcell onto which the values
+     *                     should be extrapolated.
+     * @param subgrid The subgrid on which the extrapolation is performed.
+     * @param axis The dimension along which this extrapolation axis is
+     *             oriented.
+     * @param direction The direction along the axis in that the extrapolation
+     *                  is performed. I.e. this points from the source subcells
+     *                  to the extrapolated subcell.
+     */
+    ExtrapolationAxis(
+      const tarch::la::Vector<DIMENSIONS,int>& subcellIndex,
+      const peanoclaw::Patch&                  subgrid,
+      int                                      axis,
+      int                                      direction
+    );
+
+    /**
+     * Returns the extrapolated value for the subcell specified
+     * in the constructor.
+     */
+    double getExtrapolatedValue(int unknown);
+
+    /**
+     * Returns the maximum gradient used for all extrapolations done
+     * so far.
+     */
+    double getMaximumGradient() const;
+};
+
 /**
- * Functor for traversing the corners of a patch and interpolating the ghostlayer values.
+ * Functor for traversing the corners in 3D of a subgrid and interpolating the ghostlayer values.
  */
 class peanoclaw::interSubgridCommunication::CornerExtrapolation {
   private:
@@ -26,9 +71,30 @@ class peanoclaw::interSubgridCommunication::CornerExtrapolation {
 
   public:
     void operator()(
-      peanoclaw::Patch& patch,
+      peanoclaw::Patch& subgrid,
       const peanoclaw::Area& area,
       const tarch::la::Vector<DIMENSIONS,int> cornerIndex
+    );
+
+    double getMaximumGradient() const;
+};
+
+/**
+ * Functor for traversing the edges (in 3D) or corners (in 2D) of a subgrid and
+ * interpolating the ghostlayer values.
+ */
+class peanoclaw::interSubgridCommunication::EdgeExtrapolation {
+  private:
+    double _maximumGradient;
+
+  public:
+
+    EdgeExtrapolation();
+
+    void operator()(
+      peanoclaw::Patch& subgrid,
+      const peanoclaw::Area& area,
+      const tarch::la::Vector<DIMENSIONS,int>& direction
     );
 
     double getMaximumGradient() const;
@@ -38,34 +104,26 @@ class peanoclaw::interSubgridCommunication::CornerExtrapolation {
  * This class contains functionality to extrapolate parts of a
  * ghostlayer to other parts. This is used to fill edges or
  * corners of a ghostlayer to avoid dependency of some adjacent
- * patches.
+ * subgrids.
  */
 class peanoclaw::interSubgridCommunication::Extrapolation {
 
   private:
-    peanoclaw::Patch& _patch;
+    peanoclaw::Patch& _subgrid;
+
+  public:
+    Extrapolation(Patch& subgrid);
 
     /**
      * Extrapolates the values from the ghostlayer faces to the edges.
-     * In 2D this operation does nothing.
      */
     double extrapolateEdges();
 
     /**
      * Extrapolates the values from the ghostlayer faces/edges to the corners.
+     * In 2D this operation does nothing.
      */
     double extrapolateCorners();
-
-  public:
-    Extrapolation(Patch& patch);
-
-    /**
-     * Extrapolates the ghostlayer from the faces to the edges or corners depending
-     * on the dimensionality.
-     *
-     * Returns an estimate of the maximum gradient used for extrapolation.
-     */
-    double extrapolateGhostlayer();
 };
 
 

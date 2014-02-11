@@ -333,6 +333,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::checkForCh
 void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::setOverlapOfRemoteGhostlayers(
   int targetSubgridIndex
 ) {
+  #ifdef Parallel
   //Fill ghost layers of adjacent cells
   //Get adjacent cell descriptions
   CellDescription* cellDescriptions[TWO_POWER_D];
@@ -360,6 +361,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::setOverlap
   #ifdef Dim3
   peanoclaw::interSubgridCommunication::aspects::
     CornerAdjacentPatchTraversal<SetOverlapOfRemoteGhostlayerFunctor>(patches, functor);
+  #endif
   #endif
 }
 
@@ -395,7 +397,16 @@ bool peanoclaw::interSubgridCommunication::aspects::CheckIntersectingParallelAnd
 peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayerFunctor::SetOverlapOfRemoteGhostlayerFunctor(
   const tarch::la::Vector<TWO_POWER_D, int>& adjacentRanks,
   int targetSubgridIndex
-) : _localRank(tarch::parallel::Node::getInstance().getRank()), _adjacentRanks(adjacentRanks), _targetSubgridIndex(targetSubgridIndex) {
+) :
+    _localRank(
+        #ifdef Parallel
+        tarch::parallel::Node::getInstance().getRank()
+        #else
+        0
+        #endif
+        ),
+        _adjacentRanks(adjacentRanks),
+        _targetSubgridIndex(targetSubgridIndex) {
 }
 
 void peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayerFunctor::operator() (

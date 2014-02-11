@@ -18,6 +18,7 @@ void peanoclaw::ParallelSubgrid::listRemoteRankAndAddSharedVertex(
   int  remoteRank,
   bool setRanks[THREE_POWER_D_MINUS_ONE]
 ) {
+  #ifdef Parallel
   //Search slot to store remote rank
   for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
     if(_cellDescription->getAdjacentRanks(i) == remoteRank
@@ -32,6 +33,7 @@ void peanoclaw::ParallelSubgrid::listRemoteRankAndAddSharedVertex(
       break;
     }
   }
+  #endif
 }
 
 peanoclaw::ParallelSubgrid::ParallelSubgrid(
@@ -214,15 +216,25 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
 }
 
 void peanoclaw::ParallelSubgrid::setOverlapOfRemoteGhostlayer(int subgridIndex, int overlap) {
+  #ifdef Parallel
   _cellDescription->setOverlapByRemoteGhostlayer(subgridIndex, overlap);
+  #endif
 }
 
 int peanoclaw::ParallelSubgrid::getOverlapOfRemoteGhostlayer(int subgridIndex) const {
+  #ifdef Parallel
   return _cellDescription->getOverlapByRemoteGhostlayer(subgridIndex);
+  #else
+  return 0;
+  #endif
 }
 
 tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> peanoclaw::ParallelSubgrid::getOverlapOfRemoteGhostlayers() const {
+  #ifdef Parallel
   return _cellDescription->getOverlapByRemoteGhostlayer();
+  #else
+  return 0;
+  #endif
 }
 
 bool peanoclaw::ParallelSubgrid::isAdjacentToLocalSubdomain(

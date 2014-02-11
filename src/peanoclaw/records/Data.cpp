@@ -260,7 +260,7 @@ peanoclaw::records::DataPacked peanoclaw::records::Data::convert() const{
       if (communicateBlocking) {
       
          MPI_Status  status;
-         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
          if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
             msg << "failed to start to receive peanoclaw::records::Data from node "
@@ -634,7 +634,7 @@ peanoclaw::records::Data peanoclaw::records::DataPacked::convert() const{
       if (communicateBlocking) {
       
          MPI_Status  status;
-         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
          if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
             msg << "failed to start to receive peanoclaw::records::DataPacked from node "

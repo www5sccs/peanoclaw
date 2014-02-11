@@ -591,10 +591,10 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         patch.copyUNewToUOld();
 
         //Extrapolate ghostlayer if necessary
-        if(_useDimensionalSplittingOptimization) {
-          peanoclaw::interSubgridCommunication::Extrapolation extrapolation(patch);
-          extrapolation.extrapolateGhostlayer();
-        }
+//        if(_useDimensionalSplittingOptimization) {
+//          peanoclaw::interSubgridCommunication::Extrapolation extrapolation(patch);
+//          extrapolation.extrapolateGhostlayer();
+//        }
 
         // Filling boundary layers for the given patch...
         fillBoundaryLayers(

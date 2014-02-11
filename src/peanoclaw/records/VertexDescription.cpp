@@ -327,7 +327,7 @@ peanoclaw::records::VertexDescriptionPacked peanoclaw::records::VertexDescriptio
       if (communicateBlocking) {
       
          MPI_Status  status;
-         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
          if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
             msg << "failed to start to receive peanoclaw::records::VertexDescription from node "
@@ -765,7 +765,7 @@ peanoclaw::records::VertexDescription peanoclaw::records::VertexDescriptionPacke
       if (communicateBlocking) {
       
          MPI_Status  status;
-         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
          if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
             msg << "failed to start to receive peanoclaw::records::VertexDescriptionPacked from node "

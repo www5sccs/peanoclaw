@@ -24,10 +24,10 @@ class peanoclaw::interSubgridCommunication::aspects::CornerTraversal {
 
   public:
     /**
-     * Traverses all $2^d$ corners of the given patch.
+     * Traverses all $2^d$ corners of the given subgrid.
      */
     CornerTraversal(
-      Patch& patch,
+      Patch& subgrid,
       LoopBody& loopBody
     );
 };

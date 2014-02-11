@@ -89,7 +89,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
 
 bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferGhostlayerData(Patch& source, Patch& destination) {
   bool sourceHoldsGridData = (source.isVirtual() || source.isLeaf());
-  return destination.isLeaf() && !destination.isRemote()
+  return destination.isLeaf()
+            #ifdef Parallel
+            && !destination.isRemote()
+            #endif
             && (( sourceHoldsGridData
                 && !tarch::la::greater(destination.getTimeIntervals().getCurrentTime() + destination.getTimeIntervals().getTimestepSize(), source.getTimeIntervals().getCurrentTime() + source.getTimeIntervals().getTimestepSize()))
             || (source.isLeaf() && !destination.getTimeIntervals().isBlockedByNeighbors()));
@@ -208,13 +211,23 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborT
   }
 }
 
-void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers(int destinationPatchIndex) {
-  logTraceIn("fillGhostLayers()");
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayersAndUpdateNeighborTimes(
+  int destinationPatchIndex
+) {
+  logTraceIn("fillGhostLayersAndUpdateNeighborTimes(int)");
+
+  UpdateNeighborTimeFunctor functor(
+    *this
+  );
 
   //Faces
   FillGhostlayerFaceFunctor faceFunctor(
     *this,
     destinationPatchIndex
+  );
+  peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<UpdateNeighborTimeFunctor>(
+    _patches,
+    functor
   );
   peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<FillGhostlayerFaceFunctor>(
     _patches,
@@ -227,6 +240,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
       *this,
       destinationPatchIndex
     );
+    peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<UpdateNeighborTimeFunctor>(
+      _patches,
+      functor
+    );
     peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<FillGhostlayerEdgeFunctor>(
       _patches,
       edgeFunctor
@@ -238,13 +255,19 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
       *this,
       destinationPatchIndex
     );
+    peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<UpdateNeighborTimeFunctor>(
+      _patches,
+      functor
+    );
     peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<FillGhostlayerCornerFunctor>(
       _patches,
       cornerFunctor
     );
     #endif
+  } else {
+
   }
-  logTraceOut("fillGhostLayers()");
+  logTraceOut("fillGhostLayersAndUpdateNeighborTimes(int)");
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborTimes() {

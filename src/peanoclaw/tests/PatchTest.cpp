@@ -333,7 +333,7 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeig
 }
 
 void peanoclaw::tests::PatchTest::testSettingOverlapOfRemoteGhostlayer() {
-  #ifdef Dim2
+  #if defined(Dim2) && defined(Parallel)
   peanoclaw::Vertex fineGridVertex;
   fineGridVertex.setAdjacentRank(0, 1);
   fineGridVertex.setAdjacentRank(1, 2);
@@ -406,8 +406,9 @@ void peanoclaw::tests::PatchTest::testSettingOverlapOfRemoteGhostlayer() {
 }
 
 void peanoclaw::tests::PatchTest::testManifolds() {
+  #ifdef Parallel
   tarch::la::Vector<DIMENSIONS, int> manifoldPosition;
-  #ifdef Dim2
+  #if defined(Dim2)
   validateEquals(Area::getNumberOfManifolds(0), 4);
   validateEquals(Area::getNumberOfManifolds(1), 4);
 
@@ -550,6 +551,7 @@ void peanoclaw::tests::PatchTest::testNumberOfAdjacentManifolds() {
 
   assignList(manifoldPosition) = -1, -1, 0;
   validateEquals(Area::getNumberOfAdjacentManifolds(manifoldPosition, 1, 0), 2);
+  #endif
   #endif
 }
 

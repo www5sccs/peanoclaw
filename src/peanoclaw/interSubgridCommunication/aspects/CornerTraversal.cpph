@@ -11,19 +11,20 @@
 
 template<class LoopBody>
 peanoclaw::interSubgridCommunication::aspects::CornerTraversal<LoopBody>::CornerTraversal(
-  Patch& patch,
+  Patch& subgrid,
   LoopBody& loopBody
 ) {
-
-  tarch::la::Vector<DIMENSIONS,int> size(patch.getGhostlayerWidth());
+  #ifdef Dim3
+  tarch::la::Vector<DIMENSIONS,int> size(subgrid.getGhostlayerWidth());
 
   dfor(cornerIndex, 2) {
     tarch::la::Vector<DIMENSIONS,int> offset
-      = tarch::la::multiplyComponents(cornerIndex, patch.getSubdivisionFactor() + patch.getGhostlayerWidth())
-        - patch.getGhostlayerWidth();
+      = tarch::la::multiplyComponents(cornerIndex, subgrid.getSubdivisionFactor() + subgrid.getGhostlayerWidth())
+        - subgrid.getGhostlayerWidth();
     Area area(offset, size);
 
-    loopBody(patch, area, cornerIndex);
+    loopBody(subgrid, area, 2*cornerIndex-1);
   }
+  #endif
 }
 

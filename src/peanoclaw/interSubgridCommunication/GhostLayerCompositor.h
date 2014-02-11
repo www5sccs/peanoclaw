@@ -160,7 +160,7 @@ public:
    * Fills the ghostlayers of the given patches as far as possible. Also the
    * maximum timestep size for the patches is adjusted.
    */
-  void fillGhostLayers(int destinationPatchIndex = -1);
+  void fillGhostLayersAndUpdateNeighborTimes(int destinationPatchIndex = -1);
 
   /**
    * Updates the maximum timesteps for the given patches depending on the time

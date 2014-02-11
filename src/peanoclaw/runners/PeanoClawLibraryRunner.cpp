@@ -278,10 +278,13 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   DataHeap::getInstance().plotStatistics();
 
   _simulationWatch.stopTimer();
+
+  #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
     logInfo("~PeanoClawLibraryRunner", "Time for initialization: " << _initializationWatch.getCalendarTime());
     logInfo("~PeanoClawLibraryRunner", "Time for simulation: " << _simulationWatch.getCalendarTime());
   }
+  #endif
 
   #ifdef Parallel
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
@@ -350,7 +353,7 @@ int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
   while ( newMasterNode != tarch::parallel::NodePool::JobRequestMessageAnswerValues::Terminate ) {
     if ( newMasterNode >= tarch::parallel::NodePool::JobRequestMessageAnswerValues::NewMaster ) {
       peano::parallel::messages::ForkMessage forkMessage;
-      forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true);
+      forkMessage.receive(tarch::parallel::NodePool::getInstance().getMasterRank(),tarch::parallel::NodePool::getInstance().getTagForForkMessages(), true, ReceiveIterationControlMessagesBlocking);
       _repository->restart(
         forkMessage.getH(),
         forkMessage.getDomainOffset(),
@@ -366,10 +369,10 @@ int peanoclaw::runners::PeanoClawLibraryRunner::runWorker() {
         tarch::timing::Watch masterWorkerSpacetreeWatch("", "", false);
         peanoclaw::repositories::Repository::ContinueCommand continueCommand = _repository->continueToIterate();
         masterWorkerSpacetreeWatch.stopTimer();
-        logInfo("", "Waiting time for vertical spacetree communication: "
-              << masterWorkerSpacetreeWatch.getCalendarTime() << " (total), "
-              << masterWorkerSpacetreeWatch.getCalendarTime() << " (average) "
-              << 1 << " samples");
+//        logInfo("", "Waiting time for vertical spacetree communication: "
+//              << masterWorkerSpacetreeWatch.getCalendarTime() << " (total), "
+//              << masterWorkerSpacetreeWatch.getCalendarTime() << " (average) "
+//              << 1 << " samples");
 
         switch (continueCommand) {
           case peanoclaw::repositories::Repository::Continue:

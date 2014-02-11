@@ -668,7 +668,7 @@ peanoclaw::statistics::TimeIntervalStatisticsPacked peanoclaw::statistics::TimeI
       if (communicateBlocking) {
       
          MPI_Status  status;
-         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
          if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
             msg << "failed to start to receive peanoclaw::statistics::TimeIntervalStatistics from node "
@@ -1461,7 +1461,7 @@ peanoclaw::statistics::TimeIntervalStatistics peanoclaw::statistics::TimeInterva
       if (communicateBlocking) {
       
          MPI_Status  status;
-         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
          if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
             msg << "failed to start to receive peanoclaw::statistics::TimeIntervalStatisticsPacked from node "

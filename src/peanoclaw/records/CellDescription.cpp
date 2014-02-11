@@ -1603,7 +1603,7 @@
          if (communicateBlocking) {
          
             MPI_Status  status;
-            const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+            const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
             if ( result != MPI_SUCCESS ) {
                std::ostringstream msg;
                msg << "failed to start to receive peanoclaw::records::CellDescription from node "
@@ -3396,7 +3396,7 @@
          if (communicateBlocking) {
          
             MPI_Status  status;
-            const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+            const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
             if ( result != MPI_SUCCESS ) {
                std::ostringstream msg;
                msg << "failed to start to receive peanoclaw::records::CellDescriptionPacked from node "
@@ -4763,7 +4763,7 @@
          if (communicateBlocking) {
          
             MPI_Status  status;
-            const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+            const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
             if ( result != MPI_SUCCESS ) {
                std::ostringstream msg;
                msg << "failed to start to receive peanoclaw::records::CellDescription from node "
@@ -6199,7 +6199,7 @@
          if (communicateBlocking) {
          
             MPI_Status  status;
-            const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+            const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
             if ( result != MPI_SUCCESS ) {
                std::ostringstream msg;
                msg << "failed to start to receive peanoclaw::records::CellDescriptionPacked from node "

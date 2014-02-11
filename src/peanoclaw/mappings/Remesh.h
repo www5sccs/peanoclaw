@@ -21,8 +21,8 @@
 #include "tarch/logging/Log.h"
 #include "tarch/la/Vector.h"
 #include "tarch/la/VectorCompare.h"
-
 #include "tarch/multicore/MulticoreDefinitions.h"
+#include "tarch/timing/Watch.h"
 
 namespace peanoclaw {
 

@@ -307,7 +307,7 @@
       if (communicateBlocking) {
       
          MPI_Status  status;
-         const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+         const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
          _senderDestinationRank = status.MPI_SOURCE;
          if ( result != MPI_SUCCESS ) {
             std::ostringstream msg;
@@ -725,7 +725,7 @@ void peanoclaw::records::CellPacked::receive(int source, int tag, bool exchangeO
    if (communicateBlocking) {
    
       MPI_Status  status;
-      const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+      const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
       _senderDestinationRank = status.MPI_SOURCE;
       if ( result != MPI_SUCCESS ) {
          std::ostringstream msg;
@@ -1149,7 +1149,7 @@ void peanoclaw::records::Cell::receive(int source, int tag, bool exchangeOnlyAtt
 if (communicateBlocking) {
 
    MPI_Status  status;
-   const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+   const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
    _senderDestinationRank = status.MPI_SOURCE;
    if ( result != MPI_SUCCESS ) {
       std::ostringstream msg;
@@ -1563,7 +1563,7 @@ void peanoclaw::records::CellPacked::receive(int source, int tag, bool exchangeO
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
    std::ostringstream msg;
@@ -2052,7 +2052,7 @@ void peanoclaw::records::Cell::receive(int source, int tag, bool exchangeOnlyAtt
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -2527,7 +2527,7 @@ void peanoclaw::records::CellPacked::receive(int source, int tag, bool exchangeO
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -2942,7 +2942,7 @@ void peanoclaw::records::Cell::receive(int source, int tag, bool exchangeOnlyAtt
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -3346,7 +3346,7 @@ void peanoclaw::records::CellPacked::receive(int source, int tag, bool exchangeO
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -3859,7 +3859,7 @@ void peanoclaw::records::Cell::receive(int source, int tag, bool exchangeOnlyAtt
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -4358,7 +4358,7 @@ void peanoclaw::records::CellPacked::receive(int source, int tag, bool exchangeO
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -4857,7 +4857,7 @@ void peanoclaw::records::Cell::receive(int source, int tag, bool exchangeOnlyAtt
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -5342,7 +5342,7 @@ void peanoclaw::records::CellPacked::receive(int source, int tag, bool exchangeO
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -5845,7 +5845,7 @@ void peanoclaw::records::Cell::receive(int source, int tag, bool exchangeOnlyAtt
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -6334,7 +6334,7 @@ void peanoclaw::records::CellPacked::receive(int source, int tag, bool exchangeO
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -6773,7 +6773,7 @@ void peanoclaw::records::Cell::receive(int source, int tag, bool exchangeOnlyAtt
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
@@ -7201,7 +7201,7 @@ void peanoclaw::records::CellPacked::receive(int source, int tag, bool exchangeO
 if (communicateBlocking) {
 
 MPI_Status  status;
-const int   result = MPI_Recv(this, 1, communicateBlocking ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
+const int   result = MPI_Recv(this, 1, exchangeOnlyAttributesMarkedWithParallelise ? Datatype : FullDatatype, source, tag, tarch::parallel::Node::getInstance().getCommunicator(), &status);
 _senderDestinationRank = status.MPI_SOURCE;
 if ( result != MPI_SUCCESS ) {
 std::ostringstream msg;
