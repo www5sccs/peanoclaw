@@ -1,0 +1,48 @@
+/*
+ * EdgeTraversal.cpph
+ *
+ *  Created on: Feb 10, 2014
+ *      Author: kristof
+ */
+#include "peanoclaw/Area.h"
+
+#include "peano/utils/Loop.h"
+
+template<class LoopBody>
+peanoclaw::interSubgridCommunication::aspects::EdgeTraversal<LoopBody>::EdgeTraversal(
+  Patch& subgrid,
+  LoopBody& loopBody
+) {
+  #ifdef Dim2
+  tarch::la::Vector<DIMENSIONS,int> size(subgrid.getGhostlayerWidth());
+
+  dfor(edgeIndex, 2) {
+    tarch::la::Vector<DIMENSIONS,int> offset
+      = tarch::la::multiplyComponents(edgeIndex, subgrid.getSubdivisionFactor() + subgrid.getGhostlayerWidth())
+        - subgrid.getGhostlayerWidth();
+    Area area(offset, size);
+
+    loopBody(subgrid, area, 2*edgeIndex - 1);
+  }
+  #elif Dim3
+  for(int d = 0; d < DIMENSIONS; d++) {
+    tarch::la::Vector<DIMENSIONS,int> size(subgrid.getGhostlayerWidth());
+    size(d) = subgrid.getSubdivisionFactor()(d);
+
+    dfor(edgeIndex, 2) {
+      if(edgeIndex(d) == 0) {
+        tarch::la::Vector<DIMENSIONS,int> offset
+          = tarch::la::multiplyComponents(edgeIndex, subgrid.getSubdivisionFactor() + subgrid.getGhostlayerWidth())
+            - subgrid.getGhostlayerWidth();
+        offset(d) = 0;
+        Area area(offset, size);
+
+        tarch::la::Vector<DIMENSIONS,int> direction = 2*edgeIndex-1;
+        direction(d) = 0;
+        loopBody(subgrid, area, direction);
+      }
+    }
+  }
+  #endif
+}
+
