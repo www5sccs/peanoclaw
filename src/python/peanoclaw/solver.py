@@ -98,7 +98,6 @@ class Solver(Solver):
       return Peano(
          solution,
          self.initial_minimal_mesh_width,
-         self.solver.dimensional_split,
          self.num_ghost,
          self.solver.dt_initial,
          self.initialization_callback,
