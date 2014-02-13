@@ -159,7 +159,6 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostlayerM
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillOrExtrapolateGhostlayersAndUpdateNeighborTime(
   int destinationSubgridIndex
 ) {
-  //TODO unterweg debug
   int extrapolationUpToDimension = DIMENSIONS-2;
   int fillingUpToDimension = DIMENSIONS-1;
   Extrapolation extrapolation(_patches[destinationSubgridIndex]);
@@ -178,7 +177,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillOrExtrapola
     }
 
     extrapolationUpToDimension--;
-  } while(false /*maximalGradient > 1.0/(extrapolationUpToDimension+2) && extrapolationUpToDimension > -1*/);
+  } while(maximalGradient > 1.0/(extrapolationUpToDimension+2) && extrapolationUpToDimension > -1);
 }
 
 peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor(
@@ -307,7 +306,8 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
         }
       }
     } else {
-      if(_patches[destinationSubgridIndex].isValid() && _patches[destinationSubgridIndex].isLeaf()) {
+      if(_patches[destinationSubgridIndex].isValid()
+          && (_patches[destinationSubgridIndex].isLeaf() || _patches[destinationSubgridIndex].isVirtual())) {
         fillOrExtrapolateGhostlayersAndUpdateNeighborTime(destinationSubgridIndex);
       }
     }
@@ -356,23 +356,21 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlaye
     faceFunctor
   );
 
-  if(!_useDimensionalSplittingOptimization) {
-    //Edges
-    UpdateGhostlayerBoundsEdgeFunctor edgeFunctor(*this);
-    peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<UpdateGhostlayerBoundsEdgeFunctor>(
-      _patches,
-      edgeFunctor
-    );
+  //Edges
+  UpdateGhostlayerBoundsEdgeFunctor edgeFunctor(*this);
+  peanoclaw::interSubgridCommunication::aspects::EdgeAdjacentPatchTraversal<UpdateGhostlayerBoundsEdgeFunctor>(
+    _patches,
+    edgeFunctor
+  );
 
-    //Corners
-    #ifdef Dim3
-    UpdateGhostlayerBoundsCornerFunctor cornerFunctor(*this);
-    peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<UpdateGhostlayerBoundsCornerFunctor>(
-      _patches,
-      cornerFunctor
-    );
-    #endif
-  }
+  //Corners
+  #ifdef Dim3
+  UpdateGhostlayerBoundsCornerFunctor cornerFunctor(*this);
+  peanoclaw::interSubgridCommunication::aspects::CornerAdjacentPatchTraversal<UpdateGhostlayerBoundsCornerFunctor>(
+    _patches,
+    cornerFunctor
+  );
+  #endif
 }
 
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyFluxCorrection() {
