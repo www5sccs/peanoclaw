@@ -31,6 +31,9 @@ namespace peanoclaw {
     class UpdateGhostlayerBoundsFaceFunctor;
     class UpdateGhostlayerBoundsEdgeFunctor;
     class UpdateGhostlayerBoundsCornerFunctor;
+
+    class ExtrapolateGhostlayerEdgeFunctor;
+    class ExtrapolateGhostlayerCornerFunctor;
   }
 }
 
@@ -198,20 +201,20 @@ class peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsEdgeFunctor {
  */
 class peanoclaw::interSubgridCommunication::UpdateGhostlayerBoundsCornerFunctor {
   private:
-  GhostLayerCompositor& _ghostlayerCompositor;
+    GhostLayerCompositor& _ghostlayerCompositor;
 
   public:
-  UpdateGhostlayerBoundsCornerFunctor(
-    GhostLayerCompositor& ghostlayerCompositor
-  );
+    UpdateGhostlayerBoundsCornerFunctor(
+      GhostLayerCompositor& ghostlayerCompositor
+    );
 
-  void operator() (
-    peanoclaw::Patch&                         patch1,
-    int                                       index1,
-    peanoclaw::Patch&                         patch2,
-    int                                       index2,
-    const tarch::la::Vector<DIMENSIONS, int>& direction
-  );
+    void operator() (
+      peanoclaw::Patch&                         patch1,
+      int                                       index1,
+      peanoclaw::Patch&                         patch2,
+      int                                       index2,
+      const tarch::la::Vector<DIMENSIONS, int>& direction
+    );
 };
 
 #endif /* PEANOCLAW_INTERSUBGRIDCOMMUNICATION_GHOSTLAYERCOMPOSITORFUNCTORS_H_ */

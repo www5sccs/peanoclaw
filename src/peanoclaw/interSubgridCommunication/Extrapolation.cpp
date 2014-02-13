@@ -15,7 +15,7 @@ peanoclaw::interSubgridCommunication::ExtrapolationAxis::ExtrapolationAxis(
   const peanoclaw::Patch&                  subgrid,
   int                                      axis,
   int                                      direction
-) : _subgrid(subgrid), _axis(axis), _maximumGradient(0.0) {
+) : _subgrid(subgrid), _axis(axis), _maximumLinearError(0.0) {
   _linearSubcellIndex = subgrid.getLinearIndexUOld(subcellIndex);
 
   tarch::la::Vector<DIMENSIONS, int> support0 = subcellIndex;
@@ -35,16 +35,20 @@ double peanoclaw::interSubgridCommunication::ExtrapolationAxis::getExtrapolatedV
   double valueSupport0 = _subgrid.getValueUOld(_linearIndexSupport0, unknown);
   double valueSupport1 = _subgrid.getValueUOld(_linearIndexSupport1, unknown);
 
-  _maximumGradient = std::max(_maximumGradient, std::abs((valueSupport0 - valueSupport1) / _subgrid.getSubcellSize()(_axis)));
+  if(unknown == 0) {
+    int extrapolationDistance = std::max(_distanceSupport0, _distanceSupport1) - 1;
+    _maximumLinearError = std::max(_maximumLinearError,
+      std::abs((valueSupport0 - valueSupport1) * extrapolationDistance) / std::min(valueSupport0, valueSupport1)
+    );
+  }
 
-  //TODO unterweg debug
-  std::cout << "vs0=" << valueSupport0 << ", vs1=" << valueSupport1 << ", ds0=" << _distanceSupport0 << ", ds1=" << _distanceSupport1 << std::endl;
+  logDebug("getExtrapolatedValue(int)", "valueSupport0=" << valueSupport0 << ", valueSupport1=" << valueSupport1 << ", distanceSupport0=" << _distanceSupport0 << ", distanceSupport1=" << _distanceSupport1);
 
   return (valueSupport0 * (_distanceSupport0+1) - valueSupport1 * (_distanceSupport1-1));
 }
 
-double peanoclaw::interSubgridCommunication::ExtrapolationAxis::getMaximumGradient() const {
-  return _maximumGradient;
+double peanoclaw::interSubgridCommunication::ExtrapolationAxis::getMaximumLinearError() const {
+  return _maximumLinearError;
 }
 
 void peanoclaw::interSubgridCommunication::CornerExtrapolation::operator()(
@@ -65,27 +69,27 @@ void peanoclaw::interSubgridCommunication::CornerExtrapolation::operator()(
       double valueAxis2 = axis2.getExtrapolatedValue( unknown );
 
       //TODO unterweg debug
-      if(unknown == 0) {
-        std::cout << "subcellIndex=" << subcellIndex << ", cornerIndex=" << cornerIndex << std::endl;
-        std::cout << "Setting value to (" << valueAxis0 << "+" << valueAxis1 << "+" << valueAxis2 << ")/3=" << ((valueAxis0 + valueAxis1 + valueAxis2) / 3.0) << std::endl;
-        std::cout << std::endl;
-      }
+//      if(unknown == 0) {
+//        std::cout << "subcellIndex=" << subcellIndex << ", cornerIndex=" << cornerIndex << std::endl;
+//        std::cout << "Setting value to (" << valueAxis0 << "+" << valueAxis1 << "+" << valueAxis2 << ")/3=" << ((valueAxis0 + valueAxis1 + valueAxis2) / 3.0) << std::endl;
+//        std::cout << std::endl;
+//      }
 
       subgrid.setValueUOld(linearIndexSubcell, unknown, (valueAxis0 + valueAxis1 + valueAxis2) / 3.0);
 
-      _maximumGradient = std::max(_maximumGradient, axis0.getMaximumGradient());
-      _maximumGradient = std::max(_maximumGradient, axis1.getMaximumGradient());
-      _maximumGradient = std::max(_maximumGradient, axis2.getMaximumGradient());
+      _maximumLinearError = std::max(_maximumLinearError, axis0.getMaximumLinearError());
+      _maximumLinearError = std::max(_maximumLinearError, axis1.getMaximumLinearError());
+      _maximumLinearError = std::max(_maximumLinearError, axis2.getMaximumLinearError());
     }
   }
 }
 
-double peanoclaw::interSubgridCommunication::CornerExtrapolation::getMaximumGradient() const {
-  return _maximumGradient;
+double peanoclaw::interSubgridCommunication::CornerExtrapolation::getMaximumLinearError() const {
+  return _maximumLinearError;
 }
 
 peanoclaw::interSubgridCommunication::EdgeExtrapolation::EdgeExtrapolation()
-  : _maximumGradient(0) {
+  : _maximumLinearError(0) {
 }
 
 void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
@@ -93,7 +97,7 @@ void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
   const peanoclaw::Area& area,
   const tarch::la::Vector<DIMENSIONS,int>& direction
 ) {
-  _maximumGradient = 0.0;
+  _maximumLinearError = 0.0;
 
   int dimensionAxis0 = -1;
   int dimensionAxis1 = -1;
@@ -109,9 +113,6 @@ void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
     }
   }
 
-  //TODO unterweg debug
-  std::cout << "direction=" << direction << ", axis0=" << dimensionAxis0 << ", axis1=" << dimensionAxis1 << std::endl;
-
   subgrid.clearRegion(area._offset, area._size, true);
 
   dfor(subcellIndexInArea, area._size) {
@@ -125,23 +126,16 @@ void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
       double valueAxis0 = axis0.getExtrapolatedValue( unknown );
       double valueAxis1 = axis1.getExtrapolatedValue( unknown );
 
-      //TODO unterweg debug
-//      if(unknown == 0) {
-//        std::cout << "subcellIndex=" << subcellIndex << std::endl;
-//        std::cout << "Setting value to (" << valueAxis0 << "+" << valueAxis1 << ")/2=" << ((valueAxis0 + valueAxis1) / 2.0) << std::endl;
-//        std::cout << std::endl;
-//      }
-
       subgrid.setValueUOld(linearIndexSubcell, unknown, (valueAxis0 + valueAxis1) / 2.0);
 
-      _maximumGradient = std::max(_maximumGradient, axis0.getMaximumGradient());
-      _maximumGradient = std::max(_maximumGradient, axis1.getMaximumGradient());
+      _maximumLinearError = std::max(_maximumLinearError, axis0.getMaximumLinearError());
+      _maximumLinearError = std::max(_maximumLinearError, axis1.getMaximumLinearError());
     }
   }
 }
 
-double peanoclaw::interSubgridCommunication::EdgeExtrapolation::getMaximumGradient() const {
-  return _maximumGradient;
+double peanoclaw::interSubgridCommunication::EdgeExtrapolation::getMaximumLinearError() const {
+  return _maximumLinearError;
 }
 
 double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateEdges() {
@@ -151,7 +145,7 @@ double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateEdges() {
     edgeExtrapolation
   );
 
-  return edgeExtrapolation.getMaximumGradient();
+  return edgeExtrapolation.getMaximumLinearError();
 }
 
 double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateCorners() {
@@ -172,4 +166,16 @@ peanoclaw::interSubgridCommunication::Extrapolation::Extrapolation(
 ) : _subgrid(subgrid) {
 }
 
-
+double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateManifolds(int dimensionality) {
+  #ifdef Dim2
+  assertion1(0 == dimensionality, dimensionality);
+  return extrapolateEdges();
+  #elif Dim3
+  assertion(0 <= dimensionality && dimensionality < 2);
+  if(dimensionality == 0) {
+    return extrapolateCorners();
+  } else {
+    return extrapolateEdges();
+  }
+  #endif
+}

@@ -29,7 +29,7 @@ class peanoclaw::interSubgridCommunication::ExtrapolationAxis {
     int          _linearIndexSupport1;
     int          _distanceSupport0;
     int          _distanceSupport1;
-    double       _maximumGradient;
+    double       _maximumLinearError;
 
   public:
     /**
@@ -56,10 +56,15 @@ class peanoclaw::interSubgridCommunication::ExtrapolationAxis {
     double getExtrapolatedValue(int unknown);
 
     /**
-     * Returns the maximum gradient used for all extrapolations done
+     * Returns the maximum linear error that may occur for all extrapolations done
      * so far.
+     * TODO unterweg dissertation
+     * Der maximale lineare Fehler schätzt ab, wie weit sich ein Wert durch die
+     * Extrapolation verändern kann. Dazu wird der Gradient und die Extrapolationsdistanz
+     * berücksichtigt. Der Fehler ist relativ bezogen auf das Minimum der beiden
+     * Stützpunkte.
      */
-    double getMaximumGradient() const;
+    double getMaximumLinearError() const;
 };
 
 /**
@@ -67,7 +72,7 @@ class peanoclaw::interSubgridCommunication::ExtrapolationAxis {
  */
 class peanoclaw::interSubgridCommunication::CornerExtrapolation {
   private:
-    double _maximumGradient;
+    double _maximumLinearError;
 
   public:
     void operator()(
@@ -76,7 +81,7 @@ class peanoclaw::interSubgridCommunication::CornerExtrapolation {
       const tarch::la::Vector<DIMENSIONS,int> cornerIndex
     );
 
-    double getMaximumGradient() const;
+    double getMaximumLinearError() const;
 };
 
 /**
@@ -85,7 +90,7 @@ class peanoclaw::interSubgridCommunication::CornerExtrapolation {
  */
 class peanoclaw::interSubgridCommunication::EdgeExtrapolation {
   private:
-    double _maximumGradient;
+    double _maximumLinearError;
 
   public:
 
@@ -97,7 +102,7 @@ class peanoclaw::interSubgridCommunication::EdgeExtrapolation {
       const tarch::la::Vector<DIMENSIONS,int>& direction
     );
 
-    double getMaximumGradient() const;
+    double getMaximumLinearError() const;
 };
 
 /**
@@ -124,6 +129,11 @@ class peanoclaw::interSubgridCommunication::Extrapolation {
      * In 2D this operation does nothing.
      */
     double extrapolateCorners();
+
+    /**
+     * Extrapolates to all manifolds of the given dimensionality.
+     */
+    double extrapolateManifolds(int dimensionality);
 };
 
 

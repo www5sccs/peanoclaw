@@ -195,7 +195,7 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeAndCornerExtrapolati
   }
 
   //TODO unterweg debug
-  std::cout << "Subgrid before extrapolation: " << std::endl << subgrid.toStringUOldWithGhostLayer() << std::endl;
+//  std::cout << "Subgrid before extrapolation: " << std::endl << subgrid.toStringUOldWithGhostLayer() << std::endl;
 
   //Run extrapolation
   peanoclaw::interSubgridCommunication::Extrapolation extrapolation(subgrid);
@@ -203,7 +203,7 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeAndCornerExtrapolati
   extrapolation.extrapolateCorners();
 
   //TODO unterweg debug
-  std::cout << "Subgrid after extrapolation: " << std::endl << subgrid.toStringUOldWithGhostLayer() << std::endl;
+//  std::cout << "Subgrid after extrapolation: " << std::endl << subgrid.toStringUOldWithGhostLayer() << std::endl;
 
   //Validation
   {

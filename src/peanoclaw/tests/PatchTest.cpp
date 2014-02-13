@@ -228,7 +228,7 @@ void peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
 }
 
 void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
-  #ifdef Parallel
+  #if defined(Parallel) && defined(Dim2)
   Vertex vertices[TWO_POWER_D];
   TestVertexEnumerator enumerator(1.0);
 
@@ -283,7 +283,7 @@ void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgrids() {
 }
 
 void peanoclaw::tests::PatchTest::testCountingOfAdjacentParallelSubgridsFourNeighboringRanks() {
-  #ifdef Parallel
+  #if defined(Parallel) && defined(Dim2)
   Vertex vertices[TWO_POWER_D];
   TestVertexEnumerator enumerator(1.0);
 
@@ -753,17 +753,12 @@ void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers() {
     areas
   );
 
-  //TODO unterweg debug
-  for(int i = 0; i < numberOfAreas; i++) {
-    std::cout << areas[i] << std::endl;
-  }
-
   validateEquals(numberOfAreas, 5);
   #endif
 }
 
 void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers2() {
-  #ifdef Dim2
+  #if defined(Parallel) && defined(Dim2)
   tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> adjacentRanks;
   assignList(adjacentRanks)              = 1,1,2,1,2,0,0,0;
   tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int> overlapOfRemoteGhostlayers;

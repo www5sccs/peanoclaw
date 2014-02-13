@@ -140,6 +140,17 @@ private:
    */
   bool shouldTransferGhostlayerData(Patch& sourcePatch, Patch& destinationPatch);
 
+  /**
+   * Fills the manifolds of the given dimensionality.
+   */
+  void fillGhostlayerManifoldsAndUpdateNeighborTime(int destinationSubgridIndex, int dimensionality);
+
+  /**
+   * Fills the manifolds of the given dimensionality either from the neighbors or by extrapolating
+   * the already set pars of the subgrids.
+   */
+  void fillOrExtrapolateGhostlayersAndUpdateNeighborTime(int destinationSubgridIndex);
+
 public:
 
   /**
@@ -160,13 +171,13 @@ public:
    * Fills the ghostlayers of the given patches as far as possible. Also the
    * maximum timestep size for the patches is adjusted.
    */
-  void fillGhostLayersAndUpdateNeighborTimes(int destinationPatchIndex = -1);
+  void fillGhostLayersAndUpdateNeighborTimes(int destinationSubgridIndex = -1);
 
   /**
    * Updates the maximum timesteps for the given patches depending on the time
    * interval spanned by the other patches and the maximum neighbor time interval.
    */
-  void updateNeighborTimes();
+//  void updateNeighborTimes();
 
   /**
    * Updates the ghostlayer bounds, i.e. how far a patch is overlapped by

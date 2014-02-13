@@ -107,7 +107,6 @@ void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
           false
           );
     ghostLayerCompositor.fillGhostLayersAndUpdateNeighborTimes(-1);
-    ghostLayerCompositor.updateNeighborTimes();
 
     for(int cellIndex = 0; cellIndex < 4; cellIndex++) {
       if(cellIndex == vetoIndex) {

@@ -33,7 +33,7 @@ class FluxCorrectionCallback(object):
                           c_double, #destination current time
                           c_double, #destination timestep size
                           c_int,     #unknowns per cell
-                          c_int,     #aux fields per cell
+                          c_int      #aux fields per cell
                           )
 
 
@@ -114,7 +114,7 @@ class FluxCorrectionCallback(object):
           
         self.flux_correction(source_subgrid_state, source_qbc, destination_subgrid_state, destination_qbc)
         
-      if(self.flux_correction == None):
+      if(self.flux_correction == None):        
         return None
       else:
         if not self.callback:
