@@ -6,7 +6,11 @@
 
 SWE_WavePropagationBlock_patch::SWE_WavePropagationBlock_patch(peanoclaw::Patch& patch)
   : _patch(patch),
+#if WAVE_PROPAGATION_SOLVER==1 || WAVE_PROPAGATION_SOLVER==2 || WAVE_PROPAGATION_SOLVER==3
     SWE_WavePropagationBlock(
+#else
+    SWE_WaveAccumulationBlock(
+#endif
           patch.getSubdivisionFactor()(0),
           patch.getSubdivisionFactor()(1),
           patch.getSubcellSize()(0),

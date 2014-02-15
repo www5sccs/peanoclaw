@@ -31,9 +31,18 @@
 
 #include "peanoclaw/Patch.h"
 
+#if WAVE_PROPAGATION_SOLVER==1 || WAVE_PROPAGATION_SOLVER==2 || WAVE_PROPAGATION_SOLVER==3
 #include "blocks/SWE_WavePropagationBlock.hh"
+#else
+#include "blocks/SWE_WaveAccumulationBlock.hh"
+#endif
 
-class SWE_WavePropagationBlock_patch : public  SWE_WavePropagationBlock {
+class SWE_WavePropagationBlock_patch
+#if WAVE_PROPAGATION_SOLVER==1 || WAVE_PROPAGATION_SOLVER==2 || WAVE_PROPAGATION_SOLVER==3
+  : public  SWE_WavePropagationBlock {
+#else
+  : public  SWE_WaveAccumulationBlock {
+#endif
   public:
     //constructor of a SWE_WavePropagationBlock.
     SWE_WavePropagationBlock_patch(peanoclaw::Patch& patch);
