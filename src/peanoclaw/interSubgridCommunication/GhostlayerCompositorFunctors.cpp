@@ -6,6 +6,7 @@
  */
 #include "peanoclaw/interSubgridCommunication/GhostlayerCompositorFunctors.h"
 
+#include "peanoclaw/interSubgridCommunication/Extrapolation.h"
 #include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/Patch.h"
@@ -13,7 +14,10 @@
 peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::FillGhostlayerFaceFunctor(
   GhostLayerCompositor& ghostlayerCompositor,
   int                   destinationPatchIndex
-) : _ghostlayerCompositor(ghostlayerCompositor), _destinationPatchIndex(destinationPatchIndex) {
+) : _ghostlayerCompositor(ghostlayerCompositor),
+    _destinationPatchIndex(destinationPatchIndex),
+    _maximumLinearError(0)
+{
 }
 
 void peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::operator()
@@ -33,7 +37,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::operator()
     int dimension = -1;
     int offset = 0;
     for(int d = 0; d < DIMENSIONS; d++) {
-      if(abs(direction(d)) == 1) {
+      if(std::abs(direction(d)) == 1) {
         dimension = d;
         offset = direction(d);
       }
@@ -68,8 +72,15 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::operator()
 
 peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::FillGhostlayerEdgeFunctor(
   GhostLayerCompositor& ghostlayerCompositor,
+  Extrapolation&        extrapolation,
+  bool                  fillFromNeighbor,
   int                   destinationPatchIndex
-) : _ghostlayerCompositor(ghostlayerCompositor), _destinationPatchIndex(destinationPatchIndex) {
+) : _ghostlayerCompositor(ghostlayerCompositor),
+    _extrapolation(extrapolation),
+    _fillFromNeighbor(fillFromNeighbor),
+    _destinationPatchIndex(destinationPatchIndex),
+    _maximumLinearError(0)
+{
 }
 
 void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator() (
@@ -85,15 +96,10 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator()
 //      << " _destinationPatchIndex=" << _destinationPatchIndex << " should transfer: " << _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination) << std::endl
 //      << "source: " << source << std::endl
 //      << "destiantion: " << destination << std::endl;
-
   if(
     (_destinationPatchIndex == -1 || _destinationPatchIndex == destinationIndex)
     && _ghostlayerCompositor.shouldTransferGhostlayerData(source, destination)
   ) {
-
-    //TODO unterweg debug
-//    std::cout << "Interpolating ghostlayer edge" << std::endl;
-
     assertionEquals2(source.getSubdivisionFactor(), destination.getSubdivisionFactor(), source, destination);
     int ghostlayerWidth = destination.getGhostlayerWidth();
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = source.getSubdivisionFactor();
@@ -137,10 +143,21 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator()
   }
 }
 
+double peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::getMaximumLinearError() const {
+  return _maximumLinearError;
+}
+
 peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::FillGhostlayerCornerFunctor(
   GhostLayerCompositor& ghostlayerCompositor,
+  Extrapolation&        extrapolation,
+  bool                  fillFromNeighbor,
   int                   destinationPatchIndex
-) : _ghostlayerCompositor(ghostlayerCompositor), _destinationPatchIndex(destinationPatchIndex) {
+) : _ghostlayerCompositor(ghostlayerCompositor),
+    _extrapolation(extrapolation),
+    _fillFromNeighbor(fillFromNeighbor),
+    _destinationPatchIndex(destinationPatchIndex),
+    _maximumLinearError(0)
+{
 }
 
 void peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::operator() (
@@ -190,6 +207,10 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::operator
       );
     }
   }
+}
+
+double peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::getMaximumLinearError() const {
+  return _maximumLinearError;
 }
 
 peanoclaw::interSubgridCommunication::UpdateNeighborTimeFunctor::UpdateNeighborTimeFunctor(

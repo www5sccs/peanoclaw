@@ -18,6 +18,8 @@ namespace peanoclaw {
 
   namespace interSubgridCommunication {
 
+    class Extrapolation;
+
     class GhostLayerCompositor;
 
     class FillGhostlayerFaceFunctor;
@@ -44,6 +46,7 @@ class peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor {
   private:
     GhostLayerCompositor& _ghostlayerCompositor;
     int                   _destinationPatchIndex;
+    int                   _maximumLinearError;
 
   public:
     FillGhostlayerFaceFunctor(
@@ -66,11 +69,16 @@ class peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor {
 class peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor {
   private:
     GhostLayerCompositor& _ghostlayerCompositor;
+    Extrapolation&        _extrapolation;
+    bool                  _fillFromNeighbor;
     int                   _destinationPatchIndex;
+    int                   _maximumLinearError;
 
   public:
     FillGhostlayerEdgeFunctor(
       GhostLayerCompositor& ghostlayerCompositor,
+      Extrapolation&        extrapolation,
+      bool                  fillFromNeighbor,
       int                   destinationPatchIndex
     );
 
@@ -81,6 +89,8 @@ class peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor {
       int                                       index2,
       const tarch::la::Vector<DIMENSIONS, int>& direction
     );
+
+    double getMaximumLinearError() const;
 };
 
 /**
@@ -90,11 +100,16 @@ class peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor {
 class peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor {
   private:
   GhostLayerCompositor& _ghostlayerCompositor;
+  Extrapolation&        _extrapolation;
+  bool                  _fillFromNeighbor;
   int                   _destinationPatchIndex;
+  int                   _maximumLinearError;
 
   public:
   FillGhostlayerCornerFunctor(
     GhostLayerCompositor& ghostlayerCompositor,
+    Extrapolation&        extrapolation,
+    bool                  fillFromNeighbor,
     int                   destinationPatchIndex
   );
 
@@ -105,6 +120,8 @@ class peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor {
     int                                       index2,
     const tarch::la::Vector<DIMENSIONS, int>& direction
   );
+
+  double getMaximumLinearError() const;
 };
 
 /**
@@ -149,6 +166,8 @@ class peanoclaw::interSubgridCommunication::FluxCorrectionFunctor {
       int                                       index2,
       const tarch::la::Vector<DIMENSIONS, int>& direction
     );
+
+    double getMaximumLinearError() const;
 };
 
 /**

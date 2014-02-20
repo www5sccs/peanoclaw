@@ -3,7 +3,6 @@
 #include "peanoclaw/Heap.h"
 #include "peanoclaw/ParallelSubgrid.h"
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/interSubgridCommunication/Extrapolation.h"
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 
@@ -590,12 +589,6 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         // Copy uNew to uOld
         patch.copyUNewToUOld();
 
-        //Extrapolate ghostlayer if necessary
-//        if(_useDimensionalSplittingOptimization) {
-//          peanoclaw::interSubgridCommunication::Extrapolation extrapolation(patch);
-//          extrapolation.extrapolateGhostlayer();
-//        }
-
         // Filling boundary layers for the given patch...
         fillBoundaryLayers(
           patch,
@@ -668,8 +661,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
       #ifdef Asserts
       if(patch.containsNaN()) {
-        logError("", "Invalid solution"
-            << " in patch " << patch.toString()
+        logError("", "Invalid solution in patch " << patch.toString()
             << std::endl << patch.toStringUNew() << std::endl << patch.toStringUOldWithGhostLayer());
         if(coarseGridCell.getCellDescriptionIndex() != -2) {
           Patch coarsePatch(CellDescriptionHeap::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));

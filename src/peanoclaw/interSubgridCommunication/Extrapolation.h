@@ -129,11 +129,6 @@ class peanoclaw::interSubgridCommunication::Extrapolation {
      * In 2D this operation does nothing.
      */
     double extrapolateCorners();
-
-    /**
-     * Extrapolates to all manifolds of the given dimensionality.
-     */
-    double extrapolateManifolds(int dimensionality);
 };
 
 

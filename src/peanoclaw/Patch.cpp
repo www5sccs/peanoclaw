@@ -16,7 +16,7 @@
 #include "peano/utils/Loop.h"
 
 //#define PATCH_VALUE_FORMAT std::setprecision(2) << std::scientific
-#define PATCH_VALUE_FORMAT std::setprecision(2)
+#define PATCH_VALUE_FORMAT std::setprecision(3)
 
 tarch::logging::Log peanoclaw::Patch::_log("peanoclaw::Patch");
 
@@ -948,21 +948,39 @@ dfor(subcellIndex, getSubdivisionFactor() + 2 * getGhostlayerWidth()) {
 return false;
 }
 
-bool peanoclaw::Patch::containsNonPositiveNumberInUnknown(int unknown) const {
+bool peanoclaw::Patch::containsNonPositiveNumberInUnknownInUNew(int unknown) const {
   //Check uNew
   dfor(subcellIndex, getSubdivisionFactor()){
   if( !tarch::la::greater(getValueUNew(subcellIndex, unknown), 0.0) ) {
     return true;
   }
 }
-//Check uOld
-//  dfor(subcellIndex, getSubdivisionFactor() + 2 * getGhostlayerWidth()) {
-//    if( !tarch::la::greater(getValueUOld(subcellIndex - getGhostlayerWidth(), unknown), 0.0) ) {
-//      return true;
-//    }
-//  }
 
 return false;
+}
+
+bool peanoclaw::Patch::containsNonPositiveNumberInUnknownInGhostlayer(int unknown) const {
+  dfor(subcellIndex, getSubdivisionFactor() + 2*getGhostlayerWidth()) {
+    if(tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(0), subcellIndex)
+      || tarch::la::oneGreater(subcellIndex, getSubdivisionFactor())) {
+      if(!tarch::la::greater(getValueUOld(subcellIndex-getGhostlayerWidth(), unknown), 0.0)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool peanoclaw::Patch::containsNegativeNumberInUnknownInGhostlayer(int unknown) const {
+  dfor(subcellIndex, getSubdivisionFactor() + 2*getGhostlayerWidth()) {
+    if(tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(0), subcellIndex)
+      || tarch::la::oneGreater(subcellIndex, getSubdivisionFactor())) {
+      if(tarch::la::smaller(getValueUOld(subcellIndex-getGhostlayerWidth(), unknown), 0.0)) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 void peanoclaw::Patch::increaseAgeByOneGridIteration() {

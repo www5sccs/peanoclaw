@@ -640,7 +640,11 @@ public:
    * Checks wether uNew or uOld contain non-positive numbers in the
    * given unknown.
    */
-  bool containsNonPositiveNumberInUnknown(int unknown) const;
+  bool containsNonPositiveNumberInUnknownInUNew(int unknown) const;
+
+  bool containsNonPositiveNumberInUnknownInGhostlayer(int unknown) const;
+
+  bool containsNegativeNumberInUnknownInGhostlayer(int unknown) const;
 
   /**
    * Increases the age of this patch in grid iterations by one.

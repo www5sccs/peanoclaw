@@ -4,7 +4,6 @@
 #define PEANOCLAW_MAPPINGS_Remesh_H_
 
 #include "peanoclaw/Cell.h"
-#include "peanoclaw/Patch.h"
 #include "peanoclaw/State.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"

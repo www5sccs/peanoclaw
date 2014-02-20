@@ -143,13 +143,18 @@ private:
   /**
    * Fills the manifolds of the given dimensionality.
    */
-  void fillGhostlayerManifoldsAndUpdateNeighborTime(int destinationSubgridIndex, int dimensionality);
+  double fillGhostlayerManifolds(int destinationSubgridIndex, bool fillFromNeighbor, int dimensionality);
+
+  /**
+   * Updates the neighbor time for the neighbors, corresponding to ghe given manifolds of the ghostlayers.
+   */
+  void updateNeighborTimeForManifolds(int destinationSubgridIndex, int dimensionality);
 
   /**
    * Fills the manifolds of the given dimensionality either from the neighbors or by extrapolating
    * the already set pars of the subgrids.
    */
-  void fillOrExtrapolateGhostlayersAndUpdateNeighborTime(int destinationSubgridIndex);
+  void fillOrExtrapolateGhostlayerAndUpdateNeighborTime(int destinationSubgridIndex);
 
 public:
 

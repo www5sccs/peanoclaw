@@ -220,6 +220,19 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
      */
     void testOverlapOfRemoteGhostlayers2();
 
+    /**
+     * Tests the resulting areas if the overlap of a subgrid
+     * with subdivision factor [6,3,3] on rank 1 is overlapped
+     * by remote ghostlayers of width 2 from rank 2 with the
+     * following pattern:
+     *
+     * [2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+     *
+     * The result should be a single area with
+     *  offset=[0,0,0] and size=[6,3,2]
+     */
+    void testOverlapOfRemoteGhostlayers3D();
+
   public:
     PatchTest();
     virtual ~PatchTest();

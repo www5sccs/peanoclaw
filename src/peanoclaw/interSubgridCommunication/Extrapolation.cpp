@@ -157,25 +157,11 @@ double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateCorners()
     _subgrid,
     cornerExtrapolation
   );
-  return cornerExtrapolation.getMaximumGradient();
+  return cornerExtrapolation.getMaximumLinearError();
   #endif
 }
 
 peanoclaw::interSubgridCommunication::Extrapolation::Extrapolation(
   peanoclaw::Patch& subgrid
 ) : _subgrid(subgrid) {
-}
-
-double peanoclaw::interSubgridCommunication::Extrapolation::extrapolateManifolds(int dimensionality) {
-  #ifdef Dim2
-  assertion1(0 == dimensionality, dimensionality);
-  return extrapolateEdges();
-  #elif Dim3
-  assertion(0 <= dimensionality && dimensionality < 2);
-  if(dimensionality == 0) {
-    return extrapolateCorners();
-  } else {
-    return extrapolateEdges();
-  }
-  #endif
 }

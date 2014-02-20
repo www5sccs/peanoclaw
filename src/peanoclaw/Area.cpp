@@ -163,7 +163,7 @@ int peanoclaw::Area::linearizeManifoldPosition(
   assertion1(tarch::la::allSmaller(manifoldPosition, 2), manifoldPosition);
 
   int entry = peano::utils::dLinearised(manifoldPosition + 1, 3);
-  if(entry > 4) {
+  if(entry > THREE_POWER_D_MINUS_ONE/2) {
     entry--;
   }
   return entry;
@@ -319,6 +319,7 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
   int                                                    rank,
   Area                                                   areas[THREE_POWER_D_MINUS_ONE]
 ) {
+  logTraceInWith2Arguments("getAreasOverlappedByRemoteGhostlayers(...)", adjacentRanks, overlapOfRemoteGhostlayers);
   int  numberOfAreas = 0;
   bool oneAreaCoversCompleteSubgrid = false;
 
@@ -327,6 +328,9 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
     for(int manifoldIndex = 0; manifoldIndex < numberOfManifolds; manifoldIndex++) {
       tarch::la::Vector<DIMENSIONS, int> manifoldPosition = getManifold(dimensionality, manifoldIndex);
       int manifoldEntry = linearizeManifoldPosition(manifoldPosition);
+
+      logDebug("getAreasOverlappedByRemoteGhostlayers(...)", "Manifold " << manifoldPosition << " of dimensions " << dimensionality
+          << ": entry=" << manifoldEntry << ", rank=" << adjacentRanks[manifoldEntry] << ", overlap=" << overlapOfRemoteGhostlayers[manifoldEntry]);
 
       if(adjacentRanks[manifoldEntry] == rank && overlapOfRemoteGhostlayers[manifoldEntry] > 0) {
         //Reduce lower-dimensional manifolds
@@ -340,8 +344,8 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
         );
 
         //Restrict size and offset by higher-dimensional manifolds
-//        std::cout << std::endl << "Testing manifold " << manifoldPosition << " of dimensions " << dimensionality
-//            << ": " << canBeOmitted << std::endl;
+        logDebug("getAreasOverlappedByRemoteGhostlayers(...)","Testing manifold " << manifoldPosition << " of dimensions " << dimensionality
+            << ": " << (canBeOmitted ? "omitting" : "consider"));
 
         if(!canBeOmitted) {
           tarch::la::Vector<DIMENSIONS, int> size;
@@ -395,9 +399,7 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
             }
           }
 
-          //TODO unterweg debug
-//          std::cout << "offset: " << offset << ", size: " << size << std::endl;
-
+          logDebug("getAreasOverlappedByRemoteGhostlayers(...)", "offset: " << offset << ", size: " << size << ", dimensionality=" << dimensionality << ", manifoldIndex=" << manifoldIndex << ", manifoldEntry=" << manifoldEntry);
           if(tarch::la::allGreater(size, 0)) {
             areas[numberOfAreas++] = Area(offset, size);
 
@@ -417,6 +419,7 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
     areas[0] = Area(0, subdivisionFactor);
   }
 
+  logTraceOutWith2Arguments("getAreasOverlappedByRemoteGhostlayers(...)", numberOfAreas, areas);
   return numberOfAreas;
 }
 
