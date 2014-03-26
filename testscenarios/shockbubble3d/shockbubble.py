@@ -159,7 +159,7 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     mx=int(12*factor); my=int(6*factor); mz=int(6*factor)
     
     # number of initial AMR grids in each dimension
-    msubgrid = 9 #27
+    msubgrid = 9
     
     if amr_type is None:
         # number of Domain grid cells expressed as the product of
@@ -185,7 +185,7 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     solver.user_bc_lower = shockbc
     
     claw = pyclaw.Controller()
-    claw.tfinal = 0.1 #1
+    claw.tfinal = 1e-2 #0.1 #1
     claw.num_output_times = 1 #50
     claw.outdir = outdir
     
