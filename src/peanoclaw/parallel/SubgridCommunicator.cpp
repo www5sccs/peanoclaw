@@ -96,7 +96,6 @@ void peanoclaw::parallel::SubgridCommunicator::sendCellDescription(int cellDescr
   #if defined(Asserts) && defined(Parallel)
   CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex).at(0);
   assertion1(!cellDescription.getIsPaddingSubgrid(), cellDescription.toString());
-  assertion1(!cellDescription.getIsRemote(), cellDescription.toString());
   #endif
 
   if(_packCommunication) {

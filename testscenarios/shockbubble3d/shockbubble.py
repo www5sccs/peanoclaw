@@ -159,7 +159,7 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     mx=int(12*factor); my=int(6*factor); mz=int(6*factor)
     
     # number of initial AMR grids in each dimension
-    msubgrid = 9 #27
+    msubgrid = 9
     
     if amr_type is None:
         # number of Domain grid cells expressed as the product of

@@ -88,7 +88,7 @@ def refinement_criterion_gradient(state):
   
   if max_gradient > 0.25:
       return 1.0/(6.0*81.0)
-  elif max_gradient < 0.001:
+  elif max_gradient < 0.1:
       return 1.0/(6.0*9.0)
   else:
       return dimension_x.delta
@@ -187,7 +187,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
                                         ,qinit_callback
                                         #,refinement_criterion=refinement_criterion_time_dependent
                                         #,refinement_criterion=refinement_criterion
-                                        #,refinement_criterion=refinement_criterion_gradient
+                                        ,refinement_criterion=refinement_criterion_gradient
                                         ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True, fork_level_increment=2)
                                         )
             claw.solution = amrclaw.Solution(state, domain)
