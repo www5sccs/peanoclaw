@@ -89,7 +89,7 @@ environment = Environment()
 # Only include library rt if not compiling on Mac OS.
 if(environment['PLATFORM'] != 'darwin'):
     libs.append('rt')
-
+    
 ##### Determine dimension for which to build
 #
 dim = ARGUMENTS.get('dim', 2)  # Read command line parameter
@@ -207,7 +207,12 @@ if compiler == 'gcc':
    # if multicore == 'no' or multicore == 'multicore_no':
       # ccflags.append('-Wconversion')
    ccflags.append('-Wno-non-virtual-dtor')
-   ccflags.append('-std=c++11')
+
+   gccversion = environment['CCVERSION'].split('.')
+   if int(gccversion[0]) > 4) or int(gccversion[1]) > 6:
+     ccflags.append('-std=c++11')
+   else:
+     ccflags.append('-std=c++0x')
    if build == 'debug':
       ccflags.append('-g3')
       ccflags.append('-O0')
