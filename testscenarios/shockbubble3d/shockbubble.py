@@ -185,7 +185,7 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     solver.user_bc_lower = shockbc
     
     claw = pyclaw.Controller()
-    claw.tfinal = 0.1 #1
+    claw.tfinal = 0.01 #1
     claw.num_output_times = 1 #50
     claw.outdir = outdir
     
@@ -196,7 +196,10 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
                                     (x.upper - x.lower) / (mx * msubgrid),
                                     qinit
                                     #,refinement_criterion=refinement_criterion_gradient
-                                    ,internal_settings=amrclaw.InternalSettings(enable_peano_logging=True,fork_level_increment=2))
+                                    ,internal_settings=amrclaw.InternalSettings(
+                                        enable_peano_logging=True,
+                                        fork_level_increment=2,
+                                        use_dimensional_splitting_optimization=True))
         claw.solution = amrclaw.Solution(state, domain)
       else:
         raise Exception('unsupported amr_type %s' % amr_type)
