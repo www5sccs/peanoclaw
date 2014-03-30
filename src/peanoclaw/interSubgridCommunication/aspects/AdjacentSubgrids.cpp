@@ -69,6 +69,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertPer
       if(!subgrid.isRemote()) {
         vertexDescription.setIndicesOfAdjacentCellDescriptions(i, _vertex.getAdjacentCellDescriptionIndex(i));
       } else {
+        _vertex.setAdjacentCellDescriptionIndex(i, -1);
         vertexDescription.setIndicesOfAdjacentCellDescriptions(i, -1);
       }
       #else
@@ -95,7 +96,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::convertHan
 
         if(hangingVertexIndex != -1) {
           Patch patch(CellDescriptionHeap::getInstance().getData(hangingVertexIndex).at(0));
-          if(patch.getLevel() == _level) {
+          if(patch.getLevel() == _level && !patch.isRemote()) {
             _vertex.setAdjacentCellDescriptionIndex(i, hangingVertexIndex);
           }
         }
@@ -173,7 +174,7 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::createHang
       assertion(hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i) >= -1);
       if(hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i) != -1) {
         CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i)).at(0);
-        if(cellDescription.getLevel() == _level) {
+        if(cellDescription.getLevel() == _level && !cellDescription.getIsRemote()) {
           _vertex.setAdjacentCellDescriptionIndex(i, hangingVertexDescription.getIndicesOfAdjacentCellDescriptions(i));
         }
       }
@@ -201,10 +202,19 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
 
     //Copy adjacency information from hanging vertex to hanging vertex description
     for(int i = 0; i < TWO_POWER_D; i++) {
-      hangingVertexDescription.setIndicesOfAdjacentCellDescriptions(
-        i,
-        _vertex.getAdjacentCellDescriptionIndex(i)
-      );
+      int adjacentCellDescription = -1;
+      if(_vertex.getAdjacentCellDescriptionIndex(i) != -1) {
+
+        Patch subgrid(_vertex.getAdjacentCellDescriptionIndex(i));
+        if(!subgrid.isRemote()) {
+          adjacentCellDescription = _vertex.getAdjacentCellDescriptionIndex(i);
+        } else {
+          //Remove the subgrid from the potentially hanging vertex if it is remote
+          _vertex.setAdjacentCellDescriptionIndex(i, -1);
+        }
+      }
+
+      hangingVertexDescription.setIndicesOfAdjacentCellDescriptions(i, adjacentCellDescription);
     }
 //    hangingVertexDescription.setLastUpdateIterationParity(_iterationParity);
   }
