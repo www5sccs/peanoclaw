@@ -209,7 +209,7 @@ if compiler == 'gcc':
    ccflags.append('-Wno-non-virtual-dtor')
 
    gccversion = environment['CCVERSION'].split('.')
-   if int(gccversion[0]) > 4) or int(gccversion[1]) > 6:
+   if int(gccversion[0] > 4 or int(gccversion[1]) > 6:
      ccflags.append('-std=c++11')
    else:
      ccflags.append('-std=c++0x')
