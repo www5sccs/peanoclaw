@@ -50,7 +50,7 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
 
       #ifdef Asserts
       assertion3(tarch::la::allGreater(transferedSubgrid.getSubdivisionFactor(), 0), transferedSubgrid.toString(), _position, _level);
-      assertion1(!transferedSubgrid.isRemote(), transferedSubgrid);
+      assertion2(!transferedSubgrid.isRemote(), transferedSubgrid, _remoteRank);
 
       //Check for zeros in transfered patch
       if(transferedSubgrid.isValid() && transferedSubgrid.isLeaf()) {
@@ -143,7 +143,16 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgrid(Patch& localSubg
     #endif
   } else {
     //Padding patch received -> receive padding data
-    DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+
+    // TODO: move into SubgridCommunicator?
+    if (_packCommunication) {
+//        Serialization::ReceiveBuffer& recvbuffer = peano::parallel::SerializationMap::getInstance().getReceiveBuffer(_remoteRank)[1];
+//        assertion1(recvbuffer.isBlockAvailable(), "cannot read heap data from Serialization Buffer - not enough blocks");
+//
+//        Serialization::Block block = recvbuffer.nextBlock();
+    } else {
+        DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
+    }
   }
 
   logTraceOut("receiveSubgrid(Subgrid)");

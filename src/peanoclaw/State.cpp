@@ -13,6 +13,17 @@ peanoclaw::State::State():
   resetGlobalTimeIntervals();
   resetMinimalTimestep();
   resetTotalNumberOfCellUpdates();
+  
+  //Flags that might not be initialized by Peano
+  _stateData.setHasChangedVertexOrCellState(false);
+  _stateData.setCouldNotEraseDueToDecompositionFlag(false);
+  _stateData.setHasRefined(false);
+  _stateData.setHasErased(false);
+  _stateData.setHasTriggeredRefinementForNextIteration(false);
+  _stateData.setHasTriggeredEraseForNextIteration(false);
+  #ifdef Parallel
+  _stateData.setCouldNotEraseDueToDecompositionFlag(false);
+  #endif
 }
 
 

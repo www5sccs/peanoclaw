@@ -93,7 +93,7 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
 void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::sendSubgridBetweenMasterAndWorker(
   Patch& subgrid
 ) {
-  logTraceInWith3Arguments("sendSubgridBetweenMasterAndWorker", subgrid, position, size);
+  logTraceInWith3Arguments("sendSubgridBetweenMasterAndWorker", subgrid, _position, _level);
   _subgridCommunicator.sendSubgrid(subgrid);
   logTraceOut("sendSubgridBetweenMasterAndWorker");
 }
