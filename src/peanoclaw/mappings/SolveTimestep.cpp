@@ -690,7 +690,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       }
       #endif
 
-      logTraceOutWith2Arguments( "enterCell(...)", cellDescription.getTimeIntervals().getTimestepSize(), cellDescription.getTime() + cellDescription.getTimeIntervals().getTimestepSize() );
+      logTraceOutWith2Arguments( "enterCell(...)", patch.getTimeIntervals().getTimestepSize(), cellDescription.getTime() + patch.getTimeIntervals().getTimestepSize() );
     } else {
       logTraceOut( "enterCell(...)" );
     }
@@ -699,6 +699,14 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
     //TODO unterweg debug
     assertion1(!tarch::la::smaller(patch.getTimeIntervals().getTimestepSize(), 0.0) || !patch.isLeaf(), patch);
+
+  #ifdef Parallel
+//    if (patch.getAge() >= 2) {
+        fineGridCell.setCellIsAForkCandidate(true);
+//    } else {
+//        fineGridCell.setCellIsAForkCandidate(false);
+//    }
+  #endif
   }
 }
 

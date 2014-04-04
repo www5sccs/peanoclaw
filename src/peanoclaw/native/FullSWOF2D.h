@@ -5,8 +5,8 @@
  *      Author: Kristof Unterweger
  */
 
-#ifndef PEANOCLAW_NATIVE_SWEKERNEL_H_
-#define PEANOCLAW_NATIVE_SWEKERNEL_H_
+#ifndef PEANOCLAW_NATIVE_FULLSWOF2D_H_
+#define PEANOCLAW_NATIVE_FULLSWOF2D_H_
 
 #include "tarch/logging/Log.h"
 #include "tarch/la/Vector.h"
@@ -22,14 +22,22 @@
 #include "peanoclaw/interSubgridCommunication/Restriction.h"
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
 
+#include "peanoclaw/native/SWEKernel.h"
+
+#include "peanoclaw/native/MekkaFlood_solver.h"
+
+#include "parameters.hpp"
+
+#include "choice_scheme.hpp"
+
 namespace peanoclaw {
   namespace native {
-    class SWEKernel;
-    class SWEKernelScenario;
+    class FullSWOF2D;
+    class FullSWOF2D_Parameters;
   }
 } /* namespace peanoclaw */
 
-class peanoclaw::native::SWEKernel  : public peanoclaw::Numerics
+class peanoclaw::native::FullSWOF2D  : public peanoclaw::Numerics
 {
 private:
   /**
@@ -47,16 +55,17 @@ private:
 
   double _totalSolverCallbackTime;
 
-  SWEKernelScenario& _scenario;
+  peanoclaw::native::SWEKernelScenario& _scenario;
+
 public:
-  SWEKernel(
+  FullSWOF2D(
     SWEKernelScenario& scenario,
     peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
     peanoclaw::interSubgridCommunication::Restriction*    restriction,
     peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
   );
 
-  virtual ~SWEKernel();
+  virtual ~FullSWOF2D();
 
   /**
    * Initializes the given patch at the beginning of a simulation run.
@@ -122,63 +131,20 @@ public:
    */
   void fillBoundaryLayer(Patch& patch, int dimension, bool setUpper);
 
-//#ifdef Dim2
-//  /**
-//   * Fills in the left boundary layer.
-//   * This method assumes that patch.uOld already holds
-//   * the current solution. I.e. uNew was already copied
-//   * to uOld.
-//   *
-//   * TODO unterweg: Es ist nicht schoen, dass vorausgesetzt wird, dass das Umkopieren von uNew auf uOld
-//   * schon durchgefuehrt wurde. Das kann man auch auf PyClawseite erledigen, indem dort die Daten aus
-//   * q statt qbc geholt werden.
-//   */
-//  void fillLeftBoundaryLayer(Patch& patch);
-//
-//  /**
-//   * Fills in the upper boundary layer.
-//   * This method assumes that patch.uOld already holds
-//   * the current solution. I.e. uNew was already copied
-//   * to uOld.
-//   */
-//  void fillUpperBoundaryLayer(Patch& patch);
-//
-//  /**
-//   * Fills in the right boundary layer.
-//   * This method assumes that patch.uOld already holds
-//   * the current solution. I.e. uNew was already copied
-//   * to uOld.
-//   */
-//  void fillRightBoundaryLayer(Patch& patch);
-//
-//  /**
-//   * Fills in the lower boundary layer.
-//   * This method assumes that patch.uOld already holds
-//   * the current solution. I.e. uNew was already copied
-//   * to uOld.
-//   */
-//  void fillLowerBoundaryLayer(Patch& patch);
-//
-//#endif
-//#ifdef Dim3
-//  void fillLeftBoundaryLayer(Patch& patch);
-//  void fillBehindBoundaryLayer(Patch& patch);
-//  void fillRightBoundaryLayer(Patch& patch);
-//  void fillFrontBoundaryLayer(Patch& patch);
-//  void fillUpperBoundaryLayer(Patch& patch) ;
-//  void fillLowerBoundaryLayer(Patch& patch);
-//#endif
+  void update(Patch& finePatch);
 
+  void copyPatchToScheme(Patch& patch, Scheme* scheme);
+  void copySchemeToPatch(Scheme* scheme, Patch& patch);
+
+  void copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp);
+  void copySetToPatch(unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp, Patch& patch);
 };
 
-class peanoclaw::native::SWEKernelScenario {
+class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
     public:
-        virtual ~SWEKernelScenario() {}
-        virtual double initializePatch(Patch& patch) = 0;
-        virtual double computeDemandedMeshWidth(Patch& patch) = 0;
-        virtual void update(Patch& patch) = 0;
-    protected:
-        SWEKernelScenario() {}
+        FullSWOF2D_Parameters(int ghostlayerWidth, int nx, int ny, double meshwidth_x, double meshwidth_y, int select_order=2, int select_reconstruction=1);
+        virtual ~FullSWOF2D_Parameters();
 };
+
 
 #endif /* PEANOCLAW_SWEKERNEL_NATIVE_H_ */

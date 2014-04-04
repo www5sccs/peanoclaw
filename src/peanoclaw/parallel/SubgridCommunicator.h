@@ -15,6 +15,14 @@
 
 #include "tarch/logging/Log.h"
 
+#if !defined(UseBlockedMeshCommunication) && !defined(DoNotUseBlockedMeshCommunication)
+#error "If no blocked mesh communciation should be used then please define 'DoNotUseBlockedMeshCommunication'"
+#endif
+
+#if defined(UseBlockedMeshCommunication) && defined(DoNotUseBlockedMeshCommunication)
+#error "Please define 'UseBlockedMeshCommunication' or 'DoNotUseBlockedMeshCommunication', but not both!"
+#endif
+
 namespace peanoclaw {
   namespace parallel {
     class SubgridCommunicator;

@@ -171,6 +171,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
     assertion(false);
   }
 
+  #ifdef AssertForPositiveValues
   dfor(subcellIndex, destinationSize) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex + destinationOffset;
     double checkedValue
@@ -187,6 +188,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
       throw "";
     }
   }
+  #endif
   #endif
 
   logTraceOut("");

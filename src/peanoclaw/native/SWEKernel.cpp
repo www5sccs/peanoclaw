@@ -96,7 +96,7 @@ void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension
    //std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
    //std::cout << "||||||" << std::endl;
 
-  // implement a wall boundary
+   // implement a wall boundary
     tarch::la::Vector<DIMENSIONS, int> src_subcellIndex;
     tarch::la::Vector<DIMENSIONS, int> dest_subcellIndex;
 

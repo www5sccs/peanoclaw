@@ -14,6 +14,8 @@
 
 #include "tarch/la/Vector.h"
 
+#include <algorithm>
+
 namespace peanoclaw {
   namespace interSubgridCommunication {
     class DefaultRestriction;

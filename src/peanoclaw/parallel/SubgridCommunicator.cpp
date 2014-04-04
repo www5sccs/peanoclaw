@@ -11,32 +11,45 @@
 
 #include "tarch/Assertions.h"
 
+#ifdef UseBlockedMeshCommunication
+#include "peano/parallel/Serialization.h"
+#include "peano/parallel/SerializationMap.h"
+#endif
+
 tarch::logging::Log peanoclaw::parallel::SubgridCommunicator::_log("peanoclaw::parallel::SubgridCommunicator");
 
 std::vector<peanoclaw::records::CellDescription> peanoclaw::parallel::SubgridCommunicator::receiveCellDescription() {
   logTraceIn("receiveCellDescription()");
 
   std::vector<peanoclaw::records::CellDescription> remoteCellDescriptionVector;
-  if(_packCommunication) {
+  if(_packCommunication && _messageType == peano::heap::NeighbourCommunication) {
+    #if defined(Parallel) && defined(UseBlockedMeshCommunication)
+    Serialization::ReceiveBuffer& recvbuffer = peano::parallel::SerializationMap::getInstance().getReceiveBuffer(_remoteRank)[1];
+    assertion1(recvbuffer.isBlockAvailable(), "cannot read heap data from Serialization Buffer - not enough blocks");
 
-//    Serialization::ReceiveBuffer& recvbuffer = peano::parallel::SerializationMap::getInstance().getReceiveBuffer(_remoteRank);
-//    assertion1(recvbuffer.isBlockAvailable(), "cannot read heap data from Serialization Buffer - not enough blocks");
-//
-//    Serialization::Block block = recvbuffer.nextBlock();
-//
-//    size_t numberOfCellDescriptions = block.size() / sizeof(CellDescription::Packed);
-//
-//    //assertion1(numberOfCellDescriptions > 0, "no cell descriptions, huh? we always send one");
-//
-//    remoteCellDescriptionVector.resize(numberOfCellDescriptions);
-//
-//    int block_position = 0;
-//    //std::cout << " ||||||| unpacking " << numberOfCellDescriptions << " cell descriptions " << std::endl;
-//    for (size_t i=0; i < numberOfCellDescriptions; i++) {
-//        CellDescription::Packed packed;
-//        MPI_Unpack(block.data(), block.size(), &block_position, &packed, 1, CellDescription::Packed::Datatype, MPI_COMM_WORLD );
-//        remoteCellDescriptionVector[i] = packed.convert();
-//    }
+    Serialization::Block block = recvbuffer.nextBlock();
+
+    assertion1(block.size() >= 1, "cell description block is tool small");
+
+    unsigned char BlockType;
+    block >> BlockType;
+
+    assertion2(BlockType == 0x10, "expected cell description but got something else", BlockType);
+
+    size_t numberOfCellDescriptions = (block.size() - 1) / sizeof(CellDescription::Packed);
+
+    //assertion1(numberOfCellDescriptions > 0, "no cell descriptions, huh? we always send one");
+
+    remoteCellDescriptionVector.resize(numberOfCellDescriptions);
+
+    int block_position = 1;
+    //std::cout << " ||||||| unpacking " << numberOfCellDescriptions << " cell descriptions " << std::endl;
+    for (size_t i=0; i < numberOfCellDescriptions; i++) {
+        CellDescription::Packed packed;
+        MPI_Unpack(block.data(), block.size(), &block_position, &packed, 1, CellDescription::Packed::Datatype, MPI_COMM_WORLD );
+        remoteCellDescriptionVector[i] = packed.convert();
+    }
+    #endif
   } else {
     remoteCellDescriptionVector = CellDescriptionHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
   }
@@ -64,7 +77,9 @@ peanoclaw::parallel::SubgridCommunicator::SubgridCommunicator(
 void peanoclaw::parallel::SubgridCommunicator::sendSubgrid(Patch& subgrid) {
   logTraceInWith1Argument("sendSubgrid(Subgrid)", subgrid);
 
-  sendCellDescription(subgrid.getCellDescriptionIndex());
+  if (!_packCommunication) {
+      sendCellDescription(subgrid.getCellDescriptionIndex());
+  }
 
   if(subgrid.getUIndex() != -1) {
     if(_onlySendOverlappedCells) {
@@ -77,15 +92,23 @@ void peanoclaw::parallel::SubgridCommunicator::sendSubgrid(Patch& subgrid) {
   } else {
     //Don't send anything
   }
-
+ 
+  if (_packCommunication) {
+    sendCellDescription(subgrid.getCellDescriptionIndex());
+  }
   logTraceOut("sendSubgrid(Subgrid)");
 }
 
 void peanoclaw::parallel::SubgridCommunicator::sendPaddingSubgrid() {
   logTraceIn("sendPaddingSubgrid()");
 
-  sendPaddingCellDescription();
-  sendPaddingDataArray();
+  if (_packCommunication && _messageType == peano::heap::NeighbourCommunication) {
+    sendPaddingDataArray();
+    sendPaddingCellDescription();
+  } else {
+    sendPaddingCellDescription();
+    sendPaddingDataArray();
+  }
 
   logTraceOut("sendPaddingSubgrid()");
 }
@@ -100,20 +123,24 @@ void peanoclaw::parallel::SubgridCommunicator::sendCellDescription(int cellDescr
 
   if(_packCommunication) {
     if (_messageType == peano::heap::NeighbourCommunication) {
-//      Serialization::SendBuffer& sendbuffer = peano::parallel::SerializationMap::getInstance().getSendBuffer(_remoteRank);
-//
-//      std::vector<CellDescription>& localCellDescriptionVector = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
-//
-//      size_t numberOfCellDescriptions = localCellDescriptionVector.size();
-//      int cellDescriptionSize = sizeof(CellDescription::Packed);
-//      Serialization::Block block = sendbuffer.reserveBlock(cellDescriptionSize*numberOfCellDescriptions);
-//
-//      int block_position = 0;
-//      //std::cout << " ||||||| packing " << numberOfCellDescriptions << " cell descriptions " << std::endl;
-//      for (size_t i=0; i < numberOfCellDescriptions; i++) {
-//          CellDescription::Packed packed = localCellDescriptionVector[i].convert();
-//          MPI_Pack(&packed, 1, CellDescription::Packed::Datatype, block.data(), block.size(), &block_position, MPI_COMM_WORLD );
-//      }
+      #if defined(Parallel) && defined(UseBlockedMeshCommunication)
+      Serialization::SendBuffer& sendbuffer = peano::parallel::SerializationMap::getInstance().getSendBuffer(_remoteRank)[1];
+
+      std::vector<CellDescription>& localCellDescriptionVector = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
+
+      size_t numberOfCellDescriptions = localCellDescriptionVector.size();
+      int cellDescriptionSize = sizeof(CellDescription::Packed);
+      Serialization::Block block = sendbuffer.reserveBlock(1+cellDescriptionSize*numberOfCellDescriptions);
+      unsigned char CellDescriptionType = 0x10;
+      block << CellDescriptionType;
+
+      int block_position = 1;
+      //std::cout << " ||||||| packing " << numberOfCellDescriptions << " cell descriptions " << std::endl;
+      for (size_t i=0; i < numberOfCellDescriptions; i++) {
+          CellDescription::Packed packed = localCellDescriptionVector[i].convert();
+          MPI_Pack(&packed, 1, CellDescription::Packed::Datatype, block.data(), block.size(), &block_position, MPI_COMM_WORLD );
+      }
+      #endif
     } else {
         CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, _messageType);
     }
@@ -127,29 +154,27 @@ void peanoclaw::parallel::SubgridCommunicator::sendPaddingCellDescription() {
   logTraceIn("sendPaddingCellDescription");
   int cellDescriptionIndex = CellDescriptionHeap::getInstance().createData();
 
-  if(_packCommunication) {
+  if(_packCommunication && _messageType == peano::heap::NeighbourCommunication) {
+    #if defined(Parallel) && defined(UseBlockedMeshCommunication)
+    std::vector<CellDescription>& localCellDescriptionVector = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
 
-    if (_messageType == peano::heap::NeighbourCommunication) {
-//      std::vector<CellDescription>& localCellDescriptionVector = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
-//
-//      Serialization::SendBuffer& sendbuffer = peano::parallel::SerializationMap::getInstance().getSendBuffer(_remoteRank);
-//
-//      //    size_t numberOfCellDescriptions = 1;
-//      //    int cellDescriptionSize = sizeof(CellDescription::Packed);
-//      Serialization::Block block = sendbuffer.reserveBlock(0);
-//
-//      //    int block_position = 0;
-//      //std::cout << " ||||||| packing " << numberOfCellDescriptions << " padded cell descriptions " << std::endl;
-//      //    for (size_t i=0; i < numberOfCellDescriptions; i++) {
-//      //        CellDescription::Packed packed; // padding patch
-//      //        MPI_Pack(&packed, 1, CellDescription::Packed::Datatype, block.data(), block.size(), &block_position, MPI_COMM_WORLD );
-//      //    }
-//
-//      //CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, _messageType);
-    } else {
-      CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, _messageType);
-    }
+    Serialization::SendBuffer& sendbuffer = peano::parallel::SerializationMap::getInstance().getSendBuffer(_remoteRank)[1];
 
+    //    size_t numberOfCellDescriptions = 1;
+    //    int cellDescriptionSize = sizeof(CellDescription::Packed);
+    Serialization::Block block = sendbuffer.reserveBlock(1);
+    unsigned char CellDescriptionType = 0x10;
+    block << CellDescriptionType;
+
+    //    int block_position = 0;
+    //std::cout << " ||||||| packing " << numberOfCellDescriptions << " padded cell descriptions " << std::endl;
+    //    for (size_t i=0; i < numberOfCellDescriptions; i++) {
+    //        CellDescription::Packed packed; // padding patch
+    //        MPI_Pack(&packed, 1, CellDescription::Packed::Datatype, block.data(), block.size(), &block_position, MPI_COMM_WORLD );
+    //    }
+
+    //CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, _messageType);
+    #endif
   } else {
 
     CellDescriptionHeap::getInstance().sendData(cellDescriptionIndex, _remoteRank, _position, _level, _messageType);
@@ -162,8 +187,31 @@ void peanoclaw::parallel::SubgridCommunicator::sendPaddingCellDescription() {
 
 void peanoclaw::parallel::SubgridCommunicator::sendDataArray(int index) {
   logTraceInWith3Arguments("sendDataArray", index, _position, _level);
+ 
+  if ( _packCommunication && _messageType == peano::heap::NeighbourCommunication ) {
+    #if defined(Parallel) && defined(UseBlockedMeshCommunication)
+    Serialization::SendBuffer& sendbuffer = peano::parallel::SerializationMap::getInstance().getSendBuffer(_remoteRank)[1];
 
-  DataHeap::getInstance().sendData(index, _remoteRank, _position, _level, _messageType);
+    std::vector<Data>& localDataVector = DataHeap::getInstance().getData(index);
+
+    //assertion1(localDataVector.size() <= 27*27*3+29*29+1, "tooo large");
+
+    size_t numberOfDataElements = localDataVector.size();
+    int dataSize = sizeof(Data::Packed);
+    Serialization::Block block = sendbuffer.reserveBlock(dataSize*numberOfDataElements);
+
+    int block_position = 0;
+    //std::cout << " ||||||| packing " << numberOfDataElements << " data elements" << std::endl;
+    for (size_t i=0; i < numberOfDataElements; i++) {
+        Data::Packed packed = localDataVector[i].convert();
+        MPI_Pack(&packed, 1, Data::Packed::Datatype, block.data(), block.size(), &block_position, MPI_COMM_WORLD );
+    }
+    #endif
+  } else {
+ 
+      DataHeap::getInstance().sendData(index, _remoteRank, _position, _level, _messageType);
+
+  }
 
   logTraceOut("sendDataArray");
 }
@@ -183,13 +231,6 @@ void peanoclaw::parallel::SubgridCommunicator::sendOverlappedCells(
     _remoteRank,
     areas
   );
-
-  //TODO unterweg debug
-//  std::cout << "Sending " << numberOfAreas << " areas from " << tarch::parallel::Node::getInstance().getRank() << " to " << _remoteRank
-//      << " for subgrid " << subgrid << std::endl;
-//  for(int i = 0; i < numberOfAreas; i++) {
-//    std::cout << "\t" << areas[i]._offset << ", " << areas[i]._size << std::endl;
-//  }
 
   int numberOfCells = 0;
   for(int i = 0; i < numberOfAreas; i++) {
@@ -260,14 +301,40 @@ int peanoclaw::parallel::SubgridCommunicator::receiveDataArray() {
   logTraceIn("receiveDataArray");
 
   int localIndex = DataHeap::getInstance().createData();
+  
+  if ( _packCommunication && _messageType == peano::heap::NeighbourCommunication ) {
+    #if defined(Parallel) && defined(UseBlockedMeshCommunication)
+    Serialization::ReceiveBuffer& recvbuffer = peano::parallel::SerializationMap::getInstance().getReceiveBuffer(_remoteRank)[1];
+    assertion1(recvbuffer.isBlockAvailable(), "cannot read heap data from Serialization Buffer - not enough blocks");
 
-  DataHeap::getInstance().receiveData(
-    localIndex,
-    _remoteRank,
-    _position,
-    _level,
-    _messageType
-  );
+    Serialization::Block block = recvbuffer.nextBlock();
+
+    size_t numberOfDataElements = block.size() / sizeof(Data::Packed);
+
+    //assertion1(numberOfCellDescriptions > 0, "no cell descriptions, huh? we always send one");
+ 
+    std::vector<Data>& remoteDataVector = DataHeap::getInstance().getData(localIndex);
+    remoteDataVector.resize(numberOfDataElements);
+
+    int block_position = 0;
+    //std::cout << " ||||||| unpacking " << numberOfCellDescriptions << " cell descriptions " << std::endl;
+    for (size_t i=0; i < numberOfDataElements; i++) {
+        Data::Packed packed;
+        MPI_Unpack(block.data(), block.size(), &block_position, &packed, 1, Data::Packed::Datatype, MPI_COMM_WORLD );
+        remoteDataVector[i] = packed.convert();
+    }
+    #endif
+  } else {
+
+      DataHeap::getInstance().receiveData(
+        localIndex,
+        _remoteRank,
+        _position,
+        _level,
+        _messageType
+      );
+
+  }
 
   logTraceOut("receiveDataArray");
   return localIndex;
@@ -278,7 +345,7 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
   Patch&                 subgrid
 ) {
   logTraceInWith1Argument("receiveOverlappedCells", subgrid);
-
+  #ifdef Parallel
   Area areas[THREE_POWER_D_MINUS_ONE];
   int numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
     remoteCellDescription.getAdjacentRanks(),
@@ -304,15 +371,41 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
   }
   #endif
 
-  //Allocate data array
-  std::vector<Data> remoteData = DataHeap::getInstance().receiveData(
-                                    _remoteRank,
-                                    _position,
-                                    _level,
-                                    _messageType
-                                  );
+  std::vector<Data> remoteData;
 
-  assertion1(subgrid.getUIndex() != -1, subgrid);
+  if(_packCommunication && _messageType == peano::heap::NeighbourCommunication) {
+    #if defined(Parallel) && defined(UseBlockedMeshCommunication)
+    Serialization::ReceiveBuffer& recvbuffer = peano::parallel::SerializationMap::getInstance().getReceiveBuffer(_remoteRank)[1];
+    assertion1(recvbuffer.isBlockAvailable(), "cannot read heap data from Serialization Buffer - not enough blocks");
+
+    Serialization::Block block = recvbuffer.nextBlock();
+
+    size_t numberOfDataElements = block.size() / sizeof(Data::Packed);
+
+    //assertion1(numberOfCellDescriptions > 0, "no cell descriptions, huh? we always send one");
+ 
+    remoteData.resize(numberOfDataElements);
+
+    int block_position = 0;
+    //std::cout << " ||||||| unpacking " << numberOfCellDescriptions << " cell descriptions " << std::endl;
+    for (size_t i=0; i < numberOfDataElements; i++) {
+        Data::Packed packed;
+        MPI_Unpack(block.data(), block.size(), &block_position, &packed, 1, Data::Packed::Datatype, MPI_COMM_WORLD );
+        remoteData[i] = packed.convert();
+    }
+    #endif
+  } else {
+
+      //Allocate data array
+      remoteData = DataHeap::getInstance().receiveData(
+                                        _remoteRank,
+                                        _position,
+                                        _level,
+                                        _messageType
+                                      );
+
+  }
+
   int entry = 0;
   for(int i = 0; i < numberOfAreas; i++) {
     Area& area = areas[i];
@@ -344,6 +437,7 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
 //  assertion4(subgrid.getUSize() >= entry, entry, subgrid.getUSize(), subgrid, remoteCellDescription.getSubdivisionFactor());
 //  assertion2(DataHeap::getInstance().getData(subgrid.getUIndex()).size() >= entry, DataHeap::getInstance().getData(subgrid.getUIndex()).size(), entry);
 
+  #endif
   logTraceOut("receiveOverlappedCells");
 }
 

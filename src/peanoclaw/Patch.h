@@ -18,6 +18,14 @@
 
 #include <vector>
 
+#if !defined(AssertForPositiveValues) && !defined(DoNotAssertForPositiveValues)
+#error "If no assertions for positive values should be used then please define 'DoNotAssertForPositiveValues'"
+#endif
+
+#if defined(AssertForPositiveValues) && defined(DoNotAssertForPositiveValues)
+#error "Please define 'AssertForPositiveValues' or 'DoNotAssertForPositiveValues', but not both!"
+#endif
+
 //Optimizations
 #define PATCH_DISABLE_RANGE_CHECK
 #define PATCH_INLINE_GETTERS_AND_SETTERS
@@ -492,6 +500,7 @@ public:
   void setValueUOldAndResize(int linearIndex, int unknown, double value);
 
   double getValueAux(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int auxField) const;
+  void setValueAux(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int auxField, double value);
 
   /**
    * Returns whether the subcell is actually stored in the subgrid. I.e. this
@@ -655,6 +664,7 @@ public:
    * Returns the age of this patch in terms of grid iterations.
    */
   int getAge() const;
+  void resetAge() const;
 
   /**
    * Resets the bounds for the overlap of neighboring ghostlayers.

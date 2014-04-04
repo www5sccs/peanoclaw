@@ -63,5 +63,6 @@ void peanoclaw::Numerics::applyFluxCorrection (
   );
 }
 
+void peanoclaw::Numerics::update (Patch& finePatch) {
 
-
+}

@@ -111,8 +111,10 @@ peanoclaw::mappings::Remesh::Remesh(const Remesh&  masterThread)
   _initialMinimalMeshWidth(masterThread._initialMinimalMeshWidth),
   _isInitializing(masterThread._isInitializing),
   _useDimensionalSplittingOptimization(masterThread._useDimensionalSplittingOptimization),
-  _parallelStatistics(masterThread._parallelStatistics),
-  _state(masterThread._state)
+  _parallelStatistics(""),
+  _totalParallelStatistics("Simulation"),
+  _state(masterThread._state),
+  _iterationWatch("", "", false)
 {
   logTraceIn( "Remesh(Remesh)" );
   // @todo Insert your code here
@@ -204,7 +206,7 @@ void peanoclaw::mappings::Remesh::destroyHangingVertex(
   for(int i = 0; i < TWO_POWER_D; i++) {
     if(vertex.getAdjacentCellDescriptionIndex(i) != -1) {
       Patch subgrid(vertex.getAdjacentCellDescriptionIndex(i));
-      assertion2(!subgrid.isRemote() || subgrid.getLevel() <= coarseGridVerticesEnumerator.getLevel(), subgrid, vertex);
+      assertion5(!subgrid.isRemote() || subgrid.getLevel() <= coarseGridVerticesEnumerator.getLevel(), i, subgrid, vertex, _domainOffset, _domainSize);
     }
   }
   #endif
@@ -379,6 +381,8 @@ void peanoclaw::mappings::Remesh::createCell(
           fineGridPatch,
           true
         );
+        
+        _numerics->update(fineGridPatch);
       }
     }
   }
@@ -547,11 +551,6 @@ void peanoclaw::mappings::Remesh::prepareSendToNeighbour(
   peanoclaw::parallel::NeighbourCommunicator communicator(toRank, x, level, h, _remoteSubgridMap, _parallelStatistics);
   communicator.sendSubgridsForVertex(vertex, x, h, level, *_state);
  
-  /*{
-      Serialization::SendBuffer& sendbuffer = peano::parallel::SerializationMap::getInstance().getSendBuffer(toRank);
-      Serialization::Block block = sendbuffer.reserveBlock(1337);
-  }*/
-
   logTraceOut( "prepareSendToNeighbour(...)" );
 }
 
@@ -589,7 +588,7 @@ void peanoclaw::mappings::Remesh::prepareCopyToRemoteNode(
       << ", iteration:" << _iterationNumber
   );
 
-  peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, cellCentre, level, true);
+  peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, cellCentre - cellSize * 0.5, level, true);
   communicator.sendCellDuringForkOrJoin(
     localCell,
     (cellCentre - cellSize*0.5),
@@ -638,7 +637,7 @@ void peanoclaw::mappings::Remesh::mergeWithRemoteDataDueToForkOrJoin(
 
   assertion3(localCell.isAssignedToRemoteRank() || localCell.getCellDescriptionIndex() != -2, localCell.toString(), cellCentre, cellSize);
 
-  peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(fromRank, cellCentre, level, true);
+  peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(fromRank, cellCentre - cellSize * 0.5, level, true);
   communicator.mergeCellDuringForkOrJoin(
     localCell,
     masterOrWorkerCell,
@@ -682,7 +681,12 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
 
     Patch subgrid(fineGridCell);
 
-    peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(worker, fineGridVerticesEnumerator.getCellCenter(), fineGridVerticesEnumerator.getLevel(), false);
+    peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(
+      worker,
+      fineGridVerticesEnumerator.getVertexPosition(0),
+      fineGridVerticesEnumerator.getLevel(),
+      false
+    );
     communicator.sendSubgridBetweenMasterAndWorker(subgrid);
 
     //TODO unterweg dissertation: Subgitter m��ssen auch auf virtuell geschaltet werden, wenn sie
@@ -722,7 +726,12 @@ void peanoclaw::mappings::Remesh::prepareSendToMaster(
   int toRank = tarch::parallel::NodePool::getInstance().getMasterRank();
   if(localCell.isInside()){
     Patch subgrid(localCell);
-    peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(toRank, verticesEnumerator.getCellCenter(), verticesEnumerator.getLevel(), false);
+    peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(
+      toRank,
+      verticesEnumerator.getVertexPosition(0),
+      verticesEnumerator.getLevel(),
+      false
+    );
     communicator.sendSubgridBetweenMasterAndWorker(subgrid);
   }
 
@@ -752,11 +761,11 @@ void peanoclaw::mappings::Remesh::mergeWithMaster(
 
   peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(
     worker,
-    fineGridVerticesEnumerator.getCellCenter(),
+    fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getLevel(),
     false
   );
-
+ 
   communicator.mergeWorkerStateIntoMasterState(workerState, masterState);
 
   if(fineGridCell.isInside()) {
@@ -799,7 +808,7 @@ void peanoclaw::mappings::Remesh::receiveDataFromMaster(
   if(receivedCell.isInside()) {
     peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator communicator(
       tarch::parallel::NodePool::getInstance().getMasterRank(),
-      receivedVerticesEnumerator.getCellCenter(),
+      receivedVerticesEnumerator.getVertexPosition(),
       receivedVerticesEnumerator.getLevel(),
       false
     );
@@ -922,7 +931,7 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
   );
 
   fineGridVertex.increaseAgeInGridIterations();
-
+ 
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }
 
@@ -972,7 +981,8 @@ void peanoclaw::mappings::Remesh::enterCell(
     patch,
     fineGridVertices,
     fineGridVerticesEnumerator,
-    _isInitializing
+    _isInitializing,
+    fineGridCell.isLeaf()
   );
 
   #ifdef Asserts
@@ -983,7 +993,11 @@ void peanoclaw::mappings::Remesh::enterCell(
         isRefining = true;
       }
     }
-    assertion1(isRefining, patch);
+    assertion6(isRefining, patch, fineGridCell,
+        fineGridVertices[fineGridVerticesEnumerator(0)],
+        fineGridVertices[fineGridVerticesEnumerator(1)],
+        fineGridVertices[fineGridVerticesEnumerator(2)],
+        fineGridVertices[fineGridVerticesEnumerator(3)]);
   }
   #endif
   logTraceOutWith2Arguments( "enterCell(...)", fineGridCell, patch );

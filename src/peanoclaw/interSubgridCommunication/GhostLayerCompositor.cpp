@@ -68,7 +68,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerD
     }
   }
 
-  #ifdef Asserts
+  #if defined(Asserts) && defined(AssertForPositiveValues)
   dfor(subcellIndex, size) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex + destinationOffset;
     if(destination.getValueUOld(subcellIndexInDestinationPatch, 0) < 0.0) {

@@ -13,6 +13,11 @@
 
 #include "peano/utils/Loop.h"
 
+#ifdef UseBlockedMeshCommunication
+#include "peano/parallel/Serialization.h"
+#include "peano/parallel/SerializationMap.h"
+#endif
+
 tarch::logging::Log peanoclaw::parallel::NeighbourCommunicator::_log("peanoclaw::parallel::NeighbourCommunicator");
 
 bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
@@ -52,6 +57,7 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
       assertion3(tarch::la::allGreater(transferedSubgrid.getSubdivisionFactor(), 0), transferedSubgrid.toString(), _position, _level);
       assertion2(!transferedSubgrid.isRemote(), transferedSubgrid, _remoteRank);
 
+	  #ifdef AssertForPositiveValues
       //Check for zeros in transfered patch
       if(transferedSubgrid.isValid() && transferedSubgrid.isLeaf()) {
         dfor(subcellIndex, transferedSubgrid.getSubdivisionFactor()) {
@@ -59,6 +65,7 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
           assertion3(tarch::la::greater(transferedSubgrid.getValueUOld(subcellIndex, 0), 0.0), subcellIndex, transferedSubgrid, transferedSubgrid.toStringUOldWithGhostLayer());
         }
       }
+      #endif
       #endif
 
       _statistics.sentNeighborData();
@@ -146,10 +153,12 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgrid(Patch& localSubg
 
     // TODO: move into SubgridCommunicator?
     if (_packCommunication) {
-//        Serialization::ReceiveBuffer& recvbuffer = peano::parallel::SerializationMap::getInstance().getReceiveBuffer(_remoteRank)[1];
-//        assertion1(recvbuffer.isBlockAvailable(), "cannot read heap data from Serialization Buffer - not enough blocks");
-//
-//        Serialization::Block block = recvbuffer.nextBlock();
+        #ifdef UseBlockedMeshCommunication
+        Serialization::ReceiveBuffer& recvbuffer = peano::parallel::SerializationMap::getInstance().getReceiveBuffer(_remoteRank)[1];
+        assertion1(recvbuffer.isBlockAvailable(), "cannot read heap data from Serialization Buffer - not enough blocks");
+
+        Serialization::Block block = recvbuffer.nextBlock();
+        #endif
     } else {
         DataHeap::getInstance().receiveData(_remoteRank, _position, _level, peano::heap::NeighbourCommunication);
     }

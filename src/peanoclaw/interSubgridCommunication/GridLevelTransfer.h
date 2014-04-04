@@ -173,7 +173,8 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
       const Patch&                         fineSubgrid,
       peanoclaw::Vertex * const            fineGridVertices,
       const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
-      bool                                 isInitializing
+      bool                                 isInitializing,
+      bool                                 isPeanoCellLeaf
     );
 
     /**
@@ -256,7 +257,8 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
       Patch&                               fineSubgrid,
       peanoclaw::Vertex * const            fineGridVertices,
       const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
-      bool                                 isInitializing
+      bool                                 isInitializing,
+      bool                                 isPeanoCellLeaf
     );
 
     /**

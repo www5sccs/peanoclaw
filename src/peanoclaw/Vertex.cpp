@@ -17,6 +17,7 @@ peanoclaw::Vertex::Vertex():
   _vertexData.setShouldRefine(false);
   #ifdef Parallel
   _vertexData.setAdjacentRanksChanged(false);
+  _vertexData.setAdjacentRanksInFormerIteration(-1);
   #endif
 }
 

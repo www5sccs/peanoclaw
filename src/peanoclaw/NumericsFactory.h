@@ -14,6 +14,10 @@
     #include "peanoclaw/native/SWEKernel.h" 
 #endif
 
+#if defined(PEANOCLAW_FULLSWOF2D)
+    #include "peanoclaw/native/FullSWOF2D.h" 
+#endif
+
 #include "tarch/logging/Log.h"
 
 namespace peanoclaw {
@@ -38,7 +42,9 @@ class peanoclaw::NumericsFactory {
     peanoclaw::Numerics* createSWENumerics(
       peanoclaw::native::SWEKernelScenario& scenario
     );
-#else
+#endif
+
+#if defined(PEANOCLAW_PYCLAW)
     /**
      * Creates a new Numerics object on the heap that encapsulates
      * all offered PyClaw functionality.
@@ -53,6 +59,13 @@ class peanoclaw::NumericsFactory {
       InterPatchCommunicationCallback fluxCorrectionCallback
     );
 #endif
+
+#if defined(PEANOCLAW_FULLSWOF2D)
+    peanoclaw::Numerics* createFullSWOF2DNumerics(
+      peanoclaw::native::SWEKernelScenario& scenario
+    );
+#endif
+
     /**
      * Creates a new Numerics object on the heap that provides
      * native functionality.

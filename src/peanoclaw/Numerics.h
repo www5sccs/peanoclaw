@@ -116,6 +116,12 @@ private:
       double maximumTimestepSize,
       bool useDimensionalSplitting
     ) = 0;
+
+
+    /**
+     * this function is e.g. useful to update auxillary data like bathymetry on a finer leverl
+     */
+    virtual void update (Patch& finePatch);
 };
 
 

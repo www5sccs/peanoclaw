@@ -77,6 +77,8 @@ private:
    * Initializes the MPI environment
    */
   void initializeParallelEnvironment();
+ 
+  void iterateRemesh();
 
   void iterateInitialiseGrid();
 
@@ -125,5 +127,9 @@ public:
   void runNextPossibleTimestep();
 
   void updateOracle();
+
+  peanoclaw::State& getState() {
+    return _repository->getState();
+  }
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_RUNNERS_PEANOCLAWLIBRARYRUNNER_H_ */

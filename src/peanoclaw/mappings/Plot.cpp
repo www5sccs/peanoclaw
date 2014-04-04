@@ -65,7 +65,7 @@ void peanoclaw::mappings::Plot::plotFile(int plotNumber) {
   _vtkWriter.writeToFile( snapshotFileName.str() );
 }
 
-peanoclaw::mappings::Plot::Plot() : _nextPlotNumber(0) {
+peanoclaw::mappings::Plot::Plot() : _nextPlotNumber(0), _vtkWriter(14) {
   logTraceIn( "Plot()" );
   // @todo Insert your code here
   logTraceOut( "Plot()" );

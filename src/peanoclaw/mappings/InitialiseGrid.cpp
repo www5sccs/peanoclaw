@@ -224,7 +224,7 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
     if(_refinementCriterionEnabled) {
       tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth(demandedMeshWidthScalar);
 
-      #ifdef Asserts
+      #if defined(Asserts) && defined(AssertForPositiveValues)
       dfor(subcellIndex, patch.getSubdivisionFactor()) {
         tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex;
         assertion3(tarch::la::greater(patch.getValueUNew(subcellIndexInDestinationPatch, 0), 0.0),

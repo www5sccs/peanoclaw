@@ -30,7 +30,7 @@
 #include "tarch/parallel/FCFSNodePoolStrategy.h"
 #include "peano/parallel/loadbalancing/Oracle.h"
 #include "peano/parallel/loadbalancing/OracleForOnePhaseWithGreedyPartitioning.h"
-#include "mpibalancing/OracleForOnePhaseControlLoopWrapper.h"
+#include "ControlLoopLoadBalancer/OracleForOnePhaseControlLoopWrapper.h"
 #endif
 
 #ifdef SharedTBB
@@ -78,9 +78,34 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment()
 
   //Shared Memory
   #ifdef SharedMemoryParallelisation
-  tarch::multicore::tbb::Core::getInstance().configure(1);
+  std::cout << "configuring multicore" << std::endl;
+  tarch::multicore::tbb::Core::getInstance().configure(8);
+  peano::datatraversal::autotuning::Oracle::getInstance().setOracle( new peano::datatraversal::autotuning::OracleForOnePhaseDummy(
+    true, // multithreading
+    false,
+    1, // splitTheThree
+    false, // pipelineDescendProcessing
+    false, // pipelineAscendProcessing
+    tarch::la::aPowI(DIMENSIONS,3*3*3*3/2), // smallestGrainSizeForAscendDescend
+    3, // grainSizeForAsendDescend
+    tarch::la::aPowI(DIMENSIONS,3), // smallestGrainSizeForEnterLeaveCell // (9 / 2) works good, 2 is good as well
+    2, // grainSizeForEnterLevelCell
+    tarch::la::aPowI(DIMENSIONS,3*3*3*3+1), // smallestGrainSizeForTouchFirstLast
+    64, // grainSizeForTouchFirstLast
+    tarch::la::aPowI(DIMENSIONS,3*3*3), // smallestGrainSizeForSplitLoadStore
+    8, // grainSizeForSplitLoadStore
+    -1, // adapterNumber
+   peano::datatraversal::autotuning::NumberOfDifferentMethodsCalling // methodTrace*/
+    )
+  );
   #endif
-  peano::datatraversal::autotuning::Oracle::getInstance().setOracle( new peano::datatraversal::autotuning::OracleForOnePhaseDummy(true) );
+  //peano::datatraversal::autotuning::Oracle::getInstance().setOracle( new peano::datatraversal::autotuning::OracleForOnePhaseDummy(true) );
+}
+
+void peanoclaw::runners::PeanoClawLibraryRunner::iterateRemesh() {
+  _repository->switchToRemesh();
+  updateOracle();
+  _repository->iterate();
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::iterateInitialiseGrid() {
@@ -223,13 +248,21 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
       _repository->getState().setInitialMaximalSubgridSize(currentMinimalSubgridSize);
 
       logInfo("PeanoClawLibraryRunner", "Creating grid up to level " << maximumLevel << "...");
+      bool repeat = false;
       do {
+        repeat = false;
         logInfo("PeanoClawLibraryRunner", "Initialize iteration...");
         iterateInitialiseGrid();
+        repeat |= (!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
         iterateInitialiseGrid(); //TODO unterweg: Raus?
+        repeat |= (!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+        iterateInitialiseGrid(); //TODO unterweg: Raus?
+        repeat |= (!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+        iterateInitialiseGrid(); //TODO unterweg: Raus?
+        repeat |= (!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
 
 //        logInfo("PeanoClawLibraryRunner", "stationary: " << _repository->getState().isGridStationary() << ", balanced: " << _repository->getState().isGridBalanced());
-      } while(!_repository->getState().isGridStationary() || !_repository->getState().isGridBalanced());
+      } while(repeat);
 
       maximumLevel += forkLevelIncrement;
     } while(tarch::la::oneGreater(currentMinimalSubgridSize, initialMaximalSubgridSize));

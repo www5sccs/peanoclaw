@@ -1,9 +1,11 @@
 #include "peanoclaw/parallel/PeanoClawControlLoopLoadBalancer.h"
-#include "mpibalancing/ControlLoopLoadBalancer/strategies/JoinDueToEraseStrategy.h"
-#include "mpibalancing/ControlLoopLoadBalancer/strategies/ThresholdStrategy.h"
-#include "mpibalancing/ControlLoopLoadBalancer/Reductions.h"
+#include "ControlLoopLoadBalancer/strategies/JoinDueToEraseStrategy.h"
+#include "ControlLoopLoadBalancer/strategies/ThresholdStrategy.h"
+#include "ControlLoopLoadBalancer/Reductions.h"
 
 using namespace  mpibalancing::ControlLoopLoadBalancer;
+
+tarch::logging::Log peanoclaw::parallel::PeanoClawStrategy::_log( "peanoclaw::parallel::PeanoClawStrategy" );
 
 peanoclaw::parallel::PeanoClawStrategy::PeanoClawStrategy(
     History<mpibalancing::ControlLoopLoadBalancer::WorkerData>& masterHistory,
@@ -65,6 +67,8 @@ int peanoclaw::parallel::PeanoClawStrategy::run( int worker ) {
 }
 
 // --------------------------------------------------------------------------------------------------------
+
+tarch::logging::Log peanoclaw::parallel::PeanoClawControlLoopLoadBalancer::_log( "peanoclaw::parallel::PeanoClawControlLoopLoadBalancer" );
 
 peanoclaw::parallel::PeanoClawControlLoopLoadBalancer::PeanoClawControlLoopLoadBalancer() :
     _strategy(_masterHistory,_workerHistorySet,_gridStateHistory),

@@ -73,7 +73,7 @@ int peanoclaw::Area::getNumberOfAdjacentManifolds(
   if(dimensionality < adjacentDimensionality) {
     return factorial(DIMENSIONS - n) / (factorial(s) * factorial(DIMENSIONS-n-s));
   } else {
-    return std::pow(2, factorial(n) / (factorial(s) * factorial(n-s)) * s);
+    return std::pow(2.0, factorial(n) / (factorial(s) * factorial(n-s)) * s);
   }
 }
 
