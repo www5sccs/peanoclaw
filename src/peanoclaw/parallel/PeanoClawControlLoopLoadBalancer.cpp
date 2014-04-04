@@ -47,7 +47,7 @@ int peanoclaw::parallel::PeanoClawStrategy::run( int worker ) {
             }*/
 
 
-#if 0
+#if 1
             mpibalancing::ControlLoopLoadBalancer::reductions::EraseIssueReduction eraseIssueReduction;
             _workerHistorySet.reduce(eraseIssueReduction);
 

@@ -420,7 +420,9 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
       //TODO unterweg debug
 //      std::cout << "Setting cell " << (area._offset + subcellIndex) << std::endl;
 
+      #ifdef AssertForPositiveValues
       assertion3(tarch::la::greater(subgrid.getValueUNew(linearIndex, 0), 0.0), subgrid, subcellIndex, subgrid.getValueUNew(linearIndex, 0));
+      #endif
     }
 
     //U old
@@ -430,7 +432,9 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
         subgrid.setValueUOldAndResize(linearIndex, unknown, remoteData[entry++].getU());
       }
 
+      #ifdef AssertForPositiveValues
       assertion3(tarch::la::greater(subgrid.getValueUOld(linearIndex, 0), 0.0), subgrid, subcellIndex, subgrid.getValueUOld(linearIndex, 0));
+      #endif
     }
   }
 

@@ -49,7 +49,7 @@ class peanoclaw::parallel::SubgridCommunicator {
     static tarch::logging::Log _log;
 
     int _remoteRank;
-    const tarch::la::Vector<DIMENSIONS,double>& _position;
+    tarch::la::Vector<DIMENSIONS,double>        _position;
     int                                         _level;
     peano::heap::MessageType                    _messageType;
     bool                                        _onlySendOverlappedCells;
