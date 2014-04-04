@@ -820,6 +820,18 @@ void peanoclaw::mappings::Remesh::receiveDataFromMaster(
       receivedVerticesEnumerator.getVertexPosition(tarch::la::Vector<DIMENSIONS, int>(0))
     );
     temporaryCellDescription.setSize(receivedVerticesEnumerator.getCellSize());
+
+    //TODO unterweg debug
+//    assertionNumericalEquals8(communicator._position, communicator._subgridCommunicator._position,
+//        &communicator,
+//        &(communicator._position),
+//        sizeof(communicator),
+//        &temporaryCellDescription,
+//        &(communicator._subgridCommunicator),
+//        &(communicator._subgridCommunicator._position),
+//        &(communicator._subgridCommunicator._level),
+//        sizeof(temporaryCellDescription));
+
     temporaryCellDescription.setLevel(receivedVerticesEnumerator.getLevel());
     CellDescriptionHeap::getInstance().getData(temporaryCellDescriptionIndex).push_back(temporaryCellDescription);
     receivedCell.setCellDescriptionIndex(temporaryCellDescriptionIndex);
