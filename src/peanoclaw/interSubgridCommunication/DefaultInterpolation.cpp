@@ -22,7 +22,8 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
   const peanoclaw::Patch& source,
   peanoclaw::Patch&        destination,
   bool interpolateToUOld,
-  bool interpolateToCurrentTime
+  bool interpolateToCurrentTime,
+  bool useTimeUNewOrTimeUOld
 ) {
   logTraceInWith4Arguments("", destinationSize, destinationOffset, source.toString(), destination.toString());
   assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
@@ -35,10 +36,18 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
   if(tarch::la::equals(source.getTimeIntervals().getTimestepSize(), 0.0)) {
     timeFactor = 1.0;
   } else {
-    if(interpolateToCurrentTime) {
-      timeFactor = (destination.getTimeIntervals().getTimeUOld() - source.getTimeIntervals().getTimeUOld()) / (source.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld());
+    if(useTimeUNewOrTimeUOld) {
+      if(interpolateToCurrentTime) {
+        timeFactor = (destination.getTimeIntervals().getTimeUOld() - source.getTimeIntervals().getTimeUOld()) / (source.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld());
+      } else {
+        timeFactor = (destination.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld()) / (source.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld());
+      }
     } else {
-      timeFactor = (destination.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld()) / (source.getTimeIntervals().getTimeUNew() - source.getTimeIntervals().getTimeUOld());
+      if(interpolateToCurrentTime) {
+        timeFactor = (destination.getTimeIntervals().getCurrentTime() - source.getTimeIntervals().getCurrentTime()) / (source.getTimeIntervals().getCurrentTime() + source.getTimeIntervals().getTimestepSize() - source.getTimeIntervals().getCurrentTime());
+      } else {
+        timeFactor = (destination.getTimeIntervals().getCurrentTime() + destination.getTimeIntervals().getTimestepSize() - source.getTimeIntervals().getCurrentTime()) / (source.getTimeIntervals().getCurrentTime() + source.getTimeIntervals().getTimestepSize() - source.getTimeIntervals().getCurrentTime());
+      }
     }
   }
 
@@ -127,12 +136,12 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
         double sourceUOld = source.getValueUOld(linearSourceUOldIndex, unknown);
         double sourceUNew = source.getValueUNew(linearSourceUNewIndex, unknown);
 
-        logDebug("", "\tspatialFactorUNew=" << spatialFactor
+        logDebug("interpolate(...)", "\tspatialFactorUNew=" << spatialFactor
             << ", spatialFactorUNew=" << spatialFactor
             << " due to destination position " << destination.getSubcellCenter(subcellIndexInDestinationPatch)
             << " and source position " << source.getSubcellCenter(neighborIndexInSourcePatch)
             << " and source.subcellsize=" << sourceSubcellSize << " and offset=" << offset);
-        logDebug("", "\ttimeFactor=" << timeFactor
+        logDebug("interpolate(...)", "\ttimeFactor=" << timeFactor
             << " due to destination time " << destination.getTimeIntervals().getCurrentTime()
             << " and destination timestep size " << destination.getTimeIntervals().getTimestepSize()
             << " and source time " << source.getTimeIntervals().getCurrentTime()
@@ -147,7 +156,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
               destination.getValueUOld(linearDestinationIndex, unknown)
               + spatialFactor * sourceUOld * (1.0-timeFactor) + spatialFactor * sourceUNew * timeFactor);
         } else {
-          logDebug("", "\tAdding UNew value " << sourceUNew << " and UOld value " << sourceUOld
+          logDebug("interpolate(...)", "\tAdding UNew value " << sourceUNew << " and UOld value " << sourceUOld
               << " with spatialFactor " << spatialFactor << " and timeFactor " << timeFactor
               << " to value " << destination.getValueUNew(subcellIndexInDestinationPatch, unknown));
 
@@ -157,7 +166,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
         }
       }
     enddforx
-    logDebug("interpolateGhostLayerDataBlock", "For subcell " << (subcellIndex + destinationOffset) << " interpolated value is " << destination.getValueUOld(subcellIndex + destinationOffset, 0));
+    logDebug("interpolate(...)", "For subcell " << (subcellIndex + destinationOffset) << " interpolated value is " << destination.getValueUOld(subcellIndex + destinationOffset, 0));
   }
 
   #ifdef Asserts
@@ -177,14 +186,14 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
     double checkedValue
       = interpolateToUOld ? destination.getValueUOld(subcellIndexInDestinationPatch, 0): destination.getValueUNew(subcellIndexInDestinationPatch, 0);
     if(checkedValue<= 0.0) {
-      std::cout << "Invalid interpolation "
-          #ifdef Parallel
-          << "on rank " << tarch::parallel::Node::getInstance().getRank() << " "
-          #endif
-          << "from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
-          << std::endl << "to patch" << std::endl << destination.toString() << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer()
-          << std::endl << "value=" << destination.getValueUOld(subcellIndexInDestinationPatch, 0) << std::endl;
-      assertion(false);
+      assertionFail("Invalid interpolation "
+        #ifdef Parallel
+        << "on rank " << tarch::parallel::Node::getInstance().getRank() << " "
+        #endif
+        << "from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
+        << std::endl << "to patch" << std::endl << destination.toString() << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer()
+        << std::endl << "value=" << destination.getValueUOld(subcellIndexInDestinationPatch, 0)
+      );
       throw "";
     }
   }

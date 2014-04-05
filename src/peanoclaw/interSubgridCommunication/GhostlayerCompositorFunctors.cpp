@@ -64,7 +64,8 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::operator()
         source,
         destination,
         true,
-        false
+        false,
+        true
       );
     }
   }
@@ -137,7 +138,8 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator()
         source,
         destination,
         true,
-        false
+        false,
+        true
       );
     }
   }
@@ -203,7 +205,8 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::operator
         source,
         destination,
         true,
-        false
+        false,
+        true
       );
     }
   }

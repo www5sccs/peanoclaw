@@ -35,14 +35,24 @@ class peanoclaw::interSubgridCommunication::DefaultInterpolation
   public:
     /**
      * @see peanoclaw::interSubgridCommunication::Interpolation
+     *
+     * TODO unterweg: useTimeUNewOrTimeUOld is only used because the
+     * restriction now is done to the minimalNeighborTimeInterval. However,
+     * during grid refinement the interpolation has to take the actual currentTime
+     * and timestepSize of the subgrid into account and not timeUNew and timeUOld
+     * from the TimeIntervals class. This could be circumvented if the restriction
+     * is carried out in the ascend event and can be done to the minimalFineGrid
+     * interval which becomes the new currentTime and timestepSize of the virtual
+     * subgrid anyway.
      */
     void interpolate (
         const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
         const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
         const peanoclaw::Patch& source,
         peanoclaw::Patch&        destination,
-        bool interpolateToUOld = true,
-        bool interpolateToCurrentTime = true
+        bool interpolateToUOld,
+        bool interpolateToCurrentTime,
+        bool useTimeUNewOrTimeUOld
     );
 };
 

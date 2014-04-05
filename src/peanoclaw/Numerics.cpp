@@ -25,7 +25,8 @@ void peanoclaw::Numerics::interpolate(
   const peanoclaw::Patch& source,
   peanoclaw::Patch&        destination,
   bool interpolateToUOld,
-  bool interpolateToCurrentTime
+  bool interpolateToCurrentTime,
+  bool useTimeUNewOrTimeUOld
 ) const {
   _interpolation->interpolate(
     destinationSize,
@@ -33,7 +34,8 @@ void peanoclaw::Numerics::interpolate(
     source,
     destination,
     interpolateToUOld,
-    interpolateToCurrentTime
+    interpolateToCurrentTime,
+    useTimeUNewOrTimeUOld
   );
 }
 
