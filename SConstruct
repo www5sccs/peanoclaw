@@ -84,7 +84,10 @@ p3SourcePath = join(p3Path, 'src')
 toolboxSourcePath = join(p3Path, 'toolboxes')
 cpppath.append(p3SourcePath)
 cpppath.append(toolboxSourcePath)
-cpppath.append(toolboxSourcePath+'/ControlLoopLoadBalancer')
+cpppath.append(join(toolboxSourcePath, 'ControlLoopLoadBalancer'))
+
+if not os.path.isdir(join(toolboxSourcePath, 'ControlLoopLoadBalancer')):
+  shutil.copy('tools/ControlLoopLoadBalancer', toolboxSourcePath)
 
 # Platform specific settings
 # Only include library rt if not compiling on Mac OS.
