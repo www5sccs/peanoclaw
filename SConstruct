@@ -88,7 +88,7 @@ cpppath.append(toolboxSourcePath)
 cpppath.append(join(toolboxSourcePath, 'ControlLoopLoadBalancer'))
 
 if not os.path.isdir(join(toolboxSourcePath, 'ControlLoopLoadBalancer')):
-  shutil.copy('tools/ControlLoopLoadBalancer', toolboxSourcePath)
+  shutil.copytree('tools/ControlLoopLoadBalancer', join(toolboxSourcePath, 'ControlLoopLoadBalancer'))
 
 # Platform specific settings
 # Only include library rt if not compiling on Mac OS.
