@@ -35,8 +35,9 @@ class peanoclaw::pyclaw::InterpolationCallbackWrapper : public peanoclaw::interS
       const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
       const peanoclaw::Patch& source,
       peanoclaw::Patch&        destination,
-      bool interpolateToUOld = true,
-      bool interpolateToCurrentTime = true
+      bool interpolateToUOld,
+      bool interpolateToCurrentTime,
+      bool useTimeUNewOrTimeUOld
     );
 };
 

@@ -24,7 +24,8 @@ void peanoclaw::pyclaw::InterpolationCallbackWrapper::interpolate (
   const peanoclaw::Patch& source,
   peanoclaw::Patch&        destination,
   bool interpolateToUOld,
-  bool interpolateToCurrentTime
+  bool interpolateToCurrentTime,
+  bool useTimeUNewOrTimeUOld
 ) {
 
   PyClawState sourceState(source);
