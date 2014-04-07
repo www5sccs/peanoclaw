@@ -524,9 +524,11 @@ void peanoclaw::tests::PatchTest::testManifolds() {
   assignList(manifoldPosition) =  0,  0,  1;
   validateEqualsWithParams1(Area::getManifold(2, 5), manifoldPosition, Area::getManifold(2, 5));
   #endif
+  #endif
 }
 
 void peanoclaw::tests::PatchTest::testNumberOfAdjacentManifolds() {
+  #ifdef Parallel
   tarch::la::Vector<DIMENSIONS, int> manifoldPosition;
   #ifdef Dim2
   assignList(manifoldPosition) = -1, -1;
