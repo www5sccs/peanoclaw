@@ -11,7 +11,7 @@
 
 #include "tarch/Assertions.h"
 
-#ifdef UseBlockedMeshCommunication
+#if defined(Parallel) && defined(UseBlockedMeshCommunication)
 #include "peano/parallel/Serialization.h"
 #include "peano/parallel/SerializationMap.h"
 #endif
