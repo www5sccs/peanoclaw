@@ -77,7 +77,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment()
   #endif
 
   //Shared Memory
-  #ifdef SharedMemoryParallelisation
+  #ifdef SharedTBB
   std::cout << "configuring multicore" << std::endl;
   tarch::multicore::tbb::Core::getInstance().configure(8);
   peano::datatraversal::autotuning::Oracle::getInstance().setOracle( new peano::datatraversal::autotuning::OracleForOnePhaseDummy(
