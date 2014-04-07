@@ -1,9 +1,10 @@
 # Peano/SConstruct
 
-import os;
-from os.path import join;
-from os.path import dirname;
-import sys;
+import os
+from os.path import join
+from os.path import dirname
+import sys
+import shutil
 
 #########################################################################
 ##### FUNCTION DEFINITIONS
