@@ -705,7 +705,9 @@ elif solver == 'swe':
     target=target,
     source=source
     )
-    
+  ##### Copy executable to bin directory
+  #
+  installation = env.Alias('install', env.Install('bin', executable))    
 elif solver == 'fullswof2d':
   targetfilename = 'peano-claw-' + str(dim) + 'd'
   target = buildpath + targetfilename
