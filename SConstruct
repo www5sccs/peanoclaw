@@ -88,7 +88,7 @@ cpppath.append(toolboxSourcePath)
 cpppath.append(join(toolboxSourcePath, 'ControlLoopLoadBalancer'))
 
 if not os.path.isdir(join(toolboxSourcePath, 'ControlLoopLoadBalancer')):
-  shutil.copytree('tools/ControlLoopLoadBalancer', join(toolboxSourcePath, 'ControlLoopLoadBalancer'))
+  shutil.copytree('tools/ControlLoopLoadBalancer/ControlLoopLoadBalancer', join(toolboxSourcePath, 'ControlLoopLoadBalancer'))
 
 # Platform specific settings
 # Only include library rt if not compiling on Mac OS.
@@ -640,10 +640,12 @@ sourcesPeanoClaw = [
 ##### Define sources of application peanoclaw
 if solver == 'swe':
   sourcesSolver = [
+    Glob(join(buildpath, 'peanoclaw/native/main.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/SWEKernel.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/SWE_WavePropagationBlock_patch.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/BreakingDam.cpp')),
-    Glob(join(buildpath, 'swe/blocks/*.cpp'))
+    Glob(join(buildpath, 'swe/blocks/SWE_Block.cpp')),
+    Glob(join(buildpath, 'swe/blocks/SWE_WaveAccumulationBlock.cpp'))
     ]
 elif solver == 'pyclaw':
   sourcesSolver = [
