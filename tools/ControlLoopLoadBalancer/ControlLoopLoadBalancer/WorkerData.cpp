@@ -202,3 +202,8 @@ void mpibalancing::ControlLoopLoadBalancer::WorkerData::reset() {
 bool mpibalancing::ControlLoopLoadBalancer::WorkerData::operator<(const WorkerData& right) {
     return getRank() < right.getRank();
 }
+
+std::ostream& operator<<(std::ostream& stream, const mpibalancing::ControlLoopLoadBalancer::WorkerData& workerData) {
+  stream << "WorkerData";
+  return stream;
+}

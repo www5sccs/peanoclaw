@@ -4,6 +4,8 @@
 #include "peano/utils/Globals.h"
 #include "tarch/la/Vector.h"
 
+#include <ostream>
+
 namespace mpibalancing {
     namespace ControlLoopLoadBalancer {
         class WorkerData;
@@ -119,5 +121,7 @@ class  mpibalancing::ControlLoopLoadBalancer::WorkerData {
         double  _parentCellLocalWorkload;
         bool    _couldNotEraseDueToDecomposition;
 };
+
+std::ostream& operator<<(std::ostream& stream, const mpibalancing::ControlLoopLoadBalancer::WorkerData& workerData);
 
 #endif // _CONTROL_LOOP_LOAD_BALANCER_WORKERDATA_H_

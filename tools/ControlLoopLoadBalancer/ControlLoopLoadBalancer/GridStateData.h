@@ -1,6 +1,8 @@
 #ifndef _CONTROL_LOOP_LOAD_BALANCER_STATEDATA_H_
 #define _CONTROL_LOOP_LOAD_BALANCER_STATEDATA_H_
 
+#include <ostream>
+
 namespace mpibalancing {
     namespace ControlLoopLoadBalancer {
         class GridStateData;
@@ -47,5 +49,7 @@ class mpibalancing::ControlLoopLoadBalancer::GridStateData {
         bool _couldNotEraseDueToDecomposition;
         bool _subWorkerIsInvolvedInJoinOrFork;
 };
+
+std::ostream& operator<<(std::ostream& stream, const mpibalancing::ControlLoopLoadBalancer::GridStateData& workerData);
 
 #endif

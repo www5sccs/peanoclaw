@@ -70,3 +70,8 @@ void mpibalancing::ControlLoopLoadBalancer::GridStateData::reset() {
     _couldNotEraseDueToDecomposition = false;
     _subWorkerIsInvolvedInJoinOrFork = false;
 }
+
+std::ostream& operator<<(std::ostream& stream, const mpibalancing::ControlLoopLoadBalancer::GridStateData& workerData) {
+  stream << "GridStateData";
+  return stream;
+}
