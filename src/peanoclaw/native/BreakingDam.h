@@ -10,8 +10,8 @@ class BreakingDam_SWEKernelScenario : public peanoclaw::native::SWEKernelScenari
         BreakingDam_SWEKernelScenario();
         ~BreakingDam_SWEKernelScenario();
 
-        virtual double initializePatch(peanoclaw::Patch& patch);
-        virtual double computeDemandedMeshWidth(peanoclaw::Patch& patch);
+        virtual void initializePatch(peanoclaw::Patch& patch);
+        virtual tarch::la::Vector<DIMENSIONS,double> computeDemandedMeshWidth(peanoclaw::Patch& patch, bool isInitializing);
 
         virtual void update(peanoclaw::Patch& patch) {}
 };

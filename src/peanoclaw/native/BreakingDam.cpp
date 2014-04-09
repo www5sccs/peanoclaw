@@ -4,7 +4,7 @@
 BreakingDam_SWEKernelScenario::BreakingDam_SWEKernelScenario() {}
 BreakingDam_SWEKernelScenario::~BreakingDam_SWEKernelScenario() {}
 
-double BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
+void BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
     // dam coordinates
     double x0=10/3.0;
     double y0=10/3.0;
@@ -42,10 +42,12 @@ double BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
             patch.setValueUNew(subcellIndex, 2, q2);
         }
     }
-    return 10.0/9/9;
 }
 
-double BreakingDam_SWEKernelScenario::computeDemandedMeshWidth(peanoclaw::Patch& patch) {
+tarch::la::Vector<DIMENSIONS,double> BreakingDam_SWEKernelScenario::computeDemandedMeshWidth(
+  peanoclaw::Patch& patch,
+  bool isInitializing
+) {
     double max_gradient = 0.0;
     const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
     
@@ -82,6 +84,10 @@ double BreakingDam_SWEKernelScenario::computeDemandedMeshWidth(peanoclaw::Patch&
       demandedMeshWidth = patch.getSubcellSize()(0);
     }
 
-    return demandedMeshWidth;
+    if(isInitializing) {
+      return 10.0/9/9;
+    } else {
+      return demandedMeshWidth;
+    }
 }
 #endif
