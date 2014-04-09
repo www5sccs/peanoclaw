@@ -31,7 +31,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   10/02/2014 15:08
+ * @date   09/04/2014 08:39
  */
 class peanoclaw::records::RepositoryState { 
    
@@ -204,7 +204,7 @@ class peanoclaw::records::RepositoryState {
     *
     * 		   build date: 09-02-2014 14:40
     *
-    * @date   10/02/2014 15:08
+    * @date   09/04/2014 08:39
     */
    class peanoclaw::records::RepositoryStatePacked { 
       

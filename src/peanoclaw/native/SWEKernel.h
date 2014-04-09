@@ -63,7 +63,7 @@ public:
    *
    * @return The mesh width demanded by the application.
    */
-  double initializePatch(Patch& patch);
+  void initializePatch(Patch& patch);
 
   /**
    * Solves a timestep. All updates (e.g. change of grid values, taken timestep size, new cfl number)
@@ -72,7 +72,12 @@ public:
    * @param patch The Patch object holding the grid data.
    * @param maximumTimestepSize The maximal timestep size with regard to the current global timestep.
    */
-  double solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting);
+  void solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting);
+
+  /**
+   * Returns the demanded mesh width for the given subgrid.
+   */
+  tarch::la::Vector<DIMENSIONS, double> getDemandedMeshWidth(Patch& patch, bool isInitializing);
 
   /**
    * Adds a patch to the solution which is hold in PyClaw. This method is used for gathering a solution
@@ -174,8 +179,8 @@ public:
 class peanoclaw::native::SWEKernelScenario {
     public:
         virtual ~SWEKernelScenario() {}
-        virtual double initializePatch(Patch& patch) = 0;
-        virtual double computeDemandedMeshWidth(Patch& patch) = 0;
+        virtual void initializePatch(Patch& patch) = 0;
+        virtual tarch::la::Vector<DIMENSIONS,double> computeDemandedMeshWidth(Patch& patch, bool isInitializing) = 0;
         virtual void update(Patch& patch) = 0;
     protected:
         SWEKernelScenario() {}

@@ -243,7 +243,9 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setAgeInGridIterations(0);
   
   //Refinement
-  cellDescription.setDemandedMeshWidth(size(0) / subdivisionFactor(0) * 3.0);
+  cellDescription.setDemandedMeshWidth(
+      tarch::la::multiplyComponents(size, tarch::la::invertEntries(subdivisionFactor.convertScalar<double>()))
+  );
   cellDescription.setRestrictionLowerBounds(std::numeric_limits<double>::max());
   cellDescription.setRestrictionUpperBounds(-std::numeric_limits<double>::max());
   cellDescription.setSynchronizeFineGrids(false);
@@ -653,11 +655,11 @@ int peanoclaw::Patch::getCellDescriptionIndex() const {
   return _cellDescription->getCellDescriptionIndex();
 }
 
-void peanoclaw::Patch::setDemandedMeshWidth(double demandedMeshWidth) {
+void peanoclaw::Patch::setDemandedMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth) {
   _cellDescription->setDemandedMeshWidth(demandedMeshWidth);
 }
 
-double peanoclaw::Patch::getDemandedMeshWidth() const {
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::Patch::getDemandedMeshWidth() const {
   return _cellDescription->getDemandedMeshWidth();
 }
 

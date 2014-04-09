@@ -51,21 +51,21 @@ void configureLogFilter(bool enablePeanoLogging) {
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelGridValidator", true ) );
 
     //Disable minimal time subgrid
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics", true ) );
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::repositories", false ) );
 
     //Selective Tracing
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelStatistics", false ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelStatistics", true ) );
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::runners::PeanoClawLibraryRunner", false ) );
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::SubgridStatistics::logLevelStatistics", false ) );
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::parallel", false ) );
 
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::grid::nodes::loops::LoadVertexLoopBody", false ) );
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::grid::Grid", false ) );
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::grid::nodes::Root", false ) );
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel::SendReceiveBufferPool::releaseMessages", false ) );
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel::SendReceiveBufferAbstractImplementation", false ) );
-    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel::JoinDataBufferPool::releaseMessages", false ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::grid::nodes::loops::LoadVertexLoopBody", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::grid::Grid", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::grid::nodes::Root", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel::SendReceiveBufferPool::releaseMessages", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel::SendReceiveBufferAbstractImplementation", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel::JoinDataBufferPool::releaseMessages", true ) );
+    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "tarch::mpianalysis", false ) );
   } else {
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", true ) );
   }
@@ -119,6 +119,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   InitializationCallback initializationCallback,
   BoundaryConditionCallback boundaryConditionCallback,
   SolverCallback solverCallback,
+  RefinementCriterionCallback refinementCriterionCallback,
   AddPatchToSolutionCallback addPatchToSolutionCallback,
   InterPatchCommunicationCallback interpolationCallback,
   InterPatchCommunicationCallback restrictionCallback,

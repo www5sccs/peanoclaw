@@ -154,7 +154,7 @@ class peanoclaw::records::CellDescription {
   /**
    * The mesh width that is demanded by the application.
    */
-  parallelise persistent double demandedMeshWidth;
+  parallelise persistent double demandedMeshWidth[DIMENSIONS];
   
   /**
    * Lower bounds for area overlapped by coarser ghostlayer. I.e. defining

@@ -580,13 +580,13 @@ public:
    * Sets the mesh width that was demanded by the application for
    * this patch.
    */
-  void setDemandedMeshWidth(double demandedMeshWidth);
+  void setDemandedMeshWidth(const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth);
 
   /**
    * Returns the mesh width that was demanded by the application for
    * this patch.
    */
-  double getDemandedMeshWidth() const;
+  tarch::la::Vector<DIMENSIONS,double> getDemandedMeshWidth() const;
 
   std::string toStringUNew() const;
 

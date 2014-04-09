@@ -217,13 +217,11 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
     );
  
     assertion1(patch.isLeaf(), patch);
-    double demandedMeshWidthScalar = _numerics->initializePatch(patch);
+    _numerics->initializePatch(patch);
+    tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth = _numerics->getDemandedMeshWidth(patch, true);
     patch.copyUNewToUOld();
-    patch.setDemandedMeshWidth(demandedMeshWidthScalar);
 
     if(_refinementCriterionEnabled) {
-      tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth(demandedMeshWidthScalar);
-
       #if defined(Asserts) && defined(AssertForPositiveValues)
       dfor(subcellIndex, patch.getSubdivisionFactor()) {
         tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex;
@@ -243,6 +241,8 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
         fineGridVerticesEnumerator
       );
     }
+
+    patch.setDemandedMeshWidth(demandedMeshWidth);
   }
 
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );

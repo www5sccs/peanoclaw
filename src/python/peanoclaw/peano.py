@@ -29,6 +29,7 @@ class Peano(object):
                dt_initial,
                initialization_callback, 
                solver_callback,
+               refinement_criterion_callback,
                boundary_condition_callback,
                interpolation_callback,
                restriction_callback,
@@ -49,6 +50,7 @@ class Peano(object):
     
     self.boundary_condition_callback = boundary_condition_callback
     self.solver_callback = solver_callback
+    self.refinement_criterion_callback = refinement_criterion_callback
     self.interpolation_callback = interpolation_callback
     self.restriction_callback = restriction_callback
     self.flux_correction_callback = flux_correction_callback
@@ -121,6 +123,7 @@ class Peano(object):
                                                 initialization_callback.get_initialization_callback(),
                                                 boundary_condition_callback.get_boundary_condition_callback(),
                                                 solver_callback.get_solver_callback(),
+                                                refinement_criterion_callback.get_refinement_criterion_callback(),
                                                 solution.get_add_to_solution_callback(),
                                                 interpolation_callback.get_interpolation_callback(),
                                                 restriction_callback.get_restriction_callback(),

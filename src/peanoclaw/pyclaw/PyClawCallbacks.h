@@ -46,6 +46,21 @@ typedef double (*SolverCallback)(double* dtAndCfl,
                         double estimatedNextTimestepSize,
                         bool useDimensionalSplitting);
 
+typedef double  (*RefinementCriterionCallback)(PyObject* q,
+                                               PyObject* qbc,
+                                               PyObject* aux,
+                                               int subdivisionFactorX0,
+                                               int subdivisionFactorX1,
+                                               int subdivisionFactorX2,
+                                               int unknownsPerSubcell,
+                                               int auxFieldsPerSubcell,
+                                               double sizeX,
+                                               double sizeY,
+                                               double sizeZ,
+                                               double positionX,
+                                               double positionY,
+                                               double positionZ);
+
 
 typedef void (*AddPatchToSolutionCallback)(PyObject* q,
                                     PyObject* qbc,

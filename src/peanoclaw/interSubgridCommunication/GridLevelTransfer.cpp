@@ -97,9 +97,10 @@ bool peanoclaw::interSubgridCommunication::GridLevelTransfer::shouldBecomeVirtua
 //      if(finePatch.getLevel() > 1) {
 //        createVirtualPatch = true;
 //      }
-  } else {
-    createVirtualPatch = !isPeanoCellLeaf;
   }
+//  else {
+//    createVirtualPatch = !isPeanoCellLeaf;
+//  }
 
   return createVirtualPatch;
 }
@@ -416,9 +417,6 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
       }
 
       finePatch.switchToNonVirtual();
-
-      //Avoid to refine immediately after coarsening
-      finePatch.setDemandedMeshWidth(finePatch.getSubcellSize()(0));
     }
   } else if (finePatch.isVirtual()) {
     finalizeVirtualSubgrid(
@@ -489,6 +487,6 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictDestroyedS
 
   //Set demanded mesh width for coarse cell to coarse cell size. Otherwise
   //the coarse patch might get refined immediately.
-  coarseSubgrid.setDemandedMeshWidth(coarseSubgrid.getSubcellSize()(0));
+  coarseSubgrid.setDemandedMeshWidth(coarseSubgrid.getSubcellSize());
 }
 

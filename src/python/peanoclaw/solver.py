@@ -6,6 +6,7 @@ Created on Feb 7, 2012
 from clawpack.pyclaw.solver import Solver
 from peanoclaw.callbacks.initializationcallback import InitializationCallback 
 from peanoclaw.callbacks.solvercallback import SolverCallback
+from peanoclaw.callbacks.refinementcriterioncallback import RefinementCriterionCallback
 from peanoclaw.callbacks.boundaryconditioncallback import BoundaryConditionCallback
 from peanoclaw.callbacks.interpolationcallback import InterpolationCallback
 from peanoclaw.callbacks.restrictioncallback import RestrictionCallback
@@ -61,6 +62,7 @@ class Solver(Solver):
         #Create callbacks
         self.initialization_callback = InitializationCallback(self, refinement_criterion, q_initialization, aux_initialization, initial_minimal_mesh_width)
         self.solver_callback = SolverCallback(self, refinement_criterion, initial_minimal_mesh_width, internal_settings.fixed_timestep_size)
+        self.refinement_criterion_callback = RefinementCriterionCallback(refinement_criterion, initial_minimal_mesh_width)
         self.boundary_condition_callback = BoundaryConditionCallback(self)
         self.interpolation_callback = InterpolationCallback(interpolation, self)
         self.restriction_callback = RestrictionCallback(restriction, self)
@@ -102,6 +104,7 @@ class Solver(Solver):
          self.solver.dt_initial,
          self.initialization_callback,
          self.solver_callback,
+         self.refinement_criterion_callback,
          self.boundary_condition_callback,
          self.interpolation_callback,
          self.restriction_callback,

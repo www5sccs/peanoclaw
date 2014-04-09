@@ -48,9 +48,8 @@ private:
     /**
      * Initializes the given patch at the beginning of a simulation run.
      *
-     * @return The mesh width demanded by the application.
      */
-    virtual double initializePatch(Patch& patch) = 0;
+    virtual void initializePatch(Patch& patch) = 0;
 
     /**
      * Performs the interpolation between the given source and destination
@@ -111,11 +110,23 @@ private:
      *
      * @param patch The Patch object holding the grid data.
      * @param maximumTimestepSize The maximal timestep size with regard to the current global timestep.
+     *
      */
-    virtual double solveTimestep(
+    virtual void solveTimestep(
       Patch& patch,
       double maximumTimestepSize,
       bool useDimensionalSplitting
+    ) = 0;
+
+    /**
+     * Retrieves the demanded mesh width for the given patch.
+     *
+     * @return The mesh width demanded by the application. This is assumed to be the minimal mesh width
+     * over all dimensions, hence it's a scalar value.
+     */
+    virtual tarch::la::Vector<DIMENSIONS, double> getDemandedMeshWidth(
+      Patch& patch,
+      bool   isInitializing
     ) = 0;
 
 

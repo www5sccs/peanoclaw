@@ -23,7 +23,7 @@ class peanoclaw::tests::NumericsTestStump : public peanoclaw::Numerics {
 
     void addPatchToSolution(Patch& patch){};
 
-    double initializePatch(Patch& patch){return 1.0;};
+    void initializePatch(Patch& patch){};
 
     void fillBoundaryLayer(
       Patch& patch,
@@ -31,10 +31,17 @@ class peanoclaw::tests::NumericsTestStump : public peanoclaw::Numerics {
       bool setUpper
     ){};
 
-    double solveTimestep(
+    void solveTimestep(
       Patch& patch,
       double maximumTimestepSize,
       bool useDimensionalSplitting
-    ){return 1.0;};
+    ){};
+
+    tarch::la::Vector<DIMENSIONS, double> getDemandedMeshWidth(
+      Patch& patch,
+      bool isInitializing
+    ) {
+      return 1;
+    }
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_TESTS_NUMERICSTESTSTUMP_H_ */

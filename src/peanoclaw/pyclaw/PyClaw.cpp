@@ -22,10 +22,11 @@
 tarch::logging::Log peanoclaw::pyclaw::PyClaw::_log("peanoclaw::pyclaw::PyClaw");
 
 peanoclaw::pyclaw::PyClaw::PyClaw(
-  InitializationCallback         initializationCallback,
-  BoundaryConditionCallback      boundaryConditionCallback,
-  SolverCallback                 solverCallback,
-  AddPatchToSolutionCallback     addPatchToSolutionCallback,
+  InitializationCallback                                initializationCallback,
+  BoundaryConditionCallback                             boundaryConditionCallback,
+  SolverCallback                                        solverCallback,
+  RefinementCriterionCallback                           refinementCriterionCallback,
+  AddPatchToSolutionCallback                            addPatchToSolutionCallback,
   peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
   peanoclaw::interSubgridCommunication::Restriction*    restriction,
   peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
@@ -33,8 +34,12 @@ peanoclaw::pyclaw::PyClaw::PyClaw(
 _initializationCallback(initializationCallback),
 _boundaryConditionCallback(boundaryConditionCallback),
 _solverCallback(solverCallback),
+_refinementCriterionCallback(refinementCriterionCallback),
 _addPatchToSolutionCallback(addPatchToSolutionCallback),
-_totalSolverCallbackTime(0.0)
+_totalSolverCallbackTime(0.0),
+_cachedDemandedMeshWidth(-1.0),
+_cachedSubgridPosition(0.0),
+_cachedSubgridLevel(-1)
 {
   //import_array();
 }
@@ -44,7 +49,7 @@ peanoclaw::pyclaw::PyClaw::~PyClaw()
 }
 
 
-double peanoclaw::pyclaw::PyClaw::initializePatch(
+void peanoclaw::pyclaw::PyClaw::initializePatch(
   Patch& patch
 ) {
   logTraceIn( "initializePatch(...)");
@@ -81,11 +86,15 @@ double peanoclaw::pyclaw::PyClaw::initializePatch(
     #endif
   );
 
+  //Cache demanded mesh width
+  _cachedSubgridPosition = patch.getPosition();
+  _cachedSubgridLevel = patch.getLevel();
+  _cachedDemandedMeshWidth = demandedMeshWidth;
+
   logTraceOutWith1Argument( "initializePatch(...)", demandedMeshWidth);
-  return demandedMeshWidth;
 }
 
-double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
+void peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
 
   tarch::multicore::Lock lock(_semaphore);
@@ -102,8 +111,14 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   dtAndEstimatedNextDt[0] = 0.0;
   dtAndEstimatedNextDt[1] = 0.0;
 
-  double requiredMeshWidth
-    = _solverCallback(
+  bool doDummyTimestep = false;
+  double requiredMeshWidth;
+  if(doDummyTimestep) {
+    dtAndEstimatedNextDt[0] = std::min(maximumTimestepSize, patch.getTimeIntervals().getEstimatedNextTimestepSize());
+    dtAndEstimatedNextDt[1] = patch.getTimeIntervals().getEstimatedNextTimestepSize();
+    requiredMeshWidth = patch.getSubcellSize()(0);
+  } else {
+    requiredMeshWidth = _solverCallback(
       dtAndEstimatedNextDt,
       state._q,
       state._qbc,
@@ -136,6 +151,7 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
       patch.getTimeIntervals().getEstimatedNextTimestepSize(),
       useDimensionalSplitting
     );
+  }
 
   pyclawWatch.stopTimer();
   _totalSolverCallbackTime += pyclawWatch.getCalendarTime();
@@ -151,13 +167,63 @@ double peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTime
   assertion(patch.getTimeIntervals().getTimestepSize() < std::numeric_limits<double>::infinity());
 
   //Check for zeros in solution
-  assertion3(!patch.containsNonPositiveNumberInUnknown(0), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
+  assertion3(!patch.containsNonPositiveNumberInUnknownInUNew(0), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
 
   patch.getTimeIntervals().advanceInTime();
   patch.getTimeIntervals().setTimestepSize(dtAndEstimatedNextDt[0]);
 
+  //Cache demanded mesh width
+  _cachedSubgridPosition = patch.getPosition();
+  _cachedSubgridLevel = patch.getLevel();
+  _cachedDemandedMeshWidth = requiredMeshWidth;
+
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
-  return requiredMeshWidth;
+}
+
+tarch::la::Vector<DIMENSIONS, double> peanoclaw::pyclaw::PyClaw::getDemandedMeshWidth(Patch& patch) {
+  if(
+    tarch::la::equals(patch.getPosition(), _cachedSubgridPosition)
+    && patch.getLevel() == _cachedSubgridLevel
+  ) {
+    return _cachedDemandedMeshWidth;
+  } else {
+    PyClawState state(patch);
+    double demandedMeshWidth = _initializationCallback(
+      state._q,
+      state._qbc,
+      state._aux,
+      patch.getSubdivisionFactor()(0),
+      patch.getSubdivisionFactor()(1),
+      #ifdef Dim3
+      patch.getSubdivisionFactor()(2),
+      #else
+        0,
+      #endif
+      patch.getUnknownsPerSubcell(),
+      patch.getAuxiliarFieldsPerSubcell(),
+      patch.getSize()(0),
+      patch.getSize()(1),
+      #ifdef Dim3
+      patch.getSize()(2),
+      #else
+        0,
+      #endif
+      patch.getPosition()(0),
+      patch.getPosition()(1),
+      #ifdef Dim3
+      patch.getPosition()(2)
+      #else
+        0
+      #endif
+    );
+
+    //Cache demanded mesh width
+    _cachedSubgridPosition = patch.getPosition();
+    _cachedSubgridLevel = patch.getLevel();
+    _cachedDemandedMeshWidth = demandedMeshWidth;
+
+    return demandedMeshWidth;
+  }
 }
 
 void peanoclaw::pyclaw::PyClaw::addPatchToSolution(Patch& patch) {

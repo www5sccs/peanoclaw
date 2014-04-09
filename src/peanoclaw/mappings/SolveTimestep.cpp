@@ -597,12 +597,21 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         );
 
         // Do one timestep...
-        double requiredMeshWidth = _numerics->solveTimestep(
-                                                patch,
-                                                maximumTimestepDueToGlobalTimestep,
-                                                _useDimensionalSplittingOptimization
-                                              );
+        _numerics->solveTimestep(
+          patch,
+          maximumTimestepDueToGlobalTimestep,
+          _useDimensionalSplittingOptimization
+        );
+        tarch::la::Vector<DIMENSIONS, double> requiredMeshWidth = _numerics->getDemandedMeshWidth(patch, false);
         patch.setDemandedMeshWidth(requiredMeshWidth);
+
+        //TODO unterweg debug
+//        if(tarch::la::equals(patch.getPosition()(0), 8000*(2*9+3) / 81.0)
+//           &&tarch::la::equals(patch.getPosition()(1), 4500*(5*9+2*3) / 81.0)) {
+//          std::cout << "Demanded mesh width is " << requiredMeshWidth << std::endl
+//              << " for patch " << patch << std::endl;
+//          throw "";
+//        }
 
         #ifdef Parallel
         ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
@@ -724,7 +733,7 @@ void peanoclaw::mappings::SolveTimestep::leaveCell(
   Patch patch(fineGridCell);
 
   //Refinement criterion
-  assertion1(tarch::la::greater(patch.getDemandedMeshWidth(), 0), patch);
+  assertion1(tarch::la::allGreater(patch.getDemandedMeshWidth(), tarch::la::Vector<DIMENSIONS,double>(0)), patch);
 
   if(tarch::la::oneGreater(patch.getSubcellSize(), tarch::la::Vector<DIMENSIONS, double>(patch.getDemandedMeshWidth()))) {
     // Refine

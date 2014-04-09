@@ -385,23 +385,10 @@ void peanoclaw::mappings::Remesh::createCell(
           true,
           false
         );
-        
-        //TODO unterweg
-//        if(tarch::la::equals(fineGridPatch.getPosition()(0), 8000.0 / 9.0)
-//          && tarch::la::equals(fineGridPatch.getPosition()(1), 0)
-//          //&& fineGridPatch.getLevel() == 3
-//          ) {
-//          std::cout << "Interpolating from " << coarseGridPatch << std::endl
-//              << " to " << fineGridPatch << std::endl
-//              << "Coarse Patch: " << coarseGridPatch.toStringUNew() << std::endl
-//              << "Fine Patch: " << fineGridPatch.toStringUNew() << std::endl
-//              << "Coarse Patch: " << coarseGridPatch.toStringUOldWithGhostLayer() << std::endl
-//              << "Fine Patch: " << fineGridPatch.toStringUOldWithGhostLayer() << std::endl;
-//          throw "";
-//        }
-
         _numerics->update(fineGridPatch);
       }
+
+      fineGridPatch.setDemandedMeshWidth(_numerics->getDemandedMeshWidth(fineGridPatch, _isInitializing));
     }
   }
 

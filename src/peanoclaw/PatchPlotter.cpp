@@ -59,7 +59,7 @@ void peanoclaw::PatchPlotter::plotSubcell(
       _cellGhostLayerWidthWriter->plotCell(number, patch.getGhostlayerWidth());
       _cellTimeOldWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime());
       _cellTimeNewWriter->plotCell(number, patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
-      _cellDemandedMeshWidthWriter->plotCell(number, patch.getDemandedMeshWidth());
+      _cellDemandedMeshWidthWriter->plotCell(number, tarch::la::norm1(patch.getDemandedMeshWidth()) / DIMENSIONS);
       _cellAgeWriter->plotCell(number, patch.getAge());
 
       #ifdef Parallel

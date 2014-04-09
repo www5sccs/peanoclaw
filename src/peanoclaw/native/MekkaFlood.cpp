@@ -395,7 +395,7 @@ static double interpolation_error_gradient(peanoclaw::Patch& patch, int unknown)
     return max_error;
 }
 
-double MekkaFlood_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
+void MekkaFlood_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
     // dam coordinates
     //double x0=domainSize*0.5;
     //double y0=domainSize*0.5;
@@ -475,11 +475,9 @@ double MekkaFlood_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
     const tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = patch.getSubdivisionFactor();
     double min_domainsize = std::min(x_size,y_size);
     int max_subdivisionFactor = std::max(subdivisionFactor(0),subdivisionFactor(1));
-
-    return min_domainsize / max_subdivisionFactor;
 }
 
-double MekkaFlood_SWEKernelScenario::computeDemandedMeshWidth(peanoclaw::Patch& patch) {
+tarch::la::Vector<DIMENSIONS,double> MekkaFlood_SWEKernelScenario::computeDemandedMeshWidth(peanoclaw::Patch& patch, bool isInitializing) {
     double retval = 0.0;
 
     const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
@@ -761,9 +759,11 @@ double MekkaFlood_SWEKernelScenario::computeDemandedMeshWidth(peanoclaw::Patch& 
         if (max_interpolation_error_gradient > 1.e-1) { // 1.e-2 and basic interpolation gradient used for POSTER
             //std::cout << "interpolation error inside patch: " << max_error << " " << " with ghostlayer " << max_error_ghost << std::endl;
             //std::cout << "refining!" << std::endl;
-            retval = retval / (3.0 * max_subdivisionFactor);
+//            retval = retval / (3.0 * max_subdivisionFactor);
+            retval = x_size/patch.getSubdivisionFactor()(0)/81.0;
         } else {
-            retval = retval * (3.0 * max_subdivisionFactor);
+//            retval = retval * (3.0 * max_subdivisionFactor);
+            retval = x_size/patch.getSubdivisionFactor()(0)/9.0;
         }
         patch.resetAge();
 //    } else {
@@ -804,6 +804,17 @@ double MekkaFlood_SWEKernelScenario::computeDemandedMeshWidth(peanoclaw::Patch& 
         retval = meshWidth(0);
     }*/
     return retval;
+
+    //TODO unterweg debug
+//    if(std::abs(patch.getPosition()(0) - 3000) < 500 && patch.getLevel() < 5 && !isInitializing) {
+//      return patch.getSubcellSize() / 3.0;
+////      return x_size/16/27.0;
+//    } else if( std::abs(patch.getPosition()(0) - 3000) < 500 ){
+//      return patch.getSubcellSize();
+//    } else {
+//      return patch.getSubcellSize() * 3.0;
+////      return x_size/16/9.0;
+//    }
 }
  
 void MekkaFlood_SWEKernelScenario::update(peanoclaw::Patch& patch) {

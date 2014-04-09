@@ -38,25 +38,30 @@ private:
   /**
    * Logging device
    */
-  static tarch::logging::Log         _log;
+  static tarch::logging::Log            _log;
 
-  InitializationCallback             _initializationCallback;
+  InitializationCallback                _initializationCallback;
+  BoundaryConditionCallback             _boundaryConditionCallback;
+  SolverCallback                        _solverCallback;
+  RefinementCriterionCallback           _refinementCriterionCallback;
+  AddPatchToSolutionCallback            _addPatchToSolutionCallback;
 
-  BoundaryConditionCallback          _boundaryConditionCallback;
+  double                                _totalSolverCallbackTime;
 
-  SolverCallback                     _solverCallback;
+  tarch::multicore::BooleanSemaphore    _semaphore;
 
-  AddPatchToSolutionCallback         _addPatchToSolutionCallback;
-
-  double                             _totalSolverCallbackTime;
-
-  tarch::multicore::BooleanSemaphore _semaphore;
+  //Mesh width cache
+  tarch::la::Vector<DIMENSIONS, double> _cachedDemandedMeshWidth;
+  tarch::la::Vector<DIMENSIONS, double> _cachedSubgridPosition;
+  int                                   _cachedSubgridLevel;
 
 public:
-  PyClaw(InitializationCallback   initializationCallback,
-    BoundaryConditionCallback      boundaryConditionCallback,
-    SolverCallback                 solverCallback,
-    AddPatchToSolutionCallback     addPatchToSolutionCallback,
+  PyClaw(
+    InitializationCallback                                initializationCallback,
+    BoundaryConditionCallback                             boundaryConditionCallback,
+    SolverCallback                                        solverCallback,
+    RefinementCriterionCallback                           refinementCriterionCallback,
+    AddPatchToSolutionCallback                            addPatchToSolutionCallback,
     peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
     peanoclaw::interSubgridCommunication::Restriction*    restriction,
     peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
@@ -66,10 +71,8 @@ public:
 
   /**
    * Initializes the given patch at the beginning of a simulation run.
-   *
-   * @return The mesh width demanded by the application.
    */
-  double initializePatch(Patch& patch);
+  void initializePatch(Patch& patch);
 
   /**
    * Solves a timestep. All updates (e.g. change of grid values, taken timestep size, new cfl number)
@@ -78,7 +81,12 @@ public:
    * @param patch The Patch object holding the grid data.
    * @param maximumTimestepSize The maximal timestep size with regard to the current global timestep.
    */
-  double solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting);
+  void solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting);
+
+  /**
+   * Returns the mesh width demanded by the application for the given patch.
+   */
+  tarch::la::Vector<DIMENSIONS, double> getDemandedMeshWidth(Patch& patch);
 
   /**
    * Adds a patch to the solution which is hold in PyClaw. This method is used for gathering a solution
