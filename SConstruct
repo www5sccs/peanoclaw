@@ -305,7 +305,7 @@ elif solver == 'swe':
   cppdefines.append('SWE')
   cppdefines.append('NDEBUG')
   
-  cppdefines.append('WAVE_PROPAGATION_SOLVER=4')
+  cppdefines.append('WAVE_PROPAGATION_SOLVER=1')
   cppdefines.append('VECTORIZE')
   
   cppdefines.append('AssertForPositiveValues')
@@ -645,7 +645,8 @@ if solver == 'swe':
     Glob(join(buildpath, 'peanoclaw/native/SWE_WavePropagationBlock_patch.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/BreakingDam.cpp')),
     Glob(join(buildpath, 'swe/blocks/SWE_Block.cpp')),
-    Glob(join(buildpath, 'swe/blocks/SWE_WaveAccumulationBlock.cpp'))
+    #Glob(join(buildpath, 'swe/blocks/SWE_WaveAccumulationBlock.cpp'))
+    Glob(join(buildpath, 'swe/blocks/SWE_WavePropagationBlock.cpp'))
     ]
 elif solver == 'pyclaw':
   sourcesSolver = [
@@ -677,9 +678,12 @@ sourcesPeanoClaw.extend(sourcesSolver)
 
 ##### Configure
 configure = Configure(env)
-if configure.CheckCXXHeader('peano/parallel/MeshCommunication.h'):
+#if configure.CheckCXXHeader('peano/parallel/MeshCommunication.h'):
+if os.path.isfile(join(p3SourcePath, 'peano/parallel/MeshCommunication.h')):
+  print 'Using RMK'
   env['CPPDEFINES'].append('UseBlockedMeshCommunication')
 else:
+  print 'Using Peano classic communication'
   env['CPPDEFINES'].append('DoNotUseBlockedMeshCommunication')
 #env = configure.Finish()
 

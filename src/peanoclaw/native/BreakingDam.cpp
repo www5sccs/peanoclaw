@@ -19,7 +19,6 @@ void BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
     double vr = 0.;
     
     // compute from mesh data
-    const tarch::la::Vector<DIMENSIONS, double> patchSize = patch.getSize();
     const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
     const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
 
@@ -36,7 +35,7 @@ void BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
             double q0 = hl*(r<=radDam) + hr*(r>radDam);
             double q1 = hl*ul*(r<=radDam) + hr*ur*(r>radDam);
             double q2 = hl*vl*(r<=radDam) + hr*vr*(r>radDam);
-  
+
             patch.setValueUNew(subcellIndex, 0, q0);
             patch.setValueUNew(subcellIndex, 1, q1);
             patch.setValueUNew(subcellIndex, 2, q2);
@@ -73,19 +72,19 @@ tarch::la::Vector<DIMENSIONS,double> BreakingDam_SWEKernelScenario::computeDeman
         }
     }
   
-    double demandedMeshWidth = patch.getSubcellSize()(0);
+    tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth;
     if (max_gradient > 0.1) {
         //demandedMeshWidth = 1.0/243;
-        demandedMeshWidth = 10.0/9/27;
+        demandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(10.0/6/27);
     } else if (max_gradient < 0.5) {
         //demandedMeshWidth = 10.0/130/27;
-        demandedMeshWidth = 10.0/9/27;
+        demandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(10.0/6/9);
     } else {
-      demandedMeshWidth = patch.getSubcellSize()(0);
+      demandedMeshWidth = patch.getSubcellSize();
     }
 
     if(isInitializing) {
-      return 10.0/9/9;
+      return 10.0/6/9;
     } else {
       return demandedMeshWidth;
     }

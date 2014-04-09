@@ -63,10 +63,11 @@ int main(int argc, char **argv) {
 //  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", true ) );
 
   //Validation
-  //tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelGridValidator", true ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelGridValidator", true ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::mappings::ValidateGrid", true ) );
 
   //Selective Tracing
-  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "tarch::mpianalysis::Default::Analyser", false ) );
+  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "tarch::mpianalysis", true ) );
 //  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh", false ) );
 //  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::destroyVertex", false ) );
 //  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::endIteration", false ) );
@@ -119,6 +120,9 @@ int main(int argc, char **argv) {
  
     double x_size = (upper_right_0 - lower_left_0)/scenario.scale;
     double y_size = (upper_right_1 - lower_left_1)/scenario.scale;
+
+    double timestep = 1.0;
+    double endtime = 3600.0; // 100.0;
  
     // TODO: make central scale parameter in MekkaFlood class
     // currently we have to change here, meshToCoordinates and initializePatch and computeMeshWidth
@@ -151,12 +155,14 @@ int main(int argc, char **argv) {
     peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(scenario);
  
     tarch::la::Vector<DIMENSIONS, double> domainOffset(0);
-    tarch::la::Vector<DIMENSIONS, double> domainSize(1.0);
-    tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(domainSize(0)/6/27);
+    tarch::la::Vector<DIMENSIONS, double> domainSize(10.0);
+    tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(domainSize/6.0/9.0);
 
     int ghostlayerWidth = 1;
     int unknownsPerSubcell = 3;
 
+    double timestep = 0.1;
+    double endtime = 1.0; // 100.0;
     int initialTimestepSize = 0.5;
  
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
@@ -201,8 +207,6 @@ int main(int argc, char **argv) {
   assertion(runner != 0);
  
   // run experiment
-  double timestep = 1.0;
-  double endtime = 3600.0; // 100.0;
 #if defined(Parallel)
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
 #endif
