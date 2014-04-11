@@ -138,7 +138,7 @@ void peanoclaw::parallel::NeighbourCommunicator::receiveSubgrid(Patch& localSubg
     remotePatch.initializeNonParallelFields();
 
     //Check for zeros in transfered patch
-    #ifdef Asserts
+    #if defined(Asserts) && defined(AssertForPositiveValues)
     if(remotePatch.isValid() && remotePatch.isLeaf() && !_onlySendOverlappedCells) {
       dfor(subcellIndex, remotePatch.getSubdivisionFactor()) {
         assertion3(tarch::la::greater(remotePatch.getValueUNew(subcellIndex, 0), 0.0), subcellIndex, remotePatch, remotePatch.toStringUNew());
@@ -220,10 +220,10 @@ peanoclaw::parallel::NeighbourCommunicator::NeighbourCommunicator(
     _remoteSubgridMap(remoteSubgridMap),
     _statistics(statistics),
     //En-/Disable optimizations
-    _avoidMultipleTransferOfSubgridsIfPossible(true),
-    _onlySendSubgridsAfterChange(true),
-    _onlySendOverlappedCells(true),
-    _packCommunication(false),
+    _avoidMultipleTransferOfSubgridsIfPossible(false),
+    _onlySendSubgridsAfterChange(false),
+    _onlySendOverlappedCells(false),
+    _packCommunication(true),
     _subgridCommunicator(remoteRank, position, level, peano::heap::NeighbourCommunication, _onlySendOverlappedCells, _packCommunication) {
   logTraceInWith3Arguments("NeighbourCommunicator", remoteRank, position, level);
 

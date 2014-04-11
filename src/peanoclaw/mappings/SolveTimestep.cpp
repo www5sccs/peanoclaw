@@ -586,6 +586,17 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         coarseGridVertices,
         coarseGridVerticesEnumerator
       )) {
+
+//        if((tarch::la::equals(patch.getPosition()(0), 8000.0*(7*3 + 1)/27.0)
+//            &&tarch::la::equals(patch.getPosition()(1), 4500.0*(5*3 + 2)/27.0))
+//        ||
+//           (tarch::la::equals(patch.getPosition()(0), 8000.0*7/9.0)
+//            &&tarch::la::equals(patch.getPosition()(1), 4500.0*6/9.0))) {
+//          std::cout << "Solving patch: " << patch
+//              << std::endl << patch.toStringUNew()
+//              << std::endl << patch.toStringUOldWithGhostLayer() << std::endl;
+//        }
+
         // Copy uNew to uOld
         patch.copyUNewToUOld();
 
@@ -606,11 +617,14 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         patch.setDemandedMeshWidth(requiredMeshWidth);
 
         //TODO unterweg debug
-//        if(tarch::la::equals(patch.getPosition()(0), 8000*(2*9+3) / 81.0)
-//           &&tarch::la::equals(patch.getPosition()(1), 4500*(5*9+2*3) / 81.0)) {
-//          std::cout << "Demanded mesh width is " << requiredMeshWidth << std::endl
-//              << " for patch " << patch << std::endl;
-//          throw "";
+//        if((tarch::la::equals(patch.getPosition()(0), 8000.0*(7*3 + 1)/27.0)
+//            &&tarch::la::equals(patch.getPosition()(1), 4500.0*(5*3 + 2)/27.0))
+//        ||
+//           (tarch::la::equals(patch.getPosition()(0), 8000.0*7/9.0)
+//            &&tarch::la::equals(patch.getPosition()(1), 4500.0*6/9.0))) {
+//          std::cout << "Solved patch: " << patch
+//              << std::endl << patch.toStringUNew()
+//              << std::endl << patch.toStringUOldWithGhostLayer() << std::endl;
 //        }
 
         #ifdef Parallel
@@ -751,6 +765,16 @@ void peanoclaw::mappings::SolveTimestep::leaveCell(
       if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()
           && !coarseGridVertices[coarseGridVerticesEnumerator(i)].isHangingNode()) {
         coarseGridVertices[coarseGridVerticesEnumerator(i)].setShouldRefine(true);
+      }
+    }
+  }
+
+  //TODO unterweg dissertation
+  //Delay oscillations to allow timestepping to proceed
+  if(patch.getAge() < 5) {
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      if(!fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
+        coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
       }
     }
   }

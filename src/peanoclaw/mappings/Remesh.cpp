@@ -1233,6 +1233,35 @@ void peanoclaw::mappings::Remesh::ascend(
   peanoclaw::Cell&           coarseGridCell
 ) {
   logTraceInWith2Arguments( "ascend(...)", coarseGridCell.toString(), coarseGridVerticesEnumerator.toString() );
-  // @todo Insert your code here
+
+  //TODO unterweg dissertation
+  //Oscillation warning: If a subgrid got refined the new fine subgrids get annotated with a
+  //certain demanded mesh width by the application. If this is so large for all $2^d$ fine
+  //subgrids that they could be immediately coarsened again but the coarse subgrid has a
+  //demanded mesh width so it has to be refined oscillating refinement may occur.
+  if(coarseGridCell.getCellDescriptionIndex() > -1) {
+    Patch coarseSubgrid(coarseGridCell);
+    bool printOscillationWarning = tarch::la::oneGreater(coarseSubgrid.getSubcellSize(), coarseSubgrid.getDemandedMeshWidth());
+    for(int i = 0; i < THREE_POWER_D; i++) {
+      if(fineGridCells[i].getCellDescriptionIndex() > -1) {
+        Patch fineSubgrid(fineGridCells[i]);
+
+        //Only relevant if all fine subgrids have just been created.
+        if(fineSubgrid.getAge() > 1) {
+          printOscillationWarning = false;
+          break;
+        }
+
+        if(!tarch::la::allGreaterEquals(fineSubgrid.getDemandedMeshWidth(), fineSubgrid.getSubcellSize() * 3.0)) {
+          printOscillationWarning = false;
+          break;
+        }
+      }
+    }
+    if(printOscillationWarning) {
+      logWarning("ascend(...)", "Oscillating refinement may occur. Check refinement criterion... Coarse subgrid: " << coarseSubgrid);
+    }
+  }
+
   logTraceOut( "ascend(...)" );
 }
