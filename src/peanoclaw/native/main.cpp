@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
     double x_size = (upper_right_0 - lower_left_0)/scenario.scale;
     double y_size = (upper_right_1 - lower_left_1)/scenario.scale;
 
-    double timestep = 1.0;
+    double timestep = 0.1;//1.0;
     double endtime = 3600.0; // 100.0;
  
     // TODO: make central scale parameter in MekkaFlood class
@@ -170,7 +170,8 @@ int main(int argc, char **argv) {
   
   //tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(10.0/130/27);
   //tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(130);
-  int auxiliarFieldsPerSubcell = 1;
+  int parametersWithoutGhostlayerPerSubcell = 1;
+  int parametersWithGhostlayerPerSubcell = 1;
   bool useDimensionalSplittingOptimization = true;
  
 
@@ -194,7 +195,8 @@ int main(int argc, char **argv) {
     subdivisionFactor,
     ghostlayerWidth,
     unknownsPerSubcell,
-    auxiliarFieldsPerSubcell,
+    parametersWithoutGhostlayerPerSubcell,
+    parametersWithGhostlayerPerSubcell,
     initialTimestepSize,
     useDimensionalSplittingOptimization,
     1

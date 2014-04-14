@@ -42,7 +42,8 @@ class MekkaFlood_SWEKernelScenario : public peanoclaw::native::SWEKernelScenario
         tarch::la::Vector<DIMENSIONS, double> mapMeshToCoordinates(double x, double y);
         double mapMeshToMap(tarch::la::Vector<DIMENSIONS, double>& coords);
 
-        //double domainSize;
+        tarch::la::Vector<DIMENSIONS, double> _domainSize;
+        tarch::la::Vector<DIMENSIONS, double> _domainOffset;
 
         DEM& dem;
         //BathymetryHelper bathymetryHelper;

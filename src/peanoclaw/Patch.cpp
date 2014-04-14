@@ -91,10 +91,14 @@ void peanoclaw::Patch::fillCaches() {
   }
   uNewStrideCache[0] = stride;
 
-  //Aux
+  //Parameter without ghostlayer
   tarch::la::Vector<DIMENSIONS, int> ghostlayer = tarch::la::Vector<DIMENSIONS, int>(2*ghostlayerWidth);
-  _auxArrayIndex = _uOldWithGhostlayerArrayIndex
+  _parameterWithoutGhostlayerArrayIndex = _uOldWithGhostlayerArrayIndex
       + tarch::la::volume(_cellDescription->getSubdivisionFactor() + ghostlayer) * _cellDescription->getUnknownsPerSubcell();
+
+  //Parameter with ghostlayer
+  _parameterWithGhostlayerArrayIndex = _parameterWithoutGhostlayerArrayIndex
+      + tarch::la::volume(_cellDescription->getSubdivisionFactor()) * _cellDescription->getNumberOfParametersWithoutGhostlayerPerSubcell();
 
   //Precompute subcell size
   for (int d = 0; d < DIMENSIONS; d++) {
@@ -149,10 +153,9 @@ bool peanoclaw::Patch::isVirtual(const CellDescription* cellDescription) {
 peanoclaw::Patch::Patch() :
     _cellDescription(0),
     _uNew(0),
-//    _uOldWithGhostlayer(0),
-//    _auxArray(0),
     _uOldWithGhostlayerArrayIndex(-1),
-    _auxArrayIndex(-1)
+    _parameterWithoutGhostlayerArrayIndex(-1),
+    _parameterWithGhostlayerArrayIndex(-1)
     {
 }
 
@@ -194,7 +197,8 @@ peanoclaw::Patch::Patch(int cellDescriptionIndex)
 
 peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
     const tarch::la::Vector<DIMENSIONS, double>& size, int unknownsPerSubcell,
-    int auxiliarFieldsPerSubcell,
+    int parameterWithoutGhostlayer,
+    int parameterWithGhostlayer,
     const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
     int ghostLayerWidth, double initialTimestepSize, int level)
 : _cellDescription(0),
@@ -210,9 +214,7 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   
   //Data
   cellDescription.setCellDescriptionIndex(cellDescriptionIndex);
-//  cellDescription.setUOldIndex(-1);
   cellDescription.setUIndex(-1);
-//  cellDescription.setAuxIndex(-1);
   
   //Geometry
   cellDescription.setSize(size);
@@ -236,7 +238,8 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   
   //Numerics
   cellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
-  cellDescription.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
+  cellDescription.setNumberOfParametersWithoutGhostlayerPerSubcell(parameterWithoutGhostlayer);
+  cellDescription.setNumberOfParametersWithGhostlayerPerSubcell(parameterWithGhostlayer);
     
   //Spacetree state
   cellDescription.setIsVirtual(false);
@@ -332,8 +335,12 @@ int peanoclaw::Patch::getUnknownsPerSubcell() const {
   return _cellDescription->getUnknownsPerSubcell();
 }
 
-int peanoclaw::Patch::getAuxiliarFieldsPerSubcell() const {
-  return _cellDescription->getAuxiliarFieldsPerSubcell();
+int peanoclaw::Patch::getNumberOfParametersWithoutGhostlayerPerSubcell() const {
+  return _cellDescription->getNumberOfParametersWithoutGhostlayerPerSubcell();
+}
+
+int peanoclaw::Patch::getNumberOfParametersWithGhostlayerPerSubcell() const {
+  return _cellDescription->getNumberOfParametersWithGhostlayerPerSubcell();
 }
 
 tarch::la::Vector<DIMENSIONS, int> peanoclaw::Patch::getSubdivisionFactor() const {
@@ -477,7 +484,7 @@ double peanoclaw::Patch::getValueUOld(tarch::la::Vector<DIMENSIONS, int> subcell
   assertion1(isLeaf() || isVirtual(), toString());
   int index = linearizeWithGhostlayer(unknown, subcellIndex);
   assertion4(index >= 0, index, subcellIndex, unknown, toString());
-  assertion5(index < _auxArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, auxArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
+  assertion5(index < _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
 #ifdef PATCH_DISABLE_RANGE_CHECK
   return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
 #else
@@ -558,25 +565,54 @@ void peanoclaw::Patch::setValueUOldAndResize(int linearIndex, int unknown, doubl
   _uNew->at(_uOldWithGhostlayerArrayIndex + index) = value;
 }
 
-double peanoclaw::Patch::getValueAux(
-    tarch::la::Vector<DIMENSIONS, int> subcellIndex, int auxField) const {
+double peanoclaw::Patch::getParameterWithoutGhostlayer(
+  const tarch::la::Vector<DIMENSIONS, int>& subcellIndex,
+  int parameter
+) const {
   assertion1(isLeaf() || isVirtual(), toString());
-  int index = linearize(auxField, subcellIndex);
-  assertion4(index >= 0, index, subcellIndex, auxField, toString());
-//  assertion5(index < static_cast<int>(_auxArray->size()), index, subcellIndex,
-//      auxField, static_cast<int>(_auxArray->size()), toString());
-  assertion6(_auxArrayIndex+index < static_cast<int>(_uNew->size()), _auxArrayIndex, index, subcellIndex,
-        auxField, static_cast<int>(_uNew->size()), toString());
-  return _uNew->at(_auxArrayIndex + index).getU();
+  int index = linearize(parameter, subcellIndex);
+  assertion4(index >= 0, index, subcellIndex, parameter, toString());
+  assertion6(_parameterWithoutGhostlayerArrayIndex+index < static_cast<int>(_uNew->size()), _parameterWithoutGhostlayerArrayIndex, index, subcellIndex,
+        parameter, static_cast<int>(_uNew->size()), toString());
+  return _uNew->at(_parameterWithoutGhostlayerArrayIndex + index).getU();
 }
 
-void peanoclaw::Patch::setValueAux(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int auxField, double value) {
+void peanoclaw::Patch::setParameterWithoutGhostlayer(
+  const tarch::la::Vector<DIMENSIONS, int>& subcellIndex,
+  int parameter,
+  double value
+) {
   assertion(isLeaf() || isVirtual());
-  int index = linearize(auxField, subcellIndex);
-  assertion4(index >= 0, index, subcellIndex, auxField, toString());
-  assertion6(_auxArrayIndex+index < static_cast<int>(_uNew->size()), _auxArrayIndex, index, subcellIndex,
-        auxField, static_cast<int>(_uNew->size()), toString());
-  _uNew->at(_auxArrayIndex + index).setU(value);
+  int index = linearize(parameter, subcellIndex);
+  assertion4(index >= 0, index, subcellIndex, parameter, toString());
+  assertion6(_parameterWithoutGhostlayerArrayIndex+index < static_cast<int>(_uNew->size()), _parameterWithoutGhostlayerArrayIndex, index, subcellIndex,
+        parameter, static_cast<int>(_uNew->size()), toString());
+  _uNew->at(_parameterWithoutGhostlayerArrayIndex + index).setU(value);
+}
+
+double peanoclaw::Patch::getParameterWithGhostlayer(
+  const tarch::la::Vector<DIMENSIONS, int>& subcellIndex,
+  int parameter
+) const {
+  assertion1(isLeaf() || isVirtual(), toString());
+  int index = linearizeWithGhostlayer(parameter, subcellIndex);
+  assertion4(index >= 0, index, subcellIndex, parameter, toString());
+  assertion6(_parameterWithGhostlayerArrayIndex+index < static_cast<int>(_uNew->size()), _parameterWithGhostlayerArrayIndex, index, subcellIndex,
+        parameter, static_cast<int>(_uNew->size()), toString());
+  return _uNew->at(_parameterWithGhostlayerArrayIndex + index).getU();
+}
+
+void peanoclaw::Patch::setParameterWithGhostlayer(
+  const tarch::la::Vector<DIMENSIONS, int>& subcellIndex,
+  int parameter,
+  double value
+) {
+  assertion(isLeaf() || isVirtual());
+  int index = linearizeWithGhostlayer(parameter, subcellIndex);
+  assertion4(index >= 0, index, subcellIndex, parameter, toString());
+  assertion6(_parameterWithGhostlayerArrayIndex+index < static_cast<int>(_uNew->size()), _parameterWithGhostlayerArrayIndex, index, subcellIndex,
+        parameter, static_cast<int>(_uNew->size()), toString());
+  _uNew->at(_parameterWithGhostlayerArrayIndex + index).setU(value);
 }
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellCenter(
@@ -634,13 +670,11 @@ double* peanoclaw::Patch::getUNewArray() const {
 }
 
 double* peanoclaw::Patch::getUOldWithGhostlayerArray() const {
-  //return reinterpret_cast<double*>(&(_uOldWithGhostlayer->at(0)));
   return reinterpret_cast<double*>(&(_uNew->at(_uOldWithGhostlayerArrayIndex)));
 }
 
-double* peanoclaw::Patch::getAuxArray() const {
-//  return reinterpret_cast<double*>(&(_auxArray->at(0)));
-  return reinterpret_cast<double*>(&(_uNew->at(_auxArrayIndex)));
+double* peanoclaw::Patch::getParameterWithoutGhostlayerArray() const {
+  return reinterpret_cast<double*>(&(_uNew->at(_parameterWithoutGhostlayerArrayIndex)));
 }
 
 int peanoclaw::Patch::getUIndex() const {
@@ -686,6 +720,18 @@ std::string peanoclaw::Patch::toStringUNew() const {
       str << std::endl;
     }
     str << std::endl;
+
+    //Plot Bathymetry
+//    for (int y = getSubdivisionFactor()(1) - 1; y >= 0; y--) {
+//      for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+//        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+//        assignList(subcellIndex) = x, y;
+//        str << std::setprecision(6) << getValueUNew(subcellIndex, 3) << " ";
+//      }
+//      str << std::endl;
+//    }
+//    str << std::endl;
+
     #elif Dim3
     //Plot patch
     for(int z = 0; z < getSubdivisionFactor()(2); z++) {
@@ -705,11 +751,11 @@ std::string peanoclaw::Patch::toStringUNew() const {
 //                << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 3) << " ";
 //          }
 //        }
-        str << std::endl;
+        str << "\n";
       }
-      str << std::endl << std::endl;
+      str << "\n" << "\n";
     }
-    str << std::endl;
+    str << "\n";
     #endif
     return str.str();
   } else {
@@ -741,9 +787,91 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
               << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 2) << " ";
         }
       }
-      str << std::endl;
+      str << "\n";
     }
-    str << std::endl;
+    str << "\n";
+
+
+    //Plot Bathymetry
+//    for (int y = getSubdivisionFactor()(1) + getGhostlayerWidth() - 1; y >= -getGhostlayerWidth(); y--) {
+//      for (int x = -getGhostlayerWidth(); x < getSubdivisionFactor()(0) + getGhostlayerWidth(); x++) {
+//        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+//        assignList(subcellIndex) = x, y;
+//        str << std::setprecision(6) << getValueUOld(subcellIndex, 3) << " ";
+//      }
+//      str << std::endl;
+//    }
+//    str << std::endl;
+
+    #elif Dim3
+    //Plot patch
+    for(int z = -getGhostlayerWidth(); z < getSubdivisionFactor()(2) + getGhostlayerWidth(); z++) {
+      str << "z==" << z << std::endl;
+      for (int y = getSubdivisionFactor()(1) + getGhostlayerWidth() - 1;
+          y >= -getGhostlayerWidth(); y--) {
+        for (int x = -getGhostlayerWidth();
+            x < getSubdivisionFactor()(0) + getGhostlayerWidth(); x++) {
+          tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+          assignList(subcellIndex) = x, y, z;
+          str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 0) << " ";
+        }
+//        if (_cellDescription->getUnknownsPerSubcell() > 1) {
+//          str << "\t";
+//          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+//            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+//            assignList(subcellIndex) = x, y, z;
+//            str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 1) << ","
+//                << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 2) << ","
+//                << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 3) << " ";
+//          }
+//        }
+        str << std::endl;
+      }
+      str << "\n" << "\n";
+    }
+    str << "\n";
+    #endif
+    return str.str();
+  } else {
+    return "Is refined patch.\n";
+  }
+}
+
+std::string peanoclaw::Patch::toStringParameters() const {
+  if (isLeaf() || isVirtual()) {
+    std::stringstream str;
+    #ifdef Dim2
+
+    //Plot parameters without ghostlayer
+    for(int parameter = 0; parameter < getNumberOfParametersWithoutGhostlayerPerSubcell(); parameter++) {
+      str << "Parameter without ghostlayer " << parameter << ":\n";
+      for (int y = getSubdivisionFactor()(1) - 1; y >= 0; y--) {
+        for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+          tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+          assignList(subcellIndex) = x, y;
+          str << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 0) << " ";
+        }
+        str << "\n";
+      }
+      str << "\n";
+    }
+
+    //Plot parameters with ghostlayer
+    for(int parameter = 0; parameter < getNumberOfParametersWithGhostlayerPerSubcell(); parameter++) {
+      str << "Parameter with ghostlayer " << parameter << ": " << std::endl;
+      for (int y = getSubdivisionFactor()(1) + getGhostlayerWidth() - 1;
+          y >= -getGhostlayerWidth(); y--) {
+        for (int x = -getGhostlayerWidth(); x < getSubdivisionFactor()(0) + getGhostlayerWidth(); x++) {
+          tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+          subcellIndex(0) = x;
+          subcellIndex(1) = y;
+          str << PATCH_VALUE_FORMAT << getParameterWithGhostlayer(subcellIndex, parameter) << " ";
+        }
+        str << "\n";
+      }
+      str << "\n";
+    }
+
     #elif Dim3
     //Plot patch
     for(int z = -getGhostlayerWidth(); z < getSubdivisionFactor()(2) + getGhostlayerWidth(); z++) {
@@ -791,7 +919,7 @@ std::string peanoclaw::Patch::toString() const {
         << ",uIndex=" << getUIndex()
         << ",elements in uNew=" << ((_uNew == 0) ? 0 : _uOldWithGhostlayerArrayIndex)
         << ",elements in uOld="
-        << ((_uNew == 0) ? 0 : (_auxArrayIndex - _uOldWithGhostlayerArrayIndex))
+        << ((_uNew == 0) ? 0 : (_parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex))
         << ",age=" << _cellDescription->getAgeInGridIterations()
 
         << "," << _timeIntervals.toString()
@@ -862,11 +990,19 @@ void peanoclaw::Patch::switchToVirtual() {
             + 2 * _cellDescription->getGhostlayerWidth())
         * _cellDescription->getUnknownsPerSubcell();
 
-    size_t auxArraySize = tarch::la::volume(
+    size_t parameterWithoutGhostlayerArraySize = tarch::la::volume(
         _cellDescription->getSubdivisionFactor())
-        * _cellDescription->getAuxiliarFieldsPerSubcell();
+        * _cellDescription->getNumberOfParametersWithoutGhostlayerPerSubcell();
 
-    virtualUNew.resize(uNewArraySize + uOldWithGhostlayerArraySize + auxArraySize, 0.0);
+    size_t parameterWithGhostlayerArraySize = tarch::la::volume(
+        _cellDescription->getSubdivisionFactor()
+            + 2 * _cellDescription->getGhostlayerWidth())
+        * _cellDescription->getNumberOfParametersWithGhostlayerPerSubcell();
+
+    virtualUNew.resize(
+      uNewArraySize + uOldWithGhostlayerArraySize + parameterWithoutGhostlayerArraySize + parameterWithGhostlayerArraySize,
+      0.0
+    );
     _uNew = &virtualUNew;
   }
 

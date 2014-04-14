@@ -169,7 +169,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
   int defaultGhostLayerWidth,
   int unknownsPerSubcell,
-  int auxiliarFieldsPerSubcell,
+  int parameterWithoutGhostlayerPerSubcell,
+  int parameterWithGhostlayerPerSubcell,
   double initialTimestepSize,
   bool useDimensionalSplittingOptimization,
   bool reduceReductions,
@@ -219,7 +220,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setDefaultSubdivisionFactor(subdivisionFactor);
   state.setDefaultGhostLayerWidth(defaultGhostLayerWidth);
   state.setUnknownsPerSubcell(unknownsPerSubcell);
-  state.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
+  state.setNumberOfParametersWithoutGhostlayerPerSubcell(parameterWithoutGhostlayerPerSubcell);
+  state.setNumberOfParametersWithGhostlayerPerSubcell(parameterWithGhostlayerPerSubcell);
   state.setNumerics(numerics);
   state.setInitialTimestepSize(initialTimestepSize);
   state.setDomain(domainOffset, domainSize);

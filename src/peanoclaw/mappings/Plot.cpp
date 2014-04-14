@@ -65,7 +65,7 @@ void peanoclaw::mappings::Plot::plotFile(int plotNumber) {
   _vtkWriter.writeToFile( snapshotFileName.str() );
 }
 
-peanoclaw::mappings::Plot::Plot() : _nextPlotNumber(0), _vtkWriter(14) {
+peanoclaw::mappings::Plot::Plot() : _vtkWriter(14), _nextPlotNumber(0) {
   logTraceIn( "Plot()" );
   // @todo Insert your code here
   logTraceOut( "Plot()" );
@@ -456,16 +456,20 @@ void peanoclaw::mappings::Plot::beginIteration(
   _vtkWriter.clear();
 
   std::set<int> plotQ;
-  plotQ.insert(0);
-  plotQ.insert(4);
-  std::set<int> plotAux;
+//  plotQ.insert(0);
+//  plotQ.insert(3);
+//  plotQ.insert(4);
+  std::set<int> plotParametersWithoutGhostlayer;
+  std::set<int> plotParametersWithGhostlayer;
 
   _patchPlotter = new PatchPlotter(
     _vtkWriter,
     solverState.getUnknownsPerSubcell(),
-    solverState.getAuxiliarFieldsPerSubcell(),
+    solverState.getNumberOfParametersWithoutGhostlayerPerSubcell(),
+    solverState.getNumberOfParametersWithGhostlayerPerSubcell(),
     plotQ,
-    plotAux,
+    plotParametersWithoutGhostlayer,
+    plotParametersWithGhostlayer,
     true
   );
 

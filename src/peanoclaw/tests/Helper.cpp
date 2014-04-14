@@ -14,7 +14,8 @@
 
 peanoclaw::Patch peanoclaw::tests::createPatch(
   int unknownsPerSubcell,
-  int auxFieldsPerSubcell,
+  int parametersWithoutPerSubcell,
+  int parametersWithPerSubcell,
   int subdivisionFactor,
   int ghostlayerWidth,
   tarch::la::Vector<DIMENSIONS, double> position,
@@ -47,9 +48,10 @@ peanoclaw::Patch peanoclaw::tests::createPatch(
 
   int uNewArraySize = tarch::la::aPowI(DIMENSIONS, subdivisionFactor)*unknownsPerSubcell;
   int uOldArraySize = tarch::la::aPowI(DIMENSIONS, (subdivisionFactor+2*ghostlayerWidth)) * unknownsPerSubcell;
-  int auxArraySize = tarch::la::aPowI(DIMENSIONS, subdivisionFactor + 2*ghostlayerWidth) * auxFieldsPerSubcell;
+  int parametersWithoutGhostlayerArraySize = tarch::la::aPowI(DIMENSIONS, subdivisionFactor) * parametersWithoutPerSubcell;
+  int parametersWithGhostlayerArraySize = tarch::la::aPowI(DIMENSIONS, subdivisionFactor + 2*ghostlayerWidth) * parametersWithPerSubcell;
 
-  for(int i = 0; i < uNewArraySize + uOldArraySize + auxArraySize; i++) {
+  for(int i = 0; i < uNewArraySize + uOldArraySize + parametersWithoutGhostlayerArraySize + parametersWithGhostlayerArraySize; i++) {
     peanoclaw::records::Data data;
     data.setU(0.0);
     uNew.push_back(data);

@@ -69,6 +69,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
       patches[i] = createPatch(
         3,       //Unknowns per subcell
         0,       //Aux fields per subcell
+        0,       //Aux fields per subcell
         16,      //Subdivision factor
         2,       //Ghostlayer width
         0.0,     //Position
@@ -82,6 +83,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testTimesteppingVeto2D() {
     patches[vetoIndex] =
         createPatch(
             3,       //Unknowns per subcell
+            0,       //Aux fields per subcell
             0,       //Aux fields per subcell
             16,      //Subdivision factor
             2,       //Ghostlayer width
@@ -139,6 +141,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
   patches[1] = createPatch(
     unknownsPerSubcell,
     0,   //Aux fields per subcell
+    0,   //Aux fields per subcell
     coarseSubdivisionFactor,
     coarseGhostlayerWidth,
     coarsePosition,
@@ -156,6 +159,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
   assignList(finePosition) = 5.0, 2.0;
   patches[0] = createPatch(
     unknownsPerSubcell,
+    0,   //Aux fields per subcell
     0,   //Aux fields per subcell
     fineSubdivisionFactor,
     fineGhostlayerWidth,
@@ -229,6 +233,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
   patches[2] = createPatch(
     unknownsPerSubcell,
     0,   //Aux fields per subcell
+    0,   //Aux fields per subcell
     coarseSubdivisionFactor,
     coarseGhostlayerWidth,
     coarsePosition,
@@ -245,6 +250,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
   assignList(finePosition) = 1.0, 1.0;
   patches[3] = createPatch(
     unknownsPerSubcell,
+    0,   //Aux fields per subcell
     0,   //Aux fields per subcell
     fineSubdivisionFactor,
     fineGhostlayerWidth,
@@ -405,6 +411,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
   Patch coarsePatch = createPatch(
     unknownsPerSubcell,
     0,   //Aux per subcell
+    0,   //Aux fields per subcell
     coarseSubdivisionFactor,
     ghostlayerWidth,
     coarsePosition,
@@ -456,6 +463,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
   Patch finePatch = createPatch(
     unknownsPerSubcell,
     0,         //Aux per subcell
+    0,         //Aux fields per subcell
     fineSubdivisionFactor,
     ghostlayerWidth,
     finePosition,
@@ -541,6 +549,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
     = createPatch(
       1,       //Unknowns per subcell
       0,       //Aux fields per subcell
+      0,       //Aux fields per subcell
       2,       //Subdivision factor
       1,       //Ghostlayer width
       0.0,     //Position
@@ -556,6 +565,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
   Patch destinationPatch
     = createPatch(
       1,              //Unknowns per subcell
+      0,              //Aux fields per subcell
       0,              //Aux fields per subcell
       2,              //Subdivision factor
       1,              //Ghostlayer width

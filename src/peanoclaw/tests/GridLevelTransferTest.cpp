@@ -335,6 +335,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   Patch neighboringCoarsePatch = createPatch(
     unknownsPerSubcell,
     0,   //Aux fields per subcell
+    0,   //Aux fields per subcell
     coarseSubdivisionFactor,
     ghostlayerWidth,
     coarsePosition,
@@ -374,6 +375,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   tarch::la::Vector<DIMENSIONS, double> finePosition(1.0/3.0);
   Patch finePatch = createPatch(
     unknownsPerSubcell,
+    0,   //Aux fields per subcell
     0,   //Aux fields per subcell
     fineSubdivisionFactor,
     ghostlayerWidth,

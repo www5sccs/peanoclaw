@@ -184,6 +184,7 @@ void peanoclaw::parallel::NeighbourCommunicator::createOrFindRemoteSubgrid(
       subgridSize,
       0,
       0,
+      0,
       1,
       1,
       1.0,

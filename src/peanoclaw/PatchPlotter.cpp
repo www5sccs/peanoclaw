@@ -45,12 +45,19 @@ void peanoclaw::PatchPlotter::plotSubcell(
       }
     }
 
-    int auxWriterIndex = 0;
-    //for(int i = 0; i < (int)_cellAuxWriter.size(); i++) {
-    for(int i = 0; i < patch.getAuxiliarFieldsPerSubcell(); i++) {
-      if(_plotAux.empty() || _plotAux.find(i) != _plotAux.end()) {
-        _cellAuxWriter[auxWriterIndex]->plotCell(number, patch.getValueAux(subcellIndex, i));
-        auxWriterIndex++;
+    int parameterWithoutGhostlayerWriterIndex = 0;
+    for(int i = 0; i < patch.getNumberOfParametersWithoutGhostlayerPerSubcell(); i++) {
+      if(_plotParameterWithoutGhostlayer.empty() || _plotParameterWithoutGhostlayer.find(i) != _plotParameterWithoutGhostlayer.end()) {
+        _cellParameterWithoutGhostlayerWriter[parameterWithoutGhostlayerWriterIndex]->plotCell(number, patch.getParameterWithoutGhostlayer(subcellIndex, i));
+        parameterWithoutGhostlayerWriterIndex++;
+      }
+    }
+
+    int parameterWithGhostlayerWriterIndex = 0;
+    for(int i = 0; i < patch.getNumberOfParametersWithGhostlayerPerSubcell(); i++) {
+      if(_plotParameterWithGhostlayer.empty() || _plotParameterWithGhostlayer.find(i) != _plotParameterWithGhostlayer.end()) {
+        _cellParameterWithGhostlayerWriter[parameterWithGhostlayerWriterIndex]->plotCell(number, patch.getParameterWithGhostlayer(subcellIndex, i));
+        parameterWithGhostlayerWriterIndex++;
       }
     }
 
@@ -87,11 +94,18 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::PatchPlotter::computeGradient(
 peanoclaw::PatchPlotter::PatchPlotter(
   tarch::plotter::griddata::unstructured::vtk::VTKTextFileWriter& vtkWriter,
   int unknownsPerSubcell,
-  int auxFieldsPerSubcell,
+  int parameterWithoutGhostlayerPerSubcell,
+  int parameterWithGhostlayerPerSubcell,
   std::set<int> plotQ,
-  std::set<int> plotAux,
+  std::set<int> plotParameterWithoutGhostlayer,
+  std::set<int> plotParameterWithGhostlayer,
   bool plotMetainformation
-) : _vtkWriter(vtkWriter), _gap(0.015), _plotQ(plotQ), _plotAux(plotAux), _plotMetainformation(plotMetainformation) {
+) : _vtkWriter(vtkWriter),
+    _gap(0.015),
+    _plotQ(plotQ),
+    _plotParameterWithoutGhostlayer(plotParameterWithoutGhostlayer),
+    _plotParameterWithGhostlayer(plotParameterWithGhostlayer),
+    _plotMetainformation(plotMetainformation) {
 
   _vertex2IndexMap.clear();
   _vertexWriter     = _vtkWriter.createVertexWriter();
@@ -104,11 +118,18 @@ peanoclaw::PatchPlotter::PatchPlotter(
       _cellQWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
     }
   }
-  for(int i = 0; i < auxFieldsPerSubcell; i++) {
-    if(_plotAux.empty() || _plotAux.find(i) != _plotAux.end()) {
+  for(int i = 0; i < parameterWithoutGhostlayerPerSubcell; i++) {
+    if(_plotParameterWithoutGhostlayer.empty() || _plotParameterWithoutGhostlayer.find(i) != _plotParameterWithoutGhostlayer.end()) {
       std::stringstream stringstream;
-      stringstream << "aux" << i;
-      _cellAuxWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+      stringstream << "pWoG" << i;
+      _cellParameterWithoutGhostlayerWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+    }
+  }
+  for(int i = 0; i < parameterWithGhostlayerPerSubcell; i++) {
+    if(_plotParameterWithGhostlayer.empty() || _plotParameterWithGhostlayer.find(i) != _plotParameterWithGhostlayer.end()) {
+      std::stringstream stringstream;
+      stringstream << "pWG" << i;
+      _cellParameterWithGhostlayerWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
     }
   }
 
@@ -131,8 +152,11 @@ peanoclaw::PatchPlotter::~PatchPlotter() {
   for(unsigned int i = 0; i < _cellQWriter.size(); i++) {
     delete _cellQWriter.at(i);
   }
-  for(unsigned int i = 0; i < _cellAuxWriter.size(); i++) {
-    delete _cellAuxWriter.at(i);
+  for(unsigned int i = 0; i < _cellParameterWithoutGhostlayerWriter.size(); i++) {
+    delete _cellParameterWithoutGhostlayerWriter.at(i);
+  }
+  for(unsigned int i = 0; i < _cellParameterWithGhostlayerWriter.size(); i++) {
+    delete _cellParameterWithGhostlayerWriter.at(i);
   }
 
   if(_plotMetainformation) {
@@ -189,7 +213,10 @@ void peanoclaw::PatchPlotter::close() {
   for(std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>::iterator i = _cellQWriter.begin(); i != _cellQWriter.end(); i++) {
     (*i)->close();
   }
-  for(std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>::iterator i = _cellAuxWriter.begin(); i != _cellAuxWriter.end(); i++) {
+  for(std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>::iterator i = _cellParameterWithoutGhostlayerWriter.begin(); i != _cellParameterWithoutGhostlayerWriter.end(); i++) {
+    (*i)->close();
+  }
+  for(std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>::iterator i = _cellParameterWithGhostlayerWriter.begin(); i != _cellParameterWithGhostlayerWriter.end(); i++) {
     (*i)->close();
   }
   if(_plotMetainformation) {

@@ -67,7 +67,8 @@ tarch::logging::Log                peanoclaw::mappings::Remesh::_log( "peanoclaw
 
 peanoclaw::mappings::Remesh::Remesh()
 : _unknownsPerSubcell(-1),
-  _auxiliarFieldsPerSubcell(-1),
+  _parametersWithoutGhostlayerPerSubcell(-1),
+  _parametersWithGhostlayerPerSubcell(-1),
   _defaultSubdivisionFactor(-1),
   _defaultGhostLayerWidth(-1),
   _initialTimestepSize(0.0),
@@ -100,7 +101,8 @@ peanoclaw::mappings::Remesh::~Remesh() {
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::Remesh::Remesh(const Remesh&  masterThread)
 : _unknownsPerSubcell(masterThread._unknownsPerSubcell),
-  _auxiliarFieldsPerSubcell(masterThread._auxiliarFieldsPerSubcell),
+  _parametersWithoutGhostlayer(masterThread._parametersWithoutGhostlayer),
+  _parametersWithGhostlayer(masterThread._parametersWithGhostlayer),
   _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
   _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
   _initialTimestepSize(masterThread._initialTimestepSize),
@@ -310,7 +312,8 @@ void peanoclaw::mappings::Remesh::createCell(
     fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getCellSize(),
     _unknownsPerSubcell,
-    _auxiliarFieldsPerSubcell,
+    _parametersWithoutGhostlayerPerSubcell,
+    _parametersWithGhostlayerPerSubcell,
     _defaultSubdivisionFactor,
     _defaultGhostLayerWidth,
     _initialTimestepSize,
@@ -1128,7 +1131,8 @@ void peanoclaw::mappings::Remesh::beginIteration(
   logInfo("beginIteration", "Beginning Iteration " << _iterationNumber);
 
   _unknownsPerSubcell       = solverState.getUnknownsPerSubcell();
-  _auxiliarFieldsPerSubcell = solverState.getAuxiliarFieldsPerSubcell();
+  _parametersWithoutGhostlayerPerSubcell = solverState.getNumberOfParametersWithoutGhostlayerPerSubcell();
+  _parametersWithGhostlayerPerSubcell = solverState.getNumberOfParametersWithGhostlayerPerSubcell();
   _defaultSubdivisionFactor = solverState.getDefaultSubdivisionFactor();
   _defaultGhostLayerWidth   = solverState.getDefaultGhostLayerWidth();
   _initialTimestepSize      = solverState.getInitialTimestepSize();

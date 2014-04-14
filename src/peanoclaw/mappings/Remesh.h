@@ -65,7 +65,9 @@ class peanoclaw::mappings::Remesh {
 
     int _unknownsPerSubcell;
 
-    int _auxiliarFieldsPerSubcell;
+    int _parametersWithoutGhostlayerPerSubcell;
+
+    int _parametersWithGhostlayerPerSubcell;
 
     tarch::la::Vector<DIMENSIONS, int> _defaultSubdivisionFactor;
 

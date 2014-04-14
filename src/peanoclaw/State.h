@@ -97,9 +97,13 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       int getUnknownsPerSubcell() const;
 
-      void setAuxiliarFieldsPerSubcell(int auxiliarFieldsPerSubcell);
+      void setNumberOfParametersWithoutGhostlayerPerSubcell(int parameterWithoutGhostlayerPerSubcell);
 
-      int getAuxiliarFieldsPerSubcell() const;
+      int getNumberOfParametersWithoutGhostlayerPerSubcell() const;
+
+      void setNumberOfParametersWithGhostlayerPerSubcell(int parameterWithGhostlayerPerSubcell);
+
+      int getNumberOfParametersWithGhostlayerPerSubcell() const;
 
       void setDefaultSubdivisionFactor(const tarch::la::Vector<DIMENSIONS, int>& defaultSubdivisionFactor);
 

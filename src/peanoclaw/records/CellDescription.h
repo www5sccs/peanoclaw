@@ -33,7 +33,7 @@ namespace peanoclaw {
     *
     * 		   build date: 09-02-2014 14:40
     *
-    * @date   09/04/2014 08:39
+    * @date   14/04/2014 09:02
     */
    class peanoclaw::records::CellDescription { 
       
@@ -45,7 +45,8 @@ namespace peanoclaw {
             tarch::la::Vector<DIMENSIONS,int> _subdivisionFactor;
             int _ghostlayerWidth;
             int _unknownsPerSubcell;
-            int _auxiliarFieldsPerSubcell;
+            int _numberOfParametersWithoutGhostlayerPerSubcell;
+            int _numberOfParametersWithGhostlayerPerSubcell;
             int _level;
             bool _isVirtual;
             bool _isRemote;
@@ -85,7 +86,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+            PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
             
              tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
             
@@ -114,12 +115,22 @@ namespace peanoclaw {
             /**
              * Generated
              */
-             int getAuxiliarFieldsPerSubcell() const ;
+             int getNumberOfParametersWithoutGhostlayerPerSubcell() const ;
             
             /**
              * Generated
              */
-             void setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell) ;
+             void setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell) ;
+            
+            /**
+             * Generated
+             */
+             int getNumberOfParametersWithGhostlayerPerSubcell() const ;
+            
+            /**
+             * Generated
+             */
+             void setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell) ;
             
             /**
              * Generated
@@ -397,7 +408,7 @@ namespace peanoclaw {
          /**
           * Generated
           */
-         CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+         CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
          
          /**
           * Generated
@@ -435,12 +446,22 @@ namespace peanoclaw {
          /**
           * Generated
           */
-          int getAuxiliarFieldsPerSubcell() const ;
+          int getNumberOfParametersWithoutGhostlayerPerSubcell() const ;
          
          /**
           * Generated
           */
-          void setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell) ;
+          void setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell) ;
+         
+         /**
+          * Generated
+          */
+          int getNumberOfParametersWithGhostlayerPerSubcell() const ;
+         
+         /**
+          * Generated
+          */
+          void setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell) ;
          
          /**
           * Generated
@@ -792,7 +813,7 @@ namespace peanoclaw {
              *
              * 		   build date: 09-02-2014 14:40
              *
-             * @date   09/04/2014 08:39
+             * @date   14/04/2014 09:02
              */
             class peanoclaw::records::CellDescriptionPacked { 
                
@@ -827,16 +848,17 @@ namespace peanoclaw {
                      || Member 	|| startbit 	|| length
                       |  ghostlayerWidth	| startbit 0	| #bits 4
                       |  unknownsPerSubcell	| startbit 4	| #bits 4
-                      |  auxiliarFieldsPerSubcell	| startbit 8	| #bits 4
-                      |  level	| startbit 12	| #bits 5
-                      |  isVirtual	| startbit 17	| #bits 1
-                      |  isRemote	| startbit 18	| #bits 1
-                      |  isPaddingSubgrid	| startbit 19	| #bits 1
-                      |  currentStateWasSend	| startbit 20	| #bits 1
-                      |  adjacentRanksChanged	| startbit 21	| #bits 1
-                      |  synchronizeFineGrids	| startbit 22	| #bits 1
-                      |  willCoarsen	| startbit 23	| #bits 1
-                      |  skipGridIterations	| startbit 24	| #bits 3
+                      |  numberOfParametersWithoutGhostlayerPerSubcell	| startbit 8	| #bits 4
+                      |  numberOfParametersWithGhostlayerPerSubcell	| startbit 12	| #bits 4
+                      |  level	| startbit 16	| #bits 5
+                      |  isVirtual	| startbit 21	| #bits 1
+                      |  isRemote	| startbit 22	| #bits 1
+                      |  isPaddingSubgrid	| startbit 23	| #bits 1
+                      |  currentStateWasSend	| startbit 24	| #bits 1
+                      |  adjacentRanksChanged	| startbit 25	| #bits 1
+                      |  synchronizeFineGrids	| startbit 26	| #bits 1
+                      |  willCoarsen	| startbit 27	| #bits 1
+                      |  skipGridIterations	| startbit 28	| #bits 3
                       */
                      int _packedRecords0;
                      
@@ -848,7 +870,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+                     PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
                      
                       tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                      
@@ -877,12 +899,22 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                      int getAuxiliarFieldsPerSubcell() const ;
+                      int getNumberOfParametersWithoutGhostlayerPerSubcell() const ;
                      
                      /**
                       * Generated
                       */
-                      void setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell) ;
+                      void setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell) ;
+                     
+                     /**
+                      * Generated
+                      */
+                      int getNumberOfParametersWithGhostlayerPerSubcell() const ;
+                     
+                     /**
+                      * Generated
+                      */
+                      void setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell) ;
                      
                      /**
                       * Generated
@@ -1160,7 +1192,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+                  CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
                   
                   /**
                    * Generated
@@ -1198,12 +1230,22 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                   int getAuxiliarFieldsPerSubcell() const ;
+                   int getNumberOfParametersWithoutGhostlayerPerSubcell() const ;
                   
                   /**
                    * Generated
                    */
-                   void setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell) ;
+                   void setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell) ;
+                  
+                  /**
+                   * Generated
+                   */
+                   int getNumberOfParametersWithGhostlayerPerSubcell() const ;
+                  
+                  /**
+                   * Generated
+                   */
+                   void setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell) ;
                   
                   /**
                    * Generated
@@ -1557,7 +1599,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 09-02-2014 14:40
                       *
-                      * @date   09/04/2014 08:39
+                      * @date   14/04/2014 09:02
                       */
                      class peanoclaw::records::CellDescription { 
                         
@@ -1569,7 +1611,8 @@ namespace peanoclaw {
                               tarch::la::Vector<DIMENSIONS,int> _subdivisionFactor;
                               int _ghostlayerWidth;
                               int _unknownsPerSubcell;
-                              int _auxiliarFieldsPerSubcell;
+                              int _numberOfParametersWithoutGhostlayerPerSubcell;
+                              int _numberOfParametersWithGhostlayerPerSubcell;
                               int _level;
                               bool _isVirtual;
                               tarch::la::Vector<DIMENSIONS,double> _position;
@@ -1601,7 +1644,7 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                              PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+                              PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
                               
                                tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                               
@@ -1630,12 +1673,22 @@ namespace peanoclaw {
                               /**
                                * Generated
                                */
-                               int getAuxiliarFieldsPerSubcell() const ;
+                               int getNumberOfParametersWithoutGhostlayerPerSubcell() const ;
                               
                               /**
                                * Generated
                                */
-                               void setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell) ;
+                               void setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell) ;
+                              
+                              /**
+                               * Generated
+                               */
+                               int getNumberOfParametersWithGhostlayerPerSubcell() const ;
+                              
+                              /**
+                               * Generated
+                               */
+                               void setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell) ;
                               
                               /**
                                * Generated
@@ -1857,7 +1910,7 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                           CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+                           CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
                            
                            /**
                             * Generated
@@ -1895,12 +1948,22 @@ namespace peanoclaw {
                            /**
                             * Generated
                             */
-                            int getAuxiliarFieldsPerSubcell() const ;
+                            int getNumberOfParametersWithoutGhostlayerPerSubcell() const ;
                            
                            /**
                             * Generated
                             */
-                            void setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell) ;
+                            void setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell) ;
+                           
+                           /**
+                            * Generated
+                            */
+                            int getNumberOfParametersWithGhostlayerPerSubcell() const ;
+                           
+                           /**
+                            * Generated
+                            */
+                            void setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell) ;
                            
                            /**
                             * Generated
@@ -2180,7 +2243,7 @@ namespace peanoclaw {
                                *
                                * 		   build date: 09-02-2014 14:40
                                *
-                               * @date   09/04/2014 08:39
+                               * @date   14/04/2014 09:02
                                */
                               class peanoclaw::records::CellDescriptionPacked { 
                                  
@@ -2211,12 +2274,13 @@ namespace peanoclaw {
                                        || Member 	|| startbit 	|| length
                                         |  ghostlayerWidth	| startbit 0	| #bits 4
                                         |  unknownsPerSubcell	| startbit 4	| #bits 4
-                                        |  auxiliarFieldsPerSubcell	| startbit 8	| #bits 4
-                                        |  level	| startbit 12	| #bits 5
-                                        |  isVirtual	| startbit 17	| #bits 1
-                                        |  synchronizeFineGrids	| startbit 18	| #bits 1
-                                        |  willCoarsen	| startbit 19	| #bits 1
-                                        |  skipGridIterations	| startbit 20	| #bits 3
+                                        |  numberOfParametersWithoutGhostlayerPerSubcell	| startbit 8	| #bits 4
+                                        |  numberOfParametersWithGhostlayerPerSubcell	| startbit 12	| #bits 4
+                                        |  level	| startbit 16	| #bits 5
+                                        |  isVirtual	| startbit 21	| #bits 1
+                                        |  synchronizeFineGrids	| startbit 22	| #bits 1
+                                        |  willCoarsen	| startbit 23	| #bits 1
+                                        |  skipGridIterations	| startbit 24	| #bits 3
                                         */
                                        int _packedRecords0;
                                        
@@ -2228,7 +2292,7 @@ namespace peanoclaw {
                                        /**
                                         * Generated
                                         */
-                                       PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+                                       PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
                                        
                                         tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                                        
@@ -2257,12 +2321,22 @@ namespace peanoclaw {
                                        /**
                                         * Generated
                                         */
-                                        int getAuxiliarFieldsPerSubcell() const ;
+                                        int getNumberOfParametersWithoutGhostlayerPerSubcell() const ;
                                        
                                        /**
                                         * Generated
                                         */
-                                        void setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell) ;
+                                        void setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell) ;
+                                       
+                                       /**
+                                        * Generated
+                                        */
+                                        int getNumberOfParametersWithGhostlayerPerSubcell() const ;
+                                       
+                                       /**
+                                        * Generated
+                                        */
+                                        void setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell) ;
                                        
                                        /**
                                         * Generated
@@ -2484,7 +2558,7 @@ namespace peanoclaw {
                                     /**
                                      * Generated
                                      */
-                                    CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+                                    CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
                                     
                                     /**
                                      * Generated
@@ -2522,12 +2596,22 @@ namespace peanoclaw {
                                     /**
                                      * Generated
                                      */
-                                     int getAuxiliarFieldsPerSubcell() const ;
+                                     int getNumberOfParametersWithoutGhostlayerPerSubcell() const ;
                                     
                                     /**
                                      * Generated
                                      */
-                                     void setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell) ;
+                                     void setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell) ;
+                                    
+                                    /**
+                                     * Generated
+                                     */
+                                     int getNumberOfParametersWithGhostlayerPerSubcell() const ;
+                                    
+                                    /**
+                                     * Generated
+                                     */
+                                     void setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell) ;
                                     
                                     /**
                                      * Generated

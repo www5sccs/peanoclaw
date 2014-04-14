@@ -8,8 +8,8 @@
 
 //#define BREAKINGDAMTEST
 
-/*MekkaFlood_SWEKernelScenario::MekkaFlood_SWEKernelScenario(double domainSize) : 
-    domainSize(domainSize),
+/*MekkaFlood_SWEKernelScenario::MekkaFlood_SWEKernelScenario(double _domainSize) :
+    _domainSize(_domainSize),
     bathymetryHelper("smith_sandwell.nc", "X2MIN", "Y2MIN","ROSE")
 {
 
@@ -397,11 +397,14 @@ static double interpolation_error_gradient(peanoclaw::Patch& patch, int unknown)
 
 void MekkaFlood_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
     // dam coordinates
-    //double x0=domainSize*0.5;
-    //double y0=domainSize*0.5;
+    //double x0=_domainSize*0.5;
+    //double y0=_domainSize*0.5;
   
     double x_size = (dem.upper_right(0) - dem.lower_left(0)) / scale;
     double y_size = (dem.upper_right(1) - dem.lower_left(1))  / scale;
+    _domainSize(0) = x_size;
+    _domainSize(1) = y_size;
+    _domainOffset = tarch::la::Vector<DIMENSIONS, double>(0);
 
     double x0=(x_size) * 0.5;
     double y0=(y_size) * 0.5;
@@ -464,13 +467,15 @@ void MekkaFlood_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
             patch.setValueUNew(subcellIndex, 0, h);
             patch.setValueUNew(subcellIndex, 1, u);
             patch.setValueUNew(subcellIndex, 2, v);
-            patch.setValueUNew(subcellIndex, 3, bathymetry);
-            patch.setValueAux(subcellIndex, 0, mapvalue);
+            patch.setParameterWithoutGhostlayer(subcellIndex, 0, mapvalue);
  
             patch.setValueUNew(subcellIndex, 4, h * u);
             patch.setValueUNew(subcellIndex, 5, h * v);
         }
     }
+
+    //Set bathymetry
+    update(patch);
 
     const tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = patch.getSubdivisionFactor();
     double min_domainsize = std::min(x_size,y_size);
@@ -528,9 +533,9 @@ tarch::la::Vector<DIMENSIONS,double> MekkaFlood_SWEKernelScenario::computeDemand
             if (yi >= 0 && xi >= 0 
                 && yi < subdivisionFactor(1) && xi < subdivisionFactor(0)
                ) {
-                //patch.setValueAux(subcellIndex, 0,  bathymetry);
+                //patch.setParameterWithGhostlayer(subcellIndex, 0,  bathymetry);
             }
-            //patch.setValueUOld(subcellIndex, 3, bathymetry);
+            //patch.setParameterWithGhostlayer(subcellIndex, 0, bathymetry);
 
             isInsideCircle |=(r <radDam);
         }
@@ -543,25 +548,25 @@ tarch::la::Vector<DIMENSIONS,double> MekkaFlood_SWEKernelScenario::computeDemand
         for (int xi = 1; xi < subdivisionFactor(0)-1; xi++) {
             subcellIndex(0) = xi;
             subcellIndex(1) = yi;
-            double bathemetry_11= patch.getValueAux(subcellIndex, 0);
+            double bathemetry_11= patch.getParameterWithoutGhostlayer(subcellIndex, 0);
 
             subcellIndex(0) = xi-1;
             subcellIndex(1) = yi;
-            double bathemetry_01= patch.getValueAux(subcellIndex, 0);
+            double bathemetry_01= patch.getParameterWithoutGhostlayer(subcellIndex, 0);
  
             subcellIndex(0) = xi+1;
             subcellIndex(1) = yi;
-            double bathemetry_21= patch.getValueAux(subcellIndex, 0);
+            double bathemetry_21= patch.getParameterWithoutGhostlayer(subcellIndex, 0);
  
             double curvature_x = std::abs((bathemetry_21 + 2*bathemetry_11 + bathemetry_01)/meshWidth(0));
 
             subcellIndex(0) = xi;
             subcellIndex(1) = yi-1;
-            double bathemetry_10= patch.getValueAux(subcellIndex, 0);
+            double bathemetry_10= patch.getParameterWithoutGhostlayer(subcellIndex, 0);
  
             subcellIndex(0) = xi;
             subcellIndex(1) = yi+1;
-            double bathemetry_12= patch.getValueAux(subcellIndex, 0);
+            double bathemetry_12= patch.getParameterWithoutGhostlayer(subcellIndex, 0);
 
             double curvature_y = std::abs((bathemetry_12 + 2*bathemetry_11 + bathemetry_10)/meshWidth(1));
 
@@ -818,24 +823,40 @@ tarch::la::Vector<DIMENSIONS,double> MekkaFlood_SWEKernelScenario::computeDemand
 }
  
 void MekkaFlood_SWEKernelScenario::update(peanoclaw::Patch& patch) {
-    // update bathymetry data
-    //std::cout << "updating bathymetry!" << std::endl;
-    tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-    tarch::la::Vector<DIMENSIONS, double> meshPos;
-    for (int yi = 0; yi < patch.getSubdivisionFactor()(1); yi++) {
-        for (int xi = 0; xi < patch.getSubdivisionFactor()(0); xi++) {
-            subcellIndex(0) = xi;
-            subcellIndex(1) = yi;
- 
-            meshPos = patch.getSubcellPosition(subcellIndex);
-            tarch::la::Vector<DIMENSIONS, double> coords = mapMeshToCoordinates(meshPos(0), meshPos(1));
-            double bathymetry = dem(coords(0), coords(1));
-            double mapvalue = mapMeshToMap(meshPos);
+//    // update bathymetry data
+//    //std::cout << "updating bathymetry!" << std::endl;
+//    tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+//    tarch::la::Vector<DIMENSIONS, double> meshPos;
+//    for (int yi = 0; yi < patch.getSubdivisionFactor()(1); yi++) {
+//        for (int xi = 0; xi < patch.getSubdivisionFactor()(0); xi++) {
+//            subcellIndex(0) = xi;
+//            subcellIndex(1) = yi;
+//
+//            meshPos = patch.getSubcellPosition(subcellIndex);
+//            tarch::la::Vector<DIMENSIONS, double> coords = mapMeshToCoordinates(meshPos(0), meshPos(1));
+//            double bathymetry = dem((float)coords(0), (float)coords(1));
+//            double mapvalue = mapMeshToMap(meshPos);
+//
+//            patch.setParameterWithGhostlayer(subcellIndex, 0, bathymetry);
+//            patch.setParameterWithoutGhostlayer(subcellIndex, 0, mapvalue);
+//        }
+//    }
 
-            patch.setValueUNew(subcellIndex, 3, bathymetry);
-            patch.setValueAux(subcellIndex, 0, mapvalue);
-        }
+  tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+  tarch::la::Vector<DIMENSIONS, double> meshPos;
+  for (int yi = -patch.getGhostlayerWidth(); yi < patch.getSubdivisionFactor()(1) + patch.getGhostlayerWidth(); yi++) {
+    for (int xi = -patch.getGhostlayerWidth(); xi < patch.getSubdivisionFactor()(0) + patch.getGhostlayerWidth(); xi++) {
+      meshPos = patch.getSubcellPosition(subcellIndex);
+      double bathymetry = 0.0;
+      if(tarch::la::allGreaterEquals(meshPos, _domainOffset) && !tarch::la::oneGreater(meshPos, _domainOffset+_domainSize)) {
+        tarch::la::Vector<DIMENSIONS, double> coords = mapMeshToCoordinates(meshPos(0), meshPos(1));
+        bathymetry = dem(coords(0), coords(1));
+      }
+      subcellIndex(0) = xi;
+      subcellIndex(1) = yi;
+      patch.setParameterWithGhostlayer(subcellIndex, 0, bathymetry);
     }
+  }
 }
 
 // box sizes:
@@ -849,16 +870,16 @@ void MekkaFlood_SWEKernelScenario::update(peanoclaw::Patch& patch) {
 tarch::la::Vector<DIMENSIONS, double> MekkaFlood_SWEKernelScenario::mapCoordinatesToMesh(double longitude, double latitude) {
     tarch::la::Vector<DIMENSIONS, double> mesh;
  
-    /*// put mekkah in the center - adjust bei 0*5 * scale / domainSize
+    /*// put mekkah in the center - adjust bei 0*5 * scale / _domainSize
 
     double scale = 0.1;
 
     // peano coordinates
-    //float mesh_y = (latitude-13.0f)/27.0f * domainSize;
-    //float mesh_x = (longitude-32.0f)/28.0f * domainSize;
+    //float mesh_y = (latitude-13.0f)/27.0f * _domainSize;
+    //float mesh_x = (longitude-32.0f)/28.0f * _domainSize;
  
-    float mesh_y = (latitude-39.8167f)/1.0f * domainSize / scale + 0.5;
-    float mesh_x = (longitude-21.4167f)/1.0f * domainSize / scale + 0.5;
+    float mesh_y = (latitude-39.8167f)/1.0f * _domainSize / scale + 0.5;
+    float mesh_x = (longitude-21.4167f)/1.0f * _domainSize / scale + 0.5;
 
     mesh(0) = mesh_x;
     mesh(1) = mesh_y;*/
@@ -882,15 +903,15 @@ tarch::la::Vector<DIMENSIONS, double> MekkaFlood_SWEKernelScenario::mapCoordinat
 tarch::la::Vector<DIMENSIONS, double> MekkaFlood_SWEKernelScenario::mapMeshToCoordinates(double x, double y) {
     tarch::la::Vector<DIMENSIONS, double> coords;
 
-    // put mekkah in the center - adjust bei 0*5 * scale / domainSize
+    // put mekkah in the center - adjust bei 0*5 * scale / _domainSize
 
     /*double scale = 0.5;
 
-    //double latitude = x / domainSize * 27.0 + 13.0;
-    //double longitude = y / domainSize * 28.0 + 32.0;
+    //double latitude = x / _domainSize * 27.0 + 13.0;
+    //double longitude = y / _domainSize * 28.0 + 32.0;
  
-    double latitude = (y-0.5)* (scale / domainSize) * 1.0 + 21.4167;
-    double longitude = (x-0.5)* (scale / domainSize) * 1.0 + 39.8167;
+    double latitude = (y-0.5)* (scale / _domainSize) * 1.0 + 21.4167;
+    double longitude = (x-0.5)* (scale / _domainSize) * 1.0 + 39.8167;
     coords(0) = longitude;
     coords(1) = latitude;*/
  

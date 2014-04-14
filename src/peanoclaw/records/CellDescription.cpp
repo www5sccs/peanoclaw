@@ -6,11 +6,12 @@
    }
    
    
-   peanoclaw::records::CellDescription::PersistentRecords::PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
+   peanoclaw::records::CellDescription::PersistentRecords::PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
    _subdivisionFactor(subdivisionFactor),
    _ghostlayerWidth(ghostlayerWidth),
    _unknownsPerSubcell(unknownsPerSubcell),
-   _auxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell),
+   _numberOfParametersWithoutGhostlayerPerSubcell(numberOfParametersWithoutGhostlayerPerSubcell),
+   _numberOfParametersWithGhostlayerPerSubcell(numberOfParametersWithGhostlayerPerSubcell),
    _level(level),
    _isVirtual(isVirtual),
    _isRemote(isRemote),
@@ -82,14 +83,26 @@
    
    
    
-    int peanoclaw::records::CellDescription::PersistentRecords::getAuxiliarFieldsPerSubcell() const  {
-      return _auxiliarFieldsPerSubcell;
+    int peanoclaw::records::CellDescription::PersistentRecords::getNumberOfParametersWithoutGhostlayerPerSubcell() const  {
+      return _numberOfParametersWithoutGhostlayerPerSubcell;
    }
    
    
    
-    void peanoclaw::records::CellDescription::PersistentRecords::setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell)  {
-      _auxiliarFieldsPerSubcell = auxiliarFieldsPerSubcell;
+    void peanoclaw::records::CellDescription::PersistentRecords::setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell)  {
+      _numberOfParametersWithoutGhostlayerPerSubcell = numberOfParametersWithoutGhostlayerPerSubcell;
+   }
+   
+   
+   
+    int peanoclaw::records::CellDescription::PersistentRecords::getNumberOfParametersWithGhostlayerPerSubcell() const  {
+      return _numberOfParametersWithGhostlayerPerSubcell;
+   }
+   
+   
+   
+    void peanoclaw::records::CellDescription::PersistentRecords::setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell)  {
+      _numberOfParametersWithGhostlayerPerSubcell = numberOfParametersWithGhostlayerPerSubcell;
    }
    
    
@@ -471,13 +484,13 @@
    
    
    peanoclaw::records::CellDescription::CellDescription(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._subdivisionFactor, persistentRecords._ghostlayerWidth, persistentRecords._unknownsPerSubcell, persistentRecords._auxiliarFieldsPerSubcell, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._isRemote, persistentRecords._isPaddingSubgrid, persistentRecords._numberOfTransfersToBeSkipped, persistentRecords._numberOfSharedAdjacentVertices, persistentRecords._currentStateWasSend, persistentRecords._adjacentRanksChanged, persistentRecords._adjacentRanks, persistentRecords._overlapByRemoteGhostlayer, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._maximumFineGridTime, persistentRecords._minimumFineGridTimestep, persistentRecords._synchronizeFineGrids, persistentRecords._willCoarsen, persistentRecords._minimalNeighborTimeConstraint, persistentRecords._constrainingNeighborIndex, persistentRecords._minimalLeafNeighborTimeConstraint, persistentRecords._minimalNeighborTime, persistentRecords._maximalNeighborTimestep, persistentRecords._estimatedNextTimestepSize, persistentRecords._skipGridIterations, persistentRecords._ageInGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._restrictionLowerBounds, persistentRecords._restrictionUpperBounds, persistentRecords._cellDescriptionIndex, persistentRecords._uIndex) {
+   _persistentRecords(persistentRecords._subdivisionFactor, persistentRecords._ghostlayerWidth, persistentRecords._unknownsPerSubcell, persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell, persistentRecords._numberOfParametersWithGhostlayerPerSubcell, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._isRemote, persistentRecords._isPaddingSubgrid, persistentRecords._numberOfTransfersToBeSkipped, persistentRecords._numberOfSharedAdjacentVertices, persistentRecords._currentStateWasSend, persistentRecords._adjacentRanksChanged, persistentRecords._adjacentRanks, persistentRecords._overlapByRemoteGhostlayer, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._maximumFineGridTime, persistentRecords._minimumFineGridTimestep, persistentRecords._synchronizeFineGrids, persistentRecords._willCoarsen, persistentRecords._minimalNeighborTimeConstraint, persistentRecords._constrainingNeighborIndex, persistentRecords._minimalLeafNeighborTimeConstraint, persistentRecords._minimalNeighborTime, persistentRecords._maximalNeighborTimestep, persistentRecords._estimatedNextTimestepSize, persistentRecords._skipGridIterations, persistentRecords._ageInGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._restrictionLowerBounds, persistentRecords._restrictionUpperBounds, persistentRecords._cellDescriptionIndex, persistentRecords._uIndex) {
       
    }
    
    
-   peanoclaw::records::CellDescription::CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
-   _persistentRecords(subdivisionFactor, ghostlayerWidth, unknownsPerSubcell, auxiliarFieldsPerSubcell, level, isVirtual, isRemote, isPaddingSubgrid, numberOfTransfersToBeSkipped, numberOfSharedAdjacentVertices, currentStateWasSend, adjacentRanksChanged, adjacentRanks, overlapByRemoteGhostlayer, position, size, time, timestepSize, maximumFineGridTime, minimumFineGridTimestep, synchronizeFineGrids, willCoarsen, minimalNeighborTimeConstraint, constrainingNeighborIndex, minimalLeafNeighborTimeConstraint, minimalNeighborTime, maximalNeighborTimestep, estimatedNextTimestepSize, skipGridIterations, ageInGridIterations, demandedMeshWidth, restrictionLowerBounds, restrictionUpperBounds, cellDescriptionIndex, uIndex) {
+   peanoclaw::records::CellDescription::CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
+   _persistentRecords(subdivisionFactor, ghostlayerWidth, unknownsPerSubcell, numberOfParametersWithoutGhostlayerPerSubcell, numberOfParametersWithGhostlayerPerSubcell, level, isVirtual, isRemote, isPaddingSubgrid, numberOfTransfersToBeSkipped, numberOfSharedAdjacentVertices, currentStateWasSend, adjacentRanksChanged, adjacentRanks, overlapByRemoteGhostlayer, position, size, time, timestepSize, maximumFineGridTime, minimumFineGridTimestep, synchronizeFineGrids, willCoarsen, minimalNeighborTimeConstraint, constrainingNeighborIndex, minimalLeafNeighborTimeConstraint, minimalNeighborTime, maximalNeighborTimestep, estimatedNextTimestepSize, skipGridIterations, ageInGridIterations, demandedMeshWidth, restrictionLowerBounds, restrictionUpperBounds, cellDescriptionIndex, uIndex) {
       
    }
    
@@ -539,14 +552,26 @@
    
    
    
-    int peanoclaw::records::CellDescription::getAuxiliarFieldsPerSubcell() const  {
-      return _persistentRecords._auxiliarFieldsPerSubcell;
+    int peanoclaw::records::CellDescription::getNumberOfParametersWithoutGhostlayerPerSubcell() const  {
+      return _persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell;
    }
    
    
    
-    void peanoclaw::records::CellDescription::setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell)  {
-      _persistentRecords._auxiliarFieldsPerSubcell = auxiliarFieldsPerSubcell;
+    void peanoclaw::records::CellDescription::setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell)  {
+      _persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell = numberOfParametersWithoutGhostlayerPerSubcell;
+   }
+   
+   
+   
+    int peanoclaw::records::CellDescription::getNumberOfParametersWithGhostlayerPerSubcell() const  {
+      return _persistentRecords._numberOfParametersWithGhostlayerPerSubcell;
+   }
+   
+   
+   
+    void peanoclaw::records::CellDescription::setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell)  {
+      _persistentRecords._numberOfParametersWithGhostlayerPerSubcell = numberOfParametersWithGhostlayerPerSubcell;
    }
    
    
@@ -1104,7 +1129,9 @@
       out << ",";
       out << "unknownsPerSubcell:" << getUnknownsPerSubcell();
       out << ",";
-      out << "auxiliarFieldsPerSubcell:" << getAuxiliarFieldsPerSubcell();
+      out << "numberOfParametersWithoutGhostlayerPerSubcell:" << getNumberOfParametersWithoutGhostlayerPerSubcell();
+      out << ",";
+      out << "numberOfParametersWithGhostlayerPerSubcell:" << getNumberOfParametersWithGhostlayerPerSubcell();
       out << ",";
       out << "level:" << getLevel();
       out << ",";
@@ -1216,7 +1243,8 @@
          getSubdivisionFactor(),
          getGhostlayerWidth(),
          getUnknownsPerSubcell(),
-         getAuxiliarFieldsPerSubcell(),
+         getNumberOfParametersWithoutGhostlayerPerSubcell(),
+         getNumberOfParametersWithGhostlayerPerSubcell(),
          getLevel(),
          getIsVirtual(),
          getIsRemote(),
@@ -1262,12 +1290,13 @@
          {
             CellDescription dummyCellDescription[2];
             
-            const int Attributes = 32;
+            const int Attributes = 33;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //subdivisionFactor
                MPI_INT,		 //ghostlayerWidth
                MPI_INT,		 //unknownsPerSubcell
-               MPI_INT,		 //auxiliarFieldsPerSubcell
+               MPI_INT,		 //numberOfParametersWithoutGhostlayerPerSubcell
+               MPI_INT,		 //numberOfParametersWithGhostlayerPerSubcell
                MPI_INT,		 //level
                MPI_CHAR,		 //isVirtual
                MPI_CHAR,		 //isRemote
@@ -1302,7 +1331,8 @@
                DIMENSIONS,		 //subdivisionFactor
                1,		 //ghostlayerWidth
                1,		 //unknownsPerSubcell
-               1,		 //auxiliarFieldsPerSubcell
+               1,		 //numberOfParametersWithoutGhostlayerPerSubcell
+               1,		 //numberOfParametersWithGhostlayerPerSubcell
                1,		 //level
                1,		 //isVirtual
                1,		 //isRemote
@@ -1340,35 +1370,36 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._subdivisionFactor[0]))), 		&disp[0] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ghostlayerWidth))), 		&disp[1] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._unknownsPerSubcell))), 		&disp[2] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._auxiliarFieldsPerSubcell))), 		&disp[3] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._level))), 		&disp[4] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isVirtual))), 		&disp[5] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isRemote))), 		&disp[6] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isPaddingSubgrid))), 		&disp[7] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfTransfersToBeSkipped[0]))), 		&disp[8] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._adjacentRanks[0]))), 		&disp[9] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._overlapByRemoteGhostlayer[0]))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._position[0]))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._size[0]))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._time))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._timestepSize))), 		&disp[14] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximumFineGridTime))), 		&disp[15] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimumFineGridTimestep))), 		&disp[16] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._synchronizeFineGrids))), 		&disp[17] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._willCoarsen))), 		&disp[18] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTimeConstraint))), 		&disp[19] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalLeafNeighborTimeConstraint))), 		&disp[20] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTime))), 		&disp[21] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximalNeighborTimestep))), 		&disp[22] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._estimatedNextTimestepSize))), 		&disp[23] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._skipGridIterations))), 		&disp[24] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ageInGridIterations))), 		&disp[25] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._demandedMeshWidth[0]))), 		&disp[26] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionLowerBounds[0]))), 		&disp[27] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionUpperBounds[0]))), 		&disp[28] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[29] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._uIndex))), 		&disp[30] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyCellDescription[1]._persistentRecords._subdivisionFactor[0])), 		&disp[31] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell))), 		&disp[3] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfParametersWithGhostlayerPerSubcell))), 		&disp[4] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._level))), 		&disp[5] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isVirtual))), 		&disp[6] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isRemote))), 		&disp[7] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isPaddingSubgrid))), 		&disp[8] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfTransfersToBeSkipped[0]))), 		&disp[9] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._adjacentRanks[0]))), 		&disp[10] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._overlapByRemoteGhostlayer[0]))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._position[0]))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._size[0]))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._time))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._timestepSize))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximumFineGridTime))), 		&disp[16] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimumFineGridTimestep))), 		&disp[17] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._synchronizeFineGrids))), 		&disp[18] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._willCoarsen))), 		&disp[19] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTimeConstraint))), 		&disp[20] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalLeafNeighborTimeConstraint))), 		&disp[21] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTime))), 		&disp[22] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximalNeighborTimestep))), 		&disp[23] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._estimatedNextTimestepSize))), 		&disp[24] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._skipGridIterations))), 		&disp[25] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ageInGridIterations))), 		&disp[26] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._demandedMeshWidth[0]))), 		&disp[27] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionLowerBounds[0]))), 		&disp[28] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionUpperBounds[0]))), 		&disp[29] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[30] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._uIndex))), 		&disp[31] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyCellDescription[1]._persistentRecords._subdivisionFactor[0])), 		&disp[32] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -1383,12 +1414,13 @@
          {
             CellDescription dummyCellDescription[2];
             
-            const int Attributes = 36;
+            const int Attributes = 37;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //subdivisionFactor
                MPI_INT,		 //ghostlayerWidth
                MPI_INT,		 //unknownsPerSubcell
-               MPI_INT,		 //auxiliarFieldsPerSubcell
+               MPI_INT,		 //numberOfParametersWithoutGhostlayerPerSubcell
+               MPI_INT,		 //numberOfParametersWithGhostlayerPerSubcell
                MPI_INT,		 //level
                MPI_CHAR,		 //isVirtual
                MPI_CHAR,		 //isRemote
@@ -1427,7 +1459,8 @@
                DIMENSIONS,		 //subdivisionFactor
                1,		 //ghostlayerWidth
                1,		 //unknownsPerSubcell
-               1,		 //auxiliarFieldsPerSubcell
+               1,		 //numberOfParametersWithoutGhostlayerPerSubcell
+               1,		 //numberOfParametersWithGhostlayerPerSubcell
                1,		 //level
                1,		 //isVirtual
                1,		 //isRemote
@@ -1469,39 +1502,40 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._subdivisionFactor[0]))), 		&disp[0] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ghostlayerWidth))), 		&disp[1] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._unknownsPerSubcell))), 		&disp[2] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._auxiliarFieldsPerSubcell))), 		&disp[3] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._level))), 		&disp[4] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isVirtual))), 		&disp[5] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isRemote))), 		&disp[6] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isPaddingSubgrid))), 		&disp[7] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfTransfersToBeSkipped[0]))), 		&disp[8] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfSharedAdjacentVertices[0]))), 		&disp[9] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._currentStateWasSend))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._adjacentRanksChanged))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._adjacentRanks[0]))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._overlapByRemoteGhostlayer[0]))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._position[0]))), 		&disp[14] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._size[0]))), 		&disp[15] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._time))), 		&disp[16] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._timestepSize))), 		&disp[17] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximumFineGridTime))), 		&disp[18] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimumFineGridTimestep))), 		&disp[19] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._synchronizeFineGrids))), 		&disp[20] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._willCoarsen))), 		&disp[21] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTimeConstraint))), 		&disp[22] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._constrainingNeighborIndex))), 		&disp[23] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalLeafNeighborTimeConstraint))), 		&disp[24] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTime))), 		&disp[25] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximalNeighborTimestep))), 		&disp[26] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._estimatedNextTimestepSize))), 		&disp[27] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._skipGridIterations))), 		&disp[28] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ageInGridIterations))), 		&disp[29] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._demandedMeshWidth[0]))), 		&disp[30] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionLowerBounds[0]))), 		&disp[31] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionUpperBounds[0]))), 		&disp[32] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[33] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._uIndex))), 		&disp[34] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyCellDescription[1]._persistentRecords._subdivisionFactor[0])), 		&disp[35] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell))), 		&disp[3] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfParametersWithGhostlayerPerSubcell))), 		&disp[4] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._level))), 		&disp[5] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isVirtual))), 		&disp[6] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isRemote))), 		&disp[7] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isPaddingSubgrid))), 		&disp[8] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfTransfersToBeSkipped[0]))), 		&disp[9] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfSharedAdjacentVertices[0]))), 		&disp[10] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._currentStateWasSend))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._adjacentRanksChanged))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._adjacentRanks[0]))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._overlapByRemoteGhostlayer[0]))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._position[0]))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._size[0]))), 		&disp[16] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._time))), 		&disp[17] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._timestepSize))), 		&disp[18] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximumFineGridTime))), 		&disp[19] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimumFineGridTimestep))), 		&disp[20] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._synchronizeFineGrids))), 		&disp[21] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._willCoarsen))), 		&disp[22] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTimeConstraint))), 		&disp[23] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._constrainingNeighborIndex))), 		&disp[24] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalLeafNeighborTimeConstraint))), 		&disp[25] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTime))), 		&disp[26] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximalNeighborTimestep))), 		&disp[27] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._estimatedNextTimestepSize))), 		&disp[28] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._skipGridIterations))), 		&disp[29] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ageInGridIterations))), 		&disp[30] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._demandedMeshWidth[0]))), 		&disp[31] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionLowerBounds[0]))), 		&disp[32] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionUpperBounds[0]))), 		&disp[33] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[34] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._uIndex))), 		&disp[35] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyCellDescription[1]._persistentRecords._subdivisionFactor[0])), 		&disp[36] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -1740,12 +1774,12 @@
    
    
    peanoclaw::records::CellDescriptionPacked::PersistentRecords::PersistentRecords() {
-      assertion((27 < (8 * sizeof(int))));
+      assertion((31 < (8 * sizeof(int))));
       
    }
    
    
-   peanoclaw::records::CellDescriptionPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
+   peanoclaw::records::CellDescriptionPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
    _subdivisionFactor(subdivisionFactor),
    _numberOfTransfersToBeSkipped(numberOfTransfersToBeSkipped),
    _numberOfSharedAdjacentVertices(numberOfSharedAdjacentVertices),
@@ -1771,7 +1805,8 @@
    _uIndex(uIndex) {
       setGhostlayerWidth(ghostlayerWidth);
       setUnknownsPerSubcell(unknownsPerSubcell);
-      setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
+      setNumberOfParametersWithoutGhostlayerPerSubcell(numberOfParametersWithoutGhostlayerPerSubcell);
+      setNumberOfParametersWithGhostlayerPerSubcell(numberOfParametersWithGhostlayerPerSubcell);
       setLevel(level);
       setIsVirtual(isVirtual);
       setIsRemote(isRemote);
@@ -1781,7 +1816,7 @@
       setSynchronizeFineGrids(synchronizeFineGrids);
       setWillCoarsen(willCoarsen);
       setSkipGridIterations(skipGridIterations);
-      assertion((27 < (8 * sizeof(int))));
+      assertion((31 < (8 * sizeof(int))));
       
    }
    
@@ -1840,7 +1875,7 @@
    
    
    
-    int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getAuxiliarFieldsPerSubcell() const  {
+    int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getNumberOfParametersWithoutGhostlayerPerSubcell() const  {
       int mask =  (1 << (4)) - 1;
    mask = static_cast<int>(mask << (8));
    int tmp = static_cast<int>(_packedRecords0 & mask);
@@ -1851,21 +1886,42 @@
    
    
    
-    void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell)  {
-      assertion((auxiliarFieldsPerSubcell >= 0 && auxiliarFieldsPerSubcell <= 15));
+    void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell)  {
+      assertion((numberOfParametersWithoutGhostlayerPerSubcell >= 0 && numberOfParametersWithoutGhostlayerPerSubcell <= 15));
    int mask =  (1 << (4)) - 1;
    mask = static_cast<int>(mask << (8));
    _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | auxiliarFieldsPerSubcell << (8));
+   _packedRecords0 = static_cast<int>(_packedRecords0 | numberOfParametersWithoutGhostlayerPerSubcell << (8));
+   }
+   
+   
+   
+    int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getNumberOfParametersWithGhostlayerPerSubcell() const  {
+      int mask =  (1 << (4)) - 1;
+   mask = static_cast<int>(mask << (12));
+   int tmp = static_cast<int>(_packedRecords0 & mask);
+   tmp = static_cast<int>(tmp >> (12));
+   assertion(( tmp >= 0 &&  tmp <= 15));
+   return (int) tmp;
+   }
+   
+   
+   
+    void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell)  {
+      assertion((numberOfParametersWithGhostlayerPerSubcell >= 0 && numberOfParametersWithGhostlayerPerSubcell <= 15));
+   int mask =  (1 << (4)) - 1;
+   mask = static_cast<int>(mask << (12));
+   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<int>(_packedRecords0 | numberOfParametersWithGhostlayerPerSubcell << (12));
    }
    
    
    
     int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getLevel() const  {
       int mask =  (1 << (5)) - 1;
-   mask = static_cast<int>(mask << (12));
+   mask = static_cast<int>(mask << (16));
    int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (12));
+   tmp = static_cast<int>(tmp >> (16));
    assertion(( tmp >= 0 &&  tmp <= 31));
    return (int) tmp;
    }
@@ -1875,15 +1931,15 @@
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setLevel(const int& level)  {
       assertion((level >= 0 && level <= 31));
    int mask =  (1 << (5)) - 1;
-   mask = static_cast<int>(mask << (12));
+   mask = static_cast<int>(mask << (16));
    _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | level << (12));
+   _packedRecords0 = static_cast<int>(_packedRecords0 | level << (16));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getIsVirtual() const  {
-      int mask = 1 << (17);
+      int mask = 1 << (21);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -1891,14 +1947,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setIsVirtual(const bool& isVirtual)  {
-      int mask = 1 << (17);
+      int mask = 1 << (21);
    _packedRecords0 = static_cast<int>( isVirtual ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getIsRemote() const  {
-      int mask = 1 << (18);
+      int mask = 1 << (22);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -1906,14 +1962,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setIsRemote(const bool& isRemote)  {
-      int mask = 1 << (18);
+      int mask = 1 << (22);
    _packedRecords0 = static_cast<int>( isRemote ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getIsPaddingSubgrid() const  {
-      int mask = 1 << (19);
+      int mask = 1 << (23);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -1921,7 +1977,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setIsPaddingSubgrid(const bool& isPaddingSubgrid)  {
-      int mask = 1 << (19);
+      int mask = 1 << (23);
    _packedRecords0 = static_cast<int>( isPaddingSubgrid ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
@@ -1952,7 +2008,7 @@
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getCurrentStateWasSend() const  {
-      int mask = 1 << (20);
+      int mask = 1 << (24);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -1960,14 +2016,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setCurrentStateWasSend(const bool& currentStateWasSend)  {
-      int mask = 1 << (20);
+      int mask = 1 << (24);
    _packedRecords0 = static_cast<int>( currentStateWasSend ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getAdjacentRanksChanged() const  {
-      int mask = 1 << (21);
+      int mask = 1 << (25);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -1975,7 +2031,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setAdjacentRanksChanged(const bool& adjacentRanksChanged)  {
-      int mask = 1 << (21);
+      int mask = 1 << (25);
    _packedRecords0 = static_cast<int>( adjacentRanksChanged ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
@@ -2078,7 +2134,7 @@
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getSynchronizeFineGrids() const  {
-      int mask = 1 << (22);
+      int mask = 1 << (26);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2086,14 +2142,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setSynchronizeFineGrids(const bool& synchronizeFineGrids)  {
-      int mask = 1 << (22);
+      int mask = 1 << (26);
    _packedRecords0 = static_cast<int>( synchronizeFineGrids ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getWillCoarsen() const  {
-      int mask = 1 << (23);
+      int mask = 1 << (27);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2101,7 +2157,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setWillCoarsen(const bool& willCoarsen)  {
-      int mask = 1 << (23);
+      int mask = 1 << (27);
    _packedRecords0 = static_cast<int>( willCoarsen ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
@@ -2181,9 +2237,9 @@
    
     int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getSkipGridIterations() const  {
       int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (24));
+   mask = static_cast<int>(mask << (28));
    int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (24));
+   tmp = static_cast<int>(tmp >> (28));
    assertion(( tmp >= 0 &&  tmp <= 7));
    return (int) tmp;
    }
@@ -2193,9 +2249,9 @@
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setSkipGridIterations(const int& skipGridIterations)  {
       assertion((skipGridIterations >= 0 && skipGridIterations <= 7));
    int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (24));
+   mask = static_cast<int>(mask << (28));
    _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | skipGridIterations << (24));
+   _packedRecords0 = static_cast<int>(_packedRecords0 | skipGridIterations << (28));
    }
    
    
@@ -2272,21 +2328,21 @@
    
    
    peanoclaw::records::CellDescriptionPacked::CellDescriptionPacked() {
-      assertion((27 < (8 * sizeof(int))));
+      assertion((31 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::CellDescriptionPacked::CellDescriptionPacked(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._subdivisionFactor, persistentRecords.getGhostlayerWidth(), persistentRecords.getUnknownsPerSubcell(), persistentRecords.getAuxiliarFieldsPerSubcell(), persistentRecords.getLevel(), persistentRecords.getIsVirtual(), persistentRecords.getIsRemote(), persistentRecords.getIsPaddingSubgrid(), persistentRecords._numberOfTransfersToBeSkipped, persistentRecords._numberOfSharedAdjacentVertices, persistentRecords.getCurrentStateWasSend(), persistentRecords.getAdjacentRanksChanged(), persistentRecords._adjacentRanks, persistentRecords._overlapByRemoteGhostlayer, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._maximumFineGridTime, persistentRecords._minimumFineGridTimestep, persistentRecords.getSynchronizeFineGrids(), persistentRecords.getWillCoarsen(), persistentRecords._minimalNeighborTimeConstraint, persistentRecords._constrainingNeighborIndex, persistentRecords._minimalLeafNeighborTimeConstraint, persistentRecords._minimalNeighborTime, persistentRecords._maximalNeighborTimestep, persistentRecords._estimatedNextTimestepSize, persistentRecords.getSkipGridIterations(), persistentRecords._ageInGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._restrictionLowerBounds, persistentRecords._restrictionUpperBounds, persistentRecords._cellDescriptionIndex, persistentRecords._uIndex) {
-      assertion((27 < (8 * sizeof(int))));
+   _persistentRecords(persistentRecords._subdivisionFactor, persistentRecords.getGhostlayerWidth(), persistentRecords.getUnknownsPerSubcell(), persistentRecords.getNumberOfParametersWithoutGhostlayerPerSubcell(), persistentRecords.getNumberOfParametersWithGhostlayerPerSubcell(), persistentRecords.getLevel(), persistentRecords.getIsVirtual(), persistentRecords.getIsRemote(), persistentRecords.getIsPaddingSubgrid(), persistentRecords._numberOfTransfersToBeSkipped, persistentRecords._numberOfSharedAdjacentVertices, persistentRecords.getCurrentStateWasSend(), persistentRecords.getAdjacentRanksChanged(), persistentRecords._adjacentRanks, persistentRecords._overlapByRemoteGhostlayer, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._maximumFineGridTime, persistentRecords._minimumFineGridTimestep, persistentRecords.getSynchronizeFineGrids(), persistentRecords.getWillCoarsen(), persistentRecords._minimalNeighborTimeConstraint, persistentRecords._constrainingNeighborIndex, persistentRecords._minimalLeafNeighborTimeConstraint, persistentRecords._minimalNeighborTime, persistentRecords._maximalNeighborTimestep, persistentRecords._estimatedNextTimestepSize, persistentRecords.getSkipGridIterations(), persistentRecords._ageInGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._restrictionLowerBounds, persistentRecords._restrictionUpperBounds, persistentRecords._cellDescriptionIndex, persistentRecords._uIndex) {
+      assertion((31 < (8 * sizeof(int))));
       
    }
    
    
-   peanoclaw::records::CellDescriptionPacked::CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
-   _persistentRecords(subdivisionFactor, ghostlayerWidth, unknownsPerSubcell, auxiliarFieldsPerSubcell, level, isVirtual, isRemote, isPaddingSubgrid, numberOfTransfersToBeSkipped, numberOfSharedAdjacentVertices, currentStateWasSend, adjacentRanksChanged, adjacentRanks, overlapByRemoteGhostlayer, position, size, time, timestepSize, maximumFineGridTime, minimumFineGridTimestep, synchronizeFineGrids, willCoarsen, minimalNeighborTimeConstraint, constrainingNeighborIndex, minimalLeafNeighborTimeConstraint, minimalNeighborTime, maximalNeighborTimestep, estimatedNextTimestepSize, skipGridIterations, ageInGridIterations, demandedMeshWidth, restrictionLowerBounds, restrictionUpperBounds, cellDescriptionIndex, uIndex) {
-      assertion((27 < (8 * sizeof(int))));
+   peanoclaw::records::CellDescriptionPacked::CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
+   _persistentRecords(subdivisionFactor, ghostlayerWidth, unknownsPerSubcell, numberOfParametersWithoutGhostlayerPerSubcell, numberOfParametersWithGhostlayerPerSubcell, level, isVirtual, isRemote, isPaddingSubgrid, numberOfTransfersToBeSkipped, numberOfSharedAdjacentVertices, currentStateWasSend, adjacentRanksChanged, adjacentRanks, overlapByRemoteGhostlayer, position, size, time, timestepSize, maximumFineGridTime, minimumFineGridTimestep, synchronizeFineGrids, willCoarsen, minimalNeighborTimeConstraint, constrainingNeighborIndex, minimalLeafNeighborTimeConstraint, minimalNeighborTime, maximalNeighborTimestep, estimatedNextTimestepSize, skipGridIterations, ageInGridIterations, demandedMeshWidth, restrictionLowerBounds, restrictionUpperBounds, cellDescriptionIndex, uIndex) {
+      assertion((31 < (8 * sizeof(int))));
       
    }
    
@@ -2366,7 +2422,7 @@
    
    
    
-    int peanoclaw::records::CellDescriptionPacked::getAuxiliarFieldsPerSubcell() const  {
+    int peanoclaw::records::CellDescriptionPacked::getNumberOfParametersWithoutGhostlayerPerSubcell() const  {
       int mask =  (1 << (4)) - 1;
    mask = static_cast<int>(mask << (8));
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
@@ -2377,21 +2433,42 @@
    
    
    
-    void peanoclaw::records::CellDescriptionPacked::setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell)  {
-      assertion((auxiliarFieldsPerSubcell >= 0 && auxiliarFieldsPerSubcell <= 15));
+    void peanoclaw::records::CellDescriptionPacked::setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell)  {
+      assertion((numberOfParametersWithoutGhostlayerPerSubcell >= 0 && numberOfParametersWithoutGhostlayerPerSubcell <= 15));
    int mask =  (1 << (4)) - 1;
    mask = static_cast<int>(mask << (8));
    _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | auxiliarFieldsPerSubcell << (8));
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | numberOfParametersWithoutGhostlayerPerSubcell << (8));
+   }
+   
+   
+   
+    int peanoclaw::records::CellDescriptionPacked::getNumberOfParametersWithGhostlayerPerSubcell() const  {
+      int mask =  (1 << (4)) - 1;
+   mask = static_cast<int>(mask << (12));
+   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<int>(tmp >> (12));
+   assertion(( tmp >= 0 &&  tmp <= 15));
+   return (int) tmp;
+   }
+   
+   
+   
+    void peanoclaw::records::CellDescriptionPacked::setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell)  {
+      assertion((numberOfParametersWithGhostlayerPerSubcell >= 0 && numberOfParametersWithGhostlayerPerSubcell <= 15));
+   int mask =  (1 << (4)) - 1;
+   mask = static_cast<int>(mask << (12));
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | numberOfParametersWithGhostlayerPerSubcell << (12));
    }
    
    
    
     int peanoclaw::records::CellDescriptionPacked::getLevel() const  {
       int mask =  (1 << (5)) - 1;
-   mask = static_cast<int>(mask << (12));
+   mask = static_cast<int>(mask << (16));
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (12));
+   tmp = static_cast<int>(tmp >> (16));
    assertion(( tmp >= 0 &&  tmp <= 31));
    return (int) tmp;
    }
@@ -2401,15 +2478,15 @@
     void peanoclaw::records::CellDescriptionPacked::setLevel(const int& level)  {
       assertion((level >= 0 && level <= 31));
    int mask =  (1 << (5)) - 1;
-   mask = static_cast<int>(mask << (12));
+   mask = static_cast<int>(mask << (16));
    _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | level << (12));
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | level << (16));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::getIsVirtual() const  {
-      int mask = 1 << (17);
+      int mask = 1 << (21);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2417,14 +2494,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setIsVirtual(const bool& isVirtual)  {
-      int mask = 1 << (17);
+      int mask = 1 << (21);
    _persistentRecords._packedRecords0 = static_cast<int>( isVirtual ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::getIsRemote() const  {
-      int mask = 1 << (18);
+      int mask = 1 << (22);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2432,14 +2509,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setIsRemote(const bool& isRemote)  {
-      int mask = 1 << (18);
+      int mask = 1 << (22);
    _persistentRecords._packedRecords0 = static_cast<int>( isRemote ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::getIsPaddingSubgrid() const  {
-      int mask = 1 << (19);
+      int mask = 1 << (23);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2447,7 +2524,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setIsPaddingSubgrid(const bool& isPaddingSubgrid)  {
-      int mask = 1 << (19);
+      int mask = 1 << (23);
    _persistentRecords._packedRecords0 = static_cast<int>( isPaddingSubgrid ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
@@ -2514,7 +2591,7 @@
    
    
     bool peanoclaw::records::CellDescriptionPacked::getCurrentStateWasSend() const  {
-      int mask = 1 << (20);
+      int mask = 1 << (24);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2522,14 +2599,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setCurrentStateWasSend(const bool& currentStateWasSend)  {
-      int mask = 1 << (20);
+      int mask = 1 << (24);
    _persistentRecords._packedRecords0 = static_cast<int>( currentStateWasSend ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::getAdjacentRanksChanged() const  {
-      int mask = 1 << (21);
+      int mask = 1 << (25);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2537,7 +2614,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setAdjacentRanksChanged(const bool& adjacentRanksChanged)  {
-      int mask = 1 << (21);
+      int mask = 1 << (25);
    _persistentRecords._packedRecords0 = static_cast<int>( adjacentRanksChanged ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
@@ -2712,7 +2789,7 @@
    
    
     bool peanoclaw::records::CellDescriptionPacked::getSynchronizeFineGrids() const  {
-      int mask = 1 << (22);
+      int mask = 1 << (26);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2720,14 +2797,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setSynchronizeFineGrids(const bool& synchronizeFineGrids)  {
-      int mask = 1 << (22);
+      int mask = 1 << (26);
    _persistentRecords._packedRecords0 = static_cast<int>( synchronizeFineGrids ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::getWillCoarsen() const  {
-      int mask = 1 << (23);
+      int mask = 1 << (27);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -2735,7 +2812,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setWillCoarsen(const bool& willCoarsen)  {
-      int mask = 1 << (23);
+      int mask = 1 << (27);
    _persistentRecords._packedRecords0 = static_cast<int>( willCoarsen ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
@@ -2815,9 +2892,9 @@
    
     int peanoclaw::records::CellDescriptionPacked::getSkipGridIterations() const  {
       int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (24));
+   mask = static_cast<int>(mask << (28));
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (24));
+   tmp = static_cast<int>(tmp >> (28));
    assertion(( tmp >= 0 &&  tmp <= 7));
    return (int) tmp;
    }
@@ -2827,9 +2904,9 @@
     void peanoclaw::records::CellDescriptionPacked::setSkipGridIterations(const int& skipGridIterations)  {
       assertion((skipGridIterations >= 0 && skipGridIterations <= 7));
    int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (24));
+   mask = static_cast<int>(mask << (28));
    _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | skipGridIterations << (24));
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | skipGridIterations << (28));
    }
    
    
@@ -2979,7 +3056,9 @@
       out << ",";
       out << "unknownsPerSubcell:" << getUnknownsPerSubcell();
       out << ",";
-      out << "auxiliarFieldsPerSubcell:" << getAuxiliarFieldsPerSubcell();
+      out << "numberOfParametersWithoutGhostlayerPerSubcell:" << getNumberOfParametersWithoutGhostlayerPerSubcell();
+      out << ",";
+      out << "numberOfParametersWithGhostlayerPerSubcell:" << getNumberOfParametersWithGhostlayerPerSubcell();
       out << ",";
       out << "level:" << getLevel();
       out << ",";
@@ -3091,7 +3170,8 @@
          getSubdivisionFactor(),
          getGhostlayerWidth(),
          getUnknownsPerSubcell(),
-         getAuxiliarFieldsPerSubcell(),
+         getNumberOfParametersWithoutGhostlayerPerSubcell(),
+         getNumberOfParametersWithGhostlayerPerSubcell(),
          getLevel(),
          getIsVirtual(),
          getIsRemote(),
@@ -3561,11 +3641,12 @@
    }
    
    
-   peanoclaw::records::CellDescription::PersistentRecords::PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
+   peanoclaw::records::CellDescription::PersistentRecords::PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
    _subdivisionFactor(subdivisionFactor),
    _ghostlayerWidth(ghostlayerWidth),
    _unknownsPerSubcell(unknownsPerSubcell),
-   _auxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell),
+   _numberOfParametersWithoutGhostlayerPerSubcell(numberOfParametersWithoutGhostlayerPerSubcell),
+   _numberOfParametersWithGhostlayerPerSubcell(numberOfParametersWithGhostlayerPerSubcell),
    _level(level),
    _isVirtual(isVirtual),
    _position(position),
@@ -3629,14 +3710,26 @@
    
    
    
-    int peanoclaw::records::CellDescription::PersistentRecords::getAuxiliarFieldsPerSubcell() const  {
-      return _auxiliarFieldsPerSubcell;
+    int peanoclaw::records::CellDescription::PersistentRecords::getNumberOfParametersWithoutGhostlayerPerSubcell() const  {
+      return _numberOfParametersWithoutGhostlayerPerSubcell;
    }
    
    
    
-    void peanoclaw::records::CellDescription::PersistentRecords::setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell)  {
-      _auxiliarFieldsPerSubcell = auxiliarFieldsPerSubcell;
+    void peanoclaw::records::CellDescription::PersistentRecords::setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell)  {
+      _numberOfParametersWithoutGhostlayerPerSubcell = numberOfParametersWithoutGhostlayerPerSubcell;
+   }
+   
+   
+   
+    int peanoclaw::records::CellDescription::PersistentRecords::getNumberOfParametersWithGhostlayerPerSubcell() const  {
+      return _numberOfParametersWithGhostlayerPerSubcell;
+   }
+   
+   
+   
+    void peanoclaw::records::CellDescription::PersistentRecords::setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell)  {
+      _numberOfParametersWithGhostlayerPerSubcell = numberOfParametersWithGhostlayerPerSubcell;
    }
    
    
@@ -3922,13 +4015,13 @@
    
    
    peanoclaw::records::CellDescription::CellDescription(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._subdivisionFactor, persistentRecords._ghostlayerWidth, persistentRecords._unknownsPerSubcell, persistentRecords._auxiliarFieldsPerSubcell, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._maximumFineGridTime, persistentRecords._minimumFineGridTimestep, persistentRecords._synchronizeFineGrids, persistentRecords._willCoarsen, persistentRecords._minimalNeighborTimeConstraint, persistentRecords._constrainingNeighborIndex, persistentRecords._minimalLeafNeighborTimeConstraint, persistentRecords._minimalNeighborTime, persistentRecords._maximalNeighborTimestep, persistentRecords._estimatedNextTimestepSize, persistentRecords._skipGridIterations, persistentRecords._ageInGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._restrictionLowerBounds, persistentRecords._restrictionUpperBounds, persistentRecords._cellDescriptionIndex, persistentRecords._uIndex) {
+   _persistentRecords(persistentRecords._subdivisionFactor, persistentRecords._ghostlayerWidth, persistentRecords._unknownsPerSubcell, persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell, persistentRecords._numberOfParametersWithGhostlayerPerSubcell, persistentRecords._level, persistentRecords._isVirtual, persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._maximumFineGridTime, persistentRecords._minimumFineGridTimestep, persistentRecords._synchronizeFineGrids, persistentRecords._willCoarsen, persistentRecords._minimalNeighborTimeConstraint, persistentRecords._constrainingNeighborIndex, persistentRecords._minimalLeafNeighborTimeConstraint, persistentRecords._minimalNeighborTime, persistentRecords._maximalNeighborTimestep, persistentRecords._estimatedNextTimestepSize, persistentRecords._skipGridIterations, persistentRecords._ageInGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._restrictionLowerBounds, persistentRecords._restrictionUpperBounds, persistentRecords._cellDescriptionIndex, persistentRecords._uIndex) {
       
    }
    
    
-   peanoclaw::records::CellDescription::CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
-   _persistentRecords(subdivisionFactor, ghostlayerWidth, unknownsPerSubcell, auxiliarFieldsPerSubcell, level, isVirtual, position, size, time, timestepSize, maximumFineGridTime, minimumFineGridTimestep, synchronizeFineGrids, willCoarsen, minimalNeighborTimeConstraint, constrainingNeighborIndex, minimalLeafNeighborTimeConstraint, minimalNeighborTime, maximalNeighborTimestep, estimatedNextTimestepSize, skipGridIterations, ageInGridIterations, demandedMeshWidth, restrictionLowerBounds, restrictionUpperBounds, cellDescriptionIndex, uIndex) {
+   peanoclaw::records::CellDescription::CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
+   _persistentRecords(subdivisionFactor, ghostlayerWidth, unknownsPerSubcell, numberOfParametersWithoutGhostlayerPerSubcell, numberOfParametersWithGhostlayerPerSubcell, level, isVirtual, position, size, time, timestepSize, maximumFineGridTime, minimumFineGridTimestep, synchronizeFineGrids, willCoarsen, minimalNeighborTimeConstraint, constrainingNeighborIndex, minimalLeafNeighborTimeConstraint, minimalNeighborTime, maximalNeighborTimestep, estimatedNextTimestepSize, skipGridIterations, ageInGridIterations, demandedMeshWidth, restrictionLowerBounds, restrictionUpperBounds, cellDescriptionIndex, uIndex) {
       
    }
    
@@ -3990,14 +4083,26 @@
    
    
    
-    int peanoclaw::records::CellDescription::getAuxiliarFieldsPerSubcell() const  {
-      return _persistentRecords._auxiliarFieldsPerSubcell;
+    int peanoclaw::records::CellDescription::getNumberOfParametersWithoutGhostlayerPerSubcell() const  {
+      return _persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell;
    }
    
    
    
-    void peanoclaw::records::CellDescription::setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell)  {
-      _persistentRecords._auxiliarFieldsPerSubcell = auxiliarFieldsPerSubcell;
+    void peanoclaw::records::CellDescription::setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell)  {
+      _persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell = numberOfParametersWithoutGhostlayerPerSubcell;
+   }
+   
+   
+   
+    int peanoclaw::records::CellDescription::getNumberOfParametersWithGhostlayerPerSubcell() const  {
+      return _persistentRecords._numberOfParametersWithGhostlayerPerSubcell;
+   }
+   
+   
+   
+    void peanoclaw::records::CellDescription::setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell)  {
+      _persistentRecords._numberOfParametersWithGhostlayerPerSubcell = numberOfParametersWithGhostlayerPerSubcell;
    }
    
    
@@ -4387,7 +4492,9 @@
       out << ",";
       out << "unknownsPerSubcell:" << getUnknownsPerSubcell();
       out << ",";
-      out << "auxiliarFieldsPerSubcell:" << getAuxiliarFieldsPerSubcell();
+      out << "numberOfParametersWithoutGhostlayerPerSubcell:" << getNumberOfParametersWithoutGhostlayerPerSubcell();
+      out << ",";
+      out << "numberOfParametersWithGhostlayerPerSubcell:" << getNumberOfParametersWithGhostlayerPerSubcell();
       out << ",";
       out << "level:" << getLevel();
       out << ",";
@@ -4467,7 +4574,8 @@
          getSubdivisionFactor(),
          getGhostlayerWidth(),
          getUnknownsPerSubcell(),
-         getAuxiliarFieldsPerSubcell(),
+         getNumberOfParametersWithoutGhostlayerPerSubcell(),
+         getNumberOfParametersWithGhostlayerPerSubcell(),
          getLevel(),
          getIsVirtual(),
          getPosition(),
@@ -4505,12 +4613,13 @@
          {
             CellDescription dummyCellDescription[2];
             
-            const int Attributes = 27;
+            const int Attributes = 28;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //subdivisionFactor
                MPI_INT,		 //ghostlayerWidth
                MPI_INT,		 //unknownsPerSubcell
-               MPI_INT,		 //auxiliarFieldsPerSubcell
+               MPI_INT,		 //numberOfParametersWithoutGhostlayerPerSubcell
+               MPI_INT,		 //numberOfParametersWithGhostlayerPerSubcell
                MPI_INT,		 //level
                MPI_CHAR,		 //isVirtual
                MPI_DOUBLE,		 //position
@@ -4540,7 +4649,8 @@
                DIMENSIONS,		 //subdivisionFactor
                1,		 //ghostlayerWidth
                1,		 //unknownsPerSubcell
-               1,		 //auxiliarFieldsPerSubcell
+               1,		 //numberOfParametersWithoutGhostlayerPerSubcell
+               1,		 //numberOfParametersWithGhostlayerPerSubcell
                1,		 //level
                1,		 //isVirtual
                DIMENSIONS,		 //position
@@ -4573,30 +4683,31 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._subdivisionFactor[0]))), 		&disp[0] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ghostlayerWidth))), 		&disp[1] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._unknownsPerSubcell))), 		&disp[2] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._auxiliarFieldsPerSubcell))), 		&disp[3] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._level))), 		&disp[4] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isVirtual))), 		&disp[5] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._position[0]))), 		&disp[6] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._size[0]))), 		&disp[7] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._time))), 		&disp[8] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._timestepSize))), 		&disp[9] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximumFineGridTime))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimumFineGridTimestep))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._synchronizeFineGrids))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._willCoarsen))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTimeConstraint))), 		&disp[14] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalLeafNeighborTimeConstraint))), 		&disp[15] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTime))), 		&disp[16] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximalNeighborTimestep))), 		&disp[17] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._estimatedNextTimestepSize))), 		&disp[18] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._skipGridIterations))), 		&disp[19] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ageInGridIterations))), 		&disp[20] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._demandedMeshWidth[0]))), 		&disp[21] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionLowerBounds[0]))), 		&disp[22] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionUpperBounds[0]))), 		&disp[23] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[24] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._uIndex))), 		&disp[25] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyCellDescription[1]._persistentRecords._subdivisionFactor[0])), 		&disp[26] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell))), 		&disp[3] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfParametersWithGhostlayerPerSubcell))), 		&disp[4] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._level))), 		&disp[5] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isVirtual))), 		&disp[6] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._position[0]))), 		&disp[7] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._size[0]))), 		&disp[8] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._time))), 		&disp[9] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._timestepSize))), 		&disp[10] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximumFineGridTime))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimumFineGridTimestep))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._synchronizeFineGrids))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._willCoarsen))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTimeConstraint))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalLeafNeighborTimeConstraint))), 		&disp[16] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTime))), 		&disp[17] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximalNeighborTimestep))), 		&disp[18] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._estimatedNextTimestepSize))), 		&disp[19] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._skipGridIterations))), 		&disp[20] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ageInGridIterations))), 		&disp[21] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._demandedMeshWidth[0]))), 		&disp[22] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionLowerBounds[0]))), 		&disp[23] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionUpperBounds[0]))), 		&disp[24] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[25] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._uIndex))), 		&disp[26] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyCellDescription[1]._persistentRecords._subdivisionFactor[0])), 		&disp[27] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -4611,12 +4722,13 @@
          {
             CellDescription dummyCellDescription[2];
             
-            const int Attributes = 28;
+            const int Attributes = 29;
             MPI_Datatype subtypes[Attributes] = {
                MPI_INT,		 //subdivisionFactor
                MPI_INT,		 //ghostlayerWidth
                MPI_INT,		 //unknownsPerSubcell
-               MPI_INT,		 //auxiliarFieldsPerSubcell
+               MPI_INT,		 //numberOfParametersWithoutGhostlayerPerSubcell
+               MPI_INT,		 //numberOfParametersWithGhostlayerPerSubcell
                MPI_INT,		 //level
                MPI_CHAR,		 //isVirtual
                MPI_DOUBLE,		 //position
@@ -4647,7 +4759,8 @@
                DIMENSIONS,		 //subdivisionFactor
                1,		 //ghostlayerWidth
                1,		 //unknownsPerSubcell
-               1,		 //auxiliarFieldsPerSubcell
+               1,		 //numberOfParametersWithoutGhostlayerPerSubcell
+               1,		 //numberOfParametersWithGhostlayerPerSubcell
                1,		 //level
                1,		 //isVirtual
                DIMENSIONS,		 //position
@@ -4681,31 +4794,32 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._subdivisionFactor[0]))), 		&disp[0] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ghostlayerWidth))), 		&disp[1] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._unknownsPerSubcell))), 		&disp[2] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._auxiliarFieldsPerSubcell))), 		&disp[3] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._level))), 		&disp[4] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isVirtual))), 		&disp[5] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._position[0]))), 		&disp[6] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._size[0]))), 		&disp[7] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._time))), 		&disp[8] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._timestepSize))), 		&disp[9] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximumFineGridTime))), 		&disp[10] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimumFineGridTimestep))), 		&disp[11] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._synchronizeFineGrids))), 		&disp[12] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._willCoarsen))), 		&disp[13] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTimeConstraint))), 		&disp[14] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._constrainingNeighborIndex))), 		&disp[15] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalLeafNeighborTimeConstraint))), 		&disp[16] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTime))), 		&disp[17] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximalNeighborTimestep))), 		&disp[18] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._estimatedNextTimestepSize))), 		&disp[19] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._skipGridIterations))), 		&disp[20] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ageInGridIterations))), 		&disp[21] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._demandedMeshWidth[0]))), 		&disp[22] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionLowerBounds[0]))), 		&disp[23] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionUpperBounds[0]))), 		&disp[24] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[25] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._uIndex))), 		&disp[26] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyCellDescription[1]._persistentRecords._subdivisionFactor[0])), 		&disp[27] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell))), 		&disp[3] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._numberOfParametersWithGhostlayerPerSubcell))), 		&disp[4] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._level))), 		&disp[5] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._isVirtual))), 		&disp[6] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._position[0]))), 		&disp[7] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._size[0]))), 		&disp[8] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._time))), 		&disp[9] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._timestepSize))), 		&disp[10] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximumFineGridTime))), 		&disp[11] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimumFineGridTimestep))), 		&disp[12] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._synchronizeFineGrids))), 		&disp[13] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._willCoarsen))), 		&disp[14] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTimeConstraint))), 		&disp[15] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._constrainingNeighborIndex))), 		&disp[16] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalLeafNeighborTimeConstraint))), 		&disp[17] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._minimalNeighborTime))), 		&disp[18] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._maximalNeighborTimestep))), 		&disp[19] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._estimatedNextTimestepSize))), 		&disp[20] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._skipGridIterations))), 		&disp[21] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._ageInGridIterations))), 		&disp[22] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._demandedMeshWidth[0]))), 		&disp[23] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionLowerBounds[0]))), 		&disp[24] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._restrictionUpperBounds[0]))), 		&disp[25] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._cellDescriptionIndex))), 		&disp[26] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyCellDescription[0]._persistentRecords._uIndex))), 		&disp[27] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&dummyCellDescription[1]._persistentRecords._subdivisionFactor[0])), 		&disp[28] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -4944,12 +5058,12 @@
    
    
    peanoclaw::records::CellDescriptionPacked::PersistentRecords::PersistentRecords() {
-      assertion((23 < (8 * sizeof(int))));
+      assertion((27 < (8 * sizeof(int))));
       
    }
    
    
-   peanoclaw::records::CellDescriptionPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
+   peanoclaw::records::CellDescriptionPacked::PersistentRecords::PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
    _subdivisionFactor(subdivisionFactor),
    _position(position),
    _size(size),
@@ -4971,13 +5085,14 @@
    _uIndex(uIndex) {
       setGhostlayerWidth(ghostlayerWidth);
       setUnknownsPerSubcell(unknownsPerSubcell);
-      setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
+      setNumberOfParametersWithoutGhostlayerPerSubcell(numberOfParametersWithoutGhostlayerPerSubcell);
+      setNumberOfParametersWithGhostlayerPerSubcell(numberOfParametersWithGhostlayerPerSubcell);
       setLevel(level);
       setIsVirtual(isVirtual);
       setSynchronizeFineGrids(synchronizeFineGrids);
       setWillCoarsen(willCoarsen);
       setSkipGridIterations(skipGridIterations);
-      assertion((23 < (8 * sizeof(int))));
+      assertion((27 < (8 * sizeof(int))));
       
    }
    
@@ -5036,7 +5151,7 @@
    
    
    
-    int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getAuxiliarFieldsPerSubcell() const  {
+    int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getNumberOfParametersWithoutGhostlayerPerSubcell() const  {
       int mask =  (1 << (4)) - 1;
    mask = static_cast<int>(mask << (8));
    int tmp = static_cast<int>(_packedRecords0 & mask);
@@ -5047,21 +5162,42 @@
    
    
    
-    void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell)  {
-      assertion((auxiliarFieldsPerSubcell >= 0 && auxiliarFieldsPerSubcell <= 15));
+    void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell)  {
+      assertion((numberOfParametersWithoutGhostlayerPerSubcell >= 0 && numberOfParametersWithoutGhostlayerPerSubcell <= 15));
    int mask =  (1 << (4)) - 1;
    mask = static_cast<int>(mask << (8));
    _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | auxiliarFieldsPerSubcell << (8));
+   _packedRecords0 = static_cast<int>(_packedRecords0 | numberOfParametersWithoutGhostlayerPerSubcell << (8));
+   }
+   
+   
+   
+    int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getNumberOfParametersWithGhostlayerPerSubcell() const  {
+      int mask =  (1 << (4)) - 1;
+   mask = static_cast<int>(mask << (12));
+   int tmp = static_cast<int>(_packedRecords0 & mask);
+   tmp = static_cast<int>(tmp >> (12));
+   assertion(( tmp >= 0 &&  tmp <= 15));
+   return (int) tmp;
+   }
+   
+   
+   
+    void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell)  {
+      assertion((numberOfParametersWithGhostlayerPerSubcell >= 0 && numberOfParametersWithGhostlayerPerSubcell <= 15));
+   int mask =  (1 << (4)) - 1;
+   mask = static_cast<int>(mask << (12));
+   _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
+   _packedRecords0 = static_cast<int>(_packedRecords0 | numberOfParametersWithGhostlayerPerSubcell << (12));
    }
    
    
    
     int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getLevel() const  {
       int mask =  (1 << (5)) - 1;
-   mask = static_cast<int>(mask << (12));
+   mask = static_cast<int>(mask << (16));
    int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (12));
+   tmp = static_cast<int>(tmp >> (16));
    assertion(( tmp >= 0 &&  tmp <= 31));
    return (int) tmp;
    }
@@ -5071,15 +5207,15 @@
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setLevel(const int& level)  {
       assertion((level >= 0 && level <= 31));
    int mask =  (1 << (5)) - 1;
-   mask = static_cast<int>(mask << (12));
+   mask = static_cast<int>(mask << (16));
    _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | level << (12));
+   _packedRecords0 = static_cast<int>(_packedRecords0 | level << (16));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getIsVirtual() const  {
-      int mask = 1 << (17);
+      int mask = 1 << (21);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -5087,7 +5223,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setIsVirtual(const bool& isVirtual)  {
-      int mask = 1 << (17);
+      int mask = 1 << (21);
    _packedRecords0 = static_cast<int>( isVirtual ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
@@ -5166,7 +5302,7 @@
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getSynchronizeFineGrids() const  {
-      int mask = 1 << (18);
+      int mask = 1 << (22);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -5174,14 +5310,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setSynchronizeFineGrids(const bool& synchronizeFineGrids)  {
-      int mask = 1 << (18);
+      int mask = 1 << (22);
    _packedRecords0 = static_cast<int>( synchronizeFineGrids ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::PersistentRecords::getWillCoarsen() const  {
-      int mask = 1 << (19);
+      int mask = 1 << (23);
    int tmp = static_cast<int>(_packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -5189,7 +5325,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setWillCoarsen(const bool& willCoarsen)  {
-      int mask = 1 << (19);
+      int mask = 1 << (23);
    _packedRecords0 = static_cast<int>( willCoarsen ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
    }
    
@@ -5269,9 +5405,9 @@
    
     int peanoclaw::records::CellDescriptionPacked::PersistentRecords::getSkipGridIterations() const  {
       int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (20));
+   mask = static_cast<int>(mask << (24));
    int tmp = static_cast<int>(_packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (20));
+   tmp = static_cast<int>(tmp >> (24));
    assertion(( tmp >= 0 &&  tmp <= 7));
    return (int) tmp;
    }
@@ -5281,9 +5417,9 @@
     void peanoclaw::records::CellDescriptionPacked::PersistentRecords::setSkipGridIterations(const int& skipGridIterations)  {
       assertion((skipGridIterations >= 0 && skipGridIterations <= 7));
    int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (20));
+   mask = static_cast<int>(mask << (24));
    _packedRecords0 = static_cast<int>(_packedRecords0 & ~mask);
-   _packedRecords0 = static_cast<int>(_packedRecords0 | skipGridIterations << (20));
+   _packedRecords0 = static_cast<int>(_packedRecords0 | skipGridIterations << (24));
    }
    
    
@@ -5360,21 +5496,21 @@
    
    
    peanoclaw::records::CellDescriptionPacked::CellDescriptionPacked() {
-      assertion((23 < (8 * sizeof(int))));
+      assertion((27 < (8 * sizeof(int))));
       
    }
    
    
    peanoclaw::records::CellDescriptionPacked::CellDescriptionPacked(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._subdivisionFactor, persistentRecords.getGhostlayerWidth(), persistentRecords.getUnknownsPerSubcell(), persistentRecords.getAuxiliarFieldsPerSubcell(), persistentRecords.getLevel(), persistentRecords.getIsVirtual(), persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._maximumFineGridTime, persistentRecords._minimumFineGridTimestep, persistentRecords.getSynchronizeFineGrids(), persistentRecords.getWillCoarsen(), persistentRecords._minimalNeighborTimeConstraint, persistentRecords._constrainingNeighborIndex, persistentRecords._minimalLeafNeighborTimeConstraint, persistentRecords._minimalNeighborTime, persistentRecords._maximalNeighborTimestep, persistentRecords._estimatedNextTimestepSize, persistentRecords.getSkipGridIterations(), persistentRecords._ageInGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._restrictionLowerBounds, persistentRecords._restrictionUpperBounds, persistentRecords._cellDescriptionIndex, persistentRecords._uIndex) {
-      assertion((23 < (8 * sizeof(int))));
+   _persistentRecords(persistentRecords._subdivisionFactor, persistentRecords.getGhostlayerWidth(), persistentRecords.getUnknownsPerSubcell(), persistentRecords.getNumberOfParametersWithoutGhostlayerPerSubcell(), persistentRecords.getNumberOfParametersWithGhostlayerPerSubcell(), persistentRecords.getLevel(), persistentRecords.getIsVirtual(), persistentRecords._position, persistentRecords._size, persistentRecords._time, persistentRecords._timestepSize, persistentRecords._maximumFineGridTime, persistentRecords._minimumFineGridTimestep, persistentRecords.getSynchronizeFineGrids(), persistentRecords.getWillCoarsen(), persistentRecords._minimalNeighborTimeConstraint, persistentRecords._constrainingNeighborIndex, persistentRecords._minimalLeafNeighborTimeConstraint, persistentRecords._minimalNeighborTime, persistentRecords._maximalNeighborTimestep, persistentRecords._estimatedNextTimestepSize, persistentRecords.getSkipGridIterations(), persistentRecords._ageInGridIterations, persistentRecords._demandedMeshWidth, persistentRecords._restrictionLowerBounds, persistentRecords._restrictionUpperBounds, persistentRecords._cellDescriptionIndex, persistentRecords._uIndex) {
+      assertion((27 < (8 * sizeof(int))));
       
    }
    
    
-   peanoclaw::records::CellDescriptionPacked::CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& auxiliarFieldsPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
-   _persistentRecords(subdivisionFactor, ghostlayerWidth, unknownsPerSubcell, auxiliarFieldsPerSubcell, level, isVirtual, position, size, time, timestepSize, maximumFineGridTime, minimumFineGridTimestep, synchronizeFineGrids, willCoarsen, minimalNeighborTimeConstraint, constrainingNeighborIndex, minimalLeafNeighborTimeConstraint, minimalNeighborTime, maximalNeighborTimestep, estimatedNextTimestepSize, skipGridIterations, ageInGridIterations, demandedMeshWidth, restrictionLowerBounds, restrictionUpperBounds, cellDescriptionIndex, uIndex) {
-      assertion((23 < (8 * sizeof(int))));
+   peanoclaw::records::CellDescriptionPacked::CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex):
+   _persistentRecords(subdivisionFactor, ghostlayerWidth, unknownsPerSubcell, numberOfParametersWithoutGhostlayerPerSubcell, numberOfParametersWithGhostlayerPerSubcell, level, isVirtual, position, size, time, timestepSize, maximumFineGridTime, minimumFineGridTimestep, synchronizeFineGrids, willCoarsen, minimalNeighborTimeConstraint, constrainingNeighborIndex, minimalLeafNeighborTimeConstraint, minimalNeighborTime, maximalNeighborTimestep, estimatedNextTimestepSize, skipGridIterations, ageInGridIterations, demandedMeshWidth, restrictionLowerBounds, restrictionUpperBounds, cellDescriptionIndex, uIndex) {
+      assertion((27 < (8 * sizeof(int))));
       
    }
    
@@ -5454,7 +5590,7 @@
    
    
    
-    int peanoclaw::records::CellDescriptionPacked::getAuxiliarFieldsPerSubcell() const  {
+    int peanoclaw::records::CellDescriptionPacked::getNumberOfParametersWithoutGhostlayerPerSubcell() const  {
       int mask =  (1 << (4)) - 1;
    mask = static_cast<int>(mask << (8));
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
@@ -5465,21 +5601,42 @@
    
    
    
-    void peanoclaw::records::CellDescriptionPacked::setAuxiliarFieldsPerSubcell(const int& auxiliarFieldsPerSubcell)  {
-      assertion((auxiliarFieldsPerSubcell >= 0 && auxiliarFieldsPerSubcell <= 15));
+    void peanoclaw::records::CellDescriptionPacked::setNumberOfParametersWithoutGhostlayerPerSubcell(const int& numberOfParametersWithoutGhostlayerPerSubcell)  {
+      assertion((numberOfParametersWithoutGhostlayerPerSubcell >= 0 && numberOfParametersWithoutGhostlayerPerSubcell <= 15));
    int mask =  (1 << (4)) - 1;
    mask = static_cast<int>(mask << (8));
    _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | auxiliarFieldsPerSubcell << (8));
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | numberOfParametersWithoutGhostlayerPerSubcell << (8));
+   }
+   
+   
+   
+    int peanoclaw::records::CellDescriptionPacked::getNumberOfParametersWithGhostlayerPerSubcell() const  {
+      int mask =  (1 << (4)) - 1;
+   mask = static_cast<int>(mask << (12));
+   int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
+   tmp = static_cast<int>(tmp >> (12));
+   assertion(( tmp >= 0 &&  tmp <= 15));
+   return (int) tmp;
+   }
+   
+   
+   
+    void peanoclaw::records::CellDescriptionPacked::setNumberOfParametersWithGhostlayerPerSubcell(const int& numberOfParametersWithGhostlayerPerSubcell)  {
+      assertion((numberOfParametersWithGhostlayerPerSubcell >= 0 && numberOfParametersWithGhostlayerPerSubcell <= 15));
+   int mask =  (1 << (4)) - 1;
+   mask = static_cast<int>(mask << (12));
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | numberOfParametersWithGhostlayerPerSubcell << (12));
    }
    
    
    
     int peanoclaw::records::CellDescriptionPacked::getLevel() const  {
       int mask =  (1 << (5)) - 1;
-   mask = static_cast<int>(mask << (12));
+   mask = static_cast<int>(mask << (16));
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (12));
+   tmp = static_cast<int>(tmp >> (16));
    assertion(( tmp >= 0 &&  tmp <= 31));
    return (int) tmp;
    }
@@ -5489,15 +5646,15 @@
     void peanoclaw::records::CellDescriptionPacked::setLevel(const int& level)  {
       assertion((level >= 0 && level <= 31));
    int mask =  (1 << (5)) - 1;
-   mask = static_cast<int>(mask << (12));
+   mask = static_cast<int>(mask << (16));
    _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | level << (12));
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | level << (16));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::getIsVirtual() const  {
-      int mask = 1 << (17);
+      int mask = 1 << (21);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -5505,7 +5662,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setIsVirtual(const bool& isVirtual)  {
-      int mask = 1 << (17);
+      int mask = 1 << (21);
    _persistentRecords._packedRecords0 = static_cast<int>( isVirtual ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
@@ -5620,7 +5777,7 @@
    
    
     bool peanoclaw::records::CellDescriptionPacked::getSynchronizeFineGrids() const  {
-      int mask = 1 << (18);
+      int mask = 1 << (22);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -5628,14 +5785,14 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setSynchronizeFineGrids(const bool& synchronizeFineGrids)  {
-      int mask = 1 << (18);
+      int mask = 1 << (22);
    _persistentRecords._packedRecords0 = static_cast<int>( synchronizeFineGrids ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
    
    
     bool peanoclaw::records::CellDescriptionPacked::getWillCoarsen() const  {
-      int mask = 1 << (19);
+      int mask = 1 << (23);
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
    return (tmp != 0);
    }
@@ -5643,7 +5800,7 @@
    
    
     void peanoclaw::records::CellDescriptionPacked::setWillCoarsen(const bool& willCoarsen)  {
-      int mask = 1 << (19);
+      int mask = 1 << (23);
    _persistentRecords._packedRecords0 = static_cast<int>( willCoarsen ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
    }
    
@@ -5723,9 +5880,9 @@
    
     int peanoclaw::records::CellDescriptionPacked::getSkipGridIterations() const  {
       int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (20));
+   mask = static_cast<int>(mask << (24));
    int tmp = static_cast<int>(_persistentRecords._packedRecords0 & mask);
-   tmp = static_cast<int>(tmp >> (20));
+   tmp = static_cast<int>(tmp >> (24));
    assertion(( tmp >= 0 &&  tmp <= 7));
    return (int) tmp;
    }
@@ -5735,9 +5892,9 @@
     void peanoclaw::records::CellDescriptionPacked::setSkipGridIterations(const int& skipGridIterations)  {
       assertion((skipGridIterations >= 0 && skipGridIterations <= 7));
    int mask =  (1 << (3)) - 1;
-   mask = static_cast<int>(mask << (20));
+   mask = static_cast<int>(mask << (24));
    _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 & ~mask);
-   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | skipGridIterations << (20));
+   _persistentRecords._packedRecords0 = static_cast<int>(_persistentRecords._packedRecords0 | skipGridIterations << (24));
    }
    
    
@@ -5887,7 +6044,9 @@
       out << ",";
       out << "unknownsPerSubcell:" << getUnknownsPerSubcell();
       out << ",";
-      out << "auxiliarFieldsPerSubcell:" << getAuxiliarFieldsPerSubcell();
+      out << "numberOfParametersWithoutGhostlayerPerSubcell:" << getNumberOfParametersWithoutGhostlayerPerSubcell();
+      out << ",";
+      out << "numberOfParametersWithGhostlayerPerSubcell:" << getNumberOfParametersWithGhostlayerPerSubcell();
       out << ",";
       out << "level:" << getLevel();
       out << ",";
@@ -5967,7 +6126,8 @@
          getSubdivisionFactor(),
          getGhostlayerWidth(),
          getUnknownsPerSubcell(),
-         getAuxiliarFieldsPerSubcell(),
+         getNumberOfParametersWithoutGhostlayerPerSubcell(),
+         getNumberOfParametersWithGhostlayerPerSubcell(),
          getLevel(),
          getIsVirtual(),
          getPosition(),

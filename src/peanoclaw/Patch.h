@@ -140,10 +140,9 @@ private:
 
   std::vector<Data>* _uNew;
 
-//  std::vector<Data>* _uOldWithGhostlayer;
   int                _uOldWithGhostlayerArrayIndex;
-//  std::vector<Data>* _auxArray;
-  int                _auxArrayIndex;
+  int                _parameterWithoutGhostlayerArrayIndex;
+  int                _parameterWithGhostlayerArrayIndex;
 
   int uNewStrideCache[DIMENSIONS+1];
   int uOldStrideCache[DIMENSIONS+1];
@@ -233,8 +232,9 @@ public:
     const tarch::la::Vector<DIMENSIONS, double>& position,
     const tarch::la::Vector<DIMENSIONS, double>& size,
     int    unknownsPerCell,
-    int    auxiliarFieldsPerSubcell,
-    const tarch::la::Vector<DIMENSIONS, int>&    subdivisionFactor,
+    int    parameterWithoutGhostlayer,
+    int    parameterWithGhostlayer,
+    const  tarch::la::Vector<DIMENSIONS, int>&    subdivisionFactor,
     int    ghostLayerWidth,
     double initialTimestepSize,
     int    level
@@ -282,7 +282,9 @@ public:
 
   int getUnknownsPerSubcell() const;
 
-  int getAuxiliarFieldsPerSubcell() const;
+  int getNumberOfParametersWithoutGhostlayerPerSubcell() const;
+
+  int getNumberOfParametersWithGhostlayerPerSubcell() const;
 
   tarch::la::Vector<DIMENSIONS, int> getSubdivisionFactor() const;
 
@@ -353,7 +355,7 @@ public:
     assertion(isLeaf() || isVirtual());
     int index = linearizeWithGhostlayer(unknown, subcellIndex);
     assertion3(index >= 0, index, subcellIndex, unknown);
-    assertion5(index < _auxArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _auxArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
+    assertion5(index < _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
     #ifdef PATCH_RANGE_CHECK
     _uNew->at(_uOldWithGhostlayerArrayIndex + index).setU(value);
     #else
@@ -390,8 +392,7 @@ public:
     assertion1(isLeaf() || isVirtual(), toString());
     int index = linearizeWithGhostlayer(unknown, subcellIndex);
     assertion4(index >= 0, index, subcellIndex, unknown, toString());
-//    assertion5(index < static_cast<int>(_uOldWithGhostlayer->size()), index, subcellIndex, unknown, static_cast<int>(_uOldWithGhostlayer->size()), toString());
-    assertion5(index < _auxArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _auxArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
+    assertion5(index < _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
     #ifdef PATCH_RANGE_CHECK
     return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
     #else
@@ -499,8 +500,11 @@ public:
    */
   void setValueUOldAndResize(int linearIndex, int unknown, double value);
 
-  double getValueAux(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int auxField) const;
-  void setValueAux(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int auxField, double value);
+  double getParameterWithoutGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter) const;
+  void setParameterWithoutGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter, double value);
+
+  double getParameterWithGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter) const;
+  void setParameterWithGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter, double value);
 
   /**
    * Returns whether the subcell is actually stored in the subgrid. I.e. this
@@ -557,7 +561,7 @@ public:
   /**
    * Returns the aux array as a real double array.
    */
-  double* getAuxArray() const;
+  double* getParameterWithoutGhostlayerArray() const;
 
   /**
    * Returns the index for the uNew array.
@@ -591,6 +595,8 @@ public:
   std::string toStringUNew() const;
 
   std::string toStringUOldWithGhostLayer() const;
+
+  std::string toStringParameters() const;
 
   std::string toString() const;
 

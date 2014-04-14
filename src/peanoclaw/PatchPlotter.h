@@ -70,9 +70,13 @@ private:
    */
   std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>                                _cellQWriter;
   /**
-   * Vector of writer for the data stored in the aux array
+   * Vector of writer for the data stored in the parameter array without ghostlayer
    */
-  std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>                                _cellAuxWriter;
+  std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>                                _cellParameterWithoutGhostlayerWriter;
+  /**
+   * Vector of writer for the data stored in the parameter array with ghostlayer
+   */
+  std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>                                _cellParameterWithGhostlayerWriter;
   /**
    * Plotter for writing the old time of the current Patch.
    */
@@ -101,7 +105,8 @@ private:
 
   std::set<int> _plotQ;
 
-  std::set<int> _plotAux;
+  std::set<int> _plotParameterWithoutGhostlayer;
+  std::set<int> _plotParameterWithGhostlayer;
 
   bool _plotMetainformation;
 
@@ -134,9 +139,11 @@ public:
   PatchPlotter(
     tarch::plotter::griddata::unstructured::vtk::VTKTextFileWriter& vtkWriter,
     int unknownsPerSubcell,
-    int auxFieldsPerSubcell,
+    int parametersWithoutGhostlayerPerSubcell,
+    int parametersWithGhostlayerPerSubcell,
     std::set<int> plotQ = std::set<int>(),
-    std::set<int> plotAux = std::set<int>(),
+    std::set<int> plotParameterWithoutGhostlayer = std::set<int>(),
+    std::set<int> plotParameterWithGhostlayer = std::set<int>(),
     bool plotMetainformation = true
   );
 

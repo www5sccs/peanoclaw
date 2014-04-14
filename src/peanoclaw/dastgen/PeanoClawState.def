@@ -12,7 +12,8 @@ class peanoclaw::dastgen::State {
 	
 	//Patch configuration
 	persistent parallelise packed int unknownsPerSubcell from 0 to 7;
-	persistent parallelise packed int auxiliarFieldsPerSubcell from 0 to 7;
+	persistent parallelise packed int numberOfParametersWithoutGhostlayerPerSubcell from 0 to 15;
+	persistent parallelise packed int numberOfParametersWithGhostlayerPerSubcell from 0 to 15;
 	persistent parallelise double initialMaximalSubgridSize[DIMENSIONS];
 	persistent parallelise int defaultSubdivisionFactor[DIMENSIONS];
 	persistent parallelise packed int defaultGhostWidthLayer from 0 to 7;

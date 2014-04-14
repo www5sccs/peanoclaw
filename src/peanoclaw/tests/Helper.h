@@ -22,7 +22,8 @@ namespace peanoclaw {
   namespace tests {
     Patch createPatch(
       int unknownsPerSubcell,
-      int auxPerSubcell,
+      int parametersWithoutPerSubcell,
+      int parametersWithPerSubcell,
       int subdivisionFactor,
       int ghostlayerWidth,
       tarch::la::Vector<DIMENSIONS, double> position,

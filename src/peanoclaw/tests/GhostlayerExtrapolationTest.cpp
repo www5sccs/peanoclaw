@@ -27,6 +27,7 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeExtrapolation2D() {
   Patch subgrid = createPatch(
     3,   //Unknowns per subcell
     0,   //Aux fields per subcell
+    0,   //Aux fields per subcell
     subdivisionFactor,
     ghostlayerWidth,
     0.0, //Position
@@ -132,6 +133,7 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeAndCornerExtrapolati
 
   Patch subgrid = createPatch(
     3,   //Unknowns per subcell
+    0,   //Aux fields per subcell
     0,   //Aux fields per subcell
     subdivisionFactor,
     ghostlayerWidth,

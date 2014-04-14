@@ -150,7 +150,8 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeCellDuringFo
       Patch temporaryPatch(
         _position - cellSize * 0.5,
         cellSize,
-        1,
+        0,
+        0,
         0,
         1,
         1,

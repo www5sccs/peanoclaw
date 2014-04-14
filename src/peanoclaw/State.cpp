@@ -58,12 +58,20 @@ int peanoclaw::State::getUnknownsPerSubcell() const {
   return _stateData.getUnknownsPerSubcell();
 }
 
-void peanoclaw::State::setAuxiliarFieldsPerSubcell(int auxiliarFieldsPerSubcell) {
-  _stateData.setAuxiliarFieldsPerSubcell(auxiliarFieldsPerSubcell);
+void peanoclaw::State::setNumberOfParametersWithoutGhostlayerPerSubcell(int numberOfParametersWithoutGhostlayerPerSubcell) {
+  _stateData.setNumberOfParametersWithoutGhostlayerPerSubcell(numberOfParametersWithoutGhostlayerPerSubcell);
 }
 
-int peanoclaw::State::getAuxiliarFieldsPerSubcell() const {
-  return _stateData.getAuxiliarFieldsPerSubcell();
+int peanoclaw::State::getNumberOfParametersWithoutGhostlayerPerSubcell() const {
+  return _stateData.getNumberOfParametersWithoutGhostlayerPerSubcell();
+}
+
+void peanoclaw::State::setNumberOfParametersWithGhostlayerPerSubcell(int numberOfParametersWithGhostlayerPerSubcell) {
+  _stateData.setNumberOfParametersWithGhostlayerPerSubcell(numberOfParametersWithGhostlayerPerSubcell);
+}
+
+int peanoclaw::State::getNumberOfParametersWithGhostlayerPerSubcell() const {
+  return _stateData.getNumberOfParametersWithGhostlayerPerSubcell();
 }
 
 void peanoclaw::State::setDefaultSubdivisionFactor(const tarch::la::Vector<DIMENSIONS, int>& defaultSubdivisionFactor) {

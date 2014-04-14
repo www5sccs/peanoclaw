@@ -59,6 +59,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
   Patch patch = createPatch(
     2,   //Unknowns per subcell
     0,   //Aux fields per subcell
+    0,   //Aux fields per subcell
     3,   //Subdivision factor
     1,   //Ghostlayer width
     0.0, //Position
@@ -107,6 +108,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
 //  );
   Patch patch = createPatch(
     2,       //Unknowns per subcell
+    0,       //Aux fields per subcell
     0,       //Aux fields per subcell
     3,       //Subdivision factor
     1,       //Ghostlayer width
@@ -157,6 +159,7 @@ void peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
   peanoclaw::Patch coarsePatch = createPatch(
     2,       //Unknowns per subcell
     0,       //Aux fields per subcell
+    0,       //Aux fields per subcell
     3,       //Subdivision factor
     1,       //Ghostlayer width
     0.0,     //Position
@@ -171,6 +174,7 @@ void peanoclaw::tests::PatchTest::testCoarsePatchTimeInterval() {
   for(int i = 0; i < THREE_POWER_D; i++) {
     finePatches[i] = createPatch(
       2,       //Unknowns per subcell
+      0,       //Aux fields per subcell
       0,       //Aux fields per subcell
       3,       //Subdivision factor
       1,       //Ghostlayer width
@@ -342,7 +346,7 @@ void peanoclaw::tests::PatchTest::testSettingOverlapOfRemoteGhostlayer() {
   fineGridVertex.setAdjacentRank(3, 0);
 
   Patch subgridRank0_1 = createPatch(
-    1, 1,
+    1, 1, 0,
     10, //Subdivision Factor
     1,  //Ghostlayer width
     tarch::la::Vector<DIMENSIONS, double>(0.0), //Position
@@ -352,7 +356,7 @@ void peanoclaw::tests::PatchTest::testSettingOverlapOfRemoteGhostlayer() {
   tarch::la::Vector<DIMENSIONS, double> rank0_2Position;
   assignList(rank0_2Position) = -1.0, 0.0;
   Patch subgridRank0_2 = createPatch(
-    1, 1,
+    1, 1, 0,
     10, //Subdivision Factor
     1,  //Ghostlayer width
     rank0_2Position,
@@ -360,7 +364,7 @@ void peanoclaw::tests::PatchTest::testSettingOverlapOfRemoteGhostlayer() {
     0, 0.0, 0.0, 0.0, false
   );
   Patch subgridRank1 = createPatch(
-    1, 1,
+    1, 1, 0,
     10, //Subdivision Factor
     2,  //Ghostlayer width
     tarch::la::Vector<DIMENSIONS, double>(-1.0), //Position
@@ -370,7 +374,7 @@ void peanoclaw::tests::PatchTest::testSettingOverlapOfRemoteGhostlayer() {
   tarch::la::Vector<DIMENSIONS, double> rank2Position;
   assignList(rank2Position) = 0.0, -1.0;
   Patch subgridRank2 = createPatch(
-    1, 1,
+    1, 1, 0,
     10, //Subdivision Factor
     1,  //Ghostlayer width
     rank2Position,
