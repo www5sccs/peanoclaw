@@ -268,3 +268,7 @@ void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, b
   logTraceOut("fillBoundaryLayerInPyClaw");
 }
 
+virtual void peanoclaw::pyclaw::PyClaw::update(Patch& finePatch) {
+
+}
+

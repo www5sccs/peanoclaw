@@ -99,5 +99,10 @@ public:
    */
   void fillBoundaryLayer(Patch& patch, int dimension, bool setUpper);
 
+  /**
+   * this function is e.g. useful to update auxillary data like bathymetry on a finer leverl
+   */
+  virtual void update(Patch& finePatch);
+
 };
 #endif /* PEANOCLAW_PYCLAW_PYCLAW_H_ */
