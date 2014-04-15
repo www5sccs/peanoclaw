@@ -101,7 +101,7 @@ peanoclaw::mappings::Remesh::~Remesh() {
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::Remesh::Remesh(const Remesh&  masterThread)
 : _unknownsPerSubcell(masterThread._unknownsPerSubcell),
-  _parametersWithoutGhostlayer(masterThread._parametersWithoutGhostlayer),
+  _parametersWithoutGhostlayerPerSubcell(masterThread._parametersWithoutGhostlayerPerSubcell),
   _parametersWithGhostlayer(masterThread._parametersWithGhostlayer),
   _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
   _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
