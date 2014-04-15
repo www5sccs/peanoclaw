@@ -81,7 +81,7 @@ void peanoclaw::pyclaw::FluxCorrectionCallbackWrapper::applyCorrection(
     coarsePatch.getTimeIntervals().getCurrentTime(),
     coarsePatch.getTimeIntervals().getTimestepSize(),
     finePatch.getUnknownsPerSubcell(),
-    finePatch.getAuxiliarFieldsPerSubcell()
+    finePatch.getNumberOfParametersWithoutGhostlayerPerSubcell()
   );
 }
 

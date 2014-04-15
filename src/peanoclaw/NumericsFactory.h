@@ -53,6 +53,7 @@ class peanoclaw::NumericsFactory {
       InitializationCallback initializationCallback,
       BoundaryConditionCallback boundaryConditionCallback,
       SolverCallback solverCallback,
+      RefinementCriterionCallback refinementCriterionCallback,
       AddPatchToSolutionCallback addPatchToSolutionCallback,
       InterPatchCommunicationCallback interpolationCallback,
       InterPatchCommunicationCallback restrictionCallback,

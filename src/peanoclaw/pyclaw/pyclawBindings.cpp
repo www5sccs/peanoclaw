@@ -163,6 +163,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     initializationCallback,
     boundaryConditionCallback,
     solverCallback,
+    refinementCriterionCallback,
     addPatchToSolutionCallback,
     interpolationCallback,
     restrictionCallback,

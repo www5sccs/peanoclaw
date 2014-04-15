@@ -35,11 +35,11 @@ peanoclaw::pyclaw::PyClawState::PyClawState(const Patch& patch) {
 
   //Build auxArray
   double* auxArray = 0;
-  if(patch.getAuxiliarFieldsPerSubcell() > 0) {
-    auxArray = patch.getAuxArray();
+  if(patch.getNumberOfParametersWithoutGhostlayerPerSubcell() > 0) {
+    auxArray = patch.getParameterWithoutGhostlayerArray();
     assertion(auxArray != 0);
     npy_intp sizeAux[1 + DIMENSIONS];
-    sizeAux[0] = patch.getAuxiliarFieldsPerSubcell();
+    sizeAux[0] = patch.getNumberOfParametersWithoutGhostlayerPerSubcell();
     for(int d = 0; d < DIMENSIONS; d++) {
       sizeAux[1 + d] = patch.getSubdivisionFactor()(d);
     }

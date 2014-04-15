@@ -86,7 +86,7 @@ void peanoclaw::pyclaw::InterpolationCallbackWrapper::interpolate (
     destination.getTimeIntervals().getCurrentTime(),
     destination.getTimeIntervals().getTimestepSize(),
     source.getUnknownsPerSubcell(),
-    source.getAuxiliarFieldsPerSubcell()
+    source.getNumberOfParametersWithoutGhostlayerPerSubcell()
   );
 }
 

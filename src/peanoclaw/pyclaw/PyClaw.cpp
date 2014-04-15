@@ -69,7 +69,7 @@ void peanoclaw::pyclaw::PyClaw::initializePatch(
       0,
     #endif
     patch.getUnknownsPerSubcell(),
-    patch.getAuxiliarFieldsPerSubcell(),
+    patch.getNumberOfParametersWithoutGhostlayerPerSubcell(),
     patch.getSize()(0),
     patch.getSize()(1),
     #ifdef Dim3
@@ -131,7 +131,7 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTimest
       0,
       #endif
       patch.getUnknownsPerSubcell(),            // meqn = nvar
-      patch.getAuxiliarFieldsPerSubcell(),      // naux
+      patch.getNumberOfParametersWithoutGhostlayerPerSubcell(),      // naux
       patch.getSize()(0),
       patch.getSize()(1),
       #ifdef Dim3
@@ -180,7 +180,7 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTimest
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
 }
 
-tarch::la::Vector<DIMENSIONS, double> peanoclaw::pyclaw::PyClaw::getDemandedMeshWidth(Patch& patch) {
+tarch::la::Vector<DIMENSIONS, double> peanoclaw::pyclaw::PyClaw::getDemandedMeshWidth(Patch& patch, bool isInitializing) {
   if(
     tarch::la::equals(patch.getPosition(), _cachedSubgridPosition)
     && patch.getLevel() == _cachedSubgridLevel
@@ -200,7 +200,7 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::pyclaw::PyClaw::getDemandedMesh
         0,
       #endif
       patch.getUnknownsPerSubcell(),
-      patch.getAuxiliarFieldsPerSubcell(),
+      patch.getNumberOfParametersWithoutGhostlayerPerSubcell(),
       patch.getSize()(0),
       patch.getSize()(1),
       #ifdef Dim3
@@ -268,7 +268,7 @@ void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, b
   logTraceOut("fillBoundaryLayerInPyClaw");
 }
 
-virtual void peanoclaw::pyclaw::PyClaw::update(Patch& finePatch) {
+void peanoclaw::pyclaw::PyClaw::update(Patch& finePatch) {
 
 }
 

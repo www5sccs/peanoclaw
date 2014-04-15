@@ -86,7 +86,7 @@ public:
   /**
    * Returns the mesh width demanded by the application for the given patch.
    */
-  tarch::la::Vector<DIMENSIONS, double> getDemandedMeshWidth(Patch& patch);
+  tarch::la::Vector<DIMENSIONS, double> getDemandedMeshWidth(Patch& patch, bool isInitializing);
 
   /**
    * Adds a patch to the solution which is hold in PyClaw. This method is used for gathering a solution
