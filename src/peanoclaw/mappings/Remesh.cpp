@@ -102,7 +102,7 @@ peanoclaw::mappings::Remesh::~Remesh() {
 peanoclaw::mappings::Remesh::Remesh(const Remesh&  masterThread)
 : _unknownsPerSubcell(masterThread._unknownsPerSubcell),
   _parametersWithoutGhostlayerPerSubcell(masterThread._parametersWithoutGhostlayerPerSubcell),
-  _parametersWithGhostlayer(masterThread._parametersWithGhostlayer),
+  _parametersWithGhostlayerPerSubcell(masterThread._parametersWithGhostlayerPerSubcell),
   _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
   _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
   _initialTimestepSize(masterThread._initialTimestepSize),
