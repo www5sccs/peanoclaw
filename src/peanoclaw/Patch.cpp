@@ -260,7 +260,8 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setIsPaddingSubgrid(false);
   cellDescription.setNumberOfSharedAdjacentVertices(0);
   cellDescription.setNumberOfTransfersToBeSkipped(0);
-  cellDescription.setCurrentStateWasSend(false);
+  cellDescription.setCurrentStateWasSent(false);
+  cellDescription.setMarkStateAsSentInNextIteration(false);
 #endif
 
   cellDescriptions.push_back(cellDescription);
@@ -309,6 +310,8 @@ void peanoclaw::Patch::reloadCellDescription() {
 void peanoclaw::Patch::initializeNonParallelFields() {
   assertion(isValid());
   _cellDescription->setConstrainingNeighborIndex(-1);
+  _cellDescription->setCurrentStateWasSent(false);
+  _cellDescription->setMarkStateAsSentInNextIteration(false);
 }
 
 void peanoclaw::Patch::deleteData() {
@@ -558,7 +561,7 @@ void peanoclaw::Patch::setValueUOld(int linearIndex, int unknown, double value) 
 #endif
 
 void peanoclaw::Patch::setValueUOldAndResize(int linearIndex, int unknown, double value) {
-  int index = linearIndex + uOldStrideCache[0] * unknown;
+  size_t index = linearIndex + uOldStrideCache[0] * unknown;
   if(_uOldWithGhostlayerArrayIndex + index + 1 > _uNew->size()) {
     _uNew->resize(_uOldWithGhostlayerArrayIndex + index + 1);
   }
@@ -947,6 +950,8 @@ std::string peanoclaw::Patch::toString() const {
         << ",overlapOfRemoteGhostlayers=" << _cellDescription->getOverlapByRemoteGhostlayer()
         << ",numberOfTransfersToBeSkipped=" << _cellDescription->getNumberOfTransfersToBeSkipped()
         << ",numberOfAdjacentSharedVertices=" << _cellDescription->getNumberOfSharedAdjacentVertices()
+        << ",wasCurrentStateSent=" << _cellDescription->getCurrentStateWasSent()
+        << ",markAsSentInNextIteration=" << _cellDescription->getMarkStateAsSentInNextIteration()
 #endif
         ;
   } else {

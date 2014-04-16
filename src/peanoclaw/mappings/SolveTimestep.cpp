@@ -101,7 +101,7 @@ void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
 }
 
 
-peanoclaw::mappings::SolveTimestep::SolveTimestep() {
+peanoclaw::mappings::SolveTimestep::SolveTimestep() : _workerIterations(-1) {
   logTraceIn( "SolveTimestep()" );
   // @todo Insert your code here
   logTraceOut( "SolveTimestep()" );
@@ -332,7 +332,13 @@ void peanoclaw::mappings::SolveTimestep::mergeWithRemoteDataDueToForkOrJoin(
   int                                       level
 ) {
   logTraceInWith3Arguments( "mergeWithRemoteDataDueToForkOrJoin(...)", localCell, masterOrWorkerCell, fromRank );
-  // @todo Insert your code here
+
+  bool isForking = !tarch::parallel::Node::getInstance().isGlobalMaster()
+                   && fromRank == tarch::parallel::NodePool::getInstance().getMasterRank();
+  if(isForking) {
+    _workerIterations = 0;
+  }
+
   logTraceOut( "mergeWithRemoteDataDueToForkOrJoin(...)" );
 }
 
@@ -574,7 +580,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
       #ifdef Parallel
       ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
-      parallelSubgrid.markCurrentStateAsSent(true);
+      parallelSubgrid.markCurrentStateAsSentIfAppropriate();
       #endif
 
       //Perform timestep
@@ -586,16 +592,6 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         coarseGridVertices,
         coarseGridVerticesEnumerator
       )) {
-
-//        if((tarch::la::equals(patch.getPosition()(0), 8000.0*(7*3 + 1)/27.0)
-//            &&tarch::la::equals(patch.getPosition()(1), 4500.0*(5*3 + 2)/27.0))
-//        ||
-//           (tarch::la::equals(patch.getPosition()(0), 8000.0*7/9.0)
-//            &&tarch::la::equals(patch.getPosition()(1), 4500.0*6/9.0))) {
-//          std::cout << "Solving patch: " << patch
-//              << std::endl << patch.toStringUNew()
-//              << std::endl << patch.toStringUOldWithGhostLayer() << std::endl;
-//        }
 
         // Copy uNew to uOld
         patch.copyUNewToUOld();
@@ -615,17 +611,6 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         );
         tarch::la::Vector<DIMENSIONS, double> requiredMeshWidth = _numerics->getDemandedMeshWidth(patch, false);
         patch.setDemandedMeshWidth(requiredMeshWidth);
-
-        //TODO unterweg debug
-//        if((tarch::la::equals(patch.getPosition()(0), 8000.0*(7*3 + 1)/27.0)
-//            &&tarch::la::equals(patch.getPosition()(1), 4500.0*(5*3 + 2)/27.0))
-//        ||
-//           (tarch::la::equals(patch.getPosition()(0), 8000.0*7/9.0)
-//            &&tarch::la::equals(patch.getPosition()(1), 4500.0*6/9.0))) {
-//          std::cout << "Solved patch: " << patch
-//              << std::endl << patch.toStringUNew()
-//              << std::endl << patch.toStringUOldWithGhostLayer() << std::endl;
-//        }
 
         #ifdef Parallel
         ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
@@ -801,6 +786,8 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
+
+  _workerIterations++;
 
   if(!tarch::la::equals(_globalTimestepEndTime, solverState.getGlobalTimestepEndTime())) {
     _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();

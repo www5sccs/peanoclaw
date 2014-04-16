@@ -181,7 +181,10 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToOverlapp
       );
     }
 
-    virtualParallelSubgrid.markCurrentStateAsSent(virtualParallelSubgrid.wasCurrentStateSent() || parallelSubgrid.wasCurrentStateSent());
+    if(!parallelSubgrid.wasCurrentStateSent()) {
+      //virtualParallelSubgrid.markCurrentStateAsSent(virtualParallelSubgrid.wasCurrentStateSent() || parallelSubgrid.wasCurrentStateSent());
+      virtualParallelSubgrid.markCurrentStateAsSent(false);
+    }
   }
 }
 
@@ -417,6 +420,9 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
       }
 
       finePatch.switchToNonVirtual();
+
+      ParallelSubgrid parallelSubgrid(finePatch);
+      parallelSubgrid.markCurrentStateAsSent(false);
     }
   } else if (finePatch.isVirtual()) {
     finalizeVirtualSubgrid(

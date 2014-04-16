@@ -33,7 +33,7 @@ namespace peanoclaw {
     *
     * 		   build date: 09-02-2014 14:40
     *
-    * @date   14/04/2014 09:02
+    * @date   15/04/2014 19:30
     */
    class peanoclaw::records::CellDescription { 
       
@@ -53,7 +53,8 @@ namespace peanoclaw {
             bool _isPaddingSubgrid;
             tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int> _numberOfTransfersToBeSkipped;
             tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int> _numberOfSharedAdjacentVertices;
-            bool _currentStateWasSend;
+            bool _currentStateWasSent;
+            bool _markStateAsSentInNextIteration;
             bool _adjacentRanksChanged;
             tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int> _adjacentRanks;
             tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int> _overlapByRemoteGhostlayer;
@@ -86,7 +87,7 @@ namespace peanoclaw {
             /**
              * Generated
              */
-            PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+            PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSent, const bool& markStateAsSentInNextIteration, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
             
              tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
             
@@ -183,12 +184,22 @@ namespace peanoclaw {
             /**
              * Generated
              */
-             bool getCurrentStateWasSend() const ;
+             bool getCurrentStateWasSent() const ;
             
             /**
              * Generated
              */
-             void setCurrentStateWasSend(const bool& currentStateWasSend) ;
+             void setCurrentStateWasSent(const bool& currentStateWasSent) ;
+            
+            /**
+             * Generated
+             */
+             bool getMarkStateAsSentInNextIteration() const ;
+            
+            /**
+             * Generated
+             */
+             void setMarkStateAsSentInNextIteration(const bool& markStateAsSentInNextIteration) ;
             
             /**
              * Generated
@@ -408,7 +419,7 @@ namespace peanoclaw {
          /**
           * Generated
           */
-         CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+         CellDescription(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSent, const bool& markStateAsSentInNextIteration, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
          
          /**
           * Generated
@@ -522,12 +533,22 @@ namespace peanoclaw {
          /**
           * Generated
           */
-          bool getCurrentStateWasSend() const ;
+          bool getCurrentStateWasSent() const ;
          
          /**
           * Generated
           */
-          void setCurrentStateWasSend(const bool& currentStateWasSend) ;
+          void setCurrentStateWasSent(const bool& currentStateWasSent) ;
+         
+         /**
+          * Generated
+          */
+          bool getMarkStateAsSentInNextIteration() const ;
+         
+         /**
+          * Generated
+          */
+          void setMarkStateAsSentInNextIteration(const bool& markStateAsSentInNextIteration) ;
          
          /**
           * Generated
@@ -813,7 +834,7 @@ namespace peanoclaw {
              *
              * 		   build date: 09-02-2014 14:40
              *
-             * @date   14/04/2014 09:02
+             * @date   15/04/2014 19:30
              */
             class peanoclaw::records::CellDescriptionPacked { 
                
@@ -848,17 +869,18 @@ namespace peanoclaw {
                      || Member 	|| startbit 	|| length
                       |  ghostlayerWidth	| startbit 0	| #bits 4
                       |  unknownsPerSubcell	| startbit 4	| #bits 4
-                      |  numberOfParametersWithoutGhostlayerPerSubcell	| startbit 8	| #bits 4
-                      |  numberOfParametersWithGhostlayerPerSubcell	| startbit 12	| #bits 4
-                      |  level	| startbit 16	| #bits 5
-                      |  isVirtual	| startbit 21	| #bits 1
-                      |  isRemote	| startbit 22	| #bits 1
-                      |  isPaddingSubgrid	| startbit 23	| #bits 1
-                      |  currentStateWasSend	| startbit 24	| #bits 1
-                      |  adjacentRanksChanged	| startbit 25	| #bits 1
-                      |  synchronizeFineGrids	| startbit 26	| #bits 1
-                      |  willCoarsen	| startbit 27	| #bits 1
-                      |  skipGridIterations	| startbit 28	| #bits 3
+                      |  numberOfParametersWithoutGhostlayerPerSubcell	| startbit 8	| #bits 3
+                      |  numberOfParametersWithGhostlayerPerSubcell	| startbit 11	| #bits 3
+                      |  level	| startbit 14	| #bits 5
+                      |  isVirtual	| startbit 19	| #bits 1
+                      |  isRemote	| startbit 20	| #bits 1
+                      |  isPaddingSubgrid	| startbit 21	| #bits 1
+                      |  currentStateWasSent	| startbit 22	| #bits 1
+                      |  markStateAsSentInNextIteration	| startbit 23	| #bits 1
+                      |  adjacentRanksChanged	| startbit 24	| #bits 1
+                      |  synchronizeFineGrids	| startbit 25	| #bits 1
+                      |  willCoarsen	| startbit 26	| #bits 1
+                      |  skipGridIterations	| startbit 27	| #bits 3
                       */
                      int _packedRecords0;
                      
@@ -870,7 +892,7 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                     PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+                     PersistentRecords(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSent, const bool& markStateAsSentInNextIteration, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
                      
                       tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                      
@@ -967,12 +989,22 @@ namespace peanoclaw {
                      /**
                       * Generated
                       */
-                      bool getCurrentStateWasSend() const ;
+                      bool getCurrentStateWasSent() const ;
                      
                      /**
                       * Generated
                       */
-                      void setCurrentStateWasSend(const bool& currentStateWasSend) ;
+                      void setCurrentStateWasSent(const bool& currentStateWasSent) ;
+                     
+                     /**
+                      * Generated
+                      */
+                      bool getMarkStateAsSentInNextIteration() const ;
+                     
+                     /**
+                      * Generated
+                      */
+                      void setMarkStateAsSentInNextIteration(const bool& markStateAsSentInNextIteration) ;
                      
                      /**
                       * Generated
@@ -1192,7 +1224,7 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                  CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSend, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
+                  CellDescriptionPacked(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostlayerWidth, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const int& level, const bool& isVirtual, const bool& isRemote, const bool& isPaddingSubgrid, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfTransfersToBeSkipped, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& numberOfSharedAdjacentVertices, const bool& currentStateWasSent, const bool& markStateAsSentInNextIteration, const bool& adjacentRanksChanged, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& adjacentRanks, const tarch::la::Vector<THREE_POWER_D_MINUS_ONE,int>& overlapByRemoteGhostlayer, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const double& maximumFineGridTime, const double& minimumFineGridTimestep, const bool& synchronizeFineGrids, const bool& willCoarsen, const double& minimalNeighborTimeConstraint, const int& constrainingNeighborIndex, const double& minimalLeafNeighborTimeConstraint, const double& minimalNeighborTime, const double& maximalNeighborTimestep, const double& estimatedNextTimestepSize, const int& skipGridIterations, const int& ageInGridIterations, const tarch::la::Vector<DIMENSIONS,double>& demandedMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& restrictionLowerBounds, const tarch::la::Vector<DIMENSIONS,double>& restrictionUpperBounds, const int& cellDescriptionIndex, const int& uIndex);
                   
                   /**
                    * Generated
@@ -1306,12 +1338,22 @@ namespace peanoclaw {
                   /**
                    * Generated
                    */
-                   bool getCurrentStateWasSend() const ;
+                   bool getCurrentStateWasSent() const ;
                   
                   /**
                    * Generated
                    */
-                   void setCurrentStateWasSend(const bool& currentStateWasSend) ;
+                   void setCurrentStateWasSent(const bool& currentStateWasSent) ;
+                  
+                  /**
+                   * Generated
+                   */
+                   bool getMarkStateAsSentInNextIteration() const ;
+                  
+                  /**
+                   * Generated
+                   */
+                   void setMarkStateAsSentInNextIteration(const bool& markStateAsSentInNextIteration) ;
                   
                   /**
                    * Generated
@@ -1599,7 +1641,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 09-02-2014 14:40
                       *
-                      * @date   14/04/2014 09:02
+                      * @date   15/04/2014 19:30
                       */
                      class peanoclaw::records::CellDescription { 
                         
@@ -2243,7 +2285,7 @@ namespace peanoclaw {
                                *
                                * 		   build date: 09-02-2014 14:40
                                *
-                               * @date   14/04/2014 09:02
+                               * @date   15/04/2014 19:30
                                */
                               class peanoclaw::records::CellDescriptionPacked { 
                                  
@@ -2274,13 +2316,13 @@ namespace peanoclaw {
                                        || Member 	|| startbit 	|| length
                                         |  ghostlayerWidth	| startbit 0	| #bits 4
                                         |  unknownsPerSubcell	| startbit 4	| #bits 4
-                                        |  numberOfParametersWithoutGhostlayerPerSubcell	| startbit 8	| #bits 4
-                                        |  numberOfParametersWithGhostlayerPerSubcell	| startbit 12	| #bits 4
-                                        |  level	| startbit 16	| #bits 5
-                                        |  isVirtual	| startbit 21	| #bits 1
-                                        |  synchronizeFineGrids	| startbit 22	| #bits 1
-                                        |  willCoarsen	| startbit 23	| #bits 1
-                                        |  skipGridIterations	| startbit 24	| #bits 3
+                                        |  numberOfParametersWithoutGhostlayerPerSubcell	| startbit 8	| #bits 3
+                                        |  numberOfParametersWithGhostlayerPerSubcell	| startbit 11	| #bits 3
+                                        |  level	| startbit 14	| #bits 5
+                                        |  isVirtual	| startbit 19	| #bits 1
+                                        |  synchronizeFineGrids	| startbit 20	| #bits 1
+                                        |  willCoarsen	| startbit 21	| #bits 1
+                                        |  skipGridIterations	| startbit 22	| #bits 3
                                         */
                                        int _packedRecords0;
                                        

@@ -67,6 +67,25 @@ class peanoclaw::mappings::SolveTimestep {
     std::map<int, int> _estimatedRemainingIterationsUntilGlobalTimestep;
 
     /**
+     * Counts the number of worker iterations. That means, if a worker
+     * becomes idle and several grid-iterations later receives another
+     * subtree to work on, the counter is reset to zero.
+     *
+     * TODO unterweg dissertation
+     * The counter can be used to perform actions on a subgrid after
+     * it has been sent to all adjacent ranks. Since there is no event
+     * like that, one possibility is to do these actions in the next
+     * enterCell event. However, if the status of the state gets changed
+     * in mergeWithNeighbor, mergeWithWorker, or
+     * mergeWithRemoteDataDueToForkOrJoin, these state changes might be
+     * overwritten in the immediately following enterCell. Hence, by this
+     * counter it can be checked whether the worker is in its first
+     * iteration and so changes in mergeWithRemoteDataDueToForkOrJoin due
+     * to the forking can be preserved.
+     */
+    int _workerIterations;
+
+    /**
      * Fills the boundary layers of the given patch.
      */
     void fillBoundaryLayers(

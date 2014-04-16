@@ -61,15 +61,30 @@ peanoclaw::ParallelSubgrid::ParallelSubgrid(
 
 void peanoclaw::ParallelSubgrid::markCurrentStateAsSent(bool wasSent) {
   #ifdef Parallel
-  _cellDescription->setCurrentStateWasSend(wasSent);
+  _cellDescription->setCurrentStateWasSent(wasSent);
+  #endif
+}
+
+void peanoclaw::ParallelSubgrid::markCurrentStateAsSentIfAppropriate() {
+  #ifdef Parallel
+  if(_cellDescription->getMarkStateAsSentInNextIteration()) {
+    markCurrentStateAsSent(true);
+    _cellDescription->setMarkStateAsSentInNextIteration(false);
+  }
   #endif
 }
 
 bool peanoclaw::ParallelSubgrid::wasCurrentStateSent() const {
   #ifdef Parallel
-  return _cellDescription->getCurrentStateWasSend();
+  return _cellDescription->getCurrentStateWasSent();
   #else
   return false;
+  #endif
+}
+
+void peanoclaw::ParallelSubgrid::markCurrentStateAsSentInNextIteration() {
+  #ifdef Parallel
+  _cellDescription->setMarkStateAsSentInNextIteration(true);
   #endif
 }
 
@@ -186,26 +201,28 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
   for(int vertexIndex = 0; vertexIndex < TWO_POWER_D; vertexIndex++) {
     tarch::la::Vector<TWO_POWER_D, int> countedForRanks(-1);
 
-    for(int subgridIndex = 0; subgridIndex < TWO_POWER_D; subgridIndex++) {
-      int adjacentRank = vertices[verticesEnumerator(vertexIndex)].getAdjacentRanks()(subgridIndex);
+    if(!vertices[verticesEnumerator(vertexIndex)].isHangingNode()) {
+      for(int subgridIndex = 0; subgridIndex < TWO_POWER_D; subgridIndex++) {
+        int adjacentRank = vertices[verticesEnumerator(vertexIndex)].getAdjacentRanks()(subgridIndex);
 
-      bool counted = false;
-      for(int i = 0; i < TWO_POWER_D; i++) {
-        counted |= (countedForRanks(i) == adjacentRank);
-      }
-
-      if(!counted) {
+        bool counted = false;
         for(int i = 0; i < TWO_POWER_D; i++) {
-          if(countedForRanks(i) == -1 || countedForRanks(i) == adjacentRank) {
-            countedForRanks(i) = adjacentRank;
-            break;
-          }
+          counted |= (countedForRanks(i) == adjacentRank);
         }
-        for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
-          if(_cellDescription->getAdjacentRanks(i) == -1 || _cellDescription->getAdjacentRanks(i) == adjacentRank) {
-            _cellDescription->setAdjacentRanks(i, adjacentRank);
-            _cellDescription->setNumberOfSharedAdjacentVertices(i, _cellDescription->getNumberOfSharedAdjacentVertices(i) + 1);
-            break;
+
+        if(!counted) {
+          for(int i = 0; i < TWO_POWER_D; i++) {
+            if(countedForRanks(i) == -1 || countedForRanks(i) == adjacentRank) {
+              countedForRanks(i) = adjacentRank;
+              break;
+            }
+          }
+          for(int i = 0; i < THREE_POWER_D_MINUS_ONE; i++) {
+            if(_cellDescription->getAdjacentRanks(i) == -1 || _cellDescription->getAdjacentRanks(i) == adjacentRank) {
+              _cellDescription->setAdjacentRanks(i, adjacentRank);
+              _cellDescription->setNumberOfSharedAdjacentVertices(i, _cellDescription->getNumberOfSharedAdjacentVertices(i) + 1);
+              break;
+            }
           }
         }
       }

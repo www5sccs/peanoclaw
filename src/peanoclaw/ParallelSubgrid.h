@@ -66,9 +66,22 @@ class peanoclaw::ParallelSubgrid {
   void markCurrentStateAsSent(bool wasSent);
 
   /**
+   * Marks the current state of the subgrid as sent if it was flagged so in the
+   * previous grid iteration. Hence, the flag markCurrentStateAsSentInNextIteration
+   * is set to false.
+   */
+  void markCurrentStateAsSentIfAppropriate();
+
+  /**
    * Returns whether this patch was sent to the neighbor ranks since the last time step.
    */
   bool wasCurrentStateSent() const;
+
+  /**
+   * States that the current state of the subgrid should be marked as sent from the
+   * next iteration on.
+   */
+  void markCurrentStateAsSentInNextIteration();
 
   /**
    * Returns the adjacent rank or -1 if no or more than one ranks are adjacent
