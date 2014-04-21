@@ -9,8 +9,6 @@ def installPeano3():
   p3RepositorySubpath = '.'
   p3Revision = 'HEAD'
   p3Build = 'release'
-  global p3ParallelSupport
-  p3ParallelSupport = p3ParallelSupport
   try:
     import peanoConfiguration
     p3Path = peanoConfiguration.getPeano3Path()
