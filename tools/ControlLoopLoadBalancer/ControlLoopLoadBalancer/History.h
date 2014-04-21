@@ -53,6 +53,8 @@ class mpibalancing::ControlLoopLoadBalancer::FIFOHistory : public History<Data> 
     public:
         FIFOHistory() { _offset = 0;  }
 
+        virtual ~FIFOHistory(){}
+
         virtual int size() const { return K; }
         virtual const Data& getPastItem(int id) const {
             return _history(translatePastID(id));

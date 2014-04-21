@@ -308,10 +308,12 @@ void peanoclaw::Patch::reloadCellDescription() {
 }
 
 void peanoclaw::Patch::initializeNonParallelFields() {
+  #ifdef Parallel
   assertion(isValid());
   _cellDescription->setConstrainingNeighborIndex(-1);
   _cellDescription->setCurrentStateWasSent(false);
   _cellDescription->setMarkStateAsSentInNextIteration(false);
+  #endif
 }
 
 void peanoclaw::Patch::deleteData() {

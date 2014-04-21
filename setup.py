@@ -52,13 +52,6 @@ class Peano3Develop(develop):
 #Read command line parameters
 import sys
 
-global p3ParallelSupport
-p3ParallelSupport = "no"
-for argument in sys.argv:
-  splitargument = argument.split('=')
-  if splitargument[0]=="--parallel":
-      buildParallel = splitargument[1].lower()
-
 setup(name='PeanoClaw',
       version='0.1',
       description='PeanoClaw - AMR Extension for PyClaw/Clawpack',
