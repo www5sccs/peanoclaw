@@ -1,0 +1,40 @@
+2D:
+Rauf:
+Ecke 0D auf Kante 1D: -1,-1 -> -1,0 und 0,-1
+
+Runter
+Kante 1D auf Ecke 0D: -1,0 -> -1,-1 und -1,1 (Festgelegt in einer Dimension)
+
+3D:
+Rauf
+Ecke 0D auf Kante 1D: -1,-1,-1 -> -1,-1,0   -1,0,-1   0,-1,-1
+Ecke 0D auf Fläche 2D: -1,-1,-1 -> -1,0,0   0,-1,0    0,0,-1
+Kante 1D auf Fläche 2D: -1,-1,0 -> -1,0,0  und  0,-1,0
+
+Runter
+Fläche 2D auf Kante 1D: -1,0,0 -> -1,-1,0   -1,1,0   -1,0,-1   -1,0,1 (Festgelegt in einer Dimension)
+Fläche 2D auf Ecke 0D:  -1,0,0 -> -1,-1,-1  -1,-1,1  -1,1,-1   -1,1,1 (Festgelegt in einer Dimension)
+Kante 1D auf Ecke 0D:   -1,-1,0 -> -1,-1,-1  -1,-1,1 (Festgelegt in zwei Dimensionen)
+
+
+
+
+Bei Rauf können immer alle -1 oder 1 in 0 umgewandelt werden. Und zwar maximal so viele wie Dimensionssprünge gemacht werden.
+Bei Runter ist es interessant, welche Dimensionen festgelegt sind. Das sind immer (Dimensionalität - Dimensionalität_Ursprunngsmanigfaltigkeit) viele und diese stehen immer auf -1 oder 1, die anderen auf 0. Damit gilt folgendes: Bei Runter kann jede 0 in eine -1 oder 1 umgewandelt werden und zwar so viele wie Dimensionssprünge gemacht werden.
+
+Anzahl veränderbarer Stellen: n
+Anzahl möglicher Zielwerte: k
+Anzahl Dimensionssprünge: s
+Anzahl Nachbarmanigfaltigkeiten: m
+
+n = (Anzahl 0)
+d = DIMENSIONS
+
+Rauf: 
+m = s aus (d-n) = (d-n)!/(s!(d-n-s)!)
+
+Runter: 
+m = 2^(s aus n) = 2^(n!/(s!(n-s)!*s)
+
+
+

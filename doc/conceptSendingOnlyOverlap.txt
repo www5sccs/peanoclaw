@@ -1,0 +1,21 @@
+Idee: Nur die Teile eines Subgrids der von Ghostlayern auf Nachbarknoten überdeckt werden sollen versendet 
+werden. Dabei soll auch berücksichtig werden, von welchem Rank die Überdeckung erfolgt.
+
+Realisierung: 
+
+1. Es muss getrackt werden, welche Zellen von welchem Rank überdeckt werden. Wir müssen hier nur Nachbarpatchs auf
+   dem gleichen Level berücksichtigen, da andere über virtuelle Patches gehandhabt werden.
+  
+  1.1. Für jede Fläche/Kante/Ecke eines Subgrids wird ein Integer benötigt der den adjazenten Rank hält (oder -1, 
+       falls der Rank identisch mit dem eigenen ist) und ein zweiter Integer, der angibt, wie viele Zellen überlappt
+       werden.
+  
+  1.2. In mergeWithNeighbor wird für jeden empfangenen Nachbarsubgrid auf allen adjazenten lokalen Subgrids im 
+       entsprechenden Feld der Nachbarrank und die überdeckte Ghostlayerbreite gesetzt.
+       
+2. Beim Versenden muss für jedes Subgrid geprüft werden, ob und welche Teile von dem Zielrank überdeckt werden.
+   Daraus wird ein reduziertes Subgrid erstellt, das nur diese Daten hält, und versendet.
+   
+3. Beim Empfangen muss geprüft werden, welche Teile das Subgrid tatsächlich enthält und diese müssen in das
+   Zielsubgrid kopiert werden.
+   
