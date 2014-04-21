@@ -30,8 +30,7 @@ def installPeano3():
     print("Checking out Peano3 Repository")
     call("svn checkout -r" + p3Revision + join(" svn://svn.code.sf.net/p/peano/code/trunk", p3RepositorySubpath) + " " + p3Path, shell=True)
   print("Building PeanoClaw")
-  returnValue = call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=2" + " -j2", shell=True)
-  #call("scons build=" + str(p3Build) + " parallel=" + str(p3ParallelSupport) + " dim=3" + " -j2", shell=True)
+  returnValue = call("scons build=" + str(p3Build) + " parallel=yes dim=2" + " -j2", shell=True)
   
   if returnValue != 0:
     raise Exception("PeanoClaw: Build failed.")
