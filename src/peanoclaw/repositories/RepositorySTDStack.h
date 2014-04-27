@@ -27,8 +27,7 @@
  #include "peanoclaw/adapters/SolveTimestepAndPlotAndValidateGrid.h" 
  #include "peanoclaw/adapters/GatherCurrentSolution.h" 
  #include "peanoclaw/adapters/GatherCurrentSolutionAndValidateGrid.h" 
- #include "peanoclaw/adapters/Cleanup.h" 
-
+ #include "peanoclaw/adapters/Cleanup.h"
 
 
 namespace peanoclaw {

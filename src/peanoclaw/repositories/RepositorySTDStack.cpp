@@ -14,6 +14,12 @@
 
 #include "peano/datatraversal/autotuning/Oracle.h"
 
+#include "tarch/compiler/CompilerSpecificSettings.h"
+
+#if !defined(CompilerICC)
+#include "peano/grid/Grid.cpph"
+#endif
+
 
 tarch::logging::Log peanoclaw::repositories::RepositorySTDStack::_log( "peanoclaw::repositories::RepositorySTDStack" );
 
