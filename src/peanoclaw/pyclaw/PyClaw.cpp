@@ -188,7 +188,7 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::pyclaw::PyClaw::getDemandedMesh
     return _cachedDemandedMeshWidth;
   } else {
     PyClawState state(patch);
-    double demandedMeshWidth = _initializationCallback(
+    double demandedMeshWidth = _refinementCriterionCallback(
       state._q,
       state._qbc,
       state._aux,
