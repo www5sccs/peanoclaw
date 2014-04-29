@@ -89,7 +89,7 @@ void peanoclaw::pyclaw::PyClaw::initializePatch(
   //Cache demanded mesh width
   _cachedSubgridPosition = patch.getPosition();
   _cachedSubgridLevel = patch.getLevel();
-  _cachedDemandedMeshWidth = demandedMeshWidth;
+  _cachedDemandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(demandedMeshWidth);
 
   logTraceOutWith1Argument( "initializePatch(...)", demandedMeshWidth);
 }
@@ -175,7 +175,7 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTimest
   //Cache demanded mesh width
   _cachedSubgridPosition = patch.getPosition();
   _cachedSubgridLevel = patch.getLevel();
-  _cachedDemandedMeshWidth = requiredMeshWidth;
+  _cachedDemandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(requiredMeshWidth);
 
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
 }
@@ -220,9 +220,9 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::pyclaw::PyClaw::getDemandedMesh
     //Cache demanded mesh width
     _cachedSubgridPosition = patch.getPosition();
     _cachedSubgridLevel = patch.getLevel();
-    _cachedDemandedMeshWidth = demandedMeshWidth;
+    _cachedDemandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(demandedMeshWidth);
 
-    return demandedMeshWidth;
+    return _cachedDemandedMeshWidth;
   }
 }
 
