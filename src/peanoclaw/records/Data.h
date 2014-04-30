@@ -31,7 +31,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   28/04/2014 12:42
+ * @date   30/04/2014 14:07
  */
 class peanoclaw::records::Data { 
    
@@ -51,15 +51,25 @@ class peanoclaw::records::Data {
           */
          PersistentRecords(const double& u);
          
-         /**
-          * Generated
-          */
-          double getU() const ;
          
-         /**
-          * Generated
-          */
-          void setU(const double& u) ;
+         inline double getU() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _u;
+         }
+         
+         
+         
+         inline void setU(const double& u) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _u = u;
+         }
+         
          
          
       };
@@ -92,15 +102,25 @@ class peanoclaw::records::Data {
        */
       ~Data();
       
-      /**
-       * Generated
-       */
-       double getU() const ;
       
-      /**
-       * Generated
-       */
-       void setU(const double& u) ;
+      inline double getU() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._u;
+      }
+      
+      
+      
+      inline void setU(const double& u) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._u = u;
+      }
+      
       
       /**
        * Generated
@@ -160,7 +180,7 @@ class peanoclaw::records::Data {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   28/04/2014 12:42
+          * @date   30/04/2014 14:07
           */
          class peanoclaw::records::DataPacked { 
             
@@ -178,15 +198,25 @@ class peanoclaw::records::Data {
                    */
                   PersistentRecords(const double& u);
                   
-                  /**
-                   * Generated
-                   */
-                   double getU() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setU(const double& u) ;
+                  inline double getU() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _u;
+                  }
+                  
+                  
+                  
+                  inline void setU(const double& u) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _u = u;
+                  }
+                  
                   
                   
                };
@@ -215,15 +245,25 @@ class peanoclaw::records::Data {
                 */
                ~DataPacked();
                
-               /**
-                * Generated
-                */
-                double getU() const ;
                
-               /**
-                * Generated
-                */
-                void setU(const double& u) ;
+               inline double getU() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._u;
+               }
+               
+               
+               
+               inline void setU(const double& u) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._u = u;
+               }
+               
                
                /**
                 * Generated

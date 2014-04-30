@@ -154,7 +154,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolation::interpolate(
 
           destination.setValueUOld(linearDestinationIndex, unknown,
               destination.getValueUOld(linearDestinationIndex, unknown)
-              + spatialFactor * sourceUOld * (1.0-timeFactor) + spatialFactor * sourceUNew * timeFactor);
+              + spatialFactor * (sourceUOld * (1.0-timeFactor) + sourceUNew * timeFactor));
         } else {
           logDebug("interpolate(...)", "\tAdding UNew value " << sourceUNew << " and UOld value " << sourceUOld
               << " with spatialFactor " << spatialFactor << " and timeFactor " << timeFactor

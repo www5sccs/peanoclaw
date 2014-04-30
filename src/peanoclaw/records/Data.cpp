@@ -10,18 +10,6 @@ _u(u) {
    
 }
 
-
- double peanoclaw::records::Data::PersistentRecords::getU() const  {
-   return _u;
-}
-
-
-
- void peanoclaw::records::Data::PersistentRecords::setU(const double& u)  {
-   _u = u;
-}
-
-
 peanoclaw::records::Data::Data() {
    
 }
@@ -40,18 +28,6 @@ _persistentRecords(u) {
 
 
 peanoclaw::records::Data::~Data() { }
-
-
- double peanoclaw::records::Data::getU() const  {
-   return _persistentRecords._u;
-}
-
-
-
- void peanoclaw::records::Data::setU(const double& u)  {
-   _persistentRecords._u = u;
-}
-
 
 
 
@@ -384,18 +360,6 @@ _u(u) {
    
 }
 
-
- double peanoclaw::records::DataPacked::PersistentRecords::getU() const  {
-   return _u;
-}
-
-
-
- void peanoclaw::records::DataPacked::PersistentRecords::setU(const double& u)  {
-   _u = u;
-}
-
-
 peanoclaw::records::DataPacked::DataPacked() {
    
 }
@@ -414,18 +378,6 @@ _persistentRecords(u) {
 
 
 peanoclaw::records::DataPacked::~DataPacked() { }
-
-
- double peanoclaw::records::DataPacked::getU() const  {
-   return _persistentRecords._u;
-}
-
-
-
- void peanoclaw::records::DataPacked::setU(const double& u)  {
-   _persistentRecords._u = u;
-}
-
 
 
 

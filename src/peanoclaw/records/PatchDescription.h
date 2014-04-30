@@ -33,7 +33,7 @@ namespace peanoclaw {
     *
     * 		   build date: 09-02-2014 14:40
     *
-    * @date   28/04/2014 12:42
+    * @date   30/04/2014 14:07
     */
    class peanoclaw::records::PatchDescription { 
       
@@ -67,131 +67,305 @@ namespace peanoclaw {
              */
             PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
             
-            /**
-             * Generated
-             */
-             bool getIsReferenced() const ;
             
-            /**
-             * Generated
-             */
-             void setIsReferenced(const bool& isReferenced) ;
+            inline bool getIsReferenced() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _isReferenced;
+            }
             
-             tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const ;
             
-             void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) ;
             
-            /**
-             * Generated
-             */
-             int getRank() const ;
+            inline void setIsReferenced(const bool& isReferenced) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _isReferenced = isReferenced;
+            }
             
-            /**
-             * Generated
-             */
-             void setRank(const int& rank) ;
             
-             tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
             
-             void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) ;
+            inline tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _adjacentRanks;
+            }
             
-            /**
-             * Generated
-             */
-             int getGhostLayerWidth() const ;
             
-            /**
-             * Generated
-             */
-             void setGhostLayerWidth(const int& ghostLayerWidth) ;
             
-            /**
-             * Generated
-             */
-             int getLevel() const ;
+            inline void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _adjacentRanks = (adjacentRanks);
+            }
             
-            /**
-             * Generated
-             */
-             void setLevel(const int& level) ;
             
-            /**
-             * Generated
-             */
-             bool getIsVirtual() const ;
             
-            /**
-             * Generated
-             */
-             void setIsVirtual(const bool& isVirtual) ;
+            inline int getRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _rank;
+            }
             
-            /**
-             * Generated
-             */
-             bool getIsRemote() const ;
             
-            /**
-             * Generated
-             */
-             void setIsRemote(const bool& isRemote) ;
             
-             tarch::la::Vector<DIMENSIONS,double> getPosition() const ;
+            inline void setRank(const int& rank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _rank = rank;
+            }
             
-             void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) ;
             
-             tarch::la::Vector<DIMENSIONS,double> getSize() const ;
             
-             void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) ;
+            inline tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _subdivisionFactor;
+            }
             
-            /**
-             * Generated
-             */
-             double getTime() const ;
             
-            /**
-             * Generated
-             */
-             void setTime(const double& time) ;
             
-            /**
-             * Generated
-             */
-             double getTimestepSize() const ;
+            inline void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _subdivisionFactor = (subdivisionFactor);
+            }
             
-            /**
-             * Generated
-             */
-             void setTimestepSize(const double& timestepSize) ;
             
-            /**
-             * Generated
-             */
-             int getSkipGridIterations() const ;
             
-            /**
-             * Generated
-             */
-             void setSkipGridIterations(const int& skipGridIterations) ;
+            inline int getGhostLayerWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _ghostLayerWidth;
+            }
             
-            /**
-             * Generated
-             */
-             double getDemandedMeshWidth() const ;
             
-            /**
-             * Generated
-             */
-             void setDemandedMeshWidth(const double& demandedMeshWidth) ;
             
-            /**
-             * Generated
-             */
-             int getCellDescriptionIndex() const ;
+            inline void setGhostLayerWidth(const int& ghostLayerWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _ghostLayerWidth = ghostLayerWidth;
+            }
             
-            /**
-             * Generated
-             */
-             void setCellDescriptionIndex(const int& cellDescriptionIndex) ;
+            
+            
+            inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _level;
+            }
+            
+            
+            
+            inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _level = level;
+            }
+            
+            
+            
+            inline bool getIsVirtual() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _isVirtual;
+            }
+            
+            
+            
+            inline void setIsVirtual(const bool& isVirtual) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _isVirtual = isVirtual;
+            }
+            
+            
+            
+            inline bool getIsRemote() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _isRemote;
+            }
+            
+            
+            
+            inline void setIsRemote(const bool& isRemote) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _isRemote = isRemote;
+            }
+            
+            
+            
+            inline tarch::la::Vector<DIMENSIONS,double> getPosition() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _position;
+            }
+            
+            
+            
+            inline void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _position = (position);
+            }
+            
+            
+            
+            inline tarch::la::Vector<DIMENSIONS,double> getSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _size;
+            }
+            
+            
+            
+            inline void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _size = (size);
+            }
+            
+            
+            
+            inline double getTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _time;
+            }
+            
+            
+            
+            inline void setTime(const double& time) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _time = time;
+            }
+            
+            
+            
+            inline double getTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _timestepSize;
+            }
+            
+            
+            
+            inline void setTimestepSize(const double& timestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _timestepSize = timestepSize;
+            }
+            
+            
+            
+            inline int getSkipGridIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _skipGridIterations;
+            }
+            
+            
+            
+            inline void setSkipGridIterations(const int& skipGridIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _skipGridIterations = skipGridIterations;
+            }
+            
+            
+            
+            inline double getDemandedMeshWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _demandedMeshWidth;
+            }
+            
+            
+            
+            inline void setDemandedMeshWidth(const double& demandedMeshWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _demandedMeshWidth = demandedMeshWidth;
+            }
+            
+            
+            
+            inline int getCellDescriptionIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _cellDescriptionIndex;
+            }
+            
+            
+            
+            inline void setCellDescriptionIndex(const int& cellDescriptionIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _cellDescriptionIndex = cellDescriptionIndex;
+            }
+            
             
             
          };
@@ -220,147 +394,409 @@ namespace peanoclaw {
           */
          ~PatchDescription();
          
-         /**
-          * Generated
-          */
-          bool getIsReferenced() const ;
          
-         /**
-          * Generated
-          */
-          void setIsReferenced(const bool& isReferenced) ;
+         inline bool getIsReferenced() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._isReferenced;
+         }
          
-          tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const ;
          
-          void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) ;
          
-          int getAdjacentRanks(int elementIndex) const ;
+         inline void setIsReferenced(const bool& isReferenced) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._isReferenced = isReferenced;
+         }
          
-          void setAdjacentRanks(int elementIndex, const int& adjacentRanks) ;
          
-         /**
-          * Generated
-          */
-          int getRank() const ;
          
-         /**
-          * Generated
-          */
-          void setRank(const int& rank) ;
+         inline tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._adjacentRanks;
+         }
          
-          tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
          
-          void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) ;
          
-          int getSubdivisionFactor(int elementIndex) const ;
+         inline void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._adjacentRanks = (adjacentRanks);
+         }
          
-          void setSubdivisionFactor(int elementIndex, const int& subdivisionFactor) ;
          
-         /**
-          * Generated
-          */
-          int getGhostLayerWidth() const ;
          
-         /**
-          * Generated
-          */
-          void setGhostLayerWidth(const int& ghostLayerWidth) ;
+         inline int getAdjacentRanks(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<THREE_POWER_D);
+            return _persistentRecords._adjacentRanks[elementIndex];
+            
+         }
          
-         /**
-          * Generated
-          */
-          int getLevel() const ;
          
-         /**
-          * Generated
-          */
-          void setLevel(const int& level) ;
          
-         /**
-          * Generated
-          */
-          bool getIsVirtual() const ;
+         inline void setAdjacentRanks(int elementIndex, const int& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<THREE_POWER_D);
+            _persistentRecords._adjacentRanks[elementIndex]= adjacentRanks;
+            
+         }
          
-         /**
-          * Generated
-          */
-          void setIsVirtual(const bool& isVirtual) ;
          
-         /**
-          * Generated
-          */
-          bool getIsRemote() const ;
          
-         /**
-          * Generated
-          */
-          void setIsRemote(const bool& isRemote) ;
+         inline int getRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._rank;
+         }
          
-          tarch::la::Vector<DIMENSIONS,double> getPosition() const ;
          
-          void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) ;
          
-          double getPosition(int elementIndex) const ;
+         inline void setRank(const int& rank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._rank = rank;
+         }
          
-          void setPosition(int elementIndex, const double& position) ;
          
-          tarch::la::Vector<DIMENSIONS,double> getSize() const ;
          
-          void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) ;
+         inline tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._subdivisionFactor;
+         }
          
-          double getSize(int elementIndex) const ;
          
-          void setSize(int elementIndex, const double& size) ;
          
-         /**
-          * Generated
-          */
-          double getTime() const ;
+         inline void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._subdivisionFactor = (subdivisionFactor);
+         }
          
-         /**
-          * Generated
-          */
-          void setTime(const double& time) ;
          
-         /**
-          * Generated
-          */
-          double getTimestepSize() const ;
          
-         /**
-          * Generated
-          */
-          void setTimestepSize(const double& timestepSize) ;
+         inline int getSubdivisionFactor(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<DIMENSIONS);
+            return _persistentRecords._subdivisionFactor[elementIndex];
+            
+         }
          
-         /**
-          * Generated
-          */
-          int getSkipGridIterations() const ;
          
-         /**
-          * Generated
-          */
-          void setSkipGridIterations(const int& skipGridIterations) ;
          
-         /**
-          * Generated
-          */
-          double getDemandedMeshWidth() const ;
+         inline void setSubdivisionFactor(int elementIndex, const int& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<DIMENSIONS);
+            _persistentRecords._subdivisionFactor[elementIndex]= subdivisionFactor;
+            
+         }
          
-         /**
-          * Generated
-          */
-          void setDemandedMeshWidth(const double& demandedMeshWidth) ;
          
-         /**
-          * Generated
-          */
-          int getCellDescriptionIndex() const ;
          
-         /**
-          * Generated
-          */
-          void setCellDescriptionIndex(const int& cellDescriptionIndex) ;
+         inline int getGhostLayerWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._ghostLayerWidth;
+         }
+         
+         
+         
+         inline void setGhostLayerWidth(const int& ghostLayerWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._ghostLayerWidth = ghostLayerWidth;
+         }
+         
+         
+         
+         inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._level;
+         }
+         
+         
+         
+         inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._level = level;
+         }
+         
+         
+         
+         inline bool getIsVirtual() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._isVirtual;
+         }
+         
+         
+         
+         inline void setIsVirtual(const bool& isVirtual) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._isVirtual = isVirtual;
+         }
+         
+         
+         
+         inline bool getIsRemote() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._isRemote;
+         }
+         
+         
+         
+         inline void setIsRemote(const bool& isRemote) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._isRemote = isRemote;
+         }
+         
+         
+         
+         inline tarch::la::Vector<DIMENSIONS,double> getPosition() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._position;
+         }
+         
+         
+         
+         inline void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._position = (position);
+         }
+         
+         
+         
+         inline double getPosition(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<DIMENSIONS);
+            return _persistentRecords._position[elementIndex];
+            
+         }
+         
+         
+         
+         inline void setPosition(int elementIndex, const double& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<DIMENSIONS);
+            _persistentRecords._position[elementIndex]= position;
+            
+         }
+         
+         
+         
+         inline tarch::la::Vector<DIMENSIONS,double> getSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._size;
+         }
+         
+         
+         
+         inline void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._size = (size);
+         }
+         
+         
+         
+         inline double getSize(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<DIMENSIONS);
+            return _persistentRecords._size[elementIndex];
+            
+         }
+         
+         
+         
+         inline void setSize(int elementIndex, const double& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            assertion(elementIndex>=0);
+            assertion(elementIndex<DIMENSIONS);
+            _persistentRecords._size[elementIndex]= size;
+            
+         }
+         
+         
+         
+         inline double getTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._time;
+         }
+         
+         
+         
+         inline void setTime(const double& time) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._time = time;
+         }
+         
+         
+         
+         inline double getTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._timestepSize;
+         }
+         
+         
+         
+         inline void setTimestepSize(const double& timestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._timestepSize = timestepSize;
+         }
+         
+         
+         
+         inline int getSkipGridIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._skipGridIterations;
+         }
+         
+         
+         
+         inline void setSkipGridIterations(const int& skipGridIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._skipGridIterations = skipGridIterations;
+         }
+         
+         
+         
+         inline double getDemandedMeshWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._demandedMeshWidth;
+         }
+         
+         
+         
+         inline void setDemandedMeshWidth(const double& demandedMeshWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._demandedMeshWidth = demandedMeshWidth;
+         }
+         
+         
+         
+         inline int getCellDescriptionIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._cellDescriptionIndex;
+         }
+         
+         
+         
+         inline void setCellDescriptionIndex(const int& cellDescriptionIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._cellDescriptionIndex = cellDescriptionIndex;
+         }
+         
          
          /**
           * Generated
@@ -420,7 +856,7 @@ namespace peanoclaw {
              *
              * 		   build date: 09-02-2014 14:40
              *
-             * @date   28/04/2014 12:42
+             * @date   30/04/2014 14:07
              */
             class peanoclaw::records::PatchDescriptionPacked { 
                
@@ -452,131 +888,305 @@ namespace peanoclaw {
                       */
                      PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const bool& isRemote, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                      
-                     /**
-                      * Generated
-                      */
-                      bool getIsReferenced() const ;
                      
-                     /**
-                      * Generated
-                      */
-                      void setIsReferenced(const bool& isReferenced) ;
+                     inline bool getIsReferenced() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _isReferenced;
+                     }
                      
-                      tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const ;
                      
-                      void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) ;
                      
-                     /**
-                      * Generated
-                      */
-                      int getRank() const ;
+                     inline void setIsReferenced(const bool& isReferenced) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _isReferenced = isReferenced;
+                     }
                      
-                     /**
-                      * Generated
-                      */
-                      void setRank(const int& rank) ;
                      
-                      tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                      
-                      void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) ;
+                     inline tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _adjacentRanks;
+                     }
                      
-                     /**
-                      * Generated
-                      */
-                      int getGhostLayerWidth() const ;
                      
-                     /**
-                      * Generated
-                      */
-                      void setGhostLayerWidth(const int& ghostLayerWidth) ;
                      
-                     /**
-                      * Generated
-                      */
-                      int getLevel() const ;
+                     inline void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _adjacentRanks = (adjacentRanks);
+                     }
                      
-                     /**
-                      * Generated
-                      */
-                      void setLevel(const int& level) ;
                      
-                     /**
-                      * Generated
-                      */
-                      bool getIsVirtual() const ;
                      
-                     /**
-                      * Generated
-                      */
-                      void setIsVirtual(const bool& isVirtual) ;
+                     inline int getRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _rank;
+                     }
                      
-                     /**
-                      * Generated
-                      */
-                      bool getIsRemote() const ;
                      
-                     /**
-                      * Generated
-                      */
-                      void setIsRemote(const bool& isRemote) ;
                      
-                      tarch::la::Vector<DIMENSIONS,double> getPosition() const ;
+                     inline void setRank(const int& rank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _rank = rank;
+                     }
                      
-                      void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) ;
                      
-                      tarch::la::Vector<DIMENSIONS,double> getSize() const ;
                      
-                      void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) ;
+                     inline tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _subdivisionFactor;
+                     }
                      
-                     /**
-                      * Generated
-                      */
-                      double getTime() const ;
                      
-                     /**
-                      * Generated
-                      */
-                      void setTime(const double& time) ;
                      
-                     /**
-                      * Generated
-                      */
-                      double getTimestepSize() const ;
+                     inline void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _subdivisionFactor = (subdivisionFactor);
+                     }
                      
-                     /**
-                      * Generated
-                      */
-                      void setTimestepSize(const double& timestepSize) ;
                      
-                     /**
-                      * Generated
-                      */
-                      int getSkipGridIterations() const ;
                      
-                     /**
-                      * Generated
-                      */
-                      void setSkipGridIterations(const int& skipGridIterations) ;
+                     inline int getGhostLayerWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _ghostLayerWidth;
+                     }
                      
-                     /**
-                      * Generated
-                      */
-                      double getDemandedMeshWidth() const ;
                      
-                     /**
-                      * Generated
-                      */
-                      void setDemandedMeshWidth(const double& demandedMeshWidth) ;
                      
-                     /**
-                      * Generated
-                      */
-                      int getCellDescriptionIndex() const ;
+                     inline void setGhostLayerWidth(const int& ghostLayerWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _ghostLayerWidth = ghostLayerWidth;
+                     }
                      
-                     /**
-                      * Generated
-                      */
-                      void setCellDescriptionIndex(const int& cellDescriptionIndex) ;
+                     
+                     
+                     inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _level;
+                     }
+                     
+                     
+                     
+                     inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _level = level;
+                     }
+                     
+                     
+                     
+                     inline bool getIsVirtual() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _isVirtual;
+                     }
+                     
+                     
+                     
+                     inline void setIsVirtual(const bool& isVirtual) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _isVirtual = isVirtual;
+                     }
+                     
+                     
+                     
+                     inline bool getIsRemote() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _isRemote;
+                     }
+                     
+                     
+                     
+                     inline void setIsRemote(const bool& isRemote) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _isRemote = isRemote;
+                     }
+                     
+                     
+                     
+                     inline tarch::la::Vector<DIMENSIONS,double> getPosition() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _position;
+                     }
+                     
+                     
+                     
+                     inline void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _position = (position);
+                     }
+                     
+                     
+                     
+                     inline tarch::la::Vector<DIMENSIONS,double> getSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _size;
+                     }
+                     
+                     
+                     
+                     inline void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _size = (size);
+                     }
+                     
+                     
+                     
+                     inline double getTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _time;
+                     }
+                     
+                     
+                     
+                     inline void setTime(const double& time) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _time = time;
+                     }
+                     
+                     
+                     
+                     inline double getTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _timestepSize;
+                     }
+                     
+                     
+                     
+                     inline void setTimestepSize(const double& timestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _timestepSize = timestepSize;
+                     }
+                     
+                     
+                     
+                     inline int getSkipGridIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _skipGridIterations;
+                     }
+                     
+                     
+                     
+                     inline void setSkipGridIterations(const int& skipGridIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _skipGridIterations = skipGridIterations;
+                     }
+                     
+                     
+                     
+                     inline double getDemandedMeshWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _demandedMeshWidth;
+                     }
+                     
+                     
+                     
+                     inline void setDemandedMeshWidth(const double& demandedMeshWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _demandedMeshWidth = demandedMeshWidth;
+                     }
+                     
+                     
+                     
+                     inline int getCellDescriptionIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        return _cellDescriptionIndex;
+                     }
+                     
+                     
+                     
+                     inline void setCellDescriptionIndex(const int& cellDescriptionIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                        _cellDescriptionIndex = cellDescriptionIndex;
+                     }
+                     
                      
                      
                   };
@@ -605,147 +1215,409 @@ namespace peanoclaw {
                    */
                   ~PatchDescriptionPacked();
                   
-                  /**
-                   * Generated
-                   */
-                   bool getIsReferenced() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setIsReferenced(const bool& isReferenced) ;
+                  inline bool getIsReferenced() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._isReferenced;
+                  }
                   
-                   tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const ;
                   
-                   void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) ;
                   
-                   int getAdjacentRanks(int elementIndex) const ;
+                  inline void setIsReferenced(const bool& isReferenced) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._isReferenced = isReferenced;
+                  }
                   
-                   void setAdjacentRanks(int elementIndex, const int& adjacentRanks) ;
                   
-                  /**
-                   * Generated
-                   */
-                   int getRank() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setRank(const int& rank) ;
+                  inline tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._adjacentRanks;
+                  }
                   
-                   tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                   
-                   void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) ;
                   
-                   int getSubdivisionFactor(int elementIndex) const ;
+                  inline void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._adjacentRanks = (adjacentRanks);
+                  }
                   
-                   void setSubdivisionFactor(int elementIndex, const int& subdivisionFactor) ;
                   
-                  /**
-                   * Generated
-                   */
-                   int getGhostLayerWidth() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setGhostLayerWidth(const int& ghostLayerWidth) ;
+                  inline int getAdjacentRanks(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<THREE_POWER_D);
+                     return _persistentRecords._adjacentRanks[elementIndex];
+                     
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   int getLevel() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setLevel(const int& level) ;
                   
-                  /**
-                   * Generated
-                   */
-                   bool getIsVirtual() const ;
+                  inline void setAdjacentRanks(int elementIndex, const int& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<THREE_POWER_D);
+                     _persistentRecords._adjacentRanks[elementIndex]= adjacentRanks;
+                     
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setIsVirtual(const bool& isVirtual) ;
                   
-                  /**
-                   * Generated
-                   */
-                   bool getIsRemote() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setIsRemote(const bool& isRemote) ;
+                  inline int getRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._rank;
+                  }
                   
-                   tarch::la::Vector<DIMENSIONS,double> getPosition() const ;
                   
-                   void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) ;
                   
-                   double getPosition(int elementIndex) const ;
+                  inline void setRank(const int& rank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._rank = rank;
+                  }
                   
-                   void setPosition(int elementIndex, const double& position) ;
                   
-                   tarch::la::Vector<DIMENSIONS,double> getSize() const ;
                   
-                   void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) ;
+                  inline tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._subdivisionFactor;
+                  }
                   
-                   double getSize(int elementIndex) const ;
                   
-                   void setSize(int elementIndex, const double& size) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getTime() const ;
+                  inline void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._subdivisionFactor = (subdivisionFactor);
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setTime(const double& time) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getTimestepSize() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setTimestepSize(const double& timestepSize) ;
+                  inline int getSubdivisionFactor(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<DIMENSIONS);
+                     return _persistentRecords._subdivisionFactor[elementIndex];
+                     
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   int getSkipGridIterations() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setSkipGridIterations(const int& skipGridIterations) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getDemandedMeshWidth() const ;
+                  inline void setSubdivisionFactor(int elementIndex, const int& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<DIMENSIONS);
+                     _persistentRecords._subdivisionFactor[elementIndex]= subdivisionFactor;
+                     
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setDemandedMeshWidth(const double& demandedMeshWidth) ;
                   
-                  /**
-                   * Generated
-                   */
-                   int getCellDescriptionIndex() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setCellDescriptionIndex(const int& cellDescriptionIndex) ;
+                  inline int getGhostLayerWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._ghostLayerWidth;
+                  }
+                  
+                  
+                  
+                  inline void setGhostLayerWidth(const int& ghostLayerWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._ghostLayerWidth = ghostLayerWidth;
+                  }
+                  
+                  
+                  
+                  inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._level;
+                  }
+                  
+                  
+                  
+                  inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._level = level;
+                  }
+                  
+                  
+                  
+                  inline bool getIsVirtual() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._isVirtual;
+                  }
+                  
+                  
+                  
+                  inline void setIsVirtual(const bool& isVirtual) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._isVirtual = isVirtual;
+                  }
+                  
+                  
+                  
+                  inline bool getIsRemote() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._isRemote;
+                  }
+                  
+                  
+                  
+                  inline void setIsRemote(const bool& isRemote) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._isRemote = isRemote;
+                  }
+                  
+                  
+                  
+                  inline tarch::la::Vector<DIMENSIONS,double> getPosition() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._position;
+                  }
+                  
+                  
+                  
+                  inline void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._position = (position);
+                  }
+                  
+                  
+                  
+                  inline double getPosition(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<DIMENSIONS);
+                     return _persistentRecords._position[elementIndex];
+                     
+                  }
+                  
+                  
+                  
+                  inline void setPosition(int elementIndex, const double& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<DIMENSIONS);
+                     _persistentRecords._position[elementIndex]= position;
+                     
+                  }
+                  
+                  
+                  
+                  inline tarch::la::Vector<DIMENSIONS,double> getSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._size;
+                  }
+                  
+                  
+                  
+                  inline void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._size = (size);
+                  }
+                  
+                  
+                  
+                  inline double getSize(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<DIMENSIONS);
+                     return _persistentRecords._size[elementIndex];
+                     
+                  }
+                  
+                  
+                  
+                  inline void setSize(int elementIndex, const double& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     assertion(elementIndex>=0);
+                     assertion(elementIndex<DIMENSIONS);
+                     _persistentRecords._size[elementIndex]= size;
+                     
+                  }
+                  
+                  
+                  
+                  inline double getTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._time;
+                  }
+                  
+                  
+                  
+                  inline void setTime(const double& time) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._time = time;
+                  }
+                  
+                  
+                  
+                  inline double getTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._timestepSize;
+                  }
+                  
+                  
+                  
+                  inline void setTimestepSize(const double& timestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._timestepSize = timestepSize;
+                  }
+                  
+                  
+                  
+                  inline int getSkipGridIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._skipGridIterations;
+                  }
+                  
+                  
+                  
+                  inline void setSkipGridIterations(const int& skipGridIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._skipGridIterations = skipGridIterations;
+                  }
+                  
+                  
+                  
+                  inline double getDemandedMeshWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._demandedMeshWidth;
+                  }
+                  
+                  
+                  
+                  inline void setDemandedMeshWidth(const double& demandedMeshWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._demandedMeshWidth = demandedMeshWidth;
+                  }
+                  
+                  
+                  
+                  inline int getCellDescriptionIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _persistentRecords._cellDescriptionIndex;
+                  }
+                  
+                  
+                  
+                  inline void setCellDescriptionIndex(const int& cellDescriptionIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _persistentRecords._cellDescriptionIndex = cellDescriptionIndex;
+                  }
+                  
                   
                   /**
                    * Generated
@@ -807,7 +1679,7 @@ namespace peanoclaw {
                       *
                       * 		   build date: 09-02-2014 14:40
                       *
-                      * @date   28/04/2014 12:42
+                      * @date   30/04/2014 14:07
                       */
                      class peanoclaw::records::PatchDescription { 
                         
@@ -840,121 +1712,285 @@ namespace peanoclaw {
                                */
                               PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                               
-                              /**
-                               * Generated
-                               */
-                               bool getIsReferenced() const ;
                               
-                              /**
-                               * Generated
-                               */
-                               void setIsReferenced(const bool& isReferenced) ;
+                              inline bool getIsReferenced() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _isReferenced;
+                              }
                               
-                               tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const ;
                               
-                               void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) ;
                               
-                              /**
-                               * Generated
-                               */
-                               int getRank() const ;
+                              inline void setIsReferenced(const bool& isReferenced) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _isReferenced = isReferenced;
+                              }
                               
-                              /**
-                               * Generated
-                               */
-                               void setRank(const int& rank) ;
                               
-                               tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                               
-                               void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) ;
+                              inline tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _adjacentRanks;
+                              }
                               
-                              /**
-                               * Generated
-                               */
-                               int getGhostLayerWidth() const ;
                               
-                              /**
-                               * Generated
-                               */
-                               void setGhostLayerWidth(const int& ghostLayerWidth) ;
                               
-                              /**
-                               * Generated
-                               */
-                               int getLevel() const ;
+                              inline void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _adjacentRanks = (adjacentRanks);
+                              }
                               
-                              /**
-                               * Generated
-                               */
-                               void setLevel(const int& level) ;
                               
-                              /**
-                               * Generated
-                               */
-                               bool getIsVirtual() const ;
                               
-                              /**
-                               * Generated
-                               */
-                               void setIsVirtual(const bool& isVirtual) ;
+                              inline int getRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _rank;
+                              }
                               
-                               tarch::la::Vector<DIMENSIONS,double> getPosition() const ;
                               
-                               void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) ;
                               
-                               tarch::la::Vector<DIMENSIONS,double> getSize() const ;
+                              inline void setRank(const int& rank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _rank = rank;
+                              }
                               
-                               void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) ;
                               
-                              /**
-                               * Generated
-                               */
-                               double getTime() const ;
                               
-                              /**
-                               * Generated
-                               */
-                               void setTime(const double& time) ;
+                              inline tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _subdivisionFactor;
+                              }
                               
-                              /**
-                               * Generated
-                               */
-                               double getTimestepSize() const ;
                               
-                              /**
-                               * Generated
-                               */
-                               void setTimestepSize(const double& timestepSize) ;
                               
-                              /**
-                               * Generated
-                               */
-                               int getSkipGridIterations() const ;
+                              inline void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _subdivisionFactor = (subdivisionFactor);
+                              }
                               
-                              /**
-                               * Generated
-                               */
-                               void setSkipGridIterations(const int& skipGridIterations) ;
                               
-                              /**
-                               * Generated
-                               */
-                               double getDemandedMeshWidth() const ;
                               
-                              /**
-                               * Generated
-                               */
-                               void setDemandedMeshWidth(const double& demandedMeshWidth) ;
+                              inline int getGhostLayerWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _ghostLayerWidth;
+                              }
                               
-                              /**
-                               * Generated
-                               */
-                               int getCellDescriptionIndex() const ;
                               
-                              /**
-                               * Generated
-                               */
-                               void setCellDescriptionIndex(const int& cellDescriptionIndex) ;
+                              
+                              inline void setGhostLayerWidth(const int& ghostLayerWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _ghostLayerWidth = ghostLayerWidth;
+                              }
+                              
+                              
+                              
+                              inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _level;
+                              }
+                              
+                              
+                              
+                              inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _level = level;
+                              }
+                              
+                              
+                              
+                              inline bool getIsVirtual() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _isVirtual;
+                              }
+                              
+                              
+                              
+                              inline void setIsVirtual(const bool& isVirtual) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _isVirtual = isVirtual;
+                              }
+                              
+                              
+                              
+                              inline tarch::la::Vector<DIMENSIONS,double> getPosition() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _position;
+                              }
+                              
+                              
+                              
+                              inline void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _position = (position);
+                              }
+                              
+                              
+                              
+                              inline tarch::la::Vector<DIMENSIONS,double> getSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _size;
+                              }
+                              
+                              
+                              
+                              inline void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _size = (size);
+                              }
+                              
+                              
+                              
+                              inline double getTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _time;
+                              }
+                              
+                              
+                              
+                              inline void setTime(const double& time) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _time = time;
+                              }
+                              
+                              
+                              
+                              inline double getTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _timestepSize;
+                              }
+                              
+                              
+                              
+                              inline void setTimestepSize(const double& timestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _timestepSize = timestepSize;
+                              }
+                              
+                              
+                              
+                              inline int getSkipGridIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _skipGridIterations;
+                              }
+                              
+                              
+                              
+                              inline void setSkipGridIterations(const int& skipGridIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _skipGridIterations = skipGridIterations;
+                              }
+                              
+                              
+                              
+                              inline double getDemandedMeshWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _demandedMeshWidth;
+                              }
+                              
+                              
+                              
+                              inline void setDemandedMeshWidth(const double& demandedMeshWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _demandedMeshWidth = demandedMeshWidth;
+                              }
+                              
+                              
+                              
+                              inline int getCellDescriptionIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 return _cellDescriptionIndex;
+                              }
+                              
+                              
+                              
+                              inline void setCellDescriptionIndex(const int& cellDescriptionIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                 _cellDescriptionIndex = cellDescriptionIndex;
+                              }
+                              
                               
                               
                            };
@@ -983,137 +2019,389 @@ namespace peanoclaw {
                             */
                            ~PatchDescription();
                            
-                           /**
-                            * Generated
-                            */
-                            bool getIsReferenced() const ;
                            
-                           /**
-                            * Generated
-                            */
-                            void setIsReferenced(const bool& isReferenced) ;
+                           inline bool getIsReferenced() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._isReferenced;
+                           }
                            
-                            tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const ;
                            
-                            void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) ;
                            
-                            int getAdjacentRanks(int elementIndex) const ;
+                           inline void setIsReferenced(const bool& isReferenced) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._isReferenced = isReferenced;
+                           }
                            
-                            void setAdjacentRanks(int elementIndex, const int& adjacentRanks) ;
                            
-                           /**
-                            * Generated
-                            */
-                            int getRank() const ;
                            
-                           /**
-                            * Generated
-                            */
-                            void setRank(const int& rank) ;
+                           inline tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._adjacentRanks;
+                           }
                            
-                            tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                            
-                            void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) ;
                            
-                            int getSubdivisionFactor(int elementIndex) const ;
+                           inline void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._adjacentRanks = (adjacentRanks);
+                           }
                            
-                            void setSubdivisionFactor(int elementIndex, const int& subdivisionFactor) ;
                            
-                           /**
-                            * Generated
-                            */
-                            int getGhostLayerWidth() const ;
                            
-                           /**
-                            * Generated
-                            */
-                            void setGhostLayerWidth(const int& ghostLayerWidth) ;
+                           inline int getAdjacentRanks(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              assertion(elementIndex>=0);
+                              assertion(elementIndex<THREE_POWER_D);
+                              return _persistentRecords._adjacentRanks[elementIndex];
+                              
+                           }
                            
-                           /**
-                            * Generated
-                            */
-                            int getLevel() const ;
                            
-                           /**
-                            * Generated
-                            */
-                            void setLevel(const int& level) ;
                            
-                           /**
-                            * Generated
-                            */
-                            bool getIsVirtual() const ;
+                           inline void setAdjacentRanks(int elementIndex, const int& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              assertion(elementIndex>=0);
+                              assertion(elementIndex<THREE_POWER_D);
+                              _persistentRecords._adjacentRanks[elementIndex]= adjacentRanks;
+                              
+                           }
                            
-                           /**
-                            * Generated
-                            */
-                            void setIsVirtual(const bool& isVirtual) ;
                            
-                            tarch::la::Vector<DIMENSIONS,double> getPosition() const ;
                            
-                            void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) ;
+                           inline int getRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._rank;
+                           }
                            
-                            double getPosition(int elementIndex) const ;
                            
-                            void setPosition(int elementIndex, const double& position) ;
                            
-                            tarch::la::Vector<DIMENSIONS,double> getSize() const ;
+                           inline void setRank(const int& rank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._rank = rank;
+                           }
                            
-                            void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) ;
                            
-                            double getSize(int elementIndex) const ;
                            
-                            void setSize(int elementIndex, const double& size) ;
+                           inline tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._subdivisionFactor;
+                           }
                            
-                           /**
-                            * Generated
-                            */
-                            double getTime() const ;
                            
-                           /**
-                            * Generated
-                            */
-                            void setTime(const double& time) ;
                            
-                           /**
-                            * Generated
-                            */
-                            double getTimestepSize() const ;
+                           inline void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._subdivisionFactor = (subdivisionFactor);
+                           }
                            
-                           /**
-                            * Generated
-                            */
-                            void setTimestepSize(const double& timestepSize) ;
                            
-                           /**
-                            * Generated
-                            */
-                            int getSkipGridIterations() const ;
                            
-                           /**
-                            * Generated
-                            */
-                            void setSkipGridIterations(const int& skipGridIterations) ;
+                           inline int getSubdivisionFactor(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              assertion(elementIndex>=0);
+                              assertion(elementIndex<DIMENSIONS);
+                              return _persistentRecords._subdivisionFactor[elementIndex];
+                              
+                           }
                            
-                           /**
-                            * Generated
-                            */
-                            double getDemandedMeshWidth() const ;
                            
-                           /**
-                            * Generated
-                            */
-                            void setDemandedMeshWidth(const double& demandedMeshWidth) ;
                            
-                           /**
-                            * Generated
-                            */
-                            int getCellDescriptionIndex() const ;
+                           inline void setSubdivisionFactor(int elementIndex, const int& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              assertion(elementIndex>=0);
+                              assertion(elementIndex<DIMENSIONS);
+                              _persistentRecords._subdivisionFactor[elementIndex]= subdivisionFactor;
+                              
+                           }
                            
-                           /**
-                            * Generated
-                            */
-                            void setCellDescriptionIndex(const int& cellDescriptionIndex) ;
+                           
+                           
+                           inline int getGhostLayerWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._ghostLayerWidth;
+                           }
+                           
+                           
+                           
+                           inline void setGhostLayerWidth(const int& ghostLayerWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._ghostLayerWidth = ghostLayerWidth;
+                           }
+                           
+                           
+                           
+                           inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._level;
+                           }
+                           
+                           
+                           
+                           inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._level = level;
+                           }
+                           
+                           
+                           
+                           inline bool getIsVirtual() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._isVirtual;
+                           }
+                           
+                           
+                           
+                           inline void setIsVirtual(const bool& isVirtual) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._isVirtual = isVirtual;
+                           }
+                           
+                           
+                           
+                           inline tarch::la::Vector<DIMENSIONS,double> getPosition() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._position;
+                           }
+                           
+                           
+                           
+                           inline void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._position = (position);
+                           }
+                           
+                           
+                           
+                           inline double getPosition(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              assertion(elementIndex>=0);
+                              assertion(elementIndex<DIMENSIONS);
+                              return _persistentRecords._position[elementIndex];
+                              
+                           }
+                           
+                           
+                           
+                           inline void setPosition(int elementIndex, const double& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              assertion(elementIndex>=0);
+                              assertion(elementIndex<DIMENSIONS);
+                              _persistentRecords._position[elementIndex]= position;
+                              
+                           }
+                           
+                           
+                           
+                           inline tarch::la::Vector<DIMENSIONS,double> getSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._size;
+                           }
+                           
+                           
+                           
+                           inline void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._size = (size);
+                           }
+                           
+                           
+                           
+                           inline double getSize(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              assertion(elementIndex>=0);
+                              assertion(elementIndex<DIMENSIONS);
+                              return _persistentRecords._size[elementIndex];
+                              
+                           }
+                           
+                           
+                           
+                           inline void setSize(int elementIndex, const double& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              assertion(elementIndex>=0);
+                              assertion(elementIndex<DIMENSIONS);
+                              _persistentRecords._size[elementIndex]= size;
+                              
+                           }
+                           
+                           
+                           
+                           inline double getTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._time;
+                           }
+                           
+                           
+                           
+                           inline void setTime(const double& time) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._time = time;
+                           }
+                           
+                           
+                           
+                           inline double getTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._timestepSize;
+                           }
+                           
+                           
+                           
+                           inline void setTimestepSize(const double& timestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._timestepSize = timestepSize;
+                           }
+                           
+                           
+                           
+                           inline int getSkipGridIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._skipGridIterations;
+                           }
+                           
+                           
+                           
+                           inline void setSkipGridIterations(const int& skipGridIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._skipGridIterations = skipGridIterations;
+                           }
+                           
+                           
+                           
+                           inline double getDemandedMeshWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._demandedMeshWidth;
+                           }
+                           
+                           
+                           
+                           inline void setDemandedMeshWidth(const double& demandedMeshWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._demandedMeshWidth = demandedMeshWidth;
+                           }
+                           
+                           
+                           
+                           inline int getCellDescriptionIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              return _persistentRecords._cellDescriptionIndex;
+                           }
+                           
+                           
+                           
+                           inline void setCellDescriptionIndex(const int& cellDescriptionIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                              _persistentRecords._cellDescriptionIndex = cellDescriptionIndex;
+                           }
+                           
                            
                            /**
                             * Generated
@@ -1173,7 +2461,7 @@ namespace peanoclaw {
                                *
                                * 		   build date: 09-02-2014 14:40
                                *
-                               * @date   28/04/2014 12:42
+                               * @date   30/04/2014 14:07
                                */
                               class peanoclaw::records::PatchDescriptionPacked { 
                                  
@@ -1204,121 +2492,285 @@ namespace peanoclaw {
                                         */
                                        PersistentRecords(const bool& isReferenced, const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks, const int& rank, const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor, const int& ghostLayerWidth, const int& level, const bool& isVirtual, const tarch::la::Vector<DIMENSIONS,double>& position, const tarch::la::Vector<DIMENSIONS,double>& size, const double& time, const double& timestepSize, const int& skipGridIterations, const double& demandedMeshWidth, const int& cellDescriptionIndex);
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        bool getIsReferenced() const ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setIsReferenced(const bool& isReferenced) ;
+                                       inline bool getIsReferenced() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _isReferenced;
+                                       }
                                        
-                                        tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const ;
                                        
-                                        void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        int getRank() const ;
+                                       inline void setIsReferenced(const bool& isReferenced) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _isReferenced = isReferenced;
+                                       }
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setRank(const int& rank) ;
                                        
-                                        tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                                        
-                                        void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) ;
+                                       inline tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _adjacentRanks;
+                                       }
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        int getGhostLayerWidth() const ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setGhostLayerWidth(const int& ghostLayerWidth) ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        int getLevel() const ;
+                                       inline void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _adjacentRanks = (adjacentRanks);
+                                       }
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setLevel(const int& level) ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        bool getIsVirtual() const ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setIsVirtual(const bool& isVirtual) ;
+                                       inline int getRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _rank;
+                                       }
                                        
-                                        tarch::la::Vector<DIMENSIONS,double> getPosition() const ;
                                        
-                                        void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) ;
                                        
-                                        tarch::la::Vector<DIMENSIONS,double> getSize() const ;
+                                       inline void setRank(const int& rank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _rank = rank;
+                                       }
                                        
-                                        void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        double getTime() const ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setTime(const double& time) ;
+                                       inline tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _subdivisionFactor;
+                                       }
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        double getTimestepSize() const ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setTimestepSize(const double& timestepSize) ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        int getSkipGridIterations() const ;
+                                       inline void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _subdivisionFactor = (subdivisionFactor);
+                                       }
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setSkipGridIterations(const int& skipGridIterations) ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        double getDemandedMeshWidth() const ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setDemandedMeshWidth(const double& demandedMeshWidth) ;
+                                       inline int getGhostLayerWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _ghostLayerWidth;
+                                       }
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        int getCellDescriptionIndex() const ;
                                        
-                                       /**
-                                        * Generated
-                                        */
-                                        void setCellDescriptionIndex(const int& cellDescriptionIndex) ;
+                                       
+                                       inline void setGhostLayerWidth(const int& ghostLayerWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _ghostLayerWidth = ghostLayerWidth;
+                                       }
+                                       
+                                       
+                                       
+                                       inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _level;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _level = level;
+                                       }
+                                       
+                                       
+                                       
+                                       inline bool getIsVirtual() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _isVirtual;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setIsVirtual(const bool& isVirtual) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _isVirtual = isVirtual;
+                                       }
+                                       
+                                       
+                                       
+                                       inline tarch::la::Vector<DIMENSIONS,double> getPosition() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _position;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _position = (position);
+                                       }
+                                       
+                                       
+                                       
+                                       inline tarch::la::Vector<DIMENSIONS,double> getSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _size;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _size = (size);
+                                       }
+                                       
+                                       
+                                       
+                                       inline double getTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _time;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setTime(const double& time) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _time = time;
+                                       }
+                                       
+                                       
+                                       
+                                       inline double getTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _timestepSize;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setTimestepSize(const double& timestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _timestepSize = timestepSize;
+                                       }
+                                       
+                                       
+                                       
+                                       inline int getSkipGridIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _skipGridIterations;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setSkipGridIterations(const int& skipGridIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _skipGridIterations = skipGridIterations;
+                                       }
+                                       
+                                       
+                                       
+                                       inline double getDemandedMeshWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _demandedMeshWidth;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setDemandedMeshWidth(const double& demandedMeshWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _demandedMeshWidth = demandedMeshWidth;
+                                       }
+                                       
+                                       
+                                       
+                                       inline int getCellDescriptionIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          return _cellDescriptionIndex;
+                                       }
+                                       
+                                       
+                                       
+                                       inline void setCellDescriptionIndex(const int& cellDescriptionIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                          _cellDescriptionIndex = cellDescriptionIndex;
+                                       }
+                                       
                                        
                                        
                                     };
@@ -1347,137 +2799,389 @@ namespace peanoclaw {
                                      */
                                     ~PatchDescriptionPacked();
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     bool getIsReferenced() const ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setIsReferenced(const bool& isReferenced) ;
+                                    inline bool getIsReferenced() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._isReferenced;
+                                    }
                                     
-                                     tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const ;
                                     
-                                     void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) ;
                                     
-                                     int getAdjacentRanks(int elementIndex) const ;
+                                    inline void setIsReferenced(const bool& isReferenced) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._isReferenced = isReferenced;
+                                    }
                                     
-                                     void setAdjacentRanks(int elementIndex, const int& adjacentRanks) ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     int getRank() const ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setRank(const int& rank) ;
+                                    inline tarch::la::Vector<THREE_POWER_D,int> getAdjacentRanks() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._adjacentRanks;
+                                    }
                                     
-                                     tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const ;
                                     
-                                     void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) ;
                                     
-                                     int getSubdivisionFactor(int elementIndex) const ;
+                                    inline void setAdjacentRanks(const tarch::la::Vector<THREE_POWER_D,int>& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._adjacentRanks = (adjacentRanks);
+                                    }
                                     
-                                     void setSubdivisionFactor(int elementIndex, const int& subdivisionFactor) ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     int getGhostLayerWidth() const ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setGhostLayerWidth(const int& ghostLayerWidth) ;
+                                    inline int getAdjacentRanks(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       assertion(elementIndex>=0);
+                                       assertion(elementIndex<THREE_POWER_D);
+                                       return _persistentRecords._adjacentRanks[elementIndex];
+                                       
+                                    }
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     int getLevel() const ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setLevel(const int& level) ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     bool getIsVirtual() const ;
+                                    inline void setAdjacentRanks(int elementIndex, const int& adjacentRanks) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       assertion(elementIndex>=0);
+                                       assertion(elementIndex<THREE_POWER_D);
+                                       _persistentRecords._adjacentRanks[elementIndex]= adjacentRanks;
+                                       
+                                    }
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setIsVirtual(const bool& isVirtual) ;
                                     
-                                     tarch::la::Vector<DIMENSIONS,double> getPosition() const ;
                                     
-                                     void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) ;
+                                    inline int getRank() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._rank;
+                                    }
                                     
-                                     double getPosition(int elementIndex) const ;
                                     
-                                     void setPosition(int elementIndex, const double& position) ;
                                     
-                                     tarch::la::Vector<DIMENSIONS,double> getSize() const ;
+                                    inline void setRank(const int& rank) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._rank = rank;
+                                    }
                                     
-                                     void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) ;
                                     
-                                     double getSize(int elementIndex) const ;
                                     
-                                     void setSize(int elementIndex, const double& size) ;
+                                    inline tarch::la::Vector<DIMENSIONS,int> getSubdivisionFactor() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._subdivisionFactor;
+                                    }
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     double getTime() const ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setTime(const double& time) ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     double getTimestepSize() const ;
+                                    inline void setSubdivisionFactor(const tarch::la::Vector<DIMENSIONS,int>& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._subdivisionFactor = (subdivisionFactor);
+                                    }
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setTimestepSize(const double& timestepSize) ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     int getSkipGridIterations() const ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setSkipGridIterations(const int& skipGridIterations) ;
+                                    inline int getSubdivisionFactor(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       assertion(elementIndex>=0);
+                                       assertion(elementIndex<DIMENSIONS);
+                                       return _persistentRecords._subdivisionFactor[elementIndex];
+                                       
+                                    }
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     double getDemandedMeshWidth() const ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setDemandedMeshWidth(const double& demandedMeshWidth) ;
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     int getCellDescriptionIndex() const ;
+                                    inline void setSubdivisionFactor(int elementIndex, const int& subdivisionFactor) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       assertion(elementIndex>=0);
+                                       assertion(elementIndex<DIMENSIONS);
+                                       _persistentRecords._subdivisionFactor[elementIndex]= subdivisionFactor;
+                                       
+                                    }
                                     
-                                    /**
-                                     * Generated
-                                     */
-                                     void setCellDescriptionIndex(const int& cellDescriptionIndex) ;
+                                    
+                                    
+                                    inline int getGhostLayerWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._ghostLayerWidth;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setGhostLayerWidth(const int& ghostLayerWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._ghostLayerWidth = ghostLayerWidth;
+                                    }
+                                    
+                                    
+                                    
+                                    inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._level;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._level = level;
+                                    }
+                                    
+                                    
+                                    
+                                    inline bool getIsVirtual() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._isVirtual;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setIsVirtual(const bool& isVirtual) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._isVirtual = isVirtual;
+                                    }
+                                    
+                                    
+                                    
+                                    inline tarch::la::Vector<DIMENSIONS,double> getPosition() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._position;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setPosition(const tarch::la::Vector<DIMENSIONS,double>& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._position = (position);
+                                    }
+                                    
+                                    
+                                    
+                                    inline double getPosition(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       assertion(elementIndex>=0);
+                                       assertion(elementIndex<DIMENSIONS);
+                                       return _persistentRecords._position[elementIndex];
+                                       
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setPosition(int elementIndex, const double& position) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       assertion(elementIndex>=0);
+                                       assertion(elementIndex<DIMENSIONS);
+                                       _persistentRecords._position[elementIndex]= position;
+                                       
+                                    }
+                                    
+                                    
+                                    
+                                    inline tarch::la::Vector<DIMENSIONS,double> getSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._size;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setSize(const tarch::la::Vector<DIMENSIONS,double>& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._size = (size);
+                                    }
+                                    
+                                    
+                                    
+                                    inline double getSize(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       assertion(elementIndex>=0);
+                                       assertion(elementIndex<DIMENSIONS);
+                                       return _persistentRecords._size[elementIndex];
+                                       
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setSize(int elementIndex, const double& size) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       assertion(elementIndex>=0);
+                                       assertion(elementIndex<DIMENSIONS);
+                                       _persistentRecords._size[elementIndex]= size;
+                                       
+                                    }
+                                    
+                                    
+                                    
+                                    inline double getTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._time;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setTime(const double& time) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._time = time;
+                                    }
+                                    
+                                    
+                                    
+                                    inline double getTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._timestepSize;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setTimestepSize(const double& timestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._timestepSize = timestepSize;
+                                    }
+                                    
+                                    
+                                    
+                                    inline int getSkipGridIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._skipGridIterations;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setSkipGridIterations(const int& skipGridIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._skipGridIterations = skipGridIterations;
+                                    }
+                                    
+                                    
+                                    
+                                    inline double getDemandedMeshWidth() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._demandedMeshWidth;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setDemandedMeshWidth(const double& demandedMeshWidth) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._demandedMeshWidth = demandedMeshWidth;
+                                    }
+                                    
+                                    
+                                    
+                                    inline int getCellDescriptionIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       return _persistentRecords._cellDescriptionIndex;
+                                    }
+                                    
+                                    
+                                    
+                                    inline void setCellDescriptionIndex(const int& cellDescriptionIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                                       _persistentRecords._cellDescriptionIndex = cellDescriptionIndex;
+                                    }
+                                    
                                     
                                     /**
                                      * Generated

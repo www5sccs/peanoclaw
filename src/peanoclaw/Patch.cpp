@@ -101,8 +101,9 @@ void peanoclaw::Patch::fillCaches() {
       + tarch::la::volume(_cellDescription->getSubdivisionFactor()) * _cellDescription->getNumberOfParametersWithoutGhostlayerPerSubcell();
 
   //Precompute subcell size
+  tarch::la::Vector<DIMENSIONS,double> size = _cellDescription->getSize();
   for (int d = 0; d < DIMENSIONS; d++) {
-    _subcellSize[d] = _cellDescription->getSize()[d] / subdivisionFactor[d];
+    _subcellSize[d] = size[d] / subdivisionFactor[d];
   }
 }
 
@@ -126,9 +127,10 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(const Area& area,
 }
 
 bool peanoclaw::Patch::isValid(const CellDescription* cellDescription) {
-  return (cellDescription != 0)
-      && tarch::la::allGreater(cellDescription->getSubdivisionFactor(),
-          tarch::la::Vector<DIMENSIONS, int>(-1));
+  assertion(cellDescription == 0 || tarch::la::allGreater(cellDescription->getSubdivisionFactor(), tarch::la::Vector<DIMENSIONS, int>(-1)));
+  return cellDescription != 0;
+//      && tarch::la::allGreater(cellDescription->getSubdivisionFactor(),
+//          tarch::la::Vector<DIMENSIONS, int>(-1));
 }
 
 bool peanoclaw::Patch::isLeaf(const CellDescription* cellDescription) {
@@ -291,9 +293,9 @@ void peanoclaw::Patch::loadCellDescription(int cellDescriptionIndex) {
 
   _timeIntervals = peanoclaw::grid::TimeIntervals(_cellDescription);
 
-  if (_cellDescription->getUIndex() != -1) {
-    _uNew = &DataHeap::getInstance().getData(
-        _cellDescription->getUIndex());
+  int uIndex = _cellDescription->getUIndex();
+  if ( uIndex != -1) {
+    _uNew = &DataHeap::getInstance().getData(uIndex);
   } else {
     _uNew = 0;
   }

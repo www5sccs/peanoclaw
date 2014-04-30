@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   28/04/2014 12:42
+ * @date   30/04/2014 14:07
  */
 class peanoclaw::records::VertexDescription { 
    
@@ -57,19 +57,45 @@ class peanoclaw::records::VertexDescription {
           */
          PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched);
          
-          tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const ;
          
-          void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) ;
+         inline tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _indicesOfAdjacentCellDescriptions;
+         }
          
-         /**
-          * Generated
-          */
-          bool getTouched() const ;
          
-         /**
-          * Generated
-          */
-          void setTouched(const bool& touched) ;
+         
+         inline void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
+         }
+         
+         
+         
+         inline bool getTouched() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _touched;
+         }
+         
+         
+         
+         inline void setTouched(const bool& touched) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _touched = touched;
+         }
+         
          
          
       };
@@ -98,23 +124,71 @@ class peanoclaw::records::VertexDescription {
        */
       ~VertexDescription();
       
-       tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const ;
       
-       void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) ;
+      inline tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._indicesOfAdjacentCellDescriptions;
+      }
       
-       int getIndicesOfAdjacentCellDescriptions(int elementIndex) const ;
       
-       void setIndicesOfAdjacentCellDescriptions(int elementIndex, const int& indicesOfAdjacentCellDescriptions) ;
       
-      /**
-       * Generated
-       */
-       bool getTouched() const ;
+      inline void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
+      }
       
-      /**
-       * Generated
-       */
-       void setTouched(const bool& touched) ;
+      
+      
+      inline int getIndicesOfAdjacentCellDescriptions(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         assertion(elementIndex>=0);
+         assertion(elementIndex<TWO_POWER_D);
+         return _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex];
+         
+      }
+      
+      
+      
+      inline void setIndicesOfAdjacentCellDescriptions(int elementIndex, const int& indicesOfAdjacentCellDescriptions) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         assertion(elementIndex>=0);
+         assertion(elementIndex<TWO_POWER_D);
+         _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex]= indicesOfAdjacentCellDescriptions;
+         
+      }
+      
+      
+      
+      inline bool getTouched() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._touched;
+      }
+      
+      
+      
+      inline void setTouched(const bool& touched) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._touched = touched;
+      }
+      
       
       /**
        * Generated
@@ -184,7 +258,7 @@ class peanoclaw::records::VertexDescription {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   28/04/2014 12:42
+          * @date   30/04/2014 14:07
           */
          class peanoclaw::records::VertexDescriptionPacked { 
             
@@ -205,19 +279,45 @@ class peanoclaw::records::VertexDescription {
                    */
                   PersistentRecords(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions, const bool& touched);
                   
-                   tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const ;
                   
-                   void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) ;
+                  inline tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _indicesOfAdjacentCellDescriptions;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   bool getTouched() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setTouched(const bool& touched) ;
+                  
+                  inline void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
+                  }
+                  
+                  
+                  
+                  inline bool getTouched() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _touched;
+                  }
+                  
+                  
+                  
+                  inline void setTouched(const bool& touched) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _touched = touched;
+                  }
+                  
                   
                   
                };
@@ -246,23 +346,71 @@ class peanoclaw::records::VertexDescription {
                 */
                ~VertexDescriptionPacked();
                
-                tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const ;
                
-                void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) ;
+               inline tarch::la::Vector<TWO_POWER_D,int> getIndicesOfAdjacentCellDescriptions() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._indicesOfAdjacentCellDescriptions;
+               }
                
-                int getIndicesOfAdjacentCellDescriptions(int elementIndex) const ;
                
-                void setIndicesOfAdjacentCellDescriptions(int elementIndex, const int& indicesOfAdjacentCellDescriptions) ;
                
-               /**
-                * Generated
-                */
-                bool getTouched() const ;
+               inline void setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
+               }
                
-               /**
-                * Generated
-                */
-                void setTouched(const bool& touched) ;
+               
+               
+               inline int getIndicesOfAdjacentCellDescriptions(int elementIndex) const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  assertion(elementIndex>=0);
+                  assertion(elementIndex<TWO_POWER_D);
+                  return _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex];
+                  
+               }
+               
+               
+               
+               inline void setIndicesOfAdjacentCellDescriptions(int elementIndex, const int& indicesOfAdjacentCellDescriptions) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  assertion(elementIndex>=0);
+                  assertion(elementIndex<TWO_POWER_D);
+                  _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex]= indicesOfAdjacentCellDescriptions;
+                  
+               }
+               
+               
+               
+               inline bool getTouched() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._touched;
+               }
+               
+               
+               
+               inline void setTouched(const bool& touched) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._touched = touched;
+               }
+               
                
                /**
                 * Generated

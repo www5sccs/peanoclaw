@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   28/04/2014 12:42
+ * @date   30/04/2014 14:07
  */
 class peanoclaw::statistics::TimeIntervalStatistics { 
    
@@ -64,135 +64,265 @@ class peanoclaw::statistics::TimeIntervalStatistics {
           */
          PersistentRecords(const int& minimalPatchIndex, const int& minimalPatchParentIndex, const double& minimalPatchTime, const double& startMaximumLocalTimeInterval, const double& endMaximumLocalTimeInterval, const double& startMinimumLocalTimeInterval, const double& endMinimumLocalTimeInterval, const double& minimalTimestep, const bool& allPatchesEvolvedToGlobalTimestep, const double& averageGlobalTimeInterval, const double& globalTimestepEndTime, const bool& minimalPatchBlockedDueToCoarsening, const bool& minimalPatchBlockedDueToGlobalTimestep);
          
-         /**
-          * Generated
-          */
-          int getMinimalPatchIndex() const ;
          
-         /**
-          * Generated
-          */
-          void setMinimalPatchIndex(const int& minimalPatchIndex) ;
+         inline int getMinimalPatchIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _minimalPatchIndex;
+         }
          
-         /**
-          * Generated
-          */
-          int getMinimalPatchParentIndex() const ;
          
-         /**
-          * Generated
-          */
-          void setMinimalPatchParentIndex(const int& minimalPatchParentIndex) ;
          
-         /**
-          * Generated
-          */
-          double getMinimalPatchTime() const ;
+         inline void setMinimalPatchIndex(const int& minimalPatchIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _minimalPatchIndex = minimalPatchIndex;
+         }
          
-         /**
-          * Generated
-          */
-          void setMinimalPatchTime(const double& minimalPatchTime) ;
          
-         /**
-          * Generated
-          */
-          double getStartMaximumLocalTimeInterval() const ;
          
-         /**
-          * Generated
-          */
-          void setStartMaximumLocalTimeInterval(const double& startMaximumLocalTimeInterval) ;
+         inline int getMinimalPatchParentIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _minimalPatchParentIndex;
+         }
          
-         /**
-          * Generated
-          */
-          double getEndMaximumLocalTimeInterval() const ;
          
-         /**
-          * Generated
-          */
-          void setEndMaximumLocalTimeInterval(const double& endMaximumLocalTimeInterval) ;
          
-         /**
-          * Generated
-          */
-          double getStartMinimumLocalTimeInterval() const ;
+         inline void setMinimalPatchParentIndex(const int& minimalPatchParentIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _minimalPatchParentIndex = minimalPatchParentIndex;
+         }
          
-         /**
-          * Generated
-          */
-          void setStartMinimumLocalTimeInterval(const double& startMinimumLocalTimeInterval) ;
          
-         /**
-          * Generated
-          */
-          double getEndMinimumLocalTimeInterval() const ;
          
-         /**
-          * Generated
-          */
-          void setEndMinimumLocalTimeInterval(const double& endMinimumLocalTimeInterval) ;
+         inline double getMinimalPatchTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _minimalPatchTime;
+         }
          
-         /**
-          * Generated
-          */
-          double getMinimalTimestep() const ;
          
-         /**
-          * Generated
-          */
-          void setMinimalTimestep(const double& minimalTimestep) ;
          
-         /**
-          * Generated
-          */
-          bool getAllPatchesEvolvedToGlobalTimestep() const ;
+         inline void setMinimalPatchTime(const double& minimalPatchTime) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _minimalPatchTime = minimalPatchTime;
+         }
          
-         /**
-          * Generated
-          */
-          void setAllPatchesEvolvedToGlobalTimestep(const bool& allPatchesEvolvedToGlobalTimestep) ;
          
-         /**
-          * Generated
-          */
-          double getAverageGlobalTimeInterval() const ;
          
-         /**
-          * Generated
-          */
-          void setAverageGlobalTimeInterval(const double& averageGlobalTimeInterval) ;
+         inline double getStartMaximumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _startMaximumLocalTimeInterval;
+         }
          
-         /**
-          * Generated
-          */
-          double getGlobalTimestepEndTime() const ;
          
-         /**
-          * Generated
-          */
-          void setGlobalTimestepEndTime(const double& globalTimestepEndTime) ;
          
-         /**
-          * Generated
-          */
-          bool getMinimalPatchBlockedDueToCoarsening() const ;
+         inline void setStartMaximumLocalTimeInterval(const double& startMaximumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _startMaximumLocalTimeInterval = startMaximumLocalTimeInterval;
+         }
          
-         /**
-          * Generated
-          */
-          void setMinimalPatchBlockedDueToCoarsening(const bool& minimalPatchBlockedDueToCoarsening) ;
          
-         /**
-          * Generated
-          */
-          bool getMinimalPatchBlockedDueToGlobalTimestep() const ;
          
-         /**
-          * Generated
-          */
-          void setMinimalPatchBlockedDueToGlobalTimestep(const bool& minimalPatchBlockedDueToGlobalTimestep) ;
+         inline double getEndMaximumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _endMaximumLocalTimeInterval;
+         }
+         
+         
+         
+         inline void setEndMaximumLocalTimeInterval(const double& endMaximumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _endMaximumLocalTimeInterval = endMaximumLocalTimeInterval;
+         }
+         
+         
+         
+         inline double getStartMinimumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _startMinimumLocalTimeInterval;
+         }
+         
+         
+         
+         inline void setStartMinimumLocalTimeInterval(const double& startMinimumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _startMinimumLocalTimeInterval = startMinimumLocalTimeInterval;
+         }
+         
+         
+         
+         inline double getEndMinimumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _endMinimumLocalTimeInterval;
+         }
+         
+         
+         
+         inline void setEndMinimumLocalTimeInterval(const double& endMinimumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _endMinimumLocalTimeInterval = endMinimumLocalTimeInterval;
+         }
+         
+         
+         
+         inline double getMinimalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _minimalTimestep;
+         }
+         
+         
+         
+         inline void setMinimalTimestep(const double& minimalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _minimalTimestep = minimalTimestep;
+         }
+         
+         
+         
+         inline bool getAllPatchesEvolvedToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _allPatchesEvolvedToGlobalTimestep;
+         }
+         
+         
+         
+         inline void setAllPatchesEvolvedToGlobalTimestep(const bool& allPatchesEvolvedToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _allPatchesEvolvedToGlobalTimestep = allPatchesEvolvedToGlobalTimestep;
+         }
+         
+         
+         
+         inline double getAverageGlobalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _averageGlobalTimeInterval;
+         }
+         
+         
+         
+         inline void setAverageGlobalTimeInterval(const double& averageGlobalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _averageGlobalTimeInterval = averageGlobalTimeInterval;
+         }
+         
+         
+         
+         inline double getGlobalTimestepEndTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _globalTimestepEndTime;
+         }
+         
+         
+         
+         inline void setGlobalTimestepEndTime(const double& globalTimestepEndTime) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _globalTimestepEndTime = globalTimestepEndTime;
+         }
+         
+         
+         
+         inline bool getMinimalPatchBlockedDueToCoarsening() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _minimalPatchBlockedDueToCoarsening;
+         }
+         
+         
+         
+         inline void setMinimalPatchBlockedDueToCoarsening(const bool& minimalPatchBlockedDueToCoarsening) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _minimalPatchBlockedDueToCoarsening = minimalPatchBlockedDueToCoarsening;
+         }
+         
+         
+         
+         inline bool getMinimalPatchBlockedDueToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _minimalPatchBlockedDueToGlobalTimestep;
+         }
+         
+         
+         
+         inline void setMinimalPatchBlockedDueToGlobalTimestep(const bool& minimalPatchBlockedDueToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _minimalPatchBlockedDueToGlobalTimestep = minimalPatchBlockedDueToGlobalTimestep;
+         }
+         
          
          
       };
@@ -221,135 +351,265 @@ class peanoclaw::statistics::TimeIntervalStatistics {
        */
       ~TimeIntervalStatistics();
       
-      /**
-       * Generated
-       */
-       int getMinimalPatchIndex() const ;
       
-      /**
-       * Generated
-       */
-       void setMinimalPatchIndex(const int& minimalPatchIndex) ;
+      inline int getMinimalPatchIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._minimalPatchIndex;
+      }
       
-      /**
-       * Generated
-       */
-       int getMinimalPatchParentIndex() const ;
       
-      /**
-       * Generated
-       */
-       void setMinimalPatchParentIndex(const int& minimalPatchParentIndex) ;
       
-      /**
-       * Generated
-       */
-       double getMinimalPatchTime() const ;
+      inline void setMinimalPatchIndex(const int& minimalPatchIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._minimalPatchIndex = minimalPatchIndex;
+      }
       
-      /**
-       * Generated
-       */
-       void setMinimalPatchTime(const double& minimalPatchTime) ;
       
-      /**
-       * Generated
-       */
-       double getStartMaximumLocalTimeInterval() const ;
       
-      /**
-       * Generated
-       */
-       void setStartMaximumLocalTimeInterval(const double& startMaximumLocalTimeInterval) ;
+      inline int getMinimalPatchParentIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._minimalPatchParentIndex;
+      }
       
-      /**
-       * Generated
-       */
-       double getEndMaximumLocalTimeInterval() const ;
       
-      /**
-       * Generated
-       */
-       void setEndMaximumLocalTimeInterval(const double& endMaximumLocalTimeInterval) ;
       
-      /**
-       * Generated
-       */
-       double getStartMinimumLocalTimeInterval() const ;
+      inline void setMinimalPatchParentIndex(const int& minimalPatchParentIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._minimalPatchParentIndex = minimalPatchParentIndex;
+      }
       
-      /**
-       * Generated
-       */
-       void setStartMinimumLocalTimeInterval(const double& startMinimumLocalTimeInterval) ;
       
-      /**
-       * Generated
-       */
-       double getEndMinimumLocalTimeInterval() const ;
       
-      /**
-       * Generated
-       */
-       void setEndMinimumLocalTimeInterval(const double& endMinimumLocalTimeInterval) ;
+      inline double getMinimalPatchTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._minimalPatchTime;
+      }
       
-      /**
-       * Generated
-       */
-       double getMinimalTimestep() const ;
       
-      /**
-       * Generated
-       */
-       void setMinimalTimestep(const double& minimalTimestep) ;
       
-      /**
-       * Generated
-       */
-       bool getAllPatchesEvolvedToGlobalTimestep() const ;
+      inline void setMinimalPatchTime(const double& minimalPatchTime) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._minimalPatchTime = minimalPatchTime;
+      }
       
-      /**
-       * Generated
-       */
-       void setAllPatchesEvolvedToGlobalTimestep(const bool& allPatchesEvolvedToGlobalTimestep) ;
       
-      /**
-       * Generated
-       */
-       double getAverageGlobalTimeInterval() const ;
       
-      /**
-       * Generated
-       */
-       void setAverageGlobalTimeInterval(const double& averageGlobalTimeInterval) ;
+      inline double getStartMaximumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._startMaximumLocalTimeInterval;
+      }
       
-      /**
-       * Generated
-       */
-       double getGlobalTimestepEndTime() const ;
       
-      /**
-       * Generated
-       */
-       void setGlobalTimestepEndTime(const double& globalTimestepEndTime) ;
       
-      /**
-       * Generated
-       */
-       bool getMinimalPatchBlockedDueToCoarsening() const ;
+      inline void setStartMaximumLocalTimeInterval(const double& startMaximumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._startMaximumLocalTimeInterval = startMaximumLocalTimeInterval;
+      }
       
-      /**
-       * Generated
-       */
-       void setMinimalPatchBlockedDueToCoarsening(const bool& minimalPatchBlockedDueToCoarsening) ;
       
-      /**
-       * Generated
-       */
-       bool getMinimalPatchBlockedDueToGlobalTimestep() const ;
       
-      /**
-       * Generated
-       */
-       void setMinimalPatchBlockedDueToGlobalTimestep(const bool& minimalPatchBlockedDueToGlobalTimestep) ;
+      inline double getEndMaximumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._endMaximumLocalTimeInterval;
+      }
+      
+      
+      
+      inline void setEndMaximumLocalTimeInterval(const double& endMaximumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._endMaximumLocalTimeInterval = endMaximumLocalTimeInterval;
+      }
+      
+      
+      
+      inline double getStartMinimumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._startMinimumLocalTimeInterval;
+      }
+      
+      
+      
+      inline void setStartMinimumLocalTimeInterval(const double& startMinimumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._startMinimumLocalTimeInterval = startMinimumLocalTimeInterval;
+      }
+      
+      
+      
+      inline double getEndMinimumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._endMinimumLocalTimeInterval;
+      }
+      
+      
+      
+      inline void setEndMinimumLocalTimeInterval(const double& endMinimumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._endMinimumLocalTimeInterval = endMinimumLocalTimeInterval;
+      }
+      
+      
+      
+      inline double getMinimalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._minimalTimestep;
+      }
+      
+      
+      
+      inline void setMinimalTimestep(const double& minimalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._minimalTimestep = minimalTimestep;
+      }
+      
+      
+      
+      inline bool getAllPatchesEvolvedToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._allPatchesEvolvedToGlobalTimestep;
+      }
+      
+      
+      
+      inline void setAllPatchesEvolvedToGlobalTimestep(const bool& allPatchesEvolvedToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._allPatchesEvolvedToGlobalTimestep = allPatchesEvolvedToGlobalTimestep;
+      }
+      
+      
+      
+      inline double getAverageGlobalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._averageGlobalTimeInterval;
+      }
+      
+      
+      
+      inline void setAverageGlobalTimeInterval(const double& averageGlobalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._averageGlobalTimeInterval = averageGlobalTimeInterval;
+      }
+      
+      
+      
+      inline double getGlobalTimestepEndTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._globalTimestepEndTime;
+      }
+      
+      
+      
+      inline void setGlobalTimestepEndTime(const double& globalTimestepEndTime) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._globalTimestepEndTime = globalTimestepEndTime;
+      }
+      
+      
+      
+      inline bool getMinimalPatchBlockedDueToCoarsening() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._minimalPatchBlockedDueToCoarsening;
+      }
+      
+      
+      
+      inline void setMinimalPatchBlockedDueToCoarsening(const bool& minimalPatchBlockedDueToCoarsening) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._minimalPatchBlockedDueToCoarsening = minimalPatchBlockedDueToCoarsening;
+      }
+      
+      
+      
+      inline bool getMinimalPatchBlockedDueToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._minimalPatchBlockedDueToGlobalTimestep;
+      }
+      
+      
+      
+      inline void setMinimalPatchBlockedDueToGlobalTimestep(const bool& minimalPatchBlockedDueToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._minimalPatchBlockedDueToGlobalTimestep = minimalPatchBlockedDueToGlobalTimestep;
+      }
+      
       
       /**
        * Generated
@@ -409,7 +669,7 @@ class peanoclaw::statistics::TimeIntervalStatistics {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   28/04/2014 12:42
+          * @date   30/04/2014 14:07
           */
          class peanoclaw::statistics::TimeIntervalStatisticsPacked { 
             
@@ -445,135 +705,274 @@ class peanoclaw::statistics::TimeIntervalStatistics {
                    */
                   PersistentRecords(const int& minimalPatchIndex, const int& minimalPatchParentIndex, const double& minimalPatchTime, const double& startMaximumLocalTimeInterval, const double& endMaximumLocalTimeInterval, const double& startMinimumLocalTimeInterval, const double& endMinimumLocalTimeInterval, const double& minimalTimestep, const bool& allPatchesEvolvedToGlobalTimestep, const double& averageGlobalTimeInterval, const double& globalTimestepEndTime, const bool& minimalPatchBlockedDueToCoarsening, const bool& minimalPatchBlockedDueToGlobalTimestep);
                   
-                  /**
-                   * Generated
-                   */
-                   int getMinimalPatchIndex() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setMinimalPatchIndex(const int& minimalPatchIndex) ;
+                  inline int getMinimalPatchIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _minimalPatchIndex;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   int getMinimalPatchParentIndex() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setMinimalPatchParentIndex(const int& minimalPatchParentIndex) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getMinimalPatchTime() const ;
+                  inline void setMinimalPatchIndex(const int& minimalPatchIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _minimalPatchIndex = minimalPatchIndex;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setMinimalPatchTime(const double& minimalPatchTime) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getStartMaximumLocalTimeInterval() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setStartMaximumLocalTimeInterval(const double& startMaximumLocalTimeInterval) ;
+                  inline int getMinimalPatchParentIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _minimalPatchParentIndex;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   double getEndMaximumLocalTimeInterval() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setEndMaximumLocalTimeInterval(const double& endMaximumLocalTimeInterval) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getStartMinimumLocalTimeInterval() const ;
+                  inline void setMinimalPatchParentIndex(const int& minimalPatchParentIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _minimalPatchParentIndex = minimalPatchParentIndex;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setStartMinimumLocalTimeInterval(const double& startMinimumLocalTimeInterval) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getEndMinimumLocalTimeInterval() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setEndMinimumLocalTimeInterval(const double& endMinimumLocalTimeInterval) ;
+                  inline double getMinimalPatchTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _minimalPatchTime;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   double getMinimalTimestep() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setMinimalTimestep(const double& minimalTimestep) ;
                   
-                  /**
-                   * Generated
-                   */
-                   bool getAllPatchesEvolvedToGlobalTimestep() const ;
+                  inline void setMinimalPatchTime(const double& minimalPatchTime) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _minimalPatchTime = minimalPatchTime;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setAllPatchesEvolvedToGlobalTimestep(const bool& allPatchesEvolvedToGlobalTimestep) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getAverageGlobalTimeInterval() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setAverageGlobalTimeInterval(const double& averageGlobalTimeInterval) ;
+                  inline double getStartMaximumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _startMaximumLocalTimeInterval;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   double getGlobalTimestepEndTime() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setGlobalTimestepEndTime(const double& globalTimestepEndTime) ;
                   
-                  /**
-                   * Generated
-                   */
-                   bool getMinimalPatchBlockedDueToCoarsening() const ;
+                  inline void setStartMaximumLocalTimeInterval(const double& startMaximumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _startMaximumLocalTimeInterval = startMaximumLocalTimeInterval;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setMinimalPatchBlockedDueToCoarsening(const bool& minimalPatchBlockedDueToCoarsening) ;
                   
-                  /**
-                   * Generated
-                   */
-                   bool getMinimalPatchBlockedDueToGlobalTimestep() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setMinimalPatchBlockedDueToGlobalTimestep(const bool& minimalPatchBlockedDueToGlobalTimestep) ;
+                  inline double getEndMaximumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _endMaximumLocalTimeInterval;
+                  }
+                  
+                  
+                  
+                  inline void setEndMaximumLocalTimeInterval(const double& endMaximumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _endMaximumLocalTimeInterval = endMaximumLocalTimeInterval;
+                  }
+                  
+                  
+                  
+                  inline double getStartMinimumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _startMinimumLocalTimeInterval;
+                  }
+                  
+                  
+                  
+                  inline void setStartMinimumLocalTimeInterval(const double& startMinimumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _startMinimumLocalTimeInterval = startMinimumLocalTimeInterval;
+                  }
+                  
+                  
+                  
+                  inline double getEndMinimumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _endMinimumLocalTimeInterval;
+                  }
+                  
+                  
+                  
+                  inline void setEndMinimumLocalTimeInterval(const double& endMinimumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _endMinimumLocalTimeInterval = endMinimumLocalTimeInterval;
+                  }
+                  
+                  
+                  
+                  inline double getMinimalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _minimalTimestep;
+                  }
+                  
+                  
+                  
+                  inline void setMinimalTimestep(const double& minimalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _minimalTimestep = minimalTimestep;
+                  }
+                  
+                  
+                  
+                  inline bool getAllPatchesEvolvedToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     short int mask = 1 << (0);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                  }
+                  
+                  
+                  
+                  inline void setAllPatchesEvolvedToGlobalTimestep(const bool& allPatchesEvolvedToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     short int mask = 1 << (0);
+   _packedRecords0 = static_cast<short int>( allPatchesEvolvedToGlobalTimestep ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                  }
+                  
+                  
+                  
+                  inline double getAverageGlobalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _averageGlobalTimeInterval;
+                  }
+                  
+                  
+                  
+                  inline void setAverageGlobalTimeInterval(const double& averageGlobalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _averageGlobalTimeInterval = averageGlobalTimeInterval;
+                  }
+                  
+                  
+                  
+                  inline double getGlobalTimestepEndTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _globalTimestepEndTime;
+                  }
+                  
+                  
+                  
+                  inline void setGlobalTimestepEndTime(const double& globalTimestepEndTime) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _globalTimestepEndTime = globalTimestepEndTime;
+                  }
+                  
+                  
+                  
+                  inline bool getMinimalPatchBlockedDueToCoarsening() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     short int mask = 1 << (1);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                  }
+                  
+                  
+                  
+                  inline void setMinimalPatchBlockedDueToCoarsening(const bool& minimalPatchBlockedDueToCoarsening) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     short int mask = 1 << (1);
+   _packedRecords0 = static_cast<short int>( minimalPatchBlockedDueToCoarsening ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                  }
+                  
+                  
+                  
+                  inline bool getMinimalPatchBlockedDueToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     short int mask = 1 << (2);
+   short int tmp = static_cast<short int>(_packedRecords0 & mask);
+   return (tmp != 0);
+                  }
+                  
+                  
+                  
+                  inline void setMinimalPatchBlockedDueToGlobalTimestep(const bool& minimalPatchBlockedDueToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     short int mask = 1 << (2);
+   _packedRecords0 = static_cast<short int>( minimalPatchBlockedDueToGlobalTimestep ? (_packedRecords0 | mask) : (_packedRecords0 & ~mask));
+                  }
+                  
                   
                   
                };
@@ -602,135 +1001,274 @@ class peanoclaw::statistics::TimeIntervalStatistics {
                 */
                ~TimeIntervalStatisticsPacked();
                
-               /**
-                * Generated
-                */
-                int getMinimalPatchIndex() const ;
                
-               /**
-                * Generated
-                */
-                void setMinimalPatchIndex(const int& minimalPatchIndex) ;
+               inline int getMinimalPatchIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._minimalPatchIndex;
+               }
                
-               /**
-                * Generated
-                */
-                int getMinimalPatchParentIndex() const ;
                
-               /**
-                * Generated
-                */
-                void setMinimalPatchParentIndex(const int& minimalPatchParentIndex) ;
                
-               /**
-                * Generated
-                */
-                double getMinimalPatchTime() const ;
+               inline void setMinimalPatchIndex(const int& minimalPatchIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._minimalPatchIndex = minimalPatchIndex;
+               }
                
-               /**
-                * Generated
-                */
-                void setMinimalPatchTime(const double& minimalPatchTime) ;
                
-               /**
-                * Generated
-                */
-                double getStartMaximumLocalTimeInterval() const ;
                
-               /**
-                * Generated
-                */
-                void setStartMaximumLocalTimeInterval(const double& startMaximumLocalTimeInterval) ;
+               inline int getMinimalPatchParentIndex() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._minimalPatchParentIndex;
+               }
                
-               /**
-                * Generated
-                */
-                double getEndMaximumLocalTimeInterval() const ;
                
-               /**
-                * Generated
-                */
-                void setEndMaximumLocalTimeInterval(const double& endMaximumLocalTimeInterval) ;
                
-               /**
-                * Generated
-                */
-                double getStartMinimumLocalTimeInterval() const ;
+               inline void setMinimalPatchParentIndex(const int& minimalPatchParentIndex) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._minimalPatchParentIndex = minimalPatchParentIndex;
+               }
                
-               /**
-                * Generated
-                */
-                void setStartMinimumLocalTimeInterval(const double& startMinimumLocalTimeInterval) ;
                
-               /**
-                * Generated
-                */
-                double getEndMinimumLocalTimeInterval() const ;
                
-               /**
-                * Generated
-                */
-                void setEndMinimumLocalTimeInterval(const double& endMinimumLocalTimeInterval) ;
+               inline double getMinimalPatchTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._minimalPatchTime;
+               }
                
-               /**
-                * Generated
-                */
-                double getMinimalTimestep() const ;
                
-               /**
-                * Generated
-                */
-                void setMinimalTimestep(const double& minimalTimestep) ;
                
-               /**
-                * Generated
-                */
-                bool getAllPatchesEvolvedToGlobalTimestep() const ;
+               inline void setMinimalPatchTime(const double& minimalPatchTime) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._minimalPatchTime = minimalPatchTime;
+               }
                
-               /**
-                * Generated
-                */
-                void setAllPatchesEvolvedToGlobalTimestep(const bool& allPatchesEvolvedToGlobalTimestep) ;
                
-               /**
-                * Generated
-                */
-                double getAverageGlobalTimeInterval() const ;
                
-               /**
-                * Generated
-                */
-                void setAverageGlobalTimeInterval(const double& averageGlobalTimeInterval) ;
+               inline double getStartMaximumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._startMaximumLocalTimeInterval;
+               }
                
-               /**
-                * Generated
-                */
-                double getGlobalTimestepEndTime() const ;
                
-               /**
-                * Generated
-                */
-                void setGlobalTimestepEndTime(const double& globalTimestepEndTime) ;
                
-               /**
-                * Generated
-                */
-                bool getMinimalPatchBlockedDueToCoarsening() const ;
+               inline void setStartMaximumLocalTimeInterval(const double& startMaximumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._startMaximumLocalTimeInterval = startMaximumLocalTimeInterval;
+               }
                
-               /**
-                * Generated
-                */
-                void setMinimalPatchBlockedDueToCoarsening(const bool& minimalPatchBlockedDueToCoarsening) ;
                
-               /**
-                * Generated
-                */
-                bool getMinimalPatchBlockedDueToGlobalTimestep() const ;
                
-               /**
-                * Generated
-                */
-                void setMinimalPatchBlockedDueToGlobalTimestep(const bool& minimalPatchBlockedDueToGlobalTimestep) ;
+               inline double getEndMaximumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._endMaximumLocalTimeInterval;
+               }
+               
+               
+               
+               inline void setEndMaximumLocalTimeInterval(const double& endMaximumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._endMaximumLocalTimeInterval = endMaximumLocalTimeInterval;
+               }
+               
+               
+               
+               inline double getStartMinimumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._startMinimumLocalTimeInterval;
+               }
+               
+               
+               
+               inline void setStartMinimumLocalTimeInterval(const double& startMinimumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._startMinimumLocalTimeInterval = startMinimumLocalTimeInterval;
+               }
+               
+               
+               
+               inline double getEndMinimumLocalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._endMinimumLocalTimeInterval;
+               }
+               
+               
+               
+               inline void setEndMinimumLocalTimeInterval(const double& endMinimumLocalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._endMinimumLocalTimeInterval = endMinimumLocalTimeInterval;
+               }
+               
+               
+               
+               inline double getMinimalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._minimalTimestep;
+               }
+               
+               
+               
+               inline void setMinimalTimestep(const double& minimalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._minimalTimestep = minimalTimestep;
+               }
+               
+               
+               
+               inline bool getAllPatchesEvolvedToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (0);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+               }
+               
+               
+               
+               inline void setAllPatchesEvolvedToGlobalTimestep(const bool& allPatchesEvolvedToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (0);
+   _persistentRecords._packedRecords0 = static_cast<short int>( allPatchesEvolvedToGlobalTimestep ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+               }
+               
+               
+               
+               inline double getAverageGlobalTimeInterval() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._averageGlobalTimeInterval;
+               }
+               
+               
+               
+               inline void setAverageGlobalTimeInterval(const double& averageGlobalTimeInterval) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._averageGlobalTimeInterval = averageGlobalTimeInterval;
+               }
+               
+               
+               
+               inline double getGlobalTimestepEndTime() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._globalTimestepEndTime;
+               }
+               
+               
+               
+               inline void setGlobalTimestepEndTime(const double& globalTimestepEndTime) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._globalTimestepEndTime = globalTimestepEndTime;
+               }
+               
+               
+               
+               inline bool getMinimalPatchBlockedDueToCoarsening() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (1);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+               }
+               
+               
+               
+               inline void setMinimalPatchBlockedDueToCoarsening(const bool& minimalPatchBlockedDueToCoarsening) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (1);
+   _persistentRecords._packedRecords0 = static_cast<short int>( minimalPatchBlockedDueToCoarsening ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+               }
+               
+               
+               
+               inline bool getMinimalPatchBlockedDueToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (2);
+   short int tmp = static_cast<short int>(_persistentRecords._packedRecords0 & mask);
+   return (tmp != 0);
+               }
+               
+               
+               
+               inline void setMinimalPatchBlockedDueToGlobalTimestep(const bool& minimalPatchBlockedDueToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  short int mask = 1 << (2);
+   _persistentRecords._packedRecords0 = static_cast<short int>( minimalPatchBlockedDueToGlobalTimestep ? (_persistentRecords._packedRecords0 | mask) : (_persistentRecords._packedRecords0 & ~mask));
+               }
+               
                
                /**
                 * Generated

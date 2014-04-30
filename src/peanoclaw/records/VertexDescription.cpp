@@ -11,30 +11,6 @@ _touched(touched) {
    
 }
 
-
- tarch::la::Vector<TWO_POWER_D,int> peanoclaw::records::VertexDescription::PersistentRecords::getIndicesOfAdjacentCellDescriptions() const  {
-   return _indicesOfAdjacentCellDescriptions;
-}
-
-
-
- void peanoclaw::records::VertexDescription::PersistentRecords::setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions)  {
-   _indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
-}
-
-
-
- bool peanoclaw::records::VertexDescription::PersistentRecords::getTouched() const  {
-   return _touched;
-}
-
-
-
- void peanoclaw::records::VertexDescription::PersistentRecords::setTouched(const bool& touched)  {
-   _touched = touched;
-}
-
-
 peanoclaw::records::VertexDescription::VertexDescription() {
    
 }
@@ -53,48 +29,6 @@ _persistentRecords(indicesOfAdjacentCellDescriptions, touched) {
 
 
 peanoclaw::records::VertexDescription::~VertexDescription() { }
-
-
- tarch::la::Vector<TWO_POWER_D,int> peanoclaw::records::VertexDescription::getIndicesOfAdjacentCellDescriptions() const  {
-   return _persistentRecords._indicesOfAdjacentCellDescriptions;
-}
-
-
-
- void peanoclaw::records::VertexDescription::setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions)  {
-   _persistentRecords._indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
-}
-
-
-
- int peanoclaw::records::VertexDescription::getIndicesOfAdjacentCellDescriptions(int elementIndex) const  {
-   assertion(elementIndex>=0);
-   assertion(elementIndex<TWO_POWER_D);
-   return _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex];
-   
-}
-
-
-
- void peanoclaw::records::VertexDescription::setIndicesOfAdjacentCellDescriptions(int elementIndex, const int& indicesOfAdjacentCellDescriptions)  {
-   assertion(elementIndex>=0);
-   assertion(elementIndex<TWO_POWER_D);
-   _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex]= indicesOfAdjacentCellDescriptions;
-   
-}
-
-
-
- bool peanoclaw::records::VertexDescription::getTouched() const  {
-   return _persistentRecords._touched;
-}
-
-
-
- void peanoclaw::records::VertexDescription::setTouched(const bool& touched)  {
-   _persistentRecords._touched = touched;
-}
-
 
 std::string peanoclaw::records::VertexDescription::toString(const IterationParity& param) {
    switch (param) {
@@ -452,30 +386,6 @@ _touched(touched) {
    
 }
 
-
- tarch::la::Vector<TWO_POWER_D,int> peanoclaw::records::VertexDescriptionPacked::PersistentRecords::getIndicesOfAdjacentCellDescriptions() const  {
-   return _indicesOfAdjacentCellDescriptions;
-}
-
-
-
- void peanoclaw::records::VertexDescriptionPacked::PersistentRecords::setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions)  {
-   _indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
-}
-
-
-
- bool peanoclaw::records::VertexDescriptionPacked::PersistentRecords::getTouched() const  {
-   return _touched;
-}
-
-
-
- void peanoclaw::records::VertexDescriptionPacked::PersistentRecords::setTouched(const bool& touched)  {
-   _touched = touched;
-}
-
-
 peanoclaw::records::VertexDescriptionPacked::VertexDescriptionPacked() {
    
 }
@@ -494,48 +404,6 @@ _persistentRecords(indicesOfAdjacentCellDescriptions, touched) {
 
 
 peanoclaw::records::VertexDescriptionPacked::~VertexDescriptionPacked() { }
-
-
- tarch::la::Vector<TWO_POWER_D,int> peanoclaw::records::VertexDescriptionPacked::getIndicesOfAdjacentCellDescriptions() const  {
-   return _persistentRecords._indicesOfAdjacentCellDescriptions;
-}
-
-
-
- void peanoclaw::records::VertexDescriptionPacked::setIndicesOfAdjacentCellDescriptions(const tarch::la::Vector<TWO_POWER_D,int>& indicesOfAdjacentCellDescriptions)  {
-   _persistentRecords._indicesOfAdjacentCellDescriptions = (indicesOfAdjacentCellDescriptions);
-}
-
-
-
- int peanoclaw::records::VertexDescriptionPacked::getIndicesOfAdjacentCellDescriptions(int elementIndex) const  {
-   assertion(elementIndex>=0);
-   assertion(elementIndex<TWO_POWER_D);
-   return _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex];
-   
-}
-
-
-
- void peanoclaw::records::VertexDescriptionPacked::setIndicesOfAdjacentCellDescriptions(int elementIndex, const int& indicesOfAdjacentCellDescriptions)  {
-   assertion(elementIndex>=0);
-   assertion(elementIndex<TWO_POWER_D);
-   _persistentRecords._indicesOfAdjacentCellDescriptions[elementIndex]= indicesOfAdjacentCellDescriptions;
-   
-}
-
-
-
- bool peanoclaw::records::VertexDescriptionPacked::getTouched() const  {
-   return _persistentRecords._touched;
-}
-
-
-
- void peanoclaw::records::VertexDescriptionPacked::setTouched(const bool& touched)  {
-   _persistentRecords._touched = touched;
-}
-
 
 std::string peanoclaw::records::VertexDescriptionPacked::toString(const IterationParity& param) {
    return peanoclaw::records::VertexDescription::toString(param);

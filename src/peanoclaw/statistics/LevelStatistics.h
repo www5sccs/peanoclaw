@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   28/04/2014 12:42
+ * @date   30/04/2014 14:07
  */
 class peanoclaw::statistics::LevelStatistics { 
    
@@ -63,125 +63,245 @@ class peanoclaw::statistics::LevelStatistics {
           */
          PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
          
-         /**
-          * Generated
-          */
-          double getArea() const ;
          
-         /**
-          * Generated
-          */
-          void setArea(const double& area) ;
+         inline double getArea() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _area;
+         }
          
-         /**
-          * Generated
-          */
-          int getLevel() const ;
          
-         /**
-          * Generated
-          */
-          void setLevel(const int& level) ;
          
-         /**
-          * Generated
-          */
-          double getNumberOfPatches() const ;
+         inline void setArea(const double& area) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _area = area;
+         }
          
-         /**
-          * Generated
-          */
-          void setNumberOfPatches(const double& numberOfPatches) ;
          
-         /**
-          * Generated
-          */
-          double getNumberOfCells() const ;
          
-         /**
-          * Generated
-          */
-          void setNumberOfCells(const double& numberOfCells) ;
+         inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _level;
+         }
          
-         /**
-          * Generated
-          */
-          double getNumberOfCellUpdates() const ;
          
-         /**
-          * Generated
-          */
-          void setNumberOfCellUpdates(const double& numberOfCellUpdates) ;
          
-         /**
-          * Generated
-          */
-          double getCreatedPatches() const ;
+         inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _level = level;
+         }
          
-         /**
-          * Generated
-          */
-          void setCreatedPatches(const double& createdPatches) ;
          
-         /**
-          * Generated
-          */
-          double getDestroyedPatches() const ;
          
-         /**
-          * Generated
-          */
-          void setDestroyedPatches(const double& destroyedPatches) ;
+         inline double getNumberOfPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _numberOfPatches;
+         }
          
-         /**
-          * Generated
-          */
-          double getPatchesBlockedDueToNeighbors() const ;
          
-         /**
-          * Generated
-          */
-          void setPatchesBlockedDueToNeighbors(const double& patchesBlockedDueToNeighbors) ;
          
-         /**
-          * Generated
-          */
-          double getPatchesBlockedDueToGlobalTimestep() const ;
+         inline void setNumberOfPatches(const double& numberOfPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _numberOfPatches = numberOfPatches;
+         }
          
-         /**
-          * Generated
-          */
-          void setPatchesBlockedDueToGlobalTimestep(const double& patchesBlockedDueToGlobalTimestep) ;
          
-         /**
-          * Generated
-          */
-          double getPatchesSkippingIteration() const ;
          
-         /**
-          * Generated
-          */
-          void setPatchesSkippingIteration(const double& patchesSkippingIteration) ;
+         inline double getNumberOfCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _numberOfCells;
+         }
          
-         /**
-          * Generated
-          */
-          double getPatchesCoarsening() const ;
          
-         /**
-          * Generated
-          */
-          void setPatchesCoarsening(const double& patchesCoarsening) ;
          
-         /**
-          * Generated
-          */
-          int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const ;
+         inline void setNumberOfCells(const double& numberOfCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _numberOfCells = numberOfCells;
+         }
          
-         /**
-          * Generated
-          */
-          void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) ;
+         
+         
+         inline double getNumberOfCellUpdates() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _numberOfCellUpdates;
+         }
+         
+         
+         
+         inline void setNumberOfCellUpdates(const double& numberOfCellUpdates) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _numberOfCellUpdates = numberOfCellUpdates;
+         }
+         
+         
+         
+         inline double getCreatedPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _createdPatches;
+         }
+         
+         
+         
+         inline void setCreatedPatches(const double& createdPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _createdPatches = createdPatches;
+         }
+         
+         
+         
+         inline double getDestroyedPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _destroyedPatches;
+         }
+         
+         
+         
+         inline void setDestroyedPatches(const double& destroyedPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _destroyedPatches = destroyedPatches;
+         }
+         
+         
+         
+         inline double getPatchesBlockedDueToNeighbors() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _patchesBlockedDueToNeighbors;
+         }
+         
+         
+         
+         inline void setPatchesBlockedDueToNeighbors(const double& patchesBlockedDueToNeighbors) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _patchesBlockedDueToNeighbors = patchesBlockedDueToNeighbors;
+         }
+         
+         
+         
+         inline double getPatchesBlockedDueToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _patchesBlockedDueToGlobalTimestep;
+         }
+         
+         
+         
+         inline void setPatchesBlockedDueToGlobalTimestep(const double& patchesBlockedDueToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _patchesBlockedDueToGlobalTimestep = patchesBlockedDueToGlobalTimestep;
+         }
+         
+         
+         
+         inline double getPatchesSkippingIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _patchesSkippingIteration;
+         }
+         
+         
+         
+         inline void setPatchesSkippingIteration(const double& patchesSkippingIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _patchesSkippingIteration = patchesSkippingIteration;
+         }
+         
+         
+         
+         inline double getPatchesCoarsening() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _patchesCoarsening;
+         }
+         
+         
+         
+         inline void setPatchesCoarsening(const double& patchesCoarsening) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _patchesCoarsening = patchesCoarsening;
+         }
+         
+         
+         
+         inline int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _estimatedNumberOfRemainingIterationsToGlobalTimestep;
+         }
+         
+         
+         
+         inline void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+         }
+         
          
          
       };
@@ -210,125 +330,245 @@ class peanoclaw::statistics::LevelStatistics {
        */
       ~LevelStatistics();
       
-      /**
-       * Generated
-       */
-       double getArea() const ;
       
-      /**
-       * Generated
-       */
-       void setArea(const double& area) ;
+      inline double getArea() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._area;
+      }
       
-      /**
-       * Generated
-       */
-       int getLevel() const ;
       
-      /**
-       * Generated
-       */
-       void setLevel(const int& level) ;
       
-      /**
-       * Generated
-       */
-       double getNumberOfPatches() const ;
+      inline void setArea(const double& area) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._area = area;
+      }
       
-      /**
-       * Generated
-       */
-       void setNumberOfPatches(const double& numberOfPatches) ;
       
-      /**
-       * Generated
-       */
-       double getNumberOfCells() const ;
       
-      /**
-       * Generated
-       */
-       void setNumberOfCells(const double& numberOfCells) ;
+      inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._level;
+      }
       
-      /**
-       * Generated
-       */
-       double getNumberOfCellUpdates() const ;
       
-      /**
-       * Generated
-       */
-       void setNumberOfCellUpdates(const double& numberOfCellUpdates) ;
       
-      /**
-       * Generated
-       */
-       double getCreatedPatches() const ;
+      inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._level = level;
+      }
       
-      /**
-       * Generated
-       */
-       void setCreatedPatches(const double& createdPatches) ;
       
-      /**
-       * Generated
-       */
-       double getDestroyedPatches() const ;
       
-      /**
-       * Generated
-       */
-       void setDestroyedPatches(const double& destroyedPatches) ;
+      inline double getNumberOfPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._numberOfPatches;
+      }
       
-      /**
-       * Generated
-       */
-       double getPatchesBlockedDueToNeighbors() const ;
       
-      /**
-       * Generated
-       */
-       void setPatchesBlockedDueToNeighbors(const double& patchesBlockedDueToNeighbors) ;
       
-      /**
-       * Generated
-       */
-       double getPatchesBlockedDueToGlobalTimestep() const ;
+      inline void setNumberOfPatches(const double& numberOfPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._numberOfPatches = numberOfPatches;
+      }
       
-      /**
-       * Generated
-       */
-       void setPatchesBlockedDueToGlobalTimestep(const double& patchesBlockedDueToGlobalTimestep) ;
       
-      /**
-       * Generated
-       */
-       double getPatchesSkippingIteration() const ;
       
-      /**
-       * Generated
-       */
-       void setPatchesSkippingIteration(const double& patchesSkippingIteration) ;
+      inline double getNumberOfCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._numberOfCells;
+      }
       
-      /**
-       * Generated
-       */
-       double getPatchesCoarsening() const ;
       
-      /**
-       * Generated
-       */
-       void setPatchesCoarsening(const double& patchesCoarsening) ;
       
-      /**
-       * Generated
-       */
-       int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const ;
+      inline void setNumberOfCells(const double& numberOfCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._numberOfCells = numberOfCells;
+      }
       
-      /**
-       * Generated
-       */
-       void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) ;
+      
+      
+      inline double getNumberOfCellUpdates() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._numberOfCellUpdates;
+      }
+      
+      
+      
+      inline void setNumberOfCellUpdates(const double& numberOfCellUpdates) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._numberOfCellUpdates = numberOfCellUpdates;
+      }
+      
+      
+      
+      inline double getCreatedPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._createdPatches;
+      }
+      
+      
+      
+      inline void setCreatedPatches(const double& createdPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._createdPatches = createdPatches;
+      }
+      
+      
+      
+      inline double getDestroyedPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._destroyedPatches;
+      }
+      
+      
+      
+      inline void setDestroyedPatches(const double& destroyedPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._destroyedPatches = destroyedPatches;
+      }
+      
+      
+      
+      inline double getPatchesBlockedDueToNeighbors() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._patchesBlockedDueToNeighbors;
+      }
+      
+      
+      
+      inline void setPatchesBlockedDueToNeighbors(const double& patchesBlockedDueToNeighbors) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._patchesBlockedDueToNeighbors = patchesBlockedDueToNeighbors;
+      }
+      
+      
+      
+      inline double getPatchesBlockedDueToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._patchesBlockedDueToGlobalTimestep;
+      }
+      
+      
+      
+      inline void setPatchesBlockedDueToGlobalTimestep(const double& patchesBlockedDueToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._patchesBlockedDueToGlobalTimestep = patchesBlockedDueToGlobalTimestep;
+      }
+      
+      
+      
+      inline double getPatchesSkippingIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._patchesSkippingIteration;
+      }
+      
+      
+      
+      inline void setPatchesSkippingIteration(const double& patchesSkippingIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._patchesSkippingIteration = patchesSkippingIteration;
+      }
+      
+      
+      
+      inline double getPatchesCoarsening() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._patchesCoarsening;
+      }
+      
+      
+      
+      inline void setPatchesCoarsening(const double& patchesCoarsening) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._patchesCoarsening = patchesCoarsening;
+      }
+      
+      
+      
+      inline int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep;
+      }
+      
+      
+      
+      inline void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+      }
+      
       
       /**
        * Generated
@@ -388,7 +628,7 @@ class peanoclaw::statistics::LevelStatistics {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   28/04/2014 12:42
+          * @date   30/04/2014 14:07
           */
          class peanoclaw::statistics::LevelStatisticsPacked { 
             
@@ -417,125 +657,245 @@ class peanoclaw::statistics::LevelStatistics {
                    */
                   PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
                   
-                  /**
-                   * Generated
-                   */
-                   double getArea() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setArea(const double& area) ;
+                  inline double getArea() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _area;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   int getLevel() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setLevel(const int& level) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getNumberOfPatches() const ;
+                  inline void setArea(const double& area) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _area = area;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setNumberOfPatches(const double& numberOfPatches) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getNumberOfCells() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setNumberOfCells(const double& numberOfCells) ;
+                  inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _level;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   double getNumberOfCellUpdates() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setNumberOfCellUpdates(const double& numberOfCellUpdates) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getCreatedPatches() const ;
+                  inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _level = level;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setCreatedPatches(const double& createdPatches) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getDestroyedPatches() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setDestroyedPatches(const double& destroyedPatches) ;
+                  inline double getNumberOfPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _numberOfPatches;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   double getPatchesBlockedDueToNeighbors() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setPatchesBlockedDueToNeighbors(const double& patchesBlockedDueToNeighbors) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getPatchesBlockedDueToGlobalTimestep() const ;
+                  inline void setNumberOfPatches(const double& numberOfPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _numberOfPatches = numberOfPatches;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setPatchesBlockedDueToGlobalTimestep(const double& patchesBlockedDueToGlobalTimestep) ;
                   
-                  /**
-                   * Generated
-                   */
-                   double getPatchesSkippingIteration() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setPatchesSkippingIteration(const double& patchesSkippingIteration) ;
+                  inline double getNumberOfCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _numberOfCells;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   double getPatchesCoarsening() const ;
                   
-                  /**
-                   * Generated
-                   */
-                   void setPatchesCoarsening(const double& patchesCoarsening) ;
                   
-                  /**
-                   * Generated
-                   */
-                   int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const ;
+                  inline void setNumberOfCells(const double& numberOfCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _numberOfCells = numberOfCells;
+                  }
                   
-                  /**
-                   * Generated
-                   */
-                   void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) ;
+                  
+                  
+                  inline double getNumberOfCellUpdates() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _numberOfCellUpdates;
+                  }
+                  
+                  
+                  
+                  inline void setNumberOfCellUpdates(const double& numberOfCellUpdates) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _numberOfCellUpdates = numberOfCellUpdates;
+                  }
+                  
+                  
+                  
+                  inline double getCreatedPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _createdPatches;
+                  }
+                  
+                  
+                  
+                  inline void setCreatedPatches(const double& createdPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _createdPatches = createdPatches;
+                  }
+                  
+                  
+                  
+                  inline double getDestroyedPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _destroyedPatches;
+                  }
+                  
+                  
+                  
+                  inline void setDestroyedPatches(const double& destroyedPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _destroyedPatches = destroyedPatches;
+                  }
+                  
+                  
+                  
+                  inline double getPatchesBlockedDueToNeighbors() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _patchesBlockedDueToNeighbors;
+                  }
+                  
+                  
+                  
+                  inline void setPatchesBlockedDueToNeighbors(const double& patchesBlockedDueToNeighbors) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _patchesBlockedDueToNeighbors = patchesBlockedDueToNeighbors;
+                  }
+                  
+                  
+                  
+                  inline double getPatchesBlockedDueToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _patchesBlockedDueToGlobalTimestep;
+                  }
+                  
+                  
+                  
+                  inline void setPatchesBlockedDueToGlobalTimestep(const double& patchesBlockedDueToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _patchesBlockedDueToGlobalTimestep = patchesBlockedDueToGlobalTimestep;
+                  }
+                  
+                  
+                  
+                  inline double getPatchesSkippingIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _patchesSkippingIteration;
+                  }
+                  
+                  
+                  
+                  inline void setPatchesSkippingIteration(const double& patchesSkippingIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _patchesSkippingIteration = patchesSkippingIteration;
+                  }
+                  
+                  
+                  
+                  inline double getPatchesCoarsening() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _patchesCoarsening;
+                  }
+                  
+                  
+                  
+                  inline void setPatchesCoarsening(const double& patchesCoarsening) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _patchesCoarsening = patchesCoarsening;
+                  }
+                  
+                  
+                  
+                  inline int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _estimatedNumberOfRemainingIterationsToGlobalTimestep;
+                  }
+                  
+                  
+                  
+                  inline void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+                  }
+                  
                   
                   
                };
@@ -564,125 +924,245 @@ class peanoclaw::statistics::LevelStatistics {
                 */
                ~LevelStatisticsPacked();
                
-               /**
-                * Generated
-                */
-                double getArea() const ;
                
-               /**
-                * Generated
-                */
-                void setArea(const double& area) ;
+               inline double getArea() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._area;
+               }
                
-               /**
-                * Generated
-                */
-                int getLevel() const ;
                
-               /**
-                * Generated
-                */
-                void setLevel(const int& level) ;
                
-               /**
-                * Generated
-                */
-                double getNumberOfPatches() const ;
+               inline void setArea(const double& area) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._area = area;
+               }
                
-               /**
-                * Generated
-                */
-                void setNumberOfPatches(const double& numberOfPatches) ;
                
-               /**
-                * Generated
-                */
-                double getNumberOfCells() const ;
                
-               /**
-                * Generated
-                */
-                void setNumberOfCells(const double& numberOfCells) ;
+               inline int getLevel() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._level;
+               }
                
-               /**
-                * Generated
-                */
-                double getNumberOfCellUpdates() const ;
                
-               /**
-                * Generated
-                */
-                void setNumberOfCellUpdates(const double& numberOfCellUpdates) ;
                
-               /**
-                * Generated
-                */
-                double getCreatedPatches() const ;
+               inline void setLevel(const int& level) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._level = level;
+               }
                
-               /**
-                * Generated
-                */
-                void setCreatedPatches(const double& createdPatches) ;
                
-               /**
-                * Generated
-                */
-                double getDestroyedPatches() const ;
                
-               /**
-                * Generated
-                */
-                void setDestroyedPatches(const double& destroyedPatches) ;
+               inline double getNumberOfPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._numberOfPatches;
+               }
                
-               /**
-                * Generated
-                */
-                double getPatchesBlockedDueToNeighbors() const ;
                
-               /**
-                * Generated
-                */
-                void setPatchesBlockedDueToNeighbors(const double& patchesBlockedDueToNeighbors) ;
                
-               /**
-                * Generated
-                */
-                double getPatchesBlockedDueToGlobalTimestep() const ;
+               inline void setNumberOfPatches(const double& numberOfPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._numberOfPatches = numberOfPatches;
+               }
                
-               /**
-                * Generated
-                */
-                void setPatchesBlockedDueToGlobalTimestep(const double& patchesBlockedDueToGlobalTimestep) ;
                
-               /**
-                * Generated
-                */
-                double getPatchesSkippingIteration() const ;
                
-               /**
-                * Generated
-                */
-                void setPatchesSkippingIteration(const double& patchesSkippingIteration) ;
+               inline double getNumberOfCells() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._numberOfCells;
+               }
                
-               /**
-                * Generated
-                */
-                double getPatchesCoarsening() const ;
                
-               /**
-                * Generated
-                */
-                void setPatchesCoarsening(const double& patchesCoarsening) ;
                
-               /**
-                * Generated
-                */
-                int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const ;
+               inline void setNumberOfCells(const double& numberOfCells) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._numberOfCells = numberOfCells;
+               }
                
-               /**
-                * Generated
-                */
-                void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) ;
+               
+               
+               inline double getNumberOfCellUpdates() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._numberOfCellUpdates;
+               }
+               
+               
+               
+               inline void setNumberOfCellUpdates(const double& numberOfCellUpdates) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._numberOfCellUpdates = numberOfCellUpdates;
+               }
+               
+               
+               
+               inline double getCreatedPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._createdPatches;
+               }
+               
+               
+               
+               inline void setCreatedPatches(const double& createdPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._createdPatches = createdPatches;
+               }
+               
+               
+               
+               inline double getDestroyedPatches() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._destroyedPatches;
+               }
+               
+               
+               
+               inline void setDestroyedPatches(const double& destroyedPatches) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._destroyedPatches = destroyedPatches;
+               }
+               
+               
+               
+               inline double getPatchesBlockedDueToNeighbors() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._patchesBlockedDueToNeighbors;
+               }
+               
+               
+               
+               inline void setPatchesBlockedDueToNeighbors(const double& patchesBlockedDueToNeighbors) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._patchesBlockedDueToNeighbors = patchesBlockedDueToNeighbors;
+               }
+               
+               
+               
+               inline double getPatchesBlockedDueToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._patchesBlockedDueToGlobalTimestep;
+               }
+               
+               
+               
+               inline void setPatchesBlockedDueToGlobalTimestep(const double& patchesBlockedDueToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._patchesBlockedDueToGlobalTimestep = patchesBlockedDueToGlobalTimestep;
+               }
+               
+               
+               
+               inline double getPatchesSkippingIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._patchesSkippingIteration;
+               }
+               
+               
+               
+               inline void setPatchesSkippingIteration(const double& patchesSkippingIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._patchesSkippingIteration = patchesSkippingIteration;
+               }
+               
+               
+               
+               inline double getPatchesCoarsening() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._patchesCoarsening;
+               }
+               
+               
+               
+               inline void setPatchesCoarsening(const double& patchesCoarsening) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._patchesCoarsening = patchesCoarsening;
+               }
+               
+               
+               
+               inline int getEstimatedNumberOfRemainingIterationsToGlobalTimestep() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep;
+               }
+               
+               
+               
+               inline void setEstimatedNumberOfRemainingIterationsToGlobalTimestep(const int& estimatedNumberOfRemainingIterationsToGlobalTimestep) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+               }
+               
                
                /**
                 * Generated
