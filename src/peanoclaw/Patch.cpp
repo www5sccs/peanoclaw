@@ -32,10 +32,10 @@ int peanoclaw::Patch::linearize(int unknown,
 //        toString());
 //    index += subcellIndex(d) * stride;
 //    stride *= _cellDescription->getSubdivisionFactor()(d);
-    index += subcellIndex(d) * uNewStrideCache[d + 1];
+    index += subcellIndex(d) * _uNewStrideCache[d + 1];
   }
 //  index += unknown * stride;
-  index += unknown * uNewStrideCache[0];
+  index += unknown * _uNewStrideCache[0];
 
   return index;
 }
@@ -59,9 +59,9 @@ int peanoclaw::Patch::linearizeWithGhostlayer(
 //    );
 //    index += (subcellIndex(d) + ghostlayerWidth) * stride;
 //    stride *= (subdivisionFactor(d) + 2*ghostlayerWidth);
-    index += (subcellIndex(d) + ghostlayerWidth) * uOldStrideCache[d+1];
+    index += (subcellIndex(d) + ghostlayerWidth) * _uOldStrideCache[d+1];
   }
-  index += unknown * uOldStrideCache[0];
+  index += unknown * _uOldStrideCache[0];
 //  index += unknown * stride;
   return index;
 }
@@ -77,19 +77,19 @@ void peanoclaw::Patch::fillCaches() {
   //UOld
   int stride = 1;
   for (int d = DIMENSIONS; d > 0; d--) {
-    uOldStrideCache[d] = stride;
+    _uOldStrideCache[d] = stride;
     stride *= subdivisionFactor(d - 1) + 2 * ghostlayerWidth;
   }
-  uOldStrideCache[0] = stride;
+  _uOldStrideCache[0] = stride;
   _uOldWithGhostlayerArrayIndex = tarch::la::volume(subdivisionFactor) * _cellDescription->getUnknownsPerSubcell();
 
   //UNew
   stride = 1;
   for (int d = DIMENSIONS; d > 0; d--) {
-    uNewStrideCache[d] = stride;
+    _uNewStrideCache[d] = stride;
     stride *= subdivisionFactor(d - 1);
   }
-  uNewStrideCache[0] = stride;
+  _uNewStrideCache[0] = stride;
 
   //Parameter without ghostlayer
   tarch::la::Vector<DIMENSIONS, int> ghostlayer = tarch::la::Vector<DIMENSIONS, int>(2*ghostlayerWidth);
@@ -514,7 +514,7 @@ int peanoclaw::Patch::getLinearIndexUOld(tarch::la::Vector<DIMENSIONS, int> subc
 
 #ifndef PATCH_INLINE_GETTERS_AND_SETTERS
 double peanoclaw::Patch::getValueUNew(int linearIndex, int unknown) const {
-  int index = linearIndex + uNewStrideCache[0] * unknown;
+  int index = linearIndex + _uNewStrideCache[0] * unknown;
 #ifdef PATCH_DISABLE_RANGE_CHECK
   return (*_uNew)[index].getU();
 #else
@@ -525,7 +525,7 @@ double peanoclaw::Patch::getValueUNew(int linearIndex, int unknown) const {
 
 #ifndef PATCH_INLINE_GETTERS_AND_SETTERS
 void peanoclaw::Patch::setValueUNew(int linearIndex, int unknown, double value) {
-  int index = linearIndex + uNewStrideCache[0] * unknown;
+  int index = linearIndex + _uNewStrideCache[0] * unknown;
 #ifdef PATCH_DISABLE_RANGE_CHECK
   (*_uNew)[index].setU(value);
 #else
@@ -535,7 +535,7 @@ void peanoclaw::Patch::setValueUNew(int linearIndex, int unknown, double value) 
 #endif
 
 void peanoclaw::Patch::setValueUNewAndResize(int linearIndex, int unknown, double value) {
-  size_t index = linearIndex + uNewStrideCache[0] * unknown;
+  size_t index = linearIndex + _uNewStrideCache[0] * unknown;
   if(index + 1 > _uNew->size()) {
     _uNew->resize(index + 1);
   }
@@ -544,7 +544,7 @@ void peanoclaw::Patch::setValueUNewAndResize(int linearIndex, int unknown, doubl
 
 #ifndef PATCH_INLINE_GETTERS_AND_SETTERS
 double peanoclaw::Patch::getValueUOld(int linearIndex, int unknown) const {
-  int index = linearIndex + uOldStrideCache[0] * unknown;
+  int index = linearIndex + _uOldStrideCache[0] * unknown;
 #ifdef PATCH_DISABLE_RANGE_CHECK
   return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
 #else
@@ -555,7 +555,7 @@ double peanoclaw::Patch::getValueUOld(int linearIndex, int unknown) const {
 
 #ifndef PATCH_INLINE_GETTERS_AND_SETTERS
 void peanoclaw::Patch::setValueUOld(int linearIndex, int unknown, double value) {
-  int index = linearIndex + uOldStrideCache[0] * unknown;
+  int index = linearIndex + _uOldStrideCache[0] * unknown;
 #ifdef PATCH_DISABLE_RANGE_CHECK
   (*_uNew)[_uOldWithGhostlayerArrayIndex + index].setU(value);
 #else
@@ -565,7 +565,7 @@ void peanoclaw::Patch::setValueUOld(int linearIndex, int unknown, double value) 
 #endif
 
 void peanoclaw::Patch::setValueUOldAndResize(int linearIndex, int unknown, double value) {
-  size_t index = linearIndex + uOldStrideCache[0] * unknown;
+  size_t index = linearIndex + _uOldStrideCache[0] * unknown;
   if(_uOldWithGhostlayerArrayIndex + index + 1 > _uNew->size()) {
     _uNew->resize(_uOldWithGhostlayerArrayIndex + index + 1);
   }

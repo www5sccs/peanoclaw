@@ -1,6 +1,6 @@
 p3Path='../peano3'
 p3RepositorySubpath=''
-p3Revision='1365' #Revision number or 'HEAD'
+p3Revision='1382' #Revision number or 'HEAD'
 p3Build='release' #'debug', 'asserts', or 'release'
 p3Parallel='yes' #'yes' or 'no'
 p3Dimension='2' #'2' or '3'

@@ -50,7 +50,7 @@ def addPeanoClawFlags(libpath, libs, cpppath, cppdefines):
      ccflags.append('-flat_namespace')
      linkerflags.append('-flat_namespace')
    elif build == 'release':
-     cppdefines.append('_GLIBCXX_DEBUG')
+     #cppdefines.append('_GLIBCXX_DEBUG')
      cppdefines.append('NDEBUG')
      
      
@@ -191,6 +191,18 @@ elif valgrind == 'yes':
    cpppath.append(join(valgrindRoot, "callgrind"))
 else:
    print "ERROR: valgrind must be = 'yes' or 'no'!"
+   sys.exit(1)
+
+##### Determine gprof usage
+# 
+gprof = ARGUMENTS.get('gprof', 'no')
+if gprof == 'no':
+   pass
+elif gprof == 'yes':
+   ccflags.append('-pg')
+   linkerflags.append('-pg')
+else:
+   print "ERROR: gprof must be = 'yes' or 'no'!"
    sys.exit(1)
    
 ##### Switch Compiler
@@ -374,7 +386,9 @@ buildpath = join(buildpath, solver)
 if scalasca == 'yes' or scalasca == 'scalasca_yes':
    buildpath = join(buildpath, 'scalasca')
 if heapCompression == 'no':
-   buildpath = join(buildpath, 'noHeapCompression') 
+   buildpath = join(buildpath, 'noHeapCompression')
+if gprof == 'yes':
+  buildpath = join(buildpath, 'gprof') 
 
 buildpath = buildpath + '/'
    
