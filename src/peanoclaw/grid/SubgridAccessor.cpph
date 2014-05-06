@@ -1,0 +1,195 @@
+/*
+ * SubgridAccessor.cpp
+ *
+ *  Created on: Apr 30, 2014
+ *      Author: kristof
+ */
+#include "peanoclaw/grid/SubgridAccessor.h"
+
+#include "peanoclaw/Patch.h"
+
+template<int NumberOfUnknowns>
+peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::SubgridAccessor(
+  Patch& subgrid,
+  const tarch::la::Vector<DIMENSIONS, int>& offset,
+  const tarch::la::Vector<DIMENSIONS, int>& size
+) : _subgrid(subgrid),
+    _data(subgrid.getUNewArray()),
+    _offset(offset),
+    _size(size),
+    _unknown(-1),
+    _position(offset),
+    _indexUNew(subgrid.linearize(0, offset)),
+    _indexUOld(subgrid.linearizeWithGhostlayer(0, offset)),
+    _subdivisionFactor(subgrid._cellDescription->getSubdivisionFactor()),
+    _ghostlayerWidth(subgrid._cellDescription->getGhostlayerWidth()),
+    _isValid(true)
+{
+  //Prepare for first increment
+  _position(DIMENSIONS-1)--;
+  _indexUNew-=subgrid._uNewStrideCache[DIMENSIONS]; //for one step in x2-direction
+  _indexUNew-=subgrid._uNewStrideCache[0]; //for one unknown increment
+  _indexUOld-=subgrid._uOldStrideCache[DIMENSIONS]; //for one step in x2-direction
+  _indexUOld-=subgrid._uOldStrideCache[0]; //for one unknown increment
+
+  _offsetPlusSize = _offset + _size;
+
+  _uNewUnknownStride = NumberOfUnknowns*_subgrid._uNewStrideCache[0];
+  _uOldUnknownStride = NumberOfUnknowns*_subgrid._uOldStrideCache[0];
+
+  //TODO unterweg debug
+//  std::cout << "Initializing offset=" << offset << " size=" << size << " indexUNew=" << _indexUNew << " indexUOld=" << _indexUOld << " init=" << _subgrid.linearizeWithGhostlayer(0, _offset) << std::endl;
+//  for(int i = 0; i < DIMENSIONS+1; i++) {
+//    std::cout << _subgrid._uNewStrideCache[i] << " ";
+//  }
+//  std::cout << std::endl;
+//  for(int i = 0; i < DIMENSIONS+1; i++) {
+//    std::cout << _subgrid._uOldStrideCache[i] << " ";
+//  }
+//  std::cout << std::endl;
+}
+
+template<int NumberOfUnknowns>
+double peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::getUnknownUNew() const {
+  assertion(_isValid);
+  assertion3(tarch::la::allGreaterEquals(_offset, tarch::la::Vector<DIMENSIONS, int>(0))
+            && tarch::la::allGreaterEquals(_subgrid.getSubdivisionFactor(), _offset+_size), _offset, _size, _subgrid);
+  assertion3(
+    _indexUNew >= 0 && _indexUNew < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    _indexUNew,
+    _position,
+    _unknown
+  );
+
+  //TODO unterweg debug
+  //std::cout << "Accessing value uNew " << _data[_indexUNew] << " at " << _position << " indexUNew=" << _indexUNew << std::endl;
+
+  return _data[_indexUNew];
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<NumberOfUnknowns, double> peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::getUnknownsUNew() const {
+  tarch::la::Vector<NumberOfUnknowns, double> unknowns;
+  int localIndexUNew = _indexUNew + _subgrid._uNewStrideCache[0];
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    unknowns[i] = _data[localIndexUNew];
+    localIndexUNew += _subgrid._uNewStrideCache[0];
+  }
+  return unknowns;
+}
+
+template<int NumberOfUnknowns>
+double peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::getUnknownUOld() const {
+  assertion(_isValid);
+  assertion3(
+    _indexUOld >= 0 && _indexUOld < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2*_subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
+    _indexUNew,
+    _position,
+    _unknown
+  );
+  return _data[_subgrid._uOldWithGhostlayerArrayIndex + _indexUOld];
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<NumberOfUnknowns, double> peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::getUnknownsUOld() const {
+  tarch::la::Vector<NumberOfUnknowns, double> unknowns;
+  int localIndexUOld = _indexUOld + _subgrid._uOldStrideCache[0];
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    unknowns[i] = _data[_subgrid._uOldWithGhostlayerArrayIndex + localIndexUOld];
+    localIndexUOld += _subgrid._uOldStrideCache[0];
+  }
+  return unknowns;
+}
+
+template<int NumberOfUnknowns>
+void peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::setUnknownUOld(double value) {
+  assertion(_isValid);
+  assertion3(
+      _indexUOld >= 0 && _indexUOld < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2*_subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
+      _indexUNew,
+      _position,
+      _unknown
+  );
+  _data[_subgrid._uOldWithGhostlayerArrayIndex + _indexUOld] = value;
+}
+
+template<int NumberOfUnknowns>
+void peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::setUnknownsUOld(const tarch::la::Vector<NumberOfUnknowns, double>& unknowns) {
+  int localIndexUOld = _indexUOld + _subgrid._uOldStrideCache[0];
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    _data[_subgrid._uOldWithGhostlayerArrayIndex + localIndexUOld] = unknowns[i];
+    localIndexUOld += _subgrid._uOldStrideCache[0];
+  }
+}
+
+template<int NumberOfUnknowns>
+int peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::getUnknownIndex() const {
+  assertion(_isValid);
+  return _unknown;
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<DIMENSIONS, int> peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::getCellIndex() const {
+  assertion(_isValid);
+  return _position;
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<DIMENSIONS, double> peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::getCellCenter() const {
+  assertion(_isValid);
+  return _subgrid.getPosition() + tarch::la::multiplyComponents(_position.convertScalar<double>(), _subgrid.getSubcellSize());
+}
+
+template<int NumberOfUnknowns>
+bool peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::moveToNextCell() {
+  assertion2(_unknown == -1, _unknown, _subgrid);
+
+  //TODO unterweg debug
+//  std::cout << "Moving to next cell from " << _position << " offsetPlusSize=" << _offsetPlusSize << " offset=" << _offset << std::endl;
+
+  _indexUNew++;
+  _indexUOld++;
+
+  for(int d = DIMENSIONS-1; d >= 0; d--) {
+    _position(d)++;
+    if(_position(d) < _offsetPlusSize(d)) {
+      //TODO unterweg debug
+//      std::cout << "New cell is " << _position << " indexUNew=" << _indexUNew << " indexUOld=" << _indexUOld << std::endl;
+
+      return true;
+    } else {
+      _indexUNew += _subgrid._uNewStrideCache[d+1] * (_subdivisionFactor(d) - _size(d));
+      _indexUOld += _subgrid._uOldStrideCache[d+1] * (_subdivisionFactor(d) + 2*_ghostlayerWidth - _size(d));
+      _position(d) = _offset(d);
+    }
+  }
+
+  //TODO unterweg debug
+//  std::cout << "End of Subgrid" << std::endl;
+
+  _isValid = false;
+  return false;
+}
+
+template<int NumberOfUnknowns>
+bool peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>::moveToNextUnknown() {
+  assertion(_isValid);
+  _unknown++;
+
+  //TODO unterweg debug
+//  std::cout << "Moving to next unknown " << _unknown << " position=" << _position << std::endl;
+
+  if(_unknown == NumberOfUnknowns) {
+    _indexUNew -= _uNewUnknownStride;
+    _indexUOld -= _uOldUnknownStride;
+    _unknown = -1;
+    return false;
+  }
+
+  _indexUNew += _subgrid._uNewStrideCache[0];
+  _indexUOld += _subgrid._uOldStrideCache[0];
+
+  //TODO unterweg debug
+//  std::cout << "Next unknown " << _unknown << ", indexUNew=" << _indexUNew << " indexUOld=" << _indexUOld << std::endl;
+  return true;
+}

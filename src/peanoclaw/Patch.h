@@ -36,6 +36,7 @@ namespace peanoclaw {
   class Patch;
 
   namespace grid {
+    template<int NumberOfUnknowns>
     class SubgridAccessor;
   }
 }
@@ -130,6 +131,8 @@ class peanoclaw::Patch {
 
 public:
   friend class peanoclaw::grid::TimeIntervals;
+
+  template<int NumberOfUnknowns>
   friend class peanoclaw::grid::SubgridAccessor;
 
   typedef peanoclaw::records::CellDescription CellDescription;
@@ -205,7 +208,12 @@ private:
   );
 
   //Methods for evaluating CellDescriptions
-  static bool isValid(const CellDescription* cellDescription);
+  static bool isValid(const CellDescription* cellDescription) {
+    assertion(cellDescription == 0 || tarch::la::allGreater(cellDescription->getSubdivisionFactor(), tarch::la::Vector<DIMENSIONS, int>(-1)));
+    return cellDescription != 0;
+  //      && tarch::la::allGreater(cellDescription->getSubdivisionFactor(),
+  //          tarch::la::Vector<DIMENSIONS, int>(-1));
+  }
 
   static bool isLeaf(const CellDescription* cellDescription);
 
@@ -556,7 +564,10 @@ public:
   /**
    * Returns the uNew double array.
    */
-  double* getUNewArray() const;
+  double* getUNewArray() const {
+    assertion1(_uNew != 0, toString());
+    return reinterpret_cast<double*>(&(_uNew->at(0)));
+  }
 
   /**
    * Returns the uOld double array.

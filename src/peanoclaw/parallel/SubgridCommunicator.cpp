@@ -82,6 +82,16 @@ void peanoclaw::parallel::SubgridCommunicator::sendSubgrid(Patch& subgrid) {
   }
 
   if(subgrid.getUIndex() != -1) {
+    #if defined(AssertForPositiveValues) && defined(Asserts)
+    if(subgrid.isLeaf()) {
+      assertion3(!subgrid.containsNonPositiveNumberInUnknownInUNew(0),
+                  _remoteRank,
+                  subgrid,
+                  subgrid.toStringUNew()
+      );
+    }
+    #endif
+
     if(_onlySendOverlappedCells) {
       sendOverlappedCells(subgrid);
     } else {
@@ -252,6 +262,20 @@ void peanoclaw::parallel::SubgridCommunicator::sendOverlappedCells(
       for(int unknown = 0; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {
         temporaryArray[entry++] = subgrid.getValueUNew(linearIndex, unknown);
       }
+
+      #if defined(AssertForPositiveValues) && defined(Asserts)
+      if(subgrid.isLeaf()) {
+        assertion6(
+          tarch::la::greater(subgrid.getValueUNew(linearIndex, 0), 0.0),
+          subgrid,
+          subcellIndex,
+          area._offset,
+          area._size,
+          subgrid.getValueUNew(linearIndex, 0),
+          subgrid.toStringUNew()
+        );
+      }
+      #endif
     }
 
     //U old
@@ -420,8 +444,18 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
       //TODO unterweg debug
 //      std::cout << "Setting cell " << (area._offset + subcellIndex) << std::endl;
 
-      #ifdef AssertForPositiveValues
-      assertion3(tarch::la::greater(subgrid.getValueUNew(linearIndex, 0), 0.0), subgrid, subcellIndex, subgrid.getValueUNew(linearIndex, 0));
+      #if defined(AssertForPositiveValues) && defined(Asserts)
+      if(subgrid.isLeaf()) {
+        assertion6(
+          tarch::la::greater(subgrid.getValueUNew(linearIndex, 0), 0.0),
+          subgrid,
+          subcellIndex,
+          area._offset,
+          area._size,
+          subgrid.getValueUNew(linearIndex, 0),
+          subgrid.toStringUNew()
+        );
+      }
       #endif
     }
 
@@ -432,8 +466,10 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
         subgrid.setValueUOldAndResize(linearIndex, unknown, remoteData[entry++].getU());
       }
 
-      #ifdef AssertForPositiveValues
-      assertion3(tarch::la::greater(subgrid.getValueUOld(linearIndex, 0), 0.0), subgrid, subcellIndex, subgrid.getValueUOld(linearIndex, 0));
+      #if defined(AssertForPositiveValues) && defined(Asserts)
+      if(subgrid.isLeaf()) {
+        assertion3(tarch::la::greater(subgrid.getValueUOld(linearIndex, 0), 0.0), subgrid, subcellIndex, subgrid.getValueUOld(linearIndex, 0));
+      }
       #endif
     }
   }

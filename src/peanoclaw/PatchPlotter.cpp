@@ -177,6 +177,8 @@ void peanoclaw::PatchPlotter::plotPatch(
   peanoclaw::Vertex * const        vertices,
   const peano::grid::VertexEnumerator&              enumerator
 ) {
+  assertion3(!patch.containsNaN(), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
+
   double localGap = _gap * patch.getLevel();
   tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize() / (1.0 + localGap);
 

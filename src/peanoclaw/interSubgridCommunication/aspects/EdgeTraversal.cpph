@@ -14,26 +14,28 @@ peanoclaw::interSubgridCommunication::aspects::EdgeTraversal<LoopBody>::EdgeTrav
   LoopBody& loopBody
 ) {
   #ifdef Dim2
-  tarch::la::Vector<DIMENSIONS,int> size(subgrid.getGhostlayerWidth());
+  int ghostlayerWidth = subgrid.getGhostlayerWidth();
+  tarch::la::Vector<DIMENSIONS,int> size(ghostlayerWidth);
 
   dfor(edgeIndex, 2) {
     tarch::la::Vector<DIMENSIONS,int> offset
-      = tarch::la::multiplyComponents(edgeIndex, subgrid.getSubdivisionFactor() + subgrid.getGhostlayerWidth())
-        - subgrid.getGhostlayerWidth();
+      = tarch::la::multiplyComponents(edgeIndex, subgrid.getSubdivisionFactor() + ghostlayerWidth)
+        - ghostlayerWidth;
     Area area(offset, size);
 
     loopBody(subgrid, area, 2*edgeIndex - 1);
   }
   #elif Dim3
   for(int d = 0; d < DIMENSIONS; d++) {
-    tarch::la::Vector<DIMENSIONS,int> size(subgrid.getGhostlayerWidth());
+    int ghostlayerWidth = subgrid.getGhostlayerWidth();
+    tarch::la::Vector<DIMENSIONS,int> size(ghostlayerWidth);
     size(d) = subgrid.getSubdivisionFactor()(d);
 
     dfor(edgeIndex, 2) {
       if(edgeIndex(d) == 0) {
         tarch::la::Vector<DIMENSIONS,int> offset
-          = tarch::la::multiplyComponents(edgeIndex, subgrid.getSubdivisionFactor() + subgrid.getGhostlayerWidth())
-            - subgrid.getGhostlayerWidth();
+          = tarch::la::multiplyComponents(edgeIndex, subgrid.getSubdivisionFactor() + ghostlayerWidth)
+            - ghostlayerWidth;
         offset(d) = 0;
         Area area(offset, size);
 

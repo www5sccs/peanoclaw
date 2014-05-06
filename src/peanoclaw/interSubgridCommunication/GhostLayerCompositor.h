@@ -96,7 +96,7 @@ private:
     const tarch::la::Vector<DIMENSIONS, int>&    size,
     const tarch::la::Vector<DIMENSIONS, int>&    sourceOffset,
     const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-    const peanoclaw::Patch& source,
+    peanoclaw::Patch& source,
     peanoclaw::Patch&       destination);
 
   /**

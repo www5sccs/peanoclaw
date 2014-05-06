@@ -12,6 +12,8 @@
 #include "Area.h"
 #include "Cell.h"
 #include "Heap.h"
+#include "peanoclaw/grid/SubgridAccessor.h"
+
 #include "peano/heap/Heap.h"
 #include "peano/utils/Loop.h"
 
@@ -126,13 +128,6 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(const Area& area,
   }
 }
 
-bool peanoclaw::Patch::isValid(const CellDescription* cellDescription) {
-  assertion(cellDescription == 0 || tarch::la::allGreater(cellDescription->getSubdivisionFactor(), tarch::la::Vector<DIMENSIONS, int>(-1)));
-  return cellDescription != 0;
-//      && tarch::la::allGreater(cellDescription->getSubdivisionFactor(),
-//          tarch::la::Vector<DIMENSIONS, int>(-1));
-}
-
 bool peanoclaw::Patch::isLeaf(const CellDescription* cellDescription) {
   return (cellDescription != 0) && !cellDescription->getIsVirtual()
       && (cellDescription->getUIndex() != -1);
@@ -213,18 +208,18 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   std::vector<CellDescription>& cellDescriptions = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
 
   CellDescription cellDescription;
-  
+
   //Data
   cellDescription.setCellDescriptionIndex(cellDescriptionIndex);
   cellDescription.setUIndex(-1);
-  
+
   //Geometry
   cellDescription.setSize(size);
   cellDescription.setPosition(position);
   cellDescription.setLevel(level);
   cellDescription.setSubdivisionFactor(subdivisionFactor);
   cellDescription.setGhostlayerWidth(ghostLayerWidth);
-  
+
   //Timestepping
   cellDescription.setTime(0.0);
   cellDescription.setTimestepSize(0.0);
@@ -237,16 +232,16 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setMaximumFineGridTime(-1.0);
   cellDescription.setMinimumFineGridTimestep(std::numeric_limits<double>::max());
   cellDescription.setMinimalLeafNeighborTimeConstraint(std::numeric_limits<double>::max());
-  
+
   //Numerics
   cellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
   cellDescription.setNumberOfParametersWithoutGhostlayerPerSubcell(parameterWithoutGhostlayer);
   cellDescription.setNumberOfParametersWithGhostlayerPerSubcell(parameterWithGhostlayer);
-    
+
   //Spacetree state
   cellDescription.setIsVirtual(false);
   cellDescription.setAgeInGridIterations(0);
-  
+
   //Refinement
   cellDescription.setDemandedMeshWidth(
       tarch::la::multiplyComponents(size, tarch::la::invertEntries(subdivisionFactor.convertScalar<double>()))
@@ -255,7 +250,7 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setRestrictionUpperBounds(-std::numeric_limits<double>::max());
   cellDescription.setSynchronizeFineGrids(false);
   cellDescription.setWillCoarsen(false);
-  
+
   //Parallel
 #ifdef Parallel
   cellDescription.setIsRemote(false);
@@ -648,6 +643,17 @@ void peanoclaw::Patch::copyUNewToUOld() {
       setValueUOld(subcellIndex, unknown, getValueUNew(subcellIndex, unknown));
     }
   }
+//  peanoclaw::grid::SubgridAccessor accessor(
+//    *this,
+//    tarch::la::Vector<DIMENSIONS, int>(0),
+//    _cellDescription->getSubdivisionFactor()
+//  );
+//
+//  while(accessor.moveToNextCell()) {
+//    while(accessor.moveToNextUnknown()) {
+//      accessor.setUnknownUOld(accessor.getUnknownUNew());
+//    }
+//  }
 }
 
 void peanoclaw::Patch::clearRegion(tarch::la::Vector<DIMENSIONS, int> offset,
@@ -669,11 +675,6 @@ void peanoclaw::Patch::clearRegion(tarch::la::Vector<DIMENSIONS, int> offset,
   }
 }
 #endif
-}
-
-double* peanoclaw::Patch::getUNewArray() const {
-  assertion1(_uNew != 0, toString());
-  return reinterpret_cast<double*>(&(_uNew->at(0)));
 }
 
 double* peanoclaw::Patch::getUOldWithGhostlayerArray() const {
@@ -1151,7 +1152,6 @@ int peanoclaw::Patch::getAge() const {
 void peanoclaw::Patch::resetAge() const {
   return _cellDescription->setAgeInGridIterations(0);
 }
-
 
 void peanoclaw::Patch::resetNeighboringGhostlayerBounds() {
   _cellDescription->setRestrictionLowerBounds(

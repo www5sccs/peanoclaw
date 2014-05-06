@@ -1,0 +1,89 @@
+/*
+ * DefaultTransfer.cpph
+ *
+ *  Created on: May 6, 2014
+ *      Author: kristof
+ */
+
+#include "peanoclaw/grid/SubgridAccessor.h"
+
+#include "peano/utils/Loop.h"
+
+template<int NumberOfUnknowns>
+void peanoclaw::interSubgridCommunication::DefaultTransfer<NumberOfUnknowns>::transfer(
+  const tarch::la::Vector<DIMENSIONS, int>&    size,
+  const tarch::la::Vector<DIMENSIONS, int>&    sourceOffset,
+  const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+  peanoclaw::Patch& source,
+  peanoclaw::Patch&       destination
+) {
+  logTraceInWith3Arguments("copyGhostLayerDataBlock", size, sourceOffset, destinationOffset);
+
+  //TODO unterweg debug
+  // std::cout << "Copying from " << source << std::endl << " to " << destination << std::endl
+  // << " size=" << size << " sourceOffset=" << sourceOffset << " destinationOffset=" << destinationOffset << std::endl;
+
+  assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
+
+  double timeFactor;
+  double destinationTimeUNew = destination.getTimeIntervals().getTimeUNew();
+  if(source.isVirtual()) {
+    //TODO unterweg: Restricting to interval [0, 1]
+    //timeFactor = (destination.getTimeIntervals().getTimeUNew() - 0.0) / (1.0 - source.getTimeIntervals().getTimeUOld());
+    timeFactor = (destinationTimeUNew - 0.0) / 1.0;
+  } else {
+    double sourceTimeUNew = source.getTimeIntervals().getTimeUNew();
+    double sourceTimeUOld = source.getTimeIntervals().getTimeUOld();
+    if(tarch::la::greater(sourceTimeUNew - sourceTimeUOld, 0.0)) {
+      timeFactor = (destinationTimeUNew - sourceTimeUOld) / (sourceTimeUNew - sourceTimeUOld);
+    } else {
+      timeFactor = 1.0;
+    }
+  }
+
+  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns> sourceAccessor(source, sourceOffset, size);
+  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns> destinationAccessor(destination, destinationOffset, size);
+
+  while(sourceAccessor.moveToNextCell()) {
+    #ifdef Asserts
+    bool destinationHasMoreCells =
+    #endif
+        destinationAccessor.moveToNextCell();
+    assertion(destinationHasMoreCells);
+
+    tarch::la::Vector<NumberOfUnknowns, double> sourceUnknownsUNew = sourceAccessor.getUnknownsUNew();
+    tarch::la::Vector<NumberOfUnknowns, double> sourceUnknownsUOld = sourceAccessor.getUnknownsUOld();
+
+    //TODO unterweg debug
+    #ifdef Asserts
+    for(int i = 0; i < NumberOfUnknowns; i++) {
+      assertionEquals2(source.getValueUNew(sourceAccessor.getCellIndex(), i), sourceUnknownsUNew[i], source.toStringUNew(), source.toStringUOldWithGhostLayer());
+      assertionEquals2(source.getValueUOld(sourceAccessor.getCellIndex(), i), sourceUnknownsUOld[i], source.toStringUNew(), source.toStringUOldWithGhostLayer());
+    }
+    #endif
+
+    destinationAccessor.setUnknownsUOld(sourceUnknownsUNew * timeFactor + sourceUnknownsUOld * (1.0-timeFactor));
+  }
+  destinationAccessor.moveToNextCell();
+
+  #if defined(Asserts) && defined(AssertForPositiveValues)
+  dfor(subcellIndex, size) {
+    tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex + destinationOffset;
+    double value = destination.getValueUOld(subcellIndexInDestinationPatch, 0);
+    if(value < 0.0 || value != value) {
+      std::cout << "Invalid copy "
+          << " sourceOffset=" << sourceOffset << ", size=" << size << " "
+  #ifdef Parallel
+          << "on rank " << tarch::parallel::Node::getInstance().getRank() << " "
+  #endif
+          << "from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
+          << std::endl << "to patch" << std::endl << destination.toString() << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer()
+          << std::endl << "value=" << destination.getValueUOld(subcellIndexInDestinationPatch, 0) << std::endl;
+      assertion2(false, subcellIndexInDestinationPatch, destination.getValueUOld(subcellIndexInDestinationPatch, 0));
+      throw "";
+    }
+  }
+  #endif
+
+  logTraceOut("copyGhostLayerDataBlock");
+}

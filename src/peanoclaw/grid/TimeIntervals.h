@@ -79,7 +79,9 @@ class peanoclaw::grid::TimeIntervals {
     /**
      * Sets the current time for this patch.
      */
-    void setCurrentTime(double currentTime);
+    void setCurrentTime(double currentTime) {
+      _cellDescription->setTime(currentTime);
+    }
 
     /**
      * Returns the time that refers to the grid values in uOld. For leaf

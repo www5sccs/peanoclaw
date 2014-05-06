@@ -1,0 +1,29 @@
+Packed-Type: short int;
+
+#include "peano/utils/Globals.h"
+
+Constant: DIMENSIONS;
+Constant: DIMENSIONS_TIMES_TWO;
+
+/**
+ * This class is generated via DaStGen.
+ */
+class peanoclaw::statistics::ProcessStatisticsEntry {
+
+  /**
+   * The process rank this entry refers to.
+   */
+  parallelise persistent int rank;
+
+  /**
+   * The number of cell updates for a process. 
+   */
+  parallelise persistent int numberOfCellUpdates;
+  
+  /**
+   * The number of cell operations for a process.
+   * Cell operations include cell updates, interpolations,
+   * restrictions and copy operations for cells.
+   */
+  //parallelise persistent int numberOfCellOperations;
+};

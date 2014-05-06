@@ -214,30 +214,42 @@ double peanoclaw::State::getMinimalTimestep() const {
   return _stateData.getMinimalTimestep();
 }
 
-void peanoclaw::State::setLevelStatisticsForLastGridIteration (
-  const std::vector<peanoclaw::statistics::LevelStatistics>& levelStatistics
+void peanoclaw::State::setSubgridStatisticsForLastGridIteration (
+  peanoclaw::statistics::SubgridStatistics& subgridStatistics
 ) {
-  _levelStatisticsForLastGridIteration = levelStatistics;
-  _levelStatisticsHistory.push_back(levelStatistics);
+  //_levelStatisticsForLastGridIteration = levelStatistics;
+  _subgridStatisticsHistory.push_back(subgridStatistics);
+
+  //TODO unterweg debug
+//  std::cout << std::endl << _subgridStatisticsHistory.back()._processStatisticsIndex << " statistics for last iteration: ";
+//  for(std::vector<peanoclaw::statistics::ProcessStatisticsEntry>::iterator own = _subgridStatisticsHistory.back()._processStatistics->begin(); own != _subgridStatisticsHistory.back()._processStatistics->end(); own++) {
+//    std::cout << own->getRank() << " ";
+//  }
+//  std::cout << std::endl;
+//  for(std::vector<peanoclaw::statistics::ProcessStatisticsEntry>::iterator own = subgridStatistics._processStatistics->begin(); own != subgridStatistics._processStatistics->end(); own++) {
+//    std::cout << own->getRank() << " ";
+//  }
+  std::cout << std::endl;
 }
 
-std::list<std::vector<peanoclaw::statistics::LevelStatistics> > peanoclaw::State::getLevelStatisticsHistory() const {
-  return _levelStatisticsHistory;
+std::list<peanoclaw::statistics::SubgridStatistics> peanoclaw::State::getSubgridStatisticsHistory() const {
+  return _subgridStatisticsHistory;
 }
 
 void peanoclaw::State::plotStatisticsForLastGridIteration() const {
-  peanoclaw::statistics::SubgridStatistics subgridStatistics(_levelStatisticsForLastGridIteration);
-  subgridStatistics.logLevelStatistics("Statistics for last grid iteration");
+  _subgridStatisticsHistory.back().logLevelStatistics("Statistics for last grid iteration");
+  _subgridStatisticsHistory.back().logProcessStatistics("Statistics for last grid iteration");
 }
 
 void peanoclaw::State::plotTotalStatistics() const {
   peanoclaw::statistics::SubgridStatistics totalStatistics;
-  for(std::list<std::vector<LevelStatistics> >::const_iterator i = _levelStatisticsHistory.begin();
-      i != _levelStatisticsHistory.end(); i++) {
+  for(std::list<peanoclaw::statistics::SubgridStatistics>::const_iterator i = _subgridStatisticsHistory.begin();
+      i != _subgridStatisticsHistory.end(); i++) {
     totalStatistics.merge(*i);
   }
-  totalStatistics.averageTotalSimulationValues(_levelStatisticsHistory.size());
+  totalStatistics.averageTotalSimulationValues(_subgridStatisticsHistory.size());
   totalStatistics.logLevelStatistics("Total Statistics");
+  totalStatistics.logProcessStatistics("Total Statistics");
 }
 
 void peanoclaw::State::setIsInitializing(bool isInitializing) {

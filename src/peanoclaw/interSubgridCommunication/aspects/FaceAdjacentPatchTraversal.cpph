@@ -7,6 +7,58 @@ peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<LoopBo
   peanoclaw::Patch patches[TWO_POWER_D],
   LoopBody& loopBody
 ) {
+  #ifdef Dim2
+  tarch::la::Vector<DIMENSIONS, int> direction3To2;
+  assignList(direction3To2) = 1, 0;
+  loopBody(patches[3], 3, patches[2], 2, direction3To2);
+  tarch::la::Vector<DIMENSIONS, int> direction3To1;
+  assignList(direction3To1) = 0, 1;
+  loopBody(patches[3], 3, patches[1], 1, direction3To1);
+  tarch::la::Vector<DIMENSIONS, int> direction2To3;
+  assignList(direction2To3) = -1, 0;
+  loopBody(patches[2], 2, patches[3], 3, direction2To3);
+  tarch::la::Vector<DIMENSIONS, int> direction2To0;
+  assignList(direction2To0) = 0, 1;
+  loopBody(patches[2], 2, patches[0], 0, direction2To0);
+  tarch::la::Vector<DIMENSIONS, int> direction1To0;
+  assignList(direction1To0) = 1, 0;
+  loopBody(patches[1], 1, patches[0], 0, direction1To0);
+  tarch::la::Vector<DIMENSIONS, int> direction1To3;
+  assignList(direction1To3) = 0, -1;
+  loopBody(patches[1], 1, patches[3], 3, direction1To3);
+  tarch::la::Vector<DIMENSIONS, int> direction0To1;
+  assignList(direction0To1) = -1, 0;
+  loopBody(patches[0], 0, patches[1], 1, direction0To1);
+  tarch::la::Vector<DIMENSIONS, int> direction0To2;
+  assignList(direction0To2) = 0, -1;
+  loopBody(patches[0], 0, patches[2], 2, direction0To2);
+  #elif Dim3
+  std::cout << "Use the following code for hardcoded version:" << std::endl
+      << "==================================================" << std::endl;
+  dfor(index0, 2) {
+    for(int d = 0; d < DIMENSIONS; d++) {
+      tarch::la::Vector<DIMENSIONS, int> index1 = index0;
+      index1(d) = (index0(d) + 1) % 2;
+
+      int i = TWO_POWER_D - peano::utils::dLinearised(index0, 2) - 1;
+      int j = TWO_POWER_D - peano::utils::dLinearised(index1, 2) - 1;
+
+      tarch::la::Vector<DIMENSIONS, int> direction = index1 - index0;
+
+      std::cout << "\ttarch::la::Vector<DIMENSIONS, int> direction" << i << "To" << j << ";" << std::endl;
+      std::cout << "\tassignList(direction" << i << "To" << j << ") = ";
+      for(int d = 0; d < DIMENSIONS-1; d++) {
+        std::cout << direction(d) << ", ";
+      }
+      std::cout << direction(DIMENSIONS-1) << ";" << std::endl;
+      std::cout << "\tloopBody(patches[" << i << "], " << i << ", patches[" << j << "], " << j
+          << ", direction" << i << "To" << j << ");" << std::endl;
+    }
+  }
+  std::cout << "==================================================" << std::endl;
+  assertionFail("");
+  throw("");
+  #else
   //dfor(index0, 2) traverses all TWO_POWER_D adjacent patches, independent of the dimension.
   dfor(index0, 2) {
     for(int d = 0; d < DIMENSIONS; d++) {
@@ -21,4 +73,6 @@ peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<LoopBo
       loopBody(patches[i], i, patches[j], j, direction);
     }
   }
+  #endif
+
 }

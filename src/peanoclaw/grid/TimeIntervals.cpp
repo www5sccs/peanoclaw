@@ -103,10 +103,6 @@ double peanoclaw::grid::TimeIntervals::getCurrentTime() const {
   return _cellDescription->getTime();
 }
 
-void peanoclaw::grid::TimeIntervals::setCurrentTime(double currentTime) {
-  _cellDescription->setTime(currentTime);
-}
-
 double peanoclaw::grid::TimeIntervals::getTimeUOld() const {
   assertion1(Patch::isLeaf(_cellDescription) || Patch::isVirtual(_cellDescription), toString());
   if (Patch::isLeaf(_cellDescription)) {

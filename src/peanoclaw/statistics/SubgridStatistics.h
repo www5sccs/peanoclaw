@@ -9,17 +9,25 @@
 #define PEANOCLAW_STATISTICS_SUBGRIDSTATISTICS_H_
 
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/State.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/statistics/LevelStatistics.h"
+#include "peanoclaw/statistics/ProcessStatisticsEntry.h"
 
 #include "peano/grid/VertexEnumerator.h"
 
 #include "tarch/logging/Log.h"
 
 namespace peanoclaw {
+
+  class State;
+
   namespace statistics {
     class SubgridStatistics;
+
+    /**
+     * Compare function for sorting ProcessStatisticEntry objects.
+     */
+    bool smaller(const ProcessStatisticsEntry& entry1, const ProcessStatisticsEntry& entry2);
   }
 }
 
@@ -31,9 +39,14 @@ class peanoclaw::statistics::SubgridStatistics {
     static tarch::logging::Log _log;
     typedef peanoclaw::records::CellDescription CellDescription;
     typedef peanoclaw::statistics::LevelStatistics LevelStatistics;
+    typedef peanoclaw::statistics::ProcessStatisticsEntry ProcessStatisticsEntry;
 
-    int                           _levelStatisticsIndex;
-    std::vector<LevelStatistics>* _levelStatistics;
+    friend class peanoclaw::State;
+
+    int                                  _levelStatisticsIndex;
+    std::vector<LevelStatistics>*        _levelStatistics;
+    int                                  _processStatisticsIndex;
+    std::vector<ProcessStatisticsEntry>* _processStatistics;
 
     int    _minimalPatchIndex;
     int    _minimalPatchParentIndex;
@@ -53,9 +66,10 @@ class peanoclaw::statistics::SubgridStatistics {
     bool   _isFinalized;
 
     /**
-     * Reserves a Heap-vector for the level statistics.
+     * Reserves a Heap-vector for the level
+     * and the process statistics.
      */
-    void initializeLevelStatistics();
+    void initializeLevelAndProcessStatistics();
 
     /**
      * Logs the statistics to the info-logger.
@@ -80,6 +94,11 @@ class peanoclaw::statistics::SubgridStatistics {
      */
     int estimateRemainingIterationsUntilGlobalSubgrid(Patch subgrid) const;
 
+    /**
+     * Used for assignment operators.
+     */
+    void copy(const SubgridStatistics& other);
+
   public:
     /**
      * Default destructor. Objects build with this constructor
@@ -102,6 +121,22 @@ class peanoclaw::statistics::SubgridStatistics {
      * Constructs a SubgridStatistics by receiving it from the worker.
      */
     SubgridStatistics(int workerRank);
+
+    /**
+     * Copy constructor
+     */
+    SubgridStatistics(SubgridStatistics& other);
+    SubgridStatistics(const SubgridStatistics& other);
+
+    /**
+     * Assignment operator
+     */
+    SubgridStatistics& operator=(SubgridStatistics& other);
+
+    /**
+     * Assignment operator
+     */
+    const SubgridStatistics& operator=(const SubgridStatistics& other);
 
     /**
      * Destructor.
@@ -146,7 +181,12 @@ class peanoclaw::statistics::SubgridStatistics {
     /**
      * Logs the level-wise statistics.
      */
-    void logLevelStatistics(std::string description);
+    void logLevelStatistics(std::string description) const;
+
+    /**
+     * Logs the process-wise statistics.
+     */
+    void logProcessStatistics(std::string description) const;
 
     void addBlockedPatchDueToGlobalTimestep(const Patch& subgrid);
     void addBlockedPatchDueToNeighborTimeConstraint(const Patch& subgrid);

@@ -64,6 +64,8 @@ class peanoclaw::mappings::SolveTimestep {
 
     bool _useDimensionalSplittingOptimization;
 
+    bool _collectSubgridStatistics;
+
     std::map<int, int> _estimatedRemainingIterationsUntilGlobalTimestep;
 
     /**

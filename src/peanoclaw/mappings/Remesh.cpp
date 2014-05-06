@@ -308,7 +308,7 @@ void peanoclaw::mappings::Remesh::createCell(
 //  std::cout << "Creating cell at " << fineGridVerticesEnumerator.getVertexPosition() << " on level " << fineGridVerticesEnumerator.getLevel() << " on rank " << tarch::parallel::Node::getInstance().getRank() << std::endl;
 
   //Initialise new Patch
-  Patch fineGridPatch = Patch(
+  Patch fineGridPatch(
     fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getCellSize(),
     _unknownsPerSubcell,
@@ -320,16 +320,6 @@ void peanoclaw::mappings::Remesh::createCell(
     fineGridVerticesEnumerator.getLevel()
   );
   fineGridCell.setCellDescriptionIndex(fineGridPatch.getCellDescriptionIndex());
-
-//  std::cout << "Creating cell on rank "
-//      #ifdef Parallel
-//      << tarch::parallel::Node::getInstance().getRank() << ": "
-//      #endif
-//      << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
-//      << fineGridVerticesEnumerator.getCellSize()
-//      << ", index=" << fineGridCell.getCellDescriptionIndex()
-//      << ", level=" << fineGridVerticesEnumerator.getLevel()
-//      << std::endl;
 
   if(fineGridCell.isLeaf()) {
     assertion1(!fineGridPatch.isLeaf(), fineGridPatch);
@@ -408,6 +398,27 @@ void peanoclaw::mappings::Remesh::createCell(
       i
     );
   }
+
+//  std::cout << "Creating cell on rank "
+//      #ifdef Parallel
+//      << tarch::parallel::Node::getInstance().getRank() << ": "
+//      #endif
+//      << fineGridVerticesEnumerator.getVertexPosition(0) << ", "
+//      << fineGridVerticesEnumerator.getCellSize()
+//      << ", index=" << fineGridCell.getCellDescriptionIndex()
+//      << ", level=" << fineGridVerticesEnumerator.getLevel()
+//      << ", _isInitializing=" << _isInitializing
+//      << std::endl << fineGridPatch.toStringUNew()
+//      << std::endl;
+
+  #if defined(AssertForPositiveValues)
+  assertion4(_isInitializing || !fineGridPatch.containsNonPositiveNumberInUnknownInUNew(0),
+              tarch::parallel::Node::getInstance().getRank(),
+              fineGridPatch,
+              fineGridPatch.toStringUNew(),
+              _isInitializing
+  );
+  #endif
 
   logTraceOutWith2Arguments( "createCell(...)", fineGridCell, fineGridPatch );
 }

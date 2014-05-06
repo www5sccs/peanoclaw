@@ -229,10 +229,12 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
                 patch.getValueUNew(subcellIndexInDestinationPatch, 0),
                 subcellIndex,
                 subcellIndexInDestinationPatch);
-        assertion3(tarch::la::greater(patch.getValueUOld(subcellIndexInDestinationPatch, 0), 0.0),
+        assertion5(tarch::la::greater(patch.getValueUOld(subcellIndexInDestinationPatch, 0), 0.0),
                 patch.getValueUOld(subcellIndexInDestinationPatch, 0),
                 subcellIndex,
-                subcellIndexInDestinationPatch);
+                subcellIndexInDestinationPatch,
+                patch.toStringUNew(),
+                patch.toStringUOldWithGhostLayer());
       }
       #endif
 
@@ -243,6 +245,13 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
     }
 
     patch.setDemandedMeshWidth(demandedMeshWidth);
+
+    #if defined(AssertForPositiveValues)
+    assertion2(!patch.containsNonPositiveNumberInUnknownInUNew(0),
+                patch,
+                patch.toStringUNew()
+    );
+    #endif
   }
 
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );

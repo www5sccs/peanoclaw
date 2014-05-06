@@ -15,12 +15,13 @@ peanoclaw::interSubgridCommunication::aspects::CornerTraversal<LoopBody>::Corner
   LoopBody& loopBody
 ) {
   #ifdef Dim3
-  tarch::la::Vector<DIMENSIONS,int> size(subgrid.getGhostlayerWidth());
+  int ghostlayerWidth = subgrid.getGhostlayerWidth();
+  tarch::la::Vector<DIMENSIONS,int> size(ghostlayerWidth);
 
   dfor(cornerIndex, 2) {
     tarch::la::Vector<DIMENSIONS,int> offset
-      = tarch::la::multiplyComponents(cornerIndex, subgrid.getSubdivisionFactor() + subgrid.getGhostlayerWidth())
-        - subgrid.getGhostlayerWidth();
+      = tarch::la::multiplyComponents(cornerIndex, subgrid.getSubdivisionFactor() + ghostlayerWidth)
+        - ghostlayerWidth;
     Area area(offset, size);
 
     loopBody(subgrid, area, 2*cornerIndex-1);

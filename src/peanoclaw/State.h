@@ -11,6 +11,8 @@
 #include "Numerics.h"
 
 #include "peanoclaw/statistics/LevelStatistics.h"
+#include "peanoclaw/statistics/ParallelStatistics.h"
+#include "peanoclaw/statistics/SubgridStatistics.h"
 #include "statistics/Probe.h"
 
 #include <list>
@@ -63,10 +65,12 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
     Numerics* _numerics;
 
-    std::vector<peanoclaw::statistics::Probe> _probeList;
+    std::vector<peanoclaw::statistics::Probe>  _probeList;
 
-    std::vector<LevelStatistics>              _levelStatisticsForLastGridIteration;
-    std::list< std::vector<LevelStatistics> > _levelStatisticsHistory;
+    //std::vector<LevelStatistics>               _levelStatisticsForLastGridIteration;
+    //std::list< std::vector<LevelStatistics> >  _levelStatisticsHistory;
+
+    std::list< peanoclaw::statistics::SubgridStatistics >  _subgridStatisticsHistory;
 
   public:
     /**
@@ -206,14 +210,14 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
       double getMinimalTimestep() const;
 
       /**
-       * Sets the level statistics for the last grid iteration.
+       * Sets the subgrid statistics for the last grid iteration.
        */
-      void setLevelStatisticsForLastGridIteration(const std::vector<LevelStatistics>& levelStatistics);
+      void setSubgridStatisticsForLastGridIteration(peanoclaw::statistics::SubgridStatistics& subgridStatistics);
 
       /**
-       * Returns the history of LevelStatistics over all iterations.
+       * Returns the history of subgrid statistics over all iterations.
        */
-      std::list<std::vector<LevelStatistics> > getLevelStatisticsHistory() const;
+      std::list<peanoclaw::statistics::SubgridStatistics> getSubgridStatisticsHistory() const;
 
       /**
        * Plots grid statistics for the last grid iteration

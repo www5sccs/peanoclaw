@@ -68,9 +68,6 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
   assertionEquals2(remoteCellDescription.getLevel(), localCellDescription.getLevel(), localCellDescription.toString(), remoteCellDescription.toString());
   #endif
 
-  //TODO unterweg debug
-//  std::cout << "Received cell description: " << remoteCellDescription.toString() << std::endl;
-
   //Load arrays and stores according indices in cell description
   if(remoteCellDescription.getUIndex() != -1) {
     remoteCellDescription.setUIndex(_subgridCommunicator.receiveDataArray());
@@ -87,6 +84,20 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::receivePatch(int 
 
   Patch subgrid(localCellDescriptionIndex);
   subgrid.initializeNonParallelFields();
+
+  //TODO unterweg debug
+//  std::cout << "Received cell description on rank " << tarch::parallel::Node::getInstance().getRank()
+//      << " from rank " << _remoteRank << ": " << remoteCellDescription.toString() << std::endl << subgrid.toStringUNew() << std::endl;
+
+  #if defined(AssertForPositiveValues) && defined(Asserts)
+  if(subgrid.isLeaf() || subgrid.isVirtual()) {
+    assertion4(!subgrid.containsNonPositiveNumberInUnknownInUNew(0),
+                tarch::parallel::Node::getInstance().getRank(),
+                _remoteRank,
+                subgrid,
+                subgrid.toStringUNew());
+  }
+  #endif
 
   assertionEquals(CellDescriptionHeap::getInstance().getData(localCellDescriptionIndex).at(0).getCellDescriptionIndex(), localCellDescriptionIndex);
   #endif

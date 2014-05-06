@@ -448,11 +448,13 @@ void peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayer
     ParallelSubgrid parallelSubgrid2(patch2);
     int entry = Area::linearizeManifoldPosition(-1 * direction);
 
+    int patch1GhostlayerWidth = patch1.getGhostlayerWidth();
+
     if(patch1.isValid()) {
       int maxOverlap = 0;
       for(int d = 0; d < DIMENSIONS; d++) {
         int overlap = std::ceil(
-                        std::abs(direction(d)) * patch1.getGhostlayerWidth() * patch1.getSubcellSize()(d) / patch2.getSubcellSize()(d)
+                        std::abs(direction(d)) * patch1GhostlayerWidth * patch1.getSubcellSize()(d) / patch2.getSubcellSize()(d)
                         );
         maxOverlap = std::max(maxOverlap, overlap);
       }
