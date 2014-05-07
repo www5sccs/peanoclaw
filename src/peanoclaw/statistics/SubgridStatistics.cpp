@@ -513,7 +513,7 @@ void peanoclaw::statistics::SubgridStatistics::logProcessStatistics(std::string 
 #if !defined(SharedTBB)
 
   //TODO unterweg debug
-  std::cout << "index=" << _processStatisticsIndex << std::endl;
+//  std::cout << "index=" << _processStatisticsIndex << std::endl;
 
   int totalCellUpdates = 0;
   int maximumLocalCellUpdates = 0;
