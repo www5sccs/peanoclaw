@@ -12,6 +12,7 @@
 
 peanoclaw::tests::NumericsTestStump::NumericsTestStump()
  : peanoclaw::Numerics (
+     new peanoclaw::interSubgridCommunication::DefaultTransfer,
      new peanoclaw::interSubgridCommunication::DefaultInterpolation,
      new peanoclaw::interSubgridCommunication::DefaultRestriction,
      new peanoclaw::interSubgridCommunication::DefaultFluxCorrection

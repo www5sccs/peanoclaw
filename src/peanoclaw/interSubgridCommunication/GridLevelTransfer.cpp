@@ -137,8 +137,8 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::switchToAndAddVirt
 }
 
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToOverlappingVirtualSubgrids(
-  const Patch&           subgrid,
-  const ParallelSubgrid& parallelSubgrid
+  Patch&           subgrid,
+  ParallelSubgrid& parallelSubgrid
 ) {
   tarch::multicore::Lock lock(_virtualPatchListSemaphore);
 

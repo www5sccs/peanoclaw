@@ -589,7 +589,9 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       )) {
 
         // Copy uNew to uOld
-        patch.copyUNewToUOld();
+        //patch.copyUNewToUOld();
+        peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
+        transfer.copyUNewToUOld(patch);
 
         // Filling boundary layers for the given patch...
         fillBoundaryLayers(

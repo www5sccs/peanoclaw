@@ -282,7 +282,7 @@ void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithRealOverlap
   tarch::la::Vector<DIMENSIONS, double> size2(1.5);
   size2(1) = 2.0;
 
-  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
+  peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<1> defaultRestriction;
   validateNumericalEquals( defaultRestriction.calculateOverlappingArea(position1, size1, position2, size2), 2.25);
 #endif
 }
@@ -299,7 +299,7 @@ void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithTouchingPat
   peanoclaw::tests::NumericsTestStump numerics;
   peanoclaw::interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, numerics);
 
-  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
+  peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<2> defaultRestriction;
   validateNumericalEquals( defaultRestriction.calculateOverlappingArea(position1, size1, position2, size2), 0.0);
 #endif
 }
@@ -313,7 +313,7 @@ void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithoutOverlap(
   position2(1) = 3;
   tarch::la::Vector<DIMENSIONS, double> size2(5.0);
 
-  peanoclaw::interSubgridCommunication::DefaultRestriction defaultRestriction;
+  peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<3> defaultRestriction;
   validateNumericalEquals( defaultRestriction.calculateOverlappingArea(position1, size1, position2, size2), 0.0);
 #endif
 }

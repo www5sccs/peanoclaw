@@ -91,82 +91,23 @@ tarch::logging::Log peanoclaw::interSubgridCommunication::GhostLayerCompositor::
 //  logTraceOut("copyGhostLayerDataBlock");
 //}
 
-void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerDataBlock(
-  const tarch::la::Vector<DIMENSIONS, int>& size,
-  const tarch::la::Vector<DIMENSIONS, int>& sourceOffset,
-  const tarch::la::Vector<DIMENSIONS, int>& destinationOffset,
-  peanoclaw::Patch& source,
-  peanoclaw::Patch& destination
-) {
-  assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
-
-  switch(source.getUnknownsPerSubcell()) {
-    case 1:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<1> transfer1;
-      transfer1.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 2:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<2> transfer2;
-      transfer2.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 3:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<3> transfer3;
-      transfer3.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 4:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<4> transfer4;
-      transfer4.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 5:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<5> transfer5;
-      transfer5.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 6:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<6> transfer6;
-      transfer6.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 7:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<7> transfer7;
-      transfer7.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 8:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<8> transfer8;
-      transfer8.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 9:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<9> transfer9;
-      transfer9.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    case 10:
-      peanoclaw::interSubgridCommunication::DefaultTransfer<10> transfer10;
-      transfer10.transfer(size, sourceOffset, destinationOffset, source, destination);
-      break;
-    default:
-      assertionFail("Number of unknowns " << source.getUnknownsPerSubcell() << " not supported!");
-  }
-  //TODO unterweg debug
-//  std::cout << "sourceOffset=" << sourceOffset << " destinationOffset=" << destinationOffset << " size=" << size << std::endl;
-//  std::cout << "source:\n" << source.toStringUNew() << std::endl;
-//  std::cout << "destination:\n" << destination.toStringUOldWithGhostLayer() << std::endl;
-
-  #ifdef Asserts
-  dfor(subcellIndex, size) {
-    tarch::la::Vector<DIMENSIONS, int> actualSubcellIndex = subcellIndex + destinationOffset;
-    for(int unknown = 0; unknown < destination.getUnknownsPerSubcell(); unknown++) {
-      double value = destination.getValueUOld(actualSubcellIndex, unknown);
-      assertionEquals6(value, value,
-          destination,
-          destination.toStringUOldWithGhostLayer(),
-          source.toStringUNew(),
-          sourceOffset,
-          destinationOffset,
-          size);
-    }
-  }
-  #endif
-}
+//void peanoclaw::interSubgridCommunication::GhostLayerCompositor::copyGhostLayerDataBlock(
+//  const tarch::la::Vector<DIMENSIONS, int>& size,
+//  const tarch::la::Vector<DIMENSIONS, int>& sourceOffset,
+//  const tarch::la::Vector<DIMENSIONS, int>& destinationOffset,
+//  peanoclaw::Patch& source,
+//  peanoclaw::Patch& destination
+//) {
+//  assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
+//
+//  peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
+//  transfer.transfer(size, sourceOffset, destinationOffset, source, destination);
+//}
 
 bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferGhostlayerData(Patch& source, Patch& destination) {
+  if(!source.isValid()) {
+    return false;
+  }
   bool sourceHoldsGridData = (source.isVirtual() || source.isLeaf());
   return destination.isLeaf()
             #ifdef Parallel

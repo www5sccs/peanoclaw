@@ -129,7 +129,9 @@ void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(const Area& area,
 }
 
 bool peanoclaw::Patch::isLeaf(const CellDescription* cellDescription) {
-  return (cellDescription != 0) && !cellDescription->getIsVirtual()
+  assertion(cellDescription != 0);
+  return
+      !cellDescription->getIsVirtual()
       && (cellDescription->getUIndex() != -1);
 }
 
@@ -636,13 +638,13 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellSize() const {
   return _subcellSize;
 }
 
-void peanoclaw::Patch::copyUNewToUOld() {
-  assertion1(isLeaf() || isVirtual(), toString());
-  for (int unknown = 0; unknown < _cellDescription->getUnknownsPerSubcell(); unknown++) {
-    dfor(subcellIndex, _cellDescription->getSubdivisionFactor()){
-      setValueUOld(subcellIndex, unknown, getValueUNew(subcellIndex, unknown));
-    }
-  }
+//void peanoclaw::Patch::copyUNewToUOld() {
+//  assertion1(isLeaf() || isVirtual(), toString());
+//  for (int unknown = 0; unknown < _cellDescription->getUnknownsPerSubcell(); unknown++) {
+//    dfor(subcellIndex, _cellDescription->getSubdivisionFactor()){
+//      setValueUOld(subcellIndex, unknown, getValueUNew(subcellIndex, unknown));
+//    }
+//  }
 //  peanoclaw::grid::SubgridAccessor accessor(
 //    *this,
 //    tarch::la::Vector<DIMENSIONS, int>(0),
@@ -654,7 +656,7 @@ void peanoclaw::Patch::copyUNewToUOld() {
 //      accessor.setUnknownUOld(accessor.getUnknownUNew());
 //    }
 //  }
-}
+//}
 
 void peanoclaw::Patch::clearRegion(tarch::la::Vector<DIMENSIONS, int> offset,
     tarch::la::Vector<DIMENSIONS, int> size, bool clearUOld) {

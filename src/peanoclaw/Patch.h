@@ -550,7 +550,7 @@ public:
    * transition to the next timestep by setting uOld(t) to uOld(t+1).
    * The ghost layer stays unchanged.
    */
-  void copyUNewToUOld();
+//  void copyUNewToUOld();
 
   /**
    * Sets the specified region of the patch.

@@ -205,8 +205,8 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      *
      */
     void restrictToOverlappingVirtualSubgrids(
-      const Patch&           subgrid,
-      const ParallelSubgrid& fineParallelSubgrid
+      Patch&           subgrid,
+      ParallelSubgrid& fineParallelSubgrid
     );
 
     /**

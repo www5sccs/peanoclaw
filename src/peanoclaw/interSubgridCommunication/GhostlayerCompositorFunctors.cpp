@@ -56,7 +56,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::operator()
       sourceOffset(dimension)
         = (offset==1) ? (subdivisionFactor(dimension) - source.getGhostlayerWidth()) : 0;
 
-      _ghostlayerCompositor.copyGhostLayerDataBlock(faceSize, sourceOffset, destinationOffset, source, destination);
+      _ghostlayerCompositor._numerics.transferGhostlayer(faceSize, sourceOffset, destinationOffset, source, destination);
     } else if(source.getLevel() < destination.getLevel() && destination.getLevel() == _ghostlayerCompositor._level && source.isLeaf()) {
       _ghostlayerCompositor._numerics.interpolate(
         faceSize,
@@ -122,7 +122,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator()
       }
     }
     if(sourceLevel == destinationLevel && sourceLevel == _ghostlayerCompositor._level) {
-      _ghostlayerCompositor.copyGhostLayerDataBlock(
+      _ghostlayerCompositor._numerics.transferGhostlayer(
         edgeSize,
         sourceOffset,
         destinationOffset,
@@ -195,7 +195,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::operator
       }
     }
     if(sourceLevel == destinationLevel && sourceLevel == _ghostlayerCompositor._level) {
-      _ghostlayerCompositor.copyGhostLayerDataBlock(
+      _ghostlayerCompositor._numerics.transferGhostlayer(
         cornerSize,
         sourceOffset,
         destinationOffset,

@@ -219,7 +219,9 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
     assertion1(patch.isLeaf(), patch);
     _numerics->initializePatch(patch);
     tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth = _numerics->getDemandedMeshWidth(patch, true);
-    patch.copyUNewToUOld();
+
+    peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
+    transfer.copyUNewToUOld(patch);
 
     if(_refinementCriterionEnabled) {
       #if defined(Asserts) && defined(AssertForPositiveValues)

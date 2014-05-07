@@ -30,9 +30,9 @@ class peanoclaw::interSubgridCommunication::Restriction {
      * Restricts data from a fine patch to a coarse patch.
      */
     virtual void restrict (
-      const peanoclaw::Patch& source,
-      peanoclaw::Patch&       destination,
-      bool restrictOnlyOverlappedAreas
+      peanoclaw::Patch& source,
+      peanoclaw::Patch& destination,
+      bool              restrictOnlyOverlappedAreas
     ) = 0;
 };
 

@@ -92,12 +92,12 @@ private:
    * Performs a copy of a block from the uNew of one cell to the ghostlayer of uOld
    * in a neighbouring cell.
    */
-  void copyGhostLayerDataBlock(
-    const tarch::la::Vector<DIMENSIONS, int>&    size,
-    const tarch::la::Vector<DIMENSIONS, int>&    sourceOffset,
-    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-    peanoclaw::Patch& source,
-    peanoclaw::Patch&       destination);
+//  void copyGhostLayerDataBlock(
+//    const tarch::la::Vector<DIMENSIONS, int>&    size,
+//    const tarch::la::Vector<DIMENSIONS, int>&    sourceOffset,
+//    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+//    peanoclaw::Patch& source,
+//    peanoclaw::Patch&       destination);
 
   /**
    * Updates the maximum allowed timestep size for a patch dependent on the

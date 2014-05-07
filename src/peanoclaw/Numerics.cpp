@@ -7,16 +7,34 @@
 #include "peanoclaw/Numerics.h"
 
 peanoclaw::Numerics::Numerics(
-  peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
-  peanoclaw::interSubgridCommunication::Restriction*    restriction,
-  peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
-) : _interpolation(interpolation), _restriction(restriction), _fluxCorrection(fluxCorrection) {
+  peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
+  peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
+  peanoclaw::interSubgridCommunication::Restriction*     restriction,
+  peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
+) : _transfer(transfer), _interpolation(interpolation), _restriction(restriction), _fluxCorrection(fluxCorrection) {
 }
 
 peanoclaw::Numerics::~Numerics() {
+  delete _transfer;
   delete _interpolation;
   delete _restriction;
   delete _fluxCorrection;
+}
+
+void peanoclaw::Numerics::transferGhostlayer(
+  const tarch::la::Vector<DIMENSIONS, int>&    size,
+  const tarch::la::Vector<DIMENSIONS, int>&    sourceOffset,
+  const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+  peanoclaw::Patch& source,
+  peanoclaw::Patch&       destination
+) const {
+  _transfer->transferGhostlayer(
+    size,
+    sourceOffset,
+    destinationOffset,
+    source,
+    destination
+  );
 }
 
 void peanoclaw::Numerics::interpolate(
@@ -40,9 +58,9 @@ void peanoclaw::Numerics::interpolate(
 }
 
 void peanoclaw::Numerics::restrict (
-  const peanoclaw::Patch& source,
-  peanoclaw::Patch&       destination,
-  bool restrictOnlyOverlappedAreas
+  peanoclaw::Patch& source,
+  peanoclaw::Patch& destination,
+  bool              restrictOnlyOverlappedAreas
 ) const {
   _restriction->restrict(
     source,

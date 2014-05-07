@@ -16,10 +16,11 @@ tarch::logging::Log peanoclaw::native::SWEKernel::_log("peanoclaw::native::SWEKe
 
 peanoclaw::native::SWEKernel::SWEKernel(
   SWEKernelScenario& scenario,
-  peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
-  peanoclaw::interSubgridCommunication::Restriction*    restriction,
-  peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
-) : Numerics(interpolation, restriction, fluxCorrection),
+  peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
+  peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
+  peanoclaw::interSubgridCommunication::Restriction*     restriction,
+  peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
+) : Numerics(transfer, interpolation, restriction, fluxCorrection),
 _scenario(scenario),
 _totalSolverCallbackTime(0.0)
 {

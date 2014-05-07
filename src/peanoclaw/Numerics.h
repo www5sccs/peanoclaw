@@ -8,6 +8,7 @@
 #ifndef PEANOCLAW_NUMERICS_H_
 #define PEANOCLAW_NUMERICS_H_
 
+#include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 #include "peanoclaw/interSubgridCommunication/Interpolation.h"
 #include "peanoclaw/interSubgridCommunication/Restriction.h"
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
@@ -26,15 +27,17 @@ namespace peanoclaw {
 class peanoclaw::Numerics {
 
 private:
-  peanoclaw::interSubgridCommunication::Interpolation*  _interpolation;
-  peanoclaw::interSubgridCommunication::Restriction*    _restriction;
-  peanoclaw::interSubgridCommunication::FluxCorrection* _fluxCorrection;
+  peanoclaw::interSubgridCommunication::DefaultTransfer* _transfer;
+  peanoclaw::interSubgridCommunication::Interpolation*   _interpolation;
+  peanoclaw::interSubgridCommunication::Restriction*     _restriction;
+  peanoclaw::interSubgridCommunication::FluxCorrection*  _fluxCorrection;
 
   public:
     Numerics(
-      peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
-      peanoclaw::interSubgridCommunication::Restriction*    restriction,
-      peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
+        peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
+      peanoclaw::interSubgridCommunication::Interpolation*     interpolation,
+      peanoclaw::interSubgridCommunication::Restriction*       restriction,
+      peanoclaw::interSubgridCommunication::FluxCorrection*    fluxCorrection
     );
 
     virtual ~Numerics();
@@ -50,6 +53,18 @@ private:
      *
      */
     virtual void initializePatch(Patch& patch) = 0;
+
+    /**
+     * Transfers ghostlayer values from the source subgrid to
+     * the destination subgrid.
+     */
+    virtual void transferGhostlayer(
+      const tarch::la::Vector<DIMENSIONS, int>&    size,
+      const tarch::la::Vector<DIMENSIONS, int>&    sourceOffset,
+      const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+      peanoclaw::Patch& source,
+      peanoclaw::Patch&       destination
+    ) const;
 
     /**
      * Performs the interpolation between the given source and destination
@@ -72,9 +87,9 @@ private:
      * method can only be called if providesRestriction() returns <tt>true</tt>.
      */
     virtual void restrict (
-      const peanoclaw::Patch& source,
-      peanoclaw::Patch&       destination,
-      bool restrictOnlyOverlappedAreas
+      peanoclaw::Patch& source,
+      peanoclaw::Patch& destination,
+      bool              restrictOnlyOverlappedAreas
     ) const;
 
     /**

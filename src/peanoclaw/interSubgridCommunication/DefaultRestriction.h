@@ -8,6 +8,7 @@
 #ifndef PEANOCLAW_INTERSUBGRIDCOMMUNICATION_DEFAULTRESTRICTION_H_
 #define PEANOCLAW_INTERSUBGRIDCOMMUNICATION_DEFAULTRESTRICTION_H_
 
+#include "peanoclaw/grid/SubgridAccessor.h"
 #include "peanoclaw/interSubgridCommunication/Restriction.h"
 #include "peanoclaw/tests/GhostLayerCompositorTest.h"
 #include "peanoclaw/tests/GridLevelTransferTest.h"
@@ -19,11 +20,14 @@
 namespace peanoclaw {
   namespace interSubgridCommunication {
     class DefaultRestriction;
+
+    template<int NumberOfUnknowns>
+    class DefaultRestrictionTemplate;
   }
 }
 
-class peanoclaw::interSubgridCommunication::DefaultRestriction
-: public peanoclaw::interSubgridCommunication::Restriction {
+template<int NumberOfUnknowns>
+class peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate {
 
   private:
     /**
@@ -68,17 +72,79 @@ class peanoclaw::interSubgridCommunication::DefaultRestriction
      * @param restrictToUOld Decides wether to restrict to UOld or to UNew
      */
     void restrictArea (
-        const peanoclaw::Patch& source,
-        peanoclaw::Patch&       destination,
-        const Area&                                  area
+      peanoclaw::Patch&                                   source,
+      peanoclaw::Patch&                                   destination,
+      peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>& sourceAccessor,
+      peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>& destinationAccessor,
+      const Area&                                         area
     );
 
   public:
     void restrict (
-      const peanoclaw::Patch& source,
+      peanoclaw::Patch& source,
       peanoclaw::Patch&       destination,
       bool restrictOnlyOverlappedAreas
     );
 };
+
+/**
+ * Performs a normal averaging restriction between grid levels.
+ */
+class peanoclaw::interSubgridCommunication::DefaultRestriction
+    : public peanoclaw::interSubgridCommunication::Restriction {
+  public:
+    void restrict (
+      peanoclaw::Patch& source,
+      peanoclaw::Patch&       destination,
+      bool restrictOnlyOverlappedAreas
+    ) {
+      switch(source.getUnknownsPerSubcell()) {
+        case 1:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<1> transfer1;
+          transfer1.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 2:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<2> transfer2;
+          transfer2.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 3:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<3> transfer3;
+          transfer3.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 4:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<4> transfer4;
+          transfer4.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 5:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<5> transfer5;
+          transfer5.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 6:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<6> transfer6;
+          transfer6.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 7:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<7> transfer7;
+          transfer7.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 8:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<8> transfer8;
+          transfer8.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 9:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<9> transfer9;
+          transfer9.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        case 10:
+          peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<10> transfer10;
+          transfer10.restrict(source, destination, restrictOnlyOverlappedAreas);
+          break;
+        default:
+          assertionFail("Number of unknowns " << source.getUnknownsPerSubcell() << " not supported!");
+      }
+    }
+};
+
+#include "peanoclaw/interSubgridCommunication/DefaultRestriction.cpph"
 
 #endif /* PEANOCLAW_INTERSUBGRIDCOMMUNICATION_DEFAULTRESTRICTION_H_ */

@@ -40,6 +40,7 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createSWENumerics(
 
   return new peanoclaw::native::SWEKernel(
     scenario,
+    new peanoclaw::interSubgridCommunication::DefaultTransfer,
     interpolation,
     restriction,
     fluxCorrection
@@ -91,6 +92,7 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
   }
 
   return new peanoclaw::pyclaw::PyClaw(
+    new peanoclaw::interSubgridCommunication::DefaultTransfer,
     initializationCallback,
     boundaryConditionCallback,
     solverCallback,

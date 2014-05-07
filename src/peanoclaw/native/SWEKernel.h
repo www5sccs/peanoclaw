@@ -51,6 +51,7 @@ private:
 public:
   SWEKernel(
     SWEKernelScenario& scenario,
+    peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
     peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
     peanoclaw::interSubgridCommunication::Restriction*    restriction,
     peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection

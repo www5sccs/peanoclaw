@@ -80,6 +80,19 @@ class peanoclaw::grid::SubgridAccessor {
     );
 
     /**
+     * Restarts the iterator.
+     */
+    void restart();
+
+    /**
+     * Restarts the iterator on a different part of the subgrid.
+     */
+    void restart(
+      const tarch::la::Vector<DIMENSIONS, int>& offset,
+      const tarch::la::Vector<DIMENSIONS, int>& size
+    );
+
+    /**
      * Returns the current unknown value for the current cell at the current timestamp.
      * This access is only valid if the accessor only iterates over inner cells of the
      * subgrid.
@@ -93,6 +106,11 @@ class peanoclaw::grid::SubgridAccessor {
     double getUnknownUOld() const;
     tarch::la::Vector<NumberOfUnknowns, double> getUnknownsUOld() const;
 
+    /**
+     * Sets the given value in the current unknown entry.
+     */
+    void setUnknownUNew(double value);
+    void setUnknownsUNew(const tarch::la::Vector<NumberOfUnknowns, double>& unknowns);
 
     /**
      * Sets the given value in the current unknown entry.
@@ -111,9 +129,9 @@ class peanoclaw::grid::SubgridAccessor {
     tarch::la::Vector<DIMENSIONS, int> getCellIndex() const;
 
     /**
-     * Returns the cell center of the current cell.
+     * Returns the lower left corner of the current cell.
      */
-    tarch::la::Vector<DIMENSIONS, double> getCellCenter() const;
+    tarch::la::Vector<DIMENSIONS, double> getCellPosition() const;
 
     /**
      * Moves the accessor to the next cell and returns whether

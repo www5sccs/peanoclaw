@@ -10,7 +10,7 @@
 #include "peano/utils/Loop.h"
 
 template<int NumberOfUnknowns>
-void peanoclaw::interSubgridCommunication::DefaultTransfer<NumberOfUnknowns>::transfer(
+void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnknowns>::transferGhostlayer(
   const tarch::la::Vector<DIMENSIONS, int>&    size,
   const tarch::la::Vector<DIMENSIONS, int>&    sourceOffset,
   const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
@@ -86,4 +86,14 @@ void peanoclaw::interSubgridCommunication::DefaultTransfer<NumberOfUnknowns>::tr
   #endif
 
   logTraceOut("copyGhostLayerDataBlock");
+}
+
+template<int NumberOfUnknowns>
+void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnknowns>::copyUNewToUOld(
+  peanoclaw::Patch& subgrid
+) {
+  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns> subgridAccessor(subgrid, tarch::la::Vector<DIMENSIONS, int>(0), subgrid.getSubdivisionFactor());
+  while(subgridAccessor.moveToNextCell()) {
+    subgridAccessor.setUnknownsUOld(subgridAccessor.getUnknownsUNew());
+  }
 }
