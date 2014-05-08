@@ -57,14 +57,15 @@ private:
 
 public:
   PyClaw(
-    InitializationCallback                                initializationCallback,
-    BoundaryConditionCallback                             boundaryConditionCallback,
-    SolverCallback                                        solverCallback,
-    RefinementCriterionCallback                           refinementCriterionCallback,
-    AddPatchToSolutionCallback                            addPatchToSolutionCallback,
-    peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
-    peanoclaw::interSubgridCommunication::Restriction*    restriction,
-    peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
+    InitializationCallback                                 initializationCallback,
+    BoundaryConditionCallback                              boundaryConditionCallback,
+    SolverCallback                                         solverCallback,
+    RefinementCriterionCallback                            refinementCriterionCallback,
+    AddPatchToSolutionCallback                             addPatchToSolutionCallback,
+    peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
+    peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
+    peanoclaw::interSubgridCommunication::Restriction*     restriction,
+    peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
   );
 
   virtual ~PyClaw();

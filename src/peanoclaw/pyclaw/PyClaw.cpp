@@ -22,15 +22,16 @@
 tarch::logging::Log peanoclaw::pyclaw::PyClaw::_log("peanoclaw::pyclaw::PyClaw");
 
 peanoclaw::pyclaw::PyClaw::PyClaw(
-  InitializationCallback                                initializationCallback,
-  BoundaryConditionCallback                             boundaryConditionCallback,
-  SolverCallback                                        solverCallback,
-  RefinementCriterionCallback                           refinementCriterionCallback,
-  AddPatchToSolutionCallback                            addPatchToSolutionCallback,
-  peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
-  peanoclaw::interSubgridCommunication::Restriction*    restriction,
-  peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
-) : Numerics(interpolation, restriction, fluxCorrection),
+  InitializationCallback                                 initializationCallback,
+  BoundaryConditionCallback                              boundaryConditionCallback,
+  SolverCallback                                         solverCallback,
+  RefinementCriterionCallback                            refinementCriterionCallback,
+  AddPatchToSolutionCallback                             addPatchToSolutionCallback,
+  peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
+  peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
+  peanoclaw::interSubgridCommunication::Restriction*     restriction,
+  peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
+) : Numerics(transfer, interpolation, restriction, fluxCorrection),
 _initializationCallback(initializationCallback),
 _boundaryConditionCallback(boundaryConditionCallback),
 _solverCallback(solverCallback),

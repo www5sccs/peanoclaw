@@ -29,8 +29,8 @@ class peanoclaw::pyclaw::RestrictionCallbackWrapper : public peanoclaw::interSub
      * @see peanoclaw::interSubgridCommunication::RestrictionCallbackWrapper
      */
     void restrict (
-      const peanoclaw::Patch& source,
-      peanoclaw::Patch&       destination,
+      peanoclaw::Patch& source,
+      peanoclaw::Patch& destination,
       bool restrictOnlyOverlappedAreas
     );
 };

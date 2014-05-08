@@ -71,7 +71,7 @@ void configureLogFilter(bool enablePeanoLogging) {
 //    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "tarch::mpianalysis", true ) );
 
       std::string logFilterFileName = "peanoclaw.logfilter";
-      std::ifstream logFilterFile(logFilterFileName);
+      std::ifstream logFilterFile(logFilterFileName.c_str());
       if(logFilterFile) {
         tarch::logging::LogFilterFileReader::parsePlainTextFile(logFilterFileName);
       }

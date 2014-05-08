@@ -17,8 +17,8 @@ peanoclaw::pyclaw::RestrictionCallbackWrapper::RestrictionCallbackWrapper(
 }
 
 void peanoclaw::pyclaw::RestrictionCallbackWrapper::restrict(
-  const peanoclaw::Patch& source,
-  peanoclaw::Patch&       destination,
+  peanoclaw::Patch& source,
+  peanoclaw::Patch& destination,
   bool restrictOnlyOverlappedAreas
 ) {
   PyClawState sourceState(source);
