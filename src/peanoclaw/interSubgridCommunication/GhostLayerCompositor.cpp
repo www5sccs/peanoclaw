@@ -109,7 +109,7 @@ bool peanoclaw::interSubgridCommunication::GhostLayerCompositor::shouldTransferG
     return false;
   }
   bool sourceHoldsGridData = (source.isVirtual() || source.isLeaf());
-  return destination.isLeaf()
+  return (destination.isValid() && destination.isLeaf())
             #ifdef Parallel
             && !destination.isRemote()
             #endif
