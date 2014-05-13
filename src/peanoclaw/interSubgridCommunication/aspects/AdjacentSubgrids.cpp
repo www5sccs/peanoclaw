@@ -213,7 +213,8 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
       int adjacentCellDescription = -1;
       if(_vertex.getAdjacentCellDescriptionIndex(i) != -1) {
 
-        Patch subgrid(_vertex.getAdjacentCellDescriptionIndex(i));
+        //Patch subgrid(_vertex.getAdjacentCellDescriptionIndex(i));
+        Patch& subgrid = _vertex.getAdjacentSubgrid(i);
         if(
           #ifdef Parallel
           !subgrid.isRemote()
@@ -360,21 +361,26 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::setOverlap
   #ifdef Parallel
   //Fill ghost layers of adjacent cells
   //Get adjacent cell descriptions
-  CellDescription* cellDescriptions[TWO_POWER_D];
-  for(int cellIndex = 0; cellIndex < TWO_POWER_D; cellIndex++) {
-    if(_vertex.getAdjacentCellDescriptionIndex(cellIndex) != -1) {
-      cellDescriptions[cellIndex] = &CellDescriptionHeap::getInstance().getData(_vertex.getAdjacentCellDescriptionIndex(cellIndex)).at(0);
-    }
-  }
+//  CellDescription* cellDescriptions[TWO_POWER_D];
+//  for(int cellIndex = 0; cellIndex < TWO_POWER_D; cellIndex++) {
+//    if(_vertex.getAdjacentCellDescriptionIndex(cellIndex) != -1) {
+//      cellDescriptions[cellIndex] = &CellDescriptionHeap::getInstance().getData(_vertex.getAdjacentCellDescriptionIndex(cellIndex)).at(0);
+//    }
+//  }
 
   Patch patches[TWO_POWER_D];
-  dfor2(cellIndex)
-    if(_vertex.getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
-      patches[cellIndexScalar] = Patch(
-        *cellDescriptions[cellIndexScalar]
-      );
+//  dfor2(cellIndex)
+//    if(_vertex.getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
+//      patches[cellIndexScalar] = Patch(
+//        *cellDescriptions[cellIndexScalar]
+//      );
+//    }
+//  enddforx
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    if(_vertex.getAdjacentCellDescriptionIndex(i) != -1) {
+      patches[i] = _vertex.getAdjacentSubgrid(i);
     }
-  enddforx
+  }
 
   SetOverlapOfRemoteGhostlayerFunctor functor(_vertex.getAdjacentRanks(), targetSubgridIndex);
 
@@ -448,9 +454,8 @@ void peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayer
     ParallelSubgrid parallelSubgrid2(patch2);
     int entry = Area::linearizeManifoldPosition(-1 * direction);
 
-    int patch1GhostlayerWidth = patch1.getGhostlayerWidth();
-
     if(patch1.isValid()) {
+      int patch1GhostlayerWidth = patch1.getGhostlayerWidth();
       int maxOverlap = 0;
       for(int d = 0; d < DIMENSIONS; d++) {
         int overlap = std::ceil(

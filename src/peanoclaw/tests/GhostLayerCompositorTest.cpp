@@ -176,23 +176,23 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
     subcellIndex(0) = index(1);
     subcellIndex(1) = index(0);
-    patches[1].setValueUNew(subcellIndex, 0, 1.0);
+    patches[1].getAccessor().setValueUNew(subcellIndex, 0, 1.0);
   }
   dfor(index, coarseSubdivisionFactor + 2*coarseGhostlayerWidth) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
     subcellIndex(0) = index(1) - coarseGhostlayerWidth;
     subcellIndex(1) = index(0) - coarseGhostlayerWidth;
-    patches[1].setValueUOld(subcellIndex, 0, -1.0);
+    patches[1].getAccessor().setValueUOld(subcellIndex, 0, -1.0);
   }
   tarch::la::Vector<DIMENSIONS, int> subcellIndex;
   assignList(subcellIndex) = 0, 0;
-  patches[1].setValueUOld(subcellIndex, 0, 6.0);
+  patches[1].getAccessor().setValueUOld(subcellIndex, 0, 6.0);
   assignList(subcellIndex) = 0, 1;
-  patches[1].setValueUOld(subcellIndex, 0, 7.0);
+  patches[1].getAccessor().setValueUOld(subcellIndex, 0, 7.0);
   assignList(subcellIndex) = 1, 0;
-  patches[1].setValueUOld(subcellIndex, 0, 10.0);
+  patches[1].getAccessor().setValueUOld(subcellIndex, 0, 10.0);
   assignList(subcellIndex) = 1, 1;
-  patches[1].setValueUOld(subcellIndex, 0, 11.0);
+  patches[1].getAccessor().setValueUOld(subcellIndex, 0, 11.0);
 
   //Fill left ghostlayer
   peanoclaw::tests::NumericsTestStump numerics;
@@ -205,13 +205,13 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
   ghostLayerCompositor.fillGhostLayersAndUpdateNeighborTimes(-1);
 
   assignList(subcellIndex) = -2, 0;
-  validateNumericalEquals(patches[0].getValueUOld(subcellIndex, 0), 65.0/9.0);
+  validateNumericalEquals(patches[0].getAccessor().getValueUOld(subcellIndex, 0), 65.0/9.0);
   assignList(subcellIndex) = -2, 1;
-  validateNumericalEquals(patches[0].getValueUOld(subcellIndex, 0), 67.0/9.0);
+  validateNumericalEquals(patches[0].getAccessor().getValueUOld(subcellIndex, 0), 67.0/9.0);
   assignList(subcellIndex) = -1, 0;
-  validateNumericalEquals(patches[0].getValueUOld(subcellIndex, 0), 73.0/9.0);
+  validateNumericalEquals(patches[0].getAccessor().getValueUOld(subcellIndex, 0), 73.0/9.0);
   assignList(subcellIndex) = -1, 1;
-  validateNumericalEquals(patches[0].getValueUOld(subcellIndex, 0), 25.0/3.0);
+  validateNumericalEquals(patches[0].getAccessor().getValueUOld(subcellIndex, 0), 25.0/3.0);
   #endif
 }
 
@@ -267,23 +267,23 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
     subcellIndex(0) = index(1);
     subcellIndex(1) = index(0);
-    patches[2].setValueUNew(subcellIndex, 0, 1.0);
+    patches[2].getAccessor().setValueUNew(subcellIndex, 0, 1.0);
   }
   dfor(index, coarseSubdivisionFactor + 2*coarseGhostlayerWidth) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
     subcellIndex(0) = index(1) - coarseGhostlayerWidth;
     subcellIndex(1) = index(0) - coarseGhostlayerWidth;
-    patches[2].setValueUOld(subcellIndex, 0, -1.0);
+    patches[2].getAccessor().setValueUOld(subcellIndex, 0, -1.0);
   }
   tarch::la::Vector<DIMENSIONS, int> subcellIndex;
   assignList(subcellIndex) = 0, 0;
-  patches[2].setValueUOld(subcellIndex, 0, 6.0);
+  patches[2].getAccessor().setValueUOld(subcellIndex, 0, 6.0);
   assignList(subcellIndex) = 0, 1;
-  patches[2].setValueUOld(subcellIndex, 0, 7.0);
+  patches[2].getAccessor().setValueUOld(subcellIndex, 0, 7.0);
   assignList(subcellIndex) = 1, 0;
-  patches[2].setValueUOld(subcellIndex, 0, 10.0);
+  patches[2].getAccessor().setValueUOld(subcellIndex, 0, 10.0);
   assignList(subcellIndex) = 1, 1;
-  patches[2].setValueUOld(subcellIndex, 0, 11.0);
+  patches[2].getAccessor().setValueUOld(subcellIndex, 0, 11.0);
 
   //Fill left ghostlayer
   peanoclaw::tests::NumericsTestStump numerics;
@@ -296,13 +296,13 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationFromCoarseToFi
   ghostLayerCompositor.fillGhostLayersAndUpdateNeighborTimes(-1);
 
   assignList(subcellIndex) = 2, 0;
-  validateNumericalEquals(patches[3].getValueUOld(subcellIndex, 0), 29.0/9.0);
+  validateNumericalEquals(patches[3].getAccessor().getValueUOld(subcellIndex, 0), 29.0/9.0);
   assignList(subcellIndex) = 2, 1;
-  validateNumericalEquals(patches[3].getValueUOld(subcellIndex, 0), 31.0/9.0);
+  validateNumericalEquals(patches[3].getAccessor().getValueUOld(subcellIndex, 0), 31.0/9.0);
   assignList(subcellIndex) = 3, 0;
-  validateNumericalEquals(patches[3].getValueUOld(subcellIndex, 0), 37.0/9.0);
+  validateNumericalEquals(patches[3].getAccessor().getValueUOld(subcellIndex, 0), 37.0/9.0);
   assignList(subcellIndex) = 3, 1;
-  validateNumericalEquals(patches[3].getValueUOld(subcellIndex, 0), 13.0/3.0);
+  validateNumericalEquals(patches[3].getAccessor().getValueUOld(subcellIndex, 0), 13.0/3.0);
   #endif
 }
 
@@ -379,23 +379,23 @@ void peanoclaw::tests::GhostLayerCompositorTest::testProjectionFromCoarseToFineP
 //  );
 //  ghostLayerCompositor.fillGhostLayers();
 //
-//  validateNumericalEquals(patches[3].getValueUOld(4, -2, 0), -1.0);
-//  validateNumericalEquals(patches[3].getValueUOld(4, -1, 0), -1.0);
-//  validateNumericalEquals(patches[3].getValueUOld(4, 0, 0), 0.0);
-//  validateNumericalEquals(patches[3].getValueUOld(4, 1, 0), 0.0);
-//  validateNumericalEquals(patches[3].getValueUOld(4, 2, 0), 0.0);
-//  validateNumericalEquals(patches[3].getValueUOld(4, 3, 0), 1.0);
-//  validateNumericalEquals(patches[3].getValueUOld(4, 4, 0), 1.0);
-//  validateNumericalEquals(patches[3].getValueUOld(4, 5, 0), 1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(4, -2, 0), -1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(4, -1, 0), -1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(4, 0, 0), 0.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(4, 1, 0), 0.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(4, 2, 0), 0.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(4, 3, 0), 1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(4, 4, 0), 1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(4, 5, 0), 1.0);
 //
-//  validateNumericalEquals(patches[3].getValueUOld(5, -2, 0), -1.0);
-//  validateNumericalEquals(patches[3].getValueUOld(5, -1, 0), -1.0);
-//  validateNumericalEquals(patches[3].getValueUOld(5, 0, 0), 0.0);
-//  validateNumericalEquals(patches[3].getValueUOld(5, 1, 0), 0.0);
-//  validateNumericalEquals(patches[3].getValueUOld(5, 2, 0), 0.0);
-//  validateNumericalEquals(patches[3].getValueUOld(5, 3, 0), 1.0);
-//  validateNumericalEquals(patches[3].getValueUOld(5, 4, 0), 1.0);
-//  validateNumericalEquals(patches[3].getValueUOld(5, 5, 0), 1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(5, -2, 0), -1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(5, -1, 0), -1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(5, 0, 0), 0.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(5, 1, 0), 0.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(5, 2, 0), 0.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(5, 3, 0), 1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(5, 4, 0), 1.0);
+//  validateNumericalEquals(patches[3].getAccessor().getValueUOld(5, 5, 0), 1.0);
   #endif
 }
 
@@ -421,17 +421,18 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
     1.0, //Timestep size
     1.0  //Minimal neighbor time
   );
+  peanoclaw::grid::SubgridAccessor& coarseAccessor = coarsePatch.getAccessor();
 
   //Fill coarse patch
   dfor(subcellIndex, coarseSubdivisionFactor) {
     for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
-      coarsePatch.setValueUNew(subcellIndex, unknown, (unknown == 0) ? 1.0 : 0.5);
+      coarseAccessor.setValueUNew(subcellIndex, unknown, (unknown == 0) ? 1.0 : 0.5);
     }
   }
 
   dfor(subcellIndex, coarseSubdivisionFactor + 2*ghostlayerWidth) {
     for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
-      coarsePatch.setValueUOld(subcellIndex - ghostlayerWidth, unknown, (unknown == 0) ? 1.0 : 0.5);
+      coarseAccessor.setValueUOld(subcellIndex - ghostlayerWidth, unknown, (unknown == 0) ? 1.0 : 0.5);
     }
   }
 //  std::vector<peanoclaw::records::Data>& uNewCoarse
@@ -473,27 +474,28 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
     1.0 / 3.0, //Timestep size
     1.0       //Minimal neighbor time
   );
+  peanoclaw::grid::SubgridAccessor& fineAccessor = finePatch.getAccessor();
 
   //Fine patch
   dfor(subcellIndex, fineSubdivisionFactor) {
     for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
-      finePatch.setValueUNew(subcellIndex, unknown, (unknown == 0) ? 1.0 : 0.5);
+      fineAccessor.setValueUNew(subcellIndex, unknown, (unknown == 0) ? 1.0 : 0.5);
     }
   }
   tarch::la::Vector<DIMENSIONS, int> subcellIndex;
   assignList(subcellIndex) = 2, 0;
-  finePatch.setValueUNew(subcellIndex, 0, 18.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 18.0);
   assignList(subcellIndex) = 2, 1;
-  finePatch.setValueUNew(subcellIndex, 0, 36.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 36.0);
   assignList(subcellIndex) = 2, 2;
-  finePatch.setValueUNew(subcellIndex, 0, 54.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 54.0);
 //  uNewFine[6] = 18.0;
 //  uNewFine[7] = 36.0;
 //  uNewFine[8] = 54.0;
 
   dfor(subcellIndex, fineSubdivisionFactor + 2*ghostlayerWidth) {
     for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
-      finePatch.setValueUOld(subcellIndex - ghostlayerWidth, unknown, (unknown == 0) ? 1.0 : 0.5);
+      fineAccessor.setValueUOld(subcellIndex - ghostlayerWidth, unknown, (unknown == 0) ? 1.0 : 0.5);
     }
   }
 //  std::vector<peanoclaw::records::Data>& uNewFine
@@ -535,13 +537,13 @@ void peanoclaw::tests::GhostLayerCompositorTest::testFluxCorrection() {
   logInfo("", "Coarse Patch after: \n" << coarsePatch.toStringUNew());
 
   assignList(subcellIndex) = 0, 0;
-  validateNumericalEquals(coarsePatch.getValueUNew(subcellIndex, 0), 2558.0 / 729.0);
+  validateNumericalEquals(coarseAccessor.getValueUNew(subcellIndex, 0), 2558.0 / 729.0);
   assignList(subcellIndex) = 0, 1;
-  validateNumericalEquals(coarsePatch.getValueUNew(subcellIndex, 0), 4466.0/729.0);
+  validateNumericalEquals(coarseAccessor.getValueUNew(subcellIndex, 0), 4466.0/729.0);
   assignList(subcellIndex) = 1, 0;
-  validateNumericalEquals(coarsePatch.getValueUNew(subcellIndex, 0), 1.0);
+  validateNumericalEquals(coarseAccessor.getValueUNew(subcellIndex, 0), 1.0);
   assignList(subcellIndex) = 1, 1;
-  validateNumericalEquals(coarsePatch.getValueUNew(subcellIndex, 0), 1.0);
+  validateNumericalEquals(coarseAccessor.getValueUNew(subcellIndex, 0), 1.0);
 }
 
 void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
@@ -559,6 +561,7 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
       1.0,     //Timestep size
       1.0      //Minimal neighbor time
     );
+  peanoclaw::grid::SubgridAccessor& sourceAccessor = sourcePatch.getAccessor();
 
   tarch::la::Vector<DIMENSIONS, double> sourcePosition;
   assignList(sourcePosition) = 1.0, 0.0;
@@ -580,22 +583,22 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
   //Fill source
   tarch::la::Vector<DIMENSIONS, int> subcellIndex;
   assignList(subcellIndex) = 0, 0;
-  sourcePatch.setValueUOld(subcellIndex, 0, 1.0);
+  sourceAccessor.setValueUOld(subcellIndex, 0, 1.0);
   assignList(subcellIndex) = 1, 0;
-  sourcePatch.setValueUOld(subcellIndex, 0, 1.0);
+  sourceAccessor.setValueUOld(subcellIndex, 0, 1.0);
   assignList(subcellIndex) = 0, 1;
-  sourcePatch.setValueUOld(subcellIndex, 0, 1.0);
+  sourceAccessor.setValueUOld(subcellIndex, 0, 1.0);
   assignList(subcellIndex) = 1, 1;
-  sourcePatch.setValueUOld(subcellIndex, 0, 1.0);
+  sourceAccessor.setValueUOld(subcellIndex, 0, 1.0);
 
   assignList(subcellIndex) = 0, 0;
-  sourcePatch.setValueUNew(subcellIndex, 0, 10.0);
+  sourceAccessor.setValueUNew(subcellIndex, 0, 10.0);
   assignList(subcellIndex) = 1, 0;
-  sourcePatch.setValueUNew(subcellIndex, 0, 20.0);
+  sourceAccessor.setValueUNew(subcellIndex, 0, 20.0);
   assignList(subcellIndex) = 0, 1;
-  sourcePatch.setValueUNew(subcellIndex, 0, 30.0);
+  sourceAccessor.setValueUNew(subcellIndex, 0, 30.0);
   assignList(subcellIndex) = 1, 1;
-  sourcePatch.setValueUNew(subcellIndex, 0, 40.0);
+  sourceAccessor.setValueUNew(subcellIndex, 0, 40.0);
 
   peanoclaw::Patch patches[TWO_POWER_D];
   patches[3] = sourcePatch;
@@ -613,9 +616,9 @@ void peanoclaw::tests::GhostLayerCompositorTest::testInterpolationInTime() {
   ghostLayerCompositor.fillGhostLayersAndUpdateNeighborTimes(-1);
 
   assignList(subcellIndex) = -1, 0;
-  validateNumericalEquals(destinationPatch.getValueUOld(subcellIndex, 0), 320.0/3.0);
+  validateNumericalEquals(destinationPatch.getAccessor().getValueUOld(subcellIndex, 0), 320.0/3.0);
   assignList(subcellIndex) = -1, 1;
-  validateNumericalEquals(destinationPatch.getValueUOld(subcellIndex, 0), 80.0/3.0);
+  validateNumericalEquals(destinationPatch.getAccessor().getValueUOld(subcellIndex, 0), 80.0/3.0);
 }
 
 void peanoclaw::tests::GhostLayerCompositorTest::testRestrictionWithOverlappingBounds() {

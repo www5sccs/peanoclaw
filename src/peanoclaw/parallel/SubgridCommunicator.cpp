@@ -166,7 +166,7 @@ void peanoclaw::parallel::SubgridCommunicator::sendPaddingCellDescription() {
 
   if(_packCommunication && _messageType == peano::heap::NeighbourCommunication) {
     #if defined(Parallel) && defined(UseBlockedMeshCommunication)
-    std::vector<CellDescription>& localCellDescriptionVector = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
+    //std::vector<CellDescription>& localCellDescriptionVector = CellDescriptionHeap::getInstance().getData(cellDescriptionIndex);
 
     Serialization::SendBuffer& sendbuffer = peano::parallel::SerializationMap::getInstance().getSendBuffer(_remoteRank)[1];
 
@@ -232,6 +232,7 @@ void peanoclaw::parallel::SubgridCommunicator::sendOverlappedCells(
   logTraceInWith1Argument("sendOverlappedCellsOfDataArray(...)", subgrid);
 
   ParallelSubgrid parallelSubgrid(subgrid);
+  peanoclaw::grid::SubgridAccessor& subgridAccessor = subgrid.getAccessor();
 
   Area areas[THREE_POWER_D_MINUS_ONE];
   int numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
@@ -258,20 +259,20 @@ void peanoclaw::parallel::SubgridCommunicator::sendOverlappedCells(
 
     //U new
     dfor(subcellIndex, area._size) {
-      int linearIndex = subgrid.getLinearIndexUNew(area._offset + subcellIndex);
+      int linearIndex = subgridAccessor.getLinearIndexUNew(area._offset + subcellIndex);
       for(int unknown = 0; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {
-        temporaryArray[entry++] = subgrid.getValueUNew(linearIndex, unknown);
+        temporaryArray[entry++] = subgridAccessor.getValueUNew(linearIndex, unknown);
       }
 
       #if defined(AssertForPositiveValues) && defined(Asserts)
       if(subgrid.isLeaf()) {
         assertion6(
-          tarch::la::greater(subgrid.getValueUNew(linearIndex, 0), 0.0),
+          tarch::la::greater(subgridAccessor.getValueUNew(linearIndex, 0), 0.0),
           subgrid,
           subcellIndex,
           area._offset,
           area._size,
-          subgrid.getValueUNew(linearIndex, 0),
+          subgridAccessor.getValueUNew(linearIndex, 0),
           subgrid.toStringUNew()
         );
       }
@@ -280,9 +281,9 @@ void peanoclaw::parallel::SubgridCommunicator::sendOverlappedCells(
 
     //U old
     dfor(subcellIndex, area._size) {
-      int linearIndex = subgrid.getLinearIndexUOld(area._offset + subcellIndex);
+      int linearIndex = subgridAccessor.getLinearIndexUOld(area._offset + subcellIndex);
       for(int unknown = 0; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {
-        temporaryArray[entry++] = subgrid.getValueUOld(linearIndex, unknown);
+        temporaryArray[entry++] = subgridAccessor.getValueUOld(linearIndex, unknown);
       }
     }
   }
@@ -370,6 +371,7 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
 ) {
   logTraceInWith1Argument("receiveOverlappedCells", subgrid);
   #ifdef Parallel
+  peanoclaw::grid::SubgridAccessor& subgridAccessor = subgrid.getAccessor();
   Area areas[THREE_POWER_D_MINUS_ONE];
   int numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
     remoteCellDescription.getAdjacentRanks(),
@@ -436,9 +438,9 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
 
     //U new
     dfor(subcellIndex, area._size) {
-      int linearIndex = subgrid.getLinearIndexUNew(area._offset + subcellIndex);
+      int linearIndex = subgridAccessor.getLinearIndexUNew(area._offset + subcellIndex);
       for(int unknown = 0; unknown < remoteCellDescription.getUnknownsPerSubcell(); unknown++) {
-        subgrid.setValueUNewAndResize(linearIndex, unknown, remoteData[entry++].getU());
+        subgridAccessor.setValueUNewAndResize(linearIndex, unknown, remoteData[entry++].getU());
       }
 
       //TODO unterweg debug
@@ -447,12 +449,12 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
       #if defined(AssertForPositiveValues) && defined(Asserts)
       if(subgrid.isLeaf()) {
         assertion6(
-          tarch::la::greater(subgrid.getValueUNew(linearIndex, 0), 0.0),
+          tarch::la::greater(subgrid.getAccessor().getValueUNew(linearIndex, 0), 0.0),
           subgrid,
           subcellIndex,
           area._offset,
           area._size,
-          subgrid.getValueUNew(linearIndex, 0),
+          subgrid.getAccessor().getValueUNew(linearIndex, 0),
           subgrid.toStringUNew()
         );
       }
@@ -461,14 +463,14 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
 
     //U old
     dfor(subcellIndex, area._size) {
-      int linearIndex = subgrid.getLinearIndexUOld(area._offset + subcellIndex);
+      int linearIndex = subgridAccessor.getLinearIndexUOld(area._offset + subcellIndex);
       for(int unknown = 0; unknown < remoteCellDescription.getUnknownsPerSubcell(); unknown++) {
-        subgrid.setValueUOldAndResize(linearIndex, unknown, remoteData[entry++].getU());
+        subgridAccessor.setValueUOldAndResize(linearIndex, unknown, remoteData[entry++].getU());
       }
 
       #if defined(AssertForPositiveValues) && defined(Asserts)
       if(subgrid.isLeaf()) {
-        assertion3(tarch::la::greater(subgrid.getValueUOld(linearIndex, 0), 0.0), subgrid, subcellIndex, subgrid.getValueUOld(linearIndex, 0));
+        assertion3(tarch::la::greater(subgrid.getAccessor().getValueUOld(linearIndex, 0), 0.0), subgrid, subcellIndex, subgrid.getAccessor().getValueUOld(linearIndex, 0));
       }
       #endif
     }

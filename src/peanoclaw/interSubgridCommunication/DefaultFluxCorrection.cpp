@@ -49,6 +49,9 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
 ) const {
   logTraceInWith4Arguments("applyCoarseGridCorrection", finePatch.toString(), coarsePatch.toString(), dimension, direction);
 
+  peanoclaw::grid::SubgridAccessor fineAccessor = finePatch.getAccessor();
+  peanoclaw::grid::SubgridAccessor coarseAccessor = coarsePatch.getAccessor();
+
   //Create description of the fine patch's face to be traversed
   tarch::la::Vector<DIMENSIONS, int> face = finePatch.getSubdivisionFactor();
   face(dimension) = 1;
@@ -105,8 +108,8 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
         //and variables 1 and 2 hold the velocity
         //Estimate the flux through the interface from fine to coarse grid, once from the point of view of the fine subcell and
         //once from the of the coarse subcell
-        double fineGridFlux = finePatch.getValueUNew(subcellIndexInFinePatch, 0) * finePatch.getValueUNew(subcellIndexInFinePatch, 1 + dimension) * interfaceArea;
-        double coarseGridFlux = coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) * coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 1 + dimension) * interfaceArea;
+        double fineGridFlux = fineAccessor.getValueUNew(subcellIndexInFinePatch, 0) * fineAccessor.getValueUNew(subcellIndexInFinePatch, 1 + dimension) * interfaceArea;
+        double coarseGridFlux = coarseAccessor.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) * coarseAccessor.getValueUNew(adjacentSubcellIndexInCoarsePatch, 1 + dimension) * interfaceArea;
 
         //Estimate the according transfered volume during the fine patch's timestep
         double transferedVolumeFineGrid = fineGridFlux * finePatch.getTimeIntervals().getTimestepSize();
@@ -126,8 +129,8 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
             << "\tnew u=" << coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta);
 
         //Scaled down due to inaccuracy
-        coarsePatch.setValueUNew(adjacentSubcellIndexInCoarsePatch, 0,
-            std::max(0.0, coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta * 10e-8));
+        coarseAccessor.setValueUNew(adjacentSubcellIndexInCoarsePatch, 0,
+            std::max(0.0, coarseAccessor.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta * 10e-8));
       }
     }
   }

@@ -18,6 +18,7 @@
 #include "peanoclaw/interSubgridCommunication/DefaultRestriction.h"
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
 #include "peanoclaw/interSubgridCommunication/DefaultFluxCorrection.h"
+#include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 
 tarch::logging::Log peanoclaw::NumericsFactory::_log("peanoclaw::NumericsFactory");
 
@@ -92,12 +93,12 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
   }
 
   return new peanoclaw::pyclaw::PyClaw(
-    new peanoclaw::interSubgridCommunication::DefaultTransfer,
     initializationCallback,
     boundaryConditionCallback,
     solverCallback,
     refinementCriterionCallback,
     addPatchToSolutionCallback,
+    new peanoclaw::interSubgridCommunication::DefaultTransfer,
     interpolation,
     restriction,
     fluxCorrection
@@ -124,6 +125,7 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createFullSWOF2DNumerics(
 
   return new peanoclaw::native::FullSWOF2D(
     scenario,
+    new peanoclaw::interSubgridCommunication::DefaultTransfer,
     interpolation,
     restriction,
     fluxCorrection

@@ -64,8 +64,8 @@ class peanoclaw::interSubgridCommunication::Interpolation {
     virtual void interpolate (
         const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
         const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-        const peanoclaw::Patch& source,
-        peanoclaw::Patch&        destination,
+        peanoclaw::Patch& source,
+        peanoclaw::Patch& destination,
         bool interpolateToUOld,
         bool interpolateToCurrentTime,
         bool useTimeUNewOrTimeUOld

@@ -5,6 +5,7 @@
 #include "peanoclaw/Patch.h"
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
+#include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 
 #include "tarch/parallel/Node.h"
 
@@ -106,7 +107,7 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep()
     _globalTimestepEndTime(0),
     _useDimensionalSplittingOptimization(true),
     _workerIterations(-1),
-    _collectSubgridStatistics(true) {
+    _collectSubgridStatistics(false) {
   logTraceIn( "SolveTimestep()" );
   // @todo Insert your code here
   logTraceOut( "SolveTimestep()" );
@@ -140,7 +141,9 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
 void peanoclaw::mappings::SolveTimestep::mergeWithWorkerThread(const SolveTimestep& workerThread) {
   logTraceIn( "mergeWithWorkerThread(SolveTimestep)" );
 
-  _subgridStatistics.merge(workerThread._subgridStatistics);
+  if(_collectSubgridStatistics) {
+    _subgridStatistics.merge(workerThread._subgridStatistics);
+  }
 
   logTraceOut( "mergeWithWorkerThread(SolveTimestep)" );
 }
@@ -557,9 +560,10 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
   if(fineGridCell.isInside()) {
     //Create patch
-    Patch patch (
-      fineGridCell
-    );
+//    Patch patch (
+//      fineGridCell
+//    );
+    Patch& subgrid = fineGridCell.getSubgrid();
 
     //Solve timestep for this patch
     if(fineGridCell.isLeaf()) {
@@ -568,9 +572,9 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       CellDescription& cellDescription = CellDescriptionHeap::getInstance().getData(fineGridCell.getCellDescriptionIndex()).at(0);
       double startTime = cellDescription.getTime();
       double endTime = cellDescription.getTime() + cellDescription.getTimestepSize();
-      assertionEquals1(patch.getTimeIntervals().getCurrentTime(), startTime, patch.toString());
-      assertionEquals1(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), endTime, patch.toString());
-      assertion(patch.isLeaf() || patch.isVirtual());
+      assertionEquals1(subgrid.getTimeIntervals().getCurrentTime(), startTime, subgrid);
+      assertionEquals1(subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize(), endTime, subgrid);
+      assertion(subgrid.isLeaf() || subgrid.isVirtual());
       #endif
 
       #ifdef Parallel
@@ -579,8 +583,8 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       #endif
 
       //Perform timestep
-      double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize());
-      if(patch.getTimeIntervals().isAllowedToAdvanceInTime(
+      double maximumTimestepDueToGlobalTimestep = _globalTimestepEndTime - (subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize());
+      if(subgrid.getTimeIntervals().isAllowedToAdvanceInTime(
         maximumTimestepDueToGlobalTimestep,
         fineGridVertices,
         fineGridVerticesEnumerator,
@@ -591,23 +595,23 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         // Copy uNew to uOld
         //patch.copyUNewToUOld();
         peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
-        transfer.copyUNewToUOld(patch);
+        transfer.copyUNewToUOld(subgrid);
 
         // Filling boundary layers for the given patch...
         fillBoundaryLayers(
-          patch,
+          subgrid,
           fineGridVertices,
           fineGridVerticesEnumerator
         );
 
         // Do one timestep...
         _numerics->solveTimestep(
-          patch,
+          subgrid,
           maximumTimestepDueToGlobalTimestep,
           _useDimensionalSplittingOptimization
         );
-        tarch::la::Vector<DIMENSIONS, double> requiredMeshWidth = _numerics->getDemandedMeshWidth(patch, false);
-        patch.setDemandedMeshWidth(requiredMeshWidth);
+        tarch::la::Vector<DIMENSIONS, double> requiredMeshWidth = _numerics->getDemandedMeshWidth(subgrid, false);
+        subgrid.setDemandedMeshWidth(requiredMeshWidth);
 
         #ifdef Parallel
         ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
@@ -622,15 +626,15 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         }
 
         //Statistics
-        assertion1(tarch::la::greater(patch.getTimeIntervals().getTimestepSize(), 0.0), patch);
-        assertion1(patch.getTimeIntervals().getTimestepSize() != std::numeric_limits<double>::infinity(), patch);
-        _subgridStatistics.processSubgridAfterUpdate(patch, coarseGridCell.getCellDescriptionIndex());
+        assertion1(tarch::la::greater(subgrid.getTimeIntervals().getTimestepSize(), 0.0), subgrid);
+        assertion1(subgrid.getTimeIntervals().getTimestepSize() != std::numeric_limits<double>::infinity(), subgrid);
+        _subgridStatistics.processSubgridAfterUpdate(subgrid, coarseGridCell.getCellDescriptionIndex());
 
         //Probes
         for(std::vector<peanoclaw::statistics::Probe>::iterator i = _probeList.begin();
             i != _probeList.end();
             i++) {
-          i->plotDataIfContainedInPatch(patch);
+          i->plotDataIfContainedInPatch(subgrid);
         }
 
         //TODO unterweg debug
@@ -640,7 +644,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getTimeIntervals().getCurrentTime() << ", " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << "]");
       } else {
         logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getTimeIntervals().getCurrentTime() << ", " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << "]");
-        patch.reduceGridIterationsToBeSkipped();
+        subgrid.reduceGridIterationsToBeSkipped();
 
 //        //TODO unterweg debug
 //        logInfo("enterCell", "Processing subgrid(1): " << patch
@@ -654,24 +658,24 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
         //Statistics
         _subgridStatistics.processSubgrid(
-          patch,
+          subgrid,
           coarseGridCell.getCellDescriptionIndex()
         );
         _subgridStatistics.updateMinimalSubgridBlockReason(
-          patch,
+          subgrid,
           coarseGridVertices,
           coarseGridVerticesEnumerator,
           _globalTimestepEndTime
         );
       }
 
-      assertion2(!tarch::la::smaller(patch.getTimeIntervals().getCurrentTime(), startTime), patch, startTime);
-      assertion2(!tarch::la::smaller(patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), endTime), patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(), endTime);
+      assertion2(!tarch::la::smaller(subgrid.getTimeIntervals().getCurrentTime(), startTime), subgrid, startTime);
+      assertion2(!tarch::la::smaller(subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize(), endTime), subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize(), endTime);
 
       #ifdef Asserts
-      if(patch.containsNaN()) {
-        logError("", "Invalid solution in patch " << patch.toString()
-            << std::endl << patch.toStringUNew() << std::endl << patch.toStringUOldWithGhostLayer());
+      if(subgrid.containsNaN()) {
+        logError("", "Invalid solution in patch " << subgrid.toString()
+            << std::endl << subgrid.toStringUNew() << std::endl << subgrid.toStringUOldWithGhostLayer());
         if(coarseGridCell.getCellDescriptionIndex() != -2) {
           Patch coarsePatch(CellDescriptionHeap::getInstance().getData(coarseGridCell.getCellDescriptionIndex()).at(0));
           logError("", "Coarse Patch:" << std::endl << coarsePatch.toString() << std::endl << coarsePatch.toStringUNew())
@@ -704,10 +708,10 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       logTraceOut( "enterCell(...)" );
     }
 
-    patch.increaseAgeByOneGridIteration();
+    subgrid.increaseAgeByOneGridIteration();
 
     //TODO unterweg debug
-    assertion1(!tarch::la::smaller(patch.getTimeIntervals().getTimestepSize(), 0.0) || !patch.isLeaf(), patch);
+    assertion1(!tarch::la::smaller(subgrid.getTimeIntervals().getTimestepSize(), 0.0) || !subgrid.isLeaf(), subgrid);
 
   #ifdef Parallel
 //    if (patch.getAge() >= 2) {

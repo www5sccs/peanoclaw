@@ -21,6 +21,7 @@ void BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
     // compute from mesh data
     const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
     const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
+    peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
 
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
     for (int yi = 0; yi < patch.getSubdivisionFactor()(1); yi++) {
@@ -36,9 +37,13 @@ void BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
             double q1 = hl*ul*(r<=radDam) + hr*ur*(r>radDam);
             double q2 = hl*vl*(r<=radDam) + hr*vr*(r>radDam);
 
-            patch.setValueUNew(subcellIndex, 0, q0);
-            patch.setValueUNew(subcellIndex, 1, q1);
-            patch.setValueUNew(subcellIndex, 2, q2);
+            accessor.setValueUNew(subcellIndex, 0, q0);
+            accessor.setValueUNew(subcellIndex, 1, q1);
+            accessor.setValueUNew(subcellIndex, 2, q2);
+
+            assertionEquals(accessor.getValueUNew(subcellIndex, 0), q0);
+            assertionEquals(accessor.getValueUNew(subcellIndex, 1), q1);
+            assertionEquals(accessor.getValueUNew(subcellIndex, 2), q2);
         }
     }
 }
@@ -49,6 +54,7 @@ tarch::la::Vector<DIMENSIONS,double> BreakingDam_SWEKernelScenario::computeDeman
 ) {
     double max_gradient = 0.0;
     const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
+    peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
     
     tarch::la::Vector<DIMENSIONS, int> this_subcellIndex;
     tarch::la::Vector<DIMENSIONS, int> next_subcellIndex_x;
@@ -64,9 +70,9 @@ tarch::la::Vector<DIMENSIONS,double> BreakingDam_SWEKernelScenario::computeDeman
             next_subcellIndex_y(0) = xi;
             next_subcellIndex_y(1) = yi+1;
  
-            double q0 =  patch.getValueUNew(this_subcellIndex, 0);
-            double q0_x =  (patch.getValueUNew(next_subcellIndex_x, 0) - q0) / meshWidth(0);
-            double q0_y =  (patch.getValueUNew(next_subcellIndex_y, 0) - q0) / meshWidth(1);
+            double q0 =  accessor.getValueUNew(this_subcellIndex, 0);
+            double q0_x =  (accessor.getValueUNew(next_subcellIndex_x, 0) - q0) / meshWidth(0);
+            double q0_y =  (accessor.getValueUNew(next_subcellIndex_y, 0) - q0) / meshWidth(1);
 
             max_gradient = fmax(max_gradient, sqrt(fabs(q0_x)*fabs(q0_x) + fabs(q0_y)*fabs(q0_y)));
         }

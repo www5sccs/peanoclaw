@@ -3,6 +3,7 @@
 #include "peanoclaw/Heap.h"
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/ParallelSubgrid.h"
+#include "peanoclaw/grid/SubgridLevelContainer.h"
 #include "peanoclaw/interSubgridCommunication/GridLevelTransfer.h"
 #include "peanoclaw/parallel/NeighbourCommunicator.h"
 #include "peanoclaw/parallel/MasterWorkerAndForkJoinCommunicator.h"
@@ -85,6 +86,8 @@ peanoclaw::mappings::Remesh::Remesh()
 
   _spacetreeCommunicationWaitingTimeWatch.stopTimer();
 
+  _subgridLevelContainer = new peanoclaw::grid::SubgridLevelContainer;
+
   logTraceOut( "Remesh()" );
 }
 
@@ -93,6 +96,7 @@ peanoclaw::mappings::Remesh::~Remesh() {
   logTraceIn( "~Remesh()" );
 
   _totalParallelStatistics.logTotalStatistics();
+  delete _subgridLevelContainer;
 
   logTraceOut( "~Remesh()" );
 }
@@ -946,6 +950,11 @@ void peanoclaw::mappings::Remesh::touchVertexLastTime(
 ) {
   logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
 
+  //TODO unterweg debug
+//  for(int i = 0; i < TWO_POWER_D; i++) {
+//    assertionEquals(fineGridVertex.getAdjacentRanks()(i), 0);
+//  }
+
   peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids adjacentSubgrids(
     fineGridVertex,
     _vertexPositionToIndexMap,
@@ -987,20 +996,30 @@ void peanoclaw::mappings::Remesh::enterCell(
     _iterationNumber
   );
 
-  Patch patch(
-    fineGridCell
-  );
+  //Prepare subgrid on first level
+  if(fineGridVerticesEnumerator.getLevel() == 1) {
 
-  assertion(patch.isLeaf() || !patch.isLeaf());
+    //TODO unterweg debug
+    std::cout << "Setting first level subgrid..." << std::endl;
+
+    _subgridLevelContainer->setFirstLevel(fineGridCell, fineGridVertices, fineGridVerticesEnumerator);
+  }
+
+//  Patch patch(
+//    fineGridCell
+//  );
+  Patch& subgrid = fineGridCell.getSubgrid();
+
+  assertion(subgrid.isLeaf() || !subgrid.isLeaf());
 
   #ifdef Parallel
   if(!_isInitializing) {
     fineGridCell.setCellIsAForkCandidate(true);
   }
 
-  assertionEquals4(patch.getLevel(),
+  assertionEquals4(subgrid.getLevel(),
     fineGridVerticesEnumerator.getLevel(),
-    patch,
+    subgrid,
     fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getCellSize(),
     tarch::parallel::Node::getInstance().getRank()
@@ -1008,8 +1027,8 @@ void peanoclaw::mappings::Remesh::enterCell(
   #endif
 
   _gridLevelTransfer->stepDown(
-    coarseGridCell.isRoot() ? -1 : coarseGridCell.getCellDescriptionIndex(),
-    patch,
+    coarseGridCell.isRoot() ? 0 : &(coarseGridCell.getSubgrid()),
+    subgrid,
     fineGridVertices,
     fineGridVerticesEnumerator,
     _isInitializing,
@@ -1017,21 +1036,21 @@ void peanoclaw::mappings::Remesh::enterCell(
   );
 
   #ifdef Asserts
-  if(patch.isLeaf() && !fineGridCell.isLeaf()) {
+  if(subgrid.isLeaf() && !fineGridCell.isLeaf()) {
     bool isRefining = false;
     for(int i = 0; i < TWO_POWER_D; i++) {
       if(fineGridVertices[fineGridVerticesEnumerator(i)].getRefinementControl() == peanoclaw::records::Vertex::Refining) {
         isRefining = true;
       }
     }
-    assertion6(isRefining, patch, fineGridCell,
+    assertion6(isRefining, subgrid, fineGridCell,
         fineGridVertices[fineGridVerticesEnumerator(0)],
         fineGridVertices[fineGridVerticesEnumerator(1)],
         fineGridVertices[fineGridVerticesEnumerator(2)],
         fineGridVertices[fineGridVerticesEnumerator(3)]);
   }
   #endif
-  logTraceOutWith2Arguments( "enterCell(...)", fineGridCell, patch );
+  logTraceOutWith2Arguments( "enterCell(...)", fineGridCell, subgrid );
 }
 
 
@@ -1050,24 +1069,26 @@ void peanoclaw::mappings::Remesh::leaveCell(
   assertion(fineGridCell.getCellDescriptionIndex() != -1);
   assertion(coarseGridCell.getCellDescriptionIndex() != -1);
 
-  Patch finePatch(
-    fineGridCell
-  );
+//  Patch finePatch(
+//    fineGridCell
+//  );
+  Patch& fineSubgrid = fineGridCell.getSubgrid();
   ParallelSubgrid fineParallelSubgrid(
     fineGridCell
   );
 
   _gridLevelTransfer->stepUp(
-    coarseGridCell.getCellDescriptionIndex(),
-    finePatch,
+    //coarseGridCell.getCellDescriptionIndex(),
+    coarseGridCell.holdsSubgrid() ? &coarseGridCell.getSubgrid() : 0,
+    fineSubgrid,
     fineParallelSubgrid,
     fineGridCell.isLeaf(),
     fineGridVertices,
     fineGridVerticesEnumerator
   );
 
-  assertionEquals1(finePatch.isLeaf(), fineGridCell.isLeaf(), finePatch);
-  assertionEquals1(finePatch.getLevel(), fineGridVerticesEnumerator.getLevel(), finePatch.toString());
+  assertionEquals1(fineSubgrid.isLeaf(), fineGridCell.isLeaf(), fineSubgrid);
+  assertionEquals1(fineSubgrid.getLevel(), fineGridVerticesEnumerator.getLevel(), fineSubgrid.toString());
 
   if(!fineGridCell.isAssignedToRemoteRank()) {
     //Count number of adjacent subgrids
@@ -1234,7 +1255,28 @@ void peanoclaw::mappings::Remesh::descend(
   peanoclaw::Cell&                 coarseGridCell
 ) {
   logTraceInWith2Arguments( "descend(...)", coarseGridCell.toString(), coarseGridVerticesEnumerator.toString() );
-  // @todo Insert your code here
+
+  _subgridLevelContainer->addNewLevel(
+    fineGridCells,
+    fineGridVertices,
+    fineGridVerticesEnumerator
+  );
+
+  #ifdef Asserts
+  for(int i = 0; i < FOUR_POWER_D; i++) {
+    for(int j = 0; j < TWO_POWER_D; j++) {
+      int adjacentCellDescriptionIndex = fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentCellDescriptionIndex(j);
+      assertion3(
+        adjacentCellDescriptionIndex == -1
+          || adjacentCellDescriptionIndex == fineGridVertices[fineGridVerticesEnumerator(i)].getAdjacentSubgrid(j).getCellDescriptionIndex(),
+        i,
+        j,
+        adjacentCellDescriptionIndex
+      );
+    }
+  }
+  #endif
+
   logTraceOut( "descend(...)" );
 }
 
@@ -1255,11 +1297,13 @@ void peanoclaw::mappings::Remesh::ascend(
   //subgrids that they could be immediately coarsened again but the coarse subgrid has a
   //demanded mesh width so it has to be refined oscillating refinement may occur.
   if(coarseGridCell.getCellDescriptionIndex() > -1) {
-    Patch coarseSubgrid(coarseGridCell);
+    Patch& coarseSubgrid = coarseGridCell.getSubgrid();
     bool printOscillationWarning = tarch::la::oneGreater(coarseSubgrid.getSubcellSize(), coarseSubgrid.getDemandedMeshWidth());
-    for(int i = 0; i < THREE_POWER_D; i++) {
-      if(fineGridCells[i].getCellDescriptionIndex() > -1) {
-        Patch fineSubgrid(fineGridCells[i]);
+    //for(int i = 0; i < THREE_POWER_D; i++) {
+    dfor3(cellIndex)
+      peanoclaw::Cell& fineCell = fineGridCells[fineGridVerticesEnumerator.cell(cellIndex)];
+      if(fineCell.getCellDescriptionIndex() > -1) {
+        Patch& fineSubgrid = fineCell.getSubgrid();
 
         //Only relevant if all fine subgrids have just been created.
         if(fineSubgrid.getAge() > 1) {
@@ -1272,11 +1316,14 @@ void peanoclaw::mappings::Remesh::ascend(
           break;
         }
       }
-    }
+    enddforx
     if(printOscillationWarning) {
       logWarning("ascend(...)", "Oscillating refinement may occur. Check refinement criterion... Coarse subgrid: " << coarseSubgrid);
     }
   }
+
+  //Remove level from SubgridLevelContainer
+  _subgridLevelContainer->removeCurrentLevel();
 
   logTraceOut( "ascend(...)" );
 }

@@ -102,6 +102,8 @@ void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension
     tarch::la::Vector<DIMENSIONS, int> src_subcellIndex;
     tarch::la::Vector<DIMENSIONS, int> dest_subcellIndex;
 
+    peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
+
     if (dimension == 0) {
         for (int yi = -1; yi < patch.getSubdivisionFactor()(1)+1; yi++) {
             int xi = setUpper ? patch.getSubdivisionFactor()(0) : -1;
@@ -113,12 +115,12 @@ void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension
             dest_subcellIndex(1) = yi;
      
             for (int unknown=0; unknown < patch.getUnknownsPerSubcell(); unknown++) {
-                double q = patch.getValueUOld(src_subcellIndex, unknown);
+                double q = accessor.getValueUOld(src_subcellIndex, unknown);
 
                 if (unknown == dimension + 1) {
-                    patch.setValueUOld(dest_subcellIndex, unknown, -q);
+                  accessor.setValueUOld(dest_subcellIndex, unknown, -q);
                 } else {
-                    patch.setValueUOld(dest_subcellIndex, unknown, q);
+                  accessor.setValueUOld(dest_subcellIndex, unknown, q);
                 }
             }
         }
@@ -134,12 +136,12 @@ void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension
             dest_subcellIndex(1) = yi;
      
             for (int unknown=0; unknown < patch.getUnknownsPerSubcell(); unknown++) {
-                double q = patch.getValueUOld(src_subcellIndex, unknown);
+                double q = accessor.getValueUOld(src_subcellIndex, unknown);
 
                 if (unknown == dimension + 1) {
-                    patch.setValueUOld(dest_subcellIndex, unknown, -q);
+                  accessor.setValueUOld(dest_subcellIndex, unknown, -q);
                 } else {
-                    patch.setValueUOld(dest_subcellIndex, unknown, q);
+                  accessor.setValueUOld(dest_subcellIndex, unknown, q);
                 }
             }
         }

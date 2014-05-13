@@ -2,6 +2,7 @@
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentVertices.h"
+#include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 
 #include "peano/utils/Loop.h"
 #include "peano/heap/Heap.h"
@@ -225,14 +226,17 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
 
     if(_refinementCriterionEnabled) {
       #if defined(Asserts) && defined(AssertForPositiveValues)
+      peanoclaw::grid::SubgridAccessor& subgridAccessor = patch.getAccessor();
       dfor(subcellIndex, patch.getSubdivisionFactor()) {
         tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex;
-        assertion3(tarch::la::greater(patch.getValueUNew(subcellIndexInDestinationPatch, 0), 0.0),
-                patch.getValueUNew(subcellIndexInDestinationPatch, 0),
+        assertion5(tarch::la::greater(subgridAccessor.getValueUNew(subcellIndexInDestinationPatch, 0), 0.0),
+                subgridAccessor.getValueUNew(subcellIndexInDestinationPatch, 0),
                 subcellIndex,
-                subcellIndexInDestinationPatch);
-        assertion5(tarch::la::greater(patch.getValueUOld(subcellIndexInDestinationPatch, 0), 0.0),
-                patch.getValueUOld(subcellIndexInDestinationPatch, 0),
+                subcellIndexInDestinationPatch,
+                patch.toStringUNew(),
+                patch.toStringUOldWithGhostLayer());
+        assertion5(tarch::la::greater(subgridAccessor.getValueUOld(subcellIndexInDestinationPatch, 0), 0.0),
+                subgridAccessor.getValueUOld(subcellIndexInDestinationPatch, 0),
                 subcellIndex,
                 subcellIndexInDestinationPatch,
                 patch.toStringUNew(),

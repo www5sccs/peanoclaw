@@ -16,14 +16,15 @@ peanoclaw::interSubgridCommunication::ExtrapolationAxis::ExtrapolationAxis(
   int                                      axis,
   int                                      direction
 ) : _subgrid(subgrid), _axis(axis), _maximumLinearError(0.0) {
-  _linearSubcellIndex = subgrid.getLinearIndexUOld(subcellIndex);
+  peanoclaw::grid::SubgridAccessor subgridAccessor = _subgrid.getAccessor();
+  _linearSubcellIndex = subgridAccessor.getLinearIndexUOld(subcellIndex);
 
   tarch::la::Vector<DIMENSIONS, int> support0 = subcellIndex;
   support0(axis) = std::max(0, std::min(subgrid.getSubdivisionFactor()(axis) - 1, subcellIndex(axis)));
   tarch::la::Vector<DIMENSIONS, int> support1 = subcellIndex;
   support1(axis) = support0(axis) - direction;
-  _linearIndexSupport0 = subgrid.getLinearIndexUOld(support0);
-  _linearIndexSupport1 = subgrid.getLinearIndexUOld(support1);
+  _linearIndexSupport0 = subgridAccessor.getLinearIndexUOld(support0);
+  _linearIndexSupport1 = subgridAccessor.getLinearIndexUOld(support1);
 
   _distanceSupport0 = std::abs(support0(axis) - subcellIndex(axis));
   _distanceSupport1 = std::abs(support1(axis) - subcellIndex(axis));
@@ -32,8 +33,9 @@ peanoclaw::interSubgridCommunication::ExtrapolationAxis::ExtrapolationAxis(
 double peanoclaw::interSubgridCommunication::ExtrapolationAxis::getExtrapolatedValue(
   int unknown
 ) {
-  double valueSupport0 = _subgrid.getValueUOld(_linearIndexSupport0, unknown);
-  double valueSupport1 = _subgrid.getValueUOld(_linearIndexSupport1, unknown);
+  const peanoclaw::grid::SubgridAccessor& subgridAccessor = _subgrid.getAccessor();
+  double valueSupport0 = subgridAccessor.getValueUOld(_linearIndexSupport0, unknown);
+  double valueSupport1 = subgridAccessor.getValueUOld(_linearIndexSupport1, unknown);
 
   if(unknown == 0) {
     int extrapolationDistance = std::max(_distanceSupport0, _distanceSupport1) - 1;
@@ -56,9 +58,10 @@ void peanoclaw::interSubgridCommunication::CornerExtrapolation::operator()(
   const peanoclaw::Area& area,
   const tarch::la::Vector<DIMENSIONS,int> cornerIndex
 ) {
+  peanoclaw::grid::SubgridAccessor& subgridAccessor = subgrid.getAccessor();
   dfor(subcellIndexInArea, area._size) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndex = subcellIndexInArea + area._offset;
-    int linearIndexSubcell = subgrid.getLinearIndexUOld(subcellIndex);
+    int linearIndexSubcell = subgridAccessor.getLinearIndexUOld(subcellIndex);
     ExtrapolationAxis axis0(subcellIndex, subgrid, 0, cornerIndex(0));
     ExtrapolationAxis axis1(subcellIndex, subgrid, 1, cornerIndex(1));
     ExtrapolationAxis axis2(subcellIndex, subgrid, 2, cornerIndex(2));
@@ -75,7 +78,7 @@ void peanoclaw::interSubgridCommunication::CornerExtrapolation::operator()(
 //        std::cout << std::endl;
 //      }
 
-      subgrid.setValueUOld(linearIndexSubcell, unknown, (valueAxis0 + valueAxis1 + valueAxis2) / 3.0);
+      subgridAccessor.setValueUOld(linearIndexSubcell, unknown, (valueAxis0 + valueAxis1 + valueAxis2) / 3.0);
 
       _maximumLinearError = std::max(_maximumLinearError, axis0.getMaximumLinearError());
       _maximumLinearError = std::max(_maximumLinearError, axis1.getMaximumLinearError());
@@ -98,6 +101,7 @@ void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
   const tarch::la::Vector<DIMENSIONS,int>& direction
 ) {
   _maximumLinearError = 0.0;
+  peanoclaw::grid::SubgridAccessor& subgridAccessor = subgrid.getAccessor();
 
   int dimensionAxis0 = -1;
   int dimensionAxis1 = -1;
@@ -113,11 +117,11 @@ void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
     }
   }
 
-  subgrid.clearRegion(area._offset, area._size, true);
+  subgridAccessor.clearRegion(area._offset, area._size, true);
 
   dfor(subcellIndexInArea, area._size) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndex = subcellIndexInArea + area._offset;
-    int linearIndexSubcell = subgrid.getLinearIndexUOld(subcellIndex);
+    int linearIndexSubcell = subgridAccessor.getLinearIndexUOld(subcellIndex);
 
     ExtrapolationAxis axis0(subcellIndex, subgrid, dimensionAxis0, direction(dimensionAxis0));
     ExtrapolationAxis axis1(subcellIndex, subgrid, dimensionAxis1, direction(dimensionAxis1));
@@ -126,7 +130,7 @@ void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
       double valueAxis0 = axis0.getExtrapolatedValue( unknown );
       double valueAxis1 = axis1.getExtrapolatedValue( unknown );
 
-      subgrid.setValueUOld(linearIndexSubcell, unknown, (valueAxis0 + valueAxis1) / 2.0);
+      subgridAccessor.setValueUOld(linearIndexSubcell, unknown, (valueAxis0 + valueAxis1) / 2.0);
 
       _maximumLinearError = std::max(_maximumLinearError, axis0.getMaximumLinearError());
       _maximumLinearError = std::max(_maximumLinearError, axis1.getMaximumLinearError());

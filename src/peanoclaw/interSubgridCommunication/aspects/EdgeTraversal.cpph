@@ -10,7 +10,7 @@
 
 template<class LoopBody>
 peanoclaw::interSubgridCommunication::aspects::EdgeTraversal<LoopBody>::EdgeTraversal(
-  Patch& subgrid,
+  peanoclaw::Patch& subgrid,
   LoopBody& loopBody
 ) {
   #ifdef Dim2

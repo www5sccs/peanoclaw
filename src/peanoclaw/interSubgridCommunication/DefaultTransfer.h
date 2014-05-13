@@ -9,6 +9,7 @@
 #define PEANOCLAW_INTERSUBGRIDCOMMUNICATION_DEFAULTTRANSFER_H_
 
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/grid/SubgridAccessor.h"
 
 #include "tarch/la/Vector.h"
 #include "peano/utils/Dimensions.h"
@@ -116,10 +117,11 @@ public:
     }
 
     #ifdef Asserts
+    peanoclaw::grid::SubgridAccessor destinationAccessor = destination.getAccessor();
     dfor(subcellIndex, size) {
       tarch::la::Vector<DIMENSIONS, int> actualSubcellIndex = subcellIndex + destinationOffset;
       for(int unknown = 0; unknown < destination.getUnknownsPerSubcell(); unknown++) {
-        double value = destination.getValueUOld(actualSubcellIndex, unknown);
+        double value = destinationAccessor.getValueUOld(actualSubcellIndex, unknown);
         assertionEquals6(value, value,
             destination,
             destination.toStringUOldWithGhostLayer(),

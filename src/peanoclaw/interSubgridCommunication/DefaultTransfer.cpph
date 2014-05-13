@@ -41,45 +41,49 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
     }
   }
 
-  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns> sourceAccessor(source, sourceOffset, size);
-  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns> destinationAccessor(destination, destinationOffset, size);
+  peanoclaw::grid::SubgridAccessor sourceAccessor = source.getAccessor();
+  peanoclaw::grid::SubgridIterator<NumberOfUnknowns> sourceIterator
+    = sourceAccessor.getSubgridIterator<NumberOfUnknowns>(sourceOffset, size);
+  peanoclaw::grid::SubgridAccessor destinationAccessor = destination.getAccessor();
+  peanoclaw::grid::SubgridIterator<NumberOfUnknowns> destinationIterator
+    = destinationAccessor.getSubgridIterator<NumberOfUnknowns>(destinationOffset, size);
 
-  while(sourceAccessor.moveToNextCell()) {
+  while(sourceIterator.moveToNextCell()) {
     #ifdef Asserts
     bool destinationHasMoreCells =
     #endif
-        destinationAccessor.moveToNextCell();
+    destinationIterator.moveToNextCell();
     assertion(destinationHasMoreCells);
 
-    tarch::la::Vector<NumberOfUnknowns, double> sourceUnknownsUNew = sourceAccessor.getUnknownsUNew();
-    tarch::la::Vector<NumberOfUnknowns, double> sourceUnknownsUOld = sourceAccessor.getUnknownsUOld();
+    tarch::la::Vector<NumberOfUnknowns, double> sourceUnknownsUNew = sourceIterator.getUnknownsUNew();
+    tarch::la::Vector<NumberOfUnknowns, double> sourceUnknownsUOld = sourceIterator.getUnknownsUOld();
 
     //TODO unterweg debug
     #ifdef Asserts
     for(int i = 0; i < NumberOfUnknowns; i++) {
-      assertionEquals2(source.getValueUNew(sourceAccessor.getCellIndex(), i), sourceUnknownsUNew[i], source.toStringUNew(), source.toStringUOldWithGhostLayer());
-      assertionEquals2(source.getValueUOld(sourceAccessor.getCellIndex(), i), sourceUnknownsUOld[i], source.toStringUNew(), source.toStringUOldWithGhostLayer());
+      assertionEquals2(sourceAccessor.getValueUNew(sourceIterator.getCellIndex(), i), sourceUnknownsUNew[i], source.toStringUNew(), source.toStringUOldWithGhostLayer());
+      assertionEquals2(sourceAccessor.getValueUOld(sourceIterator.getCellIndex(), i), sourceUnknownsUOld[i], source.toStringUNew(), source.toStringUOldWithGhostLayer());
     }
     #endif
 
-    destinationAccessor.setUnknownsUOld(sourceUnknownsUNew * timeFactor + sourceUnknownsUOld * (1.0-timeFactor));
+    destinationIterator.setUnknownsUOld(sourceUnknownsUNew * timeFactor + sourceUnknownsUOld * (1.0-timeFactor));
   }
-  destinationAccessor.moveToNextCell();
+  destinationIterator.moveToNextCell();
 
   #if defined(Asserts) && defined(AssertForPositiveValues)
   dfor(subcellIndex, size) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndexInDestinationPatch = subcellIndex + destinationOffset;
-    double value = destination.getValueUOld(subcellIndexInDestinationPatch, 0);
+    double value = destinationAccessor.getValueUOld(subcellIndexInDestinationPatch, 0);
     if(value < 0.0 || value != value) {
       std::cout << "Invalid copy "
           << " sourceOffset=" << sourceOffset << ", size=" << size << " "
   #ifdef Parallel
           << "on rank " << tarch::parallel::Node::getInstance().getRank() << " "
   #endif
-          << "from patch " << std::endl << source.toString() << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
-          << std::endl << "to patch" << std::endl << destination.toString() << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer()
-          << std::endl << "value=" << destination.getValueUOld(subcellIndexInDestinationPatch, 0) << std::endl;
-      assertion2(false, subcellIndexInDestinationPatch, destination.getValueUOld(subcellIndexInDestinationPatch, 0));
+          << "from patch " << std::endl << source << std::endl << source.toStringUNew() << std::endl << source.toStringUOldWithGhostLayer()
+          << std::endl << "to patch" << std::endl << destination << std::endl << destination.toStringUNew() << std::endl << destination.toStringUOldWithGhostLayer()
+          << std::endl << "value=" << destinationAccessor.getValueUOld(subcellIndexInDestinationPatch, 0) << std::endl;
+      assertion2(false, subcellIndexInDestinationPatch, destinationAccessor.getValueUOld(subcellIndexInDestinationPatch, 0));
       throw "";
     }
   }
@@ -92,8 +96,10 @@ template<int NumberOfUnknowns>
 void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnknowns>::copyUNewToUOld(
   peanoclaw::Patch& subgrid
 ) {
-  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns> subgridAccessor(subgrid, tarch::la::Vector<DIMENSIONS, int>(0), subgrid.getSubdivisionFactor());
-  while(subgridAccessor.moveToNextCell()) {
-    subgridAccessor.setUnknownsUOld(subgridAccessor.getUnknownsUNew());
+  peanoclaw::grid::SubgridAccessor subgridAccessor = subgrid.getAccessor();
+  peanoclaw::grid::SubgridIterator<NumberOfUnknowns> subgridIterator
+    = subgridAccessor.getSubgridIterator<NumberOfUnknowns>(tarch::la::Vector<DIMENSIONS, int>(0), subgrid.getSubdivisionFactor());
+  while(subgridIterator.moveToNextCell()) {
+    subgridIterator.setUnknownsUOld(subgridIterator.getUnknownsUNew());
   }
 }

@@ -6,6 +6,8 @@
  */
 #include "peanoclaw/Numerics.h"
 
+#include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
+
 peanoclaw::Numerics::Numerics(
   peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
   peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
@@ -40,8 +42,8 @@ void peanoclaw::Numerics::transferGhostlayer(
 void peanoclaw::Numerics::interpolate(
   const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
   const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-  const peanoclaw::Patch& source,
-  peanoclaw::Patch&        destination,
+  peanoclaw::Patch& source,
+  peanoclaw::Patch& destination,
   bool interpolateToUOld,
   bool interpolateToCurrentTime,
   bool useTimeUNewOrTimeUOld

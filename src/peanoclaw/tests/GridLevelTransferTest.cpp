@@ -261,14 +261,14 @@ void peanoclaw::tests::GridLevelTransferTest::testAdjacentPatchIndicesForSingleR
 }
 
 void peanoclaw::tests::GridLevelTransferTest::testUpdateMinimalNeighborTime() {
-  peanoclaw::Patch finePatch;
+  peanoclaw::Patch fineSubgrid;
 
-  finePatch.getTimeIntervals().resetMinimalNeighborTimeConstraint();
-  validate(finePatch.getTimeIntervals().getMinimalNeighborTimeConstraint() > 1e20);
+  fineSubgrid.getTimeIntervals().resetMinimalNeighborTimeConstraint();
+  validate(fineSubgrid.getTimeIntervals().getMinimalNeighborTimeConstraint() > 1e20);
 
-  finePatch.getTimeIntervals().updateMinimalNeighborTimeConstraint(1.0, 1);
+  fineSubgrid.getTimeIntervals().updateMinimalNeighborTimeConstraint(1.0, 1);
 
-  validateEquals(finePatch.getTimeIntervals().getMinimalNeighborTimeConstraint(), 1.0);
+  validateEquals(fineSubgrid.getTimeIntervals().getMinimalNeighborTimeConstraint(), 1.0);
 }
 
 
@@ -345,6 +345,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
     1.0, //timestep size
     1.0  //Minimal neighbor time
   );
+  peanoclaw::grid::SubgridAccessor& neighboringCoarseAccessor = neighboringCoarsePatch.getAccessor();
 
   //Create refined cell that becomes the virtual patch
   tarch::la::Vector<DIMENSIONS, double> virtualPatchPosition;
@@ -373,7 +374,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
 
   //Create cell description for fine leaf cell
   tarch::la::Vector<DIMENSIONS, double> finePosition(1.0/3.0);
-  Patch finePatch = createPatch(
+  Patch fineSubgrid = createPatch(
     unknownsPerSubcell,
     0,   //Aux fields per subcell
     0,   //Aux fields per subcell
@@ -386,47 +387,48 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
     1.0, //timestep size
     1.0  //Minimal neighbor time
   );
+  peanoclaw::grid::SubgridAccessor& fineAccessor = fineSubgrid.getAccessor();
 
   tarch::la::Vector<DIMENSIONS, int> subcellIndex;
   //uNew
   assignList(subcellIndex) = 0, 0;
-  finePatch.setValueUNew(subcellIndex, 0, 0.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 0.0);
   assignList(subcellIndex) = 0, 1;
-  finePatch.setValueUNew(subcellIndex, 0, 1.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 1.0);
   assignList(subcellIndex) = 0, 2;
-  finePatch.setValueUNew(subcellIndex, 0, 2.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 2.0);
   assignList(subcellIndex) = 1, 0;
-  finePatch.setValueUNew(subcellIndex, 0, 3.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 3.0);
   assignList(subcellIndex) = 1, 1;
-  finePatch.setValueUNew(subcellIndex, 0, 4.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 4.0);
   assignList(subcellIndex) = 1, 2;
-  finePatch.setValueUNew(subcellIndex, 0, 5.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 5.0);
   assignList(subcellIndex) = 2, 0;
-  finePatch.setValueUNew(subcellIndex, 0, 6.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 6.0);
   assignList(subcellIndex) = 2, 1;
-  finePatch.setValueUNew(subcellIndex, 0, 7.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 7.0);
   assignList(subcellIndex) = 2, 2;
-  finePatch.setValueUNew(subcellIndex, 0, 8.0);
+  fineAccessor.setValueUNew(subcellIndex, 0, 8.0);
 
   //uOld
   assignList(subcellIndex) = 0, 0;
-  finePatch.setValueUOld(subcellIndex, 0, 9.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 9.0);
   assignList(subcellIndex) = 0, 1;
-  finePatch.setValueUOld(subcellIndex, 0, 8.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 8.0);
   assignList(subcellIndex) = 0, 2;
-  finePatch.setValueUOld(subcellIndex, 0, 7.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 7.0);
   assignList(subcellIndex) = 1, 0;
-  finePatch.setValueUOld(subcellIndex, 0, 6.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 6.0);
   assignList(subcellIndex) = 1, 1;
-  finePatch.setValueUOld(subcellIndex, 0, 5.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 5.0);
   assignList(subcellIndex) = 1, 2;
-  finePatch.setValueUOld(subcellIndex, 0, 4.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 4.0);
   assignList(subcellIndex) = 2, 0;
-  finePatch.setValueUOld(subcellIndex, 0, 3.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 3.0);
   assignList(subcellIndex) = 2, 1;
-  finePatch.setValueUOld(subcellIndex, 0, 2.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 2.0);
   assignList(subcellIndex) = 2, 2;
-  finePatch.setValueUOld(subcellIndex, 0, 1.0);
+  fineAccessor.setValueUOld(subcellIndex, 0, 1.0);
 
   //Coarse vertices
   Vertex coarseVertices[TWO_POWER_D];
@@ -466,7 +468,7 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
           peanoclaw::records::Vertex::Refining
         ));
 
-  gridLevelTransfer.stepDown(virtualCellDescriptionIndex, virtualPatch, coarseVertices, enumerator, false, false);
+  gridLevelTransfer.stepDown(&virtualPatch, virtualPatch, coarseVertices, enumerator, false, false);
 
   validateEquals(gridLevelTransfer._virtualPatchDescriptionIndices.size(), 1);
 
@@ -474,9 +476,9 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   virtualPatch = Patch(virtualCellDescription);
   validate(virtualPatch.isVirtual());
 
-  ParallelSubgrid parallelSubgrid(finePatch.getCellDescriptionIndex());
-  gridLevelTransfer.stepUp(-1, finePatch, parallelSubgrid, true, 0, enumerator);
-  gridLevelTransfer.stepUp(-1, virtualPatch, parallelSubgrid, false, coarseVertices, enumerator);
+  ParallelSubgrid parallelSubgrid(fineSubgrid.getCellDescriptionIndex());
+  gridLevelTransfer.stepUp(0, fineSubgrid, parallelSubgrid, true, 0, enumerator);
+  gridLevelTransfer.stepUp(0, virtualPatch, parallelSubgrid, false, coarseVertices, enumerator);
 
   //Recreate virtual patch to assure that the created data arrays are involved
   virtualPatch = Patch (
@@ -490,13 +492,13 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   //Check results
   double areaFraction = (1.0/9.0)*(1.0/9.0) / (1.0/2.0) / (1.0/2.0);
   assignList(subcellIndex) = -2, 0;
-  validateNumericalEquals(neighboringCoarsePatch.getValueUOld(subcellIndex, 0), areaFraction * (-1.0*9.0 + 1.0/2.0*(2.0 - 1.0*8.0) + 1.0/2.0*(2.0*3.0 - 1.0*6.0) + 1.0/4.0*(2.0*4.0 - 1.0*5.0)));
+  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), areaFraction * (-1.0*9.0 + 1.0/2.0*(2.0 - 1.0*8.0) + 1.0/2.0*(2.0*3.0 - 1.0*6.0) + 1.0/4.0*(2.0*4.0 - 1.0*5.0)));
   assignList(subcellIndex) = -2, 1;
-  validateNumericalEquals(neighboringCoarsePatch.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*2.0 - 1.0/3.0*7.0 + 1.0/2.0*(4.0/3.0 - 1.0/3.0*8.0) + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
+  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*2.0 - 1.0/3.0*7.0 + 1.0/2.0*(4.0/3.0 - 1.0/3.0*8.0) + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
   assignList(subcellIndex) = -1, 0;
-  validateNumericalEquals(neighboringCoarsePatch.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*6.0 - 1.0/3.0*3.0 + 1.0/2.0*(4.0/3.0*3.0 - 1.0/3.0*6.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
+  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*6.0 - 1.0/3.0*3.0 + 1.0/2.0*(4.0/3.0*3.0 - 1.0/3.0*6.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
   assignList(subcellIndex) = -1, 1;
-  validateNumericalEquals(neighboringCoarsePatch.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*8.0 - 1.0/3.0 + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
+  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*8.0 - 1.0/3.0 + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
 
   //Clean up
   CellDescriptionHeap::getInstance().deleteAllData();

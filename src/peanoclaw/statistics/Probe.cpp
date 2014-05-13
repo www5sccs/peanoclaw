@@ -22,19 +22,20 @@ peanoclaw::statistics::Probe::Probe (
 void peanoclaw::statistics::Probe::plotDataIfContainedInPatch(
   peanoclaw::Patch& patch
 ) {
-  if(!tarch::la::oneGreater(patch.getPosition(), _position)
-    && !tarch::la::oneGreater(_position, patch.getPosition() + patch.getSize())) {
-    std::stringstream stringstream;
-    stringstream << _name << " " << _position << " " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << " ";
-
-    if(_unknown == -1) {
-      for(int unknown = 0; unknown < patch.getUnknownsPerSubcell(); unknown++) {
-        stringstream << patch.getValueUNew(_position, unknown) << " ";
-      }
-    } else {
-      stringstream << patch.getValueUNew(_position, _unknown) << " ";
-    }
-
-    logInfo("plotDataIfContainedInPatch(Patch)", stringstream.str() << "   ");
-  }
+  assertionFail("Not fixed, yet.");
+//  if(!tarch::la::oneGreater(patch.getPosition(), _position)
+//    && !tarch::la::oneGreater(_position, patch.getPosition() + patch.getSize())) {
+//    std::stringstream stringstream;
+//    stringstream << _name << " " << _position << " " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << " ";
+//
+//    if(_unknown == -1) {
+//      for(int unknown = 0; unknown < patch.getUnknownsPerSubcell(); unknown++) {
+//        stringstream << patch.getValueUNew(_position, unknown) << " ";
+//      }
+//    } else {
+//      stringstream << patch.getValueUNew(_position, _unknown) << " ";
+//    }
+//
+//    logInfo("plotDataIfContainedInPatch(Patch)", stringstream.str() << "   ");
+//  }
 }

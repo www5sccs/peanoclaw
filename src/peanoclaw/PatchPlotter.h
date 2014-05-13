@@ -30,6 +30,10 @@
 namespace peanoclaw {
   class Patch;
   class PatchPlotter;
+
+  namespace grid {
+    class SubgridAccessor;
+  }
 }
 
 class peanoclaw::PatchPlotter {
@@ -114,10 +118,11 @@ private:
    * Plots a single subcell.
    */
   void plotSubcell(
-    const Patch&                         patch,
-    tarch::la::Vector<DIMENSIONS, int>   subcellIndex,
-    peanoclaw::Vertex * const            vertices,
-    const peano::grid::VertexEnumerator& enumerator
+    const Patch&                            patch,
+    const peanoclaw::grid::SubgridAccessor& accessor,
+    tarch::la::Vector<DIMENSIONS, int>      subcellIndex,
+    peanoclaw::Vertex * const               vertices,
+    const peano::grid::VertexEnumerator&    enumerator
   );
 
   /**
@@ -125,9 +130,10 @@ private:
    * subgrid.
    */
   tarch::la::Vector<DIMENSIONS, double> computeGradient(
-    const Patch&                       patch,
-    tarch::la::Vector<DIMENSIONS, int> subcellIndex,
-    int                                unknown
+    const Patch&                            patch,
+    const peanoclaw::grid::SubgridAccessor& accessor,
+    tarch::la::Vector<DIMENSIONS, int>      subcellIndex,
+    int                                     unknown
   );
 
 public:

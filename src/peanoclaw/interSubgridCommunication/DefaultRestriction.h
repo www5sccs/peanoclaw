@@ -74,8 +74,8 @@ class peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate {
     void restrictArea (
       peanoclaw::Patch&                                   source,
       peanoclaw::Patch&                                   destination,
-      peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>& sourceAccessor,
-      peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>& destinationAccessor,
+      peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& sourceIterator,
+      peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& destinationIterator,
       const Area&                                         area
     );
 

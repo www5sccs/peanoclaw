@@ -3,19 +3,21 @@
  *
  *      Author: Kristof Unterweger
  */
-#include "PatchPlotter.h"
+#include "peanoclaw/PatchPlotter.h"
 
-#include "Patch.h"
+#include "peanoclaw/Patch.h"
+#include "peanoclaw/grid/SubgridAccessor.h"
 
 #include "peano/utils/Loop.h"
 
 tarch::logging::Log peanoclaw::PatchPlotter::_log( "peanoclaw::PatchPlotter" );
 
 void peanoclaw::PatchPlotter::plotSubcell(
-  const Patch&                         patch,
-  tarch::la::Vector<DIMENSIONS, int>   subcellIndex,
-  peanoclaw::Vertex * const            vertices,
-  const peano::grid::VertexEnumerator& enumerator
+  const Patch&                            patch,
+  const peanoclaw::grid::SubgridAccessor& accessor,
+  tarch::la::Vector<DIMENSIONS, int>      subcellIndex,
+  peanoclaw::Vertex * const               vertices,
+  const peano::grid::VertexEnumerator&    enumerator
 ) {
   double localGap = _gap * patch.getLevel();
   tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize() / (1.0 + localGap);
@@ -40,7 +42,7 @@ void peanoclaw::PatchPlotter::plotSubcell(
     //for(int i = 0; i < (int)_cellQWriter.size(); i++) {
     for(int i = 0; i < patch.getUnknownsPerSubcell(); i++) {
       if(_plotQ.empty() || _plotQ.find(i) != _plotQ.end()) {
-        _cellQWriter[qWriterIndex]->plotCell(number, patch.getValueUNew(subcellIndex, i));
+        _cellQWriter[qWriterIndex]->plotCell(number, accessor.getValueUNew(subcellIndex, i));
         qWriterIndex++;
       }
     }
@@ -48,7 +50,7 @@ void peanoclaw::PatchPlotter::plotSubcell(
     int parameterWithoutGhostlayerWriterIndex = 0;
     for(int i = 0; i < patch.getNumberOfParametersWithoutGhostlayerPerSubcell(); i++) {
       if(_plotParameterWithoutGhostlayer.empty() || _plotParameterWithoutGhostlayer.find(i) != _plotParameterWithoutGhostlayer.end()) {
-        _cellParameterWithoutGhostlayerWriter[parameterWithoutGhostlayerWriterIndex]->plotCell(number, patch.getParameterWithoutGhostlayer(subcellIndex, i));
+        _cellParameterWithoutGhostlayerWriter[parameterWithoutGhostlayerWriterIndex]->plotCell(number, accessor.getParameterWithoutGhostlayer(subcellIndex, i));
         parameterWithoutGhostlayerWriterIndex++;
       }
     }
@@ -56,7 +58,7 @@ void peanoclaw::PatchPlotter::plotSubcell(
     int parameterWithGhostlayerWriterIndex = 0;
     for(int i = 0; i < patch.getNumberOfParametersWithGhostlayerPerSubcell(); i++) {
       if(_plotParameterWithGhostlayer.empty() || _plotParameterWithGhostlayer.find(i) != _plotParameterWithGhostlayer.end()) {
-        _cellParameterWithGhostlayerWriter[parameterWithGhostlayerWriterIndex]->plotCell(number, patch.getParameterWithGhostlayer(subcellIndex, i));
+        _cellParameterWithGhostlayerWriter[parameterWithGhostlayerWriterIndex]->plotCell(number, accessor.getParameterWithGhostlayer(subcellIndex, i));
         parameterWithGhostlayerWriterIndex++;
       }
     }
@@ -76,16 +78,17 @@ void peanoclaw::PatchPlotter::plotSubcell(
 }
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::PatchPlotter::computeGradient(
-  const Patch&                       patch,
-  tarch::la::Vector<DIMENSIONS, int> subcellIndex,
-  int                                unknown
+  const Patch&                            patch,
+  const peanoclaw::grid::SubgridAccessor& accessor,
+  tarch::la::Vector<DIMENSIONS, int>      subcellIndex,
+  int                                     unknown
 ) {
   tarch::la::Vector<DIMENSIONS, double> gradient;
 
   for(int d = 0; d < DIMENSIONS; d++) {
     tarch::la::Vector<DIMENSIONS, int> neighborIndex = subcellIndex;
     neighborIndex(d)++;
-    gradient(d) = (patch.getValueUOld(neighborIndex, unknown) - patch.getValueUOld(subcellIndex, unknown)) / patch.getSubcellSize()(d);
+    gradient(d) = (accessor.getValueUOld(neighborIndex, unknown) - accessor.getValueUOld(subcellIndex, unknown)) / patch.getSubcellSize()(d);
   }
 
   return gradient;
@@ -182,6 +185,8 @@ void peanoclaw::PatchPlotter::plotPatch(
   double localGap = _gap * patch.getLevel();
   tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize() / (1.0 + localGap);
 
+  peanoclaw::grid::SubgridAccessor accessor = patch.getAccessor();
+
   // Plot vertices
   dfor( vertexIndex, patch.getSubdivisionFactor()+1) {
     tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(vertexIndex.convertScalar<double>(), subcellSize);
@@ -201,6 +206,7 @@ void peanoclaw::PatchPlotter::plotPatch(
 //    if(tarch::la::norm2(computeGradient(patch, subcellIndex, 0)) > 1.0) {
       plotSubcell(
         patch,
+        accessor,
         subcellIndex,
         vertices,
         enumerator

@@ -121,12 +121,12 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::switchToAndAddVirt
 
   //Create virtual patch
   if(subgrid.isVirtual()) {
-    subgrid.clearRegion(
+    subgrid.getAccessor().clearRegion(
       tarch::la::Vector<DIMENSIONS, int>(0),
       subgrid.getSubdivisionFactor(),
       false
     );
-    subgrid.clearRegion(
+    subgrid.getAccessor().clearRegion(
       tarch::la::Vector<DIMENSIONS, int>(0),
       subgrid.getSubdivisionFactor(),
       true
@@ -320,7 +320,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::updatePatchStateDu
 #endif
 
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
-  int                                  coarseCellDescriptionIndex,
+  Patch*                               coarseSubgrid,
   Patch&                               fineSubgrid,
   peanoclaw::Vertex * const            fineGridVertices,
   const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
@@ -375,21 +375,22 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepDown(
 
   //Data from coarse patch:
   // -> Update minimal time constraint of coarse neighbors
-  if(coarseCellDescriptionIndex > -1) {
-    Patch coarsePatch(coarseCellDescriptionIndex);
-    if(coarsePatch.getTimeIntervals().shouldFineGridsSynchronize()) {
+  if(coarseSubgrid != 0) {
+    //Patch coarsePatch(coarseCellDescriptionIndex);
+    if(coarseSubgrid->getTimeIntervals().shouldFineGridsSynchronize()) {
       //Set time constraint of fine grid to time of coarse grid to synch
       //on that time.
       fineSubgrid.getTimeIntervals().updateMinimalNeighborTimeConstraint(
-        coarsePatch.getTimeIntervals().getCurrentTime() + coarsePatch.getTimeIntervals().getTimestepSize(),
-        coarsePatch.getCellDescriptionIndex()
+        coarseSubgrid->getTimeIntervals().getCurrentTime() + coarseSubgrid->getTimeIntervals().getTimestepSize(),
+        coarseSubgrid->getCellDescriptionIndex()
       );
     }
   }
 }
 
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
-  int                                  coarseCellDescriptionIndex,
+  //int                                  coarseCellDescriptionIndex,
+  Patch*                               coarseSubgrid,
   Patch&                               finePatch,
   ParallelSubgrid&                     fineParallelSubgrid,
   bool                                 isPeanoCellLeaf,
@@ -404,9 +405,9 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
   }
 
   //Update fine grid time interval on next coarser patch if possible
-  if(coarseCellDescriptionIndex >= 0) {
-    Patch coarsePatch(coarseCellDescriptionIndex);
-    coarsePatch.getTimeIntervals().updateMinimalFineGridTimeInterval(
+  if(coarseSubgrid != 0) {
+    //Patch coarsePatch(coarseCellDescriptionIndex);
+    coarseSubgrid->getTimeIntervals().updateMinimalFineGridTimeInterval(
       finePatch.getTimeIntervals().getCurrentTime(),
       finePatch.getTimeIntervals().getTimestepSize()
     );

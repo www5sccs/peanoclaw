@@ -17,8 +17,8 @@ template<int NumberOfUnknowns>
 void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUnknowns>::restrictArea (
   peanoclaw::Patch&                                   source,
   peanoclaw::Patch&                                   destination,
-  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>& sourceAccessor,
-  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns>& destinationAccessor,
+  peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& sourceIterator,
+  peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& destinationIterator,
   const Area&                                         area
 ) {
   logTraceInWith2Arguments("restrictArea", source.toString(), destination.toString());
@@ -51,13 +51,12 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
 
   //Destination area
   Area destinationArea = area.mapToPatch(source, destination, epsilon);
-  destinationAccessor.restart(destinationArea._offset, destinationArea._size);
+  destinationIterator.restart(destinationArea._offset, destinationArea._size);
 
   //Loop through area in destination
-  //dfor(destinationSubcellIndexInArea, destinationArea._size) {
-  while(destinationAccessor.moveToNextCell()) {
-    tarch::la::Vector<DIMENSIONS, int> destinationSubcellIndex = destinationAccessor.getCellIndex();
-    tarch::la::Vector<DIMENSIONS, double> destinationSubcellPosition = destinationAccessor.getCellPosition(); //tarch::la::multiplyComponents(destinationSubcellIndex.convertScalar<double>(), destinationSubcellSize);
+  while(destinationIterator.moveToNextCell()) {
+    tarch::la::Vector<DIMENSIONS, int> destinationSubcellIndex = destinationIterator.getCellIndex();
+    tarch::la::Vector<DIMENSIONS, double> destinationSubcellPosition = destinationIterator.getCellPosition();
     //destinationSubcellPosition += destinationPosition;
 
     assertion4(tarch::la::allGreaterEquals(destinationSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))
@@ -65,15 +64,15 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
 
     //Get area for single destination cell
     Area subcellArea = area.mapCellToPatch(sourcePosition, sourceSubcellSize, destinationSubcellSize, destinationSubcellIndex, destinationSubcellPosition, epsilon);
-    sourceAccessor.restart(subcellArea._offset, subcellArea._size);
+    sourceIterator.restart(subcellArea._offset, subcellArea._size);
     assertion7(tarch::la::allGreaterEquals(subcellArea._size, 0), subcellArea, sourcePosition, sourceSubcellSize, destinationSubcellSize, destinationSubcellPosition, source, destination);
 
     //Loop through area in source
-    while(sourceAccessor.moveToNextCell()) {
-      tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition = sourceAccessor.getCellPosition();
+    while(sourceIterator.moveToNextCell()) {
+      tarch::la::Vector<DIMENSIONS, double> sourceSubcellPosition = sourceIterator.getCellPosition();
 
-      assertion6(tarch::la::allGreaterEquals(sourceSubcellIndex, tarch::la::Vector<DIMENSIONS, int>(0))
-                && tarch::la::allGreater(source.getSubdivisionFactor(), sourceSubcellIndex),
+      assertion6(tarch::la::allGreaterEquals(sourceIterator.getCellIndex(), tarch::la::Vector<DIMENSIONS, int>(0))
+                && tarch::la::allGreater(source.getSubdivisionFactor(), sourceIterator.getCellIndex()),
                 destinationSubcellIndex, subcellArea, area, destinationArea, destination, source);
 
       double overlapArea = calculateOverlappingArea(
@@ -83,16 +82,16 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
         sourceSubcellSize
       );
 
-      tarch::la::Vector<NumberOfUnknowns, double> sourceValuesUOld = sourceAccessor.getUnknownsUOld();
-      tarch::la::Vector<NumberOfUnknowns, double> sourceValuesUNew = sourceAccessor.getUnknownsUNew();
+      tarch::la::Vector<NumberOfUnknowns, double> sourceValuesUOld = sourceIterator.getUnknownsUOld();
+      tarch::la::Vector<NumberOfUnknowns, double> sourceValuesUNew = sourceIterator.getUnknownsUNew();
 
       tarch::la::Vector<NumberOfUnknowns, double> deltaUOld = (sourceValuesUOld * (1.0 - timeFactorUOld) + sourceValuesUNew * timeFactorUOld)
                                                                 * overlapArea / destinationSubcellArea;
       tarch::la::Vector<NumberOfUnknowns, double> deltaUNew = (sourceValuesUOld * (1.0 - timeFactorUNew) + sourceValuesUNew * timeFactorUNew)
                                                                 * overlapArea / destinationSubcellArea;
 
-      destinationAccessor.setUnknownsUOld(destinationAccessor.getUnknownsUOld() + deltaUOld);
-      destinationAccessor.setUnknownsUNew(destinationAccessor.getUnknownsUNew() + deltaUNew);
+      destinationIterator.setUnknownsUOld(destinationIterator.getUnknownsUOld() + deltaUOld);
+      destinationIterator.setUnknownsUNew(destinationIterator.getUnknownsUNew() + deltaUNew);
     }
   }
 
@@ -105,8 +104,12 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
   peanoclaw::Patch&       destination,
   bool restrictOnlyOverlappedAreas
 ) {
-  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns> sourceAccessor(source, tarch::la::Vector<DIMENSIONS, int>(0), source.getSubdivisionFactor());
-  peanoclaw::grid::SubgridAccessor<NumberOfUnknowns> destinationAccessor(destination, tarch::la::Vector<DIMENSIONS, int>(0), destination.getSubdivisionFactor());
+  peanoclaw::grid::SubgridAccessor sourceAccessor = source.getAccessor();
+  peanoclaw::grid::SubgridIterator<NumberOfUnknowns> sourceIterator
+    = sourceAccessor.getSubgridIterator<NumberOfUnknowns>(tarch::la::Vector<DIMENSIONS, int>(0), source.getSubdivisionFactor());
+  peanoclaw::grid::SubgridAccessor destinationAccessor = destination.getAccessor();
+  peanoclaw::grid::SubgridIterator<NumberOfUnknowns> destinationIterator
+    = destinationAccessor.getSubgridIterator<NumberOfUnknowns>(tarch::la::Vector<DIMENSIONS, int>(0), destination.getSubdivisionFactor());
 
   if(restrictOnlyOverlappedAreas) {
     Area areas[DIMENSIONS_TIMES_TWO];
@@ -127,7 +130,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
 
       logDebug("restrict", "Restricting area [" << areas[i]._offset << "], [" << areas[i]._size << "]");
       if(tarch::la::allGreater(areas[i]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
-        restrictArea(source, destination, sourceAccessor, destinationAccessor, areas[i]);
+        restrictArea(source, destination, sourceIterator, destinationIterator, areas[i]);
       }
     }
   } else {
@@ -135,7 +138,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
     Area area;
     area._offset = tarch::la::Vector<DIMENSIONS, int>(0);
     area._size = source.getSubdivisionFactor();
-    restrictArea(source, destination, sourceAccessor, destinationAccessor, area);
+    restrictArea(source, destination, sourceIterator, destinationIterator, area);
   }
 }
 

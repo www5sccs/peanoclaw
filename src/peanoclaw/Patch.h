@@ -7,6 +7,7 @@
 #ifndef PEANOCLAW_PATCH_H_
 #define PEANOCLAW_PATCH_H_
 
+#include "peanoclaw/grid/SubgridAccessor.h"
 #include "peanoclaw/grid/TimeIntervals.h"
 #include "peanoclaw/records/Data.h"
 #include "peanoclaw/records/CellDescription.h"
@@ -36,8 +37,8 @@ namespace peanoclaw {
   class Patch;
 
   namespace grid {
-    template<int NumberOfUnknowns>
     class SubgridAccessor;
+    template<int NumberOfUnknowns> class SubgridIterator;
   }
 }
 
@@ -133,6 +134,7 @@ public:
   friend class peanoclaw::grid::TimeIntervals;
 
   template<int NumberOfUnknowns>
+  friend class peanoclaw::grid::SubgridIterator;
   friend class peanoclaw::grid::SubgridAccessor;
 
   typedef peanoclaw::records::CellDescription CellDescription;
@@ -148,16 +150,14 @@ private:
 
   std::vector<Data>* _uNew;
 
-  int                _uOldWithGhostlayerArrayIndex;
-  int                _parameterWithoutGhostlayerArrayIndex;
-  int                _parameterWithGhostlayerArrayIndex;
-
-  int _uNewStrideCache[DIMENSIONS+1];
-  int _uOldStrideCache[DIMENSIONS+1];
+//  int                _uOldWithGhostlayerArrayIndex;
+//  int                _parameterWithoutGhostlayerArrayIndex;
+//  int                _parameterWithGhostlayerArrayIndex;
 
   tarch::la::Vector<DIMENSIONS, double> _subcellSize;
 
-  peanoclaw::grid::TimeIntervals _timeIntervals;
+  peanoclaw::grid::TimeIntervals   _timeIntervals;
+  peanoclaw::grid::SubgridAccessor _accessor;
 
   /**
    * Linearizes the given subcell index to a columnwise stored array index.
@@ -165,38 +165,45 @@ private:
    * This method assumes that the unknown is the first index of the d-dimensional array,
    * while the subcell index-components follow as indices.
    */
-  int linearize(
-    int unknown,
-    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
-  ) const;
+//  int linearize(
+//    int unknown,
+//    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
+//  ) const;
 
   /**
    * Does a similar linearization like the method linearize(...), but it assumes
    * that the array is surrounded by a ghostlayer.
    */
-  int linearizeWithGhostlayer(
-    int unknown,
-    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
-  ) const
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    int index = 0;
-    int ghostlayerWidth = _cellDescription->getGhostlayerWidth();
-
-    for(int d = 0; d < DIMENSIONS; d++) {
-      index += (subcellIndex(d) + ghostlayerWidth) * _uOldStrideCache[d+1];
-    }
-    index += unknown * _uOldStrideCache[0];
-    return index;
-  }
-  #else
-  ;
-  #endif
+//  int linearizeWithGhostlayer(
+//    int unknown,
+//    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
+//  ) const
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    int index = 0;
+//    int ghostlayerWidth = _cellDescription->getGhostlayerWidth();
+//
+//    for(int d = 0; d < DIMENSIONS; d++) {
+//      index += (subcellIndex(d) + ghostlayerWidth) * _uOldStrideCache[d+1];
+//    }
+//    index += unknown * _uOldStrideCache[0];
+//    return index;
+//  }
+//  #else
+//  ;
+//  #endif
 
   /**
    * Fills caches and precomputes data.
    */
   void fillCaches();
+
+  /**
+   * Refreshes the SubgridAccessor associated with this
+   * subgrid. This has to be done after information changed
+   * on which the accessor is based (especially the _u vector).
+   */
+  void refreshAccessor();
 
   /**
    * Switches the values in the given area to the minimal fine grid time interval.
@@ -209,7 +216,9 @@ private:
 
   //Methods for evaluating CellDescriptions
   static bool isValid(const CellDescription* cellDescription) {
-    assertion(cellDescription == 0 || tarch::la::allGreater(cellDescription->getSubdivisionFactor(), tarch::la::Vector<DIMENSIONS, int>(-1)));
+    if(cellDescription != 0) {
+      assertion(tarch::la::allGreater(cellDescription->getSubdivisionFactor(), tarch::la::Vector<DIMENSIONS, int>(-1)));
+    }
     return cellDescription != 0;
   //      && tarch::la::allGreater(cellDescription->getSubdivisionFactor(),
   //          tarch::la::Vector<DIMENSIONS, int>(-1));
@@ -262,6 +271,9 @@ public:
   const peanoclaw::grid::TimeIntervals& getTimeIntervals() const;
 
   peanoclaw::grid::TimeIntervals& getTimeIntervals();
+
+  const peanoclaw::grid::SubgridAccessor& getAccessor() const;
+  peanoclaw::grid::SubgridAccessor& getAccessor();
 
   /**
    * Loads data from the given cell description object. This has
@@ -345,179 +357,179 @@ public:
   void reduceGridIterationsToBeSkipped();
 
   //GETTER/SETTER for grid values
-  void setValueUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown, double value)
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    assertion(isLeaf() || isVirtual());
-    int index = linearize(unknown, subcellIndex);
-    assertion3(index >= 0, index, subcellIndex, unknown);
-    assertion4(index < static_cast<int>(_uNew->size()), index, subcellIndex, unknown, static_cast<int>(_uNew->size()));
-    #ifdef PATCH_RANGE_CHECK
-    _uNew->at(index).setU(value);
-    #else
-    (*_uNew)[index].setU(value);
-    #endif
-  }
-  #else
-  ;
-  #endif
-
-  void setValueUOld(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown, double value)
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    assertion(isLeaf() || isVirtual());
-    int index = linearizeWithGhostlayer(unknown, subcellIndex);
-    assertion3(index >= 0, index, subcellIndex, unknown);
-    assertion5(index < _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
-    #ifdef PATCH_RANGE_CHECK
-    _uNew->at(_uOldWithGhostlayerArrayIndex + index).setU(value);
-    #else
-    (*_uNew)[_uOldWithGhostlayerArrayIndex + index].setU(value);
-    #endif
-  }
-  #else
-  ;
-  #endif
-
-  double getValueUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown) const
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    assertion1(isLeaf() || isVirtual(), toString());
-    int index = linearize(unknown, subcellIndex);
-    assertion3(index >= 0, index, subcellIndex, unknown);
-    assertion5(index < static_cast<int>(_uNew->size()), index, subcellIndex, unknown, static_cast<int>(_uNew->size()), toString());
-    #ifdef PATCH_RANGE_CHECK
-    return _uNew->at(index).getU();
-    #else
-    return (*_uNew)[index].getU();
-    #endif
-  }
-  #else
-  ;
-  #endif
-
-
-  double getValueUNew(tarch::la::Vector<DIMENSIONS, double> subcellPosition, int unknown) const;
-
-  double getValueUOld(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown) const
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    assertion1(isLeaf() || isVirtual(), toString());
-    int index = linearizeWithGhostlayer(unknown, subcellIndex);
-    assertion4(index >= 0, index, subcellIndex, unknown, toString());
-    assertion5(index < _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
-    #ifdef PATCH_RANGE_CHECK
-    return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
-    #else
-    return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
-    #endif
-  }
-  #else
-  ;
-  #endif
-
-  /**
-   * Returns the linear index of the given subcell, which can be used in the
-   * getter and setter methods to the uNew values accepting a linear index.
-   */
-  int getLinearIndexUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    return linearize(0, subcellIndex);
-  }
-  #else
-  ;
-  #endif
-
-  /**
-   * Returns the linear index of the given subcell, which can be used in the
-   * getter and setter methods to the uOld values accepting a linear index.
-   */
-  int getLinearIndexUOld(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    return linearizeWithGhostlayer(0, subcellIndex);
-  }
-  #else
-  ;
-  #endif
-
-  double getValueUNew(int linearIndex, int unknown) const
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    size_t index = linearIndex + _uNewStrideCache[0] * unknown;
-    #ifdef PATCH_RANGE_CHECK
-    return _uNew->at(index).getU();
-    #else
-
-    assertion3(index < _uNew->size(), index, _uNew->size(), toString());
-
-    return (*_uNew)[index].getU();
-    #endif
-  }
-  #else
-  ;
-  #endif
-
-  void setValueUNew(int linearIndex, int unknown, double value)
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    int index = linearIndex + _uNewStrideCache[0] * unknown;
-    #ifdef PATCH_RANGE_CHECK
-    _uNew->at(index).setU(value);
-    #else
-    (*_uNew)[index].setU(value);
-    #endif
-  }
-  #else
-  ;
-  #endif
-
-  /**
-   * Sets the given value in the appropriate cell in the uNew array. If necessary
-   * the array is resized to contain the specified cell.
-   */
-  void setValueUNewAndResize(int linearIndex, int unknown, double value);
-
-  double getValueUOld(int linearIndex, int unknown) const
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    int index = linearIndex + _uOldStrideCache[0] * unknown;
-    #ifdef PATCH_RANGE_CHECK
-    return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
-    #else
-    return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
-    #endif
-  }
-  #else
-  ;
-  #endif
-
-  void setValueUOld(int linearIndex, int unknown, double value)
-  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
-  {
-    int index = linearIndex + _uOldStrideCache[0] * unknown;
-    #ifdef PATCH_RANGE_CHECK
-    _uNew->at(_uOldWithGhostlayerArrayIndex + index).setU(value);
-    #else
-    (*_uNew)[_uOldWithGhostlayerArrayIndex + index].setU(value);
-    #endif
-  }
-  #else
-  ;
-  #endif
-
-  /**
-   * Sets the given value in the appropriate cell in the uOld array. If necessary
-   * the array is resized to contain the specified cell.
-   */
-  void setValueUOldAndResize(int linearIndex, int unknown, double value);
-
-  double getParameterWithoutGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter) const;
-  void setParameterWithoutGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter, double value);
-
-  double getParameterWithGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter) const;
-  void setParameterWithGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter, double value);
+//  void setValueUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown, double value)
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    assertion(isLeaf() || isVirtual());
+//    int index = linearize(unknown, subcellIndex);
+//    assertion3(index >= 0, index, subcellIndex, unknown);
+//    assertion4(index < static_cast<int>(_uNew->size()), index, subcellIndex, unknown, static_cast<int>(_uNew->size()));
+//    #ifdef PATCH_RANGE_CHECK
+//    _uNew->at(index).setU(value);
+//    #else
+//    (*_uNew)[index].setU(value);
+//    #endif
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  void setValueUOld(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown, double value)
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    assertion(isLeaf() || isVirtual());
+//    int index = linearizeWithGhostlayer(unknown, subcellIndex);
+//    assertion3(index >= 0, index, subcellIndex, unknown);
+//    assertion5(index < _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
+//    #ifdef PATCH_RANGE_CHECK
+//    _uNew->at(_uOldWithGhostlayerArrayIndex + index).setU(value);
+//    #else
+//    (*_uNew)[_uOldWithGhostlayerArrayIndex + index].setU(value);
+//    #endif
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  double getValueUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown) const
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    assertion1(isLeaf() || isVirtual(), toString());
+//    int index = linearize(unknown, subcellIndex);
+//    assertion3(index >= 0, index, subcellIndex, unknown);
+//    assertion5(index < static_cast<int>(_uNew->size()), index, subcellIndex, unknown, static_cast<int>(_uNew->size()), toString());
+//    #ifdef PATCH_RANGE_CHECK
+//    return _uNew->at(index).getU();
+//    #else
+//    return (*_uNew)[index].getU();
+//    #endif
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//
+//  double getValueUNew(tarch::la::Vector<DIMENSIONS, double> subcellPosition, int unknown) const;
+//
+//  double getValueUOld(tarch::la::Vector<DIMENSIONS, int> subcellIndex, int unknown) const
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    assertion1(isLeaf() || isVirtual(), toString());
+//    int index = linearizeWithGhostlayer(unknown, subcellIndex);
+//    assertion4(index >= 0, index, subcellIndex, unknown, toString());
+//    assertion5(index < _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, index, subcellIndex, unknown, _parameterWithoutGhostlayerArrayIndex - _uOldWithGhostlayerArrayIndex, toString());
+//    #ifdef PATCH_RANGE_CHECK
+//    return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
+//    #else
+//    return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
+//    #endif
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  /**
+//   * Returns the linear index of the given subcell, which can be used in the
+//   * getter and setter methods to the uNew values accepting a linear index.
+//   */
+//  int getLinearIndexUNew(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    return linearize(0, subcellIndex);
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  /**
+//   * Returns the linear index of the given subcell, which can be used in the
+//   * getter and setter methods to the uOld values accepting a linear index.
+//   */
+//  int getLinearIndexUOld(tarch::la::Vector<DIMENSIONS, int> subcellIndex) const
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    return linearizeWithGhostlayer(0, subcellIndex);
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  double getValueUNew(int linearIndex, int unknown) const
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    size_t index = linearIndex + _uNewStrideCache[0] * unknown;
+//    #ifdef PATCH_RANGE_CHECK
+//    return _uNew->at(index).getU();
+//    #else
+//
+//    assertion3(index < _uNew->size(), index, _uNew->size(), toString());
+//
+//    return (*_uNew)[index].getU();
+//    #endif
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  void setValueUNew(int linearIndex, int unknown, double value)
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    int index = linearIndex + _uNewStrideCache[0] * unknown;
+//    #ifdef PATCH_RANGE_CHECK
+//    _uNew->at(index).setU(value);
+//    #else
+//    (*_uNew)[index].setU(value);
+//    #endif
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  /**
+//   * Sets the given value in the appropriate cell in the uNew array. If necessary
+//   * the array is resized to contain the specified cell.
+//   */
+//  void setValueUNewAndResize(int linearIndex, int unknown, double value);
+//
+//  double getValueUOld(int linearIndex, int unknown) const
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    int index = linearIndex + _uOldStrideCache[0] * unknown;
+//    #ifdef PATCH_RANGE_CHECK
+//    return _uNew->at(_uOldWithGhostlayerArrayIndex + index).getU();
+//    #else
+//    return (*_uNew)[_uOldWithGhostlayerArrayIndex + index].getU();
+//    #endif
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  void setValueUOld(int linearIndex, int unknown, double value)
+//  #ifdef PATCH_INLINE_GETTERS_AND_SETTERS
+//  {
+//    int index = linearIndex + _uOldStrideCache[0] * unknown;
+//    #ifdef PATCH_RANGE_CHECK
+//    _uNew->at(_uOldWithGhostlayerArrayIndex + index).setU(value);
+//    #else
+//    (*_uNew)[_uOldWithGhostlayerArrayIndex + index].setU(value);
+//    #endif
+//  }
+//  #else
+//  ;
+//  #endif
+//
+//  /**
+//   * Sets the given value in the appropriate cell in the uOld array. If necessary
+//   * the array is resized to contain the specified cell.
+//   */
+//  void setValueUOldAndResize(int linearIndex, int unknown, double value);
+//
+//  double getParameterWithoutGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter) const;
+//  void setParameterWithoutGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter, double value);
+//
+//  double getParameterWithGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter) const;
+//  void setParameterWithGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter, double value);
 
   /**
    * Returns whether the subcell is actually stored in the subgrid. I.e. this
@@ -553,15 +565,6 @@ public:
 //  void copyUNewToUOld();
 
   /**
-   * Sets the specified region of the patch.
-   */
-  void clearRegion(
-    tarch::la::Vector<DIMENSIONS, int> offset,
-    tarch::la::Vector<DIMENSIONS, int> size,
-    bool clearUOld
-  );
-
-  /**
    * Returns the uNew double array.
    */
   double* getUNewArray() const {
@@ -572,12 +575,12 @@ public:
   /**
    * Returns the uOld double array.
    */
-  double* getUOldWithGhostlayerArray() const;
+//  double* getUOldWithGhostlayerArray() const;
 
   /**
    * Returns the aux array as a real double array.
    */
-  double* getParameterWithoutGhostlayerArray() const;
+//  double* getParameterWithoutGhostlayerArray() const;
 
   /**
    * Returns the index for the uNew array.

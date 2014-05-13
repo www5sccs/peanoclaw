@@ -37,9 +37,10 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeExtrapolation2D() {
     0.0, //Timestep size
     0.0  //Minimal neighbor time
   );
+  peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
 
   //Set subgrid to zero
-  subgrid.clearRegion(-ghostlayerWidth, 3 + 2*ghostlayerWidth, true);
+  accessor.clearRegion(-ghostlayerWidth, 3 + 2*ghostlayerWidth, true);
 
   //Fill subgrid with test data
   tarch::la::Vector<DIMENSIONS, int> faceSize;
@@ -51,22 +52,22 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeExtrapolation2D() {
     //Lower
     subcellIndex = subcellIndexInFace;
     subcellIndex(1) -= ghostlayerWidth;
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     //Upper
     subcellIndex(0) = subgrid.getSubdivisionFactor()(0) - subcellIndexInFace(0) - 1;
     subcellIndex(1) = subgrid.getSubdivisionFactor()(1) + ghostlayerWidth - subcellIndexInFace(1) - 1;
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     //Left
     subcellIndex(0) = -ghostlayerWidth + subcellIndexInFace(1);
     subcellIndex(1) = subgrid.getSubdivisionFactor()(1) - subcellIndexInFace(0) - 1;
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     //Right
     subcellIndex(0) = subgrid.getSubdivisionFactor()(0) + ghostlayerWidth - subcellIndexInFace(1) - 1;
     subcellIndex(1) = subcellIndexInFace(0);
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     counter++;
   }
@@ -83,45 +84,48 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeExtrapolation2D() {
     double c3 = 3.0;
     double c4 = 5.0;
 
+    //TODO unterweg debug
+    std::cout << subgrid.toStringUOldWithGhostLayer() << std::endl;
+
     //Lower-Left
     assignList(subcell) = -ghostlayerWidth, -ghostlayerWidth;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c1);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c1);
     assignList(subcell) = -1, -ghostlayerWidth;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c2);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c2);
     assignList(subcell) = -ghostlayerWidth, -1;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c3);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c3);
     assignList(subcell) = -1, -1;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c4);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c4);
 
     //Upper-Left
     assignList(subcell) = -ghostlayerWidth, subdivisionFactor + ghostlayerWidth - 1;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c1);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c1);
     assignList(subcell) = -ghostlayerWidth, subdivisionFactor + ghostlayerWidth - 2;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c2);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c2);
     assignList(subcell) = -1, subdivisionFactor + ghostlayerWidth - 1;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c3);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c3);
     assignList(subcell) = -1, subdivisionFactor + ghostlayerWidth - 2;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c4);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c4);
 
     //Lower-Right
     assignList(subcell) = subdivisionFactor + ghostlayerWidth - 1, -ghostlayerWidth;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c1);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c1);
     assignList(subcell) = subdivisionFactor + ghostlayerWidth - 1, -1;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c2);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c2);
     assignList(subcell) = subdivisionFactor, -ghostlayerWidth;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c3);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c3);
     assignList(subcell) = subdivisionFactor, -1;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c4);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c4);
 
     //Upper-Right
     assignList(subcell) = subdivisionFactor + ghostlayerWidth - 1, subdivisionFactor + ghostlayerWidth - 1;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c1);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c1);
     assignList(subcell) = subdivisionFactor, subdivisionFactor + ghostlayerWidth - 1;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c2);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c2);
     assignList(subcell) = subdivisionFactor + ghostlayerWidth - 1, subdivisionFactor;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c3);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c3);
     assignList(subcell) = subdivisionFactor, subdivisionFactor;
-    validateNumericalEquals(subgrid.getValueUOld(subcell, 0), c4);
+    validateNumericalEquals(accessor.getValueUOld(subcell, 0), c4);
   }
   #endif
 }
@@ -144,9 +148,10 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeAndCornerExtrapolati
     0.0, //Timestep size
     0.0  //Minimal neighbor time
   );
+  peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
 
   //Set subgrid to zero
-  subgrid.clearRegion(-ghostlayerWidth, 3 + 2*ghostlayerWidth, true);
+  accessor.clearRegion(-ghostlayerWidth, 3 + 2*ghostlayerWidth, true);
 
   //Fill subgrid with test data
   tarch::la::Vector<DIMENSIONS, int> faceSize;
@@ -159,39 +164,39 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeAndCornerExtrapolati
     subcellIndex(0) = -ghostlayerWidth + subcellIndexInFace(0);
     subcellIndex(1) = subcellIndexInFace(1);
     subcellIndex(2) = subcellIndexInFace(2);
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     //Right
     subcellIndex(0) = subgrid.getSubdivisionFactor()(0) + ghostlayerWidth - subcellIndexInFace(0) - 1;
     subcellIndex(1) = subcellIndexInFace(1);
     subcellIndex(2) = subcellIndexInFace(2);
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     //Front
     subcellIndex(0) = subcellIndexInFace(1);
     subcellIndex(1) = -ghostlayerWidth + subcellIndexInFace(0);
     subcellIndex(2) = subcellIndexInFace(2);
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     //Back
     subcellIndex(0) = subcellIndexInFace(1);
     subcellIndex(1) = subgrid.getSubdivisionFactor()(1) + ghostlayerWidth - subcellIndexInFace(0) - 1;
     subcellIndex(2) = subcellIndexInFace(2);
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     //Lower
     subcellIndex = subcellIndexInFace;
     subcellIndex(0) = subcellIndexInFace(1);
     subcellIndex(1) = subcellIndexInFace(2);
     subcellIndex(2) = -ghostlayerWidth + subcellIndexInFace(0);
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     //Upper
     subcellIndex = subcellIndexInFace;
     subcellIndex(0) = subcellIndexInFace(1);
     subcellIndex(1) = subcellIndexInFace(2);
     subcellIndex(2) = subgrid.getSubdivisionFactor()(2) + ghostlayerWidth - subcellIndexInFace(0) - 1;
-    subgrid.setValueUOld(subcellIndex, 0, counter);
+    accessor.setValueUOld(subcellIndex, 0, counter);
 
     counter++;
   }
@@ -214,102 +219,102 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeAndCornerExtrapolati
 
     //Edge 0
     assignList(subcellIndex) = 0, -1, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -7.5, actualValue);
 
     assignList(subcellIndex) = 1, -1, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -5.5, actualValue);
 
     assignList(subcellIndex) = 2, -1, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -3.5, actualValue);
 
     assignList(subcellIndex) = 0, -2, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -11, actualValue);
 
     assignList(subcellIndex) = 1, -2, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -9, actualValue);
 
     assignList(subcellIndex) = 2, -2, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -7, actualValue);
 
     assignList(subcellIndex) = 0, -1, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -4, actualValue);
 
     assignList(subcellIndex) = 1, -1, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -2, actualValue);
 
     assignList(subcellIndex) = 2, -1, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 0, actualValue);
 
     assignList(subcellIndex) = 0, -2, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -7.5, actualValue);
 
     assignList(subcellIndex) = 1, -2, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -5.5, actualValue);
 
     assignList(subcellIndex) = 2, -2, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -3.5, actualValue);
 
 
 
     //Edge 1
     assignList(subcellIndex) = 0, 3, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 4.5, actualValue);
 
     assignList(subcellIndex) = 1, 3, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 6.5, actualValue);
 
     assignList(subcellIndex) = 2, 3, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 8.5, actualValue);
 
     assignList(subcellIndex) = 0, 4, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 7, actualValue);
 
     assignList(subcellIndex) = 1, 4, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 9, actualValue);
 
     assignList(subcellIndex) = 2, 4, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 11, actualValue);
 
     assignList(subcellIndex) = 0, 3, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 8, actualValue);
 
     assignList(subcellIndex) = 1, 3, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 10, actualValue);
 
     assignList(subcellIndex) = 2, 3, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 12, actualValue);
 
     assignList(subcellIndex) = 0, 4, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 10.5, actualValue);
 
     assignList(subcellIndex) = 1, 4, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 12.5, actualValue);
 
     assignList(subcellIndex) = 2, 4, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 14.5, actualValue);
 
 
@@ -317,51 +322,51 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeAndCornerExtrapolati
 
     //Edge 2
     assignList(subcellIndex) = 3, 0, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -1.5, actualValue);
 
     assignList(subcellIndex) = 3, 1, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 2.5, actualValue);
 
     assignList(subcellIndex) = 3, 2, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 6.5, actualValue);
 
     assignList(subcellIndex) = 4, 0, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, -1, actualValue);
 
     assignList(subcellIndex) = 4, 1, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 3, actualValue);
 
     assignList(subcellIndex) = 4, 2, -2;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 7, actualValue);
 
     assignList(subcellIndex) = 3, 0, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 2, actualValue);
 
     assignList(subcellIndex) = 3, 1, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 6, actualValue);
 
     assignList(subcellIndex) = 3, 2, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 10, actualValue);
 
     assignList(subcellIndex) = 4, 0, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 2.5, actualValue);
 
     assignList(subcellIndex) = 4, 1, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 6.5, actualValue);
 
     assignList(subcellIndex) = 4, 2, -1;
-    actualValue = subgrid.getValueUOld(subcellIndex, 0);
+    actualValue = accessor.getValueUOld(subcellIndex, 0);
     validateNumericalEqualsWithParams1(actualValue, 10.5, actualValue);
   }
   #endif

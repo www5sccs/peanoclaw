@@ -17,6 +17,7 @@
 
 namespace peanoclaw {
   class Numerics;
+  class Patch;
   class Vertex;
 }
 
@@ -37,6 +38,8 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
      * Logging device.
      */
     static tarch::logging::Log _log;
+
+    peanoclaw::Patch* _adjacentSubgrids[TWO_POWER_D];
 
   public:
     /**
@@ -198,6 +201,16 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
      * this grid iteration.
      */
     bool wereAdjacentRanksChanged() const;
+
+    /**
+     * Sets the adjacent subgrid to be reused.
+     */
+    void setAdjacentSubgrid(int index, peanoclaw::Patch& subgrid);
+
+    /**
+     * Returns the adjacent subgrid.
+     */
+    peanoclaw::Patch& getAdjacentSubgrid(int index) const;
 };
 
 

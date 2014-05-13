@@ -253,7 +253,7 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      * Performs the operations necessary when stepping into a cell.
      */
     void stepDown(
-      int                                  coarseCellDescriptionIndex,
+      Patch*                               coarseSubgrid,
       Patch&                               fineSubgrid,
       peanoclaw::Vertex * const            fineGridVertices,
       const peano::grid::VertexEnumerator& fineGridVerticesEnumerator,
@@ -269,7 +269,7 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
      * state of the containing Peano cell.
      */
     void stepUp(
-      int                                  coarseCellDescriptionIndex,
+      Patch*                               coarseSubgrid,
       Patch&                               finePatch,
       ParallelSubgrid&                     fineParallelSubgrid,
       bool                                 isPeanoCellLeaf,

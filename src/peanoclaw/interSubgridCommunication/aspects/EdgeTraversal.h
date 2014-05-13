@@ -31,7 +31,7 @@ class peanoclaw::interSubgridCommunication::aspects::EdgeTraversal {
      *              The dimension which axis is parallel to the edge is set to zero.
      */
     EdgeTraversal(
-      Patch& subgrid,
+      peanoclaw::Patch& subgrid,
       LoopBody& loopBody
     );
 };

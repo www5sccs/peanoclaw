@@ -17,12 +17,16 @@ namespace peanoclaw {
     class Extrapolation;
     class ExtrapolationAxis;
   }
+
+  namespace grid {
+    class SubgridAccessor;
+  }
 }
 
 class peanoclaw::interSubgridCommunication::ExtrapolationAxis {
 
   private:
-    const Patch& _subgrid;
+    const peanoclaw::Patch& _subgrid;
     int          _axis;
     int          _linearSubcellIndex;
     int          _linearIndexSupport0;
@@ -117,7 +121,9 @@ class peanoclaw::interSubgridCommunication::Extrapolation {
     peanoclaw::Patch& _subgrid;
 
   public:
-    Extrapolation(Patch& subgrid);
+    Extrapolation(
+      Patch& subgrid
+    );
 
     /**
      * Extrapolates the values from the ghostlayer faces to the edges.

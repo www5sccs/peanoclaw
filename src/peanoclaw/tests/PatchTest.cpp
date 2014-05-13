@@ -69,6 +69,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
     0.0, //Timestep size
     0.0  //Minimal neighbor time
   );
+  peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
 
   #ifdef Dim2
   for(int unknown = 0; unknown < 2; unknown++) {
@@ -76,7 +77,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
       for(int y = 0; y < 3; y++) {
         tarch::la::Vector<DIMENSIONS, int> subcellIndex;
         assignList(subcellIndex) = x, y;
-        patch.setValueUNew(subcellIndex, unknown, unknown * 9 + x * 3 + y);
+        accessor.setValueUNew(subcellIndex, unknown, unknown * 9 + x * 3 + y);
       }
     }
   }
@@ -92,20 +93,6 @@ void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
 }
 
 void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
-//  Patch patch(
-//    0.0,    //Position
-//    1.0,    //Size
-//    2,      //Number of unknowns
-//    3,      //Subdivision factor
-//    1,      //Ghostlayer width
-//    0.0,    //Current time
-//    0.0,    //Timestep size
-//    0.0,    //CFL
-//    0.0,    //Maximum timestep size
-//    0,      //Level
-//    &uNew,
-//    &uOld
-//  );
   Patch patch = createPatch(
     2,       //Unknowns per subcell
     0,       //Aux fields per subcell
@@ -119,14 +106,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
     0.0,     //Timestep size
     0.0      //Minimal neighbor time
   );
-
-//  std::vector<Data> uNew;
-//  std::vector<Data> uOld;
-//  for(int i = 0; i < 50; i++) {
-//    Data data;
-//    data.setU(i);
-//    uOld.push_back(data);
-//  }
+  peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
 
   #ifdef Dim2
   int counter = 0;
@@ -135,7 +115,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
       for(int y = -1; y < 3 + 1; y++) {
         tarch::la::Vector<DIMENSIONS, int> subcellIndex;
         assignList(subcellIndex) = x, y;
-        patch.setValueUOld(subcellIndex, unknown, counter++);
+        accessor.setValueUOld(subcellIndex, unknown, counter++);
       }
     }
   }

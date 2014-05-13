@@ -10,6 +10,7 @@
 
 namespace peanoclaw { 
   class Cell;
+  class Patch;
   namespace records {
     class CellDescription;
   }
@@ -26,6 +27,8 @@ class peanoclaw::Cell: public peano::grid::Cell< peanoclaw::records::Cell > {
   private: 
     typedef class peano::grid::Cell< peanoclaw::records::Cell >  Base;
     typedef class peanoclaw::records::CellDescription CellDescription;
+
+    peanoclaw::Patch* _subgrid;
 
   public:
     /**
@@ -65,6 +68,16 @@ class peanoclaw::Cell: public peano::grid::Cell< peanoclaw::records::Cell > {
      * the cell-description index is valid.
      */
     bool holdsSubgrid() const;
+
+    /**
+     * Sets the corresponding subgrid.
+     */
+    void setSubgrid(peanoclaw::Patch& subgrid);
+
+    /**
+     * Returns the corresponding subgrid.
+     */
+    peanoclaw::Patch& getSubgrid() const;
 };
 
 

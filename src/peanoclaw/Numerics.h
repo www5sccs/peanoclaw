@@ -8,7 +8,6 @@
 #ifndef PEANOCLAW_NUMERICS_H_
 #define PEANOCLAW_NUMERICS_H_
 
-#include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 #include "peanoclaw/interSubgridCommunication/Interpolation.h"
 #include "peanoclaw/interSubgridCommunication/Restriction.h"
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
@@ -18,6 +17,10 @@
 namespace peanoclaw {
   class Numerics;
   class Patch;
+
+  namespace interSubgridCommunication {
+    class DefaultTransfer;
+  }
 }
 
 /**
@@ -74,7 +77,7 @@ private:
     virtual void interpolate(
       const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
       const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
-      const peanoclaw::Patch& source,
+      peanoclaw::Patch& source,
       peanoclaw::Patch&        destination,
       bool interpolateToUOld,
       bool interpolateToCurrentTime,
