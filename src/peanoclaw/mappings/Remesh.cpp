@@ -997,11 +997,15 @@ void peanoclaw::mappings::Remesh::enterCell(
   );
 
   //Prepare subgrid on first level
-  if(fineGridVerticesEnumerator.getLevel() == 1) {
+  //if(fineGridVerticesEnumerator.getLevel() == 1) {
+  if(coarseGridCell.isRoot()) {
     _subgridLevelContainer->setFirstLevel(fineGridCell, fineGridVertices, fineGridVerticesEnumerator);
   }
 
   Patch& subgrid = fineGridCell.getSubgrid();
+
+  //TODO unterweg debug
+//  std::cout << "root=" << fineGridCell.isRoot() << ", " << coarseGridCell.isRoot() << std::endl;
 
   assertion(subgrid.isLeaf() || !subgrid.isLeaf());
 

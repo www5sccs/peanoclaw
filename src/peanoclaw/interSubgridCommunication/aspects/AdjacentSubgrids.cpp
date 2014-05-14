@@ -213,8 +213,8 @@ void peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::destroyHan
       int adjacentCellDescription = -1;
       if(_vertex.getAdjacentCellDescriptionIndex(i) != -1) {
 
-        //Patch subgrid(_vertex.getAdjacentCellDescriptionIndex(i));
-        Patch& subgrid = _vertex.getAdjacentSubgrid(i);
+        Patch subgrid(_vertex.getAdjacentCellDescriptionIndex(i));
+        //Patch& subgrid = _vertex.getAdjacentSubgrid(i);
         if(
           #ifdef Parallel
           !subgrid.isRemote()

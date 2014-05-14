@@ -217,7 +217,7 @@ private:
   //Methods for evaluating CellDescriptions
   static bool isValid(const CellDescription* cellDescription) {
     if(cellDescription != 0) {
-      assertion(tarch::la::allGreater(cellDescription->getSubdivisionFactor(), tarch::la::Vector<DIMENSIONS, int>(-1)));
+      assertion1(tarch::la::allGreater(cellDescription->getSubdivisionFactor(), tarch::la::Vector<DIMENSIONS, int>(-1)), cellDescription->toString());
     }
     return cellDescription != 0;
   //      && tarch::la::allGreater(cellDescription->getSubdivisionFactor(),
