@@ -482,15 +482,6 @@ void peanoclaw::mappings::ValidateGrid::mergeWithMaster(
   );
 
   std::vector<PatchDescription>& localData = PatchDescriptionHeap::getInstance().getData(_patchDescriptionsIndex);
-  //TODO unterweg debug
-//  for(int i = 0; i < (int)remoteData.size(); i++) {
-//
-//    //TODO unterweg debug
-////    logError("", "Merge from " << worker << " -- " << i << ": " << remoteData[i].toString());
-////    assertion2(remoteData[i].getIsReferenced(), i, remoteData[i].toString());
-//
-//    localData.push_back(remoteData[i]);
-//  }
   localData.insert(localData.end(), remoteData.begin(), remoteData.end());
 
   logInfo("mergeWithMaster(...)", "Merged " << remoteData.size() << " patches: " << PatchDescriptionHeap::getInstance().getData(_patchDescriptionsIndex).size() << " entries.");

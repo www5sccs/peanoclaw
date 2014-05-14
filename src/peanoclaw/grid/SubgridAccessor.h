@@ -18,6 +18,9 @@
 #include <vector>
 
 namespace peanoclaw {
+
+  class Patch;
+
   namespace grid {
     class SubgridAccessor;
 
@@ -167,6 +170,8 @@ class peanoclaw::grid::SubgridAccessor {
 
   private:
     template<int NumberOfUnknowns> friend class SubgridIterator;
+    friend class peanoclaw::Patch;
+
     typedef peanoclaw::records::Data Data;
     typedef peanoclaw::records::CellDescription CellDescription;
 

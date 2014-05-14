@@ -431,13 +431,13 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellSize() const {
   return _subcellSize;
 }
 
-//double* peanoclaw::Patch::getUOldWithGhostlayerArray() const {
-//  return reinterpret_cast<double*>(&(_uNew->at(_uOldWithGhostlayerArrayIndex)));
-//}
-//
-//double* peanoclaw::Patch::getParameterWithoutGhostlayerArray() const {
-//  return reinterpret_cast<double*>(&(_uNew->at(_parameterWithoutGhostlayerArrayIndex)));
-//}
+double* peanoclaw::Patch::getUOldWithGhostlayerArray() const {
+  return reinterpret_cast<double*>(&(_uNew->at(_accessor._uOldWithGhostlayerArrayIndex)));
+}
+
+double* peanoclaw::Patch::getParameterWithoutGhostlayerArray() const {
+  return reinterpret_cast<double*>(&(_uNew->at(_accessor._parameterWithoutGhostlayerArrayIndex)));
+}
 
 int peanoclaw::Patch::getUIndex() const {
   return _cellDescription->getUIndex();
