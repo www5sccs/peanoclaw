@@ -106,8 +106,8 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep()
   : _numerics(0),
     _globalTimestepEndTime(0),
     _useDimensionalSplittingOptimization(true),
-    _workerIterations(-1),
-    _collectSubgridStatistics(false) {
+    _collectSubgridStatistics(false),
+    _workerIterations(-1) {
   logTraceIn( "SolveTimestep()" );
   // @todo Insert your code here
   logTraceOut( "SolveTimestep()" );
@@ -560,10 +560,10 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
   if(fineGridCell.isInside()) {
     //Create patch
-//    Patch patch (
-//      fineGridCell
-//    );
-    Patch& subgrid = fineGridCell.getSubgrid();
+    Patch subgrid (
+      fineGridCell
+    );
+//    Patch& subgrid = fineGridCell.getSubgrid();
 
     //Solve timestep for this patch
     if(fineGridCell.isLeaf()) {

@@ -23,9 +23,9 @@ peanoclaw::Vertex::Vertex():
   _vertexData.setAdjacentRanksInFormerIteration(-1);
   #endif
 
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    _adjacentSubgrids[i] = 0;
-  }
+//  for(int i = 0; i < TWO_POWER_D; i++) {
+//    _adjacentSubgrids[i] = 0;
+//  }
 }
 
 
@@ -68,25 +68,25 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
 
   //Fill ghost layers of adjacent cells
   //Get adjacent cell descriptions
-//  CellDescription* cellDescriptions[TWO_POWER_D];
-//  for(int cellIndex = 0; cellIndex < TWO_POWER_D; cellIndex++) {
-//    if(getAdjacentCellDescriptionIndex(cellIndex) != -1) {
-//      cellDescriptions[cellIndex] = &CellDescriptionHeap::getInstance().getData(getAdjacentCellDescriptionIndex(cellIndex)).at(0);
-//    }
-//  }
+  CellDescription* cellDescriptions[TWO_POWER_D];
+  for(int cellIndex = 0; cellIndex < TWO_POWER_D; cellIndex++) {
+    if(getAdjacentCellDescriptionIndex(cellIndex) != -1) {
+      cellDescriptions[cellIndex] = &CellDescriptionHeap::getInstance().getData(getAdjacentCellDescriptionIndex(cellIndex)).at(0);
+    }
+  }
 
   // Prepare ghostlayer
   Patch patches[TWO_POWER_D];
   dfor2(cellIndex)
-    //if(getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
-//    if(_adjacentSubgrids[cellIndexScalar] != 0) {
-//      patches[cellIndexScalar] = Patch(
-//        *cellDescriptions[cellIndexScalar]
-//      );
     if(getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
-      assertion(_adjacentSubgrids[cellIndexScalar] != 0);
-      patches[cellIndexScalar] = *(_adjacentSubgrids[cellIndexScalar]);
+      patches[cellIndexScalar] = Patch(
+        *cellDescriptions[cellIndexScalar]
+      );
     }
+//    if(getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
+//      assertion(_adjacentSubgrids[cellIndexScalar] != 0);
+//      patches[cellIndexScalar] = *(_adjacentSubgrids[cellIndexScalar]);
+//    }
   enddforx
 
   //TODO unterweg Debug
@@ -237,20 +237,4 @@ void peanoclaw::Vertex::setWhetherAdjacentRanksChanged(bool adjacentRanksChanged
 
 bool peanoclaw::Vertex::wereAdjacentRanksChanged() const {
   return _vertexData.getAdjacentRanksChanged();
-}
-
-void peanoclaw::Vertex::setAdjacentSubgrid(int index, peanoclaw::Patch& subgrid) {
-  assertionEquals1(_adjacentSubgrids[index], 0, &subgrid);
-  _adjacentSubgrids[index] = &subgrid;
-}
-
-peanoclaw::Patch& peanoclaw::Vertex::getAdjacentSubgrid(int index) const {
-  assertion(_adjacentSubgrids[index] != 0);
-  return *(_adjacentSubgrids[index]);
-}
-
-void peanoclaw::Vertex::resetAdjacentSubgrids() {
-  for(int i = 0; i < TWO_POWER_D; i++) {
-    _adjacentSubgrids[i] = 0;
-  }
 }

@@ -25,10 +25,6 @@
 
 namespace peanoclaw {
 
-  namespace grid {
-    class SubgridLevelContainer;
-  }
-
   namespace interSubgridCommunication {
     class GridLevelTransfer;
   }
@@ -99,8 +95,6 @@ class peanoclaw::mappings::Remesh {
     peanoclaw::State const* _state;
 
     int _iterationNumber;
-
-    peanoclaw::grid::SubgridLevelContainer* _subgridLevelContainer;
 
     //Watches
     static tarch::timing::Watch _spacetreeCommunicationWaitingTimeWatch;
