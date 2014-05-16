@@ -8,7 +8,9 @@
 #ifndef PEANOCLAW_GRID_LINEARIZATION_H_
 #define PEANOCLAW_GRID_LINEARIZATION_H_
 
-#include "peanoclaw/grid/LinearizationQZYX.h"
+#include "peano/utils/Dimensions.h"
+
+#include "tarch/la/Vector.h"
 
 namespace peanoclaw {
   namespace grid {
@@ -21,8 +23,122 @@ namespace peanoclaw {
      *   int linearizeWithGhostlayer(int unknown,const tarch::la::Vector<DIMENSIONS, int>& subcellIndex) const;
      *
      */
-    typedef LinearizationQZYX Linearization;
+    //typedef LinearizationZYXQ Linearization;
+    class Linearization;
   }
 }
+
+class peanoclaw::grid::Linearization {
+
+private:
+  int _qStrideUNew;
+  tarch::la::Vector<DIMENSIONS,int> _cellStrideUNew;
+  int _qStrideUOld;
+  tarch::la::Vector<DIMENSIONS,int> _cellStrideUOld;
+  int _ghostlayerWidth;
+
+public:
+
+  Linearization() {
+  }
+
+  inline Linearization(
+      const tarch::la::Vector<DIMENSIONS, int> subdivisionFactor,
+      int numberOfUnknowns,
+      int ghostlayerWidth
+  );
+
+  /**
+   * Linearizes the given subcell index to a columnwise stored array index.
+   *
+   * This method assumes that the unknown is the first index of the d-dimensional array,
+   * while the subcell index-components follow as indices.
+   */
+  int linearize(
+      int unknown,
+      const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
+  ) const {
+    int index = 0;
+    for (int d = 0; d < DIMENSIONS; d++) {
+      index += subcellIndex(d) * _cellStrideUNew[d];
+    }
+    index += unknown * _qStrideUNew;
+
+    return index;
+  }
+
+  /**
+   * Does a similar linearization like the method linearize(...), but it assumes
+   * that the array is surrounded by a ghostlayer.
+   */
+  int linearizeWithGhostlayer(
+      int unknown,
+      const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
+  ) const {
+    int index = 0;
+    for(int d = 0; d < DIMENSIONS; d++) {
+      index += (subcellIndex(d) + _ghostlayerWidth) * _cellStrideUOld[d];
+    }
+    index += unknown * _qStrideUOld;
+    return index;
+  }
+
+  /**
+   * Returns the index shift required to go from one unknown in
+   * a given cell to the next unknown in the same cell in the
+   * qNew array.
+   */
+  inline int getQStrideUNew() const {
+    return _qStrideUNew;
+  }
+
+  /**
+   * Returns the index shift required to go from one unknown in
+   * a given cell to the next unknown in the same cell in the
+   * qOld array.
+   */
+  inline int getQStrideUOld() const {
+    return _qStrideUOld;
+  }
+
+  /**
+   * Returns the index shift required to go from one cell in
+   * uNew to the next cell in uNew.
+   */
+  inline int getCellStrideUNew(int dimension) const {
+    return _cellStrideUNew[dimension];
+  }
+
+  /**
+   * Returns the index shift required to go from one cell in
+   * uNew to the next cell in uNew.
+   */
+  inline int getCellStrideUOld(int dimension) const {
+    return _cellStrideUOld[dimension];
+  }
+
+  /**
+   * Returns the offset that is applied when starting an iterator for a subgrid.
+   * I.e., this refers to one cell before the iterated part of the subgrid to
+   * allow for the pattern
+   *
+   *   while(iterator.moveToNextCell()) {
+   *      while(iterator.moveToNextUnknowns()) {
+   *          ...
+   *      }
+   *   }
+   *
+   *   For this linearization this refers to minus one cell in the highest
+   *   coordinate, i.e. Y in 2D and Z in 3D.
+   *
+   */
+  inline tarch::la::Vector<DIMENSIONS,int> getInitialOffsetForIterator() const;
+};
+
+#ifdef PEANOCLAW_PYCLAW
+#include "peanoclaw/grid/LinearizationZYXQ.h"
+#elif PEANOCLAW_SWE
+#include "peanoclaw/grid/LinearizationQZYX.h"
+#endif
 
 #endif /* PEANOCLAW_GRID_LINEARIZATION_H_ */

@@ -37,16 +37,16 @@ void peanoclaw::grid::SubgridIterator<NumberOfUnknowns>::restart() {
   //Initialize
   _isValid = true;
   _unknown = -1;
-  _indexUNew = _linearization.linearize(0, _offset);
-  _indexUOld = _linearization.linearizeWithGhostlayer(0, _offset);
+  _indexUNew = _linearization.linearize(-1, _offset+_linearization.getInitialOffsetForIterator());
+  _indexUOld = _linearization.linearizeWithGhostlayer(-1, _offset+_linearization.getInitialOffsetForIterator());
 //  _data = _subgrid.getUNewArray();
 
   //Prepare for first increment
   _position(DIMENSIONS-1)--;
-  _indexUNew-=_linearization.getCellStrideUNew(DIMENSIONS-1); //for one step in x2-direction
-  _indexUNew-=_linearization.getQStrideUNew(); //for one unknown increment
-  _indexUOld-=_linearization.getCellStrideUOld(DIMENSIONS-1); //for one step in x2-direction
-  _indexUOld-=_linearization.getQStrideUOld(); //for one unknown increment
+  //_indexUNew-=_linearization.getCellStrideUNew(DIMENSIONS-1); //for one step in x2-direction
+//  _indexUNew-=_linearization.getQStrideUNew(); //for one unknown increment
+  //_indexUOld-=_linearization.getCellStrideUOld(DIMENSIONS-1); //for one step in x2-direction
+//  _indexUOld-=_linearization.getQStrideUOld(); //for one unknown increment
 
   _offsetPlusSize = _offset + _size;
 
@@ -54,13 +54,13 @@ void peanoclaw::grid::SubgridIterator<NumberOfUnknowns>::restart() {
   _uOldAllUnknownsStride = NumberOfUnknowns*_linearization.getQStrideUOld();
 
   //TODO unterweg debug
-//  std::cout << "Initializing offset=" << offset << " size=" << size << " indexUNew=" << _indexUNew << " indexUOld=" << _indexUOld << " init=" << _subgrid.linearizeWithGhostlayer(0, _offset) << std::endl;
-//  for(int i = 0; i < DIMENSIONS+1; i++) {
-//    std::cout << _subgrid._uNewStrideCache[i] << " ";
+//  std::cout << "Initializing offset=" << _offset << " size=" << _size << " indexUNew=" << _indexUNew << " indexUOld=" << _indexUOld << " init=" << _linearization.linearizeWithGhostlayer(0, _offset) << std::endl;
+//  for(int i = 0; i < DIMENSIONS; i++) {
+//    std::cout << _linearization.getCellStrideUNew(i) << " ";
 //  }
 //  std::cout << std::endl;
-//  for(int i = 0; i < DIMENSIONS+1; i++) {
-//    std::cout << _subgrid._uOldStrideCache[i] << " ";
+//  for(int i = 0; i < DIMENSIONS; i++) {
+//    std::cout << _linearization.getCellStrideUOld(i) << " ";
 //  }
 //  std::cout << std::endl;
 }
@@ -195,8 +195,8 @@ bool peanoclaw::grid::SubgridIterator<NumberOfUnknowns>::moveToNextCell() {
   //TODO unterweg debug
 //  std::cout << "Moving to next cell from " << _position << " offsetPlusSize=" << _offsetPlusSize << " offset=" << _offset << std::endl;
 
-  _indexUNew++;
-  _indexUOld++;
+  _indexUNew += _linearization.getCellStrideUNew(DIMENSIONS-1);
+  _indexUOld += _linearization.getCellStrideUOld(DIMENSIONS-1);
 
   for(int d = DIMENSIONS-1; d >= 0; d--) {
     _position(d)++;
