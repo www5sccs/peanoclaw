@@ -31,7 +31,7 @@ class peanoclaw::grid::SubgridLevelContainer {
      */
     const static int Full = 5;
 
-    int _index;
+    int _levelIndex;
 //    peanoclaw::Patch _firstLevelSubgrid;
     peanoclaw::Patch _subgrids[FIVE_POWER_D * maximumNumberOfLevels];
 
@@ -57,11 +57,16 @@ class peanoclaw::grid::SubgridLevelContainer {
      * Sets the subgrid on the first level on the according
      * cell and vertices.
      */
-    void setFirstLevel(
+    void addFirstLevel(
       peanoclaw::Cell&                     cell,
       peanoclaw::Vertex * const            vertices,
       const peano::grid::VertexEnumerator& verticesEnumerator
     );
+
+    /**
+     * Removes the subgrids from the first level.
+     */
+    void removeFirstLevel();
 
     /**
      * Adds a new level of subgrids depending on the cells and vertices.

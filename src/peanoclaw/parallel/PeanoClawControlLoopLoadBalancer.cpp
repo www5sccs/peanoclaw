@@ -47,7 +47,7 @@ int peanoclaw::parallel::PeanoClawStrategy::run( int worker ) {
             }*/
 
 
-#if 1
+#if 0
             mpibalancing::ControlLoopLoadBalancer::reductions::EraseIssueReduction eraseIssueReduction;
             _workerHistorySet.reduce(eraseIssueReduction);
 
@@ -99,10 +99,11 @@ Strategy& peanoclaw::parallel::PeanoClawControlLoopLoadBalancer::getStrategy(voi
     }
 }
 
+void peanoclaw::parallel::PeanoClawControlLoopLoadBalancer::suspendLoadBalancing(bool flag) {
+    _loadBalancingSuspended = flag;
+}
+
 FilterStrategy& peanoclaw::parallel::PeanoClawControlLoopLoadBalancer::getFilterStrategy(void) {
     return _filterStrategy;
 }
 
-void peanoclaw::parallel::PeanoClawControlLoopLoadBalancer::suspendLoadBalancing(bool flag) {
-    _loadBalancingSuspended = flag;
-}

@@ -211,6 +211,8 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
      * Returns the adjacent subgrid.
      */
     peanoclaw::Patch& getAdjacentSubgrid(int index) const;
+
+    void resetAdjacentSubgrids();
 };
 
 

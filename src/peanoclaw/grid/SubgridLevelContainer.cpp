@@ -7,6 +7,7 @@
 #include "peanoclaw/grid/SubgridLevelContainer.h"
 
 #include "peanoclaw/Cell.h"
+#include "peanoclaw/Heap.h"
 
 #include "peano/utils/Loop.h"
 
@@ -16,8 +17,8 @@ void peanoclaw::grid::SubgridLevelContainer::createAndSetSubgridsForLevel(
   const peano::grid::VertexEnumerator& enumerator,
   int subgridArraySize
 ) {
-  assertion(_index < 100);
-  _index++;
+  assertion(_levelIndex < 100);
+  _levelIndex++;
 
   //TODO unterweg debug
 //  for(int i = 0; i < FOUR_POWER_D; i++) {
@@ -46,8 +47,8 @@ void peanoclaw::grid::SubgridLevelContainer::createAndSetSubgridsForLevel(
     if(tarch::la::allGreaterEquals(cellIndex, tarch::la::Vector<DIMENSIONS,int>(0))
             && tarch::la::allGreater(tarch::la::Vector<DIMENSIONS,int>(subgridArraySize-2), cellIndex)) {
       setCellDescriptionIndex = cells[enumerator.cell(cellIndex)].getCellDescriptionIndex();
-      _subgrids[_index*FIVE_POWER_D + subgridIndexScalar] = peanoclaw::Patch(setCellDescriptionIndex);
-      cells[enumerator.cell(cellIndex)].setSubgrid(_subgrids[_index*FIVE_POWER_D + subgridIndexScalar]);
+      _subgrids[_levelIndex*FIVE_POWER_D + subgridIndexScalar] = peanoclaw::Patch(setCellDescriptionIndex);
+      cells[enumerator.cell(cellIndex)].setSubgrid(_subgrids[_levelIndex*FIVE_POWER_D + subgridIndexScalar]);
 
       //TODO unterweg debug
 //      std::cout << "\tSubgrid from cell[" << cellIndex << "]: " << setCellDescriptionIndex << std::endl;
@@ -76,25 +77,29 @@ void peanoclaw::grid::SubgridLevelContainer::createAndSetSubgridsForLevel(
 //        std::cout << " (ok), index=" << cellDescriptionIndex << std::endl;
 
         if(cellDescriptionIndex != -1) {
-          assertion4(
+          assertion8(
             cellDescriptionIndex == setCellDescriptionIndex || setCellDescriptionIndex == -1,
             cellDescriptionIndex,
             setCellDescriptionIndex,
             subgridIndex,
-            localVertexIndex
+            localVertexIndex,
+            enumerator.getLevel(),
+            vertex.toString(),
+            CellDescriptionHeap::getInstance().getData(cellDescriptionIndex)[0].toString(),
+            CellDescriptionHeap::getInstance().getData(setCellDescriptionIndex)[0].toString()
           );
 
           //Create subgrid based on vertex
           if(setCellDescriptionIndex == -1) {
-            assertion1(!tarch::la::allGreaterEquals(subgridIndex, 1) || tarch::la::oneGreater(subgridIndex, 3), subgridIndex);
+            assertion1(!tarch::la::allGreaterEquals(subgridIndex, 1) || tarch::la::oneGreater(subgridIndex, subgridArraySize-2), subgridIndex);
             setCellDescriptionIndex = cellDescriptionIndex;
-            _subgrids[_index*FIVE_POWER_D + subgridIndexScalar] = peanoclaw::Patch(cellDescriptionIndex);
+            _subgrids[_levelIndex*FIVE_POWER_D + subgridIndexScalar] = peanoclaw::Patch(cellDescriptionIndex);
 
             //TODO unterweg debug
 //            std::cout << "\t\tsubgrid from vertex: " << setCellDescriptionIndex << std::endl;
           }
 
-          vertex.setAdjacentSubgrid(localVertexIndexScalar, _subgrids[_index*FIVE_POWER_D + subgridIndexScalar]);
+          vertex.setAdjacentSubgrid(localVertexIndexScalar, _subgrids[_levelIndex*FIVE_POWER_D + subgridIndexScalar]);
         }
       }
 
@@ -106,21 +111,19 @@ void peanoclaw::grid::SubgridLevelContainer::createAndSetSubgridsForLevel(
 }
 
 peanoclaw::grid::SubgridLevelContainer::SubgridLevelContainer()
- : _index(0) {
+ : _levelIndex(0) {
 }
 
-void peanoclaw::grid::SubgridLevelContainer::setFirstLevel(
+void peanoclaw::grid::SubgridLevelContainer::addFirstLevel(
   peanoclaw::Cell&                     cell,
   peanoclaw::Vertex * const            vertices,
   const peano::grid::VertexEnumerator& enumerator
 ) {
-//  _firstLevelSubgrid = peanoclaw::Patch(cell.getCellDescriptionIndex());
-//
-//  cell.setSubgrid(_firstLevelSubgrid);
-//
-//  for(int i = 0; i < TWO_POWER_D; i++) {
-//    vertices[verticesEnumerator(i)].setAdjacentSubgrid(i, _firstLevelSubgrid);
-//  }
+
+  //Reset vertices
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    vertices[enumerator(i)].resetAdjacentSubgrids();
+  }
 
   createAndSetSubgridsForLevel(
     &cell,
@@ -130,11 +133,20 @@ void peanoclaw::grid::SubgridLevelContainer::setFirstLevel(
   );
 }
 
+void peanoclaw::grid::SubgridLevelContainer::removeFirstLevel() {
+  _levelIndex--;
+}
+
 void peanoclaw::grid::SubgridLevelContainer::addNewLevel(
   peanoclaw::Cell * const cells,
   peanoclaw::Vertex * const vertices,
   const peano::grid::VertexEnumerator& enumerator
 ) {
+  //Reset vertices
+  for(int i = 0; i < FOUR_POWER_D; i++) {
+    vertices[enumerator(i)].resetAdjacentSubgrids();
+  }
+
   createAndSetSubgridsForLevel(
     cells,
     vertices,
@@ -144,13 +156,13 @@ void peanoclaw::grid::SubgridLevelContainer::addNewLevel(
 }
 
 void peanoclaw::grid::SubgridLevelContainer::removeCurrentLevel() {
-  assertion(_index > 0);
-  _index--;
+  assertion(_levelIndex > 0);
+  _levelIndex--;
 }
 
 
 int peanoclaw::grid::SubgridLevelContainer::getCurrentLevel() const {
-  return _index;
+  return _levelIndex;
 }
 
 

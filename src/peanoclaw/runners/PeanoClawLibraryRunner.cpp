@@ -181,7 +181,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   _iterationTimer("peanoclaw::runners::PeanoClawLibraryRunner", "iteration", false),
   _totalRuntime(0.0),
   _numerics(numerics),
-  _validateGrid(true),
+  _validateGrid(false),
   _initializationWatch("Total initialization", "", false),
   _simulationWatch("Total simulation", "", false)
 {

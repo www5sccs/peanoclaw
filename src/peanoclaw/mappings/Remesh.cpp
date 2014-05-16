@@ -997,9 +997,8 @@ void peanoclaw::mappings::Remesh::enterCell(
   );
 
   //Prepare subgrid on first level
-  //if(fineGridVerticesEnumerator.getLevel() == 1) {
   if(coarseGridCell.isRoot()) {
-    _subgridLevelContainer->setFirstLevel(fineGridCell, fineGridVertices, fineGridVerticesEnumerator);
+    _subgridLevelContainer->addFirstLevel(fineGridCell, fineGridVertices, fineGridVerticesEnumerator);
   }
 
   Patch& subgrid = fineGridCell.getSubgrid();
@@ -1123,6 +1122,11 @@ void peanoclaw::mappings::Remesh::leaveCell(
     for(int i = 0; i < TWO_POWER_D; i++) {
       coarseGridVertices[coarseGridVerticesEnumerator(i)].setSubcellEraseVeto(i);
     }
+  }
+
+  //Remove subgrid on first level
+  if(coarseGridCell.isRoot()) {
+    _subgridLevelContainer->removeFirstLevel();
   }
 
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );

@@ -240,10 +240,17 @@ bool peanoclaw::Vertex::wereAdjacentRanksChanged() const {
 }
 
 void peanoclaw::Vertex::setAdjacentSubgrid(int index, peanoclaw::Patch& subgrid) {
+  assertionEquals1(_adjacentSubgrids[index], 0, &subgrid);
   _adjacentSubgrids[index] = &subgrid;
 }
 
 peanoclaw::Patch& peanoclaw::Vertex::getAdjacentSubgrid(int index) const {
   assertion(_adjacentSubgrids[index] != 0);
   return *(_adjacentSubgrids[index]);
+}
+
+void peanoclaw::Vertex::resetAdjacentSubgrids() {
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    _adjacentSubgrids[i] = 0;
+  }
 }
