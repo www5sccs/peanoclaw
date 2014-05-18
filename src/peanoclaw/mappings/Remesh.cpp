@@ -1155,23 +1155,23 @@ void peanoclaw::mappings::Remesh::beginIteration(
   }
 
   //TODO unterweg debug
-  #ifdef Parallel
-  if(solverState.isJoinWithMasterTriggered()) {
-    logInfo("beginIteration", "Join triggered: "
-        << tarch::parallel::Node::getInstance().getRank() << "+" << tarch::parallel::NodePool::getInstance().getMasterRank()
-        << "->" << tarch::parallel::NodePool::getInstance().getMasterRank());
-  }
-  if(solverState.isJoinWithMasterTriggered()) {
-    logInfo("beginIteration", "Joining: "
-        << tarch::parallel::Node::getInstance().getRank() << "+" << tarch::parallel::NodePool::getInstance().getMasterRank()
-        << "->" << tarch::parallel::NodePool::getInstance().getMasterRank());
-  }
-  #endif
+//  #ifdef Parallel
+//  if(solverState.isJoinWithMasterTriggered()) {
+//    logInfo("beginIteration", "Join triggered: "
+//        << tarch::parallel::Node::getInstance().getRank() << "+" << tarch::parallel::NodePool::getInstance().getMasterRank()
+//        << "->" << tarch::parallel::NodePool::getInstance().getMasterRank());
+//  }
+//  if(solverState.isJoinWithMasterTriggered()) {
+//    logInfo("beginIteration", "Joining: "
+//        << tarch::parallel::Node::getInstance().getRank() << "+" << tarch::parallel::NodePool::getInstance().getMasterRank()
+//        << "->" << tarch::parallel::NodePool::getInstance().getMasterRank());
+//  }
+//  #endif
 
   _iterationNumber++;
 
   //TODO unterweg debug
-  logInfo("beginIteration", "Beginning Iteration " << _iterationNumber);
+//  logInfo("beginIteration", "Beginning Iteration " << _iterationNumber);
 
   _unknownsPerSubcell       = solverState.getUnknownsPerSubcell();
   _parametersWithoutGhostlayerPerSubcell = solverState.getNumberOfParametersWithoutGhostlayerPerSubcell();

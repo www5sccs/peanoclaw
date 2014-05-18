@@ -106,7 +106,7 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep()
   : _numerics(0),
     _globalTimestepEndTime(0),
     _useDimensionalSplittingOptimization(true),
-    _collectSubgridStatistics(false),
+    _collectSubgridStatistics(true),
     _workerIterations(-1) {
   logTraceIn( "SolveTimestep()" );
   // @todo Insert your code here
