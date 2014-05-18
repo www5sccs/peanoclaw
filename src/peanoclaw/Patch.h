@@ -7,10 +7,11 @@
 #ifndef PEANOCLAW_PATCH_H_
 #define PEANOCLAW_PATCH_H_
 
+#include "peanoclaw/Heap.h"
 #include "peanoclaw/grid/SubgridAccessor.h"
 #include "peanoclaw/grid/TimeIntervals.h"
-#include "peanoclaw/records/Data.h"
 #include "peanoclaw/records/CellDescription.h"
+#include "peanoclaw/records/Data.h"
 
 #include "peano/heap/Heap.h"
 #include "peano/utils/Globals.h"

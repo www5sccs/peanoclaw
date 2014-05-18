@@ -1,7 +1,6 @@
-#ifndef _PEANOCLAW_STATISTICS_PROCESSSTATISTICSENTRY_H
-#define _PEANOCLAW_STATISTICS_PROCESSSTATISTICSENTRY_H
+#ifndef _PEANOCLAW_RECORDS_DOUBLEDATA_H
+#define _PEANOCLAW_RECORDS_DOUBLEDATA_H
 
-#include "peano/utils/Globals.h"
 #include "tarch/compiler/CompilerSpecificSettings.h"
 #include "peano/utils/PeanoOptimisations.h"
 #ifdef Parallel
@@ -18,9 +17,9 @@
 #include <iostream>
 
 namespace peanoclaw {
-   namespace statistics {
-      class ProcessStatisticsEntry;
-      class ProcessStatisticsEntryPacked;
+   namespace records {
+      class DoubleData;
+      class DoubleDataPacked;
    }
 }
 
@@ -34,15 +33,14 @@ namespace peanoclaw {
  *
  * @date   16/05/2014 21:17
  */
-class peanoclaw::statistics::ProcessStatisticsEntry { 
+class peanoclaw::records::DoubleData { 
    
    public:
       
-      typedef peanoclaw::statistics::ProcessStatisticsEntryPacked Packed;
+      typedef peanoclaw::records::DoubleDataPacked Packed;
       
       struct PersistentRecords {
-         int _rank;
-         int _numberOfCellUpdates;
+         double _u;
          /**
           * Generated
           */
@@ -51,45 +49,25 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
          /**
           * Generated
           */
-         PersistentRecords(const int& rank, const int& numberOfCellUpdates);
+         PersistentRecords(const double& u);
          
          
-         inline int getRank() const 
+         inline double getU() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-            return _rank;
+            return _u;
          }
          
          
          
-         inline void setRank(const int& rank) 
+         inline void setU(const double& u) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-            _rank = rank;
-         }
-         
-         
-         
-         inline int getNumberOfCellUpdates() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            return _numberOfCellUpdates;
-         }
-         
-         
-         
-         inline void setNumberOfCellUpdates(const int& numberOfCellUpdates) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-            _numberOfCellUpdates = numberOfCellUpdates;
+            _u = u;
          }
          
          
@@ -97,66 +75,50 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
       };
       
    private: 
+      public:
+
       PersistentRecords _persistentRecords;
+      private:
+
       
    public:
       /**
        * Generated
        */
-      ProcessStatisticsEntry();
+      DoubleData();
       
       /**
        * Generated
        */
-      ProcessStatisticsEntry(const PersistentRecords& persistentRecords);
+      DoubleData(const PersistentRecords& persistentRecords);
       
       /**
        * Generated
        */
-      ProcessStatisticsEntry(const int& rank, const int& numberOfCellUpdates);
+      DoubleData(const double& u);
       
       /**
        * Generated
        */
-      ~ProcessStatisticsEntry();
+      ~DoubleData();
       
       
-      inline int getRank() const 
+      inline double getU() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-         return _persistentRecords._rank;
+         return _persistentRecords._u;
       }
       
       
       
-      inline void setRank(const int& rank) 
+      inline void setU(const double& u) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-         _persistentRecords._rank = rank;
-      }
-      
-      
-      
-      inline int getNumberOfCellUpdates() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-         return _persistentRecords._numberOfCellUpdates;
-      }
-      
-      
-      
-      inline void setNumberOfCellUpdates(const int& numberOfCellUpdates) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-         _persistentRecords._numberOfCellUpdates = numberOfCellUpdates;
+         _persistentRecords._u = u;
       }
       
       
@@ -175,7 +137,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
       /**
        * Generated
        */
-      ProcessStatisticsEntryPacked convert() const;
+      DoubleDataPacked convert() const;
       
       
    #ifdef Parallel
@@ -220,13 +182,12 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
           *
           * @date   16/05/2014 21:17
           */
-         class peanoclaw::statistics::ProcessStatisticsEntryPacked { 
+         class peanoclaw::records::DoubleDataPacked { 
             
             public:
                
                struct PersistentRecords {
-                  int _rank;
-                  int _numberOfCellUpdates;
+                  double _u;
                   /**
                    * Generated
                    */
@@ -235,45 +196,25 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const int& rank, const int& numberOfCellUpdates);
+                  PersistentRecords(const double& u);
                   
                   
-                  inline int getRank() const 
+                  inline double getU() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     return _rank;
+                     return _u;
                   }
                   
                   
                   
-                  inline void setRank(const int& rank) 
+                  inline void setU(const double& u) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     _rank = rank;
-                  }
-                  
-                  
-                  
-                  inline int getNumberOfCellUpdates() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                     return _numberOfCellUpdates;
-                  }
-                  
-                  
-                  
-                  inline void setNumberOfCellUpdates(const int& numberOfCellUpdates) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                     _numberOfCellUpdates = numberOfCellUpdates;
+                     _u = u;
                   }
                   
                   
@@ -287,60 +228,40 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                /**
                 * Generated
                 */
-               ProcessStatisticsEntryPacked();
+               DoubleDataPacked();
                
                /**
                 * Generated
                 */
-               ProcessStatisticsEntryPacked(const PersistentRecords& persistentRecords);
+               DoubleDataPacked(const PersistentRecords& persistentRecords);
                
                /**
                 * Generated
                 */
-               ProcessStatisticsEntryPacked(const int& rank, const int& numberOfCellUpdates);
+               DoubleDataPacked(const double& u);
                
                /**
                 * Generated
                 */
-               ~ProcessStatisticsEntryPacked();
+               ~DoubleDataPacked();
                
                
-               inline int getRank() const 
+               inline double getU() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  return _persistentRecords._rank;
+                  return _persistentRecords._u;
                }
                
                
                
-               inline void setRank(const int& rank) 
+               inline void setU(const double& u) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  _persistentRecords._rank = rank;
-               }
-               
-               
-               
-               inline int getNumberOfCellUpdates() const 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                  return _persistentRecords._numberOfCellUpdates;
-               }
-               
-               
-               
-               inline void setNumberOfCellUpdates(const int& numberOfCellUpdates) 
- #ifdef UseManualInlining
- __attribute__((always_inline))
- #endif 
- {
-                  _persistentRecords._numberOfCellUpdates = numberOfCellUpdates;
+                  _persistentRecords._u = u;
                }
                
                
@@ -359,7 +280,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                /**
                 * Generated
                 */
-               ProcessStatisticsEntry convert() const;
+               DoubleData convert() const;
                
                
             #ifdef Parallel

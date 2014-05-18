@@ -1,0 +1,10 @@
+//
+// PeanoClaw Heap Data
+//
+// @author Kristof Unterweger, Tobias Weinzierl
+// 
+Packed-Type: short int;
+
+class peanoclaw::records::FloatData {
+  persistent expose parallelise double u;
+};

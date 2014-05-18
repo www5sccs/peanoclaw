@@ -13,6 +13,7 @@
 #include "peanoclaw/State.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/statistics/ParallelStatistics.h"
+#include "peanoclaw/records/Data.h"
 
 #include "peano/heap/Heap.h"
 #include "peano/utils/Dimensions.h"
@@ -27,7 +28,6 @@ namespace peanoclaw {
 
   namespace records {
     class CellDescription;
-    class Data;
   }
 
   namespace parallel {

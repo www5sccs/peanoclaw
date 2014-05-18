@@ -105,8 +105,8 @@ class peanoclaw::interSubgridCommunication::GridLevelTransfer {
 
     friend class peanoclaw::tests::GridLevelTransferTest;
 
-    typedef class peanoclaw::records::Data Data;
-    typedef class peanoclaw::records::CellDescription CellDescription;
+    typedef peanoclaw::records::Data Data;
+    typedef peanoclaw::records::CellDescription CellDescription;
     typedef std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double>, int, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> > VirtualSubgridMap;
 
     /**

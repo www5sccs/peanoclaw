@@ -11,7 +11,6 @@
 #include "peano/utils/Globals.h"
 
 #include "records/CellDescription.h"
-#include "records/Data.h"
 
 #include "tarch/logging/Log.h"
 
@@ -32,7 +31,6 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
   private: 
     typedef class peano::grid::Vertex< peanoclaw::records::Vertex >  Base;
     typedef class peanoclaw::records::CellDescription CellDescription;
-    typedef class peanoclaw::records::Data Data;
 
     /**
      * Logging device.
