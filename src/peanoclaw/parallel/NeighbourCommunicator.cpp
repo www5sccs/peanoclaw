@@ -214,7 +214,7 @@ void peanoclaw::parallel::NeighbourCommunicator::createOrFindRemoteSubgrid(
     Patch outsidePatch(
       subgridPosition,
       subgridSize,
-      0,
+      1,
       0,
       0,
       1,

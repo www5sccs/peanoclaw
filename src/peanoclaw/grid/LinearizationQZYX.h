@@ -40,8 +40,8 @@ peanoclaw::grid::Linearization::Linearization(
     stride *= subdivisionFactor[d];
   }
 
-  assertion2(tarch::la::allGreater(_cellStrideUNew, tarch::la::Vector<DIMENSIONS,int>(0)), subdivisionFactor, ghostlayerWidth);
-  assertion2(tarch::la::allGreater(_cellStrideUOld, tarch::la::Vector<DIMENSIONS,int>(0)), subdivisionFactor, ghostlayerWidth);
+  assertion3(tarch::la::allGreater(_cellStrideUNew, tarch::la::Vector<DIMENSIONS,int>(0)), _cellStrideUNew, subdivisionFactor, ghostlayerWidth);
+  assertion3(tarch::la::allGreater(_cellStrideUOld, tarch::la::Vector<DIMENSIONS,int>(0)), _cellStrideUOld, subdivisionFactor, ghostlayerWidth);
   assertion2(_qStrideUNew > 0, subdivisionFactor, ghostlayerWidth);
   assertion2(_qStrideUOld > 0, subdivisionFactor, ghostlayerWidth);
 }
