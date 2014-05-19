@@ -88,6 +88,8 @@ private:
 
   void iterateGatherSolution();
 
+  void readLogFilterFile();
+
 public:
   /**
    * Sets everything up but does not start any grid-traversal, yet.

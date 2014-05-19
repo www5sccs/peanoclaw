@@ -130,7 +130,9 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
   _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
   _probeList(masterThread._probeList),
   _useDimensionalSplittingOptimization(masterThread._useDimensionalSplittingOptimization),
-  _subgridStatistics(masterThread._subgridStatistics)
+  _subgridStatistics(masterThread._subgridStatistics),
+  _collectSubgridStatistics(masterThread._collectSubgridStatistics),
+  _workerIterations(masterThread._workerIterations)
 {
   logTraceIn( "SolveTimestep(SolveTimestep)" );
   // @todo Insert your code here

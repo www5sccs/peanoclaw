@@ -44,9 +44,9 @@ class peanoclaw::statistics::SubgridStatistics {
     friend class peanoclaw::State;
 
     int                                  _levelStatisticsIndex;
-    std::vector<LevelStatistics>*        _levelStatistics;
+    //std::vector<LevelStatistics>*        _levelStatistics;
     int                                  _processStatisticsIndex;
-    std::vector<ProcessStatisticsEntry>* _processStatistics;
+    //std::vector<ProcessStatisticsEntry>* _processStatistics;
 
     int    _minimalPatchIndex;
     int    _minimalPatchParentIndex;
@@ -79,7 +79,10 @@ class peanoclaw::statistics::SubgridStatistics {
     /**
      * Adds entries to the level vector up to the given level
      */
-    void addLevelToLevelStatistics(int level);
+    void addLevelToLevelStatistics(
+      int level,
+      std::vector<LevelStatistics>& levelStatistics
+    );
 
     /**
      * Adds the given subgrid to the level statistics.
@@ -115,7 +118,7 @@ class peanoclaw::statistics::SubgridStatistics {
      * Constructor to build a SubgridStatistics from given levelStatistics.
      * The rest of the statistics is empty. Used for merging in parallel.
      */
-    SubgridStatistics(const std::vector<LevelStatistics>& levelStatistics);
+    SubgridStatistics(const std::vector<LevelStatistics>& otherLevelStatistics);
 
     /**
      * Constructs a SubgridStatistics by receiving it from the worker.

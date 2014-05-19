@@ -9,7 +9,6 @@
 #include "peano/utils/Globals.h"
 #include "tarch/logging/Log.h"
 #include "tarch/logging/CommandLineLogger.h"
-#include "tarch/logging/LogFilterFileReader.h"
 
 #include "peano/peano.h"
 
@@ -69,12 +68,6 @@ void configureLogFilter(bool enablePeanoLogging) {
 //    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel::SendReceiveBufferAbstractImplementation", true ) );
 //    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::parallel::JoinDataBufferPool::releaseMessages", true ) );
 //    tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "tarch::mpianalysis", true ) );
-
-      std::string logFilterFileName = "peanoclaw.logfilter";
-      std::ifstream logFilterFile(logFilterFileName.c_str());
-      if(logFilterFile) {
-        tarch::logging::LogFilterFileReader::parsePlainTextFile(logFilterFileName);
-      }
   } else {
     tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", true ) );
   }
