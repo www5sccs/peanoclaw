@@ -315,6 +315,7 @@ elif solver == 'swe':
     pass
   cpppath.append(swePath)
   cppdefines.append('SWE')
+  cppdefines.append('PEANOCLAW_SWE')
   cppdefines.append('NDEBUG')
   
   cppdefines.append('WAVE_PROPAGATION_SOLVER=1')
