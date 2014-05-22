@@ -33,6 +33,10 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     bool _disableDimensionalSplittingOptimization;
 
+    void processEntry(const std::string& name, const std::string& value);
+
+    void parseLine(const std::string& line);
+
   public: 
     PeanoClawConfigurationForSpacetreeGrid(); 
     virtual ~PeanoClawConfigurationForSpacetreeGrid();

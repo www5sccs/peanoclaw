@@ -161,14 +161,6 @@ void peanoclaw::runners::PeanoClawLibraryRunner::iterateGatherSolution() {
   _repository->iterate();
 }
 
-void peanoclaw::runners::PeanoClawLibraryRunner::readLogFilterFile() {
-  std::string logFilterFileName = "peanoclaw.logfilter";
-  std::ifstream logFilterFile(logFilterFileName.c_str());
-  if(logFilterFile) {
-    tarch::logging::LogFilterFileReader::parsePlainTextFile(logFilterFileName);
-  }
-}
-
 peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid& configuration,
   peanoclaw::Numerics& numerics,
@@ -197,9 +189,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   #ifndef Asserts
   _validateGrid = false;
   #endif
-
-  //Log filter
-  readLogFilterFile();
 
   //User interface
   peano::utils::UserInterface userInterface;

@@ -18,6 +18,8 @@
 #include "peanoclaw/NumericsFactory.h"
 #include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
+#include "tarch/logging/LogFilterFileReader.h"
+#include "tarch/logging/Log.h"
 #include "tarch/tests/TestCaseRegistry.h"
 
 #include "peanoclaw/native/SWEKernel.h"
@@ -37,21 +39,9 @@
 
 static peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid* _configuration;
 
-/*void importArrays() {
-  import_array();
-}*/
+static tarch::logging::Log _log("::main");
 
-int main(int argc, char **argv) {
-  peano::fillLookupTables();
-
-
-#if defined(Parallel)
-  int parallelSetup = peano::initParallelEnvironment(&argc,(char ***)&argv);
-  int sharedMemorySetup = peano::initSharedMemoryEnvironment();
-#endif
-
-  //importArrays();
-
+void initializeLogFilter() {
   //Initialize Logger
   static tarch::logging::Log _log("peanoclaw");
   logInfo("main(...)", "Initializing Peano");
@@ -75,12 +65,29 @@ int main(int argc, char **argv) {
 //  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::touchVertex", false ) );
 
   //tarch::logging::CommandLineLogger::getInstance().setLogFormat( ... please consult source code documentation );
+  std::string logFilterFileName = "peanoclaw.logfilter";
+  std::ifstream logFilterFile(logFilterFileName.c_str());
+  if(logFilterFile) {
+    tarch::logging::LogFilterFileReader::parsePlainTextFile(logFilterFileName);
+  }
 
   std::ostringstream logFileName;
   #ifdef Parallel
   logFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-trace.txt";
   #endif
   tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
+}
+
+
+int main(int argc, char **argv) {
+  peano::fillLookupTables();
+
+#if defined(Parallel)
+  int parallelSetup = peano::initParallelEnvironment(&argc,(char ***)&argv);
+  int sharedMemorySetup = peano::initSharedMemoryEnvironment();
+#endif
+
+  initializeLogFilter();
 
   //Tests
   if(false) {
@@ -92,10 +99,8 @@ int main(int argc, char **argv) {
 
 #if defined(SWE) || defined(PEANOCLAW_FULLSWOF2D)
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
-  // assertion1(_configuration->isValid(), _configuration);
 
   //Construct parameters
- 
 #if defined(PEANOCLAW_FULLSWOF2D)
     DEM dem;
 
@@ -219,14 +224,6 @@ int main(int argc, char **argv) {
         //runner->gatherCurrentSolution();
         std::cout << "time " << time << " numberOfCells " << state.getNumberOfInnerCells() << std::endl;
       }
-  
-      /*for (int i=0; i < 100; ++i) {
-          runner->runNextPossibleTimestep();
- 
-          peanoclaw::State& state = runner->getState();
-          std::cout << "numberOfCells " << state.getNumberOfInnerCells() << std::endl;
-      }*/
-
 #if defined(Parallel)
   } else {
     runner->runWorker();
@@ -234,7 +231,6 @@ int main(int argc, char **argv) {
 #endif
 
   // experiment done -> cleanup
-
   delete runner;
  
   if(_configuration != 0) {
