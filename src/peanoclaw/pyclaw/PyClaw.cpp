@@ -172,6 +172,7 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTimest
 
   patch.getTimeIntervals().advanceInTime();
   patch.getTimeIntervals().setTimestepSize(dtAndEstimatedNextDt[0]);
+  patch.getTimeIntervals().setEstimatedNextTimestepSize(dtAndEstimatedNextDt[1]);
 
   //Cache demanded mesh width
   _cachedSubgridPosition = patch.getPosition();
