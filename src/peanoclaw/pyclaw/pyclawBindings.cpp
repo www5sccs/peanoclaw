@@ -138,6 +138,11 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
 ) {
   peano::fillLookupTables();
 
+  //TODO unterweg disabled since it causes segfaults when no callback is specified
+  restrictionCallback = 0;
+  interpolationCallback = 0;
+  fluxCorrectionCallback = 0;
+
 #if defined(Parallel)
   char argv[2][256];
   memset(argv, 0, sizeof(char) * 2 * 256);

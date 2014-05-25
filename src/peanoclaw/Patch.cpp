@@ -502,7 +502,7 @@ std::string peanoclaw::Patch::toStringUNew() const {
         for (int x = 0; x < getSubdivisionFactor()(0); x++) {
           tarch::la::Vector<DIMENSIONS, int> subcellIndex;
           assignList(subcellIndex) = x, y, z;
-          str << PATCH_VALUE_FORMAT << getValueUNew(subcellIndex, 0) << " ";
+          str << PATCH_VALUE_FORMAT << _accessor.getValueUNew(subcellIndex, 0) << " ";
         }
 //        if (_cellDescription->getUnknownsPerSubcell() > 1) {
 //          str << "\t";
@@ -576,7 +576,7 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
             x < getSubdivisionFactor()(0) + getGhostlayerWidth(); x++) {
           tarch::la::Vector<DIMENSIONS, int> subcellIndex;
           assignList(subcellIndex) = x, y, z;
-          str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 0) << " ";
+          str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 0) << " ";
         }
 //        if (_cellDescription->getUnknownsPerSubcell() > 1) {
 //          str << "\t";
@@ -645,7 +645,7 @@ std::string peanoclaw::Patch::toStringParameters() const {
             x < getSubdivisionFactor()(0) + getGhostlayerWidth(); x++) {
           tarch::la::Vector<DIMENSIONS, int> subcellIndex;
           assignList(subcellIndex) = x, y, z;
-          str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 0) << " ";
+          str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 0) << " ";
         }
 //        if (_cellDescription->getUnknownsPerSubcell() > 1) {
 //          str << "\t";
