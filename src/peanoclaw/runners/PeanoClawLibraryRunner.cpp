@@ -17,6 +17,7 @@
 #include "peanoclaw/records/Cell.h"
 #include "peanoclaw/records/Vertex.h"
 #include "peanoclaw/statistics/LevelStatistics.h"
+#include "peanoclaw/statistics/MemoryInformation.h"
 
 #include "peanoclaw/Heap.h"
 #include "peano/utils/UserInterface.h"
@@ -340,6 +341,9 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   #endif
   peano::shutdownParallelEnvironment();
   peano::shutdownSharedMemoryEnvironment();
+
+  //Print maximum memory demand
+  logInfo("~PeanoClawLibraryRunner", "Peak resident set size: " << peanoclaw::statistics::getPeakRSS() << "b");
 
   logTraceOut("~PeanoClawLibraryRunner");
 }
