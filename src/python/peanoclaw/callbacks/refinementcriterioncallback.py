@@ -31,10 +31,11 @@ class RefinementCriterionCallback(object):
                                       c_double, c_double, c_double) #position
 
 
-  def __init__(self, refinement_criterion, initial_minimal_mesh_width):
+  def __init__(self, solver, refinement_criterion, initial_minimal_mesh_width):
     '''
     Constructor
     '''
+    self.solver = solver
     self.refinement_criterion = refinement_criterion
     self.initial_minimal_mesh_width = initial_minimal_mesh_width
     self.callback = None
@@ -43,7 +44,20 @@ class RefinementCriterionCallback(object):
     r"""
     Creates a closure for the callback
     """
-    def callback_refinement_criterion(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_subcell, aux_fields_per_subcell, size_x, size_y, size_z, position_x, position_y, position_z):
+    def callback_refinement_criterion(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_cell, aux_fields_per_cell, size_x, size_y, size_z, position_x, position_y, position_z):
+        import peanoclaw
+        from peanoclaw.converter import get_number_of_dimensions
+        from peanoclaw.converter import create_domain
+        from peanoclaw.converter import create_subgrid_state
+        
+        number_of_dimensions = get_number_of_dimensions(q)
+        position = (position_x, position_y, position_z)
+        size = (size_x, size_y, size_z)
+        subdivision_factor = (subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2)
+
+        self.domain = create_domain(number_of_dimensions, position, size, subdivision_factor)
+        subgrid_state = create_subgrid_state(self.solver.solution.state, self.domain, q, qbc, aux, unknowns_per_cell, aux_fields_per_cell)
+        
         #Steer refinement
         if self.refinement_criterion != None:
           return self.refinement_criterion(subgrid_state)

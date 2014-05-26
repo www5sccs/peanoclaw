@@ -621,7 +621,7 @@ void peanoclaw::mappings::ValidateGrid::beginIteration(
   _validator = peanoclaw::statistics::ParallelGridValidator(
     solverState.getDomainOffset(),
     solverState.getDomainSize(),
-    solverState.useDimensionalSplittingOptimization()
+    solverState.useDimensionalSplittingExtrapolation()
   );
   assertionEquals(_validator.getAllPatches().size(), 0);
   _state = solverState;

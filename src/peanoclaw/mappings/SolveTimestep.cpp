@@ -105,7 +105,7 @@ void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
 peanoclaw::mappings::SolveTimestep::SolveTimestep()
   : _numerics(0),
     _globalTimestepEndTime(0),
-    _useDimensionalSplittingOptimization(true),
+    _useDimensionalSplittingExtrapolation(true),
     _collectSubgridStatistics(true),
     _workerIterations(-1) {
   logTraceIn( "SolveTimestep()" );
@@ -129,7 +129,7 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
   _domainSize(masterThread._domainSize),
   _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
   _probeList(masterThread._probeList),
-  _useDimensionalSplittingOptimization(masterThread._useDimensionalSplittingOptimization),
+  _useDimensionalSplittingExtrapolation(masterThread._useDimensionalSplittingExtrapolation),
   _subgridStatistics(masterThread._subgridStatistics),
   _collectSubgridStatistics(masterThread._collectSubgridStatistics),
   _workerIterations(masterThread._workerIterations)
@@ -610,7 +610,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         _numerics->solveTimestep(
           subgrid,
           maximumTimestepDueToGlobalTimestep,
-          _useDimensionalSplittingOptimization
+          _useDimensionalSplittingExtrapolation
         );
         tarch::la::Vector<DIMENSIONS, double> requiredMeshWidth = _numerics->getDemandedMeshWidth(subgrid, false);
         subgrid.setDemandedMeshWidth(requiredMeshWidth);
@@ -809,7 +809,7 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   _domainSize = solverState.getDomainSize();
   _initialMaximalSubgridSize = solverState.getInitialMaximalSubgridSize();
   _probeList = solverState.getProbeList();
-  _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
+  _useDimensionalSplittingExtrapolation = solverState.useDimensionalSplittingExtrapolation();
   peanoclaw::statistics::SubgridStatistics subgridStatistics(solverState);
   _subgridStatistics = subgridStatistics;
 

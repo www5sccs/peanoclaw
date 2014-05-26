@@ -76,7 +76,7 @@ peanoclaw::mappings::Remesh::Remesh()
   _numerics(0),
   _gridLevelTransfer(),
   _isInitializing(false),
-  _useDimensionalSplittingOptimization(false),
+  _useDimensionalSplittingExtrapolation(false),
   _parallelStatistics(""),
   _totalParallelStatistics("Simulation"),
   _state(),
@@ -116,7 +116,7 @@ peanoclaw::mappings::Remesh::Remesh(const Remesh&  masterThread)
   _gridLevelTransfer(masterThread._gridLevelTransfer),
   _initialMinimalMeshWidth(masterThread._initialMinimalMeshWidth),
   _isInitializing(masterThread._isInitializing),
-  _useDimensionalSplittingOptimization(masterThread._useDimensionalSplittingOptimization),
+  _useDimensionalSplittingExtrapolation(masterThread._useDimensionalSplittingExtrapolation),
   _parallelStatistics(""),
   _totalParallelStatistics("Simulation"),
   _state(masterThread._state),
@@ -1183,15 +1183,15 @@ void peanoclaw::mappings::Remesh::beginIteration(
   _domainOffset             = solverState.getDomainOffset();
   _domainSize               = solverState.getDomainSize();
 
-  _gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(
-                              solverState.useDimensionalSplittingOptimization(),
-                              *_numerics
-                           );
-
   _initialMinimalMeshWidth = solverState.getInitialMaximalSubgridSize();
   _isInitializing = solverState.getIsInitializing();
-  _useDimensionalSplittingOptimization = solverState.useDimensionalSplittingOptimization();
+  _useDimensionalSplittingExtrapolation = solverState.useDimensionalSplittingExtrapolation();
   _state = &solverState;
+
+  _gridLevelTransfer = new peanoclaw::interSubgridCommunication::GridLevelTransfer(
+                              _useDimensionalSplittingExtrapolation,
+                              *_numerics
+                           );
 
   //Reset touched for all hanging vertex descriptions
   std::map<tarch::la::Vector<DIMENSIONS_PLUS_ONE,double> , VertexDescription, tarch::la::VectorCompare<DIMENSIONS_PLUS_ONE> >::iterator i = _vertexPositionToIndexMap.begin();

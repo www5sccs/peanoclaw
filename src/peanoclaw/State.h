@@ -237,9 +237,9 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       bool isRefinementCriterionEnabled() const;
 
-      void setUseDimensionalSplittingOptimization(bool useDimensionalSplittingOptimization);
+      void setUseDimensionalSplittingExtrapolation(bool useDimensionalSplittingExtrapolation);
 
-      bool useDimensionalSplittingOptimization() const;
+      bool useDimensionalSplittingExtrapolation() const;
 
       /**
        * Resets the local height of the worker tree and sets the global height

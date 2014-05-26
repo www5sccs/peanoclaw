@@ -62,7 +62,7 @@ class peanoclaw::mappings::SolveTimestep {
 
     std::vector<peanoclaw::statistics::Probe> _probeList;
 
-    bool _useDimensionalSplittingOptimization;
+    bool _useDimensionalSplittingExtrapolation;
 
     bool _collectSubgridStatistics;
 

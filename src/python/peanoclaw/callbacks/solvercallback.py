@@ -76,7 +76,7 @@ class SolverCallback(object):
       aux = None
       
     # Set up grid information for current patch
-    import peanoclaw as peanoclaw
+    import peanoclaw
     subgridsolver = peanoclaw.SubgridSolver(
         self.solver.solver, 
         self.solver.solution.state, 

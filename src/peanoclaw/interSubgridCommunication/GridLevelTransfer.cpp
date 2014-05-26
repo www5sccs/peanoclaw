@@ -163,6 +163,9 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToOverlapp
       = tarch::la::oneGreater(virtualSubgrid.getUpperNeighboringGhostlayerBounds(), subgrid.getPosition())
         || tarch::la::oneGreater(subgrid.getPosition() + subgrid.getSize(), virtualSubgrid.getLowerNeighboringGhostlayerBounds());
 
+    bool subgridOverlapsVirtualSubgrid = !tarch::la::oneGreater(virtualSubgrid.getPosition(), subgrid.getPosition())
+                                      && !tarch::la::oneGreater(subgrid.getPosition() + subgrid.getSize(), virtualSubgrid.getPosition() + virtualSubgrid.getSize());
+
     //TODO unterweg debug
 //    if(tarch::la::equals(subgrid.getPosition()(0), 10.0*2.0/3.0)
 //      &&tarch::la::equals(subgrid.getPosition()(1), 10.0*2.0/3.0)) {
@@ -175,13 +178,16 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToOverlapp
 //    }
 
     if(
-      // Restrict if virtual subgrid is coarsening or if the data on the virtual subgrid is required for timestepping
-      virtualSubgrid.willCoarsen()
-      || (!areAllCoarseSubgridsBlocked && isOverlappedByCoarseGhostlayers)
-      //TODO unterweg dissertation: Es kann sein, dass ein Nachbarsubgitter vom groben Subgitter noch nicht angekommen ist, wenn
-      //das Gitter gerade verteilt wurde.
-      || subgrid.getAge() < 2
-      //|| true
+      subgridOverlapsVirtualSubgrid &&
+      (
+        // Restrict if virtual subgrid is coarsening or if the data on the virtual subgrid is required for timestepping
+        virtualSubgrid.willCoarsen()
+        || (!areAllCoarseSubgridsBlocked && isOverlappedByCoarseGhostlayers)
+        //TODO unterweg dissertation: Es kann sein, dass ein Nachbarsubgitter vom groben Subgitter noch nicht angekommen ist, wenn
+        //das Gitter gerade verteilt wurde.
+        || subgrid.getAge() < 2
+        || true
+      )
     ) {
       assertion2(virtualSubgrid.isVirtual(), subgrid.toString(), virtualSubgrid.toString());
       assertion2(!tarch::la::oneGreater(virtualSubgrid.getPosition(), subgrid.getPosition())

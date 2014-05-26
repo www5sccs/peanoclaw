@@ -87,7 +87,7 @@ class peanoclaw::mappings::Remesh {
 
     bool _isInitializing;
 
-    bool _useDimensionalSplittingOptimization;
+    bool _useDimensionalSplittingExtrapolation;
 
     peanoclaw::statistics::ParallelStatistics _parallelStatistics;
     peanoclaw::statistics::ParallelStatistics _totalParallelStatistics;

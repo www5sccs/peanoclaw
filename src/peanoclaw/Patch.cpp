@@ -461,7 +461,7 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::Patch::getDemandedMeshWidth() co
 }
 
 std::string peanoclaw::Patch::toStringUNew() const {
-  if (isLeaf() || isVirtual()) {
+  if (isValid() && (isLeaf() || isVirtual())) {
     std::stringstream str;
     #ifdef Dim2
     //Plot patch
@@ -527,7 +527,7 @@ std::string peanoclaw::Patch::toStringUNew() const {
 }
 
 std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
-  if (isLeaf() || isVirtual()) {
+  if (isValid() && (isLeaf() || isVirtual())) {
     std::stringstream str;
     #ifdef Dim2
     for (int y = getSubdivisionFactor()(1) + getGhostlayerWidth() - 1;

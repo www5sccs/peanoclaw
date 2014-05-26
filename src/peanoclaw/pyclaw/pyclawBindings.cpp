@@ -122,7 +122,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   int ghostlayerWidth,
   double initialTimestepSize,
   char* configurationFile,
-  bool useDimensionalSplittingOptimization,
+  bool useDimensionalSplittingExtrapolation,
   bool reduceReductions,
   InitializationCallback initializationCallback,
   BoundaryConditionCallback boundaryConditionCallback,
@@ -200,7 +200,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
   if(tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(1), subdivisionFactor) ) {
     logError("pyclaw_peano_new(...)", "subdivisionFactor not set properly.");
   }
- 
+
   //Create runner
   peanoclaw::runners::PeanoClawLibraryRunner* runner
     = new peanoclaw::runners::PeanoClawLibraryRunner(
@@ -213,8 +213,9 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     ghostlayerWidth,
     unknownsPerSubcell,
     auxiliarFieldsPerSubcell,
+    0, //parameter fields with ghostlayer
     initialTimestepSize,
-    useDimensionalSplittingOptimization,
+    useDimensionalSplittingExtrapolation,
     reduceReductions,
     forkLevelIncrement
   );

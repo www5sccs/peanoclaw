@@ -269,12 +269,12 @@ bool peanoclaw::State::isRefinementCriterionEnabled() const {
 }
 
 
-void peanoclaw::State::setUseDimensionalSplittingOptimization(bool useDimensionalSplittingOptimization) {
-  _stateData.setUseDimensionalSplittingOptimization(useDimensionalSplittingOptimization);
+void peanoclaw::State::setUseDimensionalSplittingExtrapolation(bool useDimensionalSplittingExtrapolation) {
+  _stateData.setUseDimensionalSplittingExtrapolation(useDimensionalSplittingExtrapolation);
 }
 
-bool peanoclaw::State::useDimensionalSplittingOptimization() const {
-  return _stateData.getUseDimensionalSplittingOptimization();
+bool peanoclaw::State::useDimensionalSplittingExtrapolation() const {
+  return _stateData.getUseDimensionalSplittingExtrapolation();
 }
 
 //void peanoclaw::State::resetLocalHeightOfWorkerTree() {

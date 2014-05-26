@@ -62,7 +62,7 @@ class Solver(Solver):
         #Create callbacks
         self.initialization_callback = InitializationCallback(self, refinement_criterion, q_initialization, aux_initialization, initial_minimal_mesh_width)
         self.solver_callback = SolverCallback(self, refinement_criterion, initial_minimal_mesh_width, internal_settings.fixed_timestep_size)
-        self.refinement_criterion_callback = RefinementCriterionCallback(refinement_criterion, initial_minimal_mesh_width)
+        self.refinement_criterion_callback = RefinementCriterionCallback(self, refinement_criterion, initial_minimal_mesh_width)
         self.boundary_condition_callback = BoundaryConditionCallback(self)
         self.interpolation_callback = InterpolationCallback(interpolation, self)
         self.restriction_callback = RestrictionCallback(restriction, self)

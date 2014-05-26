@@ -161,12 +161,12 @@ peanoclaw::interSubgridCommunication::GhostLayerCompositor::GhostLayerCompositor
   peanoclaw::Patch patches[TWO_POWER_D],
   int level,
   peanoclaw::Numerics& numerics,
-  bool useDimensionalSplittingOptimization
+  bool useDimensionalSplittingExtrapolation
 ) :
   _patches(patches),
   _level(level),
   _numerics(numerics),
-  _useDimensionalSplittingOptimization(useDimensionalSplittingOptimization)
+  _useDimensionalSplittingExtrapolation(useDimensionalSplittingExtrapolation)
 {
 }
 
@@ -281,7 +281,7 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
 ) {
   logTraceIn("fillGhostLayersAndUpdateNeighborTimes(int)");
 
-  if(_useDimensionalSplittingOptimization) {
+  if(_useDimensionalSplittingExtrapolation) {
     if(destinationSubgridIndex == -1) {
       for(int i = 0; i < TWO_POWER_D; i++) {
         if(_patches[i].isValid() && _patches[i].isLeaf()) {
@@ -292,6 +292,18 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
       if(_patches[destinationSubgridIndex].isValid()
           && (_patches[destinationSubgridIndex].isLeaf() || _patches[destinationSubgridIndex].isVirtual())) {
         fillOrExtrapolateGhostlayerAndUpdateNeighborTime(destinationSubgridIndex);
+
+        //TODO unterweg debug
+//        for(int i = 0; i < TWO_POWER_D; i++) {
+//          if(i != destinationSubgridIndex && _patches[i].isValid()
+//               && (_patches[i].isLeaf() || _patches[i].isVirtual())) {
+//            std::cout << i << ": " << _patches[i] << std::endl;
+//            std::cout << _patches[i].toStringUNew() << std::endl;
+//            std::cout << _patches[i].toStringUOldWithGhostLayer() << std::endl;
+//          }
+//        }
+//        std::cout << "filled to " << std::endl << _patches[destinationSubgridIndex] << std::endl;
+//        std::cout << _patches[destinationSubgridIndex].toStringUOldWithGhostLayer() << std::endl;
       }
     }
   } else {
