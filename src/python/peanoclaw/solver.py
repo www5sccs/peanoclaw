@@ -116,8 +116,9 @@ class Solver(Solver):
         r"""
         See :class:`Solver` for full documentation
         """ 
-        self.peano.teardown()
-        #self.solver.teardown()
+        if self._is_set_up:
+          self.peano.teardown()
+          self._is_set_up = False
     
     def evolve_to_time(self, solution, tend=None):
         r"""
