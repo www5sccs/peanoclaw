@@ -169,10 +169,6 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   const tarch::la::Vector<DIMENSIONS, double>& domainSize,
   const tarch::la::Vector<DIMENSIONS, double>& initialMaximalMeshWidth,
   const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
-  int defaultGhostLayerWidth,
-  int unknownsPerSubcell,
-  int parameterWithoutGhostlayerPerSubcell,
-  int parameterWithGhostlayerPerSubcell,
   double initialTimestepSize,
   bool useDimensionalSplittingExtrapolation,
   bool reduceReductions,
@@ -215,15 +211,15 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   logInfo("PeanoClawLibraryRunner", "Initial values: "
       << "Domain size = [" << domainSize << "]"
       << ", default subdivision factor = " << subdivisionFactor
-      << ", default ghostlayer width = " << defaultGhostLayerWidth
-      << ", unknowns per cell = " << unknownsPerSubcell);
+      << ", default ghostlayer width = " << numerics.getGhostlayerWidth()
+      << ", unknowns per cell = " << numerics.getNumberOfUnknownsPerCell());
 
   State& state = _repository->getState();
   state.setDefaultSubdivisionFactor(subdivisionFactor);
-  state.setDefaultGhostLayerWidth(defaultGhostLayerWidth);
-  state.setUnknownsPerSubcell(unknownsPerSubcell);
-  state.setNumberOfParametersWithoutGhostlayerPerSubcell(parameterWithoutGhostlayerPerSubcell);
-  state.setNumberOfParametersWithGhostlayerPerSubcell(parameterWithGhostlayerPerSubcell);
+  state.setDefaultGhostLayerWidth(numerics.getGhostlayerWidth());
+  state.setUnknownsPerSubcell(numerics.getNumberOfUnknownsPerCell());
+  state.setNumberOfParametersWithoutGhostlayerPerSubcell(numerics.getNumberOfParameterFieldsWithoutGhostlayer());
+  state.setNumberOfParametersWithGhostlayerPerSubcell(numerics.getNumberOfParameterFieldsWithGhostlayer());
   state.setNumerics(numerics);
   state.setInitialTimestepSize(initialTimestepSize);
   state.setDomain(domainOffset, domainSize);

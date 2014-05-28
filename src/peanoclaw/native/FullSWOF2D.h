@@ -60,9 +60,10 @@ private:
 public:
   FullSWOF2D(
     SWEKernelScenario& scenario,
-    peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
-    peanoclaw::interSubgridCommunication::Restriction*    restriction,
-    peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
+    peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
+    peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
+    peanoclaw::interSubgridCommunication::Restriction*     restriction,
+    peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
   );
 
   virtual ~FullSWOF2D();
@@ -143,6 +144,26 @@ public:
 
   void copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp);
   void copySetToPatch(unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp, Patch& patch);
+
+  /*
+   * @see peanoclaw::Numerics
+   */
+  int getNumberOfUnknownsPerCell() const { return 6; }
+
+  /*
+   * @see peanoclaw::Numerics
+   */
+  int getNumberOfParameterFieldsWithoutGhostlayer() const { return 1; }
+
+  /*
+   * @see peanoclaw::Numerics
+   */
+  int getNumberOfParameterFieldsWithGhostlayer() const { return 1; }
+
+  /*
+   * @see peanoclaw::Numerics
+   */
+  int getGhostlayerWidth() const { return 2; }
 };
 
 class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {

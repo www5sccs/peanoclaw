@@ -135,7 +135,7 @@ public:
   inline tarch::la::Vector<DIMENSIONS,int> getInitialOffsetForIterator() const;
 };
 
-#ifdef PEANOCLAW_PYCLAW
+#if defined(PEANOCLAW_PYCLAW) || defined(PEANOCLAW_FULLSWOF2D)
 #include "peanoclaw/grid/LinearizationZYXQ.h"
 #elif PEANOCLAW_SWE
 #include "peanoclaw/grid/LinearizationQZYX.h"

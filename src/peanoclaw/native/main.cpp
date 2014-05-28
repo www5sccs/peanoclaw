@@ -49,8 +49,6 @@ void initializeLogFilter() {
   // Configure the output
   tarch::logging::CommandLineLogger::getInstance().clearFilterList();
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", false ) );
-  //tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", true ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "trace", true ) );
 
   //Validation
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peanoclaw::statistics::ParallelGridValidator", true ) );
@@ -59,12 +57,7 @@ void initializeLogFilter() {
   //Selective Tracing
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "tarch::mpianalysis", true ) );
   tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "info", -1, "peano::", true ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh", false ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::destroyVertex", false ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::endIteration", false ) );
-//  tarch::logging::CommandLineLogger::getInstance().addFilterListEntry( ::tarch::logging::CommandLineLogger::FilterListEntry( "debug", -1, "peanoclaw::mappings::Remesh::touchVertex", false ) );
 
-  //tarch::logging::CommandLineLogger::getInstance().setLogFormat( ... please consult source code documentation );
   std::string logFilterFileName = "peanoclaw.logfilter";
   std::ifstream logFilterFile(logFilterFileName.c_str());
   if(logFilterFile) {
@@ -78,6 +71,67 @@ void initializeLogFilter() {
   tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
 }
 
+void runSimulation(
+  peanoclaw::native::SWEKernelScenario& scenario,
+  peanoclaw::Numerics& numerics,
+  bool useCornerExtrapolation
+) {
+  tarch::la::Vector<DIMENSIONS,double> domainOffset = scenario.getDomainOffset();
+  tarch::la::Vector<DIMENSIONS,double> domainSize = scenario.getDomainSize();
+  tarch::la::Vector<DIMENSIONS,double> initialMinimalMeshWidth = scenario.getInitialMinimalMeshWidth();
+  tarch::la::Vector<DIMENSIONS,int>    subdivisionFactor = scenario.getSubdivisionFactor();
+
+  //Check parameters
+  assertion1(tarch::la::greater(domainSize(0), 0.0) && tarch::la::greater(domainSize(1), 0.0), domainSize);
+  if(initialMinimalMeshWidth(0) > domainSize(0) || initialMinimalMeshWidth(1) > domainSize(1)) {
+    logError("main(...)", "Domainsize or initialMinimalMeshWidth not set properly.");
+  }
+  if(tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(1), subdivisionFactor(0)) ) {
+    logError("main(...)", "subdivisionFactor not set properly.");
+  }
+
+  //Create runner
+  peanoclaw::runners::PeanoClawLibraryRunner* runner
+    = new peanoclaw::runners::PeanoClawLibraryRunner(
+    *_configuration,
+    numerics,
+    domainOffset,
+    domainSize,
+    initialMinimalMeshWidth,
+    subdivisionFactor,
+    scenario.getInitialTimestepSize(),
+    useCornerExtrapolation
+  );
+
+#if defined(Parallel)
+  std::cout << tarch::parallel::Node::getInstance().getRank() << ": peano instance created" << std::endl;
+#endif
+
+  assertion(runner != 0);
+
+  // run experiment
+#if defined(Parallel)
+  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
+#endif
+      for (double time=scenario.getGlobalTimestepSize(); time <= scenario.getEndTime(); time=std::min(scenario.getEndTime(), time + scenario.getGlobalTimestepSize())) {
+          peanoclaw::State& state = runner->getState();
+        runner->evolveToTime(time);
+        //runner->gatherCurrentSolution();
+        std::cout << "time " << time << " numberOfCells " << state.getNumberOfInnerCells() << std::endl;
+      }
+#if defined(Parallel)
+  } else {
+    runner->runWorker();
+  }
+#endif
+
+  // experiment done -> cleanup
+  delete runner;
+
+  if(_configuration != 0) {
+    delete _configuration;
+  }
+}
 
 int main(int argc, char **argv) {
   peano::fillLookupTables();
@@ -105,137 +159,68 @@ int main(int argc, char **argv) {
     DEM dem;
 
     dem.load("DEM_400cm.bin");
-
-    MekkaFlood_SWEKernelScenario scenario(dem);
-    peanoclaw::Numerics* numerics = numericsFactory.createFullSWOF2DNumerics(scenario);
  
-    tarch::la::Vector<DIMENSIONS, double> domainOffset;
-
-    int parametersWithoutGhostlayerPerSubcell = 1;
-    int parametersWithGhostlayerPerSubcell = 1;
-    int ghostlayerWidth = 2;
-    int unknownsPerSubcell = 6;
-
-    // TODO: aaarg Y U NO PLOT CORRECTLY! -> work around established
-    //domainOffset(0) = dem.lower_left(0);
-    //domainOffset(1) = dem.lower_left(1);
-    domainOffset(0) = 0.0;
-    domainOffset(1) = 0.0;
-
-    tarch::la::Vector<DIMENSIONS, double> domainSize;
-    double upper_right_0 = dem.upper_right(0);
-    double upper_right_1 = dem.upper_right(1);
- 
-    double lower_left_0 = dem.lower_left(0);
-    double lower_left_1 = dem.lower_left(1);
- 
-    double x_size = (upper_right_0 - lower_left_0)/scenario.scale;
-    double y_size = (upper_right_1 - lower_left_1)/scenario.scale;
-
-    double timestep = 2.0; //0.1;//1.0;
-    double endtime = 3600.0; // 100.0;
- 
-    // TODO: make central scale parameter in MekkaFlood class
-    // currently we have to change here, meshToCoordinates and initializePatch and computeMeshWidth
-    domainSize(0) = x_size;
-    domainSize(1) = y_size;
- 
-    std::cout << "domainSize " << domainSize(0) << " " << domainSize(1) << std::endl;
+//    tarch::la::Vector<DIMENSIONS, double> domainOffset(0);
 
     // keep aspect ratio of map: 4000 3000: ratio 4:3
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor;
     subdivisionFactor(0) = static_cast<int>(16); // 96 //  6 * 4, optimum in non optimized version
     subdivisionFactor(1) = static_cast<int>(9);  // 54 //  6 * 3, optimum in non optimized version
 
-    double min_domainSize = std::min(domainSize(0),domainSize(1));
-    double max_domainSize = std::max(domainSize(0),domainSize(1));
+    tarch::la::Vector<DIMENSIONS, double> maximalMeshWidth(1.0/(9.0 * subdivisionFactor(0)));
+    tarch::la::Vector<DIMENSIONS, double> minimalMeshWidth(1.0/(81.0 * subdivisionFactor(0)));
 
-    int min_subdivisionFactor = std::min(subdivisionFactor(0),subdivisionFactor(1));
-    int max_subdivisionFactor = std::max(subdivisionFactor(0),subdivisionFactor(1));
+    double globalTimestepSize = 2.0; //0.1;//1.0;
+    double endTime = 3600.0; // 100.0;
+//    double initialTimestepSize = 1.0;
 
-    tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(min_domainSize/(3.0 * max_subdivisionFactor));
+    peanoclaw::native::MekkaFlood_SWEKernelScenario scenario(
+      dem,
+      subdivisionFactor,
+      minimalMeshWidth,
+      maximalMeshWidth,
+      globalTimestepSize,
+      endTime
+    );
+    peanoclaw::Numerics* numerics = numericsFactory.createFullSWOF2DNumerics(scenario);
 
-    double initialTimestepSize = 1.0;
+    std::cout << "domainSize " << scenario.getDomainSize() << std::endl;
 
-
+//    double min_domainSize = std::min(scenario.getDomainSize()(0),scenario.getDomainSize()(1));
+//    double max_domainSize = std::max(scenario.getDomainSize()(0),scenario.getDomainSize()(1));
+//
+//    int min_subdivisionFactor = std::min(subdivisionFactor(0),subdivisionFactor(1));
+//    int max_subdivisionFactor = std::max(subdivisionFactor(0),subdivisionFactor(1));
 #else
-    BreakingDam_SWEKernelScenario scenario;
-    peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(scenario);
-
-    int parametersWithoutGhostlayerPerSubcell = 1;
-    int parametersWithGhostlayerPerSubcell = 0;
-    int ghostlayerWidth = 1;
-    int unknownsPerSubcell = 3;
- 
     tarch::la::Vector<DIMENSIONS, double> domainOffset(0);
     tarch::la::Vector<DIMENSIONS, double> domainSize(10.0);
-    tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(domainSize/6.0/9.0);
+    tarch::la::Vector<DIMENSIONS, double> minimalMeshWidth(domainSize/6.0/9.0);
+    tarch::la::Vector<DIMENSIONS, double> maximalMeshWidth(domainSize/6.0/3.0);
 
-    double timestep = 0.1;
-//    double endtime = 2.0; //0.5; // 100.0;
-    double endtime = 0.5; // 100.0;
+    double globalTimestepSize = 0.1;
+//    double endTime = 2.0; //0.5; // 100.0;
+    double endTime = 0.5; // 100.0;
     int initialTimestepSize = 0.5;
- 
     tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
+
+    peanoclaw::native::BreakingDam_SWEKernelScenario scenario(
+      domainOffset,
+      domainSize,
+      minimalMeshWidth,
+      maximalMeshWidth,
+      subdivisionFactor,
+      globalTimestepSize,
+      endTime
+    );
+    peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(scenario);
 #endif
   
-  bool useDimensionalSplittingOptimization = true;
-
-  //Check parameters
-  assertion1(tarch::la::greater(domainSize(0), 0.0) && tarch::la::greater(domainSize(1), 0.0), domainSize);
-  if(initialMinimalMeshWidth(0) > domainSize(0) || initialMinimalMeshWidth(1) > domainSize(1)) {
-    logError("main(...)", "Domainsize or initialMinimalMeshWidth not set properly.");
-  }
-  if(tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(1), subdivisionFactor(0)) ) {
-    logError("main(...)", "subdivisionFactor not set properly.");
-  }
- 
-  //Create runner
-  peanoclaw::runners::PeanoClawLibraryRunner* runner
-    = new peanoclaw::runners::PeanoClawLibraryRunner(
-    *_configuration,
+  runSimulation(
+    scenario,
     *numerics,
-    domainOffset,
-    domainSize,
-    initialMinimalMeshWidth,
-    subdivisionFactor,
-    ghostlayerWidth,
-    unknownsPerSubcell,
-    parametersWithoutGhostlayerPerSubcell,
-    parametersWithGhostlayerPerSubcell,
-    initialTimestepSize,
-    useDimensionalSplittingOptimization,
-    1
+    true
   );
 
-#if defined(Parallel) 
-  std::cout << tarch::parallel::Node::getInstance().getRank() << ": peano instance created" << std::endl;
-#endif
-
-  assertion(runner != 0);
- 
-  // run experiment
-#if defined(Parallel)
-  if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-#endif
-      for (double time=timestep; time <= endtime; time+=timestep) {
-          peanoclaw::State& state = runner->getState();
-        runner->evolveToTime(time);
-        //runner->gatherCurrentSolution();
-        std::cout << "time " << time << " numberOfCells " << state.getNumberOfInnerCells() << std::endl;
-      }
-#if defined(Parallel)
-  } else {
-    runner->runWorker();
-  }
-#endif
-
-  // experiment done -> cleanup
-  delete runner;
- 
-  if(_configuration != 0) {
-    delete _configuration;
-  }
 #endif
   return 0;
 }

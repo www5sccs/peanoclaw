@@ -170,6 +170,13 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
 
   configureLogFilter(enablePeanoLogging);
 
+  //Construct parameters
+  tarch::la::Vector<DIMENSIONS, double> domainOffset = convertToVector(domainOffsetX0, domainOffsetX1, domainOffsetX2);
+  tarch::la::Vector<DIMENSIONS, double> domainSize = convertToVector(domainSizeX0, domainSizeX1, domainSizeX2);
+
+  tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(initialMaximalMeshWidthScalar);
+  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = convertToVector(subdivisionFactorX0, subdivisionFactorX1, subdivisionFactorX2);
+
   //Numerics -- this object is copied to the runner and is stored there.
   peanoclaw::NumericsFactory numericsFactory;
   peanoclaw::Numerics* numerics = numericsFactory.createPyClawNumerics(
@@ -180,17 +187,13 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     addPatchToSolutionCallback,
     interpolationCallback,
     restrictionCallback,
-    fluxCorrectionCallback
+    fluxCorrectionCallback,
+    unknownsPerSubcell,
+    auxiliarFieldsPerSubcell,
+    ghostlayerWidth
   );
 
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
-
-  //Construct parameters
-  tarch::la::Vector<DIMENSIONS, double> domainOffset = convertToVector(domainOffsetX0, domainOffsetX1, domainOffsetX2);
-  tarch::la::Vector<DIMENSIONS, double> domainSize = convertToVector(domainSizeX0, domainSizeX1, domainSizeX2);
-  
-  tarch::la::Vector<DIMENSIONS, double> initialMinimalMeshWidth(initialMaximalMeshWidthScalar);
-  tarch::la::Vector<DIMENSIONS, int> subdivisionFactor = convertToVector(subdivisionFactorX0, subdivisionFactorX1, subdivisionFactorX2);
 
   //Check parameters
   assertion1(tarch::la::greater(domainSizeX0, 0.0) && tarch::la::greater(domainSizeX1, 0.0), domainSize);
@@ -210,10 +213,6 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     domainSize,
     initialMinimalMeshWidth,
     subdivisionFactor,
-    ghostlayerWidth,
-    unknownsPerSubcell,
-    auxiliarFieldsPerSubcell,
-    0, //parameter fields with ghostlayer
     initialTimestepSize,
     useDimensionalSplittingExtrapolation,
     reduceReductions,

@@ -17,12 +17,13 @@ tarch::logging::Log peanoclaw::native::FullSWOF2D::_log("peanoclaw::native::Full
 
 peanoclaw::native::FullSWOF2D::FullSWOF2D(
   SWEKernelScenario& scenario,
+  peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
   peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
   peanoclaw::interSubgridCommunication::Restriction*    restriction,
   peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
-) : Numerics(interpolation, restriction, fluxCorrection),
-_scenario(scenario),
-_totalSolverCallbackTime(0.0)
+) : Numerics(transfer, interpolation, restriction, fluxCorrection),
+_totalSolverCallbackTime(0.0),
+_scenario(scenario)
 {
   //import_array();
 
@@ -51,7 +52,7 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(Patch& patch, double maximumTi
 
   tarch::timing::Watch pyclawWatch("", "", false);
   pyclawWatch.startTimer();
-  double dtAndEstimatedNextDt[2];
+//  double dtAndEstimatedNextDt[2];
   tarch::la::Vector<DIMENSIONS,double> meshwidth = patch.getSubcellSize();
   tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = patch.getSubdivisionFactor();
   int ghostlayerWidth = patch.getGhostlayerWidth();
@@ -88,7 +89,7 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(Patch& patch, double maximumTi
         struct timeval stop;
         gettimeofday(&stop, NULL);
 
-        double time = (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
+//        double time = (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
         //std::cout << "calculation took " << time << std::endl;
 
         if (scheme->getVerif() == 0) {
@@ -186,10 +187,9 @@ void peanoclaw::native::FullSWOF2D::fillBoundaryLayer(Patch& patch, int dimensio
    //std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
    //std::cout << "||||||" << std::endl;
  
+#if 0
   int ghostlayerWidth = patch.getGhostlayerWidth();
   int fullswofGhostlayerWidth = ghostlayerWidth-1;
-
-#if 0
    // implement a wall boundary
     tarch::la::Vector<DIMENSIONS, int> src_subcellIndex;
     tarch::la::Vector<DIMENSIONS, int> dest_subcellIndex;
@@ -202,8 +202,8 @@ void peanoclaw::native::FullSWOF2D::fillBoundaryLayer(Patch& patch, int dimensio
             patch.setParameterWithGhostlayer(dest_subcellIndex, 0, 1000.0);
 
             // only mirror orthogonal velocities
-            patch.setValueUOld(dest_subcellIndex, 1, -patch.getValueUOld(dest_subcellIndex, 1));
-            //patch.setValueUOld(dest_subcellIndex, 4, -patch.getValueUOld(dest_subcellIndex, 5));
+            patch.getAccessor().setValueUOld(dest_subcellIndex, 1, -patch.getAccessor().getValueUOld(dest_subcellIndex, 1));
+            //patch.getAccessor().setValueUOld(dest_subcellIndex, 4, -patch.getAccessor().getValueUOld(dest_subcellIndex, 5));
         }
     } else { // top and bottom boundary
         for (int xi = -fullswofGhostlayerWidth; xi < patch.getSubdivisionFactor()(0)+fullswofGhostlayerWidth; xi++) {
@@ -213,8 +213,8 @@ void peanoclaw::native::FullSWOF2D::fillBoundaryLayer(Patch& patch, int dimensio
             patch.setParameterWithGhostlayer(dest_subcellIndex, 0, 1000.0);
             
             // only mirror orthogonal velocities
-            patch.setValueUOld(dest_subcellIndex, 2, -patch.getValueUOld(dest_subcellIndex, 2));
-            //patch.setValueUOld(dest_subcellIndex, 5, -patch.getValueUOld(dest_subcellIndex, 5));
+            patch.getAccessor().setValueUOld(dest_subcellIndex, 2, -patch.getAccessor().getValueUOld(dest_subcellIndex, 2));
+            //patch.getAccessor().setValueUOld(dest_subcellIndex, 5, -patch.getAccessor().getValueUOld(dest_subcellIndex, 5));
         }
     }
 #endif
@@ -244,7 +244,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* sche
         for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
             subcellIndex(0) = x;
             subcellIndex(1) = y;
-            h[x+ghostlayerWidth][y+ghostlayerWidth] = patch.getValueUOld(subcellIndex, 0);
+            h[x+ghostlayerWidth][y+ghostlayerWidth] = patch.getAccessor().getValueUOld(subcellIndex, 0);
         }
   }
  
@@ -254,7 +254,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* sche
         for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
             subcellIndex(0) = x;
             subcellIndex(1) = y;
-            u[x+ghostlayerWidth][y+ghostlayerWidth] = patch.getValueUOld(subcellIndex, 1);
+            u[x+ghostlayerWidth][y+ghostlayerWidth] = patch.getAccessor().getValueUOld(subcellIndex, 1);
         }
   }
 
@@ -264,7 +264,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* sche
         for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
             subcellIndex(0) = x;
             subcellIndex(1) = y;
-            v[x+ghostlayerWidth][y+ghostlayerWidth] = patch.getValueUOld(subcellIndex, 2);
+            v[x+ghostlayerWidth][y+ghostlayerWidth] = patch.getAccessor().getValueUOld(subcellIndex, 2);
         }
   }
  
@@ -274,7 +274,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* sche
         for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
             subcellIndex(0) = x;
             subcellIndex(1) = y;
-            z[x+ghostlayerWidth][y+ghostlayerWidth] = patch.getParameterWithGhostlayer(subcellIndex, 0);
+            z[x+ghostlayerWidth][y+ghostlayerWidth] = patch.getAccessor().getParameterWithGhostlayer(subcellIndex, 0);
         }
   }
 
@@ -286,7 +286,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* sche
         subcellIndex(0) = x;
         subcellIndex(1) = y;
         // we have to initialize this because the FullSWOF2D does not compute the momentum on the ghostlayer
-        double q = patch.getValueUOld(subcellIndex, 0) * patch.getValueUOld(subcellIndex, 1);
+        double q = patch.getAccessor().getValueUOld(subcellIndex, 0) * patch.getAccessor().getValueUOld(subcellIndex, 1);
         q1[x+fullswofGhostlayerWidth][y+fullswofGhostlayerWidth] = q;
 
     }
@@ -298,7 +298,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* sche
     for (int y = -1; y < subdivisionFactor(1)+1; y++) {
         subcellIndex(0) = x;
         subcellIndex(1) = y;
-        double q = patch.getValueUOld(subcellIndex, 0) * patch.getValueUOld(subcellIndex, 2);
+        double q = patch.getAccessor().getValueUOld(subcellIndex, 0) * patch.getAccessor().getValueUOld(subcellIndex, 2);
         // we have to initialize this because the FullSWOF2D does not compute the momentum on the ghostlayer
         q2[x+fullswofGhostlayerWidth][y+fullswofGhostlayerWidth] = q;
     }
@@ -320,7 +320,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
         for (int y = 0; y < subdivisionFactor(1); y++) {
             subcellIndex(0) = x;
             subcellIndex(1) = y;
-            patch.setValueUNew(subcellIndex, 0, h[x+ghostlayerWidth][y+ghostlayerWidth]);
+            patch.getAccessor().setValueUNew(subcellIndex, 0, h[x+ghostlayerWidth][y+ghostlayerWidth]);
         }
   }
  
@@ -330,7 +330,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
         for (int y = 0; y < subdivisionFactor(1); y++) {
             subcellIndex(0) = x;
             subcellIndex(1) = y;
-            patch.setValueUNew(subcellIndex, 1, u[x+ghostlayerWidth][y+ghostlayerWidth]);
+            patch.getAccessor().setValueUNew(subcellIndex, 1, u[x+ghostlayerWidth][y+ghostlayerWidth]);
         }
   }
 
@@ -340,7 +340,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
         for (int y = 0; y < subdivisionFactor(1); y++) {
             subcellIndex(0) = x;
             subcellIndex(1) = y;
-            patch.setValueUNew(subcellIndex, 2, v[x+ghostlayerWidth][y+ghostlayerWidth]);
+            patch.getAccessor().setValueUNew(subcellIndex, 2, v[x+ghostlayerWidth][y+ghostlayerWidth]);
         }
   }
 
@@ -350,7 +350,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
     for (int y = 0; y < subdivisionFactor(1); y++) {
         subcellIndex(0) = x;
         subcellIndex(1) = y;
-        patch.setParameterWithGhostlayer(subcellIndex, 0, znew[x+ghostlayerWidth][y+ghostlayerWidth]);
+        patch.getAccessor().setParameterWithGhostlayer(subcellIndex, 0, znew[x+ghostlayerWidth][y+ghostlayerWidth]);
     }
   }
  
@@ -361,7 +361,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
     for (int y = 0; y < subdivisionFactor(1); y++) {
         subcellIndex(0) = x;
         subcellIndex(1) = y;
-        patch.setValueUNew(subcellIndex, 4, q1[x+fullswofGhostlayerWidth][y+fullswofGhostlayerWidth]);
+        patch.getAccessor().setValueUNew(subcellIndex, 4, q1[x+fullswofGhostlayerWidth][y+fullswofGhostlayerWidth]);
     }
   }
 
@@ -371,7 +371,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
     for (int y = 0; y < subdivisionFactor(1); y++) {
         subcellIndex(0) = x;
         subcellIndex(1) = y;
-        patch.setValueUNew(subcellIndex, 5, q2[x+fullswofGhostlayerWidth][y+fullswofGhostlayerWidth]);
+        patch.getAccessor().setValueUNew(subcellIndex, 5, q2[x+fullswofGhostlayerWidth][y+fullswofGhostlayerWidth]);
     }
   }
 #endif
@@ -383,7 +383,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
 //      subcellIndex(0) = x;
 //      subcellIndex(1) = y;
 //      if(!tarch::la::allGreaterEquals(subcellIndex, 0) || tarch::la::oneGreaterEquals(subcellIndex, subdivisionFactor)) {
-//        patch.setValueUOld(subcellIndex, 0, h[x+ghostlayerWidth][y+ghostlayerWidth]);
+//        patch.getAccessor().setValueUOld(subcellIndex, 0, h[x+ghostlayerWidth][y+ghostlayerWidth]);
 //      }
 //    }
 //  }
@@ -394,7 +394,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
 //            subcellIndex(0) = x;
 //            subcellIndex(1) = y;
 //            if(!tarch::la::allGreaterEquals(subcellIndex, 0) || tarch::la::oneGreaterEquals(subcellIndex, subdivisionFactor)) {
-//              patch.setValueUOld(subcellIndex, 1, u[x+ghostlayerWidth][y+ghostlayerWidth]);
+//              patch.getAccessor().setValueUOld(subcellIndex, 1, u[x+ghostlayerWidth][y+ghostlayerWidth]);
 //            }
 //        }
 //  }
@@ -405,7 +405,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
 //            subcellIndex(0) = x;
 //            subcellIndex(1) = y;
 //            if(!tarch::la::allGreaterEquals(subcellIndex, 0) || tarch::la::oneGreaterEquals(subcellIndex, subdivisionFactor)) {
-//              patch.setValueUOld(subcellIndex, 2, v[x+ghostlayerWidth][y+ghostlayerWidth]);
+//              patch.getAccessor().setValueUOld(subcellIndex, 2, v[x+ghostlayerWidth][y+ghostlayerWidth]);
 //            }
 //        }
 //  }
@@ -435,7 +435,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *s
             index[2] = patchid;
             unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-            h[centerIndex] = patch.getValueUOld(subcellIndex, 0);
+            h[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 0);
         }
   }
  
@@ -452,7 +452,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *s
             index[2] = patchid;
             unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-            u[centerIndex] = patch.getValueUOld(subcellIndex, 1);
+            u[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 1);
         }
   }
 
@@ -469,7 +469,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *s
             index[2] = patchid;
             unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-            v[centerIndex] = patch.getValueUOld(subcellIndex, 2);
+            v[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 2);
         }
   }
  
@@ -486,7 +486,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *s
             index[2] = patchid;
             unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-            z[centerIndex] = patch.getParameterWithGhostlayer(subcellIndex, 0);
+            z[centerIndex] = patch.getAccessor().getParameterWithGhostlayer(subcellIndex, 0);
         }
   }
 
@@ -505,7 +505,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *s
         unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
         // we have to initialize this because the FullSWOF2D does not compute the momentum on the ghostlayer
-        double q = patch.getValueUOld(subcellIndex, 0) * patch.getValueUOld(subcellIndex, 1);
+        double q = patch.getAccessor().getValueUOld(subcellIndex, 0) * patch.getAccessor().getValueUOld(subcellIndex, 1);
         q1[centerIndex] = q;
 
     }
@@ -524,7 +524,7 @@ void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *s
         index[2] = patchid;
         unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-        double q = patch.getValueUOld(subcellIndex, 0) * patch.getValueUOld(subcellIndex, 2);
+        double q = patch.getAccessor().getValueUOld(subcellIndex, 0) * patch.getAccessor().getValueUOld(subcellIndex, 2);
         // we have to initialize this because the FullSWOF2D does not compute the momentum on the ghostlayer
         q2[centerIndex] = q;
     }
@@ -554,7 +554,7 @@ void peanoclaw::native::FullSWOF2D::copySetToPatch(unsigned int *strideinfo, Mek
             index[2] = patchid;
             unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-            patch.setValueUNew(subcellIndex, 0, h[centerIndex]);
+            patch.getAccessor().setValueUNew(subcellIndex, 0, h[centerIndex]);
         }
   }
  
@@ -571,7 +571,7 @@ void peanoclaw::native::FullSWOF2D::copySetToPatch(unsigned int *strideinfo, Mek
             index[2] = patchid;
             unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-            patch.setValueUNew(subcellIndex, 1, u[centerIndex]);
+            patch.getAccessor().setValueUNew(subcellIndex, 1, u[centerIndex]);
         }
   }
 
@@ -588,7 +588,7 @@ void peanoclaw::native::FullSWOF2D::copySetToPatch(unsigned int *strideinfo, Mek
             index[2] = patchid;
             unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-            patch.setValueUNew(subcellIndex, 2, v[centerIndex]);
+            patch.getAccessor().setValueUNew(subcellIndex, 2, v[centerIndex]);
         }
   }
 
@@ -605,7 +605,7 @@ void peanoclaw::native::FullSWOF2D::copySetToPatch(unsigned int *strideinfo, Mek
             index[2] = patchid;
             unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-            patch.setParameterWithGhostlayer(subcellIndex, 3, z[centerIndex]);
+            patch.getAccessor().setParameterWithGhostlayer(subcellIndex, 3, z[centerIndex]);
         }
   }
  
@@ -623,7 +623,7 @@ void peanoclaw::native::FullSWOF2D::copySetToPatch(unsigned int *strideinfo, Mek
         index[2] = patchid;
         unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-        patch.setValueUNew(subcellIndex, 4, q1[centerIndex]);
+        patch.getAccessor().setValueUNew(subcellIndex, 4, q1[centerIndex]);
     }
   }
 
@@ -640,7 +640,7 @@ void peanoclaw::native::FullSWOF2D::copySetToPatch(unsigned int *strideinfo, Mek
         index[2] = patchid;
         unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
 
-        patch.setValueUNew(subcellIndex, 5, q2[centerIndex]);
+        patch.getAccessor().setValueUNew(subcellIndex, 5, q2[centerIndex]);
     }
   }
 #endif
@@ -651,7 +651,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(int ghostlayerWi
     // seed parameters based on Input file
     //setparameters("./fullswof2d_parameters.txt");
  
-    int fullswofGhostlayerWidth = ghostlayerWidth-1;
+//    int fullswofGhostlayerWidth = ghostlayerWidth-1;
     dx = meshwidth_x;
     dy = meshwidth_y;
 

@@ -152,6 +152,20 @@ private:
      * this function is e.g. useful to update auxillary data like bathymetry on a finer leverl
      */
     virtual void update (Patch& finePatch);
+
+    /**
+     * Returns the number of unknowns that have to be stored per cell.
+     */
+    virtual int getNumberOfUnknownsPerCell() const = 0;
+
+    virtual int getNumberOfParameterFieldsWithoutGhostlayer() const = 0;
+
+    virtual int getNumberOfParameterFieldsWithGhostlayer() const = 0;
+
+    /**
+     * Returns the ghostlayer width in cells that is required for the applied solver.
+     */
+    virtual int getGhostlayerWidth() const = 0;
 };
 
 

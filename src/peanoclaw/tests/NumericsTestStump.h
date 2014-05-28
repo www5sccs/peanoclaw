@@ -43,5 +43,21 @@ class peanoclaw::tests::NumericsTestStump : public peanoclaw::Numerics {
     ) {
       return 1;
     }
+
+    int getNumberOfUnknownsPerCell() const {
+      return 1;
+    }
+
+    int getNumberOfParameterFieldsWithoutGhostlayer() const {
+      return 0;
+    }
+
+    int getNumberOfParameterFieldsWithGhostlayer() const  {
+      return 0;
+    }
+
+    int getGhostlayerWidth() const {
+      return 1;
+    }
 };
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_TESTS_NUMERICSTESTSTUMP_H_ */

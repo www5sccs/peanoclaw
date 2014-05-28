@@ -50,6 +50,10 @@ private:
 
   tarch::multicore::BooleanSemaphore    _semaphore;
 
+  int _numberOfUnknowns;
+  int _numberOfAuxFields;
+  int _ghostlayerWidth;
+
   //Mesh width cache
   tarch::la::Vector<DIMENSIONS, double> _cachedDemandedMeshWidth;
   tarch::la::Vector<DIMENSIONS, double> _cachedSubgridPosition;
@@ -65,7 +69,10 @@ public:
     peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
     peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
     peanoclaw::interSubgridCommunication::Restriction*     restriction,
-    peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
+    peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection,
+    int numberOfUnknowns,
+    int numberOfAuxFields,
+    int ghostlayerWidth
   );
 
   virtual ~PyClaw();
@@ -104,6 +111,20 @@ public:
    * this function is e.g. useful to update auxillary data like bathymetry on a finer leverl
    */
   virtual void update(Patch& finePatch);
+
+  /**
+   * @see peanoclaw::Numerics
+   */
+  int getNumberOfUnknownsPerCell() const;
+
+  int getNumberOfParameterFieldsWithoutGhostlayer() const;
+
+  int getNumberOfParameterFieldsWithGhostlayer() const { return 0; }
+
+  /**
+   * @see peanoclaw::Numerics
+   */
+  int getGhostlayerWidth() const;
 
 };
 #endif /* PEANOCLAW_PYCLAW_PYCLAW_H_ */

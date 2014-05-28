@@ -57,7 +57,10 @@ class peanoclaw::NumericsFactory {
       AddPatchToSolutionCallback addPatchToSolutionCallback,
       InterPatchCommunicationCallback interpolationCallback,
       InterPatchCommunicationCallback restrictionCallback,
-      InterPatchCommunicationCallback fluxCorrectionCallback
+      InterPatchCommunicationCallback fluxCorrectionCallback,
+      int numberOfUnknowns,
+      int numberOfAuxFields,
+      int ghostlayerWidth
     );
 #endif
 

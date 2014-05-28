@@ -30,7 +30,10 @@ peanoclaw::pyclaw::PyClaw::PyClaw(
   peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
   peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
   peanoclaw::interSubgridCommunication::Restriction*     restriction,
-  peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
+  peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection,
+  int numberOfUnknowns,
+  int numberOfAuxFields,
+  int ghostlayerWidth
 ) : Numerics(transfer, interpolation, restriction, fluxCorrection),
 _initializationCallback(initializationCallback),
 _boundaryConditionCallback(boundaryConditionCallback),
@@ -38,6 +41,9 @@ _solverCallback(solverCallback),
 _refinementCriterionCallback(refinementCriterionCallback),
 _addPatchToSolutionCallback(addPatchToSolutionCallback),
 _totalSolverCallbackTime(0.0),
+_numberOfUnknowns(numberOfUnknowns),
+_numberOfAuxFields(numberOfAuxFields),
+_ghostlayerWidth(ghostlayerWidth),
 _cachedDemandedMeshWidth(-1.0),
 _cachedSubgridPosition(0.0),
 _cachedSubgridLevel(-1)
@@ -274,3 +280,14 @@ void peanoclaw::pyclaw::PyClaw::update(Patch& finePatch) {
 
 }
 
+int peanoclaw::pyclaw::PyClaw::getNumberOfUnknownsPerCell() const {
+  return _numberOfUnknowns;
+}
+
+int peanoclaw::pyclaw::PyClaw::getNumberOfParameterFieldsWithoutGhostlayer() const {
+  return _numberOfAuxFields;
+}
+
+int peanoclaw::pyclaw::PyClaw::getGhostlayerWidth() const {
+  return _ghostlayerWidth;
+}

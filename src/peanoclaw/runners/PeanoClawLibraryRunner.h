@@ -99,13 +99,9 @@ public:
     const tarch::la::Vector<DIMENSIONS, double>& domainSize,
     const tarch::la::Vector<DIMENSIONS, double>& minimalMeshWidth,
     const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
-    int ghostLayerWidth,
-    int unknownsPerSubcell,
-    int parametersWithoutGhostlayerPerSubcell,
-    int parametersWithGhostlayerPerSubcell,
     double initialTimestepSize,
-    bool useDimensionalSplitting,
-    bool reduceReductions,
+    bool useCornerExtrapolation,
+    bool reduceReductions = true,
     int  forkLevelIncrement = 1
   );
 

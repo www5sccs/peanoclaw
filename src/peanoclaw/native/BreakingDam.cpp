@@ -1,10 +1,28 @@
 #if defined(SWE)
 #include "BreakingDam.h"
 
-BreakingDam_SWEKernelScenario::BreakingDam_SWEKernelScenario() {}
-BreakingDam_SWEKernelScenario::~BreakingDam_SWEKernelScenario() {}
+peanoclaw::native::BreakingDam_SWEKernelScenario::BreakingDam_SWEKernelScenario(
+  const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
+  const tarch::la::Vector<DIMENSIONS, double>& domainSize,
+  const tarch::la::Vector<DIMENSIONS, double>& minimalMeshWidth,
+  const tarch::la::Vector<DIMENSIONS, double>& maximalMeshWidth,
+  const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
+  double                                    globalTimestepSize,
+  double                                    endTime
+) : _domainOffset(domainOffset),
+    _domainSize(domainSize),
+    _minimalMeshWidth(minimalMeshWidth),
+    _maximalMeshWidth(maximalMeshWidth),
+    _subdivisionFactor(subdivisionFactor),
+    _globalTimestepSize(globalTimestepSize),
+    _endTime(endTime)
+{
+  assertion(tarch::la::allSmallerEquals(minimalMeshWidth, maximalMeshWidth));
+}
 
-void BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
+peanoclaw::native::BreakingDam_SWEKernelScenario::~BreakingDam_SWEKernelScenario() {}
+
+void peanoclaw::native::BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
     // dam coordinates
     double x0=10/3.0;
     double y0=10/3.0;
@@ -48,7 +66,7 @@ void BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
     }
 }
 
-tarch::la::Vector<DIMENSIONS,double> BreakingDam_SWEKernelScenario::computeDemandedMeshWidth(
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelScenario::computeDemandedMeshWidth(
   peanoclaw::Patch& patch,
   bool isInitializing
 ) {
@@ -81,18 +99,49 @@ tarch::la::Vector<DIMENSIONS,double> BreakingDam_SWEKernelScenario::computeDeman
     tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth;
     if (max_gradient > 0.1) {
         //demandedMeshWidth = 1.0/243;
-        demandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(10.0/6/27);
-    } else if (max_gradient < 0.5) {
+        //demandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(10.0/6/27);
+      demandedMeshWidth = _minimalMeshWidth;
+    } else if (max_gradient < 0.1) {
         //demandedMeshWidth = 10.0/130/27;
-        demandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(10.0/6/9);
+        //demandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(10.0/6/9);
+      demandedMeshWidth = _maximalMeshWidth;
     } else {
       demandedMeshWidth = patch.getSubcellSize();
     }
 
-    if(isInitializing) {
-      return 10.0/6/9;
-    } else {
-      return demandedMeshWidth;
-    }
+//    if(isInitializing) {
+//      return 10.0/6/9;
+//    } else {
+//      return demandedMeshWidth;
+//    }
+    return demandedMeshWidth;
+}
+
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelScenario::getDomainOffset() const {
+  return _domainOffset;
+}
+
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelScenario::getDomainSize() const {
+  return _domainSize;
+}
+
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelScenario::getInitialMinimalMeshWidth() const {
+  return _maximalMeshWidth;
+}
+
+tarch::la::Vector<DIMENSIONS,int> peanoclaw::native::BreakingDam_SWEKernelScenario::getSubdivisionFactor() const {
+  return _subdivisionFactor;
+}
+
+double peanoclaw::native::BreakingDam_SWEKernelScenario::getGlobalTimestepSize() const {
+  return _globalTimestepSize;
+}
+
+double peanoclaw::native::BreakingDam_SWEKernelScenario::getEndTime() const {
+  return _endTime;
+}
+
+double peanoclaw::native::BreakingDam_SWEKernelScenario::getInitialTimestepSize() const {
+  return 0.1;
 }
 #endif

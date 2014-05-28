@@ -5,7 +5,7 @@
 #include <limits>
 
 SWE_WavePropagationBlock_patch::SWE_WavePropagationBlock_patch(peanoclaw::Patch& patch)
-  : _patch(patch),
+  :
 #if WAVE_PROPAGATION_SOLVER==1 || WAVE_PROPAGATION_SOLVER==2 || WAVE_PROPAGATION_SOLVER==3
     SWE_WavePropagationBlock(
 #else
@@ -15,7 +15,8 @@ SWE_WavePropagationBlock_patch::SWE_WavePropagationBlock_patch(peanoclaw::Patch&
           patch.getSubdivisionFactor()(1),
           patch.getSubcellSize()(0),
           patch.getSubcellSize()(1)
-      )
+      ),
+    _patch(patch)
 {
     setBoundaryType(BND_LEFT, CONNECT);
     setBoundaryType(BND_RIGHT, CONNECT);

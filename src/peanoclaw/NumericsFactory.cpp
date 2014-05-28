@@ -59,7 +59,10 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
   AddPatchToSolutionCallback addPatchToSolutionCallback,
   InterPatchCommunicationCallback interpolationCallback,
   InterPatchCommunicationCallback restrictionCallback,
-  InterPatchCommunicationCallback fluxCorrectionCallback
+  InterPatchCommunicationCallback fluxCorrectionCallback,
+  int numberOfUnknowns,
+  int numberOfAuxFields,
+  int ghostlayerWidth
 ) {
 
   //Interpolation Callback
@@ -101,7 +104,10 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
     new peanoclaw::interSubgridCommunication::DefaultTransfer,
     interpolation,
     restriction,
-    fluxCorrection
+    fluxCorrection,
+    numberOfUnknowns,
+    numberOfAuxFields,
+    ghostlayerWidth
   );
 }
 #endif
