@@ -121,7 +121,13 @@ double peanoclaw::grid::SubgridAccessor::getParameterWithoutGhostlayer(
   int parameter
 ) const {
   assertion(_isLeaf || _isVirtual);
-  int index = _linearization.linearize(parameter, subcellIndex);
+  int index = _linearization.linearizeParameterWithoutGhostlayer(parameter, subcellIndex);
+
+  //TODO unterweg debug
+//  std::cout << "index=" << index << " stride=" << _linearization.getQStrideParameterWithoutGhostlayer()
+//      << ", " << _linearization.getCellStrideParameterWithoutGhostlayer(0) << ","
+//      << _linearization.getCellStrideParameterWithoutGhostlayer(1) << std::endl;
+
   assertion3(index >= 0, index, subcellIndex, parameter);
   assertion5(_parameterWithoutGhostlayerArrayIndex+index < static_cast<int>(_u->size()), _parameterWithoutGhostlayerArrayIndex, index, subcellIndex,
         parameter, static_cast<int>(_u->size()));
@@ -134,7 +140,7 @@ void peanoclaw::grid::SubgridAccessor::setParameterWithoutGhostlayer(
   double value
 ) {
   assertion(_isLeaf || _isVirtual);
-  int index = _linearization.linearize(parameter, subcellIndex);
+  int index = _linearization.linearizeParameterWithGhostlayer(parameter, subcellIndex);
   assertion3(index >= 0, index, subcellIndex, parameter);
   assertion5(_parameterWithoutGhostlayerArrayIndex+index < static_cast<int>(_u->size()), _parameterWithoutGhostlayerArrayIndex, index, subcellIndex,
         parameter, static_cast<int>(_u->size()));
@@ -146,7 +152,7 @@ double peanoclaw::grid::SubgridAccessor::getParameterWithGhostlayer(
   int parameter
 ) const {
   assertion(_isLeaf || _isVirtual);
-  int index = _linearization.linearizeWithGhostlayer(parameter, subcellIndex);
+  int index = _linearization.linearizeParameterWithGhostlayer(parameter, subcellIndex);
   assertion3(index >= 0, index, subcellIndex, parameter);
   assertion5(_parameterWithGhostlayerArrayIndex+index < static_cast<int>(_u->size()), _parameterWithGhostlayerArrayIndex, index, subcellIndex,
         parameter, static_cast<int>(_u->size()));
@@ -159,7 +165,7 @@ void peanoclaw::grid::SubgridAccessor::setParameterWithGhostlayer(
   double value
 ) {
   assertion(_isLeaf || _isVirtual);
-  int index = _linearization.linearizeWithGhostlayer(parameter, subcellIndex);
+  int index = _linearization.linearizeParameterWithGhostlayer(parameter, subcellIndex);
   assertion3(index >= 0, index, subcellIndex, parameter);
   assertion5(_parameterWithGhostlayerArrayIndex+index < static_cast<int>(_u->size()), _parameterWithGhostlayerArrayIndex, index, subcellIndex,
         parameter, static_cast<int>(_u->size()));

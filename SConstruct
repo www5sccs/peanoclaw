@@ -317,8 +317,8 @@ elif solver == 'swe':
   cppdefines.append('SWE')
   cppdefines.append('PEANOCLAW_SWE')
   cppdefines.append('NDEBUG')
-  
-  cppdefines.append('WAVE_PROPAGATION_SOLVER=1')
+  WAVE_PROPAGATION_SOLVER = 4
+  cppdefines.append('WAVE_PROPAGATION_SOLVER=' + str(WAVE_PROPAGATION_SOLVER))
   cppdefines.append('VECTORIZE')
   
   cppdefines.append('AssertForPositiveValues')
@@ -333,8 +333,8 @@ elif solver == 'fullswof2d':
   cpppath.append(fullSWOF2DPath)
   cppdefines.append('NDEBUG')
 
-  cppdefines.append('WAVE_PROPAGATION_SOLVER=1')
-  cppdefines.append('VECTORIZE')
+#   cppdefines.append('WAVE_PROPAGATION_SOLVER=1')
+#   cppdefines.append('VECTORIZE')
   cppdefines.append('DoNotAssertForPositiveValues')
 
   #Configure fullswof2d
@@ -656,13 +656,19 @@ sourcesPeanoClaw = [
 if solver == 'swe':
   sourcesSolver = [
     Glob(join(buildpath, 'peanoclaw/native/main.cpp')),
+    Glob(join(buildpath, 'peanoclaw/native/sweMain.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/SWEKernel.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/SWE_WavePropagationBlock_patch.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/BreakingDam.cpp')),
-    Glob(join(buildpath, 'swe/blocks/SWE_Block.cpp')),
-    #Glob(join(buildpath, 'swe/blocks/SWE_WaveAccumulationBlock.cpp'))
-    Glob(join(buildpath, 'swe/blocks/SWE_WavePropagationBlock.cpp'))
+    Glob(join(buildpath, 'peanoclaw/native/SWECommandLineParser.cpp')),
+    Glob(join(buildpath, 'swe/tools/Logger.cpp')),
+    Glob(join(buildpath, 'swe/writer/VtkWriter.cpp')),
+    Glob(join(buildpath, 'swe/blocks/SWE_Block.cpp'))
     ]
+  if(WAVE_PROPAGATION_SOLVER == 1 or WAVE_PROPAGATION_SOLVER == 2 or WAVE_PROPAGATION_SOLVER == 3):
+    sourcesSolver.append(Glob(join(buildpath, 'swe/blocks/SWE_WavePropagationBlock.cpp')))
+  else:
+    sourcesSolver.append(Glob(join(buildpath, 'swe/blocks/SWE_WaveAccumulationBlock.cpp')))
 elif solver == 'pyclaw':
   sourcesSolver = [
      Glob(join(buildpath, 'peanoclaw/pyclaw/*.cpp'))

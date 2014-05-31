@@ -22,6 +22,8 @@
 peanoclaw::grid::Linearization::Linearization(
     const tarch::la::Vector<DIMENSIONS, int> subdivisionFactor,
     int numberOfUnknowns,
+    int numberOfParameterFieldsWithoutGhostlayer,
+    int numberOfParameterFieldsWithGhostlayer,
     int ghostlayerWidth
 ) : _ghostlayerWidth(ghostlayerWidth) {
   //UOld
@@ -38,6 +40,22 @@ peanoclaw::grid::Linearization::Linearization(
   for (int d = DIMENSIONS-1; d >= 0; d--) {
     _cellStrideUNew[d] = stride;
     stride *= subdivisionFactor[d];
+  }
+
+  //Parameter without ghostlayer
+  _qStrideParameterWithoutGhostlayer = 1;
+  stride = numberOfParameterFieldsWithoutGhostlayer;
+  for (int d = DIMENSIONS-1; d >= 0; d--) {
+    _cellStrideParameterWithoutGhostlayer[d] = stride;
+    stride *= subdivisionFactor[d];
+  }
+
+  //Parameter with ghostlayer
+  _qStrideParameterWithGhostlayer = 1;
+  stride = numberOfParameterFieldsWithGhostlayer;
+  for (int d = DIMENSIONS-1; d >= 0; d--) {
+    _cellStrideParameterWithGhostlayer[d] = stride;
+    stride *= subdivisionFactor[d] + 2 * ghostlayerWidth;
   }
 
   assertion3(tarch::la::allGreater(_cellStrideUNew, tarch::la::Vector<DIMENSIONS,int>(0)), _cellStrideUNew, subdivisionFactor, ghostlayerWidth);

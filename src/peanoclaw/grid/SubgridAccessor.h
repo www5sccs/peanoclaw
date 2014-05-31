@@ -203,7 +203,13 @@ class peanoclaw::grid::SubgridAccessor {
         _uOldWithGhostlayerArrayIndex(-1),
         _parameterWithoutGhostlayerArrayIndex(-1),
         _parameterWithGhostlayerArrayIndex(-1),
-        _linearization(cellDescription.getSubdivisionFactor(), cellDescription.getUnknownsPerSubcell(), cellDescription.getGhostlayerWidth()) {
+        _linearization(
+            cellDescription.getSubdivisionFactor(),
+            cellDescription.getUnknownsPerSubcell(),
+            cellDescription.getNumberOfParametersWithoutGhostlayerPerSubcell(),
+            cellDescription.getNumberOfParametersWithGhostlayerPerSubcell(),
+            cellDescription.getGhostlayerWidth()
+    ) {
 
       int volumeNew = tarch::la::volume(cellDescription.getSubdivisionFactor());
       int volumeOld = tarch::la::volume(cellDescription.getSubdivisionFactor() + 2*cellDescription.getGhostlayerWidth());

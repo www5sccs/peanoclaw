@@ -21,8 +21,8 @@ peanoclaw::native::SWEKernel::SWEKernel(
   peanoclaw::interSubgridCommunication::Restriction*     restriction,
   peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
 ) : Numerics(transfer, interpolation, restriction, fluxCorrection),
-_scenario(scenario),
-_totalSolverCallbackTime(0.0)
+_totalSolverCallbackTime(0.0),
+_scenario(scenario)
 {
   //import_array();
 }
@@ -49,7 +49,7 @@ void peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumTim
 
   tarch::timing::Watch pyclawWatch("", "", false);
   pyclawWatch.startTimer();
-  double dtAndEstimatedNextDt[2];
+//  double dtAndEstimatedNextDt[2];
 
   SWE_WavePropagationBlock_patch swe(patch);
 

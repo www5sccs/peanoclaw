@@ -4,38 +4,31 @@
 peanoclaw::native::BreakingDam_SWEKernelScenario::BreakingDam_SWEKernelScenario(
   const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
   const tarch::la::Vector<DIMENSIONS, double>& domainSize,
-  const tarch::la::Vector<DIMENSIONS, double>& minimalMeshWidth,
-  const tarch::la::Vector<DIMENSIONS, double>& maximalMeshWidth,
+  const tarch::la::Vector<DIMENSIONS, int>&    finestSubgridTopology,
+  const tarch::la::Vector<DIMENSIONS, int>&    coarsestSubgridTopology,
   const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
   double                                    globalTimestepSize,
   double                                    endTime
 ) : _domainOffset(domainOffset),
     _domainSize(domainSize),
-    _minimalMeshWidth(minimalMeshWidth),
-    _maximalMeshWidth(maximalMeshWidth),
+    _minimalMeshWidth(-1),
+    _maximalMeshWidth(-1),
     _subdivisionFactor(subdivisionFactor),
     _globalTimestepSize(globalTimestepSize),
     _endTime(endTime)
 {
-  assertion(tarch::la::allSmallerEquals(minimalMeshWidth, maximalMeshWidth));
+  _minimalMeshWidth
+    = tarch::la::multiplyComponents(domainSize, tarch::la::invertEntries(finestSubgridTopology.convertScalar<double>()));
+  _maximalMeshWidth
+    = tarch::la::multiplyComponents(domainSize, tarch::la::invertEntries(coarsestSubgridTopology.convertScalar<double>()));
+
+//  assertion2(tarch::la::allGreaterEquals(_maximalMeshWidth, _minimalMeshWidth), _minimalMeshWidth, _maximalMeshWidth);
+  assertion2(tarch::la::allSmallerEquals(_minimalMeshWidth, _maximalMeshWidth), _minimalMeshWidth, _maximalMeshWidth);
 }
 
 peanoclaw::native::BreakingDam_SWEKernelScenario::~BreakingDam_SWEKernelScenario() {}
 
 void peanoclaw::native::BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
-    // dam coordinates
-    double x0=10/3.0;
-    double y0=10/3.0;
-    
-    // Riemann states of the dam break problem
-    double radDam = 1;
-    double hl = 2.;
-    double ul = 0.;
-    double vl = 0.;
-    double hr = 1.;
-    double ur = 0.;
-    double vr = 0.;
-    
     // compute from mesh data
     const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
     const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
@@ -49,11 +42,10 @@ void peanoclaw::native::BreakingDam_SWEKernelScenario::initializePatch(peanoclaw
  
             double X = patchPosition(0) + xi*meshWidth(0);
             double Y = patchPosition(1) + yi*meshWidth(1);
- 
-            double r = sqrt((X-x0)*(X-x0) + (Y-y0)*(Y-y0));
-            double q0 = hl*(r<=radDam) + hr*(r>radDam);
-            double q1 = hl*ul*(r<=radDam) + hr*ur*(r>radDam);
-            double q2 = hl*vl*(r<=radDam) + hr*vr*(r>radDam);
+
+            double q0 = getWaterHeight(X, Y);
+            double q1 = 0.0; //hl*ul*(r<=radDam) + hr*ur*(r>radDam);
+            double q2 = 0.0; //hl*vl*(r<=radDam) + hr*vr*(r>radDam);
 
             accessor.setValueUNew(subcellIndex, 0, q0);
             accessor.setValueUNew(subcellIndex, 1, q1);
@@ -143,5 +135,18 @@ double peanoclaw::native::BreakingDam_SWEKernelScenario::getEndTime() const {
 
 double peanoclaw::native::BreakingDam_SWEKernelScenario::getInitialTimestepSize() const {
   return 0.1;
+}
+
+float peanoclaw::native::BreakingDam_SWEKernelScenario::getWaterHeight(float x, float y) {
+  // dam coordinates
+  const double x0=1/2.0;
+  const double y0=1/2.0;
+  // Riemann states of the dam break problem
+  const double radDam = 0.25;
+  const double hl = 2.;
+  const double hr = 1.;
+
+  double r = sqrt((x-x0)*(x-x0) + (y-y0)*(y-y0));
+  return hl*(r<=radDam) + hr*(r>radDam);
 }
 #endif

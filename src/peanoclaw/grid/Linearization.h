@@ -36,6 +36,10 @@ private:
   int _qStrideUOld;
   tarch::la::Vector<DIMENSIONS,int> _cellStrideUOld;
   int _ghostlayerWidth;
+  int _qStrideParameterWithoutGhostlayer;
+  tarch::la::Vector<DIMENSIONS,int> _cellStrideParameterWithoutGhostlayer;
+  int _qStrideParameterWithGhostlayer;
+  tarch::la::Vector<DIMENSIONS,int> _cellStrideParameterWithGhostlayer;
 
 public:
 
@@ -45,6 +49,8 @@ public:
   inline Linearization(
       const tarch::la::Vector<DIMENSIONS, int> subdivisionFactor,
       int numberOfUnknowns,
+      int numberOfParameterFieldsWithoutGhostlayer,
+      int numberOfParameterFieldsWithGhostlayer,
       int ghostlayerWidth
   );
 
@@ -83,6 +89,30 @@ public:
     return index;
   }
 
+  int linearizeParameterWithoutGhostlayer(
+    int unknown,
+    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
+  ) const {
+    int index = 0;
+    for(int d = 0; d < DIMENSIONS; d++) {
+      index += subcellIndex(d) * _cellStrideParameterWithoutGhostlayer[d];
+    }
+    index += unknown * _qStrideParameterWithoutGhostlayer;
+    return index;
+  }
+
+  int linearizeParameterWithGhostlayer(
+    int unknown,
+    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
+  ) const {
+    int index = 0;
+    for(int d = 0; d < DIMENSIONS; d++) {
+      index += (subcellIndex(d) + _ghostlayerWidth) * _cellStrideParameterWithGhostlayer[d];
+    }
+    index += unknown * _qStrideParameterWithGhostlayer;
+    return index;
+  }
+
   /**
    * Returns the index shift required to go from one unknown in
    * a given cell to the next unknown in the same cell in the
@@ -101,6 +131,14 @@ public:
     return _qStrideUOld;
   }
 
+  inline int getQStrideParameterWithoutGhostlayer() const {
+    return _qStrideParameterWithoutGhostlayer;
+  }
+
+  inline int getQStrideParameterWithGhostlayer() const {
+    return _qStrideParameterWithGhostlayer;
+  }
+
   /**
    * Returns the index shift required to go from one cell in
    * uNew to the next cell in uNew.
@@ -115,6 +153,14 @@ public:
    */
   inline int getCellStrideUOld(int dimension) const {
     return _cellStrideUOld[dimension];
+  }
+
+  inline int getCellStrideParameterWithoutGhostlayer(int dimension) const {
+    return _cellStrideParameterWithoutGhostlayer[dimension];
+  }
+
+  inline int getCellStrideParameterWithGhostlayer(int dimension) const {
+    return _cellStrideParameterWithGhostlayer[dimension];
   }
 
   /**
