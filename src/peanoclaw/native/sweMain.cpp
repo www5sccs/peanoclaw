@@ -1,5 +1,9 @@
 #include "peanoclaw/native/sweMain.h"
 
+#include "peanoclaw/statistics/MemoryInformation.h"
+
+#include "tarch/logging/Log.h"
+
 #include <cassert>
 #include <cstdlib>
 #include <string>
@@ -29,6 +33,8 @@ void sweMain(
   peanoclaw::native::BreakingDam_SWEKernelScenario& scenario,
   tarch::la::Vector<DIMENSIONS,int> numberOfCells
 ) {
+  tarch::logging::Log _log("sweMain(...)");
+
   tarch::la::Vector<DIMENSIONS,double> resolution
     = tarch::la::multiplyComponents(scenario.getDomainSize(), tarch::la::invertEntries(numberOfCells.convertScalar<double>()));
   Block l_wavePropgationBlock(numberOfCells[0],numberOfCells[1],resolution[0],resolution[1]);
@@ -144,5 +150,8 @@ void sweMain(
 
   // printer iteration counter
   tools::Logger::logger.printIterationsDone(l_iterations);
+
+  //Print maximum memory demand
+  logInfo("sweMain", "Peak resident set size: " << peanoclaw::statistics::getPeakRSS() << "b");
 }
 
