@@ -127,8 +127,8 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateNeighborT
 void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillOrExtrapolateGhostlayerAndUpdateNeighborTime(
   int destinationSubgridIndex
 ) {
-  int extrapolationUpToDimension = DIMENSIONS-2;
-  int fillingUpToDimension = DIMENSIONS-1;
+  int extrapolateUpToDimension = DIMENSIONS-2;
+  int fillUpToDimension = DIMENSIONS-1;
   Extrapolation extrapolation(_patches[destinationSubgridIndex]);
 
   double maximalGradient;
@@ -136,23 +136,23 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillOrExtrapola
     maximalGradient = 0.0;
 
     //Fill from neighbors
-    for(int dimensionality = extrapolationUpToDimension + 1; dimensionality <= fillingUpToDimension; dimensionality++) {
+    for(int dimensionality = extrapolateUpToDimension + 1; dimensionality <= fillUpToDimension; dimensionality++) {
       fillGhostlayerManifolds(destinationSubgridIndex, true, dimensionality);
     }
-    fillingUpToDimension = extrapolationUpToDimension;
+    fillUpToDimension = extrapolateUpToDimension;
 
     //Extrapolate from ghostlayer
-    for(int dimensionality = extrapolationUpToDimension; dimensionality >= 0 ; dimensionality--) {
+    for(int dimensionality = extrapolateUpToDimension; dimensionality >= 0 ; dimensionality--) {
       double maximalGradientForDimensionality = fillGhostlayerManifolds(destinationSubgridIndex, false, dimensionality);
       maximalGradient = std::max(maximalGradient, maximalGradientForDimensionality);
     }
 
-    extrapolationUpToDimension--;
-    assertion1(extrapolationUpToDimension >= -2, extrapolationUpToDimension);
-  } while(maximalGradient > 0.1/(extrapolationUpToDimension+2));
+    extrapolateUpToDimension--;
+    assertion1(extrapolateUpToDimension >= -2, extrapolateUpToDimension);
+  } while(maximalGradient > 0.1/(extrapolateUpToDimension+2));
 
   //Update neighbor time
-  for(int dimensionality = extrapolationUpToDimension + 2; dimensionality < DIMENSIONS; dimensionality++) {
+  for(int dimensionality = extrapolateUpToDimension + 2; dimensionality < DIMENSIONS; dimensionality++) {
     updateNeighborTimeForManifolds(destinationSubgridIndex, dimensionality);
   }
 }
@@ -284,26 +284,17 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
   if(_useDimensionalSplittingExtrapolation) {
     if(destinationSubgridIndex == -1) {
       for(int i = 0; i < TWO_POWER_D; i++) {
-        if(_patches[i].isValid() && _patches[i].isLeaf()) {
+        if(_patches[i].isValid()
+            && (_patches[i].isLeaf() || _patches[i].isVirtual())) {
+          //&& _patches[i].isLeaf()) {
           fillOrExtrapolateGhostlayerAndUpdateNeighborTime(i);
         }
       }
     } else {
       if(_patches[destinationSubgridIndex].isValid()
           && (_patches[destinationSubgridIndex].isLeaf() || _patches[destinationSubgridIndex].isVirtual())) {
+          //&& _patches[destinationSubgridIndex].isLeaf()) {
         fillOrExtrapolateGhostlayerAndUpdateNeighborTime(destinationSubgridIndex);
-
-        //TODO unterweg debug
-//        for(int i = 0; i < TWO_POWER_D; i++) {
-//          if(i != destinationSubgridIndex && _patches[i].isValid()
-//               && (_patches[i].isLeaf() || _patches[i].isVirtual())) {
-//            std::cout << i << ": " << _patches[i] << std::endl;
-//            std::cout << _patches[i].toStringUNew() << std::endl;
-//            std::cout << _patches[i].toStringUOldWithGhostLayer() << std::endl;
-//          }
-//        }
-//        std::cout << "filled to " << std::endl << _patches[destinationSubgridIndex] << std::endl;
-//        std::cout << _patches[destinationSubgridIndex].toStringUOldWithGhostLayer() << std::endl;
       }
     }
   } else {

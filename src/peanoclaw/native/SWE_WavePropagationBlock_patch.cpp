@@ -26,69 +26,97 @@ SWE_WavePropagationBlock_patch::SWE_WavePropagationBlock_patch(peanoclaw::Patch&
 
     tarch::la::Vector<DIMENSIONS,int> subcellIndex;
 
-    tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = _patch.getSubdivisionFactor();
-    peanoclaw::grid::SubgridAccessor& accessor = _patch.getAccessor();
-
-    for (int x = -1; x < subdivisionFactor(0)+1; x++) {
-        for (int y = -1; y < subdivisionFactor(1)+1; y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-            SWE_Block::h[x+1][y+1] = accessor.getValueUOld(subcellIndex, 0);
-        }
-    }
-     
-    for (int x = -1; x < subdivisionFactor(0)+1; x++) {
-        for (int y = -1; y < subdivisionFactor(1)+1; y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-            SWE_Block::hu[x+1][y+1] = accessor.getValueUOld(subcellIndex, 1);
-        }
-    }
-  
-    for (int x = -1; x < subdivisionFactor(0)+1; x++) {
-        for (int y = -1; y < subdivisionFactor(1)+1; y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-            SWE_Block::hv[x+1][y+1] = accessor.getValueUOld(subcellIndex, 2);
-        }
-    }
- 
-    for (int x = -1; x < subdivisionFactor(0)+1; x++) {
-        for (int y = -1; y < subdivisionFactor(1)+1; y++) {
-          SWE_Block::b[x+1][y+1] = 0.0;
-        }
-    }
+//    tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = _patch.getSubdivisionFactor();
+//    peanoclaw::grid::SubgridAccessor& accessor = _patch.getAccessor();
+//    for (int x = -1; x < subdivisionFactor(0)+1; x++) {
+//        for (int y = -1; y < subdivisionFactor(1)+1; y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//            SWE_Block::h[x+1][y+1] = accessor.getValueUOld(subcellIndex, 0);
+//        }
+//    }
+//
+//    for (int x = -1; x < subdivisionFactor(0)+1; x++) {
+//        for (int y = -1; y < subdivisionFactor(1)+1; y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//            SWE_Block::hu[x+1][y+1] = accessor.getValueUOld(subcellIndex, 1);
+//        }
+//    }
+//
+//    for (int x = -1; x < subdivisionFactor(0)+1; x++) {
+//        for (int y = -1; y < subdivisionFactor(1)+1; y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//            SWE_Block::hv[x+1][y+1] = accessor.getValueUOld(subcellIndex, 2);
+//        }
+//    }
+//
+//    for (int x = -1; x < subdivisionFactor(0)+1; x++) {
+//        for (int y = -1; y < subdivisionFactor(1)+1; y++) {
+//          SWE_Block::b[x+1][y+1] = 0.0;
+//        }
+//    }
 }
 
 SWE_WavePropagationBlock_patch::~SWE_WavePropagationBlock_patch() 
 {
-    tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = _patch.getSubdivisionFactor();
-    peanoclaw::grid::SubgridAccessor& accessor = _patch.getAccessor();
+//    tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = _patch.getSubdivisionFactor();
+//    peanoclaw::grid::SubgridAccessor& accessor = _patch.getAccessor();
+//
+//    tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+//    for (int x = 0; x < subdivisionFactor(0); x++) {
+//        for (int y = 0; y < subdivisionFactor(1); y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//            accessor.setValueUNew(subcellIndex, 0, SWE_Block::h[x+1][y+1]);
+//
+//        }
+//    }
+//
+//    for (int x = 0; x < subdivisionFactor(0); x++) {
+//        for (int y = 0; y < subdivisionFactor(1); y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//            accessor.setValueUNew(subcellIndex, 1, SWE_Block::hu[x+1][y+1]);
+//
+//        }
+//    }
+//
+//    for (int x = 0; x < subdivisionFactor(0); x++) {
+//        for (int y = 0; y < subdivisionFactor(1); y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//            accessor.setValueUNew(subcellIndex, 2, SWE_Block::hv[x+1][y+1]);
+//        }
+//    }
+}
 
-    tarch::la::Vector<DIMENSIONS,int> subcellIndex;
-    for (int x = 0; x < subdivisionFactor(0); x++) {
-        for (int y = 0; y < subdivisionFactor(1); y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-            accessor.setValueUNew(subcellIndex, 0, SWE_Block::h[x+1][y+1]);
-
-        }
-    }
-
-    for (int x = 0; x < subdivisionFactor(0); x++) {
-        for (int y = 0; y < subdivisionFactor(1); y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-            accessor.setValueUNew(subcellIndex, 1, SWE_Block::hu[x+1][y+1]);
-
-        }
-    }
-
-    for (int x = 0; x < subdivisionFactor(0); x++) {
-        for (int y = 0; y < subdivisionFactor(1); y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-            accessor.setValueUNew(subcellIndex, 2, SWE_Block::hv[x+1][y+1]);
-        }
-    }
+void SWE_WavePropagationBlock_patch::setArrays(
+  const peanoclaw::Patch& subgrid,
+  float* h,
+  float* hu,
+  float* hv,
+  float* b
+) {
+  this->h = Float2D(
+              subgrid.getSubdivisionFactor()(0) + subgrid.getGhostlayerWidth()*2,
+              subgrid.getSubdivisionFactor()(1) + subgrid.getGhostlayerWidth()*2,
+              h
+            );
+  this->hu = Float2D(
+              subgrid.getSubdivisionFactor()(0) + subgrid.getGhostlayerWidth()*2,
+              subgrid.getSubdivisionFactor()(1) + subgrid.getGhostlayerWidth()*2,
+              hu
+            );
+  this->hv = Float2D(
+              subgrid.getSubdivisionFactor()(0) + subgrid.getGhostlayerWidth()*2,
+              subgrid.getSubdivisionFactor()(1) + subgrid.getGhostlayerWidth()*2,
+              hv
+            );
+  this->b = Float2D(
+              subgrid.getSubdivisionFactor()(0) + subgrid.getGhostlayerWidth()*2,
+              subgrid.getSubdivisionFactor()(1) + subgrid.getGhostlayerWidth()*2,
+              b
+            );
 }

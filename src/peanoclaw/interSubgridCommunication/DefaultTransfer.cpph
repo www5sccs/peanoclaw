@@ -103,3 +103,17 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
     subgridIterator.setUnknownsUOld(subgridIterator.getUnknownsUNew());
   }
 }
+
+template<int NumberOfUnknowns>
+void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnknowns>::swapUOldAndUNew(peanoclaw::Patch& subgrid) {
+  peanoclaw::grid::SubgridAccessor subgridAccessor = subgrid.getAccessor();
+  peanoclaw::grid::SubgridIterator<NumberOfUnknowns> subgridIterator
+    = subgridAccessor.getSubgridIterator<NumberOfUnknowns>(tarch::la::Vector<DIMENSIONS, int>(0), subgrid.getSubdivisionFactor());
+  while(subgridIterator.moveToNextCell()) {
+    //subgridIterator.setUnknownsUOld(subgridIterator.getUnknownsUNew());
+    tarch::la::Vector<NumberOfUnknowns,double> vUNew = subgridIterator.getUnknownsUNew();
+    tarch::la::Vector<NumberOfUnknowns,double> vUOld = subgridIterator.getUnknownsUOld();
+    subgridIterator.setUnknownsUNew(vUOld);
+    subgridIterator.setUnknownsUOld(vUNew);
+  }
+}

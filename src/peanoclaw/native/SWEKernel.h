@@ -13,15 +13,14 @@
 #include "peano/utils/Dimensions.h"
 
 #include "peanoclaw/Numerics.h"
-/*#include "peanoclaw/pyclaw/PyClawCallbacks.h"
-#include "peanoclaw/pyclaw/InterpolationCallbackWrapper.h"
-#include "peanoclaw/pyclaw/RestrictionCallbackWrapper.h"
-#include "peanoclaw/pyclaw/FluxCorrectionCallbackWrapper.h"*/
 
 #include "peanoclaw/interSubgridCommunication/Interpolation.h"
 #include "peanoclaw/interSubgridCommunication/Restriction.h"
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
 
+#include <memory>
+
+class SWE_WavePropagationBlock_patch;
 namespace peanoclaw {
   namespace native {
     class SWEKernel;
@@ -48,6 +47,11 @@ private:
   double _totalSolverCallbackTime;
 
   SWEKernelScenario& _scenario;
+
+  tarch::la::Vector<DIMENSIONS,int> _cachedSubdivisionFactor;
+  int                               _cachedGhostlayerWidth;
+  std::auto_ptr<SWE_WavePropagationBlock_patch> _cachedBlock;
+
 public:
   SWEKernel(
     SWEKernelScenario& scenario,
@@ -96,9 +100,9 @@ public:
    */
   int getNumberOfUnknownsPerCell() const { return 3; }
 
-  int getNumberOfParameterFieldsWithoutGhostlayer() const { return 1; }
+  int getNumberOfParameterFieldsWithoutGhostlayer() const { return 0; }
 
-  int getNumberOfParameterFieldsWithGhostlayer() const { return 0; }
+  int getNumberOfParameterFieldsWithGhostlayer() const { return 1; }
 
   /**
    * @see peanoclaw::Numerics

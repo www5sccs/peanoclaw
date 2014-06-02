@@ -31,12 +31,12 @@ peanoclaw::pyclaw::PyClawState::PyClawState(const Patch& patch) {
   }
 
   _q = PyArray_SimpleNewFromData(1 + DIMENSIONS, sizeUNew, NPY_DOUBLE, patch.getUNewArray());
-  _qbc = PyArray_SimpleNewFromData(1 + DIMENSIONS, sizeUOldWithGhostlayer, NPY_DOUBLE, patch.getUOldWithGhostlayerArray());
+  _qbc = PyArray_SimpleNewFromData(1 + DIMENSIONS, sizeUOldWithGhostlayer, NPY_DOUBLE, patch.getUOldWithGhostlayerArray(0));
 
   //Build auxArray
   double* auxArray = 0;
   if(patch.getNumberOfParametersWithoutGhostlayerPerSubcell() > 0) {
-    auxArray = patch.getParameterWithoutGhostlayerArray();
+    auxArray = patch.getParameterWithoutGhostlayerArray(0);
     assertion(auxArray != 0);
     npy_intp sizeAux[1 + DIMENSIONS];
     sizeAux[0] = patch.getNumberOfParametersWithoutGhostlayerPerSubcell();

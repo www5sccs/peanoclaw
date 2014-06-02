@@ -51,9 +51,11 @@ void peanoclaw::native::BreakingDam_SWEKernelScenario::initializePatch(peanoclaw
             accessor.setValueUNew(subcellIndex, 1, q1);
             accessor.setValueUNew(subcellIndex, 2, q2);
 
-            assertionEquals(accessor.getValueUNew(subcellIndex, 0), q0);
-            assertionEquals(accessor.getValueUNew(subcellIndex, 1), q1);
-            assertionEquals(accessor.getValueUNew(subcellIndex, 2), q2);
+            accessor.setParameterWithGhostlayer(subcellIndex, 0, 0.0);
+
+            assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 0), q0, 1e-5), accessor.getValueUNew(subcellIndex, 0), q0);
+            assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 1), q1, 1e-5), accessor.getValueUNew(subcellIndex, 1), q1);
+            assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 2), q2, 1e-5), accessor.getValueUNew(subcellIndex, 2), q2);
         }
     }
 }
@@ -62,6 +64,11 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelSce
   peanoclaw::Patch& patch,
   bool isInitializing
 ) {
+  if(tarch::la::equals(_minimalMeshWidth, _maximalMeshWidth)) {
+    return _minimalMeshWidth;
+  }
+
+
     double max_gradient = 0.0;
     const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
     peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();

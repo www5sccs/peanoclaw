@@ -576,12 +576,17 @@ public:
   /**
    * Returns the uOld double array.
    */
-  double* getUOldWithGhostlayerArray() const;
+  double* getUOldWithGhostlayerArray(int unknown) const;
 
   /**
    * Returns the aux array as a real double array.
    */
-  double* getParameterWithoutGhostlayerArray() const;
+  double* getParameterWithoutGhostlayerArray(int parameter) const;
+
+  /**
+   * Returns the parameter array as a real double array.
+   */
+  double* getParameterWithGhostlayerArray(int parameter) const;
 
   /**
    * Returns the index for the uNew array.

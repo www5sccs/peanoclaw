@@ -6,11 +6,13 @@
  */
 
 #include "peanoclaw/native/SWEKernel.h"
+
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
+#include "peanoclaw/native/SWE_WavePropagationBlock_patch.hh"
+
 #include "tarch/timing/Watch.h"
 #include "tarch/parallel/Node.h"
-
-#include "peanoclaw/native/SWE_WavePropagationBlock_patch.hh"
 
 tarch::logging::Log peanoclaw::native::SWEKernel::_log("peanoclaw::native::SWEKernel");
 
@@ -22,7 +24,10 @@ peanoclaw::native::SWEKernel::SWEKernel(
   peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
 ) : Numerics(transfer, interpolation, restriction, fluxCorrection),
 _totalSolverCallbackTime(0.0),
-_scenario(scenario)
+_scenario(scenario),
+_cachedSubdivisionFactor(-1),
+_cachedGhostlayerWidth(-1),
+_cachedBlock(0)
 {
   //import_array();
 }
@@ -49,16 +54,30 @@ void peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumTim
 
   tarch::timing::Watch pyclawWatch("", "", false);
   pyclawWatch.startTimer();
-//  double dtAndEstimatedNextDt[2];
 
-  SWE_WavePropagationBlock_patch swe(patch);
+  if(_cachedSubdivisionFactor != patch.getSubdivisionFactor() || _cachedGhostlayerWidth != patch.getGhostlayerWidth()) {
+    //SWE_WavePropagationBlock_patch swe(patch);
+    _cachedBlock = std::auto_ptr<SWE_WavePropagationBlock_patch>(new SWE_WavePropagationBlock_patch(patch));
+    _cachedSubdivisionFactor = patch.getSubdivisionFactor();
+    _cachedGhostlayerWidth = patch.getGhostlayerWidth();
+  }
+  _cachedBlock->setArrays(
+        patch,
+        reinterpret_cast<float*>(patch.getUOldWithGhostlayerArray(0)),
+        reinterpret_cast<float*>(patch.getUOldWithGhostlayerArray(1)),
+        reinterpret_cast<float*>(patch.getUOldWithGhostlayerArray(2)),
+        reinterpret_cast<float*>(patch.getParameterWithoutGhostlayerArray(0))
+      );
 
-  swe.computeNumericalFluxes();
+  _cachedBlock->computeNumericalFluxes();
 
-  double dt = fmin(swe.getMaxTimestep(), maximumTimestepSize);
-  double estimatedNextTimestepSize = swe.getMaxTimestep();
+  double dt = fmin(_cachedBlock->getMaxTimestep(), maximumTimestepSize);
+  double estimatedNextTimestepSize = _cachedBlock->getMaxTimestep();
 
-  swe.updateUnknowns(dt);
+  _cachedBlock->updateUnknowns(dt);
+
+  peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
+  transfer.swapUNewAndUOld(patch);
 
   pyclawWatch.stopTimer();
   _totalSolverCallbackTime += pyclawWatch.getCalendarTime();

@@ -50,6 +50,8 @@ class peanoclaw::interSubgridCommunication::DefaultTransferTemplate{
     * The ghost layer stays unchanged.
     */
     void copyUNewToUOld(peanoclaw::Patch& subgrid);
+
+    void swapUOldAndUNew(peanoclaw::Patch& subgrid);
 };
 
 /**
@@ -175,6 +177,53 @@ public:
       case 10:
         peanoclaw::interSubgridCommunication::DefaultTransferTemplate<10> transfer10;
         transfer10.copyUNewToUOld(subgrid);
+        break;
+      default:
+        assertionFail("Number of unknowns " << subgrid.getUnknownsPerSubcell() << " not supported!");
+    }
+  }
+
+  void swapUNewAndUOld(peanoclaw::Patch& subgrid) {
+    switch(subgrid.getUnknownsPerSubcell()) {
+      case 1:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<1> transfer1;
+        transfer1.swapUOldAndUNew(subgrid);
+        break;
+      case 2:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<2> transfer2;
+        transfer2.swapUOldAndUNew(subgrid);
+        break;
+      case 3:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<3> transfer3;
+        transfer3.swapUOldAndUNew(subgrid);
+        break;
+      case 4:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<4> transfer4;
+        transfer4.swapUOldAndUNew(subgrid);
+        break;
+      case 5:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<5> transfer5;
+        transfer5.swapUOldAndUNew(subgrid);
+        break;
+      case 6:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<6> transfer6;
+        transfer6.swapUOldAndUNew(subgrid);
+        break;
+      case 7:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<7> transfer7;
+        transfer7.swapUOldAndUNew(subgrid);
+        break;
+      case 8:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<8> transfer8;
+        transfer8.swapUOldAndUNew(subgrid);
+        break;
+      case 9:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<9> transfer9;
+        transfer9.swapUOldAndUNew(subgrid);
+        break;
+      case 10:
+        peanoclaw::interSubgridCommunication::DefaultTransferTemplate<10> transfer10;
+        transfer10.swapUOldAndUNew(subgrid);
         break;
       default:
         assertionFail("Number of unknowns " << subgrid.getUnknownsPerSubcell() << " not supported!");

@@ -54,6 +54,17 @@ class SWE_WavePropagationBlock_patch
      */
     virtual ~SWE_WavePropagationBlock_patch();
 
+    /**
+     * Sets the arrays in the solver.
+     */
+    void setArrays(
+      const peanoclaw::Patch& subgrid,
+      float* h,
+      float* hu,
+      float* hv,
+      float* b
+    );
+
   private:
     peanoclaw::Patch& _patch;
 };

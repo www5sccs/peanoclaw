@@ -21,55 +21,12 @@
 
 tarch::logging::Log peanoclaw::Patch::_log("peanoclaw::Patch");
 
-//int peanoclaw::Patch::linearize(int unknown,
-//    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex) const {
-//  int index = 0;
-////  int stride = 1;
-////  for(int d = DIMENSIONS-1; d >= 0; d--) {
-//  for (int d = 0; d < DIMENSIONS; d++) {
-////    assertion3(subcellIndex(d) >= 0 && subcellIndex(d) < _cellDescription->getSubdivisionFactor()(d),
-////        subcellIndex(d),
-////        _cellDescription->getSubdivisionFactor(),
-////        toString());
-////    index += subcellIndex(d) * stride;
-////    stride *= _cellDescription->getSubdivisionFactor()(d);
-//    index += subcellIndex(d) * _uNewStrideCache[d + 1];
-//  }
-////  index += unknown * stride;
-//  index += unknown * _uNewStrideCache[0];
-//
-//  return index;
-//}
-
-#ifndef PATCH_INLINE_GETTERS_AND_SETTERS
-int peanoclaw::Patch::linearizeWithGhostlayer(
-    int unknown,
-    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex
-) const {
-  int index = 0;
-  int ghostlayerWidth = _cellDescription->getGhostlayerWidth();
-  tarch::la::Vector<DIMENSIONS, double> subdivisionFactor = _cellDescription->getSubdivisionFactor();
-
-  for(int d = 0; d < DIMENSIONS; d++) {
-//  for(int d = DIMENSIONS-1; d >= 0; d--) {
-//    assertion4(subcellIndex(d) >= - ghostlayerWidth && subcellIndex(d) < subdivisionFactor(d) + ghostlayerWidth,
-//      subcellIndex(d),
-//      subdivisionFactor,
-//      ghostlayerWidth,
-//      toString()
-//    );
-//    index += (subcellIndex(d) + ghostlayerWidth) * stride;
-//    stride *= (subdivisionFactor(d) + 2*ghostlayerWidth);
-    index += (subcellIndex(d) + ghostlayerWidth) * _uOldStrideCache[d+1];
-  }
-  index += unknown * _uOldStrideCache[0];
-//  index += unknown * stride;
-  return index;
-}
-#endif
-
 void peanoclaw::Patch::fillCaches() {
+  #ifdef PEANOCLAW_SWE
+  assertionEquals(sizeof(Data), sizeof(float));
+  #else
   assertionEquals(sizeof(Data), sizeof(double));
+  #endif
   tarch::la::Vector<DIMENSIONS, double> subdivisionFactor =
       _cellDescription->getSubdivisionFactor().convertScalar<double>();
 
@@ -431,12 +388,22 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellSize() const {
   return _subcellSize;
 }
 
-double* peanoclaw::Patch::getUOldWithGhostlayerArray() const {
-  return reinterpret_cast<double*>(&(_uNew->at(_accessor._uOldWithGhostlayerArrayIndex)));
+double* peanoclaw::Patch::getUOldWithGhostlayerArray(int unknown) const {
+  int index = _accessor._uOldWithGhostlayerArrayIndex
+      + tarch::la::volume(getSubdivisionFactor() + 2*getGhostlayerWidth()) * unknown;
+  return reinterpret_cast<double*>(&(_uNew->at(index)));
 }
 
-double* peanoclaw::Patch::getParameterWithoutGhostlayerArray() const {
-  return reinterpret_cast<double*>(&(_uNew->at(_accessor._parameterWithoutGhostlayerArrayIndex)));
+double* peanoclaw::Patch::getParameterWithoutGhostlayerArray(int parameter) const {
+  int index = _accessor._parameterWithoutGhostlayerArrayIndex
+      + tarch::la::volume(getSubdivisionFactor()) * parameter;
+  return reinterpret_cast<double*>(&(_uNew->at(index)));
+}
+
+double* peanoclaw::Patch::getParameterWithGhostlayerArray(int parameter) const {
+  int index = _accessor._parameterWithGhostlayerArrayIndex
+      + tarch::la::volume(getSubdivisionFactor() + 2*getGhostlayerWidth()) * parameter;
+  return reinterpret_cast<double*>(&(_uNew->at(index)));
 }
 
 int peanoclaw::Patch::getUIndex() const {
@@ -556,15 +523,15 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
 
 
     //Plot Bathymetry
-//    for (int y = getSubdivisionFactor()(1) + getGhostlayerWidth() - 1; y >= -getGhostlayerWidth(); y--) {
-//      for (int x = -getGhostlayerWidth(); x < getSubdivisionFactor()(0) + getGhostlayerWidth(); x++) {
-//        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-//        assignList(subcellIndex) = x, y;
-//        str << std::setprecision(6) << getValueUOld(subcellIndex, 3) << " ";
-//      }
-//      str << std::endl;
-//    }
-//    str << std::endl;
+    for (int y = getSubdivisionFactor()(1)-1; y >= 0; y--) {
+      for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+        assignList(subcellIndex) = x, y;
+        str << std::setprecision(6) << getAccessor().getParameterWithoutGhostlayer(subcellIndex, 0) << " ";
+      }
+      str << std::endl;
+    }
+    str << std::endl;
 
     #elif Dim3
     //Plot patch
