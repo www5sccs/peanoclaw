@@ -181,10 +181,10 @@ public:
   inline tarch::la::Vector<DIMENSIONS,int> getInitialOffsetForIterator() const;
 };
 
-#if defined(PEANOCLAW_PYCLAW) || defined(PEANOCLAW_FULLSWOF2D)
+#if defined(PEANOCLAW_PYCLAW) || defined(PEANOCLAW_FULLSWOF2D) || defined(PEANOCLAW_SWE)
 #include "peanoclaw/grid/LinearizationZYXQ.h"
-#elif PEANOCLAW_SWE
-#include "peanoclaw/grid/LinearizationQZYX.h"
+#else
+#error No Linearization defined
 #endif
 
 #endif /* PEANOCLAW_GRID_LINEARIZATION_H_ */

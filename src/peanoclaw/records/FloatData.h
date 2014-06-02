@@ -31,7 +31,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   26/05/2014 08:57
+ * @date   02/06/2014 13:19
  */
 class peanoclaw::records::FloatData { 
    
@@ -40,7 +40,7 @@ class peanoclaw::records::FloatData {
       typedef peanoclaw::records::FloatDataPacked Packed;
       
       struct PersistentRecords {
-         double _u;
+         float _u;
          /**
           * Generated
           */
@@ -49,10 +49,10 @@ class peanoclaw::records::FloatData {
          /**
           * Generated
           */
-         PersistentRecords(const double& u);
+         PersistentRecords(const float& u);
          
          
-         inline double getU() const 
+         inline float getU() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -62,7 +62,7 @@ class peanoclaw::records::FloatData {
          
          
          
-         inline void setU(const double& u) 
+         inline void setU(const float& u) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -95,7 +95,7 @@ class peanoclaw::records::FloatData {
       /**
        * Generated
        */
-      FloatData(const double& u);
+      FloatData(const float& u);
       
       /**
        * Generated
@@ -103,7 +103,7 @@ class peanoclaw::records::FloatData {
       ~FloatData();
       
       
-      inline double getU() const 
+      inline float getU() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -113,7 +113,7 @@ class peanoclaw::records::FloatData {
       
       
       
-      inline void setU(const double& u) 
+      inline void setU(const float& u) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -180,14 +180,14 @@ class peanoclaw::records::FloatData {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   26/05/2014 08:57
+          * @date   02/06/2014 13:19
           */
          class peanoclaw::records::FloatDataPacked { 
             
             public:
                
                struct PersistentRecords {
-                  double _u;
+                  float _u;
                   /**
                    * Generated
                    */
@@ -196,10 +196,10 @@ class peanoclaw::records::FloatData {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const double& u);
+                  PersistentRecords(const float& u);
                   
                   
-                  inline double getU() const 
+                  inline float getU() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -209,7 +209,7 @@ class peanoclaw::records::FloatData {
                   
                   
                   
-                  inline void setU(const double& u) 
+                  inline void setU(const float& u) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -238,7 +238,7 @@ class peanoclaw::records::FloatData {
                /**
                 * Generated
                 */
-               FloatDataPacked(const double& u);
+               FloatDataPacked(const float& u);
                
                /**
                 * Generated
@@ -246,7 +246,7 @@ class peanoclaw::records::FloatData {
                ~FloatDataPacked();
                
                
-               inline double getU() const 
+               inline float getU() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
@@ -256,7 +256,7 @@ class peanoclaw::records::FloatData {
                
                
                
-               inline void setU(const double& u) 
+               inline void setU(const float& u) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 

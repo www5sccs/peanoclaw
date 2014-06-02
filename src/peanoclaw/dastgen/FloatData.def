@@ -6,5 +6,5 @@
 Packed-Type: short int;
 
 class peanoclaw::records::FloatData {
-  persistent expose parallelise double u;
+  persistent expose parallelise float u;
 };

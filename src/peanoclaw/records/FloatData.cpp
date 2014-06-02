@@ -5,7 +5,7 @@ peanoclaw::records::FloatData::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::FloatData::PersistentRecords::PersistentRecords(const double& u):
+peanoclaw::records::FloatData::PersistentRecords::PersistentRecords(const float& u):
 _u(u) {
    
 }
@@ -21,7 +21,7 @@ _persistentRecords(persistentRecords._u) {
 }
 
 
-peanoclaw::records::FloatData::FloatData(const double& u):
+peanoclaw::records::FloatData::FloatData(const float& u):
 _persistentRecords(u) {
    
 }
@@ -67,7 +67,7 @@ peanoclaw::records::FloatDataPacked peanoclaw::records::FloatData::convert() con
          
          const int Attributes = 2;
          MPI_Datatype subtypes[Attributes] = {
-            MPI_DOUBLE,		 //u
+            MPI_FLOAT,		 //u
             MPI_UB		 // end/displacement flag
          };
          
@@ -98,7 +98,7 @@ peanoclaw::records::FloatDataPacked peanoclaw::records::FloatData::convert() con
          
          const int Attributes = 2;
          MPI_Datatype subtypes[Attributes] = {
-            MPI_DOUBLE,		 //u
+            MPI_FLOAT,		 //u
             MPI_UB		 // end/displacement flag
          };
          
@@ -355,7 +355,7 @@ peanoclaw::records::FloatDataPacked::PersistentRecords::PersistentRecords() {
 }
 
 
-peanoclaw::records::FloatDataPacked::PersistentRecords::PersistentRecords(const double& u):
+peanoclaw::records::FloatDataPacked::PersistentRecords::PersistentRecords(const float& u):
 _u(u) {
    
 }
@@ -371,7 +371,7 @@ _persistentRecords(persistentRecords._u) {
 }
 
 
-peanoclaw::records::FloatDataPacked::FloatDataPacked(const double& u):
+peanoclaw::records::FloatDataPacked::FloatDataPacked(const float& u):
 _persistentRecords(u) {
    
 }
@@ -417,7 +417,7 @@ peanoclaw::records::FloatData peanoclaw::records::FloatDataPacked::convert() con
          
          const int Attributes = 2;
          MPI_Datatype subtypes[Attributes] = {
-            MPI_DOUBLE,		 //u
+            MPI_FLOAT,		 //u
             MPI_UB		 // end/displacement flag
          };
          
@@ -448,7 +448,7 @@ peanoclaw::records::FloatData peanoclaw::records::FloatDataPacked::convert() con
          
          const int Attributes = 2;
          MPI_Datatype subtypes[Attributes] = {
-            MPI_DOUBLE,		 //u
+            MPI_FLOAT,		 //u
             MPI_UB		 // end/displacement flag
          };
          
