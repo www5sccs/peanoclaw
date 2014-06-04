@@ -523,15 +523,15 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
 
 
     //Plot Bathymetry
-    for (int y = getSubdivisionFactor()(1)-1; y >= 0; y--) {
-      for (int x = 0; x < getSubdivisionFactor()(0); x++) {
-        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-        assignList(subcellIndex) = x, y;
-        str << std::setprecision(6) << getAccessor().getParameterWithoutGhostlayer(subcellIndex, 0) << " ";
-      }
-      str << std::endl;
-    }
-    str << std::endl;
+//    for (int y = getSubdivisionFactor()(1)-1; y >= 0; y--) {
+//      for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+//        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+//        assignList(subcellIndex) = x, y;
+//        str << std::setprecision(6) << getAccessor().getParameterWithoutGhostlayer(subcellIndex, 0) << " ";
+//      }
+//      str << std::endl;
+//    }
+//    str << std::endl;
 
     #elif Dim3
     //Plot patch
