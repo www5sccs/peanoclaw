@@ -186,7 +186,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToOverlapp
         //TODO unterweg dissertation: Es kann sein, dass ein Nachbarsubgitter vom groben Subgitter noch nicht angekommen ist, wenn
         //das Gitter gerade verteilt wurde.
         || subgrid.getAge() < 2
-        || true
+        //|| true
       )
     ) {
       assertion2(virtualSubgrid.isVirtual(), subgrid.toString(), virtualSubgrid.toString());
