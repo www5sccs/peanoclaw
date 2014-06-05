@@ -281,7 +281,15 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
 ) {
   logTraceIn("fillGhostLayersAndUpdateNeighborTimes(int)");
 
-  if(_useDimensionalSplittingExtrapolation) {
+  //TODO unterweg dissertation: Bei einem Vertex der zwischen Subgittern auf verschiedenen Leveln liegt, kann
+  //u.U. nach einer fehlgeschlagenen Extrapolation nicht mehr korrekt befüllt werden, da die virtuellen Subgitter
+  //nicht mehr existieren. Daher muss hier die Extrapolation ausgeschaltet werden.
+  bool vertexAtDomainOrRefinementBoundary = false;
+  for(int i = 0; i < TWO_POWER_D; i++) {
+    vertexAtDomainOrRefinementBoundary |= !_patches[i].isValid();
+  }
+
+  if(_useDimensionalSplittingExtrapolation && !vertexAtDomainOrRefinementBoundary) {
     if(destinationSubgridIndex == -1) {
       for(int i = 0; i < TWO_POWER_D; i++) {
         if(_patches[i].isValid()
