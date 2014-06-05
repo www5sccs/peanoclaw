@@ -26,6 +26,11 @@ namespace peanoclaw {
 class peanoclaw::interSubgridCommunication::ExtrapolationAxis {
 
   private:
+    /**
+	 * Logging device.
+	 */
+	static tarch::logging::Log _log;
+
     const peanoclaw::Patch& _subgrid;
     int          _axis;
     int          _linearSubcellIndex;

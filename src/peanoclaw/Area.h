@@ -33,6 +33,11 @@ class peanoclaw::Area {
   private:
     friend class peanoclaw::tests::PatchTest;
 
+	/**
+	 * Logging device.
+	 */
+	static tarch::logging::Log _log;
+
     static int factorial(int i);
 
     /**

@@ -35,6 +35,12 @@ namespace peanoclaw {
 template<int NumberOfUnknowns>
 class peanoclaw::interSubgridCommunication::DefaultTransferTemplate{
 
+  private:
+    /**
+	 * Logging device.
+	 */
+    static tarch::logging::Log _log;
+
   public:
     void transferGhostlayer(
       const tarch::la::Vector<DIMENSIONS, int>&    size,

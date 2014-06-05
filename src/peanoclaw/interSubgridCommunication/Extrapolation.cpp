@@ -10,6 +10,8 @@
 
 #include "peano/utils/Loop.h"
 
+tarch::logging::Log peanoclaw::interSubgridCommunication::ExtrapolationAxis::_log("eanoclaw::interSubgridCommunication::ExtrapolationAxis");
+
 peanoclaw::interSubgridCommunication::ExtrapolationAxis::ExtrapolationAxis(
   const tarch::la::Vector<DIMENSIONS,int>& subcellIndex,
   const peanoclaw::Patch&                  subgrid,
