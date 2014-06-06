@@ -217,7 +217,6 @@ double peanoclaw::State::getMinimalTimestep() const {
 void peanoclaw::State::setSubgridStatisticsForLastGridIteration (
   peanoclaw::statistics::SubgridStatistics& subgridStatistics
 ) {
-  //_levelStatisticsForLastGridIteration = levelStatistics;
   _subgridStatisticsHistory.push_back(subgridStatistics);
 
   //TODO unterweg debug
@@ -237,6 +236,7 @@ std::list<peanoclaw::statistics::SubgridStatistics> peanoclaw::State::getSubgrid
 }
 
 void peanoclaw::State::plotStatisticsForLastGridIteration() const {
+  assertion(_subgridStatisticsHistory.size() > 0);
   _subgridStatisticsHistory.back().logLevelStatistics("Statistics for last grid iteration");
   _subgridStatisticsHistory.back().logProcessStatistics("Statistics for last grid iteration");
 }
