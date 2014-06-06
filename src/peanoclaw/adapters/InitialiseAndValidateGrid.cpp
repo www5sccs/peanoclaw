@@ -1,9 +1,19 @@
 #include "peanoclaw/adapters/InitialiseAndValidateGrid.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Remesh::communicationSpecification()
+   & peanoclaw::mappings::InitialiseGrid::communicationSpecification()
+   & peanoclaw::mappings::ValidateGrid::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::InitialiseGrid::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::ValidateGrid::touchVertexLastTimeSpecification()
@@ -14,7 +24,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::to
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::InitialiseGrid::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::ValidateGrid::touchVertexFirstTimeSpecification()
@@ -25,7 +35,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::to
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::enterCellSpecification()
    & peanoclaw::mappings::InitialiseGrid::enterCellSpecification()
    & peanoclaw::mappings::ValidateGrid::enterCellSpecification()
@@ -36,7 +46,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::en
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::leaveCellSpecification()
    & peanoclaw::mappings::InitialiseGrid::leaveCellSpecification()
    & peanoclaw::mappings::ValidateGrid::leaveCellSpecification()
@@ -47,7 +57,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::le
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::ascendSpecification()
    & peanoclaw::mappings::InitialiseGrid::ascendSpecification()
    & peanoclaw::mappings::ValidateGrid::ascendSpecification()
@@ -58,7 +68,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::as
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseAndValidateGrid::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::descendSpecification()
    & peanoclaw::mappings::InitialiseGrid::descendSpecification()
    & peanoclaw::mappings::ValidateGrid::descendSpecification()

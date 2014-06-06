@@ -1,9 +1,18 @@
 #include "peanoclaw/adapters/GatherCurrentSolution.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::GatherCurrentSolution::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Remesh::communicationSpecification()
+   & peanoclaw::mappings::GatherCurrentSolution::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::touchVertexLastTimeSpecification()
 
@@ -13,7 +22,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::touchV
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::touchVertexFirstTimeSpecification()
 
@@ -23,7 +32,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::touchV
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::enterCellSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::enterCellSpecification()
 
@@ -33,7 +42,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::enterC
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::leaveCellSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::leaveCellSpecification()
 
@@ -43,7 +52,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::leaveC
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::ascendSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::ascendSpecification()
 
@@ -53,7 +62,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::ascend
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolution::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::descendSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::descendSpecification()
 

@@ -1,9 +1,20 @@
 #include "peanoclaw/adapters/SolveTimestepAndPlotAndValidateGrid.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValidateGrid::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Remesh::communicationSpecification()
+   & peanoclaw::mappings::SolveTimestep::communicationSpecification()
+   & peanoclaw::mappings::Plot::communicationSpecification()
+   & peanoclaw::mappings::ValidateGrid::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValidateGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::SolveTimestep::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::Plot::touchVertexLastTimeSpecification()
@@ -15,7 +26,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValida
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValidateGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::SolveTimestep::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::Plot::touchVertexFirstTimeSpecification()
@@ -27,7 +38,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValida
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValidateGrid::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::enterCellSpecification()
    & peanoclaw::mappings::SolveTimestep::enterCellSpecification()
    & peanoclaw::mappings::Plot::enterCellSpecification()
@@ -39,7 +50,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValida
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValidateGrid::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::leaveCellSpecification()
    & peanoclaw::mappings::SolveTimestep::leaveCellSpecification()
    & peanoclaw::mappings::Plot::leaveCellSpecification()
@@ -51,7 +62,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValida
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValidateGrid::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::ascendSpecification()
    & peanoclaw::mappings::SolveTimestep::ascendSpecification()
    & peanoclaw::mappings::Plot::ascendSpecification()
@@ -63,7 +74,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValida
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestepAndPlotAndValidateGrid::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::descendSpecification()
    & peanoclaw::mappings::SolveTimestep::descendSpecification()
    & peanoclaw::mappings::Plot::descendSpecification()

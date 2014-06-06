@@ -4,14 +4,21 @@
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentVertices.h"
 #include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 
-#include "peano/utils/Loop.h"
-#include "peano/heap/Heap.h"
+
+
+/**
+ * @todo Please tailor the parameters to your mapping's properties.
+ */
+peano::CommunicationSpecification   peanoclaw::mappings::InitialiseGrid::communicationSpecification() {
+  return peano::CommunicationSpecification(peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime);
+}
+
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
 }
 
 
@@ -19,7 +26,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexLa
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
 }
 
 
@@ -27,7 +34,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexFi
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
 }
 
 
@@ -35,7 +42,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
 }
 
 
@@ -43,7 +50,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
 }
 
 
@@ -51,7 +58,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecifi
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
 }
 
 
@@ -311,7 +318,7 @@ void peanoclaw::mappings::InitialiseGrid::prepareCopyToRemoteNode(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-  logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank );
+  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank, x, h, level );
   // @todo Insert your code here
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -323,7 +330,7 @@ void peanoclaw::mappings::InitialiseGrid::prepareCopyToRemoteNode(
   const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
   int                                       level
 ) {
-  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level);
+  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localCell, toRank, cellCentre, cellSize, level );
   // @todo Insert your code here
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -345,8 +352,8 @@ void peanoclaw::mappings::InitialiseGrid::mergeWithRemoteDataDueToForkOrJoin(
   peanoclaw::Cell&  localCell,
   const peanoclaw::Cell&  masterOrWorkerCell,
   int                                       fromRank,
-  const tarch::la::Vector<DIMENSIONS,double>&  x,
-  const tarch::la::Vector<DIMENSIONS,double>&  h,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
   int                                       level
 ) {
   logTraceInWith3Arguments( "mergeWithRemoteDataDueToForkOrJoin(...)", localCell, masterOrWorkerCell, fromRank );
@@ -365,14 +372,15 @@ bool peanoclaw::mappings::InitialiseGrid::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  logTraceOut( "prepareSendToWorker(...)" );
+  // @todo Insert your code here
+  logTraceOutWith1Argument( "prepareSendToWorker(...)", true );
   return true;
 }
 
 void peanoclaw::mappings::InitialiseGrid::prepareSendToMaster(
   peanoclaw::Cell&                       localCell,
   peanoclaw::Vertex *                    vertices,
-  const peano::grid::VertexEnumerator&       verticesEnumerator,
+  const peano::grid::VertexEnumerator&       verticesEnumerator, 
   const peanoclaw::Vertex * const        coarseGridVertices,
   const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
   const peanoclaw::Cell&                 coarseGridCell,
@@ -417,7 +425,7 @@ void peanoclaw::mappings::InitialiseGrid::receiveDataFromMaster(
   peanoclaw::Cell&                        workersCoarseGridCell,
   const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
-  logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), receivedVerticesEnumerator.toString() );
+  logTraceIn( "receiveDataFromMaster(...)" );
   // @todo Insert your code here
   logTraceOut( "receiveDataFromMaster(...)" );
 }

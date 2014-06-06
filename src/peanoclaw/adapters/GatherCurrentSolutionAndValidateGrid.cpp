@@ -1,9 +1,19 @@
 #include "peanoclaw/adapters/GatherCurrentSolutionAndValidateGrid.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValidateGrid::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Remesh::communicationSpecification()
+   & peanoclaw::mappings::GatherCurrentSolution::communicationSpecification()
+   & peanoclaw::mappings::ValidateGrid::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValidateGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::ValidateGrid::touchVertexLastTimeSpecification()
@@ -14,7 +24,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValid
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValidateGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::ValidateGrid::touchVertexFirstTimeSpecification()
@@ -25,7 +35,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValid
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValidateGrid::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::enterCellSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::enterCellSpecification()
    & peanoclaw::mappings::ValidateGrid::enterCellSpecification()
@@ -36,7 +46,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValid
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValidateGrid::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::leaveCellSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::leaveCellSpecification()
    & peanoclaw::mappings::ValidateGrid::leaveCellSpecification()
@@ -47,7 +57,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValid
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValidateGrid::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::ascendSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::ascendSpecification()
    & peanoclaw::mappings::ValidateGrid::ascendSpecification()
@@ -58,7 +68,7 @@ peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValid
 
 
 peano::MappingSpecification   peanoclaw::adapters::GatherCurrentSolutionAndValidateGrid::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::descendSpecification()
    & peanoclaw::mappings::GatherCurrentSolution::descendSpecification()
    & peanoclaw::mappings::ValidateGrid::descendSpecification()

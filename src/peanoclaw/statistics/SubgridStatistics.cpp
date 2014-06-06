@@ -28,10 +28,8 @@ bool peanoclaw::statistics::smaller(
 void peanoclaw::statistics::SubgridStatistics::initializeLevelAndProcessStatistics() {
 #if !defined(SharedTBB)
   _levelStatisticsIndex = LevelStatisticsHeap::getInstance().createData();
-  //_levelStatistics = &LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
 
   _processStatisticsIndex = ProcessStatisticsHeap::getInstance().createData();
-  //_processStatistics = &ProcessStatisticsHeap::getInstance().getData(_processStatisticsIndex);
   std::vector<ProcessStatisticsEntry>& processStatistics = ProcessStatisticsHeap::getInstance().getData(_processStatisticsIndex);
 
   ProcessStatisticsEntry processStatisticsEntry;
@@ -42,6 +40,9 @@ void peanoclaw::statistics::SubgridStatistics::initializeLevelAndProcessStatisti
   #endif
   processStatisticsEntry.setNumberOfCellUpdates(0);
   processStatistics.push_back(processStatisticsEntry);
+
+  //TODO unterweg debug
+  std::cout << "Initialized subgrid statistics levelStatisticsIndex=" << _levelStatisticsIndex << ", _processStatisticsIndex=" << _processStatisticsIndex << std::endl;
 #endif
 }
 
@@ -127,9 +128,7 @@ int peanoclaw::statistics::SubgridStatistics::estimateRemainingIterationsUntilGl
 
 void peanoclaw::statistics::SubgridStatistics::copy(const SubgridStatistics& other) {
   _levelStatisticsIndex = other._levelStatisticsIndex;
-  //_levelStatistics = other._levelStatistics;
   _processStatisticsIndex = other._processStatisticsIndex;
-  //_processStatistics = other._processStatistics;
   _minimalPatchIndex = other._minimalPatchIndex;
   _minimalPatchParentIndex = other._minimalPatchParentIndex;
   _minimalPatchTime = other._minimalPatchTime;
@@ -149,9 +148,7 @@ void peanoclaw::statistics::SubgridStatistics::copy(const SubgridStatistics& oth
 
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics()
 : _levelStatisticsIndex(-1),
-  //_levelStatistics(0),
   _processStatisticsIndex(-1),
-  //_processStatistics(0),
   _minimalPatchIndex(-1),
   _minimalPatchParentIndex(-1),
   _minimalPatchTime(std::numeric_limits<double>::max()),
@@ -202,9 +199,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(const peanoclaw::Sta
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
   const std::vector<LevelStatistics>& otherLevelStatistics
 ) : _levelStatisticsIndex(-1),
-    //_levelStatistics(0),
     _processStatisticsIndex(-1),
-    //_processStatistics(0),
     _minimalPatchIndex(-1),
     _minimalPatchParentIndex(-1),
     _minimalPatchTime(std::numeric_limits<double>::max()),
@@ -235,9 +230,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
   int workerRank
 ) : _levelStatisticsIndex(-1),
-    //_levelStatistics(0),
     _processStatisticsIndex(-1),
-    //_processStatistics(0),
     _minimalPatchIndex(-1),
     _minimalPatchParentIndex(-1),
     _minimalPatchTime(std::numeric_limits<double>::max()),
@@ -256,18 +249,14 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
   _processStatisticsIndex = ProcessStatisticsHeap::getInstance().createData();
 #if !defined(SharedTBB)
   LevelStatisticsHeap::getInstance().receiveData(_levelStatisticsIndex, workerRank, 0, 0, peano::heap::MasterWorkerCommunication);
-  //_levelStatistics = &LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
 
   ProcessStatisticsHeap::getInstance().receiveData(_processStatisticsIndex, workerRank, 0, 0, peano::heap::MasterWorkerCommunication);
-  //_processStatistics = &ProcessStatisticsHeap::getInstance().getData(_processStatisticsIndex);
 #endif
 }
 
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics(SubgridStatistics& other)
 : _levelStatisticsIndex(other._levelStatisticsIndex),
-  //_levelStatistics(other._levelStatistics),
   _processStatisticsIndex(other._processStatisticsIndex),
-  //_processStatistics(other._processStatistics),
   _minimalPatchIndex(other._minimalPatchIndex),
   _minimalPatchParentIndex(other._minimalPatchParentIndex),
   _minimalPatchTime(other._minimalPatchTime),
@@ -288,16 +277,12 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(SubgridStatistics& o
 //  std::cout << "copying process index=" << _processStatisticsIndex << " size=" << _processStatistics->size() << std::endl;
 
   other._levelStatisticsIndex = -1;
-  //other._levelStatistics = 0;
   other._processStatisticsIndex = -1;
-  //other._processStatistics = 0;
 }
 
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics(const SubgridStatistics& other)
 : _levelStatisticsIndex(other._levelStatisticsIndex),
-  //_levelStatistics(other._levelStatistics),
   _processStatisticsIndex(other._processStatisticsIndex),
-  //_processStatistics(other._processStatistics),
   _minimalPatchIndex(other._minimalPatchIndex),
   _minimalPatchParentIndex(other._minimalPatchParentIndex),
   _minimalPatchTime(other._minimalPatchTime),
@@ -331,9 +316,7 @@ peanoclaw::statistics::SubgridStatistics& peanoclaw::statistics::SubgridStatisti
   copy(other);
 
   other._levelStatisticsIndex = -1;
-  //other._levelStatistics = 0;
   other._processStatisticsIndex = -1;
-  //other._processStatistics = 0;
 
   return *this;
 }
@@ -364,16 +347,12 @@ peanoclaw::statistics::SubgridStatistics::~SubgridStatistics() {
 //  std::cout << "delete   level index=" << _levelStatisticsIndex << " size=" << (_levelStatistics != 0 ? _levelStatistics->size() : -1) << std::endl;
 //  std::cout << "delete process index=" << _processStatisticsIndex << " size=" << (_processStatistics != 0 ? _processStatistics->size() : -1) << std::endl;
 
-  //if(_levelStatistics != 0) {
   if(_levelStatisticsIndex != -1) {
     LevelStatisticsHeap::getInstance().deleteData(_levelStatisticsIndex);
-//    _levelStatistics = 0;
   }
 
-  //if(_processStatistics != 0) {
   if(_processStatisticsIndex != -1) {
     ProcessStatisticsHeap::getInstance().deleteData(_processStatisticsIndex);
-//    _processStatistics = 0;
   }
 #endif
 }

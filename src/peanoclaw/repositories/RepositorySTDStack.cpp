@@ -180,54 +180,74 @@ const peanoclaw::State& peanoclaw::repositories::RepositorySTDStack::getState() 
 }
 
 
-void peanoclaw::repositories::RepositorySTDStack::iterate() {
+void peanoclaw::repositories::RepositorySTDStack::iterate(int numberOfIterations) {
   tarch::timing::Watch watch( "peanoclaw::repositories::RepositorySTDStack", "iterate(bool)", false);
   
   #ifdef Parallel
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    _repositoryState.setNumberOfIterations(numberOfIterations);
     tarch::parallel::NodePool::getInstance().broadcastToWorkingNodes(
       _repositoryState,
       peano::parallel::SendReceiveBufferPool::getInstance().getIterationManagementTag()
     );
   }
-  #endif
-  
-  peano::datatraversal::autotuning::Oracle::getInstance().switchToOracle(_repositoryState.getAction());
-  #ifdef Parallel
-  peano::parallel::loadbalancing::Oracle::getInstance().switchToOracle(_repositoryState.getAction());
-  #endif
-  
-  
-  switch ( _repositoryState.getAction()) {
-    case peanoclaw::records::RepositoryState::UseAdapterInitialiseGrid: watch.startTimer(); _gridWithInitialiseGrid.iterate(); watch.stopTimer(); _measureInitialiseGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterInitialiseAndValidateGrid: watch.startTimer(); _gridWithInitialiseAndValidateGrid.iterate(); watch.stopTimer(); _measureInitialiseAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterPlot: watch.startTimer(); _gridWithPlot.iterate(); watch.stopTimer(); _measurePlotCPUTime.setValue( watch.getCPUTime() ); _measurePlotCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterPlotAndValidateGrid: watch.startTimer(); _gridWithPlotAndValidateGrid.iterate(); watch.stopTimer(); _measurePlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measurePlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterRemesh: watch.startTimer(); _gridWithRemesh.iterate(); watch.stopTimer(); _measureRemeshCPUTime.setValue( watch.getCPUTime() ); _measureRemeshCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestep: watch.startTimer(); _gridWithSolveTimestep.iterate(); watch.stopTimer(); _measureSolveTimestepCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndValidateGrid: watch.startTimer(); _gridWithSolveTimestepAndValidateGrid.iterate(); watch.stopTimer(); _measureSolveTimestepAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndPlot: watch.startTimer(); _gridWithSolveTimestepAndPlot.iterate(); watch.stopTimer(); _measureSolveTimestepAndPlotCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndPlotCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndPlotAndValidateGrid: watch.startTimer(); _gridWithSolveTimestepAndPlotAndValidateGrid.iterate(); watch.stopTimer(); _measureSolveTimestepAndPlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndPlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterGatherCurrentSolution: watch.startTimer(); _gridWithGatherCurrentSolution.iterate(); watch.stopTimer(); _measureGatherCurrentSolutionCPUTime.setValue( watch.getCPUTime() ); _measureGatherCurrentSolutionCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterGatherCurrentSolutionAndValidateGrid: watch.startTimer(); _gridWithGatherCurrentSolutionAndValidateGrid.iterate(); watch.stopTimer(); _measureGatherCurrentSolutionAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureGatherCurrentSolutionAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
-    case peanoclaw::records::RepositoryState::UseAdapterCleanup: watch.startTimer(); _gridWithCleanup.iterate(); watch.stopTimer(); _measureCleanupCPUTime.setValue( watch.getCPUTime() ); _measureCleanupCalendarTime.setValue( watch.getCalendarTime() ); break;
-
-    case peanoclaw::records::RepositoryState::Terminate:
-      assertionMsg( false, "this branch/state should never be reached" ); 
-      break;
-    case peanoclaw::records::RepositoryState::NumberOfAdapters:
-      assertionMsg( false, "this branch/state should never be reached" ); 
-      break;
-    case peanoclaw::records::RepositoryState::RunOnAllNodes:
-      assertionMsg( false, "this branch/state should never be reached" ); 
-      break;
-    case peanoclaw::records::RepositoryState::ReadCheckpoint:
-      assertionMsg( false, "not implemented yet" );
-      break;
-    case peanoclaw::records::RepositoryState::WriteCheckpoint:
-      assertionMsg( false, "not implemented yet" );
-      break;
+  else {
+    assertionEquals( numberOfIterations, 1 );
+    numberOfIterations = _repositoryState.getNumberOfIterations();
   }
+
+  if ( numberOfIterations > 1 && ( peano::parallel::loadbalancing::Oracle::getInstance().isLoadBalancingActivated() || _solverState.isInvolvedInJoinOrFork() )) {
+    logWarning( "iterate()", "iterate invoked for multiple traversals though load balancing is switched on or grid is not balanced globally. Use activateLoadBalancing(false) to deactivate the load balancing before" );
+  }
+
+  peano::datatraversal::autotuning::Oracle::getInstance().switchToOracle(_repositoryState.getAction());
+
+  peano::parallel::loadbalancing::Oracle::getInstance().switchToOracle(_repositoryState.getAction());
+  peano::parallel::loadbalancing::Oracle::getInstance().activateLoadBalancing(_repositoryState.getNumberOfIterations()==1);  
+  
+  _solverState.currentlyRunsMultipleIterations(_repositoryState.getNumberOfIterations()>1);
+  #else
+  peano::datatraversal::autotuning::Oracle::getInstance().switchToOracle(_repositoryState.getAction());
+  #endif
+  
+  for (int i=0; i<numberOfIterations; i++) {
+    switch ( _repositoryState.getAction()) {
+      case peanoclaw::records::RepositoryState::UseAdapterInitialiseGrid: watch.startTimer(); _gridWithInitialiseGrid.iterate(); watch.stopTimer(); _measureInitialiseGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterInitialiseAndValidateGrid: watch.startTimer(); _gridWithInitialiseAndValidateGrid.iterate(); watch.stopTimer(); _measureInitialiseAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureInitialiseAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterPlot: watch.startTimer(); _gridWithPlot.iterate(); watch.stopTimer(); _measurePlotCPUTime.setValue( watch.getCPUTime() ); _measurePlotCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterPlotAndValidateGrid: watch.startTimer(); _gridWithPlotAndValidateGrid.iterate(); watch.stopTimer(); _measurePlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measurePlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterRemesh: watch.startTimer(); _gridWithRemesh.iterate(); watch.stopTimer(); _measureRemeshCPUTime.setValue( watch.getCPUTime() ); _measureRemeshCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterSolveTimestep: watch.startTimer(); _gridWithSolveTimestep.iterate(); watch.stopTimer(); _measureSolveTimestepCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndValidateGrid: watch.startTimer(); _gridWithSolveTimestepAndValidateGrid.iterate(); watch.stopTimer(); _measureSolveTimestepAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndPlot: watch.startTimer(); _gridWithSolveTimestepAndPlot.iterate(); watch.stopTimer(); _measureSolveTimestepAndPlotCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndPlotCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterSolveTimestepAndPlotAndValidateGrid: watch.startTimer(); _gridWithSolveTimestepAndPlotAndValidateGrid.iterate(); watch.stopTimer(); _measureSolveTimestepAndPlotAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureSolveTimestepAndPlotAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterGatherCurrentSolution: watch.startTimer(); _gridWithGatherCurrentSolution.iterate(); watch.stopTimer(); _measureGatherCurrentSolutionCPUTime.setValue( watch.getCPUTime() ); _measureGatherCurrentSolutionCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterGatherCurrentSolutionAndValidateGrid: watch.startTimer(); _gridWithGatherCurrentSolutionAndValidateGrid.iterate(); watch.stopTimer(); _measureGatherCurrentSolutionAndValidateGridCPUTime.setValue( watch.getCPUTime() ); _measureGatherCurrentSolutionAndValidateGridCalendarTime.setValue( watch.getCalendarTime() ); break;
+      case peanoclaw::records::RepositoryState::UseAdapterCleanup: watch.startTimer(); _gridWithCleanup.iterate(); watch.stopTimer(); _measureCleanupCPUTime.setValue( watch.getCPUTime() ); _measureCleanupCalendarTime.setValue( watch.getCalendarTime() ); break;
+
+      case peanoclaw::records::RepositoryState::Terminate:
+        assertionMsg( false, "this branch/state should never be reached" ); 
+        break;
+      case peanoclaw::records::RepositoryState::NumberOfAdapters:
+        assertionMsg( false, "this branch/state should never be reached" ); 
+        break;
+      case peanoclaw::records::RepositoryState::RunOnAllNodes:
+        assertionMsg( false, "this branch/state should never be reached" ); 
+        break;
+      case peanoclaw::records::RepositoryState::ReadCheckpoint:
+        assertionMsg( false, "not implemented yet" );
+        break;
+      case peanoclaw::records::RepositoryState::WriteCheckpoint:
+        assertionMsg( false, "not implemented yet" );
+        break;
+    }
+  }
+  
+  #ifdef Parallel
+  if (_solverState.isJoiningWithMaster()) {
+    _repositoryState.setAction( peanoclaw::records::RepositoryState::Terminate );
+  }
+  #endif
 }
 
  void peanoclaw::repositories::RepositorySTDStack::switchToInitialiseGrid() { _repositoryState.setAction(peanoclaw::records::RepositoryState::UseAdapterInitialiseGrid); }

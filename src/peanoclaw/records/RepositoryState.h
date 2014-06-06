@@ -31,7 +31,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   02/06/2014 13:19
+ * @date   04/06/2014 13:50
  */
 class peanoclaw::records::RepositoryState { 
    
@@ -45,6 +45,7 @@ class peanoclaw::records::RepositoryState {
       
       struct PersistentRecords {
          Action _action;
+         int _numberOfIterations;
          /**
           * Generated
           */
@@ -53,7 +54,7 @@ class peanoclaw::records::RepositoryState {
          /**
           * Generated
           */
-         PersistentRecords(const Action& action);
+         PersistentRecords(const Action& action, const int& numberOfIterations);
          
          
          inline Action getAction() const 
@@ -72,6 +73,26 @@ class peanoclaw::records::RepositoryState {
  #endif 
  {
             _action = action;
+         }
+         
+         
+         
+         inline int getNumberOfIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _numberOfIterations;
+         }
+         
+         
+         
+         inline void setNumberOfIterations(const int& numberOfIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _numberOfIterations = numberOfIterations;
          }
          
          
@@ -95,7 +116,7 @@ class peanoclaw::records::RepositoryState {
       /**
        * Generated
        */
-      RepositoryState(const Action& action);
+      RepositoryState(const Action& action, const int& numberOfIterations);
       
       /**
        * Generated
@@ -119,6 +140,26 @@ class peanoclaw::records::RepositoryState {
  #endif 
  {
          _persistentRecords._action = action;
+      }
+      
+      
+      
+      inline int getNumberOfIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._numberOfIterations;
+      }
+      
+      
+      
+      inline void setNumberOfIterations(const int& numberOfIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._numberOfIterations = numberOfIterations;
       }
       
       
@@ -204,7 +245,7 @@ class peanoclaw::records::RepositoryState {
     *
     * 		   build date: 09-02-2014 14:40
     *
-    * @date   02/06/2014 13:19
+    * @date   04/06/2014 13:50
     */
    class peanoclaw::records::RepositoryStatePacked { 
       
@@ -214,6 +255,7 @@ class peanoclaw::records::RepositoryState {
          
          struct PersistentRecords {
             Action _action;
+            int _numberOfIterations;
             /**
              * Generated
              */
@@ -222,7 +264,7 @@ class peanoclaw::records::RepositoryState {
             /**
              * Generated
              */
-            PersistentRecords(const Action& action);
+            PersistentRecords(const Action& action, const int& numberOfIterations);
             
             
             inline Action getAction() const 
@@ -241,6 +283,26 @@ class peanoclaw::records::RepositoryState {
  #endif 
  {
                _action = action;
+            }
+            
+            
+            
+            inline int getNumberOfIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               return _numberOfIterations;
+            }
+            
+            
+            
+            inline void setNumberOfIterations(const int& numberOfIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+               _numberOfIterations = numberOfIterations;
             }
             
             
@@ -264,7 +326,7 @@ class peanoclaw::records::RepositoryState {
          /**
           * Generated
           */
-         RepositoryStatePacked(const Action& action);
+         RepositoryStatePacked(const Action& action, const int& numberOfIterations);
          
          /**
           * Generated
@@ -288,6 +350,26 @@ class peanoclaw::records::RepositoryState {
  #endif 
  {
             _persistentRecords._action = action;
+         }
+         
+         
+         
+         inline int getNumberOfIterations() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _persistentRecords._numberOfIterations;
+         }
+         
+         
+         
+         inline void setNumberOfIterations(const int& numberOfIterations) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _persistentRecords._numberOfIterations = numberOfIterations;
          }
          
          

@@ -1,9 +1,18 @@
 #include "peanoclaw/adapters/SolveTimestep.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::SolveTimestep::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Remesh::communicationSpecification()
+   & peanoclaw::mappings::SolveTimestep::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::SolveTimestep::touchVertexLastTimeSpecification()
 
@@ -13,7 +22,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::touchVertexLas
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::SolveTimestep::touchVertexFirstTimeSpecification()
 
@@ -23,7 +32,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::touchVertexFir
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::enterCellSpecification()
    & peanoclaw::mappings::SolveTimestep::enterCellSpecification()
 
@@ -33,7 +42,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::enterCellSpeci
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::leaveCellSpecification()
    & peanoclaw::mappings::SolveTimestep::leaveCellSpecification()
 
@@ -43,7 +52,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::leaveCellSpeci
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::ascendSpecification()
    & peanoclaw::mappings::SolveTimestep::ascendSpecification()
 
@@ -53,7 +62,7 @@ peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::ascendSpecific
 
 
 peano::MappingSpecification   peanoclaw::adapters::SolveTimestep::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::descendSpecification()
    & peanoclaw::mappings::SolveTimestep::descendSpecification()
 

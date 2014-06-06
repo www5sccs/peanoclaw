@@ -127,7 +127,7 @@ class peanoclaw::repositories::RepositorySTDStack: public peanoclaw::repositorie
     virtual peanoclaw::State& getState();
     virtual const peanoclaw::State& getState() const;
 	
-    virtual void iterate();
+    virtual void iterate(int numberOfIterations=1);
 
     virtual void writeCheckpoint(peano::grid::Checkpoint<peanoclaw::Vertex, peanoclaw::Cell> * const checkpoint); 
     virtual void readCheckpoint( peano::grid::Checkpoint<peanoclaw::Vertex, peanoclaw::Cell> const * const checkpoint );

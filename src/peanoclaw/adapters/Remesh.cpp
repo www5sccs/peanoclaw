@@ -1,9 +1,17 @@
 #include "peanoclaw/adapters/Remesh.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::Remesh::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Remesh::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::Remesh::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification()
 
 
@@ -12,7 +20,7 @@ peano::MappingSpecification   peanoclaw::adapters::Remesh::touchVertexLastTimeSp
 
 
 peano::MappingSpecification   peanoclaw::adapters::Remesh::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification()
 
 
@@ -21,7 +29,7 @@ peano::MappingSpecification   peanoclaw::adapters::Remesh::touchVertexFirstTimeS
 
 
 peano::MappingSpecification   peanoclaw::adapters::Remesh::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::enterCellSpecification()
 
 
@@ -30,7 +38,7 @@ peano::MappingSpecification   peanoclaw::adapters::Remesh::enterCellSpecificatio
 
 
 peano::MappingSpecification   peanoclaw::adapters::Remesh::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::leaveCellSpecification()
 
 
@@ -39,7 +47,7 @@ peano::MappingSpecification   peanoclaw::adapters::Remesh::leaveCellSpecificatio
 
 
 peano::MappingSpecification   peanoclaw::adapters::Remesh::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::ascendSpecification()
 
 
@@ -48,7 +56,7 @@ peano::MappingSpecification   peanoclaw::adapters::Remesh::ascendSpecification()
 
 
 peano::MappingSpecification   peanoclaw::adapters::Remesh::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::descendSpecification()
 
 

@@ -3,12 +3,19 @@
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/PatchPlotter.h"
 
+/**
+ * @todo Please tailor the parameters to your mapping's properties.
+ */
+peano::CommunicationSpecification   peanoclaw::mappings::Plot::communicationSpecification() {
+  return peano::CommunicationSpecification(peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime);
+}
+
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
 }
 
 
@@ -16,7 +23,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexLastTimeSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
 }
 
 
@@ -24,7 +31,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexFirstTimeSpe
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
 }
 
 
@@ -32,7 +39,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::enterCellSpecification(
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
 }
 
 
@@ -40,7 +47,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::leaveCellSpecification(
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
 }
 
 
@@ -48,7 +55,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::ascendSpecification() {
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
 }
 
 
@@ -65,7 +72,7 @@ void peanoclaw::mappings::Plot::plotFile(int plotNumber) {
   _vtkWriter.writeToFile( snapshotFileName.str() );
 }
 
-peanoclaw::mappings::Plot::Plot() : _vtkWriter(14), _nextPlotNumber(0) {
+peanoclaw::mappings::Plot::Plot() {
   logTraceIn( "Plot()" );
   // @todo Insert your code here
   logTraceOut( "Plot()" );
@@ -234,7 +241,7 @@ void peanoclaw::mappings::Plot::prepareCopyToRemoteNode(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-  logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank );
+  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank, x, h, level );
   // @todo Insert your code here
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -268,8 +275,8 @@ void peanoclaw::mappings::Plot::mergeWithRemoteDataDueToForkOrJoin(
   peanoclaw::Cell&  localCell,
   const peanoclaw::Cell&  masterOrWorkerCell,
   int                                       fromRank,
-  const tarch::la::Vector<DIMENSIONS,double>&  x,
-  const tarch::la::Vector<DIMENSIONS,double>&  h,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
   int                                       level
 ) {
   logTraceInWith3Arguments( "mergeWithRemoteDataDueToForkOrJoin(...)", localCell, masterOrWorkerCell, fromRank );
@@ -288,14 +295,15 @@ bool peanoclaw::mappings::Plot::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  logTraceOut( "prepareSendToWorker(...)" );
+  // @todo Insert your code here
+  logTraceOutWith1Argument( "prepareSendToWorker(...)", true );
   return true;
 }
 
 void peanoclaw::mappings::Plot::prepareSendToMaster(
   peanoclaw::Cell&                       localCell,
   peanoclaw::Vertex *                    vertices,
-  const peano::grid::VertexEnumerator&       verticesEnumerator,
+  const peano::grid::VertexEnumerator&       verticesEnumerator, 
   const peanoclaw::Vertex * const        coarseGridVertices,
   const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
   const peanoclaw::Cell&                 coarseGridCell,
@@ -340,7 +348,7 @@ void peanoclaw::mappings::Plot::receiveDataFromMaster(
   peanoclaw::Cell&                        workersCoarseGridCell,
   const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
-  logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), receivedVerticesEnumerator.toString() );
+  logTraceIn( "receiveDataFromMaster(...)" );
   // @todo Insert your code here
   logTraceOut( "receiveDataFromMaster(...)" );
 }

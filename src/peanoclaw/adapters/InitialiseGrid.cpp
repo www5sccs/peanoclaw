@@ -1,9 +1,18 @@
 #include "peanoclaw/adapters/InitialiseGrid.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::InitialiseGrid::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Remesh::communicationSpecification()
+   & peanoclaw::mappings::InitialiseGrid::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::InitialiseGrid::touchVertexLastTimeSpecification()
 
@@ -13,7 +22,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::touchVertexLa
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::InitialiseGrid::touchVertexFirstTimeSpecification()
 
@@ -23,7 +32,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::touchVertexFi
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::enterCellSpecification()
    & peanoclaw::mappings::InitialiseGrid::enterCellSpecification()
 
@@ -33,7 +42,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::enterCellSpec
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::leaveCellSpecification()
    & peanoclaw::mappings::InitialiseGrid::leaveCellSpecification()
 
@@ -43,7 +52,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::leaveCellSpec
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::ascendSpecification()
    & peanoclaw::mappings::InitialiseGrid::ascendSpecification()
 
@@ -53,7 +62,7 @@ peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::ascendSpecifi
 
 
 peano::MappingSpecification   peanoclaw::adapters::InitialiseGrid::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::descendSpecification()
    & peanoclaw::mappings::InitialiseGrid::descendSpecification()
 

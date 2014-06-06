@@ -9,6 +9,7 @@
 
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/MappingSpecification.h"
+#include "peano/CommunicationSpecification.h"
 
 #include "tarch/multicore/MulticoreDefinitions.h"
 
@@ -43,12 +44,13 @@ class peanoclaw::adapters::GatherCurrentSolution {
 
 
   public:
-    static peano::MappingSpecification   touchVertexLastTimeSpecification();
-    static peano::MappingSpecification   touchVertexFirstTimeSpecification();
-    static peano::MappingSpecification   enterCellSpecification();
-    static peano::MappingSpecification   leaveCellSpecification();
-    static peano::MappingSpecification   ascendSpecification();
-    static peano::MappingSpecification   descendSpecification();
+    static peano::MappingSpecification         touchVertexLastTimeSpecification();
+    static peano::MappingSpecification         touchVertexFirstTimeSpecification();
+    static peano::MappingSpecification         enterCellSpecification();
+    static peano::MappingSpecification         leaveCellSpecification();
+    static peano::MappingSpecification         ascendSpecification();
+    static peano::MappingSpecification         descendSpecification();
+    static peano::CommunicationSpecification   communicationSpecification();
 
     GatherCurrentSolution();
 

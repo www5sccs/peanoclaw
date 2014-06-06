@@ -33,7 +33,7 @@ class peanoclaw::repositories::Repository {
     /**
      * Iterate with current active event handle.
      */
-    virtual void iterate() = 0;
+    virtual void iterate(int numberOfIterations=1) = 0;
 
     virtual peanoclaw::State& getState() = 0;
     virtual const peanoclaw::State& getState() const = 0;

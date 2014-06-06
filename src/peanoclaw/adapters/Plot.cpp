@@ -1,9 +1,18 @@
 #include "peanoclaw/adapters/Plot.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::Plot::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Remesh::communicationSpecification()
+   & peanoclaw::mappings::Plot::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::Plot::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification()
    & peanoclaw::mappings::Plot::touchVertexLastTimeSpecification()
 
@@ -13,7 +22,7 @@ peano::MappingSpecification   peanoclaw::adapters::Plot::touchVertexLastTimeSpec
 
 
 peano::MappingSpecification   peanoclaw::adapters::Plot::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification()
    & peanoclaw::mappings::Plot::touchVertexFirstTimeSpecification()
 
@@ -23,7 +32,7 @@ peano::MappingSpecification   peanoclaw::adapters::Plot::touchVertexFirstTimeSpe
 
 
 peano::MappingSpecification   peanoclaw::adapters::Plot::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::enterCellSpecification()
    & peanoclaw::mappings::Plot::enterCellSpecification()
 
@@ -33,7 +42,7 @@ peano::MappingSpecification   peanoclaw::adapters::Plot::enterCellSpecification(
 
 
 peano::MappingSpecification   peanoclaw::adapters::Plot::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::leaveCellSpecification()
    & peanoclaw::mappings::Plot::leaveCellSpecification()
 
@@ -43,7 +52,7 @@ peano::MappingSpecification   peanoclaw::adapters::Plot::leaveCellSpecification(
 
 
 peano::MappingSpecification   peanoclaw::adapters::Plot::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::ascendSpecification()
    & peanoclaw::mappings::Plot::ascendSpecification()
 
@@ -53,7 +62,7 @@ peano::MappingSpecification   peanoclaw::adapters::Plot::ascendSpecification() {
 
 
 peano::MappingSpecification   peanoclaw::adapters::Plot::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Remesh::descendSpecification()
    & peanoclaw::mappings::Plot::descendSpecification()
 

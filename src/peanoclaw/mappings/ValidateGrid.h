@@ -10,6 +10,7 @@
 
 #include "peano/grid/VertexEnumerator.h"
 #include "peano/MappingSpecification.h"
+#include "peano/CommunicationSpecification.h"
 
 #include "tarch/multicore/MulticoreDefinitions.h"
 
@@ -30,6 +31,7 @@ namespace peanoclaw {
     class ValidateGrid;
   }
 }
+
 
 /**
  * This is a mapping from the spacetree traversal events to your user-defined activities.
@@ -70,6 +72,8 @@ class peanoclaw::mappings::ValidateGrid {
     static peano::MappingSpecification   leaveCellSpecification();
     static peano::MappingSpecification   ascendSpecification();
     static peano::MappingSpecification   descendSpecification();
+
+    static peano::CommunicationSpecification   communicationSpecification();
 
 
     /**
@@ -610,7 +614,7 @@ class peanoclaw::mappings::ValidateGrid {
 
 
     /**
-     * Merge vertex with the incoming vertex from a neighbouring computation node.
+     * Prepare a vertex that is sent to the neighbour
      * 
      * When Peano is running in parallel the data exchange is done vertex-wise 
      * between two grid iterations. Thus, when the touchVertexLastTime event
@@ -716,14 +720,27 @@ class peanoclaw::mappings::ValidateGrid {
 
 
     /**
-     * Perpare startup send to worker
+     * Prepare startup send to worker
      *
      * This operation is called always when we send data to a worker. It is not 
      * called when we are right in a join or fork. The operation is kind of the 
      * replacement of enterCell() on the master, i.e. called for this one instead 
      * of.
      *
+     * !!! Reduction
+     *
+     * With the result, you can control whether the worker shall send back its 
+     * data from the master rank or not. In accordance, prepareSendToMaster() and 
+     * corresponding receive are then not called if reduction is switched off.  
+     * However, the result is only a recommendation: On the one hand, the 
+     * results of all the active mappings is combined. If one of them requires 
+     * reduction, Peano does reduce data to the master. On the other hand, Peano 
+     * itself might decide that it reduces nevertheless. The latter case 
+     * happens if the master decides that load balancing should be made. 
+     *
+     *
      * @see peano::kernel::spacetreegrid::nodes::Node::updateCellsParallelStateAfterLoad()
+     * @return Whether this node needs to send back data to its master.
      */
     bool prepareSendToWorker(
       peanoclaw::Cell&                       fineGridCell,
@@ -740,7 +757,8 @@ class peanoclaw::mappings::ValidateGrid {
     /**
      * Merge data from the worker into the master records. This operation is 
      * called on the master, i.e. the const arguments are received copies from 
-     * the worker.
+     * the worker. It is invoked only if reduction along the spacetree is 
+     * switched on.
      *
      * !!! Heap data
      *
@@ -750,6 +768,11 @@ class peanoclaw::mappings::ValidateGrid {
      * remote ranks, i.e. the pointers are invalid though seem to be set.
      * Receive heap data instead separately without taking the pointers in 
      * the arguments into account.      
+     *
+     * @param workerGridCell      Valid object iff data reduction is switched on. See State::reduceDataToMaster().
+     * @param workerGridVertices  Valid object iff data reduction is switched on. See State::reduceDataToMaster().
+     * @param workerEnumerator    Valid object iff data reduction is switched on. See State::reduceDataToMaster().
+     * @param workerState         Valid object iff data reduction is switched on. See State::reduceDataToMaster().
      */
     void mergeWithMaster(
       const peanoclaw::Cell&                       workerGridCell,
@@ -784,11 +807,27 @@ class peanoclaw::mappings::ValidateGrid {
      * introduce a rigorous master-owns pattern. In this case, always the 
      * vertex and cell state on the master is valid, i.e. prepareSendToMaster() 
      * informs the master about state changes. In return, prepareSendToWorker() 
-     * feeds the worker withe the new valid state of vertices and cells. 
+     * feeds the worker with new valid state of vertices and cells. 
      * Receive from master operations thus overwrite the worker's local 
      * records with the master's data, as the master always rules.  
      *
-     * The coarse data is a copy from the master and may not be modified. 
+     * The coarse data is a copy from the master and may not be modified.
+     *
+     * !!! Special case: Fork process
+     * 
+     * In the very first iteration on the worker, the receive process accepting 
+     * data from the master is not followed by the corresponding send back even 
+     * if the reduction is switched on. Hence, you have two times receive data 
+     * from master before this operation is invoked for the first time. See 
+     * Node::updateCellsParallelStateBeforeStore() for details on the technical 
+     * reasons for this assymetry.
+     *
+     * !!! Skip sends to master
+     *
+     * If you switch off the global reduction, i.e. if you call iterate() on 
+     * the repository with the parameter false, Peano does not send any data 
+     * up along the spacetree. It does not reduce the cell, state, and vertex 
+     * data. See State::reduceDataToMaster(). 
      */
     void prepareSendToMaster(
       peanoclaw::Cell&                       localCell,
@@ -849,6 +888,7 @@ class peanoclaw::mappings::ValidateGrid {
      * - Merge the heap data within mergeWithWorker().
      *
      * - Remove the heap entries created in this operation within mergeWithWorker().
+     *
      * @param coarseGridVertices  Copy of the coarse vertices of the master 
      *                            node as well worker's records. As you receive 
      *                            the copy, you can alter the local ones, but 
@@ -1109,7 +1149,7 @@ class peanoclaw::mappings::ValidateGrid {
      * Iteration is done
      * 
      * This operation is called at the very end, i.e. after all the handleCell() 
-     * and toucheVertexLastTime() operations have been invoked. In this 
+     * and touchVertexLastTime() operations have been invoked. In this 
      * operation, you have to write all the data you will need later on back to 
      * the state object passed. Afterwards, the attributes of your mapping 
      * object (as well as global static fields) might be overwritten.  
@@ -1149,8 +1189,12 @@ class peanoclaw::mappings::ValidateGrid {
      * cell is outside but its parent is not, descend is not invoked for this 
      * pair of cells, i.e. here you have to do something in enterCell anyway.
      *
-     * To access the fine grid cells, please use the enumerator as you do for 
-     * the vertices in any case.   
+     * To access the fine grid cells, please use the enumerator as you do for
+     * the vertices in any case. In particular the VertexEnumerator's cell()
+     * function is of relevance. It allows you to access the individual array
+     * elements of the cell pointer.
+     *
+     * @see VertexEnumerator::cell()
      *
      * !!! Optimisation
      * 

@@ -9,8 +9,16 @@
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
+peano::CommunicationSpecification   peanoclaw::mappings::ValidateGrid::communicationSpecification() {
+  return peano::CommunicationSpecification(peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime);
+}
+
+
+/**
+ * @todo Please tailor the parameters to your mapping's properties.
+ */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
 }
 
 
@@ -18,7 +26,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexLast
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
 }
 
 
@@ -26,7 +34,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::touchVertexFirs
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
 }
 
 
@@ -34,7 +42,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::enterCellSpecif
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
 }
 
 
@@ -42,7 +50,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::leaveCellSpecif
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
 }
 
 
@@ -50,7 +58,7 @@ peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::ascendSpecifica
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::ValidateGrid::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
 }
 
 
@@ -107,6 +115,7 @@ void peanoclaw::mappings::ValidateGrid::createHangingVertex(
       const tarch::la::Vector<DIMENSIONS,int>&                   fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "createHangingVertex(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
+  // @todo Insert your code here
   logTraceOutWith1Argument( "createHangingVertex(...)", fineGridVertex );
 }
 
@@ -385,7 +394,8 @@ bool peanoclaw::mappings::ValidateGrid::prepareSendToWorker(
   int                                                                  worker
 ) {
   logTraceIn( "prepareSendToWorker(...)" );
-  logTraceOut( "prepareSendToWorker(...)" );
+  // @todo Insert your code here
+  logTraceOutWith1Argument( "prepareSendToWorker(...)", true );
   return true;
 }
 

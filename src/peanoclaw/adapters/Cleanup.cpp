@@ -1,9 +1,17 @@
 #include "peanoclaw/adapters/Cleanup.h"
 
 
+peano::CommunicationSpecification   peanoclaw::adapters::Cleanup::communicationSpecification() {
+  return peano::CommunicationSpecification::getMinimalSpecification()
+   & peanoclaw::mappings::Cleanup::communicationSpecification()
+
+
+;
+}
+
 
 peano::MappingSpecification   peanoclaw::adapters::Cleanup::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Cleanup::touchVertexLastTimeSpecification()
 
 
@@ -12,7 +20,7 @@ peano::MappingSpecification   peanoclaw::adapters::Cleanup::touchVertexLastTimeS
 
 
 peano::MappingSpecification   peanoclaw::adapters::Cleanup::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Cleanup::touchVertexFirstTimeSpecification()
 
 
@@ -21,7 +29,7 @@ peano::MappingSpecification   peanoclaw::adapters::Cleanup::touchVertexFirstTime
 
 
 peano::MappingSpecification   peanoclaw::adapters::Cleanup::enterCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Cleanup::enterCellSpecification()
 
 
@@ -30,7 +38,7 @@ peano::MappingSpecification   peanoclaw::adapters::Cleanup::enterCellSpecificati
 
 
 peano::MappingSpecification   peanoclaw::adapters::Cleanup::leaveCellSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Cleanup::leaveCellSpecification()
 
 
@@ -39,7 +47,7 @@ peano::MappingSpecification   peanoclaw::adapters::Cleanup::leaveCellSpecificati
 
 
 peano::MappingSpecification   peanoclaw::adapters::Cleanup::ascendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Cleanup::ascendSpecification()
 
 
@@ -48,7 +56,7 @@ peano::MappingSpecification   peanoclaw::adapters::Cleanup::ascendSpecification(
 
 
 peano::MappingSpecification   peanoclaw::adapters::Cleanup::descendSpecification() {
-  return peano::MappingSpecification::getMostGeneralSpecification()
+  return peano::MappingSpecification::getMinimalSpecification()
    & peanoclaw::mappings::Cleanup::descendSpecification()
 
 

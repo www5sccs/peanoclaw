@@ -3,17 +3,24 @@
 #include "peanoclaw/Heap.h"
 #include "peanoclaw/ParallelSubgrid.h"
 #include "peanoclaw/Patch.h"
-
-#include "peano/grid/aspects/VertexStateAnalysis.h"
 #include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 
+#include "peano/grid/aspects/VertexStateAnalysis.h"
 #include "tarch/parallel/Node.h"
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
+peano::CommunicationSpecification   peanoclaw::mappings::SolveTimestep::communicationSpecification() {
+  return peano::CommunicationSpecification(peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime);
+}
+
+
+/**
+ * @todo Please tailor the parameters to your mapping's properties.
+ */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
 }
 
 
@@ -21,7 +28,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexLas
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
 }
 
 
@@ -29,7 +36,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexFir
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
 }
 
 
@@ -37,7 +44,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::enterCellSpeci
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
 }
 
 
@@ -45,7 +52,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::leaveCellSpeci
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
 }
 
 
@@ -53,11 +60,11 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::ascendSpecific
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces,false);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
 }
 
 
-tarch::logging::Log                peanoclaw::mappings::SolveTimestep::_log( "peanoclaw::mappings::SolveTimestep" );
+tarch::logging::Log                peanoclaw::mappings::SolveTimestep::_log( "peanoclaw::mappings::SolveTimestep" ); 
 
 void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
   peanoclaw::Patch& patch,
@@ -237,7 +244,7 @@ void peanoclaw::mappings::SolveTimestep::createCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-
+  // @todo Insert your code here
   logTraceOutWith1Argument( "createCell(...)", fineGridCell );
 }
 
@@ -291,7 +298,7 @@ void peanoclaw::mappings::SolveTimestep::prepareCopyToRemoteNode(
   const tarch::la::Vector<DIMENSIONS,double>&   h,
   int                                           level
 ) {
-  logTraceInWith2Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank );
+  logTraceInWith5Arguments( "prepareCopyToRemoteNode(...)", localVertex, toRank, x, h, level );
   // @todo Insert your code here
   logTraceOut( "prepareCopyToRemoteNode(...)" );
 }
@@ -325,8 +332,8 @@ void peanoclaw::mappings::SolveTimestep::mergeWithRemoteDataDueToForkOrJoin(
   peanoclaw::Cell&  localCell,
   const peanoclaw::Cell&  masterOrWorkerCell,
   int                                       fromRank,
-  const tarch::la::Vector<DIMENSIONS,double>&  x,
-  const tarch::la::Vector<DIMENSIONS,double>&  h,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellCentre,
+  const tarch::la::Vector<DIMENSIONS,double>&  cellSize,
   int                                       level
 ) {
   logTraceInWith3Arguments( "mergeWithRemoteDataDueToForkOrJoin(...)", localCell, masterOrWorkerCell, fromRank );
@@ -387,7 +394,7 @@ bool peanoclaw::mappings::SolveTimestep::prepareSendToWorker(
 void peanoclaw::mappings::SolveTimestep::prepareSendToMaster(
   peanoclaw::Cell&                       localCell,
   peanoclaw::Vertex *                    vertices,
-  const peano::grid::VertexEnumerator&       verticesEnumerator,
+  const peano::grid::VertexEnumerator&       verticesEnumerator, 
   const peanoclaw::Vertex * const        coarseGridVertices,
   const peano::grid::VertexEnumerator&       coarseGridVerticesEnumerator,
   const peanoclaw::Cell&                 coarseGridCell,
@@ -459,7 +466,7 @@ void peanoclaw::mappings::SolveTimestep::receiveDataFromMaster(
   peanoclaw::Cell&                        workersCoarseGridCell,
   const tarch::la::Vector<DIMENSIONS,int>&    fineGridPositionOfCell
 ) {
-  logTraceInWith2Arguments( "receiveDataFromMaster(...)", receivedCell.toString(), receivedVerticesEnumerator.toString() );
+  logTraceIn( "receiveDataFromMaster(...)" );
   // @todo Insert your code here
   logTraceOut( "receiveDataFromMaster(...)" );
 }
@@ -544,7 +551,7 @@ void peanoclaw::mappings::SolveTimestep::touchVertexLastTime(
       const tarch::la::Vector<DIMENSIONS,int>&                       fineGridPositionOfVertex
 ) {
   logTraceInWith6Arguments( "touchVertexLastTime(...)", fineGridVertex, fineGridX, fineGridH, coarseGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfVertex );
- 
+  // @todo Insert your code here
   logTraceOutWith1Argument( "touchVertexLastTime(...)", fineGridVertex );
 }
 
@@ -595,7 +602,6 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       )) {
 
         // Copy uNew to uOld
-        //patch.copyUNewToUOld();
         peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
         transfer.copyUNewToUOld(subgrid);
 
