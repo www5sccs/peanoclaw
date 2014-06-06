@@ -649,9 +649,9 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 //        std::cout << "Solved timestep on rank " << tarch::parallel::Node::getInstance().getRank()
 //            << ": " << patch.toString() << std::endl << patch.toStringUNew() << std::endl;
 
-        logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getTimeIntervals().getCurrentTime() << ", " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << "]");
+        logDebug("enterCell(...)", "New time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << subgrid.getTimeIntervals().getCurrentTime() << ", " << (subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize()) << "]");
       } else {
-        logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << patch.getTimeIntervals().getCurrentTime() << ", " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << "]");
+        logDebug("enterCell(...)", "Unchanged time interval of patch " << fineGridVerticesEnumerator.getCellCenter() << " on level " << fineGridVerticesEnumerator.getLevel() << " is [" << subgrid.getTimeIntervals().getCurrentTime() << ", " << (subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize()) << "]");
         subgrid.reduceGridIterationsToBeSkipped();
 
 //        //TODO unterweg debug
@@ -711,7 +711,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
       }
       #endif
 
-      logTraceOutWith2Arguments( "enterCell(...)", patch.getTimeIntervals().getTimestepSize(), cellDescription.getTime() + patch.getTimeIntervals().getTimestepSize() );
+      logTraceOutWith2Arguments( "enterCell(...)", subgrid.getTimeIntervals().getTimestepSize(), cellDescription.getTime() + subgrid.getTimeIntervals().getTimestepSize() );
     } else {
       logTraceOut( "enterCell(...)" );
     }

@@ -8,6 +8,8 @@
 
 #include "Patch.h"
 
+tarch::logging::Log peanoclaw::Area::_log("peanoclaw::Area");
+
 int peanoclaw::Area::factorial(int i) {
   int f = 1;
   while(i > 1) {

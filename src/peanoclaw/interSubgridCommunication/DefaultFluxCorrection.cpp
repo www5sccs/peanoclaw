@@ -119,14 +119,14 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
         double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / refinementFactor;
 
         logDebug("applyFluxCorrection", "Correcting neighbor cell " << adjacentSubcellIndexInCoarsePatch << " from cell " << subcellIndexInFinePatch << " with interfaceArea=" << interfaceArea << std::endl
-            << "\tu0=" << finePatch.getValueUNew(subcellIndexInFinePatch, 0) << " u1=" << finePatch.getValueUNew(subcellIndexInFinePatch, 1) << " u2=" << finePatch.getValueUNew(subcellIndexInFinePatch, 2) << std::endl
+            << "\tu0=" << finePatch.getAccessor().getValueUNew(subcellIndexInFinePatch, 0) << " u1=" << finePatch.getAccessor().getValueUNew(subcellIndexInFinePatch, 1) << " u2=" << finePatch.getAccessor().getValueUNew(subcellIndexInFinePatch, 2) << std::endl
             << "\tfineGridFlux=" << fineGridFlux << std::endl
             << "\tcoarseGridFlux=" << coarseGridFlux << std::endl
             << "\ttransferedVolumeFineGrid=" << transferedVolumeFineGrid << std::endl
             << "\ttransferedVolumeCoarseGrid=" << transferedVolumeCoarseGrid << std::endl
             << "\tdelta=" << delta << std::endl
-            << "\told u=" << coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) << std::endl
-            << "\tnew u=" << coarsePatch.getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta);
+            << "\told u=" << coarsePatch.getAccessor().getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) << std::endl
+            << "\tnew u=" << coarsePatch.getAccessor().getValueUNew(adjacentSubcellIndexInCoarsePatch, 0) + delta);
 
         //Scaled down due to inaccuracy
         coarseAccessor.setValueUNew(adjacentSubcellIndexInCoarsePatch, 0,

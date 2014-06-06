@@ -10,6 +10,9 @@
 #include "peano/utils/Loop.h"
 
 template<int NumberOfUnknowns>
+tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnknowns>::_log("peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnknowns>");
+
+template<int NumberOfUnknowns>
 void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnknowns>::transferGhostlayer(
   const tarch::la::Vector<DIMENSIONS, int>&    size,
   const tarch::la::Vector<DIMENSIONS, int>&    sourceOffset,

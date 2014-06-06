@@ -24,7 +24,7 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
   Patch& transferedSubgrid,
   Vertex& vertex
 ) {
-  logTraceInWith3Arguments("sendPatch", cellDescriptionIndex, _position, _level);
+  logTraceInWith3Arguments("sendPatch", transferedSubgrid, _position, _level);
   bool sentSubgrid = false;
 
   //TODO unterweg debug

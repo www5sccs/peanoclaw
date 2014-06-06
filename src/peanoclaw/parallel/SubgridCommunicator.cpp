@@ -486,7 +486,7 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
 void peanoclaw::parallel::SubgridCommunicator::deleteArraysFromSubgrid(
   Patch& subgrid
 ) {
-  logTraceInWith1Argument("deleteArraysFromSubgrid", cellDescriptionIndex);
+  logTraceInWith1Argument("deleteArraysFromSubgrid", subgrid);
   if(subgrid.getUIndex() != -1) {
     DataHeap::getInstance().deleteData(subgrid.getUIndex());
   }

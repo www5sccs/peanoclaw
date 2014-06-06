@@ -123,8 +123,8 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
     }
 
     logDebug("", "Mapping source-point " << subcellPositionInSourcePatch
-        << " in source-cell " << subcellIndexInSourcePatchUOld
-        << " to destination-cell " << (subcellIndex + destinationOffset));
+        << " in source-cell " << subcellIndexInSourcePatch
+        << " to destination-cell " << destinationIterator.getCellIndex());
 
     sourceIterator.restart(subcellIndexInSourcePatch, tarch::la::Vector<DIMENSIONS, int>(2));
 //    int lookupTableEntry = 0;
@@ -178,7 +178,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
         if(interpolateToUOld) {
           logDebug("", "\tAdding UOld value " << sourceUOld << " and UNew value " << sourceUNew
               << " with spatialFactor " << spatialFactor << " and timeFactor "  << timeFactor
-              << " to value " << destination.getValueUOld(subcellIndexInDestinationPatch, unknown));
+              << " to value " << destination.getAccessor().getValueUOld(subcellIndexInDestinationPatch, unknown));
 
           destinationAccessor.setValueUOld(linearDestinationIndex, unknown,
               destinationAccessor.getValueUOld(linearDestinationIndex, unknown)
@@ -186,7 +186,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
         } else {
           logDebug("interpolate(...)", "\tAdding UNew value " << sourceUNew << " and UOld value " << sourceUOld
               << " with spatialFactor " << spatialFactor << " and timeFactor " << timeFactor
-              << " to value " << destination.getValueUNew(subcellIndexInDestinationPatch, unknown));
+              << " to value " << destination.getAccessor().getValueUNew(subcellIndexInDestinationPatch, unknown));
 
           destinationAccessor.setValueUNew(linearDestinationIndex, unknown,
             destinationAccessor.getValueUNew(linearDestinationIndex, unknown)
@@ -232,7 +232,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
 //      }
 
     }
-    logDebug("interpolate(...)", "For subcell " << (subcellIndex + destinationOffset) << " interpolated value is " << destination.getValueUOld(subcellIndex + destinationOffset, 0));
+    logDebug("interpolate(...)", "For subcell " << destinationIterator.getCellIndex() << " interpolated value is " << destinationIterator.getUnknownUOld(0));
   }
 
   #ifdef Asserts
