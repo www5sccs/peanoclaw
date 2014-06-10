@@ -17,7 +17,7 @@
 tarch::logging::Log peanoclaw::native::SWEKernel::_log("peanoclaw::native::SWEKernel");
 
 peanoclaw::native::SWEKernel::SWEKernel(
-  SWEKernelScenario& scenario,
+  peanoclaw::native::scenarios::SWEScenario& scenario,
   peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
   peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
   peanoclaw::interSubgridCommunication::Restriction*     restriction,

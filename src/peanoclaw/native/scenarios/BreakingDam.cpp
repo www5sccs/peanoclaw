@@ -1,7 +1,7 @@
 #if defined(SWE)
 #include "BreakingDam.h"
 
-peanoclaw::native::BreakingDam_SWEKernelScenario::BreakingDam_SWEKernelScenario(
+peanoclaw::native::scenarios::BreakingDamSWEScenario::BreakingDamSWEScenario(
   const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
   const tarch::la::Vector<DIMENSIONS, double>& domainSize,
   const tarch::la::Vector<DIMENSIONS, int>&    finestSubgridTopology,
@@ -26,9 +26,32 @@ peanoclaw::native::BreakingDam_SWEKernelScenario::BreakingDam_SWEKernelScenario(
   assertion2(tarch::la::allSmallerEquals(_minimalMeshWidth, _maximalMeshWidth), _minimalMeshWidth, _maximalMeshWidth);
 }
 
-peanoclaw::native::BreakingDam_SWEKernelScenario::~BreakingDam_SWEKernelScenario() {}
+peanoclaw::native::scenarios::BreakingDamSWEScenario::BreakingDamSWEScenario(
+  std::vector<std::string> arguments
+) : _domainOffset(0),
+    _domainSize(1){
+  if(arguments.size() != 5) {
+    std::cerr << "Expected arguments for Scenario 'BreakingDam': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize" << std::endl
+        << "\tGot " << arguments.size() << " arguments." << std::endl;
+    throw "";
+  }
 
-void peanoclaw::native::BreakingDam_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
+  double finestSubgridTopologyPerDimension = atof(arguments[0].c_str());
+  _minimalMeshWidth = _domainSize/ finestSubgridTopologyPerDimension;
+
+  double coarsestSubgridTopologyPerDimension = atof(arguments[1].c_str());
+  _maximalMeshWidth = _domainSize/ coarsestSubgridTopologyPerDimension;
+
+  _subdivisionFactor = tarch::la::Vector<DIMENSIONS,int>(atoi(arguments[2].c_str()));
+
+  _endTime = atof(arguments[3].c_str());
+
+  _globalTimestepSize = atof(arguments[4].c_str());
+}
+
+peanoclaw::native::scenarios::BreakingDamSWEScenario::~BreakingDamSWEScenario() {}
+
+void peanoclaw::native::scenarios::BreakingDamSWEScenario::initializePatch(peanoclaw::Patch& patch) {
     // compute from mesh data
     const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
     const tarch::la::Vector<DIMENSIONS, double> meshWidth = patch.getSubcellSize();
@@ -60,7 +83,7 @@ void peanoclaw::native::BreakingDam_SWEKernelScenario::initializePatch(peanoclaw
     }
 }
 
-tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelScenario::computeDemandedMeshWidth(
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BreakingDamSWEScenario::computeDemandedMeshWidth(
   peanoclaw::Patch& patch,
   bool isInitializing
 ) {
@@ -116,35 +139,31 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelSce
     return demandedMeshWidth;
 }
 
-tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelScenario::getDomainOffset() const {
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BreakingDamSWEScenario::getDomainOffset() const {
   return _domainOffset;
 }
 
-tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelScenario::getDomainSize() const {
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BreakingDamSWEScenario::getDomainSize() const {
   return _domainSize;
 }
 
-tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::BreakingDam_SWEKernelScenario::getInitialMinimalMeshWidth() const {
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BreakingDamSWEScenario::getInitialMinimalMeshWidth() const {
   return _maximalMeshWidth;
 }
 
-tarch::la::Vector<DIMENSIONS,int> peanoclaw::native::BreakingDam_SWEKernelScenario::getSubdivisionFactor() const {
+tarch::la::Vector<DIMENSIONS,int> peanoclaw::native::scenarios::BreakingDamSWEScenario::getSubdivisionFactor() const {
   return _subdivisionFactor;
 }
 
-double peanoclaw::native::BreakingDam_SWEKernelScenario::getGlobalTimestepSize() const {
+double peanoclaw::native::scenarios::BreakingDamSWEScenario::getGlobalTimestepSize() const {
   return _globalTimestepSize;
 }
 
-double peanoclaw::native::BreakingDam_SWEKernelScenario::getEndTime() const {
+double peanoclaw::native::scenarios::BreakingDamSWEScenario::getEndTime() const {
   return _endTime;
 }
 
-double peanoclaw::native::BreakingDam_SWEKernelScenario::getInitialTimestepSize() const {
-  return 0.1;
-}
-
-float peanoclaw::native::BreakingDam_SWEKernelScenario::getWaterHeight(float x, float y) {
+float peanoclaw::native::scenarios::BreakingDamSWEScenario::getWaterHeight(float x, float y) {
   // dam coordinates
   const double x0=1/2.0;
   const double y0=1/2.0;

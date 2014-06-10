@@ -30,7 +30,7 @@
 #include "tools/ProgressBar.hh"
 
 void sweMain(
-  peanoclaw::native::BreakingDam_SWEKernelScenario& scenario,
+  peanoclaw::native::scenarios::SWEScenario& scenario,
   tarch::la::Vector<DIMENSIONS,int> numberOfCells
 ) {
   tarch::logging::Log _log("sweMain(...)");

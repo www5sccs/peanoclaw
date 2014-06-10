@@ -7,14 +7,18 @@
 
 #include "scenarios/SWE_simple_scenarios.hh"
 
+#include <vector>
+
 namespace peanoclaw {
   namespace native {
-    class BreakingDam_SWEKernelScenario;
+    namespace scenarios {
+      class BreakingDamSWEScenario;
+    }
   }
 }
 
-class peanoclaw::native::BreakingDam_SWEKernelScenario
-    : public peanoclaw::native::SWEKernelScenario, public SWE_Scenario {
+class peanoclaw::native::scenarios::BreakingDamSWEScenario
+    : public peanoclaw::native::scenarios::SWEScenario {
   private:
     tarch::la::Vector<DIMENSIONS, double> _domainOffset;
     tarch::la::Vector<DIMENSIONS, double> _domainSize;
@@ -25,7 +29,7 @@ class peanoclaw::native::BreakingDam_SWEKernelScenario
     double                                _endTime;
 
   public:
-      BreakingDam_SWEKernelScenario(
+      BreakingDamSWEScenario(
         const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
         const tarch::la::Vector<DIMENSIONS, double>& domainSize,
         const tarch::la::Vector<DIMENSIONS, int>&    finestSubgridTopology,
@@ -34,7 +38,8 @@ class peanoclaw::native::BreakingDam_SWEKernelScenario
         double                                       globalTimestepSize,
         double                                       endTime
       );
-      ~BreakingDam_SWEKernelScenario();
+      BreakingDamSWEScenario(std::vector<std::string> arguments);
+      ~BreakingDamSWEScenario();
 
       virtual void initializePatch(peanoclaw::Patch& patch);
       virtual tarch::la::Vector<DIMENSIONS,double> computeDemandedMeshWidth(peanoclaw::Patch& patch, bool isInitializing);
@@ -48,7 +53,6 @@ class peanoclaw::native::BreakingDam_SWEKernelScenario
       tarch::la::Vector<DIMENSIONS,int>    getSubdivisionFactor() const;
       double                               getGlobalTimestepSize() const;
       double                               getEndTime() const;
-      double                               getInitialTimestepSize() const;
 
       //pure SWE-Scenario
       virtual float getWaterHeight(float x, float y);

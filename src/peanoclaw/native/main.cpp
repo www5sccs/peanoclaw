@@ -20,6 +20,7 @@
 #include "peanoclaw/native/sweMain.h"
 #include "peanoclaw/native/SWEKernel.h"
 #include "peanoclaw/native/SWECommandLineParser.h"
+#include "peanoclaw/native/scenarios/SWEScenario.h"
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 #include "tarch/logging/LogFilterFileReader.h"
 #include "tarch/logging/Log.h"
@@ -27,15 +28,6 @@
 
 #if USE_VALGRIND
 #include <callgrind.h>
-#endif
-
-#if defined(SWE)
-#include "peanoclaw/native/BreakingDam.h"
-#endif
-
-#if defined(PEANOCLAW_FULLSWOF2D)
-#include "peanoclaw/native/MekkaFlood.h"
-#include "peanoclaw/native/dem.h"
 #endif
 
 static peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid* _configuration;
@@ -73,7 +65,7 @@ void initializeLogFilter() {
 }
 
 void runSimulation(
-  peanoclaw::native::SWEKernelScenario& scenario,
+  peanoclaw::native::scenarios::SWEScenario& scenario,
   peanoclaw::Numerics& numerics,
   bool useCornerExtrapolation
 ) {
@@ -154,95 +146,48 @@ int main(int argc, char **argv) {
 #if defined(SWE) || defined(PEANOCLAW_FULLSWOF2D)
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
 
+  bool usePeanoClaw;
+  if (argc == 1) {
+    usePeanoClaw = true;
+  } else if (std::string(argv[argc-1]) == "--usePeano") {
+    usePeanoClaw = true;
+    argc--;
+  }
+
+  //Create Scenario
+  peanoclaw::native::scenarios::SWEScenario* scenario;
+  try {
+     scenario
+      = peanoclaw::native::scenarios::SWEScenario::createScenario(argc, argv);
+  } catch(...) {
+    scenario = 0;
+  }
+
+  if(scenario == 0) {
+    std::cerr << "Optional arguments: [--usePeano]" << std::endl;
+    return 0;
+  }
+
   //PyClaw - this object is copied to the runner and is stored there.
   peanoclaw::NumericsFactory numericsFactory;
-
-  //Construct parameters
-#if defined(PEANOCLAW_FULLSWOF2D)
-
-    DEM dem;
-
-    dem.load("DEM_400cm.bin");
- 
-//    tarch::la::Vector<DIMENSIONS, double> domainOffset(0);
-
-    // keep aspect ratio of map: 4000 3000: ratio 4:3
-    tarch::la::Vector<DIMENSIONS, int> subdivisionFactor;
-    subdivisionFactor(0) = static_cast<int>(16); // 96 //  6 * 4, optimum in non optimized version
-    subdivisionFactor(1) = static_cast<int>(9);  // 54 //  6 * 3, optimum in non optimized version
-
-    tarch::la::Vector<DIMENSIONS, double> maximalMeshWidth(1.0/(9.0 * subdivisionFactor(0)));
-    tarch::la::Vector<DIMENSIONS, double> minimalMeshWidth(1.0/(81.0 * subdivisionFactor(0)));
-
-    double globalTimestepSize = 2.0; //0.1;//1.0;
-    double endTime = 3600.0; // 100.0;
-//    double initialTimestepSize = 1.0;
-
-    bool usePeanoClaw = true;
-
-    peanoclaw::native::MekkaFlood_SWEKernelScenario scenario(
-      dem,
-      subdivisionFactor,
-      minimalMeshWidth,
-      maximalMeshWidth,
-      globalTimestepSize,
-      endTime
-    );
-    peanoclaw::Numerics* numerics = numericsFactory.createFullSWOF2DNumerics(scenario);
-    std::cout << "domainSize " << scenario.getDomainSize() << std::endl;
-#else
-    tarch::la::Vector<DIMENSIONS, double> domainOffset(0);
-    tarch::la::Vector<DIMENSIONS, double> domainSize(10.0);
-//    tarch::la::Vector<DIMENSIONS, double> minimalMeshWidth(domainSize/6.0/9.0);
-//    tarch::la::Vector<DIMENSIONS, double> maximalMeshWidth(domainSize/6.0/3.0);
-    tarch::la::Vector<DIMENSIONS, int> finestSubgridTopology(9);
-    tarch::la::Vector<DIMENSIONS, int> coarsestSubgridTopology(3);
-
-    double globalTimestepSize = 0.1;
-// double endTime = 2.0; //0.5; // 100.0;
-    double endTime = 0.5; // 100.0;
-//    int initialTimestepSize = 0.5;
-    bool usePeanoClaw = true;
-    tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
-    if (argc > 1) {
-      domainSize = tarch::la::Vector<DIMENSIONS, double>(1.0);
-
-      peanoclaw::native::SWECommandLineParser commandLineParser(argc, argv);
-      globalTimestepSize = commandLineParser.getGlobalTimestepSize();
-      endTime = commandLineParser.getEndTime();
-      finestSubgridTopology = commandLineParser.getFinestSubgridTopology();
-      coarsestSubgridTopology = commandLineParser.getCoarsestSubgridTopology();
-      subdivisionFactor = commandLineParser.getSubdivisionFactor();
-      usePeanoClaw = commandLineParser.runSimulationWithPeanoClaw();
-    }
-
-    peanoclaw::native::BreakingDam_SWEKernelScenario scenario(
-      domainOffset,
-      domainSize,
-      finestSubgridTopology,
-      coarsestSubgridTopology,
-      subdivisionFactor,
-      globalTimestepSize,
-      endTime
-    );
-    peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(scenario);
-
-#endif
+  peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(*scenario);
 
   if(usePeanoClaw) {
     runSimulation(
-      scenario,
+      *scenario,
       *numerics,
       true
     );
   } else {
   #ifdef PEANOCLAW_SWE
-  sweMain(scenario, finestSubgridTopology);
+  tarch::la::Vector<DIMENSIONS,int> numberOfCells = scenario->getSubdivisionFactor();
+  sweMain(*scenario, numberOfCells);
   #else
   #error Pure solver use not implemented
   #endif
   }
 
+  delete scenario;
 #endif
   return 0;
 }

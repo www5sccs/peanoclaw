@@ -10,6 +10,8 @@
 
 #include "peanoclaw/pyclaw/PyClawCallbacks.h"
 
+#include "peanoclaw/native/scenarios/SWEScenario.h"
+
 #if defined(SWE)
     #include "peanoclaw/native/SWEKernel.h" 
 #endif
@@ -40,7 +42,7 @@ class peanoclaw::NumericsFactory {
 
 #if defined(SWE)
     peanoclaw::Numerics* createSWENumerics(
-      peanoclaw::native::SWEKernelScenario& scenario
+      peanoclaw::native::scenarios::SWEScenario& scenario
     );
 #endif
 

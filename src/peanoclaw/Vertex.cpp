@@ -90,14 +90,16 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   enddforx
 
   //TODO unterweg Debug
-  #ifdef Debug
+  //#ifdef Debug
   bool plotVertex = false;
-  plotVertex =
-      tarch::la::equals(position(0), 2.0/9.0)
-      && tarch::la::equals(position(1), 1.0/9.0)
-      //&& tarch::la::equals(position(2), 1.0/9.0)
-      && level == 3
-  ;
+//  plotVertex =
+//      tarch::la::equals(position(0), 1.0/9.0)
+//      && tarch::la::equals(position(1), 1.0/9.0)
+//      //&& tarch::la::equals(position(2), 1.0/9.0)
+//      && level == 3
+//  ;
+//  plotVertex = true;
+
 
   if(plotVertex) {
     std::cerr << "Filling vertex ("
@@ -117,7 +119,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
           << std::endl << patches[i].toStringUNew() << std::endl << patches[i].toStringUOldWithGhostLayer();
     }
   }
-  #endif
+//  #endif
 
   interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, level, numerics, useDimensionalSplitting);
 
@@ -125,7 +127,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   ghostLayerCompositor.updateGhostlayerBounds();
 
   //TODO unterweg Debug
-  #ifdef Debug
+//  #ifdef Debug
   if(plotVertex
   ) {
     std::cerr << "After filling:" << std::endl;
@@ -136,7 +138,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
       }
     }
   }
-  #endif
+//  #endif
 }
 
 void peanoclaw::Vertex::applyFluxCorrection(

@@ -8,11 +8,11 @@
 #ifndef PEANOCLAW_NATIVE_SWE_CPP_
 #define PEANOCLAW_NATIVE_SWE_CPP_
 
-#include "peanoclaw/native/BreakingDam.h"
+#include "peanoclaw/native/scenarios/SWEScenario.h"
 #include "tools/Logger.hh"
 
 void sweMain(
-  peanoclaw::native::BreakingDam_SWEKernelScenario& scenario,
+  peanoclaw::native::scenarios::SWEScenario& scenario,
   tarch::la::Vector<DIMENSIONS,int> numberOfCells
 );
 

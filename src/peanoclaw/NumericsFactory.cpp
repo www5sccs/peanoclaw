@@ -24,7 +24,7 @@ tarch::logging::Log peanoclaw::NumericsFactory::_log("peanoclaw::NumericsFactory
 
 #if defined(SWE)
 peanoclaw::Numerics* peanoclaw::NumericsFactory::createSWENumerics(
-  peanoclaw::native::SWEKernelScenario& scenario
+  peanoclaw::native::scenarios::SWEScenario& scenario
 ) {
 
   //Interpolation Callback
