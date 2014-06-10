@@ -10,14 +10,16 @@
 
 #include "peanoclaw/pyclaw/PyClawCallbacks.h"
 
-#include "peanoclaw/native/scenarios/SWEScenario.h"
-
 #if defined(SWE)
-    #include "peanoclaw/native/SWEKernel.h" 
+  #include "peanoclaw/native/SWEKernel.h"
 #endif
 
 #if defined(PEANOCLAW_FULLSWOF2D)
     #include "peanoclaw/native/FullSWOF2D.h" 
+#endif
+
+#if defined(PEANOCLAW_SWE) || defined(PEANOCLAW_FULLSWOF2D)
+  #include "peanoclaw/native/scenarios/SWEScenario.h"
 #endif
 
 #include "tarch/logging/Log.h"
