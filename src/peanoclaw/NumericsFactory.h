@@ -70,7 +70,7 @@ class peanoclaw::NumericsFactory {
 
 #if defined(PEANOCLAW_FULLSWOF2D)
     peanoclaw::Numerics* createFullSWOF2DNumerics(
-      peanoclaw::native::SWEKernelScenario& scenario
+      peanoclaw::native::scenarios::SWEScenario& scenario
     );
 #endif
 

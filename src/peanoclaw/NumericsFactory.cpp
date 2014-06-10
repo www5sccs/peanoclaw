@@ -114,7 +114,7 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createPyClawNumerics(
 
 #if defined(PEANOCLAW_FULLSWOF2D)
 peanoclaw::Numerics* peanoclaw::NumericsFactory::createFullSWOF2DNumerics(
-  peanoclaw::native::SWEKernelScenario& scenario
+  peanoclaw::native::scenarios::SWEScenario& scenario
 ) {
 
   //Interpolation Callback

@@ -13,16 +13,13 @@
 #include "peano/utils/Dimensions.h"
 
 #include "peanoclaw/Numerics.h"
-/*#include "peanoclaw/pyclaw/PyClawCallbacks.h"
-#include "peanoclaw/pyclaw/InterpolationCallbackWrapper.h"
-#include "peanoclaw/pyclaw/RestrictionCallbackWrapper.h"
-#include "peanoclaw/pyclaw/FluxCorrectionCallbackWrapper.h"*/
 
 #include "peanoclaw/interSubgridCommunication/Interpolation.h"
 #include "peanoclaw/interSubgridCommunication/Restriction.h"
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
 
 #include "peanoclaw/native/SWEKernel.h"
+#include "peanoclaw/native/scenarios/SWEScenario.h"
 
 #include "peanoclaw/native/MekkaFlood_solver.h"
 
@@ -45,21 +42,13 @@ private:
    */
   static tarch::logging::Log     _log;
 
-  /*InitializationCallback         _initializationCallback;
-
-  BoundaryConditionCallback      _boundaryConditionCallback;
-
-  SolverCallback                 _solverCallback;
-
-  AddPatchToSolutionCallback     _addPatchToSolutionCallback;*/
-
   double _totalSolverCallbackTime;
 
-  peanoclaw::native::SWEKernelScenario& _scenario;
+  peanoclaw::native::scenarios::SWEScenario& _scenario;
 
 public:
   FullSWOF2D(
-    SWEKernelScenario& scenario,
+    peanoclaw::native::scenarios::SWEScenario& scenario,
     peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
     peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
     peanoclaw::interSubgridCommunication::Restriction*     restriction,

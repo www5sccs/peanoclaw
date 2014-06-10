@@ -10,6 +10,7 @@
 
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/native/SWEKernel.h"
+#include "peanoclaw/native/scenarios/SWEScenario.h"
 
 //#include "BathymetryHelper.h"
 
@@ -30,7 +31,7 @@ const float mekka_lat = 21.5f;
 const float mekka_lon = 39.0f;
 
 
-class peanoclaw::native::MekkaFlood_SWEKernelScenario : public peanoclaw::native::SWEKernelScenario {
+class peanoclaw::native::MekkaFlood_SWEKernelScenario : public peanoclaw::native::scenarios::SWEScenario {
     public:
         //MekkaFlood_SWEKernelScenario(double domainSize);
         MekkaFlood_SWEKernelScenario(

@@ -17,7 +17,6 @@
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/NumericsFactory.h"
 #include "peanoclaw/configurations/PeanoClawConfigurationForSpacetreeGrid.h"
-#include "peanoclaw/native/sweMain.h"
 #include "peanoclaw/native/SWEKernel.h"
 #include "peanoclaw/native/SWECommandLineParser.h"
 #include "peanoclaw/native/scenarios/SWEScenario.h"
@@ -25,6 +24,10 @@
 #include "tarch/logging/LogFilterFileReader.h"
 #include "tarch/logging/Log.h"
 #include "tarch/tests/TestCaseRegistry.h"
+
+#ifdef PEANOCLAW_SWE
+#include "peanoclaw/native/sweMain.h"
+#endif
 
 #if USE_VALGRIND
 #include <callgrind.h>
@@ -170,7 +173,11 @@ int main(int argc, char **argv) {
 
   //PyClaw - this object is copied to the runner and is stored there.
   peanoclaw::NumericsFactory numericsFactory;
+  #if defined(PEANOCLAW_SWE)
   peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(*scenario);
+  #elif defined(PEANOCLAW_FULLSWOF2D)
+  peanoclaw::Numerics* numerics = numericsFactory.createFullSWOF2DNumerics(*scenario);
+  #endif
 
   if(usePeanoClaw) {
     runSimulation(
@@ -183,7 +190,7 @@ int main(int argc, char **argv) {
   tarch::la::Vector<DIMENSIONS,int> numberOfCells = scenario->getSubdivisionFactor();
   sweMain(*scenario, numberOfCells);
   #else
-  #error Pure solver use not implemented
+  assertionFail("Pure solver use not implemented");
   #endif
   }
 

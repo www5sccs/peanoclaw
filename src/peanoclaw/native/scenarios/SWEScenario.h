@@ -8,7 +8,9 @@
 #ifndef PEANOCLAW_NATIVE_SCENARIOS_SCENARIO_H_
 #define PEANOCLAW_NATIVE_SCENARIOS_SCENARIO_H_
 
+#if defined(PEANOCLAW_SWE)
 #include "scenarios/SWE_Scenario.hh"
+#endif
 
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
@@ -28,7 +30,11 @@ namespace peanoclaw {
  * Abstract class that describes a scenario for
  * native solvers.
  */
-class peanoclaw::native::scenarios::SWEScenario : public SWE_Scenario {
+class peanoclaw::native::scenarios::SWEScenario
+    #ifdef PEANOCLAW_SWE
+    : public SWE_Scenario
+    #endif
+      {
 
 private:
   /**

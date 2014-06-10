@@ -16,7 +16,7 @@
 tarch::logging::Log peanoclaw::native::FullSWOF2D::_log("peanoclaw::native::FullSWOF2D");
 
 peanoclaw::native::FullSWOF2D::FullSWOF2D(
-  SWEKernelScenario& scenario,
+  peanoclaw::native::scenarios::SWEScenario& scenario,
   peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
   peanoclaw::interSubgridCommunication::Interpolation*  interpolation,
   peanoclaw::interSubgridCommunication::Restriction*    restriction,
