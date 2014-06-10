@@ -1,6 +1,6 @@
-diff -wruPN ./.cproject ../FullSWOF_2D/.cproject
---- ./.cproject	1970-01-01 01:00:00.000000000 +0100
-+++ ../FullSWOF_2D/.cproject	2014-04-04 13:12:11.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/.cproject ../../FullSWOF_2D/.cproject
+--- ../../FullSWOF_2D-1.04.08/.cproject	1970-01-01 01:00:00.000000000 +0100
++++ ../../FullSWOF_2D/.cproject	2014-04-04 13:12:11.000000000 +0200
 @@ -0,0 +1,113 @@
 +<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 +<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
@@ -115,15 +115,9 @@ diff -wruPN ./.cproject ../FullSWOF_2D/.cproject
 +	</storageModule>
 +	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 +</cproject>
-diff -wruPN ./createPatch.sh ../FullSWOF_2D/createPatch.sh
---- ./createPatch.sh	2014-06-10 13:55:22.094295207 +0200
-+++ ../FullSWOF_2D/createPatch.sh	1970-01-01 01:00:00.000000000 +0100
-@@ -1,2 +0,0 @@
--#!/bin/bash
--svn diff -x -w Headers/libparameters/misc.hpp Headers/libreconstructions/choice_reconstruction.hpp Headers/libreconstructions/muscl.hpp Headers/libreconstructions/muscl_opt.hpp Headers/libreconstructions/reconstruction.hpp Headers/libschemes/scheme.hpp Headers/libschemes/choice_scheme.hpp Sources/libschemes/order2.cpp Sources/libschemes/scheme.cpp Sources/libschemes/order1.cpp > peanoclaw.patch
-diff -wruPN ./Headers/libparameters/misc.hpp ../FullSWOF_2D/Headers/libparameters/misc.hpp
---- ./Headers/libparameters/misc.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libparameters/misc.hpp	2014-04-04 13:14:04.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp ../../FullSWOF_2D/Headers/libparameters/misc.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libparameters/misc.hpp	2014-04-04 13:14:04.000000000 +0200
 @@ -65,8 +65,8 @@
  #include <cfloat>
  #include <unistd.h>
@@ -150,9 +144,9 @@ diff -wruPN ./Headers/libparameters/misc.hpp ../FullSWOF_2D/Headers/libparameter
  /*NB_CHAR is the maximum length of a comment line */
  #define NB_CHAR 256
  #define ZERO 0.
-diff -wruPN ./Headers/libparameters/misc.hpp~ ../FullSWOF_2D/Headers/libparameters/misc.hpp~
---- ./Headers/libparameters/misc.hpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libparameters/misc.hpp~	2013-11-07 11:52:56.000000000 +0100
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp~ ../../FullSWOF_2D/Headers/libparameters/misc.hpp~
+--- ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp~	1970-01-01 01:00:00.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libparameters/misc.hpp~	2013-11-07 11:52:56.000000000 +0100
 @@ -0,0 +1,98 @@
 +/**
 + * @file misc.hpp
@@ -252,9 +246,9 @@ diff -wruPN ./Headers/libparameters/misc.hpp~ ../FullSWOF_2D/Headers/libparamete
 +
 +typedef vector< vector< SCALAR > > TAB;
 +
-diff -wruPN ./Headers/libreconstructions/choice_reconstruction.hpp ../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp
---- ./Headers/libreconstructions/choice_reconstruction.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp	2014-04-04 13:14:04.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/choice_reconstruction.hpp ../../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/choice_reconstruction.hpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp	2014-04-04 13:14:04.000000000 +0200
 @@ -72,6 +72,10 @@
  #include "eno_mod.hpp"
  #endif
@@ -275,9 +269,9 @@ diff -wruPN ./Headers/libreconstructions/choice_reconstruction.hpp ../FullSWOF_2
 +        void initialize(TAB& z);
  };
  #endif
-diff -wruPN ./Headers/libreconstructions/muscl.hpp ../FullSWOF_2D/Headers/libreconstructions/muscl.hpp
---- ./Headers/libreconstructions/muscl.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libreconstructions/muscl.hpp	2014-04-04 13:14:04.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/muscl.hpp ../../FullSWOF_2D/Headers/libreconstructions/muscl.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/muscl.hpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libreconstructions/muscl.hpp	2014-04-04 13:14:04.000000000 +0200
 @@ -98,5 +98,8 @@
  		 * \brief Destructor
  		 */
@@ -287,9 +281,9 @@ diff -wruPN ./Headers/libreconstructions/muscl.hpp ../FullSWOF_2D/Headers/librec
 +  virtual void initialize(TAB& z);
  };
  #endif
-diff -wruPN ./Headers/libreconstructions/muscl_opt.hpp ../FullSWOF_2D/Headers/libreconstructions/muscl_opt.hpp
---- ./Headers/libreconstructions/muscl_opt.hpp	1970-01-01 01:00:00.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libreconstructions/muscl_opt.hpp	2014-04-04 13:14:04.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/muscl_opt.hpp ../../FullSWOF_2D/Headers/libreconstructions/muscl_opt.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/muscl_opt.hpp	1970-01-01 01:00:00.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libreconstructions/muscl_opt.hpp	2014-04-04 13:14:04.000000000 +0200
 @@ -0,0 +1,105 @@
 +/**
 + * @file muscl.hpp
@@ -396,9 +390,9 @@ diff -wruPN ./Headers/libreconstructions/muscl_opt.hpp ../FullSWOF_2D/Headers/li
 +  virtual void initialize(TAB& z);
 +};
 +#endif
-diff -wruPN ./Headers/libreconstructions/reconstruction.hpp ../FullSWOF_2D/Headers/libreconstructions/reconstruction.hpp
---- ./Headers/libreconstructions/reconstruction.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libreconstructions/reconstruction.hpp	2014-04-04 13:14:04.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/reconstruction.hpp ../../FullSWOF_2D/Headers/libreconstructions/reconstruction.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/reconstruction.hpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libreconstructions/reconstruction.hpp	2014-04-04 13:14:04.000000000 +0200
 @@ -105,6 +105,9 @@
     * \brief Destructor
  		 */
@@ -409,9 +403,9 @@ diff -wruPN ./Headers/libreconstructions/reconstruction.hpp ../FullSWOF_2D/Heade
  };
  #endif
  
-diff -wruPN ./Headers/libschemes/choice_scheme.hpp ../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp
---- ./Headers/libschemes/choice_scheme.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp	2014-04-04 13:14:04.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/choice_scheme.hpp ../../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libschemes/choice_scheme.hpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp	2014-04-04 13:14:04.000000000 +0200
 @@ -97,5 +97,10 @@
  		 * \brief Destructor
  		 */
@@ -423,9 +417,9 @@ diff -wruPN ./Headers/libschemes/choice_scheme.hpp ../FullSWOF_2D/Headers/libsch
 +        }
  };
  #endif
-diff -wruPN ./Headers/libschemes/choice_scheme.hpp~ ../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp~
---- ./Headers/libschemes/choice_scheme.hpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp~	2013-11-07 11:52:56.000000000 +0100
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/choice_scheme.hpp~ ../../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp~
+--- ../../FullSWOF_2D-1.04.08/Headers/libschemes/choice_scheme.hpp~	1970-01-01 01:00:00.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp~	2013-11-07 11:52:56.000000000 +0100
 @@ -0,0 +1,101 @@
 +/**
 + * @file choice_scheme.hpp
@@ -528,9 +522,9 @@ diff -wruPN ./Headers/libschemes/choice_scheme.hpp~ ../FullSWOF_2D/Headers/libsc
 +		virtual ~Choice_scheme();
 +};
 +#endif
-diff -wruPN ./Headers/libschemes/order2.hpp ../FullSWOF_2D/Headers/libschemes/order2.hpp
---- ./Headers/libschemes/order2.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libschemes/order2.hpp	2014-04-04 13:14:04.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/order2.hpp ../../FullSWOF_2D/Headers/libschemes/order2.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libschemes/order2.hpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libschemes/order2.hpp	2014-04-04 13:14:04.000000000 +0200
 @@ -71,7 +71,6 @@
   * Class that computes the solution with a numerical scheme at order 2.
   */
@@ -539,9 +533,9 @@ diff -wruPN ./Headers/libschemes/order2.hpp ../FullSWOF_2D/Headers/libschemes/or
  class Order2: public Scheme{
  	protected:
  		SCALAR tmp;
-diff -wruPN ./Headers/libschemes/scheme.hpp ../FullSWOF_2D/Headers/libschemes/scheme.hpp
---- ./Headers/libschemes/scheme.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libschemes/scheme.hpp	2014-04-16 15:26:47.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp ../../FullSWOF_2D/Headers/libschemes/scheme.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libschemes/scheme.hpp	2014-04-16 15:26:47.000000000 +0200
 @@ -98,6 +98,8 @@
  #ifndef SCHEME_HPP
  #define SCHEME_HPP
@@ -680,9 +674,9 @@ diff -wruPN ./Headers/libschemes/scheme.hpp ../FullSWOF_2D/Headers/libschemes/sc
 +  void resetTimings();
  };
  #endif
-diff -wruPN ./Headers/libschemes/scheme.hpp~ ../FullSWOF_2D/Headers/libschemes/scheme.hpp~
---- ./Headers/libschemes/scheme.hpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../FullSWOF_2D/Headers/libschemes/scheme.hpp~	2014-04-03 19:06:37.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp~ ../../FullSWOF_2D/Headers/libschemes/scheme.hpp~
+--- ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp~	1970-01-01 01:00:00.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libschemes/scheme.hpp~	2014-04-03 19:06:37.000000000 +0200
 @@ -0,0 +1,391 @@
 +/**
 + * @file scheme.hpp
@@ -1075,1090 +1069,9 @@ diff -wruPN ./Headers/libschemes/scheme.hpp~ ../FullSWOF_2D/Headers/libschemes/s
 +  }
 +};
 +#endif
-diff -wruPN ./peanoclaw.patch ../FullSWOF_2D/peanoclaw.patch
---- ./peanoclaw.patch	2014-06-10 13:59:02.276199584 +0200
-+++ ../FullSWOF_2D/peanoclaw.patch	1970-01-01 01:00:00.000000000 +0100
-@@ -1,1077 +0,0 @@
--diff -wruPN ./.cproject ../FullSWOF_2D/.cproject
----- ./.cproject	1970-01-01 01:00:00.000000000 +0100
--+++ ../FullSWOF_2D/.cproject	2014-04-04 13:12:11.000000000 +0200
--@@ -0,0 +1,113 @@
--+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
--+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
--+	<storageModule moduleId="org.eclipse.cdt.core.settings">
--+		<cconfiguration id="cdt.managedbuild.config.gnu.exe.debug.682623297">
--+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.682623297" moduleId="org.eclipse.cdt.core.settings" name="Debug">
--+				<externalSettings/>
--+				<extensions>
--+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
--+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
--+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
--+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
--+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
--+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
--+				</extensions>
--+			</storageModule>
--+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
--+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.exe.debug.682623297" name="Debug" parent="cdt.managedbuild.config.gnu.exe.debug">
--+					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.682623297." name="/" resourcePath="">
--+						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.debug.845014685" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
--+							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.806324041" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
--+							<builder buildPath="${workspace_loc:/FullSWOF_2D}/Debug" id="cdt.managedbuild.target.gnu.builder.exe.debug.474214867" managedBuildOn="true" name="Gnu Make Builder.Debug" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
--+							<tool id="cdt.managedbuild.tool.gnu.archiver.base.1830222842" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
--+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1603886697" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
--+								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.878037157" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
--+								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.388284403" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
--+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.808174446" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
--+							</tool>
--+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.359541343" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
--+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.930187393" superClass="gnu.c.compiler.exe.debug.option.optimization.level" valueType="enumerated"/>
--+								<option id="gnu.c.compiler.exe.debug.option.debugging.level.782163724" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
--+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.446214702" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
--+							</tool>
--+							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.2009148444" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
--+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.2094066844" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
--+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.526214599" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
--+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
--+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
--+								</inputType>
--+							</tool>
--+							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.1611594184" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
--+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1211452141" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
--+							</tool>
--+						</toolChain>
--+					</folderInfo>
--+				</configuration>
--+			</storageModule>
--+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
--+		</cconfiguration>
--+		<cconfiguration id="cdt.managedbuild.config.gnu.exe.release.25154730">
--+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.25154730" moduleId="org.eclipse.cdt.core.settings" name="Release">
--+				<externalSettings/>
--+				<extensions>
--+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
--+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
--+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
--+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
--+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
--+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
--+				</extensions>
--+			</storageModule>
--+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
--+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.exe.release.25154730" name="Release" parent="cdt.managedbuild.config.gnu.exe.release">
--+					<folderInfo id="cdt.managedbuild.config.gnu.exe.release.25154730." name="/" resourcePath="">
--+						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.release.1907379155" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.release">
--+							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.release.825903428" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.release"/>
--+							<builder buildPath="${workspace_loc:/FullSWOF_2D}/Release" id="cdt.managedbuild.target.gnu.builder.exe.release.696003842" managedBuildOn="true" name="Gnu Make Builder.Release" superClass="cdt.managedbuild.target.gnu.builder.exe.release"/>
--+							<tool id="cdt.managedbuild.tool.gnu.archiver.base.159777290" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
--+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1598427519" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release">
--+								<option id="gnu.cpp.compiler.exe.release.option.optimization.level.1319719660" superClass="gnu.cpp.compiler.exe.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
--+								<option id="gnu.cpp.compiler.exe.release.option.debugging.level.137754920" superClass="gnu.cpp.compiler.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
--+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.135283308" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
--+							</tool>
--+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.389305694" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release">
--+								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.exe.release.option.optimization.level.1646249252" superClass="gnu.c.compiler.exe.release.option.optimization.level" valueType="enumerated"/>
--+								<option id="gnu.c.compiler.exe.release.option.debugging.level.423258309" superClass="gnu.c.compiler.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
--+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1508578878" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
--+							</tool>
--+							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.2048984525" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
--+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.1089732846" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release">
--+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.240110811" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
--+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
--+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
--+								</inputType>
--+							</tool>
--+							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.release.1231916022" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.release">
--+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.645371028" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
--+							</tool>
--+						</toolChain>
--+					</folderInfo>
--+				</configuration>
--+			</storageModule>
--+		</cconfiguration>
--+	</storageModule>
--+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
--+		<project id="FullSWOF_2D.cdt.managedbuild.target.gnu.exe.62785438" name="Executable" projectType="cdt.managedbuild.target.gnu.exe"/>
--+	</storageModule>
--+	<storageModule moduleId="scannerConfiguration">
--+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
--+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.25154730;cdt.managedbuild.config.gnu.exe.release.25154730.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1598427519;cdt.managedbuild.tool.gnu.cpp.compiler.input.135283308">
--+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
--+		</scannerConfigBuildInfo>
--+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.682623297;cdt.managedbuild.config.gnu.exe.debug.682623297.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.359541343;cdt.managedbuild.tool.gnu.c.compiler.input.446214702">
--+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
--+		</scannerConfigBuildInfo>
--+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.682623297;cdt.managedbuild.config.gnu.exe.debug.682623297.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1603886697;cdt.managedbuild.tool.gnu.cpp.compiler.input.808174446">
--+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
--+		</scannerConfigBuildInfo>
--+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.25154730;cdt.managedbuild.config.gnu.exe.release.25154730.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.389305694;cdt.managedbuild.tool.gnu.c.compiler.input.1508578878">
--+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
--+		</scannerConfigBuildInfo>
--+	</storageModule>
--+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
--+</cproject>
--diff -wruPN ./createPatch.sh ../FullSWOF_2D/createPatch.sh
----- ./createPatch.sh	2014-06-10 13:55:22.094295207 +0200
--+++ ../FullSWOF_2D/createPatch.sh	1970-01-01 01:00:00.000000000 +0100
--@@ -1,2 +0,0 @@
---#!/bin/bash
---svn diff -x -w Headers/libparameters/misc.hpp Headers/libreconstructions/choice_reconstruction.hpp Headers/libreconstructions/muscl.hpp Headers/libreconstructions/muscl_opt.hpp Headers/libreconstructions/reconstruction.hpp Headers/libschemes/scheme.hpp Headers/libschemes/choice_scheme.hpp Sources/libschemes/order2.cpp Sources/libschemes/scheme.cpp Sources/libschemes/order1.cpp > peanoclaw.patch
--diff -wruPN ./Headers/libparameters/misc.hpp ../FullSWOF_2D/Headers/libparameters/misc.hpp
----- ./Headers/libparameters/misc.hpp	2013-11-07 11:52:56.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libparameters/misc.hpp	2014-04-04 13:14:04.000000000 +0200
--@@ -65,8 +65,8 @@
-- #include <cfloat>
-- #include <unistd.h>
-- 
---#define max(a,b) (a>=b?a:b)
---#define min(a,b) (a<=b?a:b)
--+//#define max(a,b) (a>=b?a:b)
--+//#define min(a,b) (a<=b?a:b)
-- 
-- #define GRAV 9.81
-- #define GRAV_DEM 4.905
--@@ -76,7 +76,14 @@
-- #define VE_CA 1.e-12
-- #define MAX_CFL_X 0.
-- #define MAX_CFL_Y 0.
--+
--+// PEANOCLAW EXTENSION
--+#if defined(PEANOCLAW_FULLSWOF2D)
--+#warning PeanoClaw single iteration mode activated for FullSWOF2D!
--+#define MAX_ITER 1
--+#else
-- #define MAX_ITER 1000000000
--+#endif
-- /*NB_CHAR is the maximum length of a comment line */
-- #define NB_CHAR 256
-- #define ZERO 0.
--diff -wruPN ./Headers/libparameters/misc.hpp~ ../FullSWOF_2D/Headers/libparameters/misc.hpp~
----- ./Headers/libparameters/misc.hpp~	1970-01-01 01:00:00.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libparameters/misc.hpp~	2013-11-07 11:52:56.000000000 +0100
--@@ -0,0 +1,98 @@
--+/**
--+ * @file misc.hpp
--+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
--+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
--+ * @version 1.04.08
--+ * @date 2013-11-07
--+ *
--+ * @brief Definitions
--+ * @details 
--+ * Defines the constants, the types used in the code and contains the `include'.
--+ *
--+ * @copyright License Cecill-V2  \n
--+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
--+ *
--+ * (c) CNRS - Universite d'Orleans - INRA (France)
--+ */
--+/*
--+ * This file is part of FullSWOF_1D software. 
--+ * <https://sourcesup.renater.fr/projects/fullswof-1d/> 
--+ *
--+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
--+ * in one dimension of space.
--+ * This software is a computer program whose purpose is to compute
--+ * solutions for 1D Shallow-Water equations.
--+ *
--+ * LICENSE
--+ *
--+ * This software is governed by the CeCILL license under French law and
--+ * abiding by the rules of distribution of free software.  You can  use, 
--+ * modify and/ or redistribute the software under the terms of the CeCILL
--+ * license as circulated by CEA, CNRS and INRIA at the following URL
--+ * <http://www.cecill.info>. 
--+ *
--+ * As a counterpart to the access to the source code and  rights to copy,
--+ * modify and redistribute granted by the license, users are provided only
--+ * with a limited warranty  and the software's author,  the holder of the
--+ * economic rights,  and the successive licensors  have only  limited
--+ * liability. 
--+ *
--+ * In this respect, the user's attention is drawn to the risks associated
--+ * with loading,  using,  modifying and/or developing or reproducing the
--+ * software by the user in light of its specific status of free software,
--+ * that may mean  that it is complicated to manipulate,  and  that  also
--+ * therefore means  that it is reserved for developers  and  experienced
--+ * professionals having in-depth computer knowledge. Users are therefore
--+ * encouraged to load and test the software's suitability as regards their
--+ * requirements in conditions enabling the security of their systems and/or 
--+ * data to be ensured and,  more generally, to use and operate it in the 
--+ * same conditions as regards security. 
--+ *
--+ * The fact that you are presently reading this means that you have had
--+ * knowledge of the CeCILL license and that you accept its terms.
--+ *
--+ ******************************************************************************/
--+
--+#include <vector>
--+#include <iostream>
--+#include <cmath>
--+#include <fstream>
--+#include <string>
--+#include <cstring>
--+#include <cstdlib>
--+#include <iomanip>
--+#include <sstream>
--+#include <cfloat>
--+#include <unistd.h>
--+
--+#define max(a,b) (a>=b?a:b)
--+#define min(a,b) (a<=b?a:b)
--+
--+#define GRAV 9.81
--+#define GRAV_DEM 4.905
--+#define CONST_CFL_X 0.5
--+#define CONST_CFL_Y  0.5
--+#define HE_CA 1.e-12
--+#define VE_CA 1.e-12
--+#define MAX_CFL_X 0.
--+#define MAX_CFL_Y 0.
--+#define MAX_ITER 1000000000
--+/*NB_CHAR is the maximum length of a comment line */
--+#define NB_CHAR 256
--+#define ZERO 0.
--+#define IE_CA 1.e-8
--+#define EPSILON 1.e-13
--+#define VERSION "FullSWOF_2D version 1.04.08, 2013-11-07"
--+
--+//RATIO_CLOSE_CELL is used to verify that the input data is very close to cell center
--+#define RATIO_CLOSE_CELL 1.e-3
--+
--+using namespace std;
--+
--+typedef double SCALAR;/*If you change the data type of SCALAR, don't forget to change the macro definition MAX_SCAL*/
--+
--+/*Maximum finite representable floating-point number of SCALAR.*/
--+#define MAX_SCAL DBL_MAX
--+
--+typedef vector< vector< SCALAR > > TAB;
--+
--diff -wruPN ./Headers/libreconstructions/choice_reconstruction.hpp ../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp
----- ./Headers/libreconstructions/choice_reconstruction.hpp	2013-11-07 11:52:56.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp	2014-04-04 13:14:04.000000000 +0200
--@@ -72,6 +72,10 @@
-- #include "eno_mod.hpp"
-- #endif
-- 
--+#ifndef MUSCL_OPT_HPP
--+#include "muscl_opt.hpp"
--+#endif
--+
-- #ifndef CHOICE_RECONSTRUCTION
-- #define CHOICE_RECONSTRUCTION
-- 
--@@ -103,5 +107,8 @@
-- 		 * \brief Destructor
-- 		 */
-- 		virtual ~ Choice_reconstruction();
--+
--+        // PEANOCLAW extension:
--+        void initialize(TAB& z);
-- };
-- #endif
--diff -wruPN ./Headers/libreconstructions/muscl.hpp ../FullSWOF_2D/Headers/libreconstructions/muscl.hpp
----- ./Headers/libreconstructions/muscl.hpp	2013-11-07 11:52:56.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libreconstructions/muscl.hpp	2014-04-04 13:14:04.000000000 +0200
--@@ -98,5 +98,8 @@
-- 		 * \brief Destructor
-- 		 */
--   ~MUSCL();
--+
--+  // PEANOCLAW extension:
--+  virtual void initialize(TAB& z);
-- };
-- #endif
--diff -wruPN ./Headers/libreconstructions/muscl_opt.hpp ../FullSWOF_2D/Headers/libreconstructions/muscl_opt.hpp
----- ./Headers/libreconstructions/muscl_opt.hpp	1970-01-01 01:00:00.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libreconstructions/muscl_opt.hpp	2014-04-04 13:14:04.000000000 +0200
--@@ -0,0 +1,105 @@
--+/**
--+ * @file muscl.hpp
--+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
--+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
--+ * @version 1.03.00
--+ * @date 2012-04-03
--+ *
--+ * @brief %MUSCL reconstruction
--+ * @details 
--+ * Linear reconstruction: %MUSCL.
--+ *
--+ * @copyright License Cecill-V2 \n
--+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
--+ *
--+ * (c) CNRS - Universite d'Orleans - BRGM (France)
--+ */
--+/* 
--+ *
--+ * This file is part of FullSWOF_2D software. 
--+ * <https://sourcesup.renater.fr/projects/fullswof-2d/> 
--+ *
--+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
--+ * in two dimensions of space.
--+ * This software is a computer program whose purpose is to compute
--+ * solutions for 2D Shallow-Water equations.
--+ *
--+ * LICENSE
--+ *
--+ * This software is governed by the CeCILL license under French law and
--+ * abiding by the rules of distribution of free software.  You can  use, 
--+ * modify and/ or redistribute the software under the terms of the CeCILL
--+ * license as circulated by CEA, CNRS and INRIA at the following URL
--+ * "http://www.cecill.info". 
--+ *
--+ * As a counterpart to the access to the source code and  rights to copy,
--+ * modify and redistribute granted by the license, users are provided only
--+ * with a limited warranty  and the software's author,  the holder of the
--+ * economic rights,  and the successive licensors  have only  limited
--+ * liability. 
--+ *
--+ * In this respect, the user's attention is drawn to the risks associated
--+ * with loading,  using,  modifying and/or developing or reproducing the
--+ * software by the user in light of its specific status of free software,
--+ * that may mean  that it is complicated to manipulate,  and  that  also
--+ * therefore means  that it is reserved for developers  and  experienced
--+ * professionals having in-depth computer knowledge. Users are therefore
--+ * encouraged to load and test the software's suitability as regards their
--+ * requirements in conditions enabling the security of their systems and/or 
--+ * data to be ensured and,  more generally, to use and operate it in the 
--+ * same conditions as regards security. 
--+ *
--+ * The fact that you are presently reading this means that you have had
--+ * knowledge of the CeCILL license and that you accept its terms.
--+ *
--+ ******************************************************************************/
--+
--+
--+#ifndef RECONSTRUCTION_HPP
--+#include "reconstruction.hpp"
--+#endif
--+
--+#ifndef MUSCL_HPP
--+#define MUSCL_HPP
--+
--+
--+/*! @class MUSCL
--+ * @brief class which allows to calculate MUSCL reconstruction in space
--+ *
--+ * In order to get a second order in space, we can use a MUSCL reconstruction.
--+ * A scalar fonction \f$s\in R\f$ is reconstructed by the MUSCL reconstruction (Monotonic Upwind Scheme Conservation Law)
--+ *\f[\begin{array}{cc}
--+s_{i-1/2+}=s_i-\frac{\Delta x}{2}D_{mm}s_i\;\;and& s_{i+1/2-}=s_i+\frac{\Delta x}{2}D_{mm}s_i
--+\end{array}\f]
--+ * where \f$D_{mm}\f$ writes
--+ *\f[D_{mm}s_i=minmod\left(\frac{s_i-s_{i-1}}{\Delta x},\frac{s_{i+1}-s_i}{\Delta x}\right)\f]
--+ * with the Minmod slope limiter.
--+ */
--+
--+
--+class MUSCL: public Reconstruction{
--+
--+protected :
--+  const	int NXCELL;
--+  const int NYCELL;
--+  
--+public :
--+  /*!
--+   * \brief Constructor
--+   */
--+		MUSCL(Parameters & ,TAB &);
--+ 
--+  /*!
--+   * \brief Calculates the MUSCL reconstruction in space
--+   */
--+  void calcul(TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &);
--+  
--+  /*!
--+		 * \brief Destructor
--+		 */
--+  ~MUSCL();
--+
--+  // PEANOCLAW extension:
--+  virtual void initialize(TAB& z);
--+};
--+#endif
--diff -wruPN ./Headers/libreconstructions/reconstruction.hpp ../FullSWOF_2D/Headers/libreconstructions/reconstruction.hpp
----- ./Headers/libreconstructions/reconstruction.hpp	2013-11-07 11:52:56.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libreconstructions/reconstruction.hpp	2014-04-04 13:14:04.000000000 +0200
--@@ -105,6 +105,9 @@
--    * \brief Destructor
-- 		 */
--   virtual ~Reconstruction();
--+
--+  // PEANOCLAW extension
--+  virtual void initialize(TAB& z) {}
-- };
-- #endif
-- 
--diff -wruPN ./Headers/libschemes/choice_scheme.hpp ../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp
----- ./Headers/libschemes/choice_scheme.hpp	2013-11-07 11:52:56.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp	2014-04-04 13:14:04.000000000 +0200
--@@ -97,5 +97,10 @@
-- 		 * \brief Destructor
-- 		 */
-- 		virtual ~Choice_scheme();
--+
--+        // PEANOCLAW extension:
--+        Scheme *getInternalScheme() {
--+            return Sche;
--+        }
-- };
-- #endif
--diff -wruPN ./Headers/libschemes/choice_scheme.hpp~ ../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp~
----- ./Headers/libschemes/choice_scheme.hpp~	1970-01-01 01:00:00.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp~	2013-11-07 11:52:56.000000000 +0100
--@@ -0,0 +1,101 @@
--+/**
--+ * @file choice_scheme.hpp
--+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
--+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
--+ * @version 1.03.00
--+ * @date 2012-04-03
--+ *
--+ * @brief Choice of numerical scheme
--+ * @details 
--+ * From the value of the corresponding parameter,
--+ * calls the chosen numerical scheme.
--+ *
--+ * @copyright License Cecill-V2 \n
--+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
--+ *
--+ * (c) CNRS - Universite d'Orleans - BRGM (France)
--+ */
--+/* 
--+ *
--+ * This file is part of FullSWOF_2D software. 
--+ * <https://sourcesup.renater.fr/projects/fullswof-2d/> 
--+ *
--+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
--+ * in two dimensions of space.
--+ * This software is a computer program whose purpose is to compute
--+ * solutions for 2D Shallow-Water equations.
--+ *
--+ * LICENSE
--+ *
--+ * This software is governed by the CeCILL license under French law and
--+ * abiding by the rules of distribution of free software.  You can  use, 
--+ * modify and/ or redistribute the software under the terms of the CeCILL
--+ * license as circulated by CEA, CNRS and INRIA at the following URL
--+ * "http://www.cecill.info". 
--+ *
--+ * As a counterpart to the access to the source code and  rights to copy,
--+ * modify and redistribute granted by the license, users are provided only
--+ * with a limited warranty  and the software's author,  the holder of the
--+ * economic rights,  and the successive licensors  have only  limited
--+ * liability. 
--+ *
--+ * In this respect, the user's attention is drawn to the risks associated
--+ * with loading,  using,  modifying and/or developing or reproducing the
--+ * software by the user in light of its specific status of free software,
--+ * that may mean  that it is complicated to manipulate,  and  that  also
--+ * therefore means  that it is reserved for developers  and  experienced
--+ * professionals having in-depth computer knowledge. Users are therefore
--+ * encouraged to load and test the software's suitability as regards their
--+ * requirements in conditions enabling the security of their systems and/or 
--+ * data to be ensured and,  more generally, to use and operate it in the 
--+ * same conditions as regards security. 
--+ *
--+ * The fact that you are presently reading this means that you have had
--+ * knowledge of the CeCILL license and that you accept its terms.
--+ *
--+ ******************************************************************************/
--+
--+
--+#ifndef SCHEME_HPP
--+#include "scheme.hpp"
--+#endif
--+
--+#ifndef ORDER1_HPP
--+#include "order1.hpp"
--+#endif
--+
--+#ifndef ORDER2_HPP
--+#include "order2.hpp"
--+#endif
--+
--+#ifndef CHOICE_SCHEME_HPP
--+#define CHOICE_SCHEME_HPP
--+
--+/** @class Choice_scheme
--+ * @brief Choice of numerical scheme
--+ * @details 
--+ * Class that calls the numerical scheme chosen in the parameters file.
--+ */
--+
--+
--+class Choice_scheme{
--+	private :
--+		Scheme * Sche;
--+
--+	public :
--+		/*!
--+		 * \brief Constructor
--+		 */
--+		Choice_scheme(Parameters &);
--+
--+		/*!
--+		 * \brief Performs the scheme
--+		 */
--+		void calcul();
--+
--+		/*!
--+		 * \brief Destructor
--+		 */
--+		virtual ~Choice_scheme();
--+};
--+#endif
--diff -wruPN ./Headers/libschemes/order2.hpp ../FullSWOF_2D/Headers/libschemes/order2.hpp
----- ./Headers/libschemes/order2.hpp	2013-11-07 11:52:56.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libschemes/order2.hpp	2014-04-04 13:14:04.000000000 +0200
--@@ -71,7 +71,6 @@
--  * Class that computes the solution with a numerical scheme at order 2.
--  */
-- 
---
-- class Order2: public Scheme{
-- 	protected:
-- 		SCALAR tmp;
--diff -wruPN ./Headers/libschemes/scheme.hpp ../FullSWOF_2D/Headers/libschemes/scheme.hpp
----- ./Headers/libschemes/scheme.hpp	2013-11-07 11:52:56.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libschemes/scheme.hpp	2014-04-16 15:26:47.000000000 +0200
--@@ -98,6 +98,8 @@
-- #ifndef SCHEME_HPP
-- #define SCHEME_HPP
-- 
--+#include <sys/time.h>
--+
-- /** @class Scheme
--  * @brief Numerical scheme
--  * @details 
--@@ -106,6 +108,47 @@
-- 
-- 
-- class Scheme{
--+    public:
--+         // PEANOCLAW extensions: time measurements
--+        typedef struct {
--+            // maincalcflux times
--+            double horizontal_flux_time;
--+            double vertical_flux_time;
--+            int maincalcflux_samples;
--+
--+            // maincalcscheme times
--+            double rain_time;
--+            double mass_conservation_time;
--+            double infiltration_time;
--+            double momentum_time;
--+            double accumulated_rain_time;
--+            int maincalcscheme_samples;
--+
--+            // times used in order 2
--+            double delz_time;
--+            int delz_samples;
--+            
--+            double boundary_time;
--+            int boundary_samples;
--+
--+            double reconstruction_time;
--+            int reconstruction_samples;
--+            
--+            double vincopy_time;
--+            int vincopy_samples;
--+
--+            double filter_time;
--+            int filter_samples;
--+
--+            double heun_time;
--+            int heun_samples;
--+
--+            // total time
--+            double total_time;
--+            int total_samples;
--+        } timings_t;
--+
--+
--  protected :
--   /**  @brief Number of cells in x.*/
--   const	int NXCELL;
--@@ -308,6 +351,8 @@
-- 
--   int verif;
-- 
--+              
--+        timings_t time_meas;
--  public:
--   /*!
--    * \brief Constructor
--@@ -315,10 +360,10 @@
--   Scheme(Parameters &);
--   
--   /** @brief Main calculation of the flux */
---  void maincalcflux(SCALAR,SCALAR, SCALAR, SCALAR , SCALAR, SCALAR &);
--+      virtual void maincalcflux(SCALAR,SCALAR, SCALAR, SCALAR , SCALAR, SCALAR &);
--   
--   /** @brief Main calculation of the scheme */
---  void maincalcscheme(TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,SCALAR,SCALAR,int);
--+      virtual void maincalcscheme(TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,SCALAR,SCALAR,int);
-- 
-- 
--   /*!
--@@ -342,5 +387,58 @@
--    * \brief Destructor
--    */
--   virtual ~Scheme();
--+
--+  // PEANOCLAW EXTENSIONS
--+  double getTimestep() {
--+    return dt1;
--+  }
--+
--+  void setTimestep(double timestep) {
--+    dt1 = timestep;
--+    dt_max = std::min(DX*CFL_FIX,DY*CFL_FIX); // TODO: this is new, compared to the nice poster version
--+  }
--+ 
--+  void setMaxTimestep(double timestep) {
--+    dt_max = std::min(timestep, std::min(DX*CFL_FIX,DY*CFL_FIX)); // TODO: this is new, compared to the nice poster version
--+  }
--+ 
--+  double getMaxTimestep() {
--+    return std::min(DX*CFL_FIX,DY*CFL_FIX); // TODO: this is new, compared to the nice poster version
--+  }
--+
--+  int getVerif() {
--+    return verif;
--+  }
--+
--+  void resetN() {
--+    n = 0;
--+  }
--+
--+  /** Topography.*/
--+  TAB& getZ() { return z; }
--+  /** Water height.*/
--+  TAB& getH() { return h; }
--+  /** X Velocity.*/
--+  TAB& getU() { return u; }
--+  /** Y Velocity.*/
--+  TAB& getV() { return v; }
--+  /** Discharge.*/
--+  TAB& getQ1() { return q1; }
--+  /** Discharge.*/
--+  TAB& getQ2() { return q2; }
--+  /** Water height after one step of the scheme. OBSOLETE*/
--+  TAB& getHs() { return hs; }
--+  /** X Velocity after one step of the scheme. OBSOLETE */
--+  TAB& getUs() { return us; }
--+  /** Y Velocity after one step of the scheme. OBSOLETE*/
--+  TAB& getVs() { return vs; }
--+  /** Discharge after one step of the scheme. OBSOLETE*/
--+  TAB& getQs1() { return qs1; }
--+  /** Discharge after one step of the scheme.OBSOLETE */
--+  TAB& getQs2() { return qs2; }
--+
--+  // return timings
--+  Scheme::timings_t& getTimings() { return time_meas; }
--+  void resetTimings();
-- };
-- #endif
--diff -wruPN ./Headers/libschemes/scheme.hpp~ ../FullSWOF_2D/Headers/libschemes/scheme.hpp~
----- ./Headers/libschemes/scheme.hpp~	1970-01-01 01:00:00.000000000 +0100
--+++ ../FullSWOF_2D/Headers/libschemes/scheme.hpp~	2014-04-03 19:06:37.000000000 +0200
--@@ -0,0 +1,391 @@
--+/**
--+ * @file scheme.hpp
--+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
--+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
--+ * @version 1.03.00
--+ * @date 2012-04-03
--+ *
--+ * @brief Numerical scheme
--+ * @details
--+ * Common part for all the numerical schemes.
--+ *
--+ * @copyright License Cecill-V2 \n
--+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
--+ *
--+ * (c) CNRS - Universite d'Orleans - BRGM (France)
--+ */
--+/* 
--+ *
--+ * This file is part of FullSWOF_2D software. 
--+ * <https://sourcesup.renater.fr/projects/fullswof-2d/> 
--+ *
--+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
--+ * in two dimensions of space.
--+ * This software is a computer program whose purpose is to compute
--+ * solutions for 2D Shallow-Water equations.
--+ *
--+ * LICENSE
--+ *
--+ * This software is governed by the CeCILL license under French law and
--+ * abiding by the rules of distribution of free software.  You can  use, 
--+ * modify and/ or redistribute the software under the terms of the CeCILL
--+ * license as circulated by CEA, CNRS and INRIA at the following URL
--+ * "http://www.cecill.info". 
--+ *
--+ * As a counterpart to the access to the source code and  rights to copy,
--+ * modify and redistribute granted by the license, users are provided only
--+ * with a limited warranty  and the software's author,  the holder of the
--+ * economic rights,  and the successive licensors  have only  limited
--+ * liability. 
--+ *
--+ * In this respect, the user's attention is drawn to the risks associated
--+ * with loading,  using,  modifying and/or developing or reproducing the
--+ * software by the user in light of its specific status of free software,
--+ * that may mean  that it is complicated to manipulate,  and  that  also
--+ * therefore means  that it is reserved for developers  and  experienced
--+ * professionals having in-depth computer knowledge. Users are therefore
--+ * encouraged to load and test the software's suitability as regards their
--+ * requirements in conditions enabling the security of their systems and/or 
--+ * data to be ensured and,  more generally, to use and operate it in the 
--+ * same conditions as regards security. 
--+ *
--+ * The fact that you are presently reading this means that you have had
--+ * knowledge of the CeCILL license and that you accept its terms.
--+ *
--+ ******************************************************************************/
--+
--+#ifndef PARAMETERS_HPP
--+#include "parameters.hpp"
--+#endif
--+
--+#ifndef HYDROSTATIC_HPP
--+#include "hydrostatic.hpp"
--+#endif
--+
--+
--+#ifndef CHOICE_CONDITION_HPP
--+#include "choice_condition.hpp"
--+#endif
--+
--+#ifndef CHOICE_FLUX_HPP
--+#include "choice_flux.hpp"
--+#endif
--+
--+#ifndef CHOICE_FRICTION_HPP
--+#include "choice_friction.hpp"
--+#endif
--+
--+#ifndef CHOICE_INFILTRATION_HPP
--+#include "choice_infiltration.hpp"
--+#endif
--+
--+#ifndef CHOICE_INIT_TOPO_HPP
--+#include "choice_init_topo.hpp"
--+#endif
--+
--+#ifndef CHOICE_INIT_HUV_HPP
--+#include "choice_init_huv.hpp"
--+#endif
--+
--+#ifndef CHOICE_RAIN_HPP
--+#include "choice_rain.hpp"
--+#endif
--+
--+#ifndef CHOICE_OUTPUT_HPP
--+#include "choice_output.hpp"
--+#endif
--+
--+#ifndef SCHEME_HPP
--+#define SCHEME_HPP
--+
--+/** @class Scheme
--+ * @brief Numerical scheme
--+ * @details 
--+ * Class that contains all the common declarations for the numerical schemes.
--+ */
--+
--+
--+class Scheme{
--+  public:
--+           // PEANOCLAW extensions: time measurements
--+        typedef struct {
--+            // maincalcflux times
--+            double horizontal_flux_time;
--+            double vertical_flux_time;
--+            int maincalcflux_samples;
--+
--+            // maincalcscheme times
--+            double rain_time;
--+            double mass_conservation_time;
--+            double infiltration_time;
--+            double momentum_time;
--+            double accumulated_rain_time;
--+            int maincalcscheme_samples;
--+
--+            // times used in order 2
--+            double delz_time;
--+            int delz_samples;
--+            
--+            double boundary_time;
--+            int boundary_samples;
--+
--+            double reconstruction_time;
--+            int reconstruction_samples;
--+            
--+            double vincopy_time;
--+            int vincopy_samples;
--+
--+            double filter_time;
--+            int filter_samples;
--+
--+            double heun_time;
--+            int heun_samples;
--+
--+            // total time
--+            double total_time;
--+            int total_samples;
--+        } timings_t;
--+
--+ protected :
--+  /**  @brief Number of cells in x.*/
--+  const	int NXCELL;
--+  /**  @brief Number of cells in y.*/
--+  const int NYCELL;
--+  /**  @brief Order of scheme to compute the flux*/
--+  const int ORDER; 
--+  /**  @brief Final time of simulation*/
--+  const SCALAR T;
--+  /**  @brief Number of times saved.*/
--+  const int NBTIMES;
--+/**  @brief  @brief Choice of type of scheme (fixed cfl or fixed dt)  */
--+  const int SCHEME_TYPE;
--+  /**  @brief X space step size*/
--+  const SCALAR DX;
--+  /**  @brief Y space step size*/
--+  const SCALAR DY;
--+  /**  @brief Value of fixed cfl*/
--+  const  SCALAR CFL_FIX;
--+  /**  @brief Fixed space step in case of scheme with a fixed dt*/
--+  SCALAR DT_FIX;
--+
--+  /**  @brief Ratio dt/dx.*/
--+  SCALAR tx;
--+  /**  @brief Ratio dt/dy.*/
--+  SCALAR ty;
--+  /**  @brief The storage time of the data*/
--+  SCALAR T_output;
--+  /**  @brief The storage step time of the data*/
--+  SCALAR dt_output;
--+
--+ /** @brief  Friction coefficient*/
--+  const SCALAR FRICCOEF;
--+
--+ 
--+  /**  @brief Imposed discharge on the left boundary.*/
--+  const SCALAR L_IMP_Q;
--+  /**  @brief Imposed water height on the left boundary.*/
--+  const SCALAR L_IMP_H;
--+
--+  /**  @brief Imposed discharge on the right boundary.*/
--+  const SCALAR R_IMP_Q;
--+
--+  /**  @brief Imposed water height on the right boundary.*/
--+  const SCALAR R_IMP_H;
--+
--+  /**  @brief Imposed discharge on the bottom boundary.*/
--+  const SCALAR B_IMP_Q;
--+
--+  /**  @brief Imposed water height on the bottom boundary.*/
--+  const SCALAR B_IMP_H;
--+
--+  /**  @brief Imposed discharge on the top boundary.*/
--+  const SCALAR T_IMP_Q;
--+
--+  /**  @brief Imposed water height on the top boundary.*/
--+  const SCALAR T_IMP_H;
--+  
--+  /** Topography.*/
--+  TAB z;
--+  /** Water height.*/
--+  TAB h;
--+  /** X Velocity.*/
--+  TAB u;
--+  /** Y Velocity.*/
--+  TAB v;
--+  /** Discharge.*/
--+  TAB q1;
--+  /** Discharge.*/
--+  TAB q2;
--+  /** Water height after one step of the scheme.*/
--+  TAB hs;
--+  /** X Velocity after one step of the scheme.*/
--+  TAB us;
--+  /** Y Velocity after one step of the scheme.*/
--+  TAB vs;
--+  /** Discharge after one step of the scheme.*/
--+  TAB qs1;
--+  /** Discharge after one step of the scheme.*/
--+  TAB qs2;
--+  /** First component of the numerical flu along x. */ 
--+  TAB f1;
--+  /** Second component of the numerical flux along x. */
--+  TAB f2;
--+  /** Third component of the numerical flux along x. */
--+  TAB f3;
--+  /** First component of the numerical flu along y. */ 
--+  TAB g1;
--+  /** Second component of the numerical flux along y. */
--+  TAB g2;
--+  /** Third component of the numerical flux along y. */
--+  TAB g3;
--+  
--+  /** %Hydrostatic reconstruction on the left along x.*/
--+  TAB h1left;
--+  /** %Hydrostatic reconstruction on the right along x.*/
--+  TAB h1right;
--+  /** %Hydrostatic reconstruction on the left along y.*/
--+  TAB h2left;
--+  /** %Hydrostatic reconstruction on the right along y.*/
--+  TAB h2right;
--+  /** Variations of the topography along x.*/
--+  TAB delz1;
--+  /** Variations of the topography along y.*/
--+  TAB delz2;
--+  /** Difference between the reconstructed topographies on the left and on the right boundary of a cell along x.*/
--+  TAB delzc1;
--+  /** Difference between the reconstructed topographies on the left and on the right boundary of a cell along y.*/
--+  TAB delzc2;
--+ 
--+  /** Water height on the cell located at the right of the boundary along x.*/
--+  TAB h1r;
--+  /** Velocity on the cell located at the right of the boundary along x.*/
--+  TAB u1r;
--+  /** Velocity on the cell located at the right of the boundary along x.*/
--+  TAB v1r;
--+  /** Water height on the cell located at the left of the boundary along x.*/
--+  TAB h1l;
--+  /** Velocity on the cell located at the left of the boundary along x.*/
--+  TAB u1l;
--+  /** Velocity on the cell located at the left of the boundary along x.*/
--+  TAB v1l;
--+  /** Water height on the cell located at the right of the boundary along y.*/
--+  TAB h2r;
--+  /** Velocity on the cell located at the right of the boundary along y.*/
--+  TAB u2r;
--+  /** Velocity on the cell located at the right of the boundary along y.*/
--+  TAB v2r;
--+  /** Water height on the cell located at the left of the boundary along y.*/
--+  TAB h2l;
--+  /** Velocity on the cell located at the left of the boundary along y.*/
--+  TAB u2l;
--+  /** Velocity on the cell located at the left of the boundary along y.*/
--+  TAB v2l;
--+  /** %Rain intensity*/
--+  TAB Rain;
--+  /** Table of friction coefficient*/
--+  TAB Fric_tab;
--+
--+  /** Cumulative Volume of Water Infiltrated at each point.*/
--+  TAB Vin_tot;
--+
--+   /** Beginning of timer.*/ 
--+  time_t start;
--+  /** End of timer.*/ 
--+  time_t  end;
--+  
--+  /** Duration of the computation.*/
--+  SCALAR timecomputation;
--+  /** Number for the loop to the time*/ 
--+  int n; 
--+ 
--+  /** Mean Froude number.*/
--+  SCALAR Fr;
--+
--+
--+   /** The choice of the left boundary condition*/
--+  int nchoice_Lbound;
--+  /** The choice of the left boundary condition*/
--+  int nchoice_Rbound;
--+  /** The choice of the left boundary condition*/
--+  int nchoice_Bbound;
--+  /** The choice of the left boundary condition*/
--+  int nchoice_Tbound; 
--+  /** Time step in case of fixed cfl */
--+  SCALAR dt1;
--+  /** Maximum time step in case of fixed cfl*/
--+  SCALAR dt_max;
--+  /** The current simulation time*/
--+  SCALAR tps;
--+  /** Correspond to dt in the first step in the method Heun*/
--+  SCALAR dt_first; 
--+  /** Cumulative Volume of rain on the whole of domain.*/
--+  SCALAR Volrain_Tot;
--+  /** Cumulative Outflow volume at the boundary */
--+  SCALAR Total_discharge_outflow;
--+
--+  /** Cumulative water height on the whole of domain*/
--+  SCALAR height_of_tot;
--+  /** Cumulative height of infiltrated volume on the whole of domain*/
--+  SCALAR height_Vinf_tot;
--+  /** Cumulative Volume of water infiltrated.*/
--+  SCALAR Vol_inf_tot_cumul;
--+  /** Cumulative streammed volume.*/
--+  SCALAR Vol_of_tot;
--+  
--+  Hydrostatic rec_hydro;
--+  Choice_condition * Lbound;
--+  Choice_condition * Rbound;
--+  Choice_condition * Bbound;
--+  Choice_condition * Tbound;
--+  Choice_flux * flux_num;
--+  Choice_friction * fric;
--+  Choice_infiltration * I;
--+  Choice_init_topo * topo;
--+  Choice_init_huv * huv_init;
--+  Choice_rain * Prain;
--+  
--+  Choice_output * out;
--+
--+  int verif;
--+
--+ public:
--+  /*!
--+   * \brief Constructor
--+		 */
--+  Scheme(Parameters &);
--+  
--+  /** @brief Main calculation of the flux */
--+  void maincalcflux(SCALAR,SCALAR, SCALAR, SCALAR , SCALAR, SCALAR &);
--+  
--+  /** @brief Main calculation of the scheme */
--+  void maincalcscheme(TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,SCALAR,SCALAR,int);
--+
--+
--+  /*!
--+   * \brief Returns the Froude number
--+   */
--+  SCALAR froude_number(TAB,TAB,TAB);
--+
--+ 
--+  /** Allocation of spatialized variables */
--+  void allocation();
--+  
--+  /** Deallocation of variables */	
--+  void deallocation();
--+  
--+  virtual void calcul() =0;
--+  
--+  /** @brief Calls the boundary conditions and affects the boundary values */ 
--+  void boundary(TAB &,TAB &,TAB &, SCALAR,const int , const int);
--+
--+  /*!
--+   * \brief Destructor
--+   */
--+  virtual ~Scheme();
--+  
--+    // PEANOCLAW EXTENSIONS
--+  double getTimestep() {
--+    return dt1;
--+  }
--+};
--+#endif
-diff -wruPN ./.project ../FullSWOF_2D/.project
---- ./.project	1970-01-01 01:00:00.000000000 +0100
-+++ ../FullSWOF_2D/.project	2014-04-04 13:12:11.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/.project ../../FullSWOF_2D/.project
+--- ../../FullSWOF_2D-1.04.08/.project	1970-01-01 01:00:00.000000000 +0100
++++ ../../FullSWOF_2D/.project	2014-04-04 13:12:11.000000000 +0200
 @@ -0,0 +1,27 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +<projectDescription>
@@ -2187,9 +1100,9 @@ diff -wruPN ./.project ../FullSWOF_2D/.project
 +		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 +	</natures>
 +</projectDescription>
-diff -wruPN ./Sources/libboundaryconditions/bc_wall.cpp ../FullSWOF_2D/Sources/libboundaryconditions/bc_wall.cpp
---- ./Sources/libboundaryconditions/bc_wall.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libboundaryconditions/bc_wall.cpp	2014-04-04 13:13:55.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libboundaryconditions/bc_wall.cpp ../../FullSWOF_2D/Sources/libboundaryconditions/bc_wall.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/libboundaryconditions/bc_wall.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libboundaryconditions/bc_wall.cpp	2014-04-04 13:13:55.000000000 +0200
 @@ -103,7 +103,6 @@
  }
  
@@ -2198,9 +1111,9 @@ diff -wruPN ./Sources/libboundaryconditions/bc_wall.cpp ../FullSWOF_2D/Sources/l
      unormbound = -unorm_in;
      utanbound = utan_in;
      hbound = hin;
-diff -wruPN ./Sources/libboundaryconditions/choice_condition.cpp ../FullSWOF_2D/Sources/libboundaryconditions/choice_condition.cpp
---- ./Sources/libboundaryconditions/choice_condition.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libboundaryconditions/choice_condition.cpp	2014-04-04 13:13:55.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libboundaryconditions/choice_condition.cpp ../../FullSWOF_2D/Sources/libboundaryconditions/choice_condition.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/libboundaryconditions/choice_condition.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libboundaryconditions/choice_condition.cpp	2014-04-04 13:13:55.000000000 +0200
 @@ -92,6 +92,7 @@
  }
  
@@ -2209,9 +1122,9 @@ diff -wruPN ./Sources/libboundaryconditions/choice_condition.cpp ../FullSWOF_2D/
      C->calcul(hin,unorm_in,utan_in,hfix,qfix,hin_oppbound,unorm_in_oppbound,utan_in_oppbound,time, n1, n2);
  }
  
-diff -wruPN ./Sources/librain_infiltration/infiltration.cpp ../FullSWOF_2D/Sources/librain_infiltration/infiltration.cpp
---- ./Sources/librain_infiltration/infiltration.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/librain_infiltration/infiltration.cpp	2014-04-04 13:13:55.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/librain_infiltration/infiltration.cpp ../../FullSWOF_2D/Sources/librain_infiltration/infiltration.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/librain_infiltration/infiltration.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/librain_infiltration/infiltration.cpp	2014-04-04 13:13:55.000000000 +0200
 @@ -77,10 +77,14 @@
  
  }
@@ -2227,9 +1140,9 @@ diff -wruPN ./Sources/librain_infiltration/infiltration.cpp ../FullSWOF_2D/Sourc
  TAB Infiltration::get_Vin() const{
    return  Vin;
  }
-diff -wruPN ./Sources/librain_infiltration/rain_generated.cpp ../FullSWOF_2D/Sources/librain_infiltration/rain_generated.cpp
---- ./Sources/librain_infiltration/rain_generated.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/librain_infiltration/rain_generated.cpp	2014-04-16 11:11:32.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/librain_infiltration/rain_generated.cpp ../../FullSWOF_2D/Sources/librain_infiltration/rain_generated.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/librain_infiltration/rain_generated.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/librain_infiltration/rain_generated.cpp	2014-04-16 11:11:32.000000000 +0200
 @@ -67,8 +67,8 @@
      
    for (int i=1 ; i<NXCELL+1 ; i++){
@@ -2241,9 +1154,9 @@ diff -wruPN ./Sources/librain_infiltration/rain_generated.cpp ../FullSWOF_2D/Sou
      }
    }     
   
-diff -wruPN ./Sources/libreconstructions/choice_reconstruction.cpp ../FullSWOF_2D/Sources/libreconstructions/choice_reconstruction.cpp
---- ./Sources/libreconstructions/choice_reconstruction.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libreconstructions/choice_reconstruction.cpp	2014-04-04 13:13:55.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libreconstructions/choice_reconstruction.cpp ../../FullSWOF_2D/Sources/libreconstructions/choice_reconstruction.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/libreconstructions/choice_reconstruction.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libreconstructions/choice_reconstruction.cpp	2014-04-04 13:13:55.000000000 +0200
 @@ -76,7 +76,6 @@
  		case 3:
  			Rec = new ENO_mod(par,z);
@@ -2260,9 +1173,9 @@ diff -wruPN ./Sources/libreconstructions/choice_reconstruction.cpp ../FullSWOF_2
 +void Choice_reconstruction::initialize(TAB& z) {
 +    Rec->initialize(z);
 +}
-diff -wruPN ./Sources/libreconstructions/muscl.cpp ../FullSWOF_2D/Sources/libreconstructions/muscl.cpp
---- ./Sources/libreconstructions/muscl.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libreconstructions/muscl.cpp	2014-04-04 13:13:55.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libreconstructions/muscl.cpp ../../FullSWOF_2D/Sources/libreconstructions/muscl.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/libreconstructions/muscl.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libreconstructions/muscl.cpp	2014-04-04 13:13:55.000000000 +0200
 @@ -85,27 +85,19 @@
  
  	z1l[NXCELL+1].resize(NYCELL+1);
@@ -2321,9 +1234,9 @@ diff -wruPN ./Sources/libreconstructions/muscl.cpp ../FullSWOF_2D/Sources/librec
 +	  } //end for j
 +	} //end for i
 +}
-diff -wruPN ./Sources/libschemes/choice_scheme.cpp ../FullSWOF_2D/Sources/libschemes/choice_scheme.cpp
---- ./Sources/libschemes/choice_scheme.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libschemes/choice_scheme.cpp	2014-04-04 13:13:55.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/choice_scheme.cpp ../../FullSWOF_2D/Sources/libschemes/choice_scheme.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/libschemes/choice_scheme.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libschemes/choice_scheme.cpp	2014-04-04 13:13:55.000000000 +0200
 @@ -72,7 +72,6 @@
  		case 2:
  			Sche = new Order2(par);
@@ -2352,9 +1265,9 @@ diff -wruPN ./Sources/libschemes/choice_scheme.cpp ../FullSWOF_2D/Sources/libsch
  }
  
  Choice_scheme::~Choice_scheme(){
-diff -wruPN ./Sources/libschemes/order1.cpp ../FullSWOF_2D/Sources/libschemes/order1.cpp
---- ./Sources/libschemes/order1.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libschemes/order1.cpp	2014-04-04 13:13:55.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp ../../FullSWOF_2D/Sources/libschemes/order1.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libschemes/order1.cpp	2014-04-04 13:13:55.000000000 +0200
 @@ -61,7 +61,21 @@
  Order1::~Order1(){}
  
@@ -2419,9 +1332,9 @@ diff -wruPN ./Sources/libschemes/order1.cpp ../FullSWOF_2D/Sources/libschemes/or
  
      //to give the ultimate situation
    out->write(h,u,v,z,tps);
-diff -wruPN ./Sources/libschemes/order1.cpp~ ../FullSWOF_2D/Sources/libschemes/order1.cpp~
---- ./Sources/libschemes/order1.cpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libschemes/order1.cpp~	2014-04-04 12:37:41.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp~ ../../FullSWOF_2D/Sources/libschemes/order1.cpp~
+--- ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp~	1970-01-01 01:00:00.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libschemes/order1.cpp~	2014-04-04 12:37:41.000000000 +0200
 @@ -0,0 +1,258 @@
 +/**
 + * @file order1.cpp
@@ -2681,9 +1594,9 @@ diff -wruPN ./Sources/libschemes/order1.cpp~ ../FullSWOF_2D/Sources/libschemes/o
 +  //storage of h u v value in the final time
 +  out->final(DX, DY,z, h, u,v);  
 +}
-diff -wruPN ./Sources/libschemes/order2.cpp ../FullSWOF_2D/Sources/libschemes/order2.cpp
---- ./Sources/libschemes/order2.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libschemes/order2.cpp	2014-04-16 14:43:56.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSWOF_2D/Sources/libschemes/order2.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libschemes/order2.cpp	2014-04-16 14:43:56.000000000 +0200
 @@ -53,9 +53,14 @@
   * knowledge of the CeCILL license and that you accept its terms.
   *
@@ -2903,9 +1816,9 @@ diff -wruPN ./Sources/libschemes/order2.cpp ../FullSWOF_2D/Sources/libschemes/or
 +  std::cout << "calcul: dt1=" << dt1 << ", dt_max=" << dt_max << std::endl;
 +
  }
-diff -wruPN ./Sources/libschemes/scheme.cpp ../FullSWOF_2D/Sources/libschemes/scheme.cpp
---- ./Sources/libschemes/scheme.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libschemes/scheme.cpp	2014-04-16 16:50:19.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSWOF_2D/Sources/libschemes/scheme.cpp
+--- ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libschemes/scheme.cpp	2014-04-16 16:50:19.000000000 +0200
 @@ -56,6 +56,7 @@
  
  #include "scheme.hpp"
@@ -3167,9 +2080,9 @@ diff -wruPN ./Sources/libschemes/scheme.cpp ../FullSWOF_2D/Sources/libschemes/sc
 +      time_meas.total_samples = 0;
 +}
 +
-diff -wruPN ./Sources/libschemes/scheme.cpp~ ../FullSWOF_2D/Sources/libschemes/scheme.cpp~
---- ./Sources/libschemes/scheme.cpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../FullSWOF_2D/Sources/libschemes/scheme.cpp~	2014-04-04 08:12:41.000000000 +0200
+diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp~ ../../FullSWOF_2D/Sources/libschemes/scheme.cpp~
+--- ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp~	1970-01-01 01:00:00.000000000 +0100
++++ ../../FullSWOF_2D/Sources/libschemes/scheme.cpp~	2014-04-04 08:12:41.000000000 +0200
 @@ -0,0 +1,817 @@
 +/**
 + * @file scheme.cpp
