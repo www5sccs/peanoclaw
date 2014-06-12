@@ -50,6 +50,25 @@ void peanoclaw::State::setPlotNumber(int plotNumber) {
   _stateData.setPlotNumber(plotNumber);
 }
 
+std::string peanoclaw::State::getPlotName() const {
+  std::string plotName;
+  int i = 0;
+  while(i < 32 && _stateData.getPlotName(i) > 0) {
+    plotName.push_back((char)_stateData.getPlotName(i));
+    i++;
+  }
+  return plotName;
+}
+
+void peanoclaw::State::setPlotName(const std::string& plotName) {
+  for(int i = 0; i < std::min(32ul, plotName.length()); i++) {
+    _stateData.setPlotName(i, (int)plotName[i]);
+  }
+  if(plotName.length() < 32) {
+    _stateData.setPlotName(std::min(32ul, plotName.length()), 0);
+  }
+}
+
 void peanoclaw::State::setUnknownsPerSubcell(int unknownsPerSubcell) {
   _stateData.setUnknownsPerSubcell(unknownsPerSubcell);
 }

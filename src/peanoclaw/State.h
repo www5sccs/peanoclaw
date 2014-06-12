@@ -97,6 +97,10 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 
       int getPlotNumber() const;
 
+      void setPlotName(const std::string& plotName);
+
+      std::string getPlotName() const;
+
       void setUnknownsPerSubcell(int unknownsPerSubcell);
 
       int getUnknownsPerSubcell() const;

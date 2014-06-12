@@ -102,7 +102,8 @@ public:
     double initialTimestepSize,
     bool useCornerExtrapolation,
     bool reduceReductions = true,
-    int  forkLevelIncrement = 1
+    int  forkLevelIncrement = 1,
+    const std::string& plotName = "adaptive"
   );
 
   virtual ~PeanoClawLibraryRunner();

@@ -61,9 +61,12 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::descendSpecification() 
 
 tarch::logging::Log                peanoclaw::mappings::Plot::_log( "peanoclaw::mappings::Plot" ); 
 
-void peanoclaw::mappings::Plot::plotFile(int plotNumber) {
+void peanoclaw::mappings::Plot::plotFile(
+  const std::string& plotName,
+  int plotNumber
+) {
   std::ostringstream snapshotFileName;
-  snapshotFileName << "vtkOutput/adaptive-"
+  snapshotFileName << "vtkOutput/" << plotName << "-"
                    #ifdef Parallel
                    << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-"
                    #endif
@@ -458,7 +461,7 @@ void peanoclaw::mappings::Plot::beginIteration(
 
   for(;_nextPlotNumber < solverState.getPlotNumber(); _nextPlotNumber++) {
     _vtkWriter.clear();
-    plotFile(_nextPlotNumber);
+    plotFile(solverState.getPlotName(), _nextPlotNumber);
   }
 
   _vtkWriter.clear();
@@ -493,7 +496,7 @@ void peanoclaw::mappings::Plot::endIteration(
   _patchPlotter->close();
   delete _patchPlotter;
 
-  plotFile(solverState.getPlotNumber());
+  plotFile(solverState.getPlotName(), solverState.getPlotNumber());
   _nextPlotNumber = solverState.getPlotNumber() + 1;
 
   // @todo Insert your code here

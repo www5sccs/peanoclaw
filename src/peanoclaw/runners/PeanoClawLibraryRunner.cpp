@@ -172,7 +172,8 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   double initialTimestepSize,
   bool useDimensionalSplittingExtrapolation,
   bool reduceReductions,
-  int  forkLevelIncrement
+  int  forkLevelIncrement,
+  const std::string& plotName
 ) :
   _plotNumber(1),
   _configuration(configuration),
@@ -225,6 +226,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setDomain(domainOffset, domainSize);
   state.setUseDimensionalSplittingExtrapolation(useDimensionalSplittingExtrapolation && !_configuration.disableDimensionalSplittingOptimization());
   state.setReduceReductions(reduceReductions);
+  state.setPlotName(plotName);
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);

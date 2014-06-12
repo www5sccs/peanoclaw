@@ -29,6 +29,7 @@ class peanoclaw::dastgen::State {
 	persistent parallelise double domainSize[DIMENSIONS];
 	
 	//Plotting
+	persistent parallelise int plotName[32] from 0 to 127;
 	persistent parallelise int plotNumber;
 	
 	//Statistics

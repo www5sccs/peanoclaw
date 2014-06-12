@@ -61,7 +61,7 @@ class peanoclaw::mappings::Plot {
     /**
      * Plots
      */
-    void plotFile(int plotNumber);
+    void plotFile(const std::string& plotName, int plotNumber);
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 
