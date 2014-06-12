@@ -286,7 +286,11 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::fillGhostLayers
   //nicht mehr existieren. Daher muss hier die Extrapolation ausgeschaltet werden.
   bool vertexAtDomainOrRefinementBoundary = false;
   for(int i = 0; i < TWO_POWER_D; i++) {
-    vertexAtDomainOrRefinementBoundary |= !_patches[i].isValid();
+    if(_patches[i].isValid()) {
+      vertexAtDomainOrRefinementBoundary |= !_patches[i].isLeaf();
+    } else {
+      vertexAtDomainOrRefinementBoundary = true;
+    }
   }
 
   if(_useDimensionalSplittingExtrapolation && !vertexAtDomainOrRefinementBoundary) {

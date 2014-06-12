@@ -233,6 +233,13 @@ void peanoclaw::interSubgridCommunication::UpdateNeighborTimeFunctor::operator()
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
   if(updatedPatch.isValid() && neighborPatch.isValid()) {
+//    //TODO unterweg debug
+//    if(tarch::la::equals(updatedPatch.getPosition()(0), 1.0/9.0)
+//      &&tarch::la::equals(updatedPatch.getPosition()(1), 7.0/9.0)
+//      &&updatedPatch.getLevel() == 3) {
+//      std::cout << neighborPatchIndex << "->" << updatedPatchIndex << " updating neighbor time for subgrid " << updatedPatch << " from patch " << neighborPatch << std::endl;
+//    }
+
     double neighborTimeConstraint = neighborPatch.getTimeIntervals().getTimeConstraint();
     updatedPatch.getTimeIntervals().updateMinimalNeighborTimeConstraint(
       neighborTimeConstraint,
@@ -248,6 +255,13 @@ void peanoclaw::interSubgridCommunication::UpdateNeighborTimeFunctor::operator()
         neighborTimeConstraint
       );
     }
+
+//    //TODO unterweg debug
+//    if(tarch::la::equals(updatedPatch.getPosition()(0), 1.0/9.0)
+//      &&tarch::la::equals(updatedPatch.getPosition()(1), 7.0/9.0)
+//      &&updatedPatch.getLevel() == 3) {
+//      std::cout << "After update: " << updatedPatch << std::endl;
+//    }
   }
 }
 

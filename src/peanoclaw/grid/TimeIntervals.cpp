@@ -242,7 +242,9 @@ std::string peanoclaw::grid::TimeIntervals::toString() const {
     str << "currentTime=" << _cellDescription->getTime() << ",timestepSize="
     << _cellDescription->getTimestepSize()
     << ",minimalNeighborTimeConstraint="
-    << _cellDescription->getMinimalNeighborTimeConstraint();
+    << _cellDescription->getMinimalNeighborTimeConstraint()
+    << ",minimalLeafNeighborTimeConstraint="
+    << _cellDescription->getMinimalLeafNeighborTimeConstraint();
   } else {
     str << "null";
   }
