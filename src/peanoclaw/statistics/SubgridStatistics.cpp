@@ -42,7 +42,7 @@ void peanoclaw::statistics::SubgridStatistics::initializeLevelAndProcessStatisti
   processStatistics.push_back(processStatisticsEntry);
 
   //TODO unterweg debug
-  std::cout << "Initialized subgrid statistics levelStatisticsIndex=" << _levelStatisticsIndex << ", _processStatisticsIndex=" << _processStatisticsIndex << std::endl;
+//  std::cout << "Initialized subgrid statistics levelStatisticsIndex=" << _levelStatisticsIndex << ", _processStatisticsIndex=" << _processStatisticsIndex << std::endl;
 #endif
 }
 
