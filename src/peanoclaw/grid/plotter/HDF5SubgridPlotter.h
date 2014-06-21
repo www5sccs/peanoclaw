@@ -10,8 +10,6 @@
 
 #include "peanoclaw/grid/plotter/SubgridPlotter.h"
 
-#include <hdf5.h>
-
 #include <string>
 #include <set>
 #include <map>
