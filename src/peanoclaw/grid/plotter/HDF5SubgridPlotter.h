@@ -10,6 +10,10 @@
 
 #include "peanoclaw/grid/plotter/SubgridPlotter.h"
 
+#ifdef PEANOCLAW_USE_HDF5
+#include <hdf5.h>
+#endif
+
 #include <string>
 #include <set>
 #include <map>
@@ -27,6 +31,9 @@ namespace peanoclaw {
 class peanoclaw::grid::plotter::HDF5SubgridPlotter : public peanoclaw::grid::plotter::SubgridPlotter {
 
   private:
+    #ifndef PEANOCLAW_USE_HDF5
+    typedef int hid_t;
+    #endif
     hid_t _fileID;
     int   _datasetCounter;
 
