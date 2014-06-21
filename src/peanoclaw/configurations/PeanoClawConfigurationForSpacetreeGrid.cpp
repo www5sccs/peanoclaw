@@ -13,7 +13,9 @@ void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::processE
 ) {
   if(name == "plot" || name == "plotAtOutputTimes") {
     _plotAtOutputTimes = (value == "yes");
-
+    assert(value == "yes" || value == "no");
+  } else if(name == "plotAtEnd") {
+    _plotAtEndTime = (value == "yes");
     assert(value == "yes" || value == "no");
   } else {
     _isValid = false;
@@ -107,6 +109,10 @@ bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::plotAtOu
  
 bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::plotSubsteps() const {
   return _plotSubsteps;
+}
+
+bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::plotAtEndTime() const {
+  return _plotAtEndTime;
 }
 
 int peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::plotSubstepsAfterOutputTime() const {

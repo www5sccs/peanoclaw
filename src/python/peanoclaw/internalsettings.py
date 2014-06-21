@@ -13,7 +13,8 @@ class InternalSettings(object):
                plot_unknowns_filter=None, 
                fork_level_increment=1,
                reduce_reductions=True,
-               use_dimensional_splitting_optimization=False):
+               use_dimensional_splitting_optimization=False,
+               plot_name='adaptive'):
     self.use_heap_compression = use_heap_compression
     self.enable_peano_logging = enable_peano_logging
     self.fixed_timestep_size = fixed_timestep_size
@@ -21,6 +22,7 @@ class InternalSettings(object):
     self.fork_level_increment = fork_level_increment
     self.reduce_reductions = reduce_reductions
     self.use_dimensional_splitting_optimization = use_dimensional_splitting_optimization
+    self.plot_name = plot_name
     
   def getFilenameSuffix(self):
     suffix = ''

@@ -365,6 +365,14 @@ elif heapCompression == 'yes':
   pass
 else:
   raise Exception("ERROR: heapCompression must be 'yes' or 'no'")
+
+##### Determine HDF5 usage
+# 
+hdf5 = ARGUMENTS.get('hdf5', 'no')
+if hdf5 == 'yes':
+  cppdefines.append('PEANOCLAW_USE_HDF5')
+  libs.append('hdf5')
+  libs.append('hdf5_hl')
    
 ##### Determine build path
 #
@@ -641,6 +649,7 @@ sourcesPeanoClaw = [
   Glob(join(buildpath, 'peanoclaw/adapters/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/configurations/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/grid/*.cpp')),
+  Glob(join(buildpath, 'peanoclaw/grid/plotter/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/interSubgridCommunication/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/interSubgridCommunication/aspects/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/mappings/*.cpp')),

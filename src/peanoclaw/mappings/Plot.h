@@ -17,8 +17,6 @@
 #include "peanoclaw/Cell.h"
 #include "peanoclaw/State.h"
 
-#include "tarch/plotter/griddata/unstructured/vtk/VTKTextFileWriter.h"
-
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
@@ -27,7 +25,11 @@ namespace peanoclaw {
   namespace mappings {
     class Plot;
   }
-  class PatchPlotter;
+  namespace grid {
+    namespace plotter {
+      class GridPlotter;
+    }
+  }
 }
 
 
@@ -48,20 +50,10 @@ class peanoclaw::mappings::Plot {
     typedef peanoclaw::records::CellDescription CellDescription;
     typedef peanoclaw::records::Data Data;
 
-    /**
-     * Vtk writer. This is a real instance and not a pointer, different to the
-     * subwriters.
-     */
-    tarch::plotter::griddata::unstructured::vtk::VTKTextFileWriter _vtkWriter;
+    peanoclaw::grid::plotter::GridPlotter* _gridPlotter;
 
-    peanoclaw::PatchPlotter*                  _patchPlotter;
+    int                                    _nextPlotNumber;
 
-    int                                       _nextPlotNumber;
-
-    /**
-     * Plots
-     */
-    void plotFile(const std::string& plotName, int plotNumber);
   public:
     /**
      * These flags are used to inform Peano about your operation. It tells the 

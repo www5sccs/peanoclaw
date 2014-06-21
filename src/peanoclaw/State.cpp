@@ -61,7 +61,7 @@ std::string peanoclaw::State::getPlotName() const {
 }
 
 void peanoclaw::State::setPlotName(const std::string& plotName) {
-  for(int i = 0; i < std::min(32ul, plotName.length()); i++) {
+  for(size_t i = 0; i < std::min(32ul, plotName.length()); i++) {
     _stateData.setPlotName(i, (int)plotName[i]);
   }
   if(plotName.length() < 32) {

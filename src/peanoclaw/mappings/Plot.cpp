@@ -1,7 +1,7 @@
 #include "peanoclaw/mappings/Plot.h"
 
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/PatchPlotter.h"
+#include "peanoclaw/grid/plotter/GridPlotter.h"
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
@@ -60,20 +60,6 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::descendSpecification() 
 
 
 tarch::logging::Log                peanoclaw::mappings::Plot::_log( "peanoclaw::mappings::Plot" ); 
-
-void peanoclaw::mappings::Plot::plotFile(
-  const std::string& plotName,
-  int plotNumber
-) {
-  std::ostringstream snapshotFileName;
-  snapshotFileName << "vtkOutput/" << plotName << "-"
-                   #ifdef Parallel
-                   << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-"
-                   #endif
-                   << plotNumber
-                   << ".vtk";
-  _vtkWriter.writeToFile( snapshotFileName.str() );
-}
 
 peanoclaw::mappings::Plot::Plot() {
   logTraceIn( "Plot()" );
@@ -448,7 +434,7 @@ void peanoclaw::mappings::Plot::leaveCell(
         fineGridCell
       );
 
-      _patchPlotter->plotPatch(patch, fineGridVertices, fineGridVerticesEnumerator);
+      _gridPlotter->plotSubgrid(patch);
     }
   logTraceOutWith1Argument( "leaveCell(...)", fineGridCell );
 }
@@ -459,13 +445,6 @@ void peanoclaw::mappings::Plot::beginIteration(
 ) {
   logTraceInWith1Argument( "beginIteration(State)", solverState );
 
-  for(;_nextPlotNumber < solverState.getPlotNumber(); _nextPlotNumber++) {
-    _vtkWriter.clear();
-    plotFile(solverState.getPlotName(), _nextPlotNumber);
-  }
-
-  _vtkWriter.clear();
-
   std::set<int> plotQ;
 //  plotQ.insert(0);
 //  plotQ.insert(3);
@@ -473,8 +452,27 @@ void peanoclaw::mappings::Plot::beginIteration(
   std::set<int> plotParametersWithoutGhostlayer;
   std::set<int> plotParametersWithGhostlayer;
 
-  _patchPlotter = new PatchPlotter(
-    _vtkWriter,
+  //Plot files for skipped iterations
+  for(;_nextPlotNumber < solverState.getPlotNumber(); _nextPlotNumber++) {
+    //_vtkWriter.clear();
+    //plotFile(solverState.getPlotName(), _nextPlotNumber);
+    _gridPlotter = new peanoclaw::grid::plotter::GridPlotter(
+      solverState.getPlotName(),
+      _nextPlotNumber,
+      solverState.getUnknownsPerSubcell(),
+      solverState.getNumberOfParametersWithoutGhostlayerPerSubcell(),
+      solverState.getNumberOfParametersWithGhostlayerPerSubcell(),
+      plotQ,
+      plotParametersWithoutGhostlayer,
+      plotParametersWithGhostlayer,
+      true
+    );
+    delete _gridPlotter;
+  }
+
+  _gridPlotter = new peanoclaw::grid::plotter::GridPlotter(
+    solverState.getPlotName(),
+    _nextPlotNumber,
     solverState.getUnknownsPerSubcell(),
     solverState.getNumberOfParametersWithoutGhostlayerPerSubcell(),
     solverState.getNumberOfParametersWithGhostlayerPerSubcell(),
@@ -492,12 +490,11 @@ void peanoclaw::mappings::Plot::endIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState ); 
-  
-  _patchPlotter->close();
-  delete _patchPlotter;
 
-  plotFile(solverState.getPlotName(), solverState.getPlotNumber());
+  //plotFile(solverState.getPlotName(), solverState.getPlotNumber());
   _nextPlotNumber = solverState.getPlotNumber() + 1;
+  
+  delete _gridPlotter;
 
   // @todo Insert your code here
   logTraceOutWith1Argument( "endIteration(State)", solverState);

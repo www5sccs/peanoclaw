@@ -1,0 +1,78 @@
+/*
+ * NetCDFSubgridPlotter.cpp
+ *
+ *  Created on: Jun 20, 2014
+ *      Author: kristof
+ */
+#include "peanoclaw/grid/plotter/HDF5SubgridPlotter.h"
+
+#include "peanoclaw/Patch.h"
+
+#include "peano/utils/Dimensions.h"
+
+#include <sstream>
+#ifdef PEANOCLAW_USE_HDF5
+#include <hdf5.h>
+#include <hdf5_hl.h>
+#endif
+
+peanoclaw::grid::plotter::HDF5SubgridPlotter::HDF5SubgridPlotter(
+  std::string fileName,
+  int unknownsPerSubcell,
+  int parametersWithoutGhostlayerPerSubcell,
+  int parametersWithGhostlayerPerSubcell,
+  std::set<int> plotQ,
+  std::set<int> plotParameterWithoutGhostlayer,
+  std::set<int> plotParameterWithGhostlayer,
+  bool plotMetainformation
+) : _fileID(-1),
+    _datasetCounter(0)
+{
+  #ifdef PEANOCLAW_USE_HDF5
+  _fileID = H5Fcreate(fileName.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+  #endif
+}
+
+peanoclaw::grid::plotter::HDF5SubgridPlotter::~HDF5SubgridPlotter() {
+  #ifdef PEANOCLAW_USE_HDF5
+  herr_t status = H5Fclose(_fileID);
+
+  if(status < 0) {
+    H5Eprint(H5E_DEFAULT, stderr);
+  }
+  #endif
+}
+
+
+void peanoclaw::grid::plotter::HDF5SubgridPlotter::plotSubgrid(
+  const Patch& subgrid
+) {
+  #ifdef PEANOCLAW_USE_HDF5
+  //Dataset name
+  std::stringstream s;
+  s << "subgrid" << _datasetCounter;
+  _datasetCounter++;
+
+  //Dimensions
+  hsize_t dimensions[DIMENSIONS];
+  for(int d = 0; d < DIMENSIONS; d++) {
+    dimensions[d] = subgrid.getSubdivisionFactor()[d];
+  }
+
+  //Dataset
+  double* data = subgrid.getUNewArray();
+  H5LTmake_dataset(_fileID, s.str().c_str(), DIMENSIONS, dimensions, H5T_NATIVE_DOUBLE, data);
+
+  //Attributes
+  double position[DIMENSIONS];
+  double size[DIMENSIONS];
+  for(int d = 0; d < DIMENSIONS; d++) {
+    position[d] = subgrid.getPosition()[d];
+    size[d] = subgrid.getSize()[d];
+  }
+  H5LTset_attribute_double(_fileID, s.str().c_str(), "position", position, DIMENSIONS);
+  H5LTset_attribute_double(_fileID, s.str().c_str(), "size", size, DIMENSIONS);
+
+  #endif
+}
+

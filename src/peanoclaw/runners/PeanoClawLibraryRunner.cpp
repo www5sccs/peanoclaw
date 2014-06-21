@@ -297,6 +297,13 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
 {
   logTraceIn("~PeanoClawLibraryRunner");
+  //Plot
+  if(_configuration.plotAtEndTime()) {
+    _repository->getState().setPlotNumber(_plotNumber);
+    iteratePlot();
+    _plotNumber++;
+  }
+
 //  logInfo("~PeanoClawLibraryRunner()", "Total number of cell updates: " << _repository->getState().getTotalNumberOfCellUpdates());
 
   //Delete remaining heap data

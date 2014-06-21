@@ -27,6 +27,8 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     bool _plotSubsteps;
 
+    bool _plotAtEndTime;
+
     int _plotSubstepsAfterOutputTime;
 
     int _additionalLevelsForPredefinedRefinement;
@@ -52,6 +54,11 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
      * Indicates wether the substeps of the adaptive timestepping should be plotted.
      */
     bool plotSubsteps() const;
+
+    /**
+     * Indicates whether the final state of the simulation should be plotted.
+     */
+    bool plotAtEndTime() const;
 
     /**
      * Turns the substeps plotting on after the given output time has been reached.

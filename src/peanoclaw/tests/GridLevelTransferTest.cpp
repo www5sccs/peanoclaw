@@ -512,12 +512,11 @@ peanoclaw::tests::GridLevelTransferTest::~GridLevelTransferTest(){
 }
 
 void peanoclaw::tests::GridLevelTransferTest::run() {
-  //TODO unterweg debug
   testMethod(testAdjacentPatchIndicesForSingleRefinedCell);
   testMethod(testOverlappingAreaWithRealOverlap);
   testMethod(testOverlappingAreaWithTouchingPatches);
   testMethod(testOverlappingAreaWithoutOverlap);
-//  testMethod(testRestrictionToVirtualPatch);
+  testMethod(testRestrictionToVirtualPatch);
 }
 
 void peanoclaw::tests::GridLevelTransferTest::setUp() {

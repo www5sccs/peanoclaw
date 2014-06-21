@@ -1,23 +1,104 @@
 /*
- * PatchPlotter.cpp
+ * VTKSubgridPlotter.cpp
  *
- *      Author: Kristof Unterweger
+ *  Created on: Jun 20, 2014
+ *      Author: kristof
  */
-#include "peanoclaw/PatchPlotter.h"
+#include "peanoclaw/grid/plotter/VTKSubgridPlotter.h"
 
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/grid/SubgridAccessor.h"
 
-#include "peano/utils/Loop.h"
+peanoclaw::grid::plotter::VTKSubgridPlotter::VTKSubgridPlotter(
+  std::string fileName,
+  int unknownsPerSubcell,
+  int parametersWithoutGhostlayerPerSubcell,
+  int parametersWithGhostlayerPerSubcell,
+  std::set<int> plotQ = std::set<int>(),
+  std::set<int> plotParameterWithoutGhostlayer = std::set<int>(),
+  std::set<int> plotParameterWithGhostlayer = std::set<int>(),
+  bool plotMetainformation = true
+) : _fileName(fileName),
+    _vtkWriter(),
+    _gap(0.015),
+    _plotQ(plotQ),
+    _plotParameterWithoutGhostlayer(plotParameterWithoutGhostlayer),
+    _plotParameterWithGhostlayer(plotParameterWithGhostlayer),
+    _plotMetainformation(plotMetainformation) {
+  _vertex2IndexMap.clear();
+  _vertexWriter     = _vtkWriter.createVertexWriter();
+  _cellWriter       = _vtkWriter.createCellWriter();
 
-tarch::logging::Log peanoclaw::PatchPlotter::_log( "peanoclaw::PatchPlotter" );
+  for(int i = 0; i < unknownsPerSubcell; i++) {
+    if(_plotQ.empty() || _plotQ.find(i) != _plotQ.end()) {
+      std::stringstream stringstream;
+      stringstream << "q" << i;
+      _cellQWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+    }
+  }
+  for(int i = 0; i < parametersWithoutGhostlayerPerSubcell; i++) {
+    if(_plotParameterWithoutGhostlayer.empty() || _plotParameterWithoutGhostlayer.find(i) != _plotParameterWithoutGhostlayer.end()) {
+      std::stringstream stringstream;
+      stringstream << "pWoG" << i;
+      _cellParameterWithoutGhostlayerWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+    }
+  }
+  for(int i = 0; i < parametersWithGhostlayerPerSubcell; i++) {
+    if(_plotParameterWithGhostlayer.empty() || _plotParameterWithGhostlayer.find(i) != _plotParameterWithGhostlayer.end()) {
+      std::stringstream stringstream;
+      stringstream << "pWG" << i;
+      _cellParameterWithGhostlayerWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
+    }
+  }
 
-void peanoclaw::PatchPlotter::plotSubcell(
+  if(_plotMetainformation) {
+    _cellSubdivisionFactorWriter = _vtkWriter.createCellDataWriter("SubdivisionFactor",1);
+    _cellGhostLayerWidthWriter   = _vtkWriter.createCellDataWriter("GhostlayerWidth",1);
+    _cellTimeOldWriter           = _vtkWriter.createCellDataWriter("timeOld", 1);
+    _cellTimeNewWriter           = _vtkWriter.createCellDataWriter("timeNew", 1);
+    _cellDemandedMeshWidthWriter = _vtkWriter.createCellDataWriter("demandedMeshWidth", 1);
+    _cellAgeWriter               = _vtkWriter.createCellDataWriter("age", 1);
+    #ifdef Parallel
+    _cellRankWriter               = _vtkWriter.createCellDataWriter("rank", 1);
+    #endif
+  }
+}
+
+peanoclaw::grid::plotter::VTKSubgridPlotter::~VTKSubgridPlotter() {
+  close();
+
+  _vtkWriter.writeToFile( _fileName );
+
+  delete _vertexWriter;
+  delete _cellWriter;
+  for(unsigned int i = 0; i < _cellQWriter.size(); i++) {
+    delete _cellQWriter.at(i);
+  }
+  for(unsigned int i = 0; i < _cellParameterWithoutGhostlayerWriter.size(); i++) {
+    delete _cellParameterWithoutGhostlayerWriter.at(i);
+  }
+  for(unsigned int i = 0; i < _cellParameterWithGhostlayerWriter.size(); i++) {
+    delete _cellParameterWithGhostlayerWriter.at(i);
+  }
+
+  if(_plotMetainformation) {
+    delete _cellSubdivisionFactorWriter;
+    delete _cellGhostLayerWidthWriter;
+    delete _cellTimeOldWriter;
+    delete _cellTimeNewWriter;
+    delete _cellDemandedMeshWidthWriter;
+    delete _cellAgeWriter;
+    #ifdef Parallel
+    delete _cellRankWriter;
+    #endif
+  }
+}
+
+void peanoclaw::grid::plotter::VTKSubgridPlotter::plotSubcell(
   const Patch&                            patch,
   const peanoclaw::grid::SubgridAccessor& accessor,
-  tarch::la::Vector<DIMENSIONS, int>      subcellIndex,
-  peanoclaw::Vertex * const               vertices,
-  const peano::grid::VertexEnumerator&    enumerator
+  tarch::la::Vector<DIMENSIONS, int>      subcellIndex//,
+//  peanoclaw::Vertex * const               vertices,
+//  const peano::grid::VertexEnumerator&    enumerator
 ) {
   double localGap = _gap * patch.getLevel();
   tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize() / (1.0 + localGap);
@@ -77,7 +158,7 @@ void peanoclaw::PatchPlotter::plotSubcell(
     }
 }
 
-tarch::la::Vector<DIMENSIONS, double> peanoclaw::PatchPlotter::computeGradient(
+tarch::la::Vector<DIMENSIONS, double> peanoclaw::grid::plotter::VTKSubgridPlotter::computeGradient(
   const Patch&                            patch,
   const peanoclaw::grid::SubgridAccessor& accessor,
   tarch::la::Vector<DIMENSIONS, int>      subcellIndex,
@@ -94,102 +175,17 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::PatchPlotter::computeGradient(
   return gradient;
 }
 
-peanoclaw::PatchPlotter::PatchPlotter(
-  tarch::plotter::griddata::unstructured::vtk::VTKTextFileWriter& vtkWriter,
-  int unknownsPerSubcell,
-  int parameterWithoutGhostlayerPerSubcell,
-  int parameterWithGhostlayerPerSubcell,
-  std::set<int> plotQ,
-  std::set<int> plotParameterWithoutGhostlayer,
-  std::set<int> plotParameterWithGhostlayer,
-  bool plotMetainformation
-) : _vtkWriter(vtkWriter),
-    _gap(0.015),
-    _plotQ(plotQ),
-    _plotParameterWithoutGhostlayer(plotParameterWithoutGhostlayer),
-    _plotParameterWithGhostlayer(plotParameterWithGhostlayer),
-    _plotMetainformation(plotMetainformation) {
-
-  _vertex2IndexMap.clear();
-  _vertexWriter     = _vtkWriter.createVertexWriter();
-  _cellWriter       = _vtkWriter.createCellWriter();
-
-  for(int i = 0; i < unknownsPerSubcell; i++) {
-    if(_plotQ.empty() || _plotQ.find(i) != _plotQ.end()) {
-      std::stringstream stringstream;
-      stringstream << "q" << i;
-      _cellQWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
-    }
-  }
-  for(int i = 0; i < parameterWithoutGhostlayerPerSubcell; i++) {
-    if(_plotParameterWithoutGhostlayer.empty() || _plotParameterWithoutGhostlayer.find(i) != _plotParameterWithoutGhostlayer.end()) {
-      std::stringstream stringstream;
-      stringstream << "pWoG" << i;
-      _cellParameterWithoutGhostlayerWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
-    }
-  }
-  for(int i = 0; i < parameterWithGhostlayerPerSubcell; i++) {
-    if(_plotParameterWithGhostlayer.empty() || _plotParameterWithGhostlayer.find(i) != _plotParameterWithGhostlayer.end()) {
-      std::stringstream stringstream;
-      stringstream << "pWG" << i;
-      _cellParameterWithGhostlayerWriter.push_back( _vtkWriter.createCellDataWriter(stringstream.str(), 1) );
-    }
-  }
-
-  if(_plotMetainformation) {
-    _cellSubdivisionFactorWriter = _vtkWriter.createCellDataWriter("SubdivisionFactor",1);
-    _cellGhostLayerWidthWriter   = _vtkWriter.createCellDataWriter("GhostlayerWidth",1);
-    _cellTimeOldWriter           = _vtkWriter.createCellDataWriter("timeOld", 1);
-    _cellTimeNewWriter           = _vtkWriter.createCellDataWriter("timeNew", 1);
-    _cellDemandedMeshWidthWriter = _vtkWriter.createCellDataWriter("demandedMeshWidth", 1);
-    _cellAgeWriter               = _vtkWriter.createCellDataWriter("age", 1);
-    #ifdef Parallel
-    _cellRankWriter               = _vtkWriter.createCellDataWriter("rank", 1);
-    #endif
-  }
-}
-
-peanoclaw::PatchPlotter::~PatchPlotter() {
-  delete _vertexWriter;
-  delete _cellWriter;
-  for(unsigned int i = 0; i < _cellQWriter.size(); i++) {
-    delete _cellQWriter.at(i);
-  }
-  for(unsigned int i = 0; i < _cellParameterWithoutGhostlayerWriter.size(); i++) {
-    delete _cellParameterWithoutGhostlayerWriter.at(i);
-  }
-  for(unsigned int i = 0; i < _cellParameterWithGhostlayerWriter.size(); i++) {
-    delete _cellParameterWithGhostlayerWriter.at(i);
-  }
-
-  if(_plotMetainformation) {
-    delete _cellSubdivisionFactorWriter;
-    delete _cellGhostLayerWidthWriter;
-    delete _cellTimeOldWriter;
-    delete _cellTimeNewWriter;
-    delete _cellDemandedMeshWidthWriter;
-    delete _cellAgeWriter;
-    #ifdef Parallel
-    delete _cellRankWriter;
-    #endif
-  }
-}
-
-void peanoclaw::PatchPlotter::plotPatch(
-  const Patch& patch,
-  peanoclaw::Vertex * const        vertices,
-  const peano::grid::VertexEnumerator&              enumerator
+void peanoclaw::grid::plotter::VTKSubgridPlotter::plotSubgrid(
+  const Patch& subgrid
 ) {
-  assertion3(!patch.containsNaN(), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
+  double localGap = _gap * subgrid.getLevel();
+  tarch::la::Vector<DIMENSIONS, double> subcellSize = subgrid.getSubcellSize() / (1.0 + localGap);
 
-  double localGap = _gap * patch.getLevel();
-  tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize() / (1.0 + localGap);
-
-  peanoclaw::grid::SubgridAccessor accessor = patch.getAccessor();
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
 
   // Plot vertices
-  dfor( vertexIndex, patch.getSubdivisionFactor()+1) {
-    tarch::la::Vector<DIMENSIONS, double> x = patch.getPosition() + patch.getSize() * localGap/2.0 + tarch::la::multiplyComponents(vertexIndex.convertScalar<double>(), subcellSize);
+  dfor( vertexIndex, subgrid.getSubdivisionFactor()+1) {
+    tarch::la::Vector<DIMENSIONS, double> x = subgrid.getPosition() + subgrid.getSize() * localGap/2.0 + tarch::la::multiplyComponents(vertexIndex.convertScalar<double>(), subcellSize);
     if ( _vertex2IndexMap.find(x) == _vertex2IndexMap.end() ) {
       assertion(_vertexWriter!=NULL);
       #if defined(Dim2) || defined(Dim3)
@@ -202,20 +198,21 @@ void peanoclaw::PatchPlotter::plotPatch(
   }
 
   // Plot cells
-  dfor(subcellIndex, patch.getSubdivisionFactor()) {
+  dfor(subcellIndex, subgrid.getSubdivisionFactor()) {
 //    if(tarch::la::norm2(computeGradient(patch, subcellIndex, 0)) > 1.0) {
       plotSubcell(
-        patch,
+        subgrid,
         accessor,
-        subcellIndex,
-        vertices,
-        enumerator
+        subcellIndex//,
+//        vertices,
+//        enumerator
       );
 //    }
   }
 }
 
-void peanoclaw::PatchPlotter::close() {
+
+void peanoclaw::grid::plotter::VTKSubgridPlotter::close() {
   _vertexWriter->close();
   _cellWriter->close();
   for(std::vector<tarch::plotter::griddata::Writer::CellDataWriter*>::iterator i = _cellQWriter.begin(); i != _cellQWriter.end(); i++) {
@@ -239,5 +236,6 @@ void peanoclaw::PatchPlotter::close() {
     #endif
   }
 }
+
 
 
