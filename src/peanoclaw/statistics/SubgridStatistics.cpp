@@ -12,6 +12,8 @@
 #include "peanoclaw/Heap.h"
 #include "peanoclaw/State.h"
 
+#include "tarch/parallel/Node.h"
+
 #include <algorithm>
 #include <limits>
 #include <iomanip>
@@ -449,7 +451,9 @@ void peanoclaw::statistics::SubgridStatistics::finalizeIteration(peanoclaw::Stat
   _averageGlobalTimeInterval = (state.getStartMaximumGlobalTimeInterval() + state.getEndMaximumGlobalTimeInterval()) / 2.0;
  
 #if !defined(SharedTBB)
-  state.setSubgridStatisticsForLastGridIteration(*this);
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    state.setSubgridStatisticsForLastGridIteration(*this);
+  }
 #endif
 
   _isFinalized = true;
