@@ -26,6 +26,8 @@ SWE_WavePropagationBlock_patch::SWE_WavePropagationBlock_patch(peanoclaw::Patch&
 
     tarch::la::Vector<DIMENSIONS,int> subcellIndex;
 
+    synchAfterWrite();
+
 //    tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = _patch.getSubdivisionFactor();
 //    peanoclaw::grid::SubgridAccessor& accessor = _patch.getAccessor();
 //    for (int x = -1; x < subdivisionFactor(0)+1; x++) {

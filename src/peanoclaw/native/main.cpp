@@ -70,14 +70,16 @@ void initializeLogFilter() {
 int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string& plotName) {
   //Optional arguments
   int remaining = argc;
+  std::string defaultPlotName = "adaptive";
   if (argc == 1) {
     usePeanoClaw = true;
-    plotName = "adaptive";
+    plotName = defaultPlotName;
   } else if (argc == 2) {
     if(std::string(argv[argc-1]) == "--usePeano") {
       usePeanoClaw = true;
       remaining = argc-1;
     }
+    plotName = defaultPlotName;
   } else if (argc >= 3) {
     if(std::string(argv[argc-1]) == "--usePeano" || std::string(argv[argc-3]) == "--usePeano") {
       usePeanoClaw = true;
@@ -86,6 +88,8 @@ int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string
     if(std::string(argv[argc-2]) == "--plotName") {
       plotName = std::string(argv[argc-1]);
       remaining-=2;
+    } else {
+      plotName = defaultPlotName;
     }
   }
   return remaining;

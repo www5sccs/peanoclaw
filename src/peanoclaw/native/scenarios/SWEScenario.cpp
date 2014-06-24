@@ -6,6 +6,7 @@
  */
 #include "peanoclaw/native/scenarios/SWEScenario.h"
 
+#include "peanoclaw/native/scenarios/BowlOcean.h"
 #include "peanoclaw/native/scenarios/BreakingDam.h"
 #include "peanoclaw/native/scenarios/CalmOcean.h"
 
@@ -86,6 +87,8 @@ peanoclaw::native::scenarios::SWEScenario* peanoclaw::native::scenarios::SWEScen
       return new peanoclaw::native::scenarios::BreakingDamSWEScenario(arguments);
     } else if(scenarioName == "calmOcean") {
       return new peanoclaw::native::scenarios::CalmOcean(arguments);
+    } else if(scenarioName == "bowlOcean") {
+      return new peanoclaw::native::scenarios::BowlOcean(arguments);
     } else {
       std::cerr << "Unknown scenario '" << scenarioName << "'." << std::endl;
     }
