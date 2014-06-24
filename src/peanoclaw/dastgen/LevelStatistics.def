@@ -20,5 +20,7 @@ class peanoclaw::statistics::LevelStatistics {
   parallelise persistent double patchesBlockedDueToGlobalTimestep;
   parallelise persistent double patchesSkippingIteration;
   parallelise persistent double patchesCoarsening;
-  parallelise persistent int    estimatedNumberOfRemainingIterationsToGlobalTimestep; 
+  parallelise persistent int    estimatedNumberOfRemainingIterationsToGlobalTimestep;
+  parallelise persistent double averageTimestepSize;
+  parallelise persistent double minimalTimestepSize; 
 };

@@ -393,6 +393,8 @@ void peanoclaw::statistics::SubgridStatistics::processSubgridAfterUpdate(const p
   level.setNumberOfCellUpdates(
     level.getNumberOfCellUpdates() + tarch::la::volume(patch.getSubdivisionFactor())
   );
+  level.setAverageTimestepSize(level.getAverageTimestepSize() + patch.getTimeIntervals().getTimestepSize());
+  level.setMinimalTimestepSize(std::min(level.getMinimalTimestepSize(), patch.getTimeIntervals().getTimestepSize()));
 
   std::vector<ProcessStatisticsEntry>& processStatistics = ProcessStatisticsHeap::getInstance().getData(_processStatisticsIndex);
   ProcessStatisticsEntry& processStatisticsEntry = processStatistics[0];
@@ -449,6 +451,11 @@ void peanoclaw::statistics::SubgridStatistics::finalizeIteration(peanoclaw::Stat
 
   //Finalize statistics
   _averageGlobalTimeInterval = (state.getStartMaximumGlobalTimeInterval() + state.getEndMaximumGlobalTimeInterval()) / 2.0;
+
+  std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
+  for(std::vector<LevelStatistics>::iterator i = levelStatistics.begin(); i != levelStatistics.end(); i++) {
+    i->setAverageTimestepSize(i->getAverageTimestepSize() / i->getNumberOfPatches());
+  }
  
 #if !defined(SharedTBB)
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
@@ -482,7 +489,8 @@ void peanoclaw::statistics::SubgridStatistics::logLevelStatistics(std::string de
     const LevelStatistics& level = levelStatistics.at(i);
     logInfo("logLevelStatistics", "\tLevel " << i << ": " << level.getNumberOfPatches() << " patches (area=" << level.getArea() <<  "), "
         << level.getNumberOfCells() << " cells, " << level.getNumberOfCellUpdates() << "cell updates, "
-        << totalEstimatedIterationsToGlobalTimestep << " remaining iterations. ");
+        << totalEstimatedIterationsToGlobalTimestep << " remaining iterations. "
+        << "minDt=" << level.getMinimalTimestepSize() << " averageDt=" << level.getAverageTimestepSize());
 
     totalArea += level.getArea();
     totalNumberOfPatches += level.getNumberOfPatches();

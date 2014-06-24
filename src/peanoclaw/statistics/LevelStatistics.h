@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   12/06/2014 07:41
+ * @date   24/06/2014 20:44
  */
 class peanoclaw::statistics::LevelStatistics { 
    
@@ -53,6 +53,8 @@ class peanoclaw::statistics::LevelStatistics {
          double _patchesSkippingIteration;
          double _patchesCoarsening;
          int _estimatedNumberOfRemainingIterationsToGlobalTimestep;
+         double _averageTimestepSize;
+         double _minimalTimestepSize;
          /**
           * Generated
           */
@@ -61,7 +63,7 @@ class peanoclaw::statistics::LevelStatistics {
          /**
           * Generated
           */
-         PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
+         PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
          
          
          inline double getArea() const 
@@ -304,6 +306,46 @@ class peanoclaw::statistics::LevelStatistics {
          
          
          
+         inline double getAverageTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _averageTimestepSize;
+         }
+         
+         
+         
+         inline void setAverageTimestepSize(const double& averageTimestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _averageTimestepSize = averageTimestepSize;
+         }
+         
+         
+         
+         inline double getMinimalTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _minimalTimestepSize;
+         }
+         
+         
+         
+         inline void setMinimalTimestepSize(const double& minimalTimestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _minimalTimestepSize = minimalTimestepSize;
+         }
+         
+         
+         
       };
       
    private: 
@@ -323,7 +365,7 @@ class peanoclaw::statistics::LevelStatistics {
       /**
        * Generated
        */
-      LevelStatistics(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
+      LevelStatistics(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
       
       /**
        * Generated
@@ -570,6 +612,46 @@ class peanoclaw::statistics::LevelStatistics {
       }
       
       
+      
+      inline double getAverageTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._averageTimestepSize;
+      }
+      
+      
+      
+      inline void setAverageTimestepSize(const double& averageTimestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._averageTimestepSize = averageTimestepSize;
+      }
+      
+      
+      
+      inline double getMinimalTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._minimalTimestepSize;
+      }
+      
+      
+      
+      inline void setMinimalTimestepSize(const double& minimalTimestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._minimalTimestepSize = minimalTimestepSize;
+      }
+      
+      
       /**
        * Generated
        */
@@ -628,7 +710,7 @@ class peanoclaw::statistics::LevelStatistics {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   12/06/2014 07:41
+          * @date   24/06/2014 20:44
           */
          class peanoclaw::statistics::LevelStatisticsPacked { 
             
@@ -647,6 +729,8 @@ class peanoclaw::statistics::LevelStatistics {
                   double _patchesSkippingIteration;
                   double _patchesCoarsening;
                   int _estimatedNumberOfRemainingIterationsToGlobalTimestep;
+                  double _averageTimestepSize;
+                  double _minimalTimestepSize;
                   /**
                    * Generated
                    */
@@ -655,7 +739,7 @@ class peanoclaw::statistics::LevelStatistics {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
+                  PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
                   
                   
                   inline double getArea() const 
@@ -898,6 +982,46 @@ class peanoclaw::statistics::LevelStatistics {
                   
                   
                   
+                  inline double getAverageTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _averageTimestepSize;
+                  }
+                  
+                  
+                  
+                  inline void setAverageTimestepSize(const double& averageTimestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _averageTimestepSize = averageTimestepSize;
+                  }
+                  
+                  
+                  
+                  inline double getMinimalTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _minimalTimestepSize;
+                  }
+                  
+                  
+                  
+                  inline void setMinimalTimestepSize(const double& minimalTimestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _minimalTimestepSize = minimalTimestepSize;
+                  }
+                  
+                  
+                  
                };
                
             private: 
@@ -917,7 +1041,7 @@ class peanoclaw::statistics::LevelStatistics {
                /**
                 * Generated
                 */
-               LevelStatisticsPacked(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep);
+               LevelStatisticsPacked(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const int& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
                
                /**
                 * Generated
@@ -1161,6 +1285,46 @@ class peanoclaw::statistics::LevelStatistics {
  #endif 
  {
                   _persistentRecords._estimatedNumberOfRemainingIterationsToGlobalTimestep = estimatedNumberOfRemainingIterationsToGlobalTimestep;
+               }
+               
+               
+               
+               inline double getAverageTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._averageTimestepSize;
+               }
+               
+               
+               
+               inline void setAverageTimestepSize(const double& averageTimestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._averageTimestepSize = averageTimestepSize;
+               }
+               
+               
+               
+               inline double getMinimalTimestepSize() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._minimalTimestepSize;
+               }
+               
+               
+               
+               inline void setMinimalTimestepSize(const double& minimalTimestepSize) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._minimalTimestepSize = minimalTimestepSize;
                }
                
                
