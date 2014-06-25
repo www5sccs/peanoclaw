@@ -246,6 +246,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSub
   if(isPeanoCellLeaf) {
     assertion1(tarch::la::greaterEquals(subgrid.getTimeIntervals().getTimestepSize(), 0.0), subgrid);
     subgrid.switchToLeaf();
+    _numerics.update(subgrid);
     ParallelSubgrid parallelSubgrid(subgrid);
     parallelSubgrid.markCurrentStateAsSent(false);
   } else {

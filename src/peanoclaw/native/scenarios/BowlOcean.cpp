@@ -86,18 +86,27 @@ void peanoclaw::native::scenarios::BowlOcean::initializePatch(peanoclaw::Patch& 
         }
     }
 
-    //Bathymetry
-    for (int subcellY = -patch.getGhostlayerWidth(); subcellY < patch.getSubdivisionFactor()(1) + patch.getGhostlayerWidth(); subcellY++) {
-        for (int subcellX = -patch.getGhostlayerWidth(); subcellX < patch.getSubdivisionFactor()(0) + patch.getGhostlayerWidth(); subcellX++) {
-          subcellIndex(0) = subcellX;
-          subcellIndex(1) = subcellY;
+    update(patch);
+}
 
-          double x = patchPosition(0) + subcellX*subcellSize(0);
-          double y = patchPosition(1) + subcellY*subcellSize(1);
+void peanoclaw::native::scenarios::BowlOcean::update(peanoclaw::Patch& subgrid) {
+  peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
+  const tarch::la::Vector<DIMENSIONS, double> subgridPosition = subgrid.getPosition();
+  const tarch::la::Vector<DIMENSIONS, double> subcellSize = subgrid.getSubcellSize();
 
-          accessor.setParameterWithGhostlayer(subcellIndex, 0, getBathymetry(x, y));
-        }
-    }
+  //Bathymetry
+  tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+  for (int subcellY = -subgrid.getGhostlayerWidth(); subcellY < subgrid.getSubdivisionFactor()(1) + subgrid.getGhostlayerWidth(); subcellY++) {
+      for (int subcellX = -subgrid.getGhostlayerWidth(); subcellX < subgrid.getSubdivisionFactor()(0) + subgrid.getGhostlayerWidth(); subcellX++) {
+        subcellIndex(0) = subcellX;
+        subcellIndex(1) = subcellY;
+
+        double x = subgridPosition(0) + subcellX*subcellSize(0);
+        double y = subgridPosition(1) + subcellY*subcellSize(1);
+
+        accessor.setParameterWithGhostlayer(subcellIndex, 0, getBathymetry(x, y));
+      }
+  }
 }
 
 tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BowlOcean::computeDemandedMeshWidth(

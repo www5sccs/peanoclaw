@@ -53,7 +53,7 @@ public:
   virtual void initializePatch(peanoclaw::Patch& patch);
   virtual tarch::la::Vector<DIMENSIONS,double> computeDemandedMeshWidth(peanoclaw::Patch& patch, bool isInitializing);
 
-  virtual void update(peanoclaw::Patch& patch) {}
+  virtual void update(peanoclaw::Patch& subgrid);
 
   //PeanoClaw-Scenario
   tarch::la::Vector<DIMENSIONS,double> getDomainOffset() const;

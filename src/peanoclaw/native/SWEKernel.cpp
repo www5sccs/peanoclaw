@@ -47,6 +47,10 @@ void peanoclaw::native::SWEKernel::initializePatch(
   logTraceOutWith1Argument( "initializePatch(...)", demandedMeshWidth);
 }
 
+void peanoclaw::native::SWEKernel::update(Patch& subgrid) {
+  _scenario.update(subgrid);
+}
+
 void peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
 

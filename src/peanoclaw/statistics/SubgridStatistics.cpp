@@ -91,6 +91,7 @@ void peanoclaw::statistics::SubgridStatistics::addLevelToLevelStatistics(int lev
   while(static_cast<int>(levelStatistics.size()) < level + 1) {
     LevelStatistics levelStatisticsEntry;
     memset(&levelStatisticsEntry, 0, sizeof(LevelStatistics));
+    levelStatisticsEntry.setMinimalTimestepSize(std::numeric_limits<double>::max());
     levelStatistics.push_back(levelStatisticsEntry);
   }
 #endif
@@ -454,7 +455,7 @@ void peanoclaw::statistics::SubgridStatistics::finalizeIteration(peanoclaw::Stat
 
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   for(std::vector<LevelStatistics>::iterator i = levelStatistics.begin(); i != levelStatistics.end(); i++) {
-    i->setAverageTimestepSize(i->getAverageTimestepSize() / i->getNumberOfPatches());
+    i->setAverageTimestepSize(i->getAverageTimestepSize() / i->getNumberOfPatches() * i->getNumberOfCells() / i->getNumberOfCellUpdates());
   }
  
 #if !defined(SharedTBB)

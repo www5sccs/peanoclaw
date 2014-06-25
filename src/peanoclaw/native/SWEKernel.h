@@ -64,6 +64,12 @@ public:
   void initializePatch(Patch& patch);
 
   /**
+   * Initializes parameter when a subgrid is created due to refinement
+   * or coarsening.
+   */
+  void update(Patch& subgrid);
+
+  /**
    * Solves a timestep. All updates (e.g. change of grid values, taken timestep size, new cfl number)
    * are performed on the patch object
    *
