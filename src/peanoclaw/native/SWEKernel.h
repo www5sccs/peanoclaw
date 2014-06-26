@@ -45,6 +45,17 @@ private:
   int                               _cachedGhostlayerWidth;
   std::auto_ptr<SWE_WavePropagationBlock_patch> _cachedBlock;
 
+  /**
+   * Transforms the water height in the given subgrid form either
+   * absolute height to height above sea floor or vice versa.
+   */
+  void transformWaterHeight(
+    peanoclaw::Patch& subgrid,
+    const Area&       area,
+    bool              modifyUOld,
+    bool              absoluteToAboveSeaFloor
+  ) const;
+
 public:
   SWEKernel(
     peanoclaw::native::scenarios::SWEScenario& scenario,
@@ -107,6 +118,30 @@ public:
    * @see peanoclaw::Numerics
    */
   int getGhostlayerWidth() const { return 1; }
+
+  /*
+   * Modifies the source subgrid so that not the water height above
+   * the seafloor is interpolated but the absolute water height.
+   */
+  virtual void interpolate(
+    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
+    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+    peanoclaw::Patch& source,
+    peanoclaw::Patch&        destination,
+    bool interpolateToUOld,
+    bool interpolateToCurrentTime,
+    bool useTimeUNewOrTimeUOld
+  ) const;
+
+  /*
+   * Modifies the source subgrid so that not the water height above
+   * the seafloor is restricted but the absolute water height.
+   */
+  virtual void restrict (
+    peanoclaw::Patch& source,
+    peanoclaw::Patch& destination,
+    bool              restrictOnlyOverlappedAreas
+  ) const;
 };
 
 #endif /* PEANOCLAW_SWEKERNEL_NATIVE_H_ */

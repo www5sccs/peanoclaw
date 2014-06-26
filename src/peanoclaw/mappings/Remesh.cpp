@@ -371,25 +371,25 @@ void peanoclaw::mappings::Remesh::createCell(
         true
         #endif
       ) {
-        _numerics->interpolate(
-          fineGridPatch.getSubdivisionFactor(),
-          0,
-          coarseGridPatch,
-          fineGridPatch,
-          false,
-          false,
-          false
-        );
-        _numerics->interpolate(
-          fineGridPatch.getSubdivisionFactor(),
-          0,
-          coarseGridPatch,
-          fineGridPatch,
-          true,
-          true,
-          false
-        );
         _numerics->update(fineGridPatch);
+        _numerics->interpolate(
+          fineGridPatch.getSubdivisionFactor(),
+          0,
+          coarseGridPatch,
+          fineGridPatch,
+          false,
+          false,
+          false
+        );
+        _numerics->interpolate(
+          fineGridPatch.getSubdivisionFactor(),
+          0,
+          coarseGridPatch,
+          fineGridPatch,
+          true,
+          true,
+          false
+        );
       }
 
       fineGridPatch.setDemandedMeshWidth(_numerics->getDemandedMeshWidth(fineGridPatch, _isInitializing));

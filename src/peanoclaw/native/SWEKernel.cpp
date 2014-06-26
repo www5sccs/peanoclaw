@@ -8,6 +8,7 @@
 #include "peanoclaw/native/SWEKernel.h"
 
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/Area.h"
 #include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 #include "peanoclaw/native/SWE_WavePropagationBlock_patch.hh"
 
@@ -15,6 +16,35 @@
 #include "tarch/parallel/Node.h"
 
 tarch::logging::Log peanoclaw::native::SWEKernel::_log("peanoclaw::native::SWEKernel");
+
+void peanoclaw::native::SWEKernel::transformWaterHeight(
+  peanoclaw::Patch& subgrid,
+  const Area&       area,
+  bool              modifyUOld,
+  bool              absoluteToAboveSeaFloor
+) const {
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
+  double sign = absoluteToAboveSeaFloor ? -1 : +1;
+  if(modifyUOld) {
+    dfor(internalSubcellIndex, area._size) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + area._offset;
+      accessor.setValueUOld(
+        subcellIndex,
+        0,
+        accessor.getValueUOld(subcellIndex, 0) + sign * accessor.getParameterWithGhostlayer(subcellIndex, 0)
+      );
+    }
+  } else {
+    dfor(internalSubcellIndex, area._size) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + area._offset;
+      accessor.setValueUNew(
+        subcellIndex,
+        0,
+        accessor.getValueUNew(subcellIndex, 0) + sign * accessor.getParameterWithGhostlayer(subcellIndex, 0)
+      );
+    }
+  }
+}
 
 peanoclaw::native::SWEKernel::SWEKernel(
   peanoclaw::native::scenarios::SWEScenario& scenario,
@@ -176,4 +206,81 @@ void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension
 
       logTraceOut("fillBoundaryLayerInPyClaw");
     }
+
+void peanoclaw::native::SWEKernel::interpolate(
+  const tarch::la::Vector<DIMENSIONS, int>& destinationSize,
+  const tarch::la::Vector<DIMENSIONS, int>& destinationOffset,
+  peanoclaw::Patch& source,
+  peanoclaw::Patch& destination,
+  bool interpolateToUOld,
+  bool interpolateToCurrentTime,
+  bool useTimeUNewOrTimeUOld
+) const {
+  peanoclaw::grid::SubgridAccessor sourceAccessor = source.getAccessor();
+  peanoclaw::grid::SubgridAccessor destinationAccessor = destination.getAccessor();
+  tarch::la::Vector<DIMENSIONS,int> sourceSubdivisionFactor = source.getSubdivisionFactor();
+
+  Area destinationArea(destinationOffset, destinationSize);
+  Area sourceArea = destinationArea.mapToPatch(destination, source);
+
+  //Increase sourceArea by one cell in each direction.
+  for(int d = 0; d < DIMENSIONS; d++) {
+    if(sourceArea._offset[d] > 0) {
+      sourceArea._offset[d] = sourceArea._offset[d]-1;
+      sourceArea._size[d] = std::min(sourceSubdivisionFactor[d], sourceArea._size[d] + 2);
+    } else {
+      sourceArea._size[d] = std::min(sourceSubdivisionFactor[d], sourceArea._size[d] + 1);
+    }
+  }
+
+  //Source: Water Height above Sea Floor -> Absolute Water Height
+  transformWaterHeight(source, sourceArea, true, false); //UOld
+  transformWaterHeight(source, sourceArea, false, false); // UNew
+
+  //Interpolate
+  Numerics::interpolate(
+    destinationSize,
+    destinationOffset,
+    source,
+    destination,
+    interpolateToUOld,
+    interpolateToCurrentTime,
+    useTimeUNewOrTimeUOld
+  );
+
+  //Source: Absolute Water Height -> Water Height above Sea Floor
+  transformWaterHeight(source, sourceArea, true, true); //UOld
+  transformWaterHeight(source, sourceArea, false, true); // UNew
+
+  //Destination: Absolute Water Height -> Water Height above Sea Floor
+  transformWaterHeight(destination, destinationArea, interpolateToUOld, true);
+}
+
+void peanoclaw::native::SWEKernel::restrict (
+  peanoclaw::Patch& source,
+  peanoclaw::Patch& destination,
+  bool              restrictOnlyOverlappedAreas
+) const {
+
+  Area sourceArea(tarch::la::Vector<DIMENSIONS,int>(0), source.getSubdivisionFactor());
+  Area destinationArea(tarch::la::Vector<DIMENSIONS,int>(0), destination.getSubdivisionFactor());
+
+  transformWaterHeight(source, sourceArea, true, false); //UOld
+  transformWaterHeight(source, sourceArea, false, false); //UNew
+  transformWaterHeight(destination, destinationArea, true, false); //UOld
+  transformWaterHeight(destination, destinationArea, false, false); //UNew
+
+  Numerics::restrict(
+    source,
+    destination,
+    restrictOnlyOverlappedAreas
+  );
+
+  transformWaterHeight(source, sourceArea, true, true); //UOld
+  transformWaterHeight(source, sourceArea, false, true); //UNew
+  transformWaterHeight(destination, destinationArea, true, true); //UOld
+  transformWaterHeight(destination, destinationArea, false, true); //UNew
+}
+
+
 

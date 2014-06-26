@@ -134,6 +134,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::switchToAndAddVirt
   } else {
     subgrid.switchToVirtual();
   }
+  _numerics.update(subgrid);
 }
 
 void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToOverlappingVirtualSubgrids(
