@@ -31,9 +31,12 @@
 peanoclaw::native::scenarios::BowlOcean::BowlOcean(
   std::vector<std::string> arguments
 ) : _domainSize(1000){
-  if(arguments.size() != 6) {
-    std::cerr << "Expected arguments for Scenario 'BreakingDam': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize" << std::endl
-        << "\tGot " << arguments.size() << " arguments." << std::endl;
+  if(arguments.size() != 7) {
+    std::cerr << "Expected arguments for Scenario 'BreakingDam': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize numberOfRamps refinementType" << std::endl
+        << "\tGot " << arguments.size() << " arguments." << std::endl
+        << "Parameters:" << std::endl
+        << " - numberOfRamps: 0-4" << std::endl
+       << " - refinementType: refineWave - Refinement of wave front; refineCoast - Refinement of coast line" << std::endl;
     throw "";
   }
 
@@ -50,6 +53,12 @@ peanoclaw::native::scenarios::BowlOcean::BowlOcean(
   _globalTimestepSize = atof(arguments[4].c_str());
 
   _numberOfRampSides = atoi(arguments[5].c_str());
+
+  if(arguments[6] == "refineWave") {
+    _refinementType = RefineWaveFront;
+  } else if(arguments[6] == "refineCoast") {
+    _refinementType = RefineCoastline;
+  }
 
   _deepestDepth = 100;
   _shallowestDepth = 1;
@@ -69,8 +78,8 @@ void peanoclaw::native::scenarios::BowlOcean::initializePatch(peanoclaw::Patch& 
             subcellIndex(0) = subcellX;
             subcellIndex(1) = subcellY;
 
-            double x = patchPosition(0) + subcellX*subcellSize(0);
-            double y = patchPosition(1) + subcellY*subcellSize(1);
+            double x = (patchPosition(0) + 0.5) + subcellX*subcellSize(0);
+            double y = (patchPosition(1) + 0.5) + subcellY*subcellSize(1);
 
             double q0 = getWaterHeight(x, y);
             double q1 = 0.0; //hl*ul*(r<=radDam) + hr*ur*(r>radDam);
@@ -101,8 +110,8 @@ void peanoclaw::native::scenarios::BowlOcean::update(peanoclaw::Patch& subgrid) 
         subcellIndex(0) = subcellX;
         subcellIndex(1) = subcellY;
 
-        double x = subgridPosition(0) + subcellX*subcellSize(0);
-        double y = subgridPosition(1) + subcellY*subcellSize(1);
+        double x = (subgridPosition(0) + 0.5) + subcellX*subcellSize(0);
+        double y = (subgridPosition(1) + 0.5) + subcellY*subcellSize(1);
 
         accessor.setParameterWithGhostlayer(subcellIndex, 0, getBathymetry(x, y));
       }
@@ -145,32 +154,26 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BowlOcean::co
 
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
     double minWaterHeight = std::numeric_limits<double>::max();
-//    for (int yi = 0; yi < patch.getSubdivisionFactor()(1); yi++) {
-//        for (int xi = 0; xi < patch.getSubdivisionFactor()(0); xi++) {
-//          subcellIndex(0) = xi;
-//          subcellIndex(1) = yi;
-//          minWaterHeight = std::min(accessor.getValueUNew(subcellIndex, 0), minWaterHeight);
-//        }
-//    }
+    for (int yi = 0; yi < patch.getSubdivisionFactor()(1); yi++) {
+        for (int xi = 0; xi < patch.getSubdivisionFactor()(0); xi++) {
+          subcellIndex(0) = xi;
+          subcellIndex(1) = yi;
+          minWaterHeight = std::min(accessor.getValueUNew(subcellIndex, 0), minWaterHeight);
+        }
+    }
 
     tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth;
-    if (max_gradient > 0.1 || minWaterHeight < 1.1) {
-        //demandedMeshWidth = 1.0/243;
-        //demandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(10.0/6/27);
+    if (
+           (_refinementType==RefineWaveFront && max_gradient > 0.05)
+        || (_refinementType==RefineCoastline && minWaterHeight < 1.1)
+        ) {
       demandedMeshWidth = _minimalMeshWidth;
-    } else if (max_gradient < 0.1) {
-        //demandedMeshWidth = 10.0/130/27;
-        //demandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(10.0/6/9);
+    } else if (max_gradient < 0.05) {
       demandedMeshWidth = _maximalMeshWidth;
     } else {
       demandedMeshWidth = patch.getSubcellSize();
     }
 
-//    if(isInitializing) {
-//      return 10.0/6/9;
-//    } else {
-//      return demandedMeshWidth;
-//    }
     return demandedMeshWidth;
 }
 

@@ -43,6 +43,13 @@ private:
   double                                _deepestDepth;
   double                                _shallowestDepth;
 
+  enum RefinementType {
+    RefineWaveFront,
+    RefineCoastline
+  };
+
+  RefinementType                        _refinementType;
+
 public:
   BowlOcean(
     std::vector<std::string> arguments
