@@ -9,6 +9,7 @@
 #include "peanoclaw/grid/SubgridAccessor.h"
 #include "peanoclaw/grid/plotter/SubgridPlotter.h"
 #include "peanoclaw/grid/plotter/VTKSubgridPlotter.h"
+#include "peanoclaw/grid/plotter/VTUSubgridPlotter.h"
 #include "peanoclaw/grid/plotter/HDF5SubgridPlotter.h"
 
 #include "peano/utils/Loop.h"
@@ -36,6 +37,19 @@ peanoclaw::grid::plotter::GridPlotter::GridPlotter(
                    << plotNumber;
 
   if(plotVTK) {
+    #ifdef PEANOCLAW_USE_VTU
+    _subgridPlotter.push_back(new VTUSubgridPlotter(
+        snapshotFileName.str() + ".vtu",
+        unknownsPerSubcell,
+        parameterWithoutGhostlayerPerSubcell,
+        parameterWithGhostlayerPerSubcell,
+        plotQ,
+        plotParameterWithoutGhostlayer,
+        plotParameterWithGhostlayer,
+        plotMetainformation
+        )
+    );
+    #else
     _subgridPlotter.push_back(new VTKSubgridPlotter(
         snapshotFileName.str() + ".vtk",
         unknownsPerSubcell,
@@ -47,6 +61,7 @@ peanoclaw::grid::plotter::GridPlotter::GridPlotter(
         plotMetainformation
         )
     );
+    #endif
   }
 
   if(plotHDF5) {

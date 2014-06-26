@@ -179,7 +179,11 @@ class peanoclaw::Area {
      * Maps the area of the source patch to the according area
      * of the destination patch.
      */
-    Area mapToPatch(const Patch& source, const Patch& destination, double epsilon = 1e-12) const;
+    Area mapToPatch(
+      const Patch& source,
+      const Patch& destination,
+      double epsilon = 1e-12
+    ) const;
 
     /**
      * Maps a cell of the coarse patch to an area in the destination patch.

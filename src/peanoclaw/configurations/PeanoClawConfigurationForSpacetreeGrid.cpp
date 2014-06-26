@@ -17,6 +17,9 @@ void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::processE
   } else if(name == "plotAtEnd") {
     _plotAtEndTime = (value == "yes");
     assert(value == "yes" || value == "no");
+  } else if(name == "plotAtSubsteps") {
+    _plotSubsteps = (value == "yes");
+    assert(value == "yes" || value == "no");
   } else {
     _isValid = false;
     logError("processEntry(string,string)", "Invalid entry: '" << name << "' '" << value << "'");
