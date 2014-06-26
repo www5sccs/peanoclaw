@@ -373,6 +373,12 @@ if hdf5 == 'yes':
   cppdefines.append('PEANOCLAW_USE_HDF5')
   libs.append('hdf5')
   libs.append('hdf5_hl')
+  
+##### Determine VTU usage
+# 
+vtu = ARGUMENTS.get('vtu', 'yes')
+if vtu == 'yes':
+  cppdefines.append('PEANOCLAW_USE_VTU')
    
 ##### Determine build path
 #
@@ -660,6 +666,11 @@ sourcesPeanoClaw = [
   Glob(join(buildpath, 'peanoclaw/statistics/*.cpp')),
   Glob(join(buildpath, 'peanoclaw/tests/*.cpp')),
 	]
+	
+##### PeanoClaw-specific tarch
+sourcesPeanoClawTarch = [
+    Glob(join(buildpath, 'tarch/plotter/griddata/unstructured/binaryvtu/*.cpp'))
+  ]
 
 ##### Define sources of application peanoclaw
 if solver == 'swe':
@@ -725,6 +736,7 @@ source = [
    sourcesTComponents,
    sourcesPeanoBase,
    sourcesPeanoClaw,
+   sourcesPeanoClawTarch,
    sourcesParallel,
    sourcesToolBox
    ]
