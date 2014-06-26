@@ -1,5 +1,7 @@
 #include "tarch/plotter/griddata/unstructured/binaryvtu/BinaryVTUTextFileWriter.h"
 
+#include "tarch/parallel/Node.h"
+
 #include <stdio.h>
 #include <fstream>
 #include <iomanip>
