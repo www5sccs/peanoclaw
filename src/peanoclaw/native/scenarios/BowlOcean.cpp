@@ -71,7 +71,6 @@ peanoclaw::native::scenarios::BowlOcean::~BowlOcean() {}
 
 void peanoclaw::native::scenarios::BowlOcean::initializePatch(peanoclaw::Patch& subgrid) {
     // compute from mesh data
-    const tarch::la::Vector<DIMENSIONS, double> subcellSize = subgrid.getSubcellSize();
     peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
 
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
@@ -101,8 +100,6 @@ void peanoclaw::native::scenarios::BowlOcean::initializePatch(peanoclaw::Patch& 
 
 void peanoclaw::native::scenarios::BowlOcean::update(peanoclaw::Patch& subgrid) {
   peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
-  const tarch::la::Vector<DIMENSIONS, double> subgridPosition = subgrid.getPosition();
-  const tarch::la::Vector<DIMENSIONS, double> subcellSize = subgrid.getSubcellSize();
 
   //Bathymetry
   tarch::la::Vector<DIMENSIONS, int> subcellIndex;
@@ -215,8 +212,8 @@ double peanoclaw::native::scenarios::BowlOcean::getEndTime() const {
 
 float peanoclaw::native::scenarios::BowlOcean::getWaterHeight(float x, float y) {
   // dam coordinates
-  const double x0=_domainSize[0]/2.0;
-  const double y0=_domainSize[1]/2.0;
+  const double x0=_damCenter[0];
+  const double y0=_damCenter[1];
   // Riemann states of the dam break problem
   const double radDam = _domainSize[0] / 5;
   const double hl = 2.;
