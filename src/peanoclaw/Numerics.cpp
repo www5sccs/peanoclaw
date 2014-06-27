@@ -71,6 +71,12 @@ void peanoclaw::Numerics::restrict (
   );
 }
 
+void peanoclaw::Numerics::postProcessRestriction(
+  peanoclaw::Patch& destination,
+  bool              restrictOnlyOverlappedAreas
+) const {
+}
+
 void peanoclaw::Numerics::applyFluxCorrection (
   const Patch& finePatch,
   Patch& coarsePatch,

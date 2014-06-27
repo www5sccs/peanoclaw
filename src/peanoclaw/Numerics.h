@@ -96,6 +96,16 @@ private:
     ) const;
 
     /**
+     * As the restriction is a splitted process over all fine subgrids
+     * this event allows to do operations after all restriction steps
+     * are finished.
+     */
+    virtual void postProcessRestriction(
+      peanoclaw::Patch& destination,
+      bool              restrictOnlyOverlappedAreas
+    ) const;
+
+    /**
      * Performs the flux correction between the given source and destination
      * by means of the restriction method implemented in Python. I.e. this
      * method can only be called if providesRestriction() returns <tt>true</tt>.

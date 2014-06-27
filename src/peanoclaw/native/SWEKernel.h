@@ -142,6 +142,15 @@ public:
     peanoclaw::Patch& destination,
     bool              restrictOnlyOverlappedAreas
   ) const;
+
+  /**
+   * Transforms the destination subgrid from absolute water height
+   * to water height above seafloor.
+   */
+  virtual void postProcessRestriction(
+    peanoclaw::Patch& destination,
+    bool              restrictOnlyOverlappedAreas
+  ) const;
 };
 
 #endif /* PEANOCLAW_SWEKERNEL_NATIVE_H_ */

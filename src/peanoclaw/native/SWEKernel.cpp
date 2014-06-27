@@ -200,10 +200,6 @@ void peanoclaw::native::SWEKernel::fillBoundaryLayer(Patch& patch, int dimension
         }
     }
 
-   //std::cout << "++++++" << std::endl;
-   //std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
-   //std::cout << "||||||" << std::endl;
-
       logTraceOut("fillBoundaryLayerInPyClaw");
     }
 
@@ -263,12 +259,9 @@ void peanoclaw::native::SWEKernel::restrict (
 ) const {
 
   Area sourceArea(tarch::la::Vector<DIMENSIONS,int>(0), source.getSubdivisionFactor());
-  Area destinationArea(tarch::la::Vector<DIMENSIONS,int>(0), destination.getSubdivisionFactor());
 
   transformWaterHeight(source, sourceArea, true, false); //UOld
   transformWaterHeight(source, sourceArea, false, false); //UNew
-  transformWaterHeight(destination, destinationArea, true, false); //UOld
-  transformWaterHeight(destination, destinationArea, false, false); //UNew
 
   Numerics::restrict(
     source,
@@ -278,9 +271,14 @@ void peanoclaw::native::SWEKernel::restrict (
 
   transformWaterHeight(source, sourceArea, true, true); //UOld
   transformWaterHeight(source, sourceArea, false, true); //UNew
+}
+
+void peanoclaw::native::SWEKernel::postProcessRestriction(
+  peanoclaw::Patch& destination,
+  bool              restrictOnlyOverlappedAreas
+) const {
+  Area destinationArea(tarch::la::Vector<DIMENSIONS,int>(0), destination.getSubdivisionFactor());
   transformWaterHeight(destination, destinationArea, true, true); //UOld
   transformWaterHeight(destination, destinationArea, false, true); //UNew
 }
-
-
 

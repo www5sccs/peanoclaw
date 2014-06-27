@@ -43,6 +43,8 @@ private:
   double                                _deepestDepth;
   double                                _shallowestDepth;
 
+  tarch::la::Vector<DIMENSIONS, double> _damCenter;
+
   enum RefinementType {
     RefineWaveFront,
     RefineCoastline

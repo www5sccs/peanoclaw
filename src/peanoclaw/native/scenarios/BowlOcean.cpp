@@ -31,8 +31,8 @@
 peanoclaw::native::scenarios::BowlOcean::BowlOcean(
   std::vector<std::string> arguments
 ) : _domainSize(1000){
-  if(arguments.size() != 7) {
-    std::cerr << "Expected arguments for Scenario 'BreakingDam': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize numberOfRamps refinementType" << std::endl
+  if(arguments.size() != 9) {
+    std::cerr << "Expected arguments for Scenario 'BreakingDam': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize numberOfRamps relDamCenterX relDamCenterY refinementType" << std::endl
         << "\tGot " << arguments.size() << " arguments." << std::endl
         << "Parameters:" << std::endl
         << " - numberOfRamps: 0-4" << std::endl
@@ -54,9 +54,12 @@ peanoclaw::native::scenarios::BowlOcean::BowlOcean(
 
   _numberOfRampSides = atoi(arguments[5].c_str());
 
-  if(arguments[6] == "refineWave") {
+  _damCenter[0] = atof(arguments[6].c_str()) * _domainSize[1];
+  _damCenter[1] = atof(arguments[7].c_str()) * _domainSize[1];
+
+  if(arguments[8] == "refineWave") {
     _refinementType = RefineWaveFront;
-  } else if(arguments[6] == "refineCoast") {
+  } else if(arguments[8] == "refineCoast") {
     _refinementType = RefineCoastline;
   }
 
@@ -66,24 +69,22 @@ peanoclaw::native::scenarios::BowlOcean::BowlOcean(
 
 peanoclaw::native::scenarios::BowlOcean::~BowlOcean() {}
 
-void peanoclaw::native::scenarios::BowlOcean::initializePatch(peanoclaw::Patch& patch) {
+void peanoclaw::native::scenarios::BowlOcean::initializePatch(peanoclaw::Patch& subgrid) {
     // compute from mesh data
-    const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
-    const tarch::la::Vector<DIMENSIONS, double> subcellSize = patch.getSubcellSize();
-    peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
+    const tarch::la::Vector<DIMENSIONS, double> subcellSize = subgrid.getSubcellSize();
+    peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
 
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-    for (int subcellY = 0; subcellY < patch.getSubdivisionFactor()(1); subcellY++) {
-        for (int subcellX = 0; subcellX < patch.getSubdivisionFactor()(0); subcellX++) {
+    for (int subcellY = 0; subcellY < subgrid.getSubdivisionFactor()(1); subcellY++) {
+        for (int subcellX = 0; subcellX < subgrid.getSubdivisionFactor()(0); subcellX++) {
             subcellIndex(0) = subcellX;
             subcellIndex(1) = subcellY;
 
-            double x = (patchPosition(0) + 0.5) + subcellX*subcellSize(0);
-            double y = (patchPosition(1) + 0.5) + subcellY*subcellSize(1);
+            tarch::la::Vector<DIMENSIONS,double> subcellCenter = subgrid.getSubcellCenter(subcellIndex);
 
-            double q0 = getWaterHeight(x, y);
-            double q1 = 0.0; //hl*ul*(r<=radDam) + hr*ur*(r>radDam);
-            double q2 = 0.0; //hl*vl*(r<=radDam) + hr*vr*(r>radDam);
+            double q0 = getWaterHeight(subcellCenter[0], subcellCenter[1]);
+            double q1 = 0.0;
+            double q2 = 0.0;
 
             accessor.setValueUNew(subcellIndex, 0, q0);
             accessor.setValueUNew(subcellIndex, 1, q1);
@@ -95,7 +96,7 @@ void peanoclaw::native::scenarios::BowlOcean::initializePatch(peanoclaw::Patch& 
         }
     }
 
-    update(patch);
+    update(subgrid);
 }
 
 void peanoclaw::native::scenarios::BowlOcean::update(peanoclaw::Patch& subgrid) {
@@ -110,16 +111,14 @@ void peanoclaw::native::scenarios::BowlOcean::update(peanoclaw::Patch& subgrid) 
         subcellIndex(0) = subcellX;
         subcellIndex(1) = subcellY;
 
-        double x = (subgridPosition(0) + 0.5) + subcellX*subcellSize(0);
-        double y = (subgridPosition(1) + 0.5) + subcellY*subcellSize(1);
-
-        accessor.setParameterWithGhostlayer(subcellIndex, 0, getBathymetry(x, y));
+        tarch::la::Vector<DIMENSIONS,double> subcellCenter = subgrid.getSubcellCenter(subcellIndex);
+        accessor.setParameterWithGhostlayer(subcellIndex, 0, getBathymetry(subcellCenter[0], subcellCenter[1]));
       }
   }
 }
 
 tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BowlOcean::computeDemandedMeshWidth(
-  peanoclaw::Patch& patch,
+  peanoclaw::Patch& subgrid,
   bool isInitializing
 ) {
   if(tarch::la::equals(_minimalMeshWidth, _maximalMeshWidth)) {
@@ -128,13 +127,13 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BowlOcean::co
 
 
     double max_gradient = 0.0;
-    peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
+    peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
 
     tarch::la::Vector<DIMENSIONS, int> this_subcellIndex;
     tarch::la::Vector<DIMENSIONS, int> next_subcellIndex_x;
     tarch::la::Vector<DIMENSIONS, int> next_subcellIndex_y;
-    for (int yi = 0; yi < patch.getSubdivisionFactor()(1)-1; yi++) {
-        for (int xi = 0; xi < patch.getSubdivisionFactor()(0)-1; xi++) {
+    for (int yi = 0; yi < subgrid.getSubdivisionFactor()(1)-1; yi++) {
+        for (int xi = 0; xi < subgrid.getSubdivisionFactor()(0)-1; xi++) {
             this_subcellIndex(0) = xi;
             this_subcellIndex(1) = yi;
 
@@ -153,25 +152,38 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::BowlOcean::co
     }
 
     tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-    double minWaterHeight = std::numeric_limits<double>::max();
-    for (int yi = 0; yi < patch.getSubdivisionFactor()(1); yi++) {
-        for (int xi = 0; xi < patch.getSubdivisionFactor()(0); xi++) {
+    double minimalDepth = std::numeric_limits<double>::max();
+    for (int yi = 0; yi < subgrid.getSubdivisionFactor()(1); yi++) {
+        for (int xi = 0; xi < subgrid.getSubdivisionFactor()(0); xi++) {
           subcellIndex(0) = xi;
           subcellIndex(1) = yi;
-          minWaterHeight = std::min(accessor.getValueUNew(subcellIndex, 0), minWaterHeight);
+          tarch::la::Vector<DIMENSIONS,double> subcellCenter = subgrid.getSubcellCenter(subcellIndex);
+          minimalDepth = std::min(minimalDepth, -static_cast<double>(getBathymetry(subcellCenter[0], subcellCenter[1])));
         }
     }
 
     tarch::la::Vector<DIMENSIONS,double> demandedMeshWidth;
-    if (
-           (_refinementType==RefineWaveFront && max_gradient > 0.05)
-        || (_refinementType==RefineCoastline && minWaterHeight < 1.1)
+    if(_refinementType == RefineWaveFront) {
+      if (
+         max_gradient > 0.05
+          ) {
+        demandedMeshWidth = _minimalMeshWidth;
+      } else if (max_gradient < 0.05) {
+        demandedMeshWidth = _maximalMeshWidth;
+      } else {
+        demandedMeshWidth = subgrid.getSubcellSize();
+      }
+    } else if(_refinementType == RefineCoastline) {
+      if (
+          minimalDepth < _shallowestDepth + 0.1
         ) {
-      demandedMeshWidth = _minimalMeshWidth;
-    } else if (max_gradient < 0.05) {
-      demandedMeshWidth = _maximalMeshWidth;
+        demandedMeshWidth = _minimalMeshWidth;
+      } else {
+        demandedMeshWidth = _maximalMeshWidth;
+      }
     } else {
-      demandedMeshWidth = patch.getSubcellSize();
+      assertionFail("Not implemented, yet!");
+      throw "Not implemented, yet!";
     }
 
     return demandedMeshWidth;
@@ -207,8 +219,8 @@ float peanoclaw::native::scenarios::BowlOcean::getWaterHeight(float x, float y) 
   const double y0=_domainSize[1]/2.0;
   // Riemann states of the dam break problem
   const double radDam = _domainSize[0] / 5;
-  const double hl = 1.;
-  const double hr = 0.;
+  const double hl = 2.;
+  const double hr = 1.;
 
   double r = sqrt((x-x0)*(x-x0) + (y-y0)*(y-y0));
   return hl*(r<=radDam) + hr*(r>radDam) - getBathymetry(x, y);
@@ -223,19 +235,10 @@ float peanoclaw::native::scenarios::BowlOcean::endSimulation() {
 }
 
 float peanoclaw::native::scenarios::BowlOcean::getBathymetry(float xf, float yf) {
-//  double r2 = (x - _domainSize[0]/2.0) * (x - _domainSize[0]/2.0) + (y - _domainSize[1]/2.0) * (y - _domainSize[1]/2.0);
-//  double rMax2 = (_domainSize[0]/2.0) * (_domainSize[0]/2.0) + (_domainSize[1]/2.0) * (_domainSize[1]/2.0);
-//
-//  double a = (_deepestDepth - _shallowestDepth) / rMax2;
-//
-//  return a * r2 - _deepestDepth;
   double x = (double)xf;
   double y = (double)yf;
 
   double relativeCoastWidth = 0.05;
-
-//  double distanceX = std::numeric_limits<double>::max();// = std::min(x, _domainSize[0] - x);
-//  double distanceY = std::numeric_limits<double>::max();// = std::min(y, _domainSize[1] - y);
 
   double minDistance =  std::numeric_limits<double>::max();
   if(_numberOfRampSides > 0) {
