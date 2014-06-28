@@ -64,7 +64,7 @@ peanoclaw::native::scenarios::BowlOcean::BowlOcean(
   }
 
   _deepestDepth = 100;
-  _shallowestDepth = 1;
+  _shallowestDepth = 10;
 }
 
 peanoclaw::native::scenarios::BowlOcean::~BowlOcean() {}
