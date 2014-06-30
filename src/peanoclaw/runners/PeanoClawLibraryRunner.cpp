@@ -298,7 +298,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
 {
   logTraceIn("~PeanoClawLibraryRunner");
   //Plot
-  if(_configuration.plotAtEndTime()) {
+  if(_configuration.plotAtEndTime() && tarch::parallel::Node::getInstance().isGlobalMaster()) {
     _repository->getState().setPlotNumber(_plotNumber);
     iteratePlot();
     _plotNumber++;
