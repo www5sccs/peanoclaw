@@ -10,42 +10,44 @@ import shutil
 ##### FUNCTION DEFINITIONS
 #########################################################################
 
-def addPeanoClawFlags(libpath, libs, cpppath, cppdefines):
+def addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver):
    ccflags.append('-g3')
    ccflags.append('-g')
    if(environment['PLATFORM'] != 'darwin'):
      ccflags.append('-march=native')
    
-   if sys.version_info[0] == 2 and sys.version_info[1] < 7:
-       pythonVersion = str(sys.version_info[0]) + '.' + str(sys.version_info[1]) #For Python 2.6
-   else: 
-       pythonVersion = str(sys.version_info.major) + '.' + str(sys.version_info.minor) #For Python 2.7
-   # Determine python version from environment variable:
-   peanoClawPythonVersion = os.getenv ('PEANOCLAW_PYTHONVERSION')
-   if (peanoClawPythonVersion != None):
-      pythonVersion = peanoClawPythonVersion
-
-   # Determine python root path from environment variable:
-   pythonHome = os.getenv ('PYTHONHOME')
-   peanoClawPythonHome = os.getenv ('PEANOCLAW_PYTHONHOME')
-   if (peanoClawPythonHome != None):
-      print 'Using environment variable PEANOCLAW_PYTHONHOME =', peanoClawPythonHome
-      pythonHome = peanoClawPythonHome
-   elif (pythonHome != None):
-      print 'Using environment variable PYTHONHOME =', pythonHome
-   else:
-      print('Environment variables PYTHONHOME and PEANOCLAW_PYTHONHOME not defined. Using path depending on the interpreter\'s path ' + sys.executable)
-      pythonHome = join(dirname(sys.executable), '..')
-      print pythonHome
-   cppdefines.append('NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION')
-      
-   # Add paths and lib
-   libpath.append(pythonHome + '/lib')
-   libpath.append(pythonHome + '/lib/python' + pythonVersion)
-   cpppath.append(pythonHome + '/include/python' + pythonVersion)
-   cpppath.append(pythonHome + '/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
-   cpppath.append(os.getenv("HOME") + '/.local/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
-   libs.append('python' + pythonVersion)
+   if solver=='pyclaw':
+     if sys.version_info[0] == 2 and sys.version_info[1] < 7:
+         pythonVersion = str(sys.version_info[0]) + '.' + str(sys.version_info[1]) #For Python 2.6
+     else: 
+         pythonVersion = str(sys.version_info.major) + '.' + str(sys.version_info.minor) #For Python 2.7
+     # Determine python version from environment variable:
+     peanoClawPythonVersion = os.getenv ('PEANOCLAW_PYTHONVERSION')
+     if (peanoClawPythonVersion != None):
+        pythonVersion = peanoClawPythonVersion
+  
+     # Determine python root path from environment variable:
+     pythonHome = os.getenv ('PYTHONHOME')
+     peanoClawPythonHome = os.getenv ('PEANOCLAW_PYTHONHOME')
+     if (peanoClawPythonHome != None):
+        print 'Using environment variable PEANOCLAW_PYTHONHOME =', peanoClawPythonHome
+        pythonHome = peanoClawPythonHome
+     elif (pythonHome != None):
+        print 'Using environment variable PYTHONHOME =', pythonHome
+     else:
+        print('Environment variables PYTHONHOME and PEANOCLAW_PYTHONHOME not defined. Using path depending on the interpreter\'s path ' + sys.executable)
+        pythonHome = join(dirname(sys.executable), '..')
+        print pythonHome
+     cppdefines.append('NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION')
+        
+     # Add paths and lib
+     libpath.append(pythonHome + '/lib')
+     libpath.append(pythonHome + '/lib/python' + pythonVersion)
+     cpppath.append(pythonHome + '/include/python' + pythonVersion)
+     cpppath.append(pythonHome + '/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
+     cpppath.append(os.getenv("HOME") + '/.local/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
+     libs.append('python' + pythonVersion)
+     
    if(environment['PLATFORM'] == 'darwin'):
      ccflags.append('-flat_namespace')
      linkerflags.append('-flat_namespace')
@@ -409,7 +411,7 @@ buildpath = buildpath + '/'
    
 ##### Specify build settings
 #
-addPeanoClawFlags(libpath, libs, cpppath, cppdefines)
+addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver)
 
 ##### Print options used to build
 #
