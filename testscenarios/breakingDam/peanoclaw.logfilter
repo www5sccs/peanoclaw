@@ -1,0 +1,7 @@
+info peano -1 black 
+info peanoclaw -1 white
+info tarch -1 black
+info :: -1 white
+info peanoclaw::statistics::ParallelStatistics::logStatistics -1 black
+info mpibalancing -1 black
+info peanoclaw::mappings::Remesh::logStatistics -1 black
