@@ -23,6 +23,7 @@
 #include "peano/utils/UserInterface.h"
 #include "peano/peano.h"
 #include "tarch/logging/LogFilterFileReader.h"
+#include "tarch/parallel/Node.h"
 
 #if defined(Parallel)
 #include "tarch/parallel/NodePool.h"
