@@ -215,7 +215,7 @@ float peanoclaw::native::scenarios::BowlOcean::getWaterHeight(float x, float y) 
   const double x0=_damCenter[0];
   const double y0=_damCenter[1];
   // Riemann states of the dam break problem
-  const double radDam = _domainSize[0] / 5;
+  const double radDam = _domainSize[0] / 10;
   const double hl = 2.;
   const double hr = 1.;
 

@@ -69,7 +69,6 @@ void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
     0.0, //Timestep size
     0.0  //Minimal neighbor time
   );
-  peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
 
   #ifdef Dim2
   for(int unknown = 0; unknown < 2; unknown++) {
@@ -106,7 +105,6 @@ void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
     0.0,     //Timestep size
     0.0      //Minimal neighbor time
   );
-  peanoclaw::grid::SubgridAccessor& accessor = patch.getAccessor();
 
   #ifdef Dim2
   int counter = 0;
