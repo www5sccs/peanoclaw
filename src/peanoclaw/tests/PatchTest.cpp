@@ -71,6 +71,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUNewArray() {
   );
 
   #ifdef Dim2
+  peanoclaw::grid::SubgridAccessor accessor = patch.getAccessor();
   for(int unknown = 0; unknown < 2; unknown++) {
     for(int x = 0; x < 3; x++) {
       for(int y = 0; y < 3; y++) {
@@ -107,6 +108,7 @@ void peanoclaw::tests::PatchTest::testFillingOfUOldArray() {
   );
 
   #ifdef Dim2
+  peanoclaw::grid::SubgridAccessor accessor = patch.getAccessor();
   int counter = 0;
   for(int unknown = 0; unknown < 2; unknown++) {
     for(int x = -1; x < 3 + 1; x++) {

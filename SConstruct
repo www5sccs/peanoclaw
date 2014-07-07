@@ -704,6 +704,7 @@ elif solver == 'fullswof2d':
      Glob(join(buildpath, 'peanoclaw/native/BreakingDam.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/dem.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/main.cpp')),
+     Glob(join(buildpath, 'peanoclaw/native/fullswof2DMain.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/scenarios/*.cpp')),
      Glob(join(buildpath, 'fullswof2d/Sources/liblimitations/*.cpp')),
      Glob(join(buildpath, 'fullswof2d/Sources/libfrictions/*.cpp')),
