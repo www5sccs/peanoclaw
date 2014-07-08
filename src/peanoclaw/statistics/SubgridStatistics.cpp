@@ -628,7 +628,8 @@ void peanoclaw::statistics::SubgridStatistics::merge(const SubgridStatistics& su
   std::vector<ProcessStatisticsEntry>& processStatistics = ProcessStatisticsHeap::getInstance().getData(_processStatisticsIndex);
   std::sort(processStatistics.begin(), processStatistics.end(), smaller);
   std::sort(otherProcessStatistics.begin(), otherProcessStatistics.end(), smaller);
-  std::vector<ProcessStatisticsEntry>::iterator own = processStatistics.begin();
+  //std::vector<ProcessStatisticsEntry>::iterator own = processStatistics.begin();
+  int ownIndex = 0;
 
   //TODO unterweg debug
 //  std::cout << "other before: ";
@@ -642,14 +643,14 @@ void peanoclaw::statistics::SubgridStatistics::merge(const SubgridStatistics& su
 //  std::cout << std::endl;
 
   for(std::vector<ProcessStatisticsEntry>::iterator other = otherProcessStatistics.begin(); other != otherProcessStatistics.end(); other++) {
-    while(own != processStatistics.end() && own->getRank() < other->getRank()) {
-      own++;
+    while(ownIndex < processStatistics.size() && processStatistics[ownIndex].getRank() < other->getRank()) {
+      ownIndex++;
     }
 
-    if(own == processStatistics.end()) {
+    if(ownIndex == processStatistics.size()) {
       processStatistics.push_back(*other);
-    } else if(own->getRank() == other->getRank()) {
-      own->setNumberOfCellUpdates(own->getNumberOfCellUpdates() + other->getNumberOfCellUpdates());
+    } else if(processStatistics[ownIndex].getRank() == other->getRank()) {
+      processStatistics[ownIndex].setNumberOfCellUpdates(processStatistics[ownIndex].getNumberOfCellUpdates() + other->getNumberOfCellUpdates());
     } else {
       processStatistics.push_back(*other);
     }

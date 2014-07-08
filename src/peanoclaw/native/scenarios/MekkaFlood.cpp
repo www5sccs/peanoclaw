@@ -4,7 +4,7 @@
 
 #include <png.h>
 
-#include "peanoclaw/native/MekkaFlood.h"
+#include "peanoclaw/native/scenarios/MekkaFlood.h"
 
 //#define BREAKINGDAMTEST
 
@@ -15,7 +15,7 @@
 
 }*/
 
-peanoclaw::native::MekkaFlood_SWEKernelScenario::MekkaFlood_SWEKernelScenario(
+peanoclaw::native::scenarios::MekkaFloodSWEScenario::MekkaFloodSWEScenario(
     DEM& dem,
     const tarch::la::Vector<DIMENSIONS,int>&    subdivisionFactor,
     const tarch::la::Vector<DIMENSIONS,double>& minimalMeshWidth,
@@ -87,7 +87,7 @@ peanoclaw::native::MekkaFlood_SWEKernelScenario::MekkaFlood_SWEKernelScenario(
     
 }
 
-peanoclaw::native::MekkaFlood_SWEKernelScenario::~MekkaFlood_SWEKernelScenario() {
+peanoclaw::native::scenarios::MekkaFloodSWEScenario::~MekkaFloodSWEScenario() {
     // cleanup png data
 #if 0
     if (mekka_map_data == NULL)
@@ -423,7 +423,7 @@ static double interpolation_error_gradient(peanoclaw::Patch& patch, int unknown)
     return max_error;
 }
 
-void peanoclaw::native::MekkaFlood_SWEKernelScenario::initializePatch(peanoclaw::Patch& patch) {
+void peanoclaw::native::scenarios::MekkaFloodSWEScenario::initializePatch(peanoclaw::Patch& patch) {
     // dam coordinates
     //double x0=_domainSize*0.5;
     //double y0=_domainSize*0.5;
@@ -508,7 +508,7 @@ void peanoclaw::native::MekkaFlood_SWEKernelScenario::initializePatch(peanoclaw:
     int max_subdivisionFactor = std::max(subdivisionFactor(0),subdivisionFactor(1));
 }
 
-tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::MekkaFlood_SWEKernelScenario::computeDemandedMeshWidth(peanoclaw::Patch& patch, bool isInitializing) {
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::MekkaFloodSWEScenario::computeDemandedMeshWidth(peanoclaw::Patch& patch, bool isInitializing) {
     double retval = 0.0;
 
     const tarch::la::Vector<DIMENSIONS, double> patchPosition = patch.getPosition();
@@ -850,7 +850,7 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::MekkaFlood_SWEKernelScen
 //    }
 }
  
-void peanoclaw::native::MekkaFlood_SWEKernelScenario::update(peanoclaw::Patch& patch) {
+void peanoclaw::native::scenarios::MekkaFloodSWEScenario::update(peanoclaw::Patch& patch) {
 //    // update bathymetry data
 //    //std::cout << "updating bathymetry!" << std::endl;
 //    tarch::la::Vector<DIMENSIONS, int> subcellIndex;
@@ -887,31 +887,31 @@ void peanoclaw::native::MekkaFlood_SWEKernelScenario::update(peanoclaw::Patch& p
   }
 }
 
-tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::MekkaFlood_SWEKernelScenario::getDomainOffset() const {
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::MekkaFloodSWEScenario::getDomainOffset() const {
   return _domainOffset;
 }
 
-tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::MekkaFlood_SWEKernelScenario::getDomainSize() const {
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::MekkaFloodSWEScenario::getDomainSize() const {
   return _domainSize;
 }
 
-tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::MekkaFlood_SWEKernelScenario::getInitialMinimalMeshWidth() const {
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::MekkaFloodSWEScenario::getInitialMinimalMeshWidth() const {
   return _maximalMeshWidth;
 }
 
-tarch::la::Vector<DIMENSIONS,int>    peanoclaw::native::MekkaFlood_SWEKernelScenario::getSubdivisionFactor() const {
+tarch::la::Vector<DIMENSIONS,int>    peanoclaw::native::scenarios::MekkaFloodSWEScenario::getSubdivisionFactor() const {
   return _subdivisionFactor;
 }
 
-double peanoclaw::native::MekkaFlood_SWEKernelScenario::getGlobalTimestepSize() const {
+double peanoclaw::native::scenarios::MekkaFloodSWEScenario::getGlobalTimestepSize() const {
   return _globalTimestepSize;
 }
 
-double peanoclaw::native::MekkaFlood_SWEKernelScenario::getEndTime() const {
+double peanoclaw::native::scenarios::MekkaFloodSWEScenario::getEndTime() const {
   return _endTime;
 }
 
-double peanoclaw::native::MekkaFlood_SWEKernelScenario::getInitialTimestepSize() const {
+double peanoclaw::native::scenarios::MekkaFloodSWEScenario::getInitialTimestepSize() const {
   return 1.0;
 }
 
@@ -923,7 +923,7 @@ double peanoclaw::native::MekkaFlood_SWEKernelScenario::getInitialTimestepSize()
 // - mekka area
 
 
-tarch::la::Vector<DIMENSIONS, double> peanoclaw::native::MekkaFlood_SWEKernelScenario::mapCoordinatesToMesh(double longitude, double latitude) {
+tarch::la::Vector<DIMENSIONS, double> peanoclaw::native::scenarios::MekkaFloodSWEScenario::mapCoordinatesToMesh(double longitude, double latitude) {
     tarch::la::Vector<DIMENSIONS, double> mesh;
  
     /*// put mekkah in the center - adjust bei 0*5 * scale / _domainSize
@@ -956,7 +956,7 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::native::MekkaFlood_SWEKernelSce
     return mesh;
 }
 
-tarch::la::Vector<DIMENSIONS, double> peanoclaw::native::MekkaFlood_SWEKernelScenario::mapMeshToCoordinates(double x, double y) {
+tarch::la::Vector<DIMENSIONS, double> peanoclaw::native::scenarios::MekkaFloodSWEScenario::mapMeshToCoordinates(double x, double y) {
     tarch::la::Vector<DIMENSIONS, double> coords;
 
     // put mekkah in the center - adjust bei 0*5 * scale / _domainSize
@@ -984,7 +984,7 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::native::MekkaFlood_SWEKernelSce
     return coords;
 }
 
-double peanoclaw::native::MekkaFlood_SWEKernelScenario::mapMeshToMap(tarch::la::Vector<DIMENSIONS, double>& coords) {
+double peanoclaw::native::scenarios::MekkaFloodSWEScenario::mapMeshToMap(tarch::la::Vector<DIMENSIONS, double>& coords) {
 #if 0
     // relate pixel in png file to bathymetry data
     int width_map = mekka_map.width;

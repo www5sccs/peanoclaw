@@ -681,7 +681,6 @@ if solver == 'swe':
     Glob(join(buildpath, 'peanoclaw/native/sweMain.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/SWEKernel.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/SWE_WavePropagationBlock_patch.cpp')),
-    Glob(join(buildpath, 'peanoclaw/native/BreakingDam.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/SWECommandLineParser.cpp')),
     Glob(join(buildpath, 'peanoclaw/native/scenarios/*.cpp')),
     Glob(join(buildpath, 'swe/tools/Logger.cpp')),
@@ -700,8 +699,6 @@ elif solver == 'fullswof2d':
   sourcesSolver = [
      Glob(join(buildpath, 'peanoclaw/native/FullSWOF2D.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/MekkaFlood_solver.cpp')),
-     Glob(join(buildpath, 'peanoclaw/native/MekkaFlood.cpp')),
-     Glob(join(buildpath, 'peanoclaw/native/BreakingDam.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/dem.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/main.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/fullswof2DMain.cpp')),

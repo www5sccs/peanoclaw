@@ -27,6 +27,8 @@
 
 #ifdef PEANOCLAW_SWE
 #include "peanoclaw/native/sweMain.h"
+#elif PEANOCLAW_FULLSWOF2D
+#include "peanoclaw/native/fullswof2DMain.h"
 #endif
 
 #if USE_VALGRIND
@@ -178,7 +180,7 @@ int main(int argc, char **argv) {
     tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
   }
 
-#if defined(SWE) || defined(PEANOCLAW_FULLSWOF2D)
+#if defined(PEANOCLAW_SWE) || defined(PEANOCLAW_FULLSWOF2D)
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
 
   bool usePeanoClaw;
@@ -199,7 +201,6 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  //PyClaw - this object is copied to the runner and is stored there.
   peanoclaw::NumericsFactory numericsFactory;
   #if defined(PEANOCLAW_SWE)
   peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(*scenario);
@@ -217,9 +218,10 @@ int main(int argc, char **argv) {
   } else {
   #ifdef PEANOCLAW_SWE
   tarch::la::Vector<DIMENSIONS,int> numberOfCells = scenario->getSubdivisionFactor();
-  sweMain(*scenario, numberOfCells);
+  peanoclaw::native::sweMain(*scenario, numberOfCells);
   #else
-  assertionFail("Pure solver use not implemented");
+  tarch::la::Vector<DIMENSIONS,int> numberOfCells = scenario->getSubdivisionFactor();
+  peanoclaw::native::fullswof2DMain(*scenario, numberOfCells);
   #endif
   }
 

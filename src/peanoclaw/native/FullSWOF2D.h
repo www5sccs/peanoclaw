@@ -25,7 +25,9 @@
 
 #include "parameters.hpp"
 
-#include "choice_scheme.hpp"
+#if !defined(SCHEME_HPP)
+#include "scheme.hpp"
+#endif
 
 namespace peanoclaw {
   namespace native {
@@ -156,9 +158,24 @@ public:
 };
 
 class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
+    private:
+        double _endTime;
+
     public:
-        FullSWOF2D_Parameters(int ghostlayerWidth, int nx, int ny, double meshwidth_x, double meshwidth_y, int select_order=2, int select_reconstruction=1);
+        FullSWOF2D_Parameters(
+          int ghostlayerWidth,
+          int nx,
+          int ny,
+          double meshwidth_x,
+          double meshwidth_y,
+          double endTime,
+          int select_order=2,
+          int select_reconstruction=1
+        );
+
         virtual ~FullSWOF2D_Parameters();
+
+        double get_T() const;
 };
 
 

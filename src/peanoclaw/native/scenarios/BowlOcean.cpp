@@ -258,6 +258,7 @@ float peanoclaw::native::scenarios::BowlOcean::getBathymetry(float xf, float yf)
   return -std::min(_deepestDepth, _shallowestDepth + a * minDistance);
 }
 
+#ifdef PEANOCLAW_SWE
 float peanoclaw::native::scenarios::BowlOcean::getBoundaryPos(BoundaryEdge edge) {
    if (edge==BND_LEFT || edge==BND_BOTTOM) {
       return 0.0f;
@@ -265,6 +266,7 @@ float peanoclaw::native::scenarios::BowlOcean::getBoundaryPos(BoundaryEdge edge)
       return _domainSize[0];
    }
 };
+#endif
 #endif
 
 

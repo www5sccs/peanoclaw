@@ -1,23 +1,22 @@
 /*
- * sweMain.h
+ * fullswof2DMain.h
  *
- *  Created on: May 30, 2014
+ *  Created on: Jul 7, 2014
  *      Author: kristof
  */
 
-#ifndef PEANOCLAW_NATIVE_SWE_CPP_
-#define PEANOCLAW_NATIVE_SWE_CPP_
+#ifndef PEANOCLAW_NATIVE_FULLSWOF2DMAIN_H_
+#define PEANOCLAW_NATIVE_FULLSWOF2DMAIN_H_
 
 #include "peanoclaw/native/scenarios/SWEScenario.h"
-#include "tools/Logger.hh"
 
 namespace peanoclaw {
   namespace native {
-    void sweMain(
+    void fullswof2DMain(
       peanoclaw::native::scenarios::SWEScenario& scenario,
       tarch::la::Vector<DIMENSIONS,int> numberOfCells
     );
   }
 }
 
-#endif /* PEANOCLAW_NATIVE_SWE_CPP_ */
+#endif /* PEANOCLAW_NATIVE_FULLSWOF2DMAIN_H_ */

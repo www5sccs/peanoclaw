@@ -79,7 +79,9 @@ public:
 
   float getBathymetry(float x, float y);
 
+  #ifdef PEANOCLAW_SWE
   float getBoundaryPos(BoundaryEdge edge);
+  #endif
 };
 
 

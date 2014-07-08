@@ -1,11 +1,8 @@
 #ifndef __BREAKINGDAM_H__
 #define __BREAKINGDAM_H__
 
-#if defined(SWE)
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/native/SWEKernel.h"
-
-#include "scenarios/SWE_simple_scenarios.hh"
 
 #include <vector>
 
@@ -59,6 +56,5 @@ class peanoclaw::native::scenarios::BreakingDamSWEScenario
       virtual float waterHeightAtRest() { return getWaterHeight(0, 0); };
       virtual float endSimulation() { return (float)getEndTime(); };
 };
-#endif
 
 #endif // __BREAKINGDAM_H__

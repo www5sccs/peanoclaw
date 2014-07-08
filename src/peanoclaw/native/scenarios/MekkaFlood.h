@@ -12,13 +12,13 @@
 #include "peanoclaw/native/SWEKernel.h"
 #include "peanoclaw/native/scenarios/SWEScenario.h"
 
-//#include "BathymetryHelper.h"
-
-#include "peanoclaw/native/dem.h"
+#include "peanoclaw/native/scenarios/dem.h"
 
 namespace peanoclaw {
   namespace native {
-    class MekkaFlood_SWEKernelScenario;
+    namespace scenarios {
+      class MekkaFloodSWEScenario;
+    }
   }
 }
 
@@ -31,10 +31,9 @@ const float mekka_lat = 21.5f;
 const float mekka_lon = 39.0f;
 
 
-class peanoclaw::native::MekkaFlood_SWEKernelScenario : public peanoclaw::native::scenarios::SWEScenario {
+class peanoclaw::native::scenarios::MekkaFloodSWEScenario : public peanoclaw::native::scenarios::SWEScenario {
     public:
-        //MekkaFlood_SWEKernelScenario(double domainSize);
-        MekkaFlood_SWEKernelScenario(
+        MekkaFloodSWEScenario(
           DEM& dem,
           const tarch::la::Vector<DIMENSIONS,int>&    subdivisionFactor,
           const tarch::la::Vector<DIMENSIONS,double>& minimalMeshWidth,
@@ -43,7 +42,7 @@ class peanoclaw::native::MekkaFlood_SWEKernelScenario : public peanoclaw::native
           double                                      endTime
         );
 
-        ~MekkaFlood_SWEKernelScenario();
+        ~MekkaFloodSWEScenario();
 
         virtual void initializePatch(peanoclaw::Patch& patch);
         virtual tarch::la::Vector<DIMENSIONS,double> computeDemandedMeshWidth(peanoclaw::Patch& patch, bool isInitializing);

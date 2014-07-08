@@ -29,11 +29,11 @@
 #include "tools/help.hh"
 #include "tools/ProgressBar.hh"
 
-void sweMain(
+void peanoclaw::native::sweMain(
   peanoclaw::native::scenarios::SWEScenario& scenario,
   tarch::la::Vector<DIMENSIONS,int> numberOfCells
 ) {
-  tarch::logging::Log _log("sweMain(...)");
+  tarch::logging::Log _log("peanoclaw::native::sweMain(...)");
 
   tarch::la::Vector<DIMENSIONS,double> resolution
     = tarch::la::multiplyComponents(scenario.getDomainSize(), tarch::la::invertEntries(numberOfCells.convertScalar<double>()));
