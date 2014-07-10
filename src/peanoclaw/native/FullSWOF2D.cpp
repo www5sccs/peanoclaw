@@ -78,6 +78,7 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(Patch& patch, double maximumTi
 
       Choice_scheme *wrapper_scheme = new Choice_scheme(par);
       Scheme *scheme = wrapper_scheme->getInternalScheme();
+      scheme->usePeanoClaw();
 
       // overwrite internal values
       copyPatchToScheme(patch, scheme);
@@ -752,7 +753,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   top_imp_discharge = 0.0;
   top_imp_h = 0.1;
 
-  output_format = 0; // disable all output
+  output_format = 2; // disable all output
 }
 
 peanoclaw::native::FullSWOF2D_Parameters::~FullSWOF2D_Parameters() {

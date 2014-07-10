@@ -2,32 +2,6 @@
 
 #include "peanoclaw/Patch.h"
 
-#if defined(SWE)
-//peanoclaw::native::scenarios::BowlOcean::BowlOcean(
-//  const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
-//  const tarch::la::Vector<DIMENSIONS, double>& domainSize,
-//  const tarch::la::Vector<DIMENSIONS, int>&    finestSubgridTopology,
-//  const tarch::la::Vector<DIMENSIONS, int>&    coarsestSubgridTopology,
-//  const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
-//  double                                    globalTimestepSize,
-//  double                                    endTime
-//) : _domainOffset(domainOffset),
-//    _domainSize(domainSize),
-//    _minimalMeshWidth(-1),
-//    _maximalMeshWidth(-1),
-//    _subdivisionFactor(subdivisionFactor),
-//    _globalTimestepSize(globalTimestepSize),
-//    _endTime(endTime)
-//{
-//  _minimalMeshWidth
-//    = tarch::la::multiplyComponents(domainSize, tarch::la::invertEntries(finestSubgridTopology.convertScalar<double>()));
-//  _maximalMeshWidth
-//    = tarch::la::multiplyComponents(domainSize, tarch::la::invertEntries(coarsestSubgridTopology.convertScalar<double>()));
-//
-////  assertion2(tarch::la::allGreaterEquals(_maximalMeshWidth, _minimalMeshWidth), _minimalMeshWidth, _maximalMeshWidth);
-//  assertion2(tarch::la::allSmallerEquals(_minimalMeshWidth, _maximalMeshWidth), _minimalMeshWidth, _maximalMeshWidth);
-//}
-
 peanoclaw::native::scenarios::BowlOcean::BowlOcean(
   std::vector<std::string> arguments
 ) : _domainSize(1000){
@@ -266,7 +240,6 @@ float peanoclaw::native::scenarios::BowlOcean::getBoundaryPos(BoundaryEdge edge)
       return _domainSize[0];
    }
 };
-#endif
 #endif
 
 

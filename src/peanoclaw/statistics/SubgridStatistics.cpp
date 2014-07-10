@@ -629,7 +629,7 @@ void peanoclaw::statistics::SubgridStatistics::merge(const SubgridStatistics& su
   std::sort(processStatistics.begin(), processStatistics.end(), smaller);
   std::sort(otherProcessStatistics.begin(), otherProcessStatistics.end(), smaller);
   //std::vector<ProcessStatisticsEntry>::iterator own = processStatistics.begin();
-  int ownIndex = 0;
+  size_t ownIndex = 0;
 
   //TODO unterweg debug
 //  std::cout << "other before: ";

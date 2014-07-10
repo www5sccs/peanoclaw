@@ -1,4 +1,3 @@
-#if defined(SWE)
 #include "BreakingDam.h"
 
 peanoclaw::native::scenarios::BreakingDamSWEScenario::BreakingDamSWEScenario(
@@ -175,4 +174,3 @@ float peanoclaw::native::scenarios::BreakingDamSWEScenario::getWaterHeight(float
   double r = sqrt((x-x0)*(x-x0) + (y-y0)*(y-y0));
   return hl*(r<=radDam) + hr*(r>radDam);
 }
-#endif

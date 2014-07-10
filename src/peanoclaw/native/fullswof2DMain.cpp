@@ -6,6 +6,10 @@
  */
 #include "peanoclaw/native/fullswof2DMain.h"
 
+#include "peanoclaw/statistics/MemoryInformation.h"
+
+#include "tarch/logging/Log.h"
+
 #include "peanoclaw/native/MekkaFlood_solver.h"
 #ifndef CHOICE_SCHEME_HPP
 #include "choice_scheme.hpp"
@@ -17,8 +21,12 @@ void peanoclaw::native::fullswof2DMain(
   peanoclaw::native::scenarios::SWEScenario& scenario,
   tarch::la::Vector<DIMENSIONS,int> numberOfCells
 ) {
+  tarch::logging::Log _log("peanoclaw::native::fullswof2DMain(...)");
+
+  int ghostlayerWidth = 1;
+
   FullSWOF2D_Parameters parameters(
-    1, //Ghostlayer Width
+    ghostlayerWidth,
     numberOfCells[0],
     numberOfCells[1],
     scenario.getInitialMinimalMeshWidth()[0],
@@ -26,17 +34,76 @@ void peanoclaw::native::fullswof2DMain(
     scenario.getEndTime()
   );
 
-  Choice_scheme * scheme;
-  scheme = new Choice_scheme(parameters);
+  Choice_scheme * schemeWrapper;
+  schemeWrapper = new Choice_scheme(parameters);
+  Scheme* scheme = schemeWrapper->getInternalScheme();
 
-  //Set bathymetry
+  tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+
+  /** Water height.*/
+  TAB& h = scheme->getH();
+  for (int x = -ghostlayerWidth; x < numberOfCells(0)+ghostlayerWidth; x++) {
+    for (int y = -ghostlayerWidth; y < numberOfCells(1)+ghostlayerWidth; y++) {
+      assignList(subcellIndex) = x, y;
+      tarch::la::Vector<DIMENSIONS,double> position
+        = subcellIndex.convertScalar<double>() * tarch::la::invertEntries(numberOfCells.convertScalar<double>()) * scenario.getDomainSize();
+      position += scenario.getDomainOffset();
+      h[x+ghostlayerWidth][y+ghostlayerWidth] = scenario.getWaterHeight(
+        (float)x / numberOfCells[0] * scenario.getDomainSize()[0] + scenario.getDomainOffset()[0],
+        (float)y / numberOfCells[1] * scenario.getDomainSize()[1] + scenario.getDomainOffset()[1]
+      );
+    }
+  }
+
+  /** X Velocity.*/
+  TAB& u = scheme->getU();
+  for (int x = -ghostlayerWidth; x < numberOfCells(0)+ghostlayerWidth; x++) {
+    for (int y = -ghostlayerWidth; y < numberOfCells(1)+ghostlayerWidth; y++) {
+        assignList(subcellIndex) = x, y;
+        u[x+ghostlayerWidth][y+ghostlayerWidth] = scenario.getVeloc_u(
+          (float)x / numberOfCells[0] * scenario.getDomainSize()[0] + scenario.getDomainOffset()[0],
+          (float)y / numberOfCells[1] * scenario.getDomainSize()[1] + scenario.getDomainOffset()[1]
+        );
+    }
+  }
+
+  /** Y Velocity.*/
+  TAB& v = scheme->getV();
+  for (int x = -ghostlayerWidth; x < numberOfCells(0)+ghostlayerWidth; x++) {
+    for (int y = -ghostlayerWidth; y < numberOfCells(1)+ghostlayerWidth; y++) {
+      assignList(subcellIndex) = x, y;
+      v[x+ghostlayerWidth][y+ghostlayerWidth] = scenario.getVeloc_v(
+        (float)x / numberOfCells[0] * scenario.getDomainSize()[0] + scenario.getDomainOffset()[0],
+        (float)y / numberOfCells[1] * scenario.getDomainSize()[1] + scenario.getDomainOffset()[1]
+      );
+    }
+  }
+
+  /** Topography.*/
+  TAB& z = scheme->getZ();
+  for (int x = -ghostlayerWidth; x < numberOfCells(0)+ghostlayerWidth; x++) {
+    for (int y = -ghostlayerWidth; y < numberOfCells(1)+ghostlayerWidth; y++) {
+      assignList(subcellIndex) = x, y;
+      z[x+ghostlayerWidth][y+ghostlayerWidth] = scenario.getBathymetry(
+        (float)x / numberOfCells[0] * scenario.getDomainSize()[0] + scenario.getDomainOffset()[0],
+        (float)y / numberOfCells[1] * scenario.getDomainSize()[1] + scenario.getDomainOffset()[1]
+      );
+    }
+  }
 
   double t = 0.0;
   while(tarch::la::smaller(t, scenario.getEndTime())) {
-    scheme->calcul();
-    t += scheme->getInternalScheme()->getTimestep();
+
+    //TODO unterweg debug
+    std::cout << "t=" << t << std::endl;
+
+    scheme->resetN();
+    schemeWrapper->calcul();
+    t += scheme->getTimestep();
   }
 
+  //Print maximum memory demand
+  logInfo("fullswof2DMain", "Peak resident set size: " << peanoclaw::statistics::getPeakRSS() << "b");
   delete scheme;
 }
 

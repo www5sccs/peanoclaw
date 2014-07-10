@@ -37,8 +37,8 @@ peanoclaw::native::scenarios::SWEScenario* peanoclaw::native::scenarios::SWEScen
 
     bool usePeanoClaw = true;
 
-    peanoclaw::native::MekkaFlood_SWEKernelScenario* scenario
-      = new peanoclaw::native::MekkaFlood_SWEKernelScenario(
+    peanoclaw::native::scenarios::MekkaFloodSWEScenario* scenario
+      = new peanoclaw::native::scenarios::MekkaFloodSWEScenario(
             dem,
             subdivisionFactor,
             minimalMeshWidth,

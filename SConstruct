@@ -753,7 +753,7 @@ if solver == 'pyclaw':
   #
   installation = env.Alias('install', env.Install('src/python/peanoclaw', library))
 elif solver == 'swe':
-  targetfilename = 'peano-claw-' + str(dim) + 'd'
+  targetfilename = 'peano-claw-swe'
   target = buildpath + targetfilename
   executable = env.Program ( 
     target=target,
@@ -763,7 +763,7 @@ elif solver == 'swe':
   #
   installation = env.Alias('install', env.Install('bin', executable))    
 elif solver == 'fullswof2d':
-  targetfilename = 'peano-claw-' + str(dim) + 'd'
+  targetfilename = 'peano-claw-fullswof2d'
   target = buildpath + targetfilename
   executable = env.Program ( 
     target=target,

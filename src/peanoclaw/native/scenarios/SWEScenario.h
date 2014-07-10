@@ -56,6 +56,13 @@ public:
     virtual double getEndTime() const = 0;
     virtual double getInitialTimestepSize() const;
 
+    #ifndef PEANOCLAW_SWE
+    virtual float getWaterHeight(float x, float y) { return 10.0f; };
+    virtual float getVeloc_u(float x, float y) { return 0.0f; };
+    virtual float getVeloc_v(float x, float y) { return 0.0f; };
+    virtual float getBathymetry(float x, float y) { return 0.0f; };
+    #endif
+
     /**
      * Creates a scenario based on the passed command line parameters.
      */
