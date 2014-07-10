@@ -32,7 +32,7 @@ public:
 	/// data access at grid points (size_t) and interpolated (const double&), all in pixel-space
 	inline	float&			operator()(int i, int j);
 	inline	const float&	operator()(int i, int j) const;
-	inline	float			operator()(const double x, const double y) const;
+	inline	float			operator()(float x, float y) const;
 	
 	/// direct access of grid
 	inline	float&			operator[](size_t addr);
@@ -151,16 +151,16 @@ inline float& DEM::operator()(int i, int j) {
 	// boundary treatment
 	if (m_boundary_size>0) {
 		if (j<0) {
-			return m_bound_bottom[i+m_boundary_size + (j+m_boundary_size)*(m_dimension[0]+2*m_boundary_size) ];			
+			return m_bound_bottom[i+m_boundary_size + (j+m_boundary_size)*(m_dimension[0]+2*m_boundary_size) ];
 		}
 		else if (j>=m_dimension[1]) {
-			return m_bound_top[i+m_boundary_size +(j-m_dimension[1])*(m_dimension[0]+2*m_boundary_size) ];			
+			return m_bound_top[i+m_boundary_size +(j-m_dimension[1])*(m_dimension[0]+2*m_boundary_size) ];
 		}
-		else if (i<0) {			
+		else if (i<0) {
 			return m_bound_left[i+m_boundary_size + j*m_boundary_size];
 		}
 		else if (i>=m_dimension[0]) {
-			return m_bound_right[i-m_dimension[0] + j*m_boundary_size];			
+			return m_bound_right[i-m_dimension[0] + j*m_boundary_size];
 		}
 	}
 	return m_data[size_t(i)+size_t(j)*size_t(m_dimension[0])];
@@ -170,22 +170,22 @@ inline const float&	DEM::operator()(int i, int j) const {
 	// boundary treatment
 	if (m_boundary_size>0) {
 		if (j<0) {
-			return m_bound_bottom[i+m_boundary_size + (j+m_boundary_size)*(m_dimension[0]+2*m_boundary_size) ];			
+			return m_bound_bottom[i+m_boundary_size + (j+m_boundary_size)*(m_dimension[0]+2*m_boundary_size) ];
 		}
 		else if (j>=m_dimension[1]) {
-			return m_bound_top[i+m_boundary_size +(j-m_dimension[1])*(m_dimension[0]+2*m_boundary_size) ];			
+			return m_bound_top[i+m_boundary_size +(j-m_dimension[1])*(m_dimension[0]+2*m_boundary_size) ];
 		}
 		else if (i<0) {
 			return m_bound_left[i+m_boundary_size + j*m_boundary_size];
 		}
 		else if (i>=m_dimension[0]) {
-			return m_bound_right[i-m_dimension[0] + j*m_boundary_size];			
+			return m_bound_right[i-m_dimension[0] + j*m_boundary_size];
 		}
 	}
 	return m_data[size_t(i)+size_t(j)*size_t(m_dimension[0])];
 }
 
-inline float DEM::operator()(const double x, const double y) const {
+inline float DEM::operator()(float x, float y) const {
 	if (x<0.0 || x>double(m_dimension[0]-1)) return INVALID;
 	if (y<0.0 || y>double(m_dimension[1]-1)) return INVALID;
 	size_t i = size_t(std::floor(x));
