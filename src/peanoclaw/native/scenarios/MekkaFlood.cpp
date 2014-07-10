@@ -473,7 +473,7 @@ void peanoclaw::native::scenarios::MekkaFloodSWEScenario::initializePatch(peanoc
             double Y = meshPos(1);
 
             //double bathymetry = bathymetryHelper.getHeight(coords(0),coords(1));
-            double bathymetry = dem(coords(0), coords(1));
+            double bathymetry = dem(static_cast<const double&>(coords(0)), static_cast<const double&>(coords(1)));
             double mapvalue = mapMeshToMap(meshPos);
 
 
@@ -878,7 +878,7 @@ void peanoclaw::native::scenarios::MekkaFloodSWEScenario::update(peanoclaw::Patc
       double bathymetry = 0.0;
       if(tarch::la::allGreaterEquals(meshPos, _domainOffset) && !tarch::la::oneGreater(meshPos, _domainOffset+_domainSize)) {
         tarch::la::Vector<DIMENSIONS, double> coords = mapMeshToCoordinates(meshPos(0), meshPos(1));
-        bathymetry = dem(coords(0), coords(1));
+        bathymetry = dem(static_cast<const double&>(coords(0)), static_cast<const double&>(coords(1)));
       }
       subcellIndex(0) = xi;
       subcellIndex(1) = yi;
