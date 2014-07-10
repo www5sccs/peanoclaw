@@ -32,7 +32,7 @@ public:
 	/// data access at grid points (size_t) and interpolated (const double&), all in pixel-space
 	inline	float&			operator()(int i, int j);
 	inline	const float&	operator()(int i, int j) const;
-	inline	float			operator()(const double& x, const double& y) const;
+	inline	float			operator()(const double x, const double y) const;
 	
 	/// direct access of grid
 	inline	float&			operator[](size_t addr);
@@ -185,7 +185,7 @@ inline const float&	DEM::operator()(int i, int j) const {
 	return m_data[size_t(i)+size_t(j)*size_t(m_dimension[0])];
 }
 
-inline float DEM::operator()(const double& x, const double& y) const {
+inline float DEM::operator()(const double x, const double y) const {
 	if (x<0.0 || x>double(m_dimension[0]-1)) return INVALID;
 	if (y<0.0 || y>double(m_dimension[1]-1)) return INVALID;
 	size_t i = size_t(std::floor(x));
