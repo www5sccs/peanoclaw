@@ -73,6 +73,7 @@ int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string
   //Optional arguments
   int remaining = argc;
   std::string defaultPlotName = "adaptive";
+  usePeanoClaw = false;
   if (argc == 1) {
     usePeanoClaw = true;
     plotName = defaultPlotName;
