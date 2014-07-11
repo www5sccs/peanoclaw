@@ -6,7 +6,7 @@
    }
    
    
-   peanoclaw::records::State::PersistentRecords::PersistentRecords(const bool& isInitializing, const bool& isRefinementCriterionEnabled, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingExtrapolation, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const tarch::la::Vector<32,int>& plotName, const int& plotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const bool& reduceReductions, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork):
+   peanoclaw::records::State::PersistentRecords::PersistentRecords(const bool& isInitializing, const bool& isRefinementCriterionEnabled, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingExtrapolation, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const tarch::la::Vector<32,int>& plotName, const int& plotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const bool& reduceReductions, const bool& restrictStatistics, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork):
    _isInitializing(isInitializing),
    _isRefinementCriterionEnabled(isRefinementCriterionEnabled),
    _unknownsPerSubcell(unknownsPerSubcell),
@@ -30,6 +30,7 @@
    _minimalTimestep(minimalTimestep),
    _totalNumberOfCellUpdates(totalNumberOfCellUpdates),
    _reduceReductions(reduceReductions),
+   _restrictStatistics(restrictStatistics),
    _minMeshWidth(minMeshWidth),
    _maxMeshWidth(maxMeshWidth),
    _numberOfInnerVertices(numberOfInnerVertices),
@@ -61,13 +62,13 @@
    
    
    peanoclaw::records::State::State(const PersistentRecords& persistentRecords):
-   _persistentRecords(persistentRecords._isInitializing, persistentRecords._isRefinementCriterionEnabled, persistentRecords._unknownsPerSubcell, persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell, persistentRecords._numberOfParametersWithGhostlayerPerSubcell, persistentRecords._initialMaximalSubgridSize, persistentRecords._defaultSubdivisionFactor, persistentRecords._defaultGhostWidthLayer, persistentRecords._initialTimestepSize, persistentRecords._useDimensionalSplittingExtrapolation, persistentRecords._globalTimestepEndTime, persistentRecords._allPatchesEvolvedToGlobalTimestep, persistentRecords._domainOffset, persistentRecords._domainSize, persistentRecords._plotName, persistentRecords._plotNumber, persistentRecords._startMaximumGlobalTimeInterval, persistentRecords._endMaximumGlobalTimeInterval, persistentRecords._startMinimumGlobalTimeInterval, persistentRecords._endMinimumGlobalTimeInterval, persistentRecords._minimalTimestep, persistentRecords._totalNumberOfCellUpdates, persistentRecords._reduceReductions, persistentRecords._minMeshWidth, persistentRecords._maxMeshWidth, persistentRecords._numberOfInnerVertices, persistentRecords._numberOfBoundaryVertices, persistentRecords._numberOfOuterVertices, persistentRecords._numberOfInnerCells, persistentRecords._numberOfOuterCells, persistentRecords._numberOfInnerLeafVertices, persistentRecords._numberOfBoundaryLeafVertices, persistentRecords._numberOfOuterLeafVertices, persistentRecords._numberOfInnerLeafCells, persistentRecords._numberOfOuterLeafCells, persistentRecords._maxLevel, persistentRecords._hasRefined, persistentRecords._hasTriggeredRefinementForNextIteration, persistentRecords._hasErased, persistentRecords._hasTriggeredEraseForNextIteration, persistentRecords._hasChangedVertexOrCellState, persistentRecords._isTraversalInverted, persistentRecords._reduceStateAndCell, persistentRecords._couldNotEraseDueToDecompositionFlag, persistentRecords._subWorkerIsInvolvedInJoinOrFork) {
+   _persistentRecords(persistentRecords._isInitializing, persistentRecords._isRefinementCriterionEnabled, persistentRecords._unknownsPerSubcell, persistentRecords._numberOfParametersWithoutGhostlayerPerSubcell, persistentRecords._numberOfParametersWithGhostlayerPerSubcell, persistentRecords._initialMaximalSubgridSize, persistentRecords._defaultSubdivisionFactor, persistentRecords._defaultGhostWidthLayer, persistentRecords._initialTimestepSize, persistentRecords._useDimensionalSplittingExtrapolation, persistentRecords._globalTimestepEndTime, persistentRecords._allPatchesEvolvedToGlobalTimestep, persistentRecords._domainOffset, persistentRecords._domainSize, persistentRecords._plotName, persistentRecords._plotNumber, persistentRecords._startMaximumGlobalTimeInterval, persistentRecords._endMaximumGlobalTimeInterval, persistentRecords._startMinimumGlobalTimeInterval, persistentRecords._endMinimumGlobalTimeInterval, persistentRecords._minimalTimestep, persistentRecords._totalNumberOfCellUpdates, persistentRecords._reduceReductions, persistentRecords._restrictStatistics, persistentRecords._minMeshWidth, persistentRecords._maxMeshWidth, persistentRecords._numberOfInnerVertices, persistentRecords._numberOfBoundaryVertices, persistentRecords._numberOfOuterVertices, persistentRecords._numberOfInnerCells, persistentRecords._numberOfOuterCells, persistentRecords._numberOfInnerLeafVertices, persistentRecords._numberOfBoundaryLeafVertices, persistentRecords._numberOfOuterLeafVertices, persistentRecords._numberOfInnerLeafCells, persistentRecords._numberOfOuterLeafCells, persistentRecords._maxLevel, persistentRecords._hasRefined, persistentRecords._hasTriggeredRefinementForNextIteration, persistentRecords._hasErased, persistentRecords._hasTriggeredEraseForNextIteration, persistentRecords._hasChangedVertexOrCellState, persistentRecords._isTraversalInverted, persistentRecords._reduceStateAndCell, persistentRecords._couldNotEraseDueToDecompositionFlag, persistentRecords._subWorkerIsInvolvedInJoinOrFork) {
       
    }
    
    
-   peanoclaw::records::State::State(const bool& isInitializing, const bool& isRefinementCriterionEnabled, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingExtrapolation, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const tarch::la::Vector<32,int>& plotName, const int& plotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const bool& reduceReductions, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork):
-   _persistentRecords(isInitializing, isRefinementCriterionEnabled, unknownsPerSubcell, numberOfParametersWithoutGhostlayerPerSubcell, numberOfParametersWithGhostlayerPerSubcell, initialMaximalSubgridSize, defaultSubdivisionFactor, defaultGhostWidthLayer, initialTimestepSize, useDimensionalSplittingExtrapolation, globalTimestepEndTime, allPatchesEvolvedToGlobalTimestep, domainOffset, domainSize, plotName, plotNumber, startMaximumGlobalTimeInterval, endMaximumGlobalTimeInterval, startMinimumGlobalTimeInterval, endMinimumGlobalTimeInterval, minimalTimestep, totalNumberOfCellUpdates, reduceReductions, minMeshWidth, maxMeshWidth, numberOfInnerVertices, numberOfBoundaryVertices, numberOfOuterVertices, numberOfInnerCells, numberOfOuterCells, numberOfInnerLeafVertices, numberOfBoundaryLeafVertices, numberOfOuterLeafVertices, numberOfInnerLeafCells, numberOfOuterLeafCells, maxLevel, hasRefined, hasTriggeredRefinementForNextIteration, hasErased, hasTriggeredEraseForNextIteration, hasChangedVertexOrCellState, isTraversalInverted, reduceStateAndCell, couldNotEraseDueToDecompositionFlag, subWorkerIsInvolvedInJoinOrFork) {
+   peanoclaw::records::State::State(const bool& isInitializing, const bool& isRefinementCriterionEnabled, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingExtrapolation, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const tarch::la::Vector<32,int>& plotName, const int& plotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const bool& reduceReductions, const bool& restrictStatistics, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork):
+   _persistentRecords(isInitializing, isRefinementCriterionEnabled, unknownsPerSubcell, numberOfParametersWithoutGhostlayerPerSubcell, numberOfParametersWithGhostlayerPerSubcell, initialMaximalSubgridSize, defaultSubdivisionFactor, defaultGhostWidthLayer, initialTimestepSize, useDimensionalSplittingExtrapolation, globalTimestepEndTime, allPatchesEvolvedToGlobalTimestep, domainOffset, domainSize, plotName, plotNumber, startMaximumGlobalTimeInterval, endMaximumGlobalTimeInterval, startMinimumGlobalTimeInterval, endMinimumGlobalTimeInterval, minimalTimestep, totalNumberOfCellUpdates, reduceReductions, restrictStatistics, minMeshWidth, maxMeshWidth, numberOfInnerVertices, numberOfBoundaryVertices, numberOfOuterVertices, numberOfInnerCells, numberOfOuterCells, numberOfInnerLeafVertices, numberOfBoundaryLeafVertices, numberOfOuterLeafVertices, numberOfInnerLeafCells, numberOfOuterLeafCells, maxLevel, hasRefined, hasTriggeredRefinementForNextIteration, hasErased, hasTriggeredEraseForNextIteration, hasChangedVertexOrCellState, isTraversalInverted, reduceStateAndCell, couldNotEraseDueToDecompositionFlag, subWorkerIsInvolvedInJoinOrFork) {
       
    }
    
@@ -149,6 +150,8 @@
       out << "totalNumberOfCellUpdates:" << getTotalNumberOfCellUpdates();
       out << ",";
       out << "reduceReductions:" << getReduceReductions();
+      out << ",";
+      out << "restrictStatistics:" << getRestrictStatistics();
       out << ",";
       out << "minMeshWidth:[";
    for (int i = 0; i < DIMENSIONS-1; i++) {
@@ -234,6 +237,7 @@
          getMinimalTimestep(),
          getTotalNumberOfCellUpdates(),
          getReduceReductions(),
+         getRestrictStatistics(),
          getMinMeshWidth(),
          getMaxMeshWidth(),
          getNumberOfInnerVertices(),
@@ -270,7 +274,7 @@
          {
             State dummyState[2];
             
-            const int Attributes = 46;
+            const int Attributes = 47;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isInitializing
                MPI_CHAR,		 //isRefinementCriterionEnabled
@@ -295,6 +299,7 @@
                MPI_DOUBLE,		 //minimalTimestep
                MPI_DOUBLE,		 //totalNumberOfCellUpdates
                MPI_CHAR,		 //reduceReductions
+               MPI_CHAR,		 //restrictStatistics
                MPI_DOUBLE,		 //minMeshWidth
                MPI_DOUBLE,		 //maxMeshWidth
                MPI_DOUBLE,		 //numberOfInnerVertices
@@ -344,6 +349,7 @@
                1,		 //minimalTimestep
                1,		 //totalNumberOfCellUpdates
                1,		 //reduceReductions
+               1,		 //restrictStatistics
                DIMENSIONS,		 //minMeshWidth
                DIMENSIONS,		 //maxMeshWidth
                1,		 //numberOfInnerVertices
@@ -396,29 +402,30 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._minimalTimestep))), 		&disp[20] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._totalNumberOfCellUpdates))), 		&disp[21] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._reduceReductions))), 		&disp[22] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._minMeshWidth[0]))), 		&disp[23] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._maxMeshWidth[0]))), 		&disp[24] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerVertices))), 		&disp[25] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfBoundaryVertices))), 		&disp[26] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterVertices))), 		&disp[27] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerCells))), 		&disp[28] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterCells))), 		&disp[29] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerLeafVertices))), 		&disp[30] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfBoundaryLeafVertices))), 		&disp[31] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterLeafVertices))), 		&disp[32] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerLeafCells))), 		&disp[33] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterLeafCells))), 		&disp[34] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._maxLevel))), 		&disp[35] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasRefined))), 		&disp[36] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredRefinementForNextIteration))), 		&disp[37] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasErased))), 		&disp[38] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredEraseForNextIteration))), 		&disp[39] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasChangedVertexOrCellState))), 		&disp[40] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._isTraversalInverted))), 		&disp[41] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._reduceStateAndCell))), 		&disp[42] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._couldNotEraseDueToDecompositionFlag))), 		&disp[43] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._subWorkerIsInvolvedInJoinOrFork))), 		&disp[44] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[1]._persistentRecords._isInitializing))), 		&disp[45] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._restrictStatistics))), 		&disp[23] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._minMeshWidth[0]))), 		&disp[24] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._maxMeshWidth[0]))), 		&disp[25] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerVertices))), 		&disp[26] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfBoundaryVertices))), 		&disp[27] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterVertices))), 		&disp[28] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerCells))), 		&disp[29] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterCells))), 		&disp[30] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerLeafVertices))), 		&disp[31] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfBoundaryLeafVertices))), 		&disp[32] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterLeafVertices))), 		&disp[33] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerLeafCells))), 		&disp[34] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterLeafCells))), 		&disp[35] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._maxLevel))), 		&disp[36] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasRefined))), 		&disp[37] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredRefinementForNextIteration))), 		&disp[38] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasErased))), 		&disp[39] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredEraseForNextIteration))), 		&disp[40] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasChangedVertexOrCellState))), 		&disp[41] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._isTraversalInverted))), 		&disp[42] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._reduceStateAndCell))), 		&disp[43] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._couldNotEraseDueToDecompositionFlag))), 		&disp[44] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._subWorkerIsInvolvedInJoinOrFork))), 		&disp[45] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[1]._persistentRecords._isInitializing))), 		&disp[46] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -433,7 +440,7 @@
          {
             State dummyState[2];
             
-            const int Attributes = 46;
+            const int Attributes = 47;
             MPI_Datatype subtypes[Attributes] = {
                MPI_CHAR,		 //isInitializing
                MPI_CHAR,		 //isRefinementCriterionEnabled
@@ -458,6 +465,7 @@
                MPI_DOUBLE,		 //minimalTimestep
                MPI_DOUBLE,		 //totalNumberOfCellUpdates
                MPI_CHAR,		 //reduceReductions
+               MPI_CHAR,		 //restrictStatistics
                MPI_DOUBLE,		 //minMeshWidth
                MPI_DOUBLE,		 //maxMeshWidth
                MPI_DOUBLE,		 //numberOfInnerVertices
@@ -507,6 +515,7 @@
                1,		 //minimalTimestep
                1,		 //totalNumberOfCellUpdates
                1,		 //reduceReductions
+               1,		 //restrictStatistics
                DIMENSIONS,		 //minMeshWidth
                DIMENSIONS,		 //maxMeshWidth
                1,		 //numberOfInnerVertices
@@ -559,29 +568,30 @@
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._minimalTimestep))), 		&disp[20] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._totalNumberOfCellUpdates))), 		&disp[21] );
             MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._reduceReductions))), 		&disp[22] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._minMeshWidth[0]))), 		&disp[23] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._maxMeshWidth[0]))), 		&disp[24] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerVertices))), 		&disp[25] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfBoundaryVertices))), 		&disp[26] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterVertices))), 		&disp[27] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerCells))), 		&disp[28] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterCells))), 		&disp[29] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerLeafVertices))), 		&disp[30] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfBoundaryLeafVertices))), 		&disp[31] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterLeafVertices))), 		&disp[32] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerLeafCells))), 		&disp[33] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterLeafCells))), 		&disp[34] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._maxLevel))), 		&disp[35] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasRefined))), 		&disp[36] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredRefinementForNextIteration))), 		&disp[37] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasErased))), 		&disp[38] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredEraseForNextIteration))), 		&disp[39] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasChangedVertexOrCellState))), 		&disp[40] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._isTraversalInverted))), 		&disp[41] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._reduceStateAndCell))), 		&disp[42] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._couldNotEraseDueToDecompositionFlag))), 		&disp[43] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._subWorkerIsInvolvedInJoinOrFork))), 		&disp[44] );
-            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[1]._persistentRecords._isInitializing))), 		&disp[45] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._restrictStatistics))), 		&disp[23] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._minMeshWidth[0]))), 		&disp[24] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._maxMeshWidth[0]))), 		&disp[25] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerVertices))), 		&disp[26] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfBoundaryVertices))), 		&disp[27] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterVertices))), 		&disp[28] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerCells))), 		&disp[29] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterCells))), 		&disp[30] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerLeafVertices))), 		&disp[31] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfBoundaryLeafVertices))), 		&disp[32] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterLeafVertices))), 		&disp[33] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfInnerLeafCells))), 		&disp[34] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._numberOfOuterLeafCells))), 		&disp[35] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._maxLevel))), 		&disp[36] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasRefined))), 		&disp[37] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredRefinementForNextIteration))), 		&disp[38] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasErased))), 		&disp[39] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasTriggeredEraseForNextIteration))), 		&disp[40] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._hasChangedVertexOrCellState))), 		&disp[41] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._isTraversalInverted))), 		&disp[42] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._reduceStateAndCell))), 		&disp[43] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._couldNotEraseDueToDecompositionFlag))), 		&disp[44] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[0]._persistentRecords._subWorkerIsInvolvedInJoinOrFork))), 		&disp[45] );
+            MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyState[1]._persistentRecords._isInitializing))), 		&disp[46] );
             
             for (int i=1; i<Attributes; i++) {
                assertion1( disp[i] > disp[i-1], i );
@@ -828,12 +838,12 @@
 
 
 peanoclaw::records::StatePacked::PersistentRecords::PersistentRecords() {
-   assertion((27 < (8 * sizeof(int))));
+   assertion((28 < (8 * sizeof(int))));
    
 }
 
 
-peanoclaw::records::StatePacked::PersistentRecords::PersistentRecords(const bool& isInitializing, const bool& isRefinementCriterionEnabled, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingExtrapolation, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const tarch::la::Vector<32,int>& plotName, const int& plotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const bool& reduceReductions, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork):
+peanoclaw::records::StatePacked::PersistentRecords::PersistentRecords(const bool& isInitializing, const bool& isRefinementCriterionEnabled, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingExtrapolation, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const tarch::la::Vector<32,int>& plotName, const int& plotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const bool& reduceReductions, const bool& restrictStatistics, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork):
 _initialMaximalSubgridSize(initialMaximalSubgridSize),
 _defaultSubdivisionFactor(defaultSubdivisionFactor),
 _initialTimestepSize(initialTimestepSize),
@@ -871,6 +881,7 @@ _isTraversalInverted(isTraversalInverted) {
    setUseDimensionalSplittingExtrapolation(useDimensionalSplittingExtrapolation);
    setAllPatchesEvolvedToGlobalTimestep(allPatchesEvolvedToGlobalTimestep);
    setReduceReductions(reduceReductions);
+   setRestrictStatistics(restrictStatistics);
    setHasRefined(hasRefined);
    setHasTriggeredRefinementForNextIteration(hasTriggeredRefinementForNextIteration);
    setHasErased(hasErased);
@@ -879,26 +890,26 @@ _isTraversalInverted(isTraversalInverted) {
    setReduceStateAndCell(reduceStateAndCell);
    setCouldNotEraseDueToDecompositionFlag(couldNotEraseDueToDecompositionFlag);
    setSubWorkerIsInvolvedInJoinOrFork(subWorkerIsInvolvedInJoinOrFork);
-   assertion((27 < (8 * sizeof(int))));
+   assertion((28 < (8 * sizeof(int))));
    
 }
 
 peanoclaw::records::StatePacked::StatePacked() {
-   assertion((27 < (8 * sizeof(int))));
+   assertion((28 < (8 * sizeof(int))));
    
 }
 
 
 peanoclaw::records::StatePacked::StatePacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords.getIsInitializing(), persistentRecords.getIsRefinementCriterionEnabled(), persistentRecords.getUnknownsPerSubcell(), persistentRecords.getNumberOfParametersWithoutGhostlayerPerSubcell(), persistentRecords.getNumberOfParametersWithGhostlayerPerSubcell(), persistentRecords._initialMaximalSubgridSize, persistentRecords._defaultSubdivisionFactor, persistentRecords.getDefaultGhostWidthLayer(), persistentRecords._initialTimestepSize, persistentRecords.getUseDimensionalSplittingExtrapolation(), persistentRecords._globalTimestepEndTime, persistentRecords.getAllPatchesEvolvedToGlobalTimestep(), persistentRecords._domainOffset, persistentRecords._domainSize, persistentRecords._plotName, persistentRecords._plotNumber, persistentRecords._startMaximumGlobalTimeInterval, persistentRecords._endMaximumGlobalTimeInterval, persistentRecords._startMinimumGlobalTimeInterval, persistentRecords._endMinimumGlobalTimeInterval, persistentRecords._minimalTimestep, persistentRecords._totalNumberOfCellUpdates, persistentRecords.getReduceReductions(), persistentRecords._minMeshWidth, persistentRecords._maxMeshWidth, persistentRecords._numberOfInnerVertices, persistentRecords._numberOfBoundaryVertices, persistentRecords._numberOfOuterVertices, persistentRecords._numberOfInnerCells, persistentRecords._numberOfOuterCells, persistentRecords._numberOfInnerLeafVertices, persistentRecords._numberOfBoundaryLeafVertices, persistentRecords._numberOfOuterLeafVertices, persistentRecords._numberOfInnerLeafCells, persistentRecords._numberOfOuterLeafCells, persistentRecords._maxLevel, persistentRecords.getHasRefined(), persistentRecords.getHasTriggeredRefinementForNextIteration(), persistentRecords.getHasErased(), persistentRecords.getHasTriggeredEraseForNextIteration(), persistentRecords.getHasChangedVertexOrCellState(), persistentRecords._isTraversalInverted, persistentRecords.getReduceStateAndCell(), persistentRecords.getCouldNotEraseDueToDecompositionFlag(), persistentRecords.getSubWorkerIsInvolvedInJoinOrFork()) {
-   assertion((27 < (8 * sizeof(int))));
+_persistentRecords(persistentRecords.getIsInitializing(), persistentRecords.getIsRefinementCriterionEnabled(), persistentRecords.getUnknownsPerSubcell(), persistentRecords.getNumberOfParametersWithoutGhostlayerPerSubcell(), persistentRecords.getNumberOfParametersWithGhostlayerPerSubcell(), persistentRecords._initialMaximalSubgridSize, persistentRecords._defaultSubdivisionFactor, persistentRecords.getDefaultGhostWidthLayer(), persistentRecords._initialTimestepSize, persistentRecords.getUseDimensionalSplittingExtrapolation(), persistentRecords._globalTimestepEndTime, persistentRecords.getAllPatchesEvolvedToGlobalTimestep(), persistentRecords._domainOffset, persistentRecords._domainSize, persistentRecords._plotName, persistentRecords._plotNumber, persistentRecords._startMaximumGlobalTimeInterval, persistentRecords._endMaximumGlobalTimeInterval, persistentRecords._startMinimumGlobalTimeInterval, persistentRecords._endMinimumGlobalTimeInterval, persistentRecords._minimalTimestep, persistentRecords._totalNumberOfCellUpdates, persistentRecords.getReduceReductions(), persistentRecords.getRestrictStatistics(), persistentRecords._minMeshWidth, persistentRecords._maxMeshWidth, persistentRecords._numberOfInnerVertices, persistentRecords._numberOfBoundaryVertices, persistentRecords._numberOfOuterVertices, persistentRecords._numberOfInnerCells, persistentRecords._numberOfOuterCells, persistentRecords._numberOfInnerLeafVertices, persistentRecords._numberOfBoundaryLeafVertices, persistentRecords._numberOfOuterLeafVertices, persistentRecords._numberOfInnerLeafCells, persistentRecords._numberOfOuterLeafCells, persistentRecords._maxLevel, persistentRecords.getHasRefined(), persistentRecords.getHasTriggeredRefinementForNextIteration(), persistentRecords.getHasErased(), persistentRecords.getHasTriggeredEraseForNextIteration(), persistentRecords.getHasChangedVertexOrCellState(), persistentRecords._isTraversalInverted, persistentRecords.getReduceStateAndCell(), persistentRecords.getCouldNotEraseDueToDecompositionFlag(), persistentRecords.getSubWorkerIsInvolvedInJoinOrFork()) {
+   assertion((28 < (8 * sizeof(int))));
    
 }
 
 
-peanoclaw::records::StatePacked::StatePacked(const bool& isInitializing, const bool& isRefinementCriterionEnabled, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingExtrapolation, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const tarch::la::Vector<32,int>& plotName, const int& plotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const bool& reduceReductions, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork):
-_persistentRecords(isInitializing, isRefinementCriterionEnabled, unknownsPerSubcell, numberOfParametersWithoutGhostlayerPerSubcell, numberOfParametersWithGhostlayerPerSubcell, initialMaximalSubgridSize, defaultSubdivisionFactor, defaultGhostWidthLayer, initialTimestepSize, useDimensionalSplittingExtrapolation, globalTimestepEndTime, allPatchesEvolvedToGlobalTimestep, domainOffset, domainSize, plotName, plotNumber, startMaximumGlobalTimeInterval, endMaximumGlobalTimeInterval, startMinimumGlobalTimeInterval, endMinimumGlobalTimeInterval, minimalTimestep, totalNumberOfCellUpdates, reduceReductions, minMeshWidth, maxMeshWidth, numberOfInnerVertices, numberOfBoundaryVertices, numberOfOuterVertices, numberOfInnerCells, numberOfOuterCells, numberOfInnerLeafVertices, numberOfBoundaryLeafVertices, numberOfOuterLeafVertices, numberOfInnerLeafCells, numberOfOuterLeafCells, maxLevel, hasRefined, hasTriggeredRefinementForNextIteration, hasErased, hasTriggeredEraseForNextIteration, hasChangedVertexOrCellState, isTraversalInverted, reduceStateAndCell, couldNotEraseDueToDecompositionFlag, subWorkerIsInvolvedInJoinOrFork) {
-   assertion((27 < (8 * sizeof(int))));
+peanoclaw::records::StatePacked::StatePacked(const bool& isInitializing, const bool& isRefinementCriterionEnabled, const int& unknownsPerSubcell, const int& numberOfParametersWithoutGhostlayerPerSubcell, const int& numberOfParametersWithGhostlayerPerSubcell, const tarch::la::Vector<DIMENSIONS,double>& initialMaximalSubgridSize, const tarch::la::Vector<DIMENSIONS,int>& defaultSubdivisionFactor, const int& defaultGhostWidthLayer, const double& initialTimestepSize, const bool& useDimensionalSplittingExtrapolation, const double& globalTimestepEndTime, const bool& allPatchesEvolvedToGlobalTimestep, const tarch::la::Vector<DIMENSIONS,double>& domainOffset, const tarch::la::Vector<DIMENSIONS,double>& domainSize, const tarch::la::Vector<32,int>& plotName, const int& plotNumber, const double& startMaximumGlobalTimeInterval, const double& endMaximumGlobalTimeInterval, const double& startMinimumGlobalTimeInterval, const double& endMinimumGlobalTimeInterval, const double& minimalTimestep, const double& totalNumberOfCellUpdates, const bool& reduceReductions, const bool& restrictStatistics, const tarch::la::Vector<DIMENSIONS,double>& minMeshWidth, const tarch::la::Vector<DIMENSIONS,double>& maxMeshWidth, const double& numberOfInnerVertices, const double& numberOfBoundaryVertices, const double& numberOfOuterVertices, const double& numberOfInnerCells, const double& numberOfOuterCells, const double& numberOfInnerLeafVertices, const double& numberOfBoundaryLeafVertices, const double& numberOfOuterLeafVertices, const double& numberOfInnerLeafCells, const double& numberOfOuterLeafCells, const int& maxLevel, const bool& hasRefined, const bool& hasTriggeredRefinementForNextIteration, const bool& hasErased, const bool& hasTriggeredEraseForNextIteration, const bool& hasChangedVertexOrCellState, const bool& isTraversalInverted, const bool& reduceStateAndCell, const bool& couldNotEraseDueToDecompositionFlag, const bool& subWorkerIsInvolvedInJoinOrFork):
+_persistentRecords(isInitializing, isRefinementCriterionEnabled, unknownsPerSubcell, numberOfParametersWithoutGhostlayerPerSubcell, numberOfParametersWithGhostlayerPerSubcell, initialMaximalSubgridSize, defaultSubdivisionFactor, defaultGhostWidthLayer, initialTimestepSize, useDimensionalSplittingExtrapolation, globalTimestepEndTime, allPatchesEvolvedToGlobalTimestep, domainOffset, domainSize, plotName, plotNumber, startMaximumGlobalTimeInterval, endMaximumGlobalTimeInterval, startMinimumGlobalTimeInterval, endMinimumGlobalTimeInterval, minimalTimestep, totalNumberOfCellUpdates, reduceReductions, restrictStatistics, minMeshWidth, maxMeshWidth, numberOfInnerVertices, numberOfBoundaryVertices, numberOfOuterVertices, numberOfInnerCells, numberOfOuterCells, numberOfInnerLeafVertices, numberOfBoundaryLeafVertices, numberOfOuterLeafVertices, numberOfInnerLeafCells, numberOfOuterLeafCells, maxLevel, hasRefined, hasTriggeredRefinementForNextIteration, hasErased, hasTriggeredEraseForNextIteration, hasChangedVertexOrCellState, isTraversalInverted, reduceStateAndCell, couldNotEraseDueToDecompositionFlag, subWorkerIsInvolvedInJoinOrFork) {
+   assertion((28 < (8 * sizeof(int))));
    
 }
 
@@ -980,6 +991,8 @@ void peanoclaw::records::StatePacked::toString (std::ostream& out) const {
    out << "totalNumberOfCellUpdates:" << getTotalNumberOfCellUpdates();
    out << ",";
    out << "reduceReductions:" << getReduceReductions();
+   out << ",";
+   out << "restrictStatistics:" << getRestrictStatistics();
    out << ",";
    out << "minMeshWidth:[";
    for (int i = 0; i < DIMENSIONS-1; i++) {
@@ -1065,6 +1078,7 @@ peanoclaw::records::State peanoclaw::records::StatePacked::convert() const{
       getMinimalTimestep(),
       getTotalNumberOfCellUpdates(),
       getReduceReductions(),
+      getRestrictStatistics(),
       getMinMeshWidth(),
       getMaxMeshWidth(),
       getNumberOfInnerVertices(),

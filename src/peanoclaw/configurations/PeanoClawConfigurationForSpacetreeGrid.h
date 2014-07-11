@@ -35,6 +35,8 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     bool _disableDimensionalSplittingOptimization;
 
+    bool _restrictStatistics;
+
     void processEntry(const std::string& name, const std::string& value);
 
     void parseLine(const std::string& line);
@@ -69,6 +71,11 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
     int getAdditionalLevelsForPredefinedRefinement() const;
 
     bool disableDimensionalSplittingOptimization() const;
+
+    /**
+     * Indicates whether statistics should be restricted in a parallel run.
+     */
+    bool restrictStatistics() const;
 };
 
 

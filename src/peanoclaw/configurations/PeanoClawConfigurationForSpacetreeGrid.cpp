@@ -20,6 +20,9 @@ void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::processE
   } else if(name == "plotAtSubsteps") {
     _plotSubsteps = (value == "yes");
     assert(value == "yes" || value == "no");
+  } else if(name == "restrictStatistics") {
+    _restrictStatistics = (value == "yes");
+    assert(value == "yes" || value == "no");
   } else {
     _isValid = false;
     logError("processEntry(string,string)", "Invalid entry: '" << name << "' '" << value << "'");
@@ -70,7 +73,7 @@ void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::parseLin
 
 peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::PeanoClawConfigurationForSpacetreeGrid():
   _isValid(true),
-  _plotAtOutputTimes(true),
+  _plotAtOutputTimes(false),
   _plotSubsteps(false),
   _plotSubstepsAfterOutputTime(-1),
   _additionalLevelsForPredefinedRefinement(1),
@@ -122,7 +125,10 @@ int peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::plotSubst
   return _plotSubstepsAfterOutputTime;
 }
 
-
 bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::disableDimensionalSplittingOptimization() const {
   return _disableDimensionalSplittingOptimization;
+}
+
+bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::restrictStatistics() const {
+  return _restrictStatistics;
 }

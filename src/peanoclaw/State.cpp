@@ -349,3 +349,17 @@ bool peanoclaw::State::shouldReduceReductions() const {
   return true;
   #endif
 }
+
+void peanoclaw::State::setRestrictStatistics(bool restrictStatistics) {
+  #ifdef Parallel
+  return _stateData.setRestrictStatistics(restrictStatistics);
+  #endif
+}
+
+bool peanoclaw::State::shouldRestrictStatistics() const {
+  #ifdef Parallel
+  return _stateData.getRestrictStatistics();
+  #else
+  return false;
+  #endif
+}

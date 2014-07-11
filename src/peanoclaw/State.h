@@ -286,6 +286,16 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        * the number of remaining iterations.
        */
       bool shouldReduceReductions() const;
+
+      /**
+       * Sets whether statistics should be restricted in a parallel run.
+       */
+      void setRestrictStatistics(bool restrictStatistics);
+
+      /**
+       * Returns whether statistics should be restricted in a parallel run.
+       */
+      bool shouldRestrictStatistics() const;
 };
 
 

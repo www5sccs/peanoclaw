@@ -9,6 +9,7 @@
 #include "peanoclaw/statistics/MemoryInformation.h"
 
 #include "tarch/logging/Log.h"
+#include "tarch/timing/Watch.h"
 
 #include "peanoclaw/native/MekkaFlood_solver.h"
 #ifndef CHOICE_SCHEME_HPP
@@ -91,6 +92,8 @@ void peanoclaw::native::fullswof2DMain(
     }
   }
 
+  tarch::timing::Watch runtimeWatch("fullswof2DMain", "peanoclaw::native", true);
+
   double t = 0.0;
   while(tarch::la::smaller(t, scenario.getEndTime())) {
 
@@ -101,6 +104,8 @@ void peanoclaw::native::fullswof2DMain(
     schemeWrapper->calcul();
     t += scheme->getTimestep();
   }
+
+  runtimeWatch.stopTimer();
 
   //Print maximum memory demand
   logInfo("fullswof2DMain", "Peak resident set size: " << peanoclaw::statistics::getPeakRSS() << "b");
