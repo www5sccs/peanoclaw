@@ -801,6 +801,7 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   logTraceInWith1Argument( "beginIteration(State)", solverState );
 
   _workerIterations++;
+  _collectSubgridStatistics = solverState.shouldRestrictStatistics();
 
   if(!tarch::la::equals(_globalTimestepEndTime, solverState.getGlobalTimestepEndTime())) {
     _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();
