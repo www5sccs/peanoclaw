@@ -92,7 +92,7 @@ void peanoclaw::native::fullswof2DMain(
     }
   }
 
-  tarch::timing::Watch runtimeWatch("fullswof2DMain", "peanoclaw::native", true);
+  tarch::timing::Watch runtimeWatch("peanoclaw::native", "fullswof2DMain", true);
 
   double t = 0.0;
   while(tarch::la::smaller(t, scenario.getEndTime())) {
