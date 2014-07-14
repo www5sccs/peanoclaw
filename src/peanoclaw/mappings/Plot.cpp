@@ -61,7 +61,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::descendSpecification() 
 
 tarch::logging::Log                peanoclaw::mappings::Plot::_log( "peanoclaw::mappings::Plot" ); 
 
-peanoclaw::mappings::Plot::Plot() {
+peanoclaw::mappings::Plot::Plot() : _nextPlotNumber(0) {
   logTraceIn( "Plot()" );
   // @todo Insert your code here
   logTraceOut( "Plot()" );
@@ -77,7 +77,8 @@ peanoclaw::mappings::Plot::~Plot() {
 
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::Plot::Plot(const Plot&  masterThread)
- : _patchPlotter(masterThread._patchPlotter)
+ : _patchPlotter(masterThread._patchPlotter),
+   _nextPlotNumber(masterThread._nextPlotNumber)
 {
   logTraceIn( "Plot(Plot)" );
   // @todo Insert your code here
