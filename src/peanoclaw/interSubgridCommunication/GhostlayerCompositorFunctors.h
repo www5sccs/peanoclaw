@@ -153,10 +153,12 @@ class peanoclaw::interSubgridCommunication::UpdateNeighborTimeFunctor {
 class peanoclaw::interSubgridCommunication::FluxCorrectionFunctor {
   private:
     Numerics& _numerics;
+    int       _sourceSubgridIndex;
 
   public:
     FluxCorrectionFunctor(
-      Numerics& numerics
+      Numerics& numerics,
+      int       sourceSubgridIndex
     );
 
     void operator() (

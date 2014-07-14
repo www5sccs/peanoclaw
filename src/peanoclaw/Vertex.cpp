@@ -142,9 +142,10 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
 }
 
 void peanoclaw::Vertex::applyFluxCorrection(
-  peanoclaw::Numerics& numerics
+  peanoclaw::Numerics& numerics,
+  int sourceSubgridIndex
 ) const {
-  //Fill ghost layers of adjacent cells
+  // Retrieve cell descriptions indices
   CellDescription* cellDescriptions[TWO_POWER_D];
   for(int cellIndex = 0; cellIndex < TWO_POWER_D; cellIndex++) {
     if(getAdjacentCellDescriptionIndex(cellIndex) != -1) {
@@ -152,7 +153,7 @@ void peanoclaw::Vertex::applyFluxCorrection(
     }
   }
 
-  // Prepare ghostlayer
+  // Load cell descriptions
   Patch patches[TWO_POWER_D];
   dfor2(cellIndex)
     if(getAdjacentCellDescriptionIndex(cellIndexScalar) != -1) {
@@ -165,8 +166,7 @@ void peanoclaw::Vertex::applyFluxCorrection(
   //Apply coarse grid correction
   interSubgridCommunication::GhostLayerCompositor ghostLayerCompositor(patches, 0, numerics, false);
 
-  //TODO unterweg debug
-//  ghostLayerCompositor.applyFluxCorrection();
+  ghostLayerCompositor.applyFluxCorrection(sourceSubgridIndex);
 }
 
 void peanoclaw::Vertex::setShouldRefine(bool shouldRefine) {

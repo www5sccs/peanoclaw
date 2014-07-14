@@ -343,8 +343,10 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::updateGhostlaye
   #endif
 }
 
-void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyFluxCorrection() {
-  FluxCorrectionFunctor functor(_numerics);
+void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyFluxCorrection(
+  int sourceSubgridIndex
+) {
+  FluxCorrectionFunctor functor(_numerics, sourceSubgridIndex);
   peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<FluxCorrectionFunctor>(
     _patches,
     functor

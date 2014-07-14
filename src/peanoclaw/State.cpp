@@ -223,6 +223,7 @@ double peanoclaw::State::getTotalNumberOfCellUpdates() const {
 
 void peanoclaw::State::resetMinimalTimestep() {
   _stateData.setMinimalTimestep(std::numeric_limits<double>::max());
+//  _stateData.setMinimalEstimatedNextTimestepSize(std::numeric_limits<double>::max());
 }
 
 void peanoclaw::State::updateMinimalTimestep(double timestep) {
@@ -363,3 +364,21 @@ bool peanoclaw::State::shouldRestrictStatistics() const {
   return false;
   #endif
 }
+
+//void peanoclaw::State::updateMinimalEstimatedNextTimestepSize(double estimatedNextTimestepSize) {
+//  _stateData.setMinimalEstimatedNextTimestepSize(
+//    std::min(_stateData.getMinimalEstimatedNextTimestepSize(), estimatedNextTimestepSize)
+//  );
+//}
+//
+//double peanoclaw::State::getMinimalEstimatedNextTimestepSize() const {
+//  return _stateData.getMinimalEstimatedNextTimestepSize();
+//}
+//
+//void peanoclaw::State::setEnforceGlobalTimestepping(bool enforceGlobalTimestepping) {
+//  _stateData.setEnforceGlobalTimestepping(enforceGlobalTimestepping);
+//}
+//
+//bool peanoclaw::State::shouldEnforceGlobalTimestepping() const {
+//  return _stateData.getEnforceGlobalTimestepping();
+//}

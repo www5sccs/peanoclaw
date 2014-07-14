@@ -78,14 +78,14 @@ void peanoclaw::Numerics::postProcessRestriction(
 }
 
 void peanoclaw::Numerics::applyFluxCorrection (
-  const Patch& finePatch,
-  Patch& coarsePatch,
+  const Patch& sourceSubgrid,
+  Patch& destinationSubgrid,
   int dimension,
   int direction
 ) const {
   _fluxCorrection->applyCorrection(
-    finePatch,
-    coarsePatch,
+    sourceSubgrid,
+    destinationSubgrid,
     dimension,
     direction
   );

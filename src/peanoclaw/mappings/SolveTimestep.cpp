@@ -628,9 +628,12 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 
         // Coarse grid correction
         for(int i = 0; i < TWO_POWER_D; i++) {
-          if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-            fineGridVertices[fineGridVerticesEnumerator(i)].applyFluxCorrection(*_numerics);
-          }
+//          if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
+          fineGridVertices[fineGridVerticesEnumerator(i)].applyFluxCorrection(
+            *_numerics,
+            i
+          );
+//          }
         }
 
         //Statistics

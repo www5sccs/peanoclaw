@@ -124,9 +124,14 @@ class peanoclaw::Vertex: public peano::grid::Vertex< peanoclaw::records::Vertex 
 
     /**
      * Applies the coarse grid correction on all adjacent patches.
+     * @param numerics
+     * @param sourceSubgridIndex an index in the range [0, 2^d[ that indicates
+     *        the subgrid that made a timestep and, hence, is the source subgrid
+     *        for the flux correction.
      */
     void applyFluxCorrection(
-      peanoclaw::Numerics& numerics
+      peanoclaw::Numerics& numerics,
+      int sourceSubgridIndex
     ) const;
 
     void setShouldRefine(bool shouldRefine);

@@ -296,6 +296,27 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        * Returns whether statistics should be restricted in a parallel run.
        */
       bool shouldRestrictStatistics() const;
+
+//      /**
+//       * Updates the minimal estimated next timestep size by the estimated next
+//       * timestep size for a certain subgrid.
+//       */
+//      void updateMinimalEstimatedNextTimestepSize(double estimatedNextTimestepSize);
+//
+//      /**
+//       * Returns the globally minimal estimated next timestep size.
+//       */
+//      double getMinimalEstimatedNextTimestepSize() const;
+//
+//      /**
+//       * En-/Disables the usage of a pure global timestepping.
+//       */
+//      void setEnforceGlobalTimestepping(bool enforceGlobalTimestepping);
+//
+//      /**
+//       * Returns whether pure global timestepping should be used.
+//       */
+//      bool shouldEnforceGlobalTimestepping() const;
 };
 
 

@@ -266,8 +266,9 @@ void peanoclaw::interSubgridCommunication::UpdateNeighborTimeFunctor::operator()
 }
 
 peanoclaw::interSubgridCommunication::FluxCorrectionFunctor::FluxCorrectionFunctor(
-  Numerics& numerics
-) : _numerics(numerics) {
+  Numerics& numerics,
+  int       sourceSubgridIndex
+) : _numerics(numerics), _sourceSubgridIndex(sourceSubgridIndex) {
 }
 
 void peanoclaw::interSubgridCommunication::FluxCorrectionFunctor::operator() (
@@ -277,26 +278,19 @@ void peanoclaw::interSubgridCommunication::FluxCorrectionFunctor::operator() (
   int                                       index2,
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
-  if(patch1.isLeaf()
-      && patch2.isLeaf()) {
-    int dimension = -1;
-    int offset = 0;
-    for(int d = 0; d < DIMENSIONS; d++) {
-      if(abs(direction(d)) == 1) {
-        dimension = d;
-        offset = direction(d);
+  if(index1 == _sourceSubgridIndex) {
+    if(patch1.isValid() && patch1.isLeaf() && patch2.isValid() && patch2.isLeaf()) {
+      int dimension = -1;
+      int offset = 0;
+      for(int d = 0; d < DIMENSIONS; d++) {
+        if(abs(direction(d)) == 1) {
+          dimension = d;
+          offset = direction(d);
+        }
       }
-    }
-    assertion3(dimension!=-1 && offset != 0, dimension, offset, direction);
+      assertion3(dimension!=-1 && offset != 0, dimension, offset, direction);
 
-    //Correct from patch1 to patch2
-    if(patch1.getLevel() > patch2.getLevel()) {
       _numerics.applyFluxCorrection(patch1, patch2, dimension, offset);
-    }
-
-    //Correct from right to left
-    if(patch2.getLevel() > patch1.getLevel()) {
-      _numerics.applyFluxCorrection(patch2, patch1, dimension, offset);
     }
   }
 }

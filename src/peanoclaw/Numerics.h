@@ -111,8 +111,8 @@ private:
      * method can only be called if providesRestriction() returns <tt>true</tt>.
      */
     virtual void applyFluxCorrection (
-      const Patch& finePatch,
-      Patch& coarsePatch,
+      const Patch& sourceSubgrid,
+      Patch& destinationSubgrid,
       int dimension,
       int direction
     ) const;

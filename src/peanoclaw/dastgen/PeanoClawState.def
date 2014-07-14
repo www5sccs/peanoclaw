@@ -23,6 +23,7 @@ class peanoclaw::dastgen::State {
 	//Global Timestepping	
 	persistent parallelise double globalTimestepEndTime;
 	persistent parallelise packed bool allPatchesEvolvedToGlobalTimestep;
+	//persistent parallelise packed bool enforceGlobalTimestepping;
 	
 	//Domain
 	persistent parallelise double domainOffset[DIMENSIONS];
@@ -38,6 +39,7 @@ class peanoclaw::dastgen::State {
 	persistent parallelise double startMinimumGlobalTimeInterval;
   persistent parallelise double endMinimumGlobalTimeInterval;
 	persistent parallelise double minimalTimestep;
+	//persistent parallelise double minimalEstimatedNextTimestepSize;
 	persistent parallelise double totalNumberOfCellUpdates;
 		
 	#ifdef Parallel

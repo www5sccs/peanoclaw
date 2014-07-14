@@ -182,7 +182,7 @@ public:
   /**
    * Applies the flux correction on all adjacent coarse patches.
    */
-  void applyFluxCorrection();
+  void applyFluxCorrection(int sourceSubgridIndex);
 };
 
 #endif /* PEANO_APPLICATIONS_PEANOCLAW_GHOSTLAYERCOMPOSITOR_H_ */
