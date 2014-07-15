@@ -48,7 +48,7 @@ class peanoclaw::statistics::Probe {
 
   public:
     Probe(
-       std::string name,
+      std::string name,
       tarch::la::Vector<DIMENSIONS, double> position,
       int unknown
     );
@@ -65,7 +65,7 @@ class peanoclaw::statistics::Probe {
      * plotted one after the other.
      */
     void plotDataIfContainedInPatch(
-      peanoclaw::Patch& patch
+      peanoclaw::Patch& subgrid
     );
 };
 

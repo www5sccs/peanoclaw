@@ -24,6 +24,7 @@ class peanoclaw::dastgen::State {
 	persistent parallelise double globalTimestepEndTime;
 	persistent parallelise packed bool allPatchesEvolvedToGlobalTimestep;
 	//persistent parallelise packed bool enforceGlobalTimestepping;
+	persistent parallelise packed bool enableFluxCorrection;
 	
 	//Domain
 	persistent parallelise double domainOffset[DIMENSIONS];

@@ -4,7 +4,10 @@
 #ifndef PEANO_APPLICATIONS_PEANOCLAW_CONFIGURATIONSPeanoClawConfiguration_FOR_SPACETREE_GRID_H_
 #define PEANO_APPLICATIONS_PEANOCLAW_CONFIGURATIONSPeanoClawConfiguration_FOR_SPACETREE_GRID_H_
 
+#include "peanoclaw/statistics/Probe.h"
+
 #include "tarch/logging/Log.h"
+#include <vector>
 
 namespace peanoclaw {
   namespace configurations {
@@ -37,7 +40,15 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     bool _restrictStatistics;
 
-    void processEntry(const std::string& name, const std::string& value);
+    bool _fluxCorrection;
+
+    std::vector<peanoclaw::statistics::Probe> _probes;
+
+    std::string getBoolValue(std::stringstream& s);
+
+    void addProbe(std::stringstream& values);
+
+    void processEntry(const std::string& name, std::stringstream& values);
 
     void parseLine(const std::string& line);
 
@@ -76,6 +87,16 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
      * Indicates whether statistics should be restricted in a parallel run.
      */
     bool restrictStatistics() const;
+
+    /**
+     * Indicates whether the flux correction should be used.
+     */
+    bool enableFluxCorrection() const;
+
+    /**
+     * Returns the list of probes.
+     */
+    std::vector<peanoclaw::statistics::Probe> getProbeList() const;
 };
 
 

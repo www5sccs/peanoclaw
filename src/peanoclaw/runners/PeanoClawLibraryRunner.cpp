@@ -230,6 +230,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
 //  state.setEnforceGlobalTimestepping(true);
 //  state.updateMinimalEstimatedNextTimestepSize(1e-7);
   state.setPlotName(plotName);
+  state.setProbeList(configuration.getProbeList());
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);

@@ -20,22 +20,28 @@ peanoclaw::statistics::Probe::Probe (
 }
 
 void peanoclaw::statistics::Probe::plotDataIfContainedInPatch(
-  peanoclaw::Patch& patch
+  peanoclaw::Patch& subgrid
 ) {
-  assertionFail("Not fixed, yet.");
-//  if(!tarch::la::oneGreater(patch.getPosition(), _position)
-//    && !tarch::la::oneGreater(_position, patch.getPosition() + patch.getSize())) {
-//    std::stringstream stringstream;
-//    stringstream << _name << " " << _position << " " << (patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize()) << " ";
-//
-//    if(_unknown == -1) {
-//      for(int unknown = 0; unknown < patch.getUnknownsPerSubcell(); unknown++) {
-//        stringstream << patch.getValueUNew(_position, unknown) << " ";
-//      }
-//    } else {
-//      stringstream << patch.getValueUNew(_position, _unknown) << " ";
-//    }
-//
-//    logInfo("plotDataIfContainedInPatch(Patch)", stringstream.str() << "   ");
-//  }
+
+  if(!tarch::la::oneGreater(subgrid.getPosition(), _position)
+    && !tarch::la::oneGreater(_position, subgrid.getPosition() + subgrid.getSize())) {
+    std::stringstream stringstream;
+    stringstream << _name << " " << _position << " " << (subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize()) << " ";
+
+    peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
+
+    tarch::la::Vector<DIMENSIONS,double> relativeSubcellPosition = _position - subgrid.getPosition();
+    tarch::la::Vector<DIMENSIONS,int> subcellIndex
+      = tarch::la::multiplyComponents(relativeSubcellPosition, tarch::la::invertEntries(subgrid.getSubcellSize())).convertScalar<int>();
+
+    if(_unknown == -1) {
+      for(int unknown = 0; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {
+        stringstream << accessor.getValueUNew(subcellIndex, unknown) << " ";
+      }
+    } else {
+      stringstream << accessor.getValueUNew(subcellIndex, _unknown) << " ";
+    }
+
+    logInfo("plotDataIfContainedInPatch(Patch)", stringstream.str() << "   ");
+  }
 }

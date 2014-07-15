@@ -7,68 +7,63 @@
 
 tarch::logging::Log peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::_log("peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid");
 
+std::string peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getBoolValue(std::stringstream& s) {
+  std::string value;
+  s >> value;
+  assert(value == "yes" || value == "no");
+  return value;
+}
+
+void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::addProbe(std::stringstream& s) {
+  std::string name;
+  s >> name;
+
+  int unknown;
+  s >> unknown;
+
+  tarch::la::Vector<DIMENSIONS,double> position;
+  for(int d = 0; d < DIMENSIONS; d++) {
+    s >> position[d];
+  }
+  _probes.push_back(peanoclaw::statistics::Probe(name, position, unknown));
+}
+
 void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::processEntry(
   const std::string& name,
-  const std::string& value
+  std::stringstream& values
 ) {
+
   if(name == "plot" || name == "plotAtOutputTimes") {
-    _plotAtOutputTimes = (value == "yes");
-    assert(value == "yes" || value == "no");
+    _plotAtOutputTimes = (getBoolValue(values) == "yes");
   } else if(name == "plotAtEnd") {
-    _plotAtEndTime = (value == "yes");
-    assert(value == "yes" || value == "no");
+    _plotAtEndTime = (getBoolValue(values) == "yes");
   } else if(name == "plotAtSubsteps") {
-    _plotSubsteps = (value == "yes");
-    assert(value == "yes" || value == "no");
+    _plotSubsteps = (getBoolValue(values) == "yes");
   } else if(name == "restrictStatistics") {
-    _restrictStatistics = (value == "yes");
-    assert(value == "yes" || value == "no");
+    _restrictStatistics = (getBoolValue(values) == "yes");
+  } else if(name == "fluxCorrection") {
+    _fluxCorrection = (getBoolValue(values) == "yes");
+  } else if(name == "probe") {
+    addProbe(values);
   } else {
     _isValid = false;
-    logError("processEntry(string,string)", "Invalid entry: '" << name << "' '" << value << "'");
+    logError("processEntry(string,string)", "Invalid entry: '" << name << "' '" << values << "'");
   }
 }
 
 void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::parseLine(const std::string& line) {
-  int startName = -1;
-  int endName = -1;
-  int startValue = -1;
-  int endValue = -1;
 
-  bool inFirstToken = true;
-
-  for(size_t i = 0; i < line.size(); i++) {
-    char c = line[i];
-    const bool isWhiteSpace =
-      c == ' '  ||
-      c == '\t' ||
-      c == '\n';
-
-    if(!isWhiteSpace && c != '=') {
-      if(startName == -1) {
-        startName = i;
-      } else if(!inFirstToken && startValue == -1) {
-        startValue = i;
-      }
-    } else {
-      if(startName != -1 && endName == -1) {
-        endName = i;
-        inFirstToken = false;
-      } else if(!inFirstToken && startValue != -1 && endValue == -1) {
-        endValue = i;
-      }
-    }
+  //Delimiter
+  std::string modified = line;
+  if(modified.find("=") != std::string::npos) {
+    modified.replace(modified.find("="), 1, " ");
   }
 
-  std::string name = line.substr(startName, endName-startName);
-  std::string value = line.substr(startValue, endValue-startValue);
+  std::stringstream s(modified);
+  std::string name;
+  s >> name;
 
-  //TODO unterweg debug
-//  std::cout << "line=" << line << std::endl
-//      << "name=[" << startName << "," << endName << "]: " << name << std::endl
-//      << "value=[" << startValue << "," << endValue << "]: " << value << std::endl;
-
-  processEntry(name, value);
+  processEntry(name, s);
 }
 
 peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::PeanoClawConfigurationForSpacetreeGrid():
@@ -77,7 +72,9 @@ peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::PeanoClawConf
   _plotSubsteps(false),
   _plotSubstepsAfterOutputTime(-1),
   _additionalLevelsForPredefinedRefinement(1),
-  _disableDimensionalSplittingOptimization(false)
+  _disableDimensionalSplittingOptimization(false),
+  _restrictStatistics(true),
+  _fluxCorrection(true)
   {
   std::string configFileName = "peanoclaw.config";
   std::ifstream configFile(configFileName.c_str());
@@ -131,4 +128,8 @@ bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::disableD
 
 bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::restrictStatistics() const {
   return _restrictStatistics;
+}
+
+std::vector<peanoclaw::statistics::Probe> peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getProbeList() const {
+  return _probes;
 }

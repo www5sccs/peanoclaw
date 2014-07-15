@@ -122,8 +122,6 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
           double transferedVolumeFineGrid = fineGridFlux * timestepOverlap;
           double transferedVolumeCoarseGrid = coarseGridFlux * timestepOverlap;
 
-          //        double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / coarseSubcellSize(dimension) / refinementFactor;
-          //double delta = (transferedVolumeFineGrid * refinementFactor - transferedVolumeCoarseGrid) / refinementFactor;
           double delta = transferedVolumeFineGrid - transferedVolumeCoarseGrid;
 
           logDebug("applyFluxCorrection", "Correcting neighbor cell " << adjacentSubcellIndexInDestinationPatch << " from cell " << subcellIndexInSourcePatch << " with interfaceArea=" << interfaceArea << std::endl
@@ -136,8 +134,8 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
               << "\told u=" << coarsePatch.getAccessor().getValueUNew(adjacentSubcellIndexInDestinationPatch, 0) << std::endl
               << "\tnew u=" << coarsePatch.getAccessor().getValueUNew(adjacentSubcellIndexInDestinationPatch, 0) + delta);
 
-//          destinationAccessor.setValueUNew(adjacentSubcellIndexInDestinationPatch, unknown,
-//              destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown) + delta);
+          destinationAccessor.setValueUNew(adjacentSubcellIndexInDestinationPatch, unknown,
+              destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown) + delta);
         }
       }
     }

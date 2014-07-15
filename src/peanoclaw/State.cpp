@@ -382,3 +382,11 @@ bool peanoclaw::State::shouldRestrictStatistics() const {
 //bool peanoclaw::State::shouldEnforceGlobalTimestepping() const {
 //  return _stateData.getEnforceGlobalTimestepping();
 //}
+
+void peanoclaw::State::enableFluxCorrection(bool enableFluxCorrection) {
+  _stateData.setEnableFluxCorrection(enableFluxCorrection);
+}
+
+bool peanoclaw::State::isFluxCorrectionEnabled() const {
+  return _stateData.getEnableFluxCorrection();
+}

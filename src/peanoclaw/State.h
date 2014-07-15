@@ -317,6 +317,16 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
 //       * Returns whether pure global timestepping should be used.
 //       */
 //      bool shouldEnforceGlobalTimestepping() const;
+
+      /**
+       * En-/Disables the flux correction along patch boundaries.
+       */
+      void enableFluxCorrection(bool enableFluxCorrection);
+
+      /**
+       * Returns whether the flux correction along patch boundaries is enabled.
+       */
+      bool isFluxCorrectionEnabled() const;
 };
 
 

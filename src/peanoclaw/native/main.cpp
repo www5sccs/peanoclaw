@@ -84,12 +84,12 @@ int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string
     }
     plotName = defaultPlotName;
   } else if (argc >= 3) {
-    if(std::string(argv[argc-1]) == "--usePeano" || std::string(argv[argc-3]) == "--usePeano") {
+    if(std::string(argv[argc-1]) == "--usePeano") {
       usePeanoClaw = true;
       remaining = argc-1;
     }
-    if(std::string(argv[argc-2]) == "--plotName") {
-      plotName = std::string(argv[argc-1]);
+    if(std::string(argv[remaining-2]) == "--plotName") {
+      plotName = std::string(argv[remaining-1]);
       remaining-=2;
     } else {
       plotName = defaultPlotName;
@@ -198,7 +198,7 @@ int main(int argc, char **argv) {
   }
 
   if(scenario == 0) {
-    std::cerr << "Optional arguments: [--usePeano]" << std::endl;
+    std::cerr << "Optional arguments: [--plotName <plotName>] [--usePeano]" << std::endl;
     return 0;
   }
 
