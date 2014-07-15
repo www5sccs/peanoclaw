@@ -67,6 +67,8 @@ class peanoclaw::mappings::SolveTimestep {
 
     bool _collectSubgridStatistics;
 
+    bool _correctFluxes;
+
     std::map<int, int> _estimatedRemainingIterationsUntilGlobalTimestep;
 
     /**

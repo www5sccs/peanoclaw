@@ -114,7 +114,8 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep()
     _globalTimestepEndTime(0),
     _useDimensionalSplittingExtrapolation(true),
     _collectSubgridStatistics(true),
-    _workerIterations(-1) {
+    _workerIterations(-1),
+    _correctFluxes(true) {
   logTraceIn( "SolveTimestep()" );
   // @todo Insert your code here
   logTraceOut( "SolveTimestep()" );
@@ -627,13 +628,13 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         #endif
 
         // Coarse grid correction
-        for(int i = 0; i < TWO_POWER_D; i++) {
-//          if(fineGridVertices[fineGridVerticesEnumerator(i)].isHangingNode()) {
-          fineGridVertices[fineGridVerticesEnumerator(i)].applyFluxCorrection(
-            *_numerics,
-            i
-          );
-//          }
+        if(_correctFluxes) {
+          for(int i = 0; i < TWO_POWER_D; i++) {
+            fineGridVertices[fineGridVerticesEnumerator(i)].applyFluxCorrection(
+              *_numerics,
+              i
+            );
+          }
         }
 
         //Statistics
@@ -805,6 +806,7 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
 
   _workerIterations++;
   _collectSubgridStatistics = solverState.shouldRestrictStatistics();
+  _correctFluxes = solverState.isFluxCorrectionEnabled();
 
   if(!tarch::la::equals(_globalTimestepEndTime, solverState.getGlobalTimestepEndTime())) {
     _globalTimestepEndTime = solverState.getGlobalTimestepEndTime();
