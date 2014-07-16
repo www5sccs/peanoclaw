@@ -89,10 +89,10 @@ peanoclaw::mappings::InitialiseGrid::~InitialiseGrid() {
 
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  masterThread)
-:  _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
-   _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
+:  _defaultSubdivisionFactor(masterThread._defaultSubdivisionFactor),
    _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
    _initialTimestepSize(masterThread._initialTimestepSize),
+   _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
    _numerics(masterThread._numerics) //,
 //   _refinementTriggered(masterThread._refinementTriggered)
 {

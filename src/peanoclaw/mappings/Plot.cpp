@@ -77,11 +77,11 @@ peanoclaw::mappings::Plot::~Plot() {
 
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::Plot::Plot(const Plot&  masterThread)
- : _patchPlotter(masterThread._patchPlotter),
-   _nextPlotNumber(masterThread._nextPlotNumber)
+ : _nextPlotNumber(masterThread._nextPlotNumber)
 {
   logTraceIn( "Plot(Plot)" );
   // @todo Insert your code here
+  assertionFail("Parallel Plotting not supported!");
   logTraceOut( "Plot(Plot)" );
 }
 
