@@ -10,6 +10,9 @@
 
 #include "peanoclaw/interSubgridCommunication/FluxCorrection.h"
 #include "peanoclaw/tests/GridLevelTransferTest.h"
+#include "peanoclaw/Patch.h"
+#include "peanoclaw/grid/SubgridAccessor.h"
+#include "peanoclaw/grid/TimeIntervals.h"
 
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
@@ -51,6 +54,25 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
       int projectionAxis
     ) const;
 
+    void correctFluxBetweenCells(
+      int dimension,
+      int direction,
+      double timestepOverlap,
+      const peanoclaw::Patch& sourceSubgrid,
+      peanoclaw::Patch& destinationSubgrid,
+      peanoclaw::grid::SubgridAccessor& sourceAccessor,
+      peanoclaw::grid::SubgridAccessor& destinationAccessor,
+      const peanoclaw::grid::TimeIntervals& sourceTimeIntervals,
+      const peanoclaw::grid::TimeIntervals& destinationTimeIntervals,
+      double destinationSubcellVolume,
+      const tarch::la::Vector<DIMENSIONS,double>& sourceSubcellSize,
+      const tarch::la::Vector<DIMENSIONS,double>& destinationSubcellSize,
+      const tarch::la::Vector<DIMENSIONS,int>& subcellIndexInSourcePatch,
+      const tarch::la::Vector<DIMENSIONS,int>& ghostlayerSubcellIndexInSourcePatch,
+      const tarch::la::Vector<DIMENSIONS,int>& adjacentSubcellIndexInDestinationPatch,
+      const tarch::la::Vector<DIMENSIONS,int>& ghostlayerSubcellIndexInDestinationPatch
+    ) const;
+
   public:
 
     virtual ~DefaultFluxCorrection();
@@ -59,8 +81,8 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
      * Applying the default flux correction on the coarse patch.
      */
     void applyCorrection(
-      const Patch& finePatch,
-      Patch& coarsePatch,
+      const Patch& sourcePatch,
+      Patch& destinationPatch,
       int dimension,
       int direction
     ) const;
