@@ -1,6 +1,9 @@
 from os.path import join
+from os.path import dirname
+import sys
+import os
     
-def addPython():
+def addPython(cppdefines, cpppath, libpath, libs):
    if sys.version_info[0] == 2 and sys.version_info[1] < 7:
        pythonVersion = str(sys.version_info[0]) + '.' + str(sys.version_info[1]) #For Python 2.6
    else: 
