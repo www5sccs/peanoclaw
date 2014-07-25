@@ -58,6 +58,8 @@ class Solver(Solver):
         self.num_ghost = solver.num_ghost
         self.rp = solver.rp
         self.did_run_as_worker = False
+        self.num_waves = solver.num_waves
+        self.num_eqn = solver.num_eqn
 
         #Create callbacks
         self.initialization_callback = InitializationCallback(self, refinement_criterion, q_initialization, aux_initialization, initial_minimal_mesh_width)
