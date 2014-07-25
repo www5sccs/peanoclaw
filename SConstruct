@@ -5,6 +5,7 @@ from os.path import join
 from os.path import dirname
 import sys
 import shutil
+from tools import buildtools
 
 #########################################################################
 ##### FUNCTION DEFINITIONS
@@ -17,36 +18,7 @@ def addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver):
      ccflags.append('-march=native')
    
    if solver=='pyclaw':
-     if sys.version_info[0] == 2 and sys.version_info[1] < 7:
-         pythonVersion = str(sys.version_info[0]) + '.' + str(sys.version_info[1]) #For Python 2.6
-     else: 
-         pythonVersion = str(sys.version_info.major) + '.' + str(sys.version_info.minor) #For Python 2.7
-     # Determine python version from environment variable:
-     peanoClawPythonVersion = os.getenv ('PEANOCLAW_PYTHONVERSION')
-     if (peanoClawPythonVersion != None):
-        pythonVersion = peanoClawPythonVersion
-  
-     # Determine python root path from environment variable:
-     pythonHome = os.getenv ('PYTHONHOME')
-     peanoClawPythonHome = os.getenv ('PEANOCLAW_PYTHONHOME')
-     if (peanoClawPythonHome != None):
-        print 'Using environment variable PEANOCLAW_PYTHONHOME =', peanoClawPythonHome
-        pythonHome = peanoClawPythonHome
-     elif (pythonHome != None):
-        print 'Using environment variable PYTHONHOME =', pythonHome
-     else:
-        print('Environment variables PYTHONHOME and PEANOCLAW_PYTHONHOME not defined. Using path depending on the interpreter\'s path ' + sys.executable)
-        pythonHome = join(dirname(sys.executable), '..')
-        print pythonHome
-     cppdefines.append('NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION')
-        
-     # Add paths and lib
-     libpath.append(pythonHome + '/lib')
-     libpath.append(pythonHome + '/lib/python' + pythonVersion)
-     cpppath.append(pythonHome + '/include/python' + pythonVersion)
-     cpppath.append(pythonHome + '/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
-     cpppath.append(os.getenv("HOME") + '/.local/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
-     libs.append('python' + pythonVersion)
+     buildtools.addPython()
      
    if(environment['PLATFORM'] == 'darwin'):
      ccflags.append('-flat_namespace')
@@ -54,7 +26,6 @@ def addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver):
    elif build == 'release':
      #cppdefines.append('_GLIBCXX_DEBUG')
      cppdefines.append('NDEBUG')
-     
      
    if '-Werror' in ccflags:
      ccflags.remove('-Werror')
@@ -99,18 +70,16 @@ if(environment['PLATFORM'] != 'darwin'):
     
 ##### Determine dimension for which to build
 #
-dim = ARGUMENTS.get('dim', 2)  # Read command line parameter
-if int(dim) == 2:
+dim = int(ARGUMENTS.get('dim', 2))  # Read command line parameter
+if dim == 2:
    cppdefines.append('Dim2')
-elif int(dim) == 3:
+elif dim == 3:
    cppdefines.append('Dim3')
-elif int(dim) == 4:
-   cppdefines.append('Dim4')
-elif int(dim) == 5:
-   cppdefines.append('Dim5')
 else:
-   print "ERROR: dim must be either '2', '3', '4', or '5'!"
+   print "ERROR: dim must be either 2 or 3!"
    sys.exit(1)
+
+print 'dim=',dim
 
 ##### Add build parameter specific build variable settings:
 # This section only defines Peano-specific flags. It does not
@@ -310,6 +279,8 @@ if solver == 'pyclaw':
 elif solver == 'swe':
   #Configure SWE-Sources
   swePath = '../SWE/src'
+  if dim != 2:
+    raise Exception("The SWE solver can only be used in 2D.")
   try:
     import sweConfiguration
     swePath = sweConfiguration.getSWEPath()
@@ -327,6 +298,8 @@ elif solver == 'swe':
 elif solver == 'fullswof2d':
   #Configure FullSWOF-Sources
   fullSWOF2DPath = '../FullSWOF_2D'
+  if dim != 2:
+    raise Exception("The FullSWOF2D solver can only be used in 2D.")
   try:
     import fullSWOF2DConfiguration
     fullSWOF2DPath = fullSWOF2DConfiguration.getFullSWOF2DPath()
@@ -335,12 +308,8 @@ elif solver == 'fullswof2d':
   cpppath.append(fullSWOF2DPath)
   cppdefines.append('NDEBUG')
 
-#   cppdefines.append('WAVE_PROPAGATION_SOLVER=1')
-#   cppdefines.append('VECTORIZE')
   cppdefines.append('DoNotAssertForPositiveValues')
 
-  #Configure fullswof2d
-  # add FULLSWOF2D mode
   cppdefines.append('PEANOCLAW_FULLSWOF2D')
   cpppath.append( join(fullSWOF2DPath, 'Headers/liblimitations') )
   cpppath.append( join(fullSWOF2DPath, 'Headers/libfrictions') )
@@ -354,8 +323,20 @@ elif solver == 'fullswof2d':
   cpppath.append( join(fullSWOF2DPath, 'Headers/libboundaryconditions') )
   cpppath.append( join(fullSWOF2DPath, 'Headers/libparameters') )
   libs.append('png') # for texture file
+elif solver == 'euler3d':
+  cppdefines.append('PEANOCLAW_EULER3D')
+  if dim != 3:
+    raise Exception("The Euler3D solver can only be used in 3D.")
+  euler3DPath = '../euler3d'
+  try:
+    import euler3DConfiguration
+    euler3DPath = euler3DConfiguration.getEuler3DPath()
+  except ImportError:
+    pass
+  cpppath.append(join(euler3DPath, 'source'))
+  cppdefines.append('AssertForPositiveValues')
 else:
-  raise Exception("ERROR: solver must be 'pyclaw', 'swe', or 'fullswof2d'")
+  raise Exception("ERROR: solver must be 'pyclaw', 'swe', 'fullswof2d', or 'euler3d'")
 
 ##### Determine Heap Compression
 #
@@ -426,11 +407,10 @@ VariantDir (join(buildpath, 'kernel'), p3SourcePath, duplicate=0)  # Set build d
 VariantDir (join(buildpath, 'toolboxes'), toolboxSourcePath, duplicate=0)  # Set build directory for Toolbox sources
 if solver == 'swe':
   VariantDir (join(buildpath, 'swe'), swePath, duplicate=0)  # Set build directory for SWE sources
-if solver == 'fullswof2d':
-  
-  print "VariantDir", join(buildpath, 'fullswof2d'), fullSWOF2DPath
-  
-  VariantDir (join(buildpath, 'fullswof2d'), fullSWOF2DPath, duplicate=0)  # Set build directory for SWE sources
+elif solver == 'fullswof2d':
+  VariantDir (join(buildpath, 'fullswof2d'), fullSWOF2DPath, duplicate=0)  # Set build directory for FullSWOF2D sources
+elif solver == 'euler3d':
+  VariantDir (join(buildpath, 'euler3d'), euler3DPath, duplicate=0)  # Set build directory for SWE sources
   
   
 ##### Setup construction environment:
@@ -451,228 +431,9 @@ env = Environment (
 #
 # Define sources
 #
+sourcesPeano = buildtools.getPeanoSources(Glob, buildpath, multicore)
 
-##### Sub T-components
-
-sourcesTLa = [
-   Glob(join(buildpath, 'kernel/tarch/la/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/la/tests/*.cpp'))
-   ]
-
-sourcesTCompiler = [
-   Glob(join(buildpath, 'kernel/tarch/compiler/*.cpp'))
-   ]
-
-sourcesTConfiguration = [
-   Glob(join(buildpath, 'kernel/tarch/configuration/*.cpp'))
-   ]
-
-sourcesTIrr = [
-   Glob(join(buildpath, 'kernel/tarch/irr/*.cpp'))
- ]
-
-sourcesTLogging = [
-  Glob(join(buildpath, 'kernel/tarch/logging/*.cpp')),
-  Glob(join(buildpath, 'kernel/tarch/logging/configurations/*.cpp'))
-]
-
-sourcesTServices = [
-  Glob(join(buildpath, 'kernel/tarch/services/*.cpp'))
-]
-
-sourcesTTests = [
-  Glob(join(buildpath, 'kernel/tarch/tests/*.cpp')),
-  Glob(join(buildpath, 'kernel/tarch/tests/configurations/*.cpp'))
-  ]
-
-sourcesTUtils = [
-  Glob(join(buildpath, 'kernel/tarch/utils/*.cpp'))
-]
-
-sourcesTTiming = [
-  Glob(join(buildpath, 'kernel/tarch/timing/*.cpp'))
-]
-
-sourcesTPlotter = [ 
-   Glob(join(buildpath, 'kernel/tarch/plotter/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/plotter/globaldata/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/plotter/globaldata/tests/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/plotter/griddata/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/plotter/griddata/multiscale/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/plotter/griddata/unstructured/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/plotter/griddata/unstructured/configurations/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/plotter/griddata/unstructured/vtk/*.cpp')),
-   Glob(join(buildpath, 'kernel/tarch/plotter/griddata/unstructured/vtk/tests/*.cpp'))
-   ]   
-   
-##### Define sources T-components
-#            
-sourcesTComponents = [
-   sourcesTCompiler,
-   sourcesTConfiguration,
-   sourcesTIrr,
-   sourcesTLa,
-   sourcesTLogging,
-   sourcesTPlotter,
-   sourcesTServices,
-   sourcesTTests,
-   sourcesTTiming,
-   sourcesTUtils
-   ]
-
-
-##### Define sources for multicore support
-#    
-sourcesDatatraversal = [
-    Glob(join(buildpath, 'kernel/peano/datatraversal/*.cpp')),
-    Glob(join(buildpath, 'kernel/peano/datatraversal/configurations/*.cpp')),
-    Glob(join(buildpath, 'kernel/peano/datatraversal/tests/*.cpp')),
-    Glob(join(buildpath, 'kernel/peano/datatraversal/autotuning/*.cpp')),
-    Glob(join(buildpath, 'kernel/tarch/multicore/configurations/*.cpp')),
-    Glob(join(buildpath, 'kernel/tarch/multicore/*.cpp'))
-  ]       
-      
-if multicore == 'no' or multicore == 'multicore_no':
-   pass
-elif multicore == 'openmp':
-   sourcesDatatraversal = sourcesDatatraversal + [
-     Glob(join(buildpath, 'kernel/tarch/multicore/openMP/*.cpp'))
-   ]
-elif multicore == 'tbb':
-   sourcesDatatraversal = sourcesDatatraversal + [
-     Glob(join(buildpath, 'kernel/tarch/multicore/tbb/*.cpp'))
-   ]
-
-sourcesParallel = [
- Glob(join(buildpath, 'kernel/tarch/parallel/configuration/*.cpp')),
- Glob(join(buildpath, 'kernel/tarch/parallel/*.cpp')),
- Glob(join(buildpath, 'kernel/tarch/parallel/strategy/*.cpp')),
- Glob(join(buildpath, 'kernel/tarch/parallel/messages/*.cpp')),
- Glob(join(buildpath, 'kernel/tarch/parallel/dastgen/*.cpp')),
- Glob(join(buildpath, 'kernel/tarch/parallel/configurations/*.cpp')),
- Glob(join(buildpath, 'kernel/peano/parallel/*.cpp')),
- Glob(join(buildpath, 'kernel/peano/parallel/*.cc')),
- Glob(join(buildpath, 'kernel/peano/parallel/configurations/*.cpp')),
- Glob(join(buildpath, 'kernel/peano/parallel/loadbalancing/*.cpp')),
- Glob(join(buildpath, 'kernel/peano/parallel/messages/*.cpp')),
- Glob(join(buildpath, 'kernel/peano/parallel/tests/*.cpp')),
- Glob(join(buildpath, 'kernel/tarch/mpianalysis/*.cpp')),
- Glob(join(buildpath, 'kernel/tarch/analysis/*.cpp'))
-]
-
-
-#### Peano Utils
-sourcesPeanoUtils = [
-  Glob(join(buildpath, 'kernel/peano/utils/*.cpp'))
-]
-
-
-# ## Peano partition coupling
-sourcesPartitionCoupling = [
-  Glob(join(buildpath, 'kernel/peano/integration/partitioncoupling/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/integration/partitioncoupling/builtin/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/integration/partitioncoupling/builtin/configurations/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/integration/partitioncoupling/builtin/tests/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/integration/partitioncoupling/builtin/records/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/integration/partitioncoupling/services/*.cpp'))
-]
-
-# ## Kernel
-sourcesKernelConfiguration = [
-   Glob(join(buildpath, 'kernel/peano/configurations/*.cpp'))
-   ]
-
-sourcesGridInterface = [
-   Glob(join(buildpath, 'kernel/peano/gridinterface/*.cpp'))
-   ]
-   
-sourcesGrid = [
-   Glob(join(buildpath, 'kernel/peano/grid/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/grid/aspects/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/grid/nodes/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/grid/nodes/loops/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/grid/nodes/tasks/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/grid/tests/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/grid/tests/records/*.cpp'))
-   ]
-sourcesStacks = [
-    Glob(join(buildpath, 'kernel/peano/stacks/*.cpp')),
-    Glob(join(buildpath, 'kernel/peano/stacks/implementation/*.cpp'))
-    ]
-sourcesHeap = [
-    Glob(join(buildpath, 'kernel/peano/heap/records/*.cpp'))
-    ]
-sourcesPeanoKernel = [
-   sourcesKernelConfiguration,
-   sourcesGridInterface,
-   sourcesGrid,
-   sourcesStacks,
-   sourcesHeap
-   ]
-
-#### Geometry
-##### Builtin Geometry
-sourcesBuiltinGeometry = [
-   Glob(join(buildpath, 'kernel/peano/geometry/builtin/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/geometry/builtin/services/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/geometry/extensions/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/geometry/builtin/configurations/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/geometry/builtin/tests/*.cpp'))
-   ]
-
-
-sourcesPeanoGeometry = [
-   Glob(join(buildpath, 'kernel/peano/geometry/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/geometry/tests/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/geometry/configurations/*.cpp')),
-   Glob(join(buildpath, 'kernel/peano/geometry/services/*.cpp')),
-   sourcesBuiltinGeometry
-   ]
-
-sourcesPeanoBase = [
-  sourcesPeanoKernel,
-  sourcesPeanoGeometry,
-  sourcesPeanoUtils,
-  sourcesDatatraversal,
-  # sourcesQueries,
-  Glob(join(buildpath, 'kernel/peano/*.cpp')),
-  Glob(join(buildpath, 'kernel/*.cpp'))
-]
-
-sourcesToolBox = [
-  Glob(join(buildpath, 'toolboxes/ControlLoopLoadBalancer/*.cpp')),
-  Glob(join(buildpath, 'toolboxes/ControlLoopLoadBalancer/strategies/*.cpp'))
-]
-
-sourcesToolBoxVHH = [
-  Glob(join(buildpath, 'kernel/peano/toolbox/solver/vhh/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/toolbox/solver/vhh/tests/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/toolbox/solver/vhh/opencl/*.cpp')),
-  Glob(join(buildpath, 'kernel/peano/toolbox/solver/vhh/opencl/tests/*.cpp'))
-]
-
-# ## Applications
-sourcesPeanoClaw = [
-  Glob(join(buildpath, 'peanoclaw/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/adapters/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/configurations/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/grid/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/grid/plotter/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/interSubgridCommunication/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/interSubgridCommunication/aspects/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/mappings/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/parallel/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/records/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/repositories/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/runners/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/statistics/*.cpp')),
-  Glob(join(buildpath, 'peanoclaw/tests/*.cpp')),
-	]
-	
-##### PeanoClaw-specific tarch
-sourcesPeanoClawTarch = [
-    Glob(join(buildpath, 'tarch/plotter/griddata/unstructured/binaryvtu/*.cpp'))
-  ]
+sourcesPeanoClaw = buildtools.getPeanoClawSources(Glob, buildpath)
 
 ##### Define sources of application peanoclaw
 if solver == 'swe':
@@ -715,7 +476,19 @@ elif solver == 'fullswof2d':
      Glob(join(buildpath, 'fullswof2d/Sources/libboundaryconditions/*.cpp')),
      Glob(join(buildpath, 'fullswof2d/Sources/libparameters/*.cpp'))
      ]
+elif solver == 'euler3d':
+  sourcesSolver = [
+     Glob(join(buildpath, 'euler3d/source/EulerEquation/*.cpp')),
+     Glob(join(buildpath, 'peanoclaw/native/main.cpp')),
+     Glob(join(buildpath, 'peanoclaw/native/scenarios/*.cpp')),
+     Glob(join(buildpath, 'peanoclaw/solver/euler3d/*.cpp'))
+     ]
 sourcesPeanoClaw.extend(sourcesSolver)
+
+source = [
+   sourcesPeano,
+   sourcesPeanoClaw
+   ]
 
 ################################################################################
 
@@ -732,15 +505,6 @@ else:
 
 ##### Build selected target
 #
-source = [
-   sourcesTComponents,
-   sourcesPeanoBase,
-   sourcesPeanoClaw,
-   sourcesPeanoClawTarch,
-   sourcesParallel,
-   sourcesToolBox
-   ]
-
 if solver == 'pyclaw':
   targetfilename = 'libpeano-claw-' + str(dim) + 'd' + filenameSuffix
   target = buildpath + targetfilename
@@ -772,6 +536,17 @@ elif solver == 'fullswof2d':
   ##### Copy executable to bin directory
   #
   installation = env.Alias('install', env.Install('bin', executable))
+elif solver == 'euler3d':
+  targetfilename = 'peano-claw-euler3d'
+  target = buildpath + targetfilename
+  executable = env.Program ( 
+    target=target,
+    source=source
+    )
+  ##### Copy executable to bin directory
+  #
+  installation = env.Alias('install', env.Install('bin', executable))
 
+#installation = solverSpecification.getInstallationTarget() 
 Default(installation)
 
