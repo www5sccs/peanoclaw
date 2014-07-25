@@ -117,8 +117,18 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/.cproject ../../FullSWOF_2D/.cproject
 +</cproject>
 diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp ../../FullSWOF_2D/Headers/libparameters/misc.hpp
 --- ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../../FullSWOF_2D/Headers/libparameters/misc.hpp	2014-04-04 13:14:04.000000000 +0200
-@@ -65,8 +65,8 @@
++++ ../../FullSWOF_2D/Headers/libparameters/misc.hpp	2014-07-09 11:23:18.435439793 +0200
+@@ -53,6 +53,9 @@
+  *
+  ******************************************************************************/
+ 
++#ifndef MISC_HPP
++#define MISC_HPP
++
+ #include <vector>
+ #include <iostream>
+ #include <cmath>
+@@ -65,8 +68,8 @@
  #include <cfloat>
  #include <unistd.h>
  
@@ -129,7 +139,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp ../../FullS
  
  #define GRAV 9.81
  #define GRAV_DEM 4.905
-@@ -76,7 +76,14 @@
+@@ -76,7 +79,14 @@
  #define VE_CA 1.e-12
  #define MAX_CFL_X 0.
  #define MAX_CFL_Y 0.
@@ -144,123 +154,26 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp ../../FullS
  /*NB_CHAR is the maximum length of a comment line */
  #define NB_CHAR 256
  #define ZERO 0.
-diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp~ ../../FullSWOF_2D/Headers/libparameters/misc.hpp~
---- ../../FullSWOF_2D-1.04.08/Headers/libparameters/misc.hpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../../FullSWOF_2D/Headers/libparameters/misc.hpp~	2013-11-07 11:52:56.000000000 +0100
-@@ -0,0 +1,98 @@
-+/**
-+ * @file misc.hpp
-+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
-+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
-+ * @version 1.04.08
-+ * @date 2013-11-07
-+ *
-+ * @brief Definitions
-+ * @details 
-+ * Defines the constants, the types used in the code and contains the `include'.
-+ *
-+ * @copyright License Cecill-V2  \n
-+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
-+ *
-+ * (c) CNRS - Universite d'Orleans - INRA (France)
-+ */
-+/*
-+ * This file is part of FullSWOF_1D software. 
-+ * <https://sourcesup.renater.fr/projects/fullswof-1d/> 
-+ *
-+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
-+ * in one dimension of space.
-+ * This software is a computer program whose purpose is to compute
-+ * solutions for 1D Shallow-Water equations.
-+ *
-+ * LICENSE
-+ *
-+ * This software is governed by the CeCILL license under French law and
-+ * abiding by the rules of distribution of free software.  You can  use, 
-+ * modify and/ or redistribute the software under the terms of the CeCILL
-+ * license as circulated by CEA, CNRS and INRIA at the following URL
-+ * <http://www.cecill.info>. 
-+ *
-+ * As a counterpart to the access to the source code and  rights to copy,
-+ * modify and redistribute granted by the license, users are provided only
-+ * with a limited warranty  and the software's author,  the holder of the
-+ * economic rights,  and the successive licensors  have only  limited
-+ * liability. 
-+ *
-+ * In this respect, the user's attention is drawn to the risks associated
-+ * with loading,  using,  modifying and/or developing or reproducing the
-+ * software by the user in light of its specific status of free software,
-+ * that may mean  that it is complicated to manipulate,  and  that  also
-+ * therefore means  that it is reserved for developers  and  experienced
-+ * professionals having in-depth computer knowledge. Users are therefore
-+ * encouraged to load and test the software's suitability as regards their
-+ * requirements in conditions enabling the security of their systems and/or 
-+ * data to be ensured and,  more generally, to use and operate it in the 
-+ * same conditions as regards security. 
-+ *
-+ * The fact that you are presently reading this means that you have had
-+ * knowledge of the CeCILL license and that you accept its terms.
-+ *
-+ ******************************************************************************/
-+
-+#include <vector>
-+#include <iostream>
-+#include <cmath>
-+#include <fstream>
-+#include <string>
-+#include <cstring>
-+#include <cstdlib>
-+#include <iomanip>
-+#include <sstream>
-+#include <cfloat>
-+#include <unistd.h>
-+
-+#define max(a,b) (a>=b?a:b)
-+#define min(a,b) (a<=b?a:b)
-+
-+#define GRAV 9.81
-+#define GRAV_DEM 4.905
-+#define CONST_CFL_X 0.5
-+#define CONST_CFL_Y  0.5
-+#define HE_CA 1.e-12
-+#define VE_CA 1.e-12
-+#define MAX_CFL_X 0.
-+#define MAX_CFL_Y 0.
-+#define MAX_ITER 1000000000
-+/*NB_CHAR is the maximum length of a comment line */
-+#define NB_CHAR 256
-+#define ZERO 0.
-+#define IE_CA 1.e-8
-+#define EPSILON 1.e-13
-+#define VERSION "FullSWOF_2D version 1.04.08, 2013-11-07"
-+
-+//RATIO_CLOSE_CELL is used to verify that the input data is very close to cell center
-+#define RATIO_CLOSE_CELL 1.e-3
-+
-+using namespace std;
-+
-+typedef double SCALAR;/*If you change the data type of SCALAR, don't forget to change the macro definition MAX_SCAL*/
-+
-+/*Maximum finite representable floating-point number of SCALAR.*/
-+#define MAX_SCAL DBL_MAX
-+
-+typedef vector< vector< SCALAR > > TAB;
-+
+@@ -96,3 +106,4 @@
+ 
+ typedef vector< vector< SCALAR > > TAB;
+ 
++#endif
+diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libparameters/parameters.hpp ../../FullSWOF_2D/Headers/libparameters/parameters.hpp
+--- ../../FullSWOF_2D-1.04.08/Headers/libparameters/parameters.hpp	2013-11-07 11:52:56.000000000 +0100
++++ ../../FullSWOF_2D/Headers/libparameters/parameters.hpp	2014-07-07 19:35:13.647585545 +0200
+@@ -55,7 +55,6 @@
+ 
+ #include "misc.hpp"
+ 
+-
+ #ifndef PARAMETERS_HPP
+ #define PARAMETERS_HPP
+ 
 diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/choice_reconstruction.hpp ../../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp
 --- ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/choice_reconstruction.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp	2014-04-04 13:14:04.000000000 +0200
-@@ -72,6 +72,10 @@
- #include "eno_mod.hpp"
- #endif
- 
-+#ifndef MUSCL_OPT_HPP
-+#include "muscl_opt.hpp"
-+#endif
-+
- #ifndef CHOICE_RECONSTRUCTION
- #define CHOICE_RECONSTRUCTION
- 
-@@ -103,5 +107,8 @@
++++ ../../FullSWOF_2D/Headers/libreconstructions/choice_reconstruction.hpp	2014-07-10 13:08:52.684415782 +0200
+@@ -103,5 +103,8 @@
  		 * \brief Destructor
  		 */
  		virtual ~ Choice_reconstruction();
@@ -281,115 +194,6 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/muscl.hpp ../..
 +  virtual void initialize(TAB& z);
  };
  #endif
-diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/muscl_opt.hpp ../../FullSWOF_2D/Headers/libreconstructions/muscl_opt.hpp
---- ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/muscl_opt.hpp	1970-01-01 01:00:00.000000000 +0100
-+++ ../../FullSWOF_2D/Headers/libreconstructions/muscl_opt.hpp	2014-04-04 13:14:04.000000000 +0200
-@@ -0,0 +1,105 @@
-+/**
-+ * @file muscl.hpp
-+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
-+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
-+ * @version 1.03.00
-+ * @date 2012-04-03
-+ *
-+ * @brief %MUSCL reconstruction
-+ * @details 
-+ * Linear reconstruction: %MUSCL.
-+ *
-+ * @copyright License Cecill-V2 \n
-+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
-+ *
-+ * (c) CNRS - Universite d'Orleans - BRGM (France)
-+ */
-+/* 
-+ *
-+ * This file is part of FullSWOF_2D software. 
-+ * <https://sourcesup.renater.fr/projects/fullswof-2d/> 
-+ *
-+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
-+ * in two dimensions of space.
-+ * This software is a computer program whose purpose is to compute
-+ * solutions for 2D Shallow-Water equations.
-+ *
-+ * LICENSE
-+ *
-+ * This software is governed by the CeCILL license under French law and
-+ * abiding by the rules of distribution of free software.  You can  use, 
-+ * modify and/ or redistribute the software under the terms of the CeCILL
-+ * license as circulated by CEA, CNRS and INRIA at the following URL
-+ * "http://www.cecill.info". 
-+ *
-+ * As a counterpart to the access to the source code and  rights to copy,
-+ * modify and redistribute granted by the license, users are provided only
-+ * with a limited warranty  and the software's author,  the holder of the
-+ * economic rights,  and the successive licensors  have only  limited
-+ * liability. 
-+ *
-+ * In this respect, the user's attention is drawn to the risks associated
-+ * with loading,  using,  modifying and/or developing or reproducing the
-+ * software by the user in light of its specific status of free software,
-+ * that may mean  that it is complicated to manipulate,  and  that  also
-+ * therefore means  that it is reserved for developers  and  experienced
-+ * professionals having in-depth computer knowledge. Users are therefore
-+ * encouraged to load and test the software's suitability as regards their
-+ * requirements in conditions enabling the security of their systems and/or 
-+ * data to be ensured and,  more generally, to use and operate it in the 
-+ * same conditions as regards security. 
-+ *
-+ * The fact that you are presently reading this means that you have had
-+ * knowledge of the CeCILL license and that you accept its terms.
-+ *
-+ ******************************************************************************/
-+
-+
-+#ifndef RECONSTRUCTION_HPP
-+#include "reconstruction.hpp"
-+#endif
-+
-+#ifndef MUSCL_HPP
-+#define MUSCL_HPP
-+
-+
-+/*! @class MUSCL
-+ * @brief class which allows to calculate MUSCL reconstruction in space
-+ *
-+ * In order to get a second order in space, we can use a MUSCL reconstruction.
-+ * A scalar fonction \f$s\in R\f$ is reconstructed by the MUSCL reconstruction (Monotonic Upwind Scheme Conservation Law)
-+ *\f[\begin{array}{cc}
-+s_{i-1/2+}=s_i-\frac{\Delta x}{2}D_{mm}s_i\;\;and& s_{i+1/2-}=s_i+\frac{\Delta x}{2}D_{mm}s_i
-+\end{array}\f]
-+ * where \f$D_{mm}\f$ writes
-+ *\f[D_{mm}s_i=minmod\left(\frac{s_i-s_{i-1}}{\Delta x},\frac{s_{i+1}-s_i}{\Delta x}\right)\f]
-+ * with the Minmod slope limiter.
-+ */
-+
-+
-+class MUSCL: public Reconstruction{
-+
-+protected :
-+  const	int NXCELL;
-+  const int NYCELL;
-+  
-+public :
-+  /*!
-+   * \brief Constructor
-+   */
-+		MUSCL(Parameters & ,TAB &);
-+ 
-+  /*!
-+   * \brief Calculates the MUSCL reconstruction in space
-+   */
-+  void calcul(TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &);
-+  
-+  /*!
-+		 * \brief Destructor
-+		 */
-+  ~MUSCL();
-+
-+  // PEANOCLAW extension:
-+  virtual void initialize(TAB& z);
-+};
-+#endif
 diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/reconstruction.hpp ../../FullSWOF_2D/Headers/libreconstructions/reconstruction.hpp
 --- ../../FullSWOF_2D-1.04.08/Headers/libreconstructions/reconstruction.hpp	2013-11-07 11:52:56.000000000 +0100
 +++ ../../FullSWOF_2D/Headers/libreconstructions/reconstruction.hpp	2014-04-04 13:14:04.000000000 +0200
@@ -417,111 +221,6 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/choice_scheme.hpp ../..
 +        }
  };
  #endif
-diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/choice_scheme.hpp~ ../../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp~
---- ../../FullSWOF_2D-1.04.08/Headers/libschemes/choice_scheme.hpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../../FullSWOF_2D/Headers/libschemes/choice_scheme.hpp~	2013-11-07 11:52:56.000000000 +0100
-@@ -0,0 +1,101 @@
-+/**
-+ * @file choice_scheme.hpp
-+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
-+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
-+ * @version 1.03.00
-+ * @date 2012-04-03
-+ *
-+ * @brief Choice of numerical scheme
-+ * @details 
-+ * From the value of the corresponding parameter,
-+ * calls the chosen numerical scheme.
-+ *
-+ * @copyright License Cecill-V2 \n
-+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
-+ *
-+ * (c) CNRS - Universite d'Orleans - BRGM (France)
-+ */
-+/* 
-+ *
-+ * This file is part of FullSWOF_2D software. 
-+ * <https://sourcesup.renater.fr/projects/fullswof-2d/> 
-+ *
-+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
-+ * in two dimensions of space.
-+ * This software is a computer program whose purpose is to compute
-+ * solutions for 2D Shallow-Water equations.
-+ *
-+ * LICENSE
-+ *
-+ * This software is governed by the CeCILL license under French law and
-+ * abiding by the rules of distribution of free software.  You can  use, 
-+ * modify and/ or redistribute the software under the terms of the CeCILL
-+ * license as circulated by CEA, CNRS and INRIA at the following URL
-+ * "http://www.cecill.info". 
-+ *
-+ * As a counterpart to the access to the source code and  rights to copy,
-+ * modify and redistribute granted by the license, users are provided only
-+ * with a limited warranty  and the software's author,  the holder of the
-+ * economic rights,  and the successive licensors  have only  limited
-+ * liability. 
-+ *
-+ * In this respect, the user's attention is drawn to the risks associated
-+ * with loading,  using,  modifying and/or developing or reproducing the
-+ * software by the user in light of its specific status of free software,
-+ * that may mean  that it is complicated to manipulate,  and  that  also
-+ * therefore means  that it is reserved for developers  and  experienced
-+ * professionals having in-depth computer knowledge. Users are therefore
-+ * encouraged to load and test the software's suitability as regards their
-+ * requirements in conditions enabling the security of their systems and/or 
-+ * data to be ensured and,  more generally, to use and operate it in the 
-+ * same conditions as regards security. 
-+ *
-+ * The fact that you are presently reading this means that you have had
-+ * knowledge of the CeCILL license and that you accept its terms.
-+ *
-+ ******************************************************************************/
-+
-+
-+#ifndef SCHEME_HPP
-+#include "scheme.hpp"
-+#endif
-+
-+#ifndef ORDER1_HPP
-+#include "order1.hpp"
-+#endif
-+
-+#ifndef ORDER2_HPP
-+#include "order2.hpp"
-+#endif
-+
-+#ifndef CHOICE_SCHEME_HPP
-+#define CHOICE_SCHEME_HPP
-+
-+/** @class Choice_scheme
-+ * @brief Choice of numerical scheme
-+ * @details 
-+ * Class that calls the numerical scheme chosen in the parameters file.
-+ */
-+
-+
-+class Choice_scheme{
-+	private :
-+		Scheme * Sche;
-+
-+	public :
-+		/*!
-+		 * \brief Constructor
-+		 */
-+		Choice_scheme(Parameters &);
-+
-+		/*!
-+		 * \brief Performs the scheme
-+		 */
-+		void calcul();
-+
-+		/*!
-+		 * \brief Destructor
-+		 */
-+		virtual ~Choice_scheme();
-+};
-+#endif
 diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/order2.hpp ../../FullSWOF_2D/Headers/libschemes/order2.hpp
 --- ../../FullSWOF_2D-1.04.08/Headers/libschemes/order2.hpp	2013-11-07 11:52:56.000000000 +0100
 +++ ../../FullSWOF_2D/Headers/libschemes/order2.hpp	2014-04-04 13:14:04.000000000 +0200
@@ -535,7 +234,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/order2.hpp ../../FullSW
  		SCALAR tmp;
 diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp ../../FullSWOF_2D/Headers/libschemes/scheme.hpp
 --- ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../../FullSWOF_2D/Headers/libschemes/scheme.hpp	2014-04-16 15:26:47.000000000 +0200
++++ ../../FullSWOF_2D/Headers/libschemes/scheme.hpp	2014-07-09 16:51:12.389683862 +0200
 @@ -98,6 +98,8 @@
  #ifndef SCHEME_HPP
  #define SCHEME_HPP
@@ -593,16 +292,15 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp ../../FullSW
   protected :
    /**  @brief Number of cells in x.*/
    const	int NXCELL;
-@@ -308,6 +351,8 @@
+@@ -308,6 +351,7 @@
  
    int verif;
  
-+              
 +        timings_t time_meas;
   public:
    /*!
     * \brief Constructor
-@@ -315,10 +360,10 @@
+@@ -315,10 +359,10 @@
    Scheme(Parameters &);
    
    /** @brief Main calculation of the flux */
@@ -615,7 +313,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp ../../FullSW
  
  
    /*!
-@@ -342,5 +387,58 @@
+@@ -342,5 +386,68 @@
     * \brief Destructor
     */
    virtual ~Scheme();
@@ -636,6 +334,16 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp ../../FullSW
 + 
 +  double getMaxTimestep() {
 +    return std::min(DX*CFL_FIX,DY*CFL_FIX); // TODO: this is new, compared to the nice poster version
++  }
++
++  bool _usePeanoClaw;
++  bool _lastTimestep;
++  void usePeanoClaw() {
++    _usePeanoClaw = true;
++  }
++
++  void runLastTimestep() {
++    _lastTimestep = true;
 +  }
 +
 +  int getVerif() {
@@ -674,401 +382,6 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp ../../FullSW
 +  void resetTimings();
  };
  #endif
-diff -wruPN ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp~ ../../FullSWOF_2D/Headers/libschemes/scheme.hpp~
---- ../../FullSWOF_2D-1.04.08/Headers/libschemes/scheme.hpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../../FullSWOF_2D/Headers/libschemes/scheme.hpp~	2014-04-03 19:06:37.000000000 +0200
-@@ -0,0 +1,391 @@
-+/**
-+ * @file scheme.hpp
-+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
-+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
-+ * @version 1.03.00
-+ * @date 2012-04-03
-+ *
-+ * @brief Numerical scheme
-+ * @details
-+ * Common part for all the numerical schemes.
-+ *
-+ * @copyright License Cecill-V2 \n
-+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
-+ *
-+ * (c) CNRS - Universite d'Orleans - BRGM (France)
-+ */
-+/* 
-+ *
-+ * This file is part of FullSWOF_2D software. 
-+ * <https://sourcesup.renater.fr/projects/fullswof-2d/> 
-+ *
-+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
-+ * in two dimensions of space.
-+ * This software is a computer program whose purpose is to compute
-+ * solutions for 2D Shallow-Water equations.
-+ *
-+ * LICENSE
-+ *
-+ * This software is governed by the CeCILL license under French law and
-+ * abiding by the rules of distribution of free software.  You can  use, 
-+ * modify and/ or redistribute the software under the terms of the CeCILL
-+ * license as circulated by CEA, CNRS and INRIA at the following URL
-+ * "http://www.cecill.info". 
-+ *
-+ * As a counterpart to the access to the source code and  rights to copy,
-+ * modify and redistribute granted by the license, users are provided only
-+ * with a limited warranty  and the software's author,  the holder of the
-+ * economic rights,  and the successive licensors  have only  limited
-+ * liability. 
-+ *
-+ * In this respect, the user's attention is drawn to the risks associated
-+ * with loading,  using,  modifying and/or developing or reproducing the
-+ * software by the user in light of its specific status of free software,
-+ * that may mean  that it is complicated to manipulate,  and  that  also
-+ * therefore means  that it is reserved for developers  and  experienced
-+ * professionals having in-depth computer knowledge. Users are therefore
-+ * encouraged to load and test the software's suitability as regards their
-+ * requirements in conditions enabling the security of their systems and/or 
-+ * data to be ensured and,  more generally, to use and operate it in the 
-+ * same conditions as regards security. 
-+ *
-+ * The fact that you are presently reading this means that you have had
-+ * knowledge of the CeCILL license and that you accept its terms.
-+ *
-+ ******************************************************************************/
-+
-+#ifndef PARAMETERS_HPP
-+#include "parameters.hpp"
-+#endif
-+
-+#ifndef HYDROSTATIC_HPP
-+#include "hydrostatic.hpp"
-+#endif
-+
-+
-+#ifndef CHOICE_CONDITION_HPP
-+#include "choice_condition.hpp"
-+#endif
-+
-+#ifndef CHOICE_FLUX_HPP
-+#include "choice_flux.hpp"
-+#endif
-+
-+#ifndef CHOICE_FRICTION_HPP
-+#include "choice_friction.hpp"
-+#endif
-+
-+#ifndef CHOICE_INFILTRATION_HPP
-+#include "choice_infiltration.hpp"
-+#endif
-+
-+#ifndef CHOICE_INIT_TOPO_HPP
-+#include "choice_init_topo.hpp"
-+#endif
-+
-+#ifndef CHOICE_INIT_HUV_HPP
-+#include "choice_init_huv.hpp"
-+#endif
-+
-+#ifndef CHOICE_RAIN_HPP
-+#include "choice_rain.hpp"
-+#endif
-+
-+#ifndef CHOICE_OUTPUT_HPP
-+#include "choice_output.hpp"
-+#endif
-+
-+#ifndef SCHEME_HPP
-+#define SCHEME_HPP
-+
-+/** @class Scheme
-+ * @brief Numerical scheme
-+ * @details 
-+ * Class that contains all the common declarations for the numerical schemes.
-+ */
-+
-+
-+class Scheme{
-+  public:
-+           // PEANOCLAW extensions: time measurements
-+        typedef struct {
-+            // maincalcflux times
-+            double horizontal_flux_time;
-+            double vertical_flux_time;
-+            int maincalcflux_samples;
-+
-+            // maincalcscheme times
-+            double rain_time;
-+            double mass_conservation_time;
-+            double infiltration_time;
-+            double momentum_time;
-+            double accumulated_rain_time;
-+            int maincalcscheme_samples;
-+
-+            // times used in order 2
-+            double delz_time;
-+            int delz_samples;
-+            
-+            double boundary_time;
-+            int boundary_samples;
-+
-+            double reconstruction_time;
-+            int reconstruction_samples;
-+            
-+            double vincopy_time;
-+            int vincopy_samples;
-+
-+            double filter_time;
-+            int filter_samples;
-+
-+            double heun_time;
-+            int heun_samples;
-+
-+            // total time
-+            double total_time;
-+            int total_samples;
-+        } timings_t;
-+
-+ protected :
-+  /**  @brief Number of cells in x.*/
-+  const	int NXCELL;
-+  /**  @brief Number of cells in y.*/
-+  const int NYCELL;
-+  /**  @brief Order of scheme to compute the flux*/
-+  const int ORDER; 
-+  /**  @brief Final time of simulation*/
-+  const SCALAR T;
-+  /**  @brief Number of times saved.*/
-+  const int NBTIMES;
-+/**  @brief  @brief Choice of type of scheme (fixed cfl or fixed dt)  */
-+  const int SCHEME_TYPE;
-+  /**  @brief X space step size*/
-+  const SCALAR DX;
-+  /**  @brief Y space step size*/
-+  const SCALAR DY;
-+  /**  @brief Value of fixed cfl*/
-+  const  SCALAR CFL_FIX;
-+  /**  @brief Fixed space step in case of scheme with a fixed dt*/
-+  SCALAR DT_FIX;
-+
-+  /**  @brief Ratio dt/dx.*/
-+  SCALAR tx;
-+  /**  @brief Ratio dt/dy.*/
-+  SCALAR ty;
-+  /**  @brief The storage time of the data*/
-+  SCALAR T_output;
-+  /**  @brief The storage step time of the data*/
-+  SCALAR dt_output;
-+
-+ /** @brief  Friction coefficient*/
-+  const SCALAR FRICCOEF;
-+
-+ 
-+  /**  @brief Imposed discharge on the left boundary.*/
-+  const SCALAR L_IMP_Q;
-+  /**  @brief Imposed water height on the left boundary.*/
-+  const SCALAR L_IMP_H;
-+
-+  /**  @brief Imposed discharge on the right boundary.*/
-+  const SCALAR R_IMP_Q;
-+
-+  /**  @brief Imposed water height on the right boundary.*/
-+  const SCALAR R_IMP_H;
-+
-+  /**  @brief Imposed discharge on the bottom boundary.*/
-+  const SCALAR B_IMP_Q;
-+
-+  /**  @brief Imposed water height on the bottom boundary.*/
-+  const SCALAR B_IMP_H;
-+
-+  /**  @brief Imposed discharge on the top boundary.*/
-+  const SCALAR T_IMP_Q;
-+
-+  /**  @brief Imposed water height on the top boundary.*/
-+  const SCALAR T_IMP_H;
-+  
-+  /** Topography.*/
-+  TAB z;
-+  /** Water height.*/
-+  TAB h;
-+  /** X Velocity.*/
-+  TAB u;
-+  /** Y Velocity.*/
-+  TAB v;
-+  /** Discharge.*/
-+  TAB q1;
-+  /** Discharge.*/
-+  TAB q2;
-+  /** Water height after one step of the scheme.*/
-+  TAB hs;
-+  /** X Velocity after one step of the scheme.*/
-+  TAB us;
-+  /** Y Velocity after one step of the scheme.*/
-+  TAB vs;
-+  /** Discharge after one step of the scheme.*/
-+  TAB qs1;
-+  /** Discharge after one step of the scheme.*/
-+  TAB qs2;
-+  /** First component of the numerical flu along x. */ 
-+  TAB f1;
-+  /** Second component of the numerical flux along x. */
-+  TAB f2;
-+  /** Third component of the numerical flux along x. */
-+  TAB f3;
-+  /** First component of the numerical flu along y. */ 
-+  TAB g1;
-+  /** Second component of the numerical flux along y. */
-+  TAB g2;
-+  /** Third component of the numerical flux along y. */
-+  TAB g3;
-+  
-+  /** %Hydrostatic reconstruction on the left along x.*/
-+  TAB h1left;
-+  /** %Hydrostatic reconstruction on the right along x.*/
-+  TAB h1right;
-+  /** %Hydrostatic reconstruction on the left along y.*/
-+  TAB h2left;
-+  /** %Hydrostatic reconstruction on the right along y.*/
-+  TAB h2right;
-+  /** Variations of the topography along x.*/
-+  TAB delz1;
-+  /** Variations of the topography along y.*/
-+  TAB delz2;
-+  /** Difference between the reconstructed topographies on the left and on the right boundary of a cell along x.*/
-+  TAB delzc1;
-+  /** Difference between the reconstructed topographies on the left and on the right boundary of a cell along y.*/
-+  TAB delzc2;
-+ 
-+  /** Water height on the cell located at the right of the boundary along x.*/
-+  TAB h1r;
-+  /** Velocity on the cell located at the right of the boundary along x.*/
-+  TAB u1r;
-+  /** Velocity on the cell located at the right of the boundary along x.*/
-+  TAB v1r;
-+  /** Water height on the cell located at the left of the boundary along x.*/
-+  TAB h1l;
-+  /** Velocity on the cell located at the left of the boundary along x.*/
-+  TAB u1l;
-+  /** Velocity on the cell located at the left of the boundary along x.*/
-+  TAB v1l;
-+  /** Water height on the cell located at the right of the boundary along y.*/
-+  TAB h2r;
-+  /** Velocity on the cell located at the right of the boundary along y.*/
-+  TAB u2r;
-+  /** Velocity on the cell located at the right of the boundary along y.*/
-+  TAB v2r;
-+  /** Water height on the cell located at the left of the boundary along y.*/
-+  TAB h2l;
-+  /** Velocity on the cell located at the left of the boundary along y.*/
-+  TAB u2l;
-+  /** Velocity on the cell located at the left of the boundary along y.*/
-+  TAB v2l;
-+  /** %Rain intensity*/
-+  TAB Rain;
-+  /** Table of friction coefficient*/
-+  TAB Fric_tab;
-+
-+  /** Cumulative Volume of Water Infiltrated at each point.*/
-+  TAB Vin_tot;
-+
-+   /** Beginning of timer.*/ 
-+  time_t start;
-+  /** End of timer.*/ 
-+  time_t  end;
-+  
-+  /** Duration of the computation.*/
-+  SCALAR timecomputation;
-+  /** Number for the loop to the time*/ 
-+  int n; 
-+ 
-+  /** Mean Froude number.*/
-+  SCALAR Fr;
-+
-+
-+   /** The choice of the left boundary condition*/
-+  int nchoice_Lbound;
-+  /** The choice of the left boundary condition*/
-+  int nchoice_Rbound;
-+  /** The choice of the left boundary condition*/
-+  int nchoice_Bbound;
-+  /** The choice of the left boundary condition*/
-+  int nchoice_Tbound; 
-+  /** Time step in case of fixed cfl */
-+  SCALAR dt1;
-+  /** Maximum time step in case of fixed cfl*/
-+  SCALAR dt_max;
-+  /** The current simulation time*/
-+  SCALAR tps;
-+  /** Correspond to dt in the first step in the method Heun*/
-+  SCALAR dt_first; 
-+  /** Cumulative Volume of rain on the whole of domain.*/
-+  SCALAR Volrain_Tot;
-+  /** Cumulative Outflow volume at the boundary */
-+  SCALAR Total_discharge_outflow;
-+
-+  /** Cumulative water height on the whole of domain*/
-+  SCALAR height_of_tot;
-+  /** Cumulative height of infiltrated volume on the whole of domain*/
-+  SCALAR height_Vinf_tot;
-+  /** Cumulative Volume of water infiltrated.*/
-+  SCALAR Vol_inf_tot_cumul;
-+  /** Cumulative streammed volume.*/
-+  SCALAR Vol_of_tot;
-+  
-+  Hydrostatic rec_hydro;
-+  Choice_condition * Lbound;
-+  Choice_condition * Rbound;
-+  Choice_condition * Bbound;
-+  Choice_condition * Tbound;
-+  Choice_flux * flux_num;
-+  Choice_friction * fric;
-+  Choice_infiltration * I;
-+  Choice_init_topo * topo;
-+  Choice_init_huv * huv_init;
-+  Choice_rain * Prain;
-+  
-+  Choice_output * out;
-+
-+  int verif;
-+
-+ public:
-+  /*!
-+   * \brief Constructor
-+		 */
-+  Scheme(Parameters &);
-+  
-+  /** @brief Main calculation of the flux */
-+  void maincalcflux(SCALAR,SCALAR, SCALAR, SCALAR , SCALAR, SCALAR &);
-+  
-+  /** @brief Main calculation of the scheme */
-+  void maincalcscheme(TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,TAB &,SCALAR,SCALAR,int);
-+
-+
-+  /*!
-+   * \brief Returns the Froude number
-+   */
-+  SCALAR froude_number(TAB,TAB,TAB);
-+
-+ 
-+  /** Allocation of spatialized variables */
-+  void allocation();
-+  
-+  /** Deallocation of variables */	
-+  void deallocation();
-+  
-+  virtual void calcul() =0;
-+  
-+  /** @brief Calls the boundary conditions and affects the boundary values */ 
-+  void boundary(TAB &,TAB &,TAB &, SCALAR,const int , const int);
-+
-+  /*!
-+   * \brief Destructor
-+   */
-+  virtual ~Scheme();
-+  
-+    // PEANOCLAW EXTENSIONS
-+  double getTimestep() {
-+    return dt1;
-+  }
-+};
-+#endif
 diff -wruPN ../../FullSWOF_2D-1.04.08/.project ../../FullSWOF_2D/.project
 --- ../../FullSWOF_2D-1.04.08/.project	1970-01-01 01:00:00.000000000 +0100
 +++ ../../FullSWOF_2D/.project	2014-04-04 13:12:11.000000000 +0200
@@ -1267,7 +580,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/choice_scheme.cpp ../..
  Choice_scheme::~Choice_scheme(){
 diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp ../../FullSWOF_2D/Sources/libschemes/order1.cpp
 --- ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../../FullSWOF_2D/Sources/libschemes/order1.cpp	2014-04-04 13:13:55.000000000 +0200
++++ ../../FullSWOF_2D/Sources/libschemes/order1.cpp	2014-07-08 08:29:48.073930351 +0200
 @@ -61,7 +61,21 @@
  Order1::~Order1(){}
  
@@ -1291,7 +604,15 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp ../../FullSW
  
  
  void Order1::calcul() {
-@@ -138,7 +152,9 @@
+@@ -98,7 +112,6 @@
+   
+   time(&start);
+   
+-  
+   //time iteration's beginning
+   while (T > tps  && n < MAX_ITER+1) {
+ 
+@@ -138,7 +151,9 @@
        } //end for j
      } //end for i
      
@@ -1301,7 +622,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp ../../FullSW
        for (int j=1 ; j<NYCELL+1 ; j++) {
  	h1r[i][j] = h[i][j];
  	u1r[i][j] = u[i][j];
-@@ -150,8 +166,9 @@
+@@ -150,8 +165,9 @@
      }//end for i
      
      
@@ -1312,7 +633,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp ../../FullSW
        for (int j=0 ; j<NYCELL+1 ; j++) {
  	h2r[i][j] = h[i][j];
  	u2r[i][j] = u[i][j];
-@@ -224,15 +241,19 @@
+@@ -224,15 +240,19 @@
      out->check_vol(tps,dt1,Volrain_Tot,Vol_inf_tot_cumul,Vol_of_tot,Total_discharge_outflow);
  #endif 
   
@@ -1332,271 +653,9 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp ../../FullSW
  
      //to give the ultimate situation
    out->write(h,u,v,z,tps);
-diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp~ ../../FullSWOF_2D/Sources/libschemes/order1.cpp~
---- ../../FullSWOF_2D-1.04.08/Sources/libschemes/order1.cpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../../FullSWOF_2D/Sources/libschemes/order1.cpp~	2014-04-04 12:37:41.000000000 +0200
-@@ -0,0 +1,258 @@
-+/**
-+ * @file order1.cpp
-+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
-+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
-+ * @version 1.03.00
-+ * @date 2012-04-03
-+ *
-+ * @brief Order 1 scheme
-+ * @details 
-+ * Numerical scheme: at order 1.
-+ *
-+ * @copyright License Cecill-V2 \n
-+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
-+ *
-+ * (c) CNRS - Universite d'Orleans - BRGM (France)
-+ */
-+/* 
-+ *
-+ * This file is part of FullSWOF_2D software. 
-+ * <https://sourcesup.renater.fr/projects/fullswof-2d/> 
-+ *
-+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
-+ * in two dimensions of space.
-+ * This software is a computer program whose purpose is to compute
-+ * solutions for 2D Shallow-Water equations.
-+ *
-+ * LICENSE
-+ *
-+ * This software is governed by the CeCILL license under French law and
-+ * abiding by the rules of distribution of free software.  You can  use, 
-+ * modify and/ or redistribute the software under the terms of the CeCILL
-+ * license as circulated by CEA, CNRS and INRIA at the following URL
-+ * "http://www.cecill.info". 
-+ *
-+ * As a counterpart to the access to the source code and  rights to copy,
-+ * modify and redistribute granted by the license, users are provided only
-+ * with a limited warranty  and the software's author,  the holder of the
-+ * economic rights,  and the successive licensors  have only  limited
-+ * liability. 
-+ *
-+ * In this respect, the user's attention is drawn to the risks associated
-+ * with loading,  using,  modifying and/or developing or reproducing the
-+ * software by the user in light of its specific status of free software,
-+ * that may mean  that it is complicated to manipulate,  and  that  also
-+ * therefore means  that it is reserved for developers  and  experienced
-+ * professionals having in-depth computer knowledge. Users are therefore
-+ * encouraged to load and test the software's suitability as regards their
-+ * requirements in conditions enabling the security of their systems and/or 
-+ * data to be ensured and,  more generally, to use and operate it in the 
-+ * same conditions as regards security. 
-+ *
-+ * The fact that you are presently reading this means that you have had
-+ * knowledge of the CeCILL license and that you accept its terms.
-+ *
-+ ******************************************************************************/
-+
-+#include "order1.hpp"
-+
-+Order1::Order1(Parameters & par):Scheme(par) {}
-+
-+Order1::~Order1(){}
-+
-+
-+
-+
-+
-+void Order1::calcul() {
-+
-+	/**
-+	 * @details Performs the first order numerical scheme.
-+	 * @note In DEBUG mode, the programme will save another file with boundary fluxes.
-+	 */
-+
-+  //boundary conditions
-+  boundary(h,u,v,tps,NXCELL,NYCELL);  
-+  
-+  //initialization delz and delzc
-+  
-+  for (int i=1 ; i<=NXCELL+1 ; i++) {
-+    for (int j=1 ; j<=NYCELL ; j++) {
-+      delz1[i-1][j] = z[i][j]-z[i-1][j];
-+    } //end for j
-+  } //end for i
-+  
-+  for (int i=1 ; i<=NXCELL ; i++) {
-+    for (int j=1 ; j<=NYCELL+1 ; j++) {
-+      delz2[i][j-1] = z[i][j]-z[i][j-1];
-+    } //end for j
-+  } //end for i
-+  
-+  for (int i=1 ; i<=NXCELL ; i++) {
-+    for (int j=1 ; j<=NYCELL ; j++) {
-+      delzc2[i][j] = 0.;
-+      delzc1[i][j] = 0.;
-+    }
-+  }
-+  
-+  
-+  time(&start);
-+  
-+  
-+  //time iteration's beginning
-+  while (T > tps  && n < MAX_ITER+1) {
-+
-+    // save the data in huz_evolution.dat      
-+    if (tps >= T_output){
-+      out->write(h,u,v,z,tps);
-+      T_output+=dt_output;
-+    }// end if
-+     
-+    dt1=dt_max;
-+    
-+    // Calcul of the rain
-+    Prain->rain_func(tps,Rain);
-+     
-+    
-+    
-+    //boundary conditions
-+    boundary(h,u,v,tps,NXCELL,NYCELL);  
-+    
-+    for (int i=1 ; i<NXCELL+1 ; i++) {
-+      for (int j=1 ; j<NYCELL+1 ; j++) {
-+	if (h[i][j]<=HE_CA) {
-+	  h[i][j]=0.;
-+	  u[i][j] = 0.;
-+	  v[i][j] = 0.;
-+	  q1[i][j]=0.;
-+	  q2[i][j]=0.;
-+	}
-+	if (fabs(u[i][j])<=VE_CA) {
-+	  u[i][j]=0.;
-+	  q1[i][j]=0.;
-+	}
-+	if (fabs(v[i][j])<=VE_CA) {
-+	  v[i][j]=0.;
-+	  q2[i][j]=0.;
-+	}
-+      } //end for j
-+    } //end for i
-+    
-+    for (int i=0 ; i<NXCELL+1 ; i++) {
-+      for (int j=1 ; j<NYCELL+1 ; j++) {
-+	h1r[i][j] = h[i][j];
-+	u1r[i][j] = u[i][j];
-+	v1r[i][j] = v[i][j];
-+	h1l[i+1][j] = h[i+1][j];
-+	u1l[i+1][j] = u[i+1][j];
-+	v1l[i+1][j] = v[i+1][j];
-+      }//end for j
-+    }//end for i
-+    
-+    
-+      
-+    for (int i=1 ; i<NXCELL+1 ; i++) {
-+      for (int j=0 ; j<NYCELL+1 ; j++) {
-+	h2r[i][j] = h[i][j];
-+	u2r[i][j] = u[i][j];
-+	v2r[i][j] = v[i][j];
-+	h2l[i][j+1] = h[i][j+1];
-+	u2l[i][j+1] = u[i][j+1];
-+	v2l[i][j+1] = v[i][j+1];
-+      }//end for j
-+    }//end for i
-+    
-+    maincalcflux(CFL_FIX,T, tps, dt_max, dt1, dt1);
-+    
-+    dt1=min(T-tps,dt1);
-+    
-+    //TODO unterweg debug
-+    std::cout << "dt1=" << dt1 << std::endl,
-+    
-+    tx=dt1/DX;
-+    ty=dt1/DY;
-+    
-+    maincalcscheme(h,u,v,q1,q2,hs,us,vs,qs1,qs2,Vin_tot,tps,dt1,n);
-+    
-+    for (int i=1 ; i<NXCELL+1 ; i++) {
-+      for (int j=1 ; j<NYCELL+1 ; j++) {
-+	h[i][j] = hs[i][j];
-+	u[i][j] = us[i][j];
-+	v[i][j] = vs[i][j];
-+	q1[i][j] = h[i][j]*u[i][j];
-+	q2[i][j] = h[i][j]*v[i][j];
-+	//				Vin[i][j] = Vin[i][j];
-+      }//end for j
-+    }//end for i
-+    
-+      /*the values of height_Vinf_tot and height_of_tot put to zero
-+	to compute infiltrated and overland flow volume*/
-+    height_Vinf_tot=ZERO;  
-+    height_of_tot=ZERO;  
-+    
-+    for (int i=1 ; i<NXCELL+1 ; i++) {
-+      for (int j=1 ; j<NYCELL+1 ; j++) {
-+	if (h[i][j]<=HE_CA) {
-+	  h[i][j]= 0.;
-+	  u[i][j] = 0.;
-+	  v[i][j] = 0.;
-+	  q1[i][j]= 0.;
-+	  q2[i][j]= 0.;
-+	}
-+	  if (fabs(u[i][j])<=VE_CA) {
-+	    u[i][j]= 0.;
-+	    q1[i][j]= 0.;
-+	  }
-+	  if (fabs(v[i][j])<=VE_CA) {
-+	    v[i][j]= 0.;
-+	    q2[i][j]= 0.;
-+	  }
-+
-+	  height_Vinf_tot+= Vin_tot[i][j];  
-+	  height_of_tot+=h[i][j];
-+
-+
-+      } //end for j
-+    } //end for i
-+
-+    Vol_inf_tot_cumul=height_Vinf_tot*DX*DY;
-+    
-+    Vol_of_tot=height_of_tot*DX*DY;
-+
-+    
-+    tps=tps+dt1;
-+    n=n+1;
-+    
-+#ifdef DEBUG
-+    out->check_vol(tps,dt1,Volrain_Tot,Vol_inf_tot_cumul,Vol_of_tot,Total_discharge_outflow);
-+#endif 
-+ 
-+     //Display the percentage of elapsed time       
-+      cout  << '\r' << '\t' << "[" << int((tps/T)*100) << "%] done" ;  
-+       
-+  } //end for n : loop in time
-+  
-+  //Verify the reason of the run finished
-+  if (n>MAX_ITER){
-+    cerr << "\n order1: WARNING: the computation finished because the maximum number of time steps was reached (see MAX_ITER in misc.hpp)\n"; 
-+  }
-+
-+    //to give the ultimate situation
-+  out->write(h,u,v,z,tps);
-+  
-+  //to give the computing time
-+  time(&end);
-+  timecomputation=difftime(end,start);
-+  
-+  //to inform about the froude number
-+  Fr=froude_number(hs,us,vs);
-+  
-+  // The quantity of water outflow is the sum of flux at the boundary multiply by one cell area, so
-+  //Outflow volum = (fluxy0_cum_T+fluxNycell_cum_T+fluxx0_cum_T+fluxNxcell_cum_T)*DX*DY
-+  //In this case n1=1 and n2=-1 because we consider the direction of the flow
-+  // is from left to the right (x=0 to x=Nxcell) and from bottom to the top (y=0 to y=NYCELL)  
-+    out->result(timecomputation,Volrain_Tot,Vol_inf_tot_cumul , Vol_of_tot,Fr,n,Total_discharge_outflow);
-+  
-+  //storage of h u v value in the final time
-+  out->final(DX, DY,z, h, u,v);  
-+}
 diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSWOF_2D/Sources/libschemes/order2.cpp
 --- ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../../FullSWOF_2D/Sources/libschemes/order2.cpp	2014-04-16 14:43:56.000000000 +0200
++++ ../../FullSWOF_2D/Sources/libschemes/order2.cpp	2014-07-09 16:55:55.821007850 +0200
 @@ -53,9 +53,14 @@
   * knowledge of the CeCILL license and that you accept its terms.
   *
@@ -1612,7 +671,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
  Order2::Order2(Parameters & par):Scheme(par){
    
  	/**
-@@ -126,7 +131,25 @@
+@@ -126,7 +131,30 @@
    
  }
  
@@ -1633,12 +692,17 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
 +  struct timeval total_stop_tv;
 +
 +  //TODO unterweg debug
-+  std::cout << "calcul: dt1=" << dt1 << ", dt_max=" << dt_max << std::endl;
++//  std::cout << "calcul: dt1=" << dt1 << ", dt_max=" << dt_max << std::endl;
++  n = 0;
++  verif = 1;
++  dt_max=min(DX*CFL_FIX,DY*CFL_FIX);
++  tps=0;
++  dt1=0.;
 +
  	/**
  	 * @details Performs the second order numerical scheme.
  	 * @note In DEBUG mode, the programme will save another file with boundary fluxes.
-@@ -134,27 +157,42 @@
+@@ -134,27 +162,44 @@
  
    //initialization
    
@@ -1658,7 +722,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
    //time's iteration beginning 
 -
 -  while (T > tps  && n < MAX_ITER+1){  
-+  while (T > tps  && n < MAX_ITER){  
++  while (T > tps  && n < MAX_ITER){
   
      if (1 == verif){
        dt1=dt_max;
@@ -1675,7 +739,9 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
        //boundary conditions
 +      gettimeofday(&start_tv, NULL);
 +
++      if(!_usePeanoClaw) {
        boundary(h,u,v,tps,NXCELL,NYCELL);  
++      }
        
 +      gettimeofday(&stop_tv, NULL);
 +      time_meas.boundary_time += (stop_tv.tv_sec - start_tv.tv_sec) + (stop_tv.tv_usec - start_tv.tv_usec) / 1000000.0;
@@ -1683,7 +749,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
        
        for (int i=1 ; i<NXCELL+1 ; i++){
  	for (int j=1 ; j<NYCELL+1 ; j++){
-@@ -175,14 +213,24 @@
+@@ -175,14 +220,24 @@
        } //end for i
        
        // Reconstruction for order 2
@@ -1708,7 +774,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
  
      maincalcflux(CFL_FIX,T, tps, dt_max, dt1, dt1);
      
-@@ -196,7 +244,13 @@
+@@ -196,7 +251,13 @@
      dt2=dt1;    
      
      //boundary conditions
@@ -1722,7 +788,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
      
      for (int i=1 ; i<NXCELL+1 ; i++){
        for (int j=1 ; j<NYCELL+1 ; j++){
-@@ -218,20 +272,34 @@
+@@ -218,20 +279,34 @@
        } //end for j
      } //end for i
      
@@ -1757,7 +823,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
      }else{
        
        //Added to do calculus at the beginning 
-@@ -244,6 +312,8 @@
+@@ -244,6 +319,8 @@
        height_Vinf_tot=ZERO;  
        height_of_tot=ZERO;  
        //Heun method (order 2 in time)
@@ -1766,7 +832,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
        for (int i=1 ; i<NXCELL+1 ; i++){
  	for (int j=1 ; j<NYCELL+1 ; j++){
  	  if (hsa[i][j]<=HE_CA) {   hsa[i][j]=0.;};
-@@ -273,6 +343,10 @@
+@@ -273,6 +350,10 @@
  	} //end for j
        } //end for i
  
@@ -1777,7 +843,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
        /*Computation of the cumulated infiltrated volume*/
        Vol_inf_tot_cumul=height_Vinf_tot*DX*DY;
  
-@@ -286,20 +360,25 @@
+@@ -286,20 +367,25 @@
        out->check_vol(tps,dt1,Volrain_Tot,Vol_inf_tot_cumul,Vol_of_tot,Total_discharge_outflow);
  #endif 
  
@@ -1802,24 +868,22 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/order2.cpp ../../FullSW
 +  gettimeofday(&total_stop_tv, NULL);
 +  double total_time = (total_stop_tv.tv_sec - total_start_tv.tv_sec) + (total_stop_tv.tv_usec - total_start_tv.tv_usec) / 1000000.0;
  
-+#if !defined(PEANOCLAW_FULLSWOF2D) // takes far too much time
++  if(_lastTimestep) {
    //to give the ultimate situation
    out->write(h,u,v,z,tps);
    
-@@ -319,4 +398,9 @@
-   out->result(timecomputation,Volrain_Tot, Vol_inf_tot_cumul, Vol_of_tot,Fr,n,Total_discharge_outflow);  
+@@ -320,3 +406,7 @@
    //storage of h u v value in the final time
    out->final(DX, DY,z, h, u,v);  
-+#endif
+ }
 +
 +  //TODO unterweg debug
-+  std::cout << "calcul: dt1=" << dt1 << ", dt_max=" << dt_max << std::endl;
-+
- }
++//  std::cout << "calcul: dt1=" << dt1 << ", dt_max=" << dt_max << std::endl;
++}
 diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSWOF_2D/Sources/libschemes/scheme.cpp
 --- ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp	2013-11-07 11:52:56.000000000 +0100
-+++ ../../FullSWOF_2D/Sources/libschemes/scheme.cpp	2014-04-16 16:50:19.000000000 +0200
-@@ -56,6 +56,7 @@
++++ ../../FullSWOF_2D/Sources/libschemes/scheme.cpp	2014-07-09 16:53:33.695352620 +0200
+@@ -56,9 +56,13 @@
  
  #include "scheme.hpp"
  
@@ -1827,7 +891,13 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
  
  Scheme::Scheme(Parameters & par):NXCELL(par.get_Nxcell()),NYCELL(par.get_Nycell()),ORDER(par.get_order()),T(par.get_T()),NBTIMES(par.get_nbtimes()),SCHEME_TYPE(par.get_scheme_type()),FRICCOEF(par.get_friccoef()),DX(par.get_dx()),DY(par.get_dy()),CFL_FIX(par.get_cflfix()),DT_FIX(par.get_dtfix()),L_IMP_Q(par.get_left_imp_discharge()),L_IMP_H(par.get_left_imp_h()),R_IMP_Q(par.get_right_imp_discharge()),R_IMP_H(par.get_right_imp_h()),B_IMP_Q(par.get_bottom_imp_discharge()),B_IMP_H(par.get_bottom_imp_h()),T_IMP_Q(par.get_top_imp_discharge()),T_IMP_H(par.get_top_imp_h()){
  
-@@ -156,10 +157,9 @@
++  _usePeanoClaw = false;
++  _lastTimestep = false;
++
+  	/**
+ 	 * @details	 
+ 	 * Initializations and allocations. 
+@@ -156,10 +160,9 @@
    }
    
  
@@ -1839,7 +909,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
    //storage of the topography
    out->initial(DX, DY,z, h, u,v);
  
-@@ -167,7 +167,7 @@
+@@ -167,7 +170,7 @@
    out->write(h,u,v,z,tps);
  
    string suffix_outputs = par.get_suffix();
@@ -1848,7 +918,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
  
    
    
-@@ -192,13 +192,16 @@
+@@ -192,13 +195,16 @@
  /*----------------------------------- */
  
  void Scheme:: maincalcflux(SCALAR cflfix, SCALAR T , SCALAR tps , SCALAR dt_max , SCALAR dt , SCALAR & dt_cal){
@@ -1868,22 +938,22 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
    for (int i=1 ; i<=NXCELL+1 ; i++){
      for (int j=1 ; j<NYCELL+1 ; j++){
        rec_hydro.calcul(h1r[i-1][j],h1l[i][j],delz1[i-1][j]);
-@@ -220,7 +223,14 @@
+@@ -220,7 +226,14 @@
      } //end for j
    } //end for i
    
 +#if defined(DEBUG)
 +  std::cout << "- dtx " << dtx << std::endl;
 +#endif
-+ 
+   
 +  gettimeofday(&stop, NULL);
 +  time_meas.horizontal_flux_time += (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
-   
++
 +  gettimeofday(&start, NULL);
    
    for (int i=1 ; i<NXCELL+1 ; i++){
      for (int j=1 ; j<=NYCELL+1 ; j++){
-@@ -244,19 +254,27 @@
+@@ -244,19 +257,27 @@
      } //end for j
    } //end for i
    
@@ -1914,7 +984,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
  }
  
  /*-----------------bloc 2------------------ */
-@@ -264,6 +282,9 @@
+@@ -264,6 +285,9 @@
  /*----------------------------------- */
  
  void Scheme:: maincalcscheme(TAB & he, TAB & ve1, TAB & ve2, TAB & qe1, TAB & qe2, TAB & hes, TAB & ves1, TAB & ves2, TAB & qes1, TAB & qes2,TAB & Vin, SCALAR tps, SCALAR dt, int n){
@@ -1924,7 +994,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
  /*------------------------Periodic boundary condition----------------------------------------------------------*/
    //In case of periodic boundary condition  it's necessary that the flux at the boundary (Left and Right, Bottom and Top) are the same.
    // are the same.
-@@ -294,7 +315,13 @@
+@@ -294,7 +318,13 @@
    /*---------------------------------------------------------------------------------------------------------*/    
   //Rainfall and infiltration calculated in Saint-Venant system
    //  rain(tps,P);  
@@ -1938,7 +1008,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
    /*---------------------------------------------------------------------------------------------------------*/    
  
   
-@@ -309,26 +336,37 @@
+@@ -309,26 +339,37 @@
  
   }
  
@@ -1977,7 +1047,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
   
   for (int i=1 ; i<NXCELL+1 ; i++){
     for (int j=1 ; j<NYCELL+1 ; j++){
-@@ -355,28 +393,40 @@
+@@ -355,28 +396,40 @@
     } //end for j
   } //end for i	
  
@@ -2015,11 +1085,11 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
  
  void Scheme::boundary(TAB & h_tmp,TAB & u_tmp ,TAB & v_tmp,SCALAR time_tmp,const int NODEX, const int NODEY){
 -
-+#if 0
++#if 1
    for (int j=1 ; j<NODEY+1 ; j++){
      Lbound->calcul(h_tmp[1][j],u_tmp[1][j],v_tmp[1][j],L_IMP_H,L_IMP_Q,h_tmp[NODEX][j],u_tmp[NODEX][j],v_tmp[NODEX][j], time_tmp,-1,0);
      h_tmp[0][j] = Lbound->get_hbound();
-@@ -399,7 +449,7 @@
+@@ -399,7 +452,7 @@
      u_tmp[i][NODEY+1] = Tbound->get_utanbound();
      v_tmp[i][NODEY+1] = Tbound->get_unormbound();
    } //end for i
@@ -2028,7 +1098,7 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
  }
  
  
-@@ -440,6 +490,7 @@
+@@ -440,6 +493,7 @@
  void Scheme::allocation(){
  
  
@@ -2036,831 +1106,10 @@ diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp ../../FullSW
  	
  	Rain.resize(NXCELL+2); // i : 0->NXCELL+1
  
-@@ -723,3 +774,43 @@
+@@ -723,3 +777,43 @@
  
  	
  }
-+
-+// PEANOCLAW: extensions
-+void Scheme::resetTimings() {
-+      // maincalcflux times
-+      time_meas.horizontal_flux_time = 0.0;
-+      time_meas.vertical_flux_time = 0.0;
-+      time_meas.maincalcflux_samples = 0;
-+
-+      // maincalcscheme times
-+      time_meas.rain_time = 0.0;
-+      time_meas.mass_conservation_time = 0.0;
-+      time_meas.infiltration_time = 0.0;
-+      time_meas.momentum_time = 0.0;
-+      time_meas.accumulated_rain_time = 0.0;
-+      time_meas.maincalcscheme_samples = 0;
-+
-+      // times used in order 2
-+      time_meas.delz_time = 0.0;
-+      time_meas.delz_samples = 0;
-+        
-+      time_meas.boundary_time = 0.0;
-+      time_meas.boundary_samples = 0;
-+
-+      time_meas.reconstruction_time = 0.0;
-+      time_meas.reconstruction_samples = 0;
-+ 
-+      time_meas.vincopy_time = 0.0;
-+      time_meas.vincopy_samples = 0;
-+
-+      time_meas.filter_time = 0.0;
-+      time_meas.filter_samples = 0;
-+
-+      time_meas.heun_time = 0.0;
-+      time_meas.heun_samples = 0;
-+
-+      // total time
-+      time_meas.total_time = 0.0;
-+      time_meas.total_samples = 0;
-+}
-+
-diff -wruPN ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp~ ../../FullSWOF_2D/Sources/libschemes/scheme.cpp~
---- ../../FullSWOF_2D-1.04.08/Sources/libschemes/scheme.cpp~	1970-01-01 01:00:00.000000000 +0100
-+++ ../../FullSWOF_2D/Sources/libschemes/scheme.cpp~	2014-04-04 08:12:41.000000000 +0200
-@@ -0,0 +1,817 @@
-+/**
-+ * @file scheme.cpp
-+ * @author Olivier Delestre <olivierdelestre41@yahoo.fr> (2008)
-+ * @author Christian Laguerre <christian.laguerre@math.cnrs.fr> (2012)
-+ * @version 1.04.06
-+ * @date 2013-06-10
-+ *
-+ * @brief Numerical scheme
-+ * @details
-+ * Common part for all the numerical schemes.
-+ *
-+ * @copyright License Cecill-V2 \n
-+ * <http://www.cecill.info/licences/Licence_CeCILL_V2-en.html>
-+ *
-+ * (c) CNRS - Universite d'Orleans - BRGM (France)
-+ */
-+/* 
-+ *
-+ * This file is part of FullSWOF_2D software. 
-+ * <https://sourcesup.renater.fr/projects/fullswof-2d/> 
-+ *
-+ * FullSWOF_2D = Full Shallow-Water equations for Overland Flow, 
-+ * in two dimensions of space.
-+ * This software is a computer program whose purpose is to compute
-+ * solutions for 2D Shallow-Water equations.
-+ *
-+ * LICENSE
-+ *
-+ * This software is governed by the CeCILL license under French law and
-+ * abiding by the rules of distribution of free software.  You can  use, 
-+ * modify and/ or redistribute the software under the terms of the CeCILL
-+ * license as circulated by CEA, CNRS and INRIA at the following URL
-+ * "http://www.cecill.info". 
-+ *
-+ * As a counterpart to the access to the source code and  rights to copy,
-+ * modify and redistribute granted by the license, users are provided only
-+ * with a limited warranty  and the software's author,  the holder of the
-+ * economic rights,  and the successive licensors  have only  limited
-+ * liability. 
-+ *
-+ * In this respect, the user's attention is drawn to the risks associated
-+ * with loading,  using,  modifying and/or developing or reproducing the
-+ * software by the user in light of its specific status of free software,
-+ * that may mean  that it is complicated to manipulate,  and  that  also
-+ * therefore means  that it is reserved for developers  and  experienced
-+ * professionals having in-depth computer knowledge. Users are therefore
-+ * encouraged to load and test the software's suitability as regards their
-+ * requirements in conditions enabling the security of their systems and/or 
-+ * data to be ensured and,  more generally, to use and operate it in the 
-+ * same conditions as regards security. 
-+ *
-+ * The fact that you are presently reading this means that you have had
-+ * knowledge of the CeCILL license and that you accept its terms.
-+ *
-+ ******************************************************************************/
-+
-+#include "scheme.hpp"
-+
-+//#define DEBUG
-+
-+Scheme::Scheme(Parameters & par):NXCELL(par.get_Nxcell()),NYCELL(par.get_Nycell()),ORDER(par.get_order()),T(par.get_T()),NBTIMES(par.get_nbtimes()),SCHEME_TYPE(par.get_scheme_type()),FRICCOEF(par.get_friccoef()),DX(par.get_dx()),DY(par.get_dy()),CFL_FIX(par.get_cflfix()),DT_FIX(par.get_dtfix()),L_IMP_Q(par.get_left_imp_discharge()),L_IMP_H(par.get_left_imp_h()),R_IMP_Q(par.get_right_imp_discharge()),R_IMP_H(par.get_right_imp_h()),B_IMP_Q(par.get_bottom_imp_discharge()),B_IMP_H(par.get_bottom_imp_h()),T_IMP_Q(par.get_top_imp_discharge()),T_IMP_H(par.get_top_imp_h()){
-+
-+ 	/**
-+	 * @details	 
-+	 * Initializations and allocations. 
-+	 * @param[in] par parameter, contains all the values from the parameters file.
-+	 */	
-+   
-+  allocation();
-+
-+ 
-+  /*----------------------------------------------------------------------- */
-+  Prain = new Choice_rain(par);
-+  //Initialisation Rain
-+  Prain->rain_func(tps,Rain); 
-+  Volrain_Tot=0.;
-+
-+  // Initialization of the topography 
-+  topo = new Choice_init_topo(par);
-+  topo->initialization(z);
-+
-+ // Initialization of h, u, v
-+  huv_init = new Choice_init_huv(par);
-+  huv_init->initialization(h,u,v);
-+  Vol_of_tot=0.;
-+
-+  flux_num = new Choice_flux(par.get_flux());
-+
-+  for (int i=1 ; i<=NXCELL ; i++){
-+    for (int j=1 ; j<=NYCELL ; j++){
-+      //h[i][j] =0.001;
-+      q1[i][j] = u[i][j]*h[i][j];
-+      q2[i][j] = v[i][j]*h[i][j];
-+    } //end for j
-+  } //end for i
-+
-+
-+  Total_discharge_outflow = 0.;
-+
-+  fric = new Choice_friction(par.get_fric());
-+  for (int i=0 ; i<=NXCELL+1 ; i++){
-+    for (int j=0 ; j<=NYCELL+1 ; j++){
-+      Fric_tab[i][j]=FRICCOEF;
-+    } //end for j
-+  }//end for i
-+
-+
-+  I = new Choice_infiltration(par);
-+
-+
-+  for (int i=1 ; i<=NXCELL ; i++){
-+    for (int j=1 ; j<=NYCELL ; j++){
-+      Vin_tot[i][j] = 0.;
-+    } //end for j
-+  } //end for i
-+  Vol_inf_tot_cumul=0.;
-+
-+
-+
-+
-+  Hydrostatic rec_hydro();
-+
-+   
-+
-+  // Left Boundary condition 
-+  nchoice_Lbound=par.get_Lbound();
-+  Lbound = new Choice_condition(nchoice_Lbound,par,z,-1,0);
-+  // Right Boundary condition 
-+  nchoice_Rbound=par.get_Rbound();
-+  Rbound = new Choice_condition(nchoice_Rbound,par,z,1,0);
-+  // Bottom Boundary condition
-+  nchoice_Bbound=par.get_Bbound();
-+  Bbound = new Choice_condition(nchoice_Bbound,par,z,0,-1);
-+  // Top Boundary condition 
-+  nchoice_Tbound=par.get_Tbound();
-+  Tbound = new Choice_condition(nchoice_Tbound,par,z,0,1);
-+  
-+
-+
-+
-+  dt_max=min(DX*CFL_FIX,DY*CFL_FIX);
-+  tps=0;
-+  dt1=0.; 
-+
-+  n=0; //initialization of the variable for the time loop
-+  
-+  // initialization of time value for the output
-+  if (0 == NBTIMES){ //in this case we don't call any function to store the values of variables (h,u ..)
-+    dt_output=2*T;              //computation of the step of time to save the variables in huz_evolution.dat file 
-+    T_output=dt_output;       //Initialization of the variable used to save the variables in huz_evolution.dat file 
-+                              // T_output=2*T but it can take any value greater than T, because we don't want to call
-+                              // the method to save picture in the final time (T).
-+  }else{
-+    dt_output=T/(NBTIMES-1);  //computation of the step of time to save the variables in huz_evolution.dat file 
-+    T_output=dt_output;       //Initialization of the variable used to save the variables in huz_evolution.dat file 
-+    
-+  }
-+  
-+
-+  out = new Choice_output(par);	
-+
-+#if 0
-+  //storage of the topography
-+  out->initial(DX, DY,z, h, u,v);
-+
-+  //storage the initialization of the main variables
-+  out->write(h,u,v,z,tps);
-+
-+  string suffix_outputs = par.get_suffix();
-+#endif
-+
-+  
-+  
-+  verif=1; 
-+ 
-+  
-+}
-+
-+Scheme::~Scheme(){
-+  deallocation(); 
-+#ifdef DEBUG 
-+  cout<<"Deallocation of objects is finished"<< endl;
-+#endif
-+}
-+
-+/*-----------------bloc 1------------------ */
-+
-+/*Construction variables for hydrostatic reconstruction.
-+ Flux with x and y.
-+ Calcul of the time's step in relation to fixed cfl.*/
-+
-+/*----------------------------------- */
-+
-+void Scheme:: maincalcflux(SCALAR cflfix, SCALAR T , SCALAR tps , SCALAR dt_max , SCALAR dt , SCALAR & dt_cal){
-+  SCALAR dt_tmp,dtx,dty;
-+  SCALAR velocity_max_x,velocity_max_y;              //tempory velocity to verify if clf > cflfix
-+  dtx=dty=dt_max;
-+  velocity_max_x=velocity_max_y=-VE_CA;
-+ 
-+  struct timeval start;
-+  struct timeval stop;
-+
-+  gettimeofday(&start, NULL);
-+
-+  for (int i=1 ; i<=NXCELL+1 ; i++){
-+    for (int j=1 ; j<NYCELL+1 ; j++){
-+      rec_hydro.calcul(h1r[i-1][j],h1l[i][j],delz1[i-1][j]);
-+      h1right[i-1][j] = rec_hydro.hg();
-+      h1left[i][j] = rec_hydro.hd();
-+      flux_num->calcul(h1right[i-1][j],u1r[i-1][j],v1r[i-1][j],h1left[i][j],u1l[i][j],v1l[i][j]);
-+      f1[i][j] = flux_num->get_f1();
-+      f2[i][j] = flux_num->get_f2();
-+      f3[i][j] = flux_num->get_f3();
-+      
-+      if (fabs(flux_num->get_cfl()*dt/DX) < EPSILON) {
-+	dt_tmp=dt_max;
-+      }else{
-+	//	dt_tmp=min(T-tps,cflfix*DX/flux_num->get_cfl());
-+	dt_tmp=cflfix*DX/flux_num->get_cfl();
-+      }
-+      dtx=min(min(dt,dt_tmp),dtx);
-+      velocity_max_x=max(velocity_max_x,flux_num->get_cfl());
-+    } //end for j
-+  } //end for i
-+  
-+#if defined(DEBUG)
-+  std::cout << "- dtx " << dtx << std::endl;
-+#endif
-+ 
-+  gettimeofday(&stop, NULL);
-+  time_meas.horizontal_flux_time += (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
-+
-+  gettimeofday(&start, NULL);
-+
-+  for (int i=1 ; i<NXCELL+1 ; i++){
-+    for (int j=1 ; j<=NYCELL+1 ; j++){
-+      rec_hydro.calcul(h2r[i][j-1],h2l[i][j],delz2[i][j-1]);
-+      h2right[i][j-1] = rec_hydro.hg();
-+      h2left[i][j] = rec_hydro.hd();
-+      flux_num->calcul(h2right[i][j-1],v2r[i][j-1],u2r[i][j-1],h2left[i][j],v2l[i][j],u2l[i][j]);
-+      g1[i][j] = flux_num->get_f1();
-+      g2[i][j] = flux_num->get_f3();
-+      g3[i][j] = flux_num->get_f2();
-+
-+
-+      if (fabs(flux_num->get_cfl()*dt/DY) < EPSILON) {
-+	dt_tmp=dt_max;
-+      }else{
-+	dt_tmp=cflfix*DY/flux_num->get_cfl();
-+      }
-+      dty=min(min(dt,dt_tmp),dty);
-+      velocity_max_y=max(velocity_max_y,flux_num->get_cfl());
-+      
-+    } //end for j
-+  } //end for i
-+ 
-+#if defined(DEBUG)
-+  std::cout << "- dty " << dty << std::endl;
-+#endif
-+
-+  gettimeofday(&stop, NULL);
-+  time_meas.vertical_flux_time += (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
-+
-+  if (1 == SCHEME_TYPE){
-+    dt_cal=min(dtx,dty);
-+    //cout << " computed new timestep: " << dt_cal << "and got cfl " << flux_num->get_cfl() << endl;
-+  }else{
-+      double x_lhs = velocity_max_x*DT_FIX/DX;
-+      double y_lhs = velocity_max_y*DT_FIX/DY>cflfix;
-+    if ((x_lhs/DX>cflfix)||(y_lhs>cflfix)){
-+      cout << " the CFL condition is not satisfied: CFL >"<<cflfix << " " << x_lhs << " " << y_lhs << " " << DX << " " << DY << endl;
-+      exit(1);
-+    } //end if
-+    dt_cal=DT_FIX;    
-+  }
-+
-+  ++time_meas.maincalcflux_samples;
-+}
-+
-+/*-----------------bloc 2------------------ */
-+/* Calcul of scheme: h u et v */
-+/*----------------------------------- */
-+
-+void Scheme:: maincalcscheme(TAB & he, TAB & ve1, TAB & ve2, TAB & qe1, TAB & qe2, TAB & hes, TAB & ves1, TAB & ves2, TAB & qes1, TAB & qes2,TAB & Vin, SCALAR tps, SCALAR dt, int n){
-+  struct timeval start;
-+  struct timeval stop;
-+
-+/*------------------------Periodic boundary condition----------------------------------------------------------*/
-+  //In case of periodic boundary condition  it's necessary that the flux at the boundary (Left and Right, Bottom and Top) are the same.
-+  // are the same.
-+  //moreover we need to consider the direction of the discharge in order to exchange the flux.
-+    if ((4==nchoice_Tbound) && (4==nchoice_Bbound)) {
-+    for (int i=1 ; i<NXCELL+1 ; i++){
-+      if ((ve2[i][1] > 0.) && (ve2[i][NYCELL]> 0.)){ //the direction of flow is Bottom to the Top
-+	g1[i][1]= g1[i][NYCELL+1];
-+      }
-+      if ((ve2[i][1] < 0.) && (ve2[i][NYCELL]< 0.)){ //the direction of flow is Top to the Bottom
-+	g1[i][NYCELL+1]	= g1[i][1];
-+      }
-+    }
-+  } 
-+    
-+  if ((4==nchoice_Rbound) && (4==nchoice_Lbound)) {
-+    for (int j=1 ; j<NYCELL+1 ; j++){
-+      if ((ve1[1][j] > 0.) && (ve1[NXCELL][j]> 0.)){ //the direction of flow is Left to the Right
-+	f1[1][j]= f1[NXCELL+1][j];
-+      }
-+    }
-+    for (int j=1 ; j<NYCELL+1 ; j++){
-+      if ((ve1[1][j] < 0.) && (ve1[NXCELL][j]< 0.)){ //the direction of flow is Right to the Left
-+	f1[NXCELL+1][j] = f1[1][j];
-+      }
-+    }
-+  }
-+  /*---------------------------------------------------------------------------------------------------------*/    
-+ //Rainfall and infiltration calculated in Saint-Venant system
-+  //  rain(tps,P);  
-+  gettimeofday(&start, NULL);
-+  
-+  Prain->rain_func(tps,Rain); 
-+
-+  gettimeofday(&stop, NULL);
-+  time_meas.rain_time += (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
-+
-+  /*---------------------------------------------------------------------------------------------------------*/    
-+
-+ 
-+  
-+  tx=dt/DX;
-+  ty=dt/DY;
-+  
-+  // flux' s computation  at each boundaries-----------------------------------------------
-+if (1 == verif){
-+
-+    dt_first=dt;
-+
-+ }
-+ 
-+
-+  // --------------------------------------------------------------------------------------
-+  
-+ gettimeofday(&start, NULL);
-+
-+ for (int i=1 ; i<NXCELL+1 ; i++){
-+   for (int j=1 ; j<NYCELL+1 ; j++){
-+     // Solution of the equation of mass conservation (First equation of Saint venant)
-+     hes[i][j] = he[i][j]-tx*(f1[i+1][j]-f1[i][j])-ty*(g1[i][j+1]-g1[i][j])+Rain[i][j]*dt;
-+       
-+   } //end for j
-+ } //end for i	
-+ 
-+  gettimeofday(&stop, NULL);
-+  time_meas.mass_conservation_time += (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
-+
-+ //------------------------------------------
-+
-+ 
-+ //Infiltration case  ------------------------  
-+ gettimeofday(&start, NULL);
-+
-+ I->calcul(hes,Vin,dt);
-+ hes = I->get_hmod();
-+ Vin = I->get_Vin();
-+ 
-+ gettimeofday(&stop, NULL);
-+ time_meas.infiltration_time += (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
-+
-+ //------------------------------------------
-+ 
-+ gettimeofday(&start, NULL);
-+
-+ for (int i=1 ; i<NXCELL+1 ; i++){
-+   for (int j=1 ; j<NYCELL+1 ; j++){
-+     //------------------------------------------
-+     
-+     if (hes[i][j] > HE_CA){
-+       //Solution of the equation of momentum (Second and third equation of Saint-venant)
-+       
-+       qes1[i][j] =he[i][j]*ve1[i][j]-tx*(f2[i+1][j]-f2[i][j]+GRAV_DEM*((h1left[i][j]-h1l[i][j])*(h1left[i][j]+h1l[i][j])+(h1r[i][j]-h1right[i][j])*(h1r[i][j]+h1right[i][j])+(h1l[i][j]+h1r[i][j])*delzc1[i][j]))-ty*(g2[i][j+1]-g2[i][j]);
-+       qes2[i][j] = he[i][j]*ve2[i][j]-tx*(f3[i+1][j]-f3[i][j])-ty*(g3[i][j+1]-g3[i][j]+GRAV_DEM*((h2left[i][j]-h2l[i][j])*(h2left[i][j]+h2l[i][j])+(h2r[i][j]-h2right[i][j])*(h2r[i][j]+h2right[i][j])+(h2l[i][j]+h2r[i][j])*delzc2[i][j]));
-+       
-+       //Calcul friction in semi-implicit.
-+       fric->calcul(ve1[i][j],ve2[i][j],hes[i][j],qes1[i][j],qes2[i][j],dt,Fric_tab[i][j]);
-+       qes1[i][j] = fric->get_q1mod();
-+       qes2[i][j] = fric->get_q2mod();
-+       //}	
-+       ves1[i][j] = qes1[i][j]/hes[i][j];
-+       ves2[i][j] = qes2[i][j]/hes[i][j];
-+     }else{ // Case of height of water is zero.
-+       ves1[i][j] = 0.;
-+       ves2[i][j] = 0.;
-+       
-+     }				
-+   } //end for j
-+ } //end for i	
-+ 
-+  gettimeofday(&stop, NULL);
-+  time_meas.momentum_time += (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
-+
-+ /*--------------------*/
-+ 
-+ gettimeofday(&start, NULL);
-+
-+ // The total cumulated rain's computed
-+ for (int i=1 ; i<NXCELL+1 ; i++){
-+   for (int j=1 ; j<NYCELL+1 ; j++){
-+     Volrain_Tot += Rain[i][j]*(dt-dt_first*(1-verif))*(1./ORDER)*DX*DY;
-+   }
-+ }
-+
-+ gettimeofday(&stop, NULL);
-+ time_meas.accumulated_rain_time += (stop.tv_sec - start.tv_sec) + (stop.tv_usec - start.tv_usec) / 1000000.0;
-+
-+ /*--------------------*/
-+
-+#if !defined(PEANOCLAW_FULLSWOF2D)
-+ Total_discharge_outflow =  out->boundaries_flux(tps,f1,g1, dt, dt_first,ORDER,verif);
-+#endif
-+ 
-+#ifdef DEBUG
-+ out->boundaries_flux_LR(tps,f1);
-+ out->boundaries_flux_BT(tps,g1);
-+#endif 
-+
-+  ++time_meas.maincalcscheme_samples;
-+}
-+
-+
-+void Scheme::boundary(TAB & h_tmp,TAB & u_tmp ,TAB & v_tmp,SCALAR time_tmp,const int NODEX, const int NODEY){
-+#if 0
-+  for (int j=1 ; j<NODEY+1 ; j++){
-+    Lbound->calcul(h_tmp[1][j],u_tmp[1][j],v_tmp[1][j],L_IMP_H,L_IMP_Q,h_tmp[NODEX][j],u_tmp[NODEX][j],v_tmp[NODEX][j], time_tmp,-1,0);
-+    h_tmp[0][j] = Lbound->get_hbound();
-+    u_tmp[0][j] = Lbound->get_unormbound();
-+    v_tmp[0][j] = Lbound->get_utanbound();
-+    Rbound->calcul(h_tmp[NODEX][j],u_tmp[NODEX][j],v_tmp[NODEX][j],R_IMP_H,R_IMP_Q,h_tmp[1][j],u_tmp[1][j],v_tmp[1][j], time_tmp,1,0);
-+    h_tmp[NODEX+1][j] = Rbound->get_hbound();
-+    u_tmp[NODEX+1][j] = Rbound->get_unormbound();
-+    v_tmp[NODEX+1][j] = Rbound->get_utanbound();
-+  } //end for j
-+  
-+  for (int i=1 ; i<NODEX+1 ; i++){
-+    Bbound->calcul(h_tmp[i][1],v_tmp[i][1],u_tmp[i][1],B_IMP_H,B_IMP_Q,h_tmp[i][NODEY],v_tmp[i][NODEY],u_tmp[i][NODEY], time_tmp,0,-1);
-+    h_tmp[i][0] = Bbound->get_hbound();
-+    u_tmp[i][0] = Bbound->get_utanbound();
-+    v_tmp[i][0] = Bbound->get_unormbound();
-+    
-+    Tbound->calcul(h_tmp[i][NODEY],v_tmp[i][NODEY],u_tmp[i][NODEY],T_IMP_H,T_IMP_Q,h_tmp[i][1],v_tmp[i][1],u_tmp[i][1], time_tmp,0,1);
-+    h_tmp[i][NODEY+1] = Tbound->get_hbound();
-+    u_tmp[i][NODEY+1] = Tbound->get_utanbound();
-+    v_tmp[i][NODEY+1] = Tbound->get_unormbound();
-+  } //end for i
-+#endif
-+}
-+
-+
-+// To determine the Froude number
-+
-+SCALAR Scheme::froude_number(TAB h_s,TAB u_s,TAB v_s){
-+
-+    SCALAR Fr;
-+    int i,j;
-+    SCALAR stock_u,stock_v,stock_h;
-+
-+    stock_u=0.;
-+    stock_v=0.;
-+    stock_h=0.;
-+
-+    for(j=1;j<=NYCELL;j++){
-+        for(i=1;i<=NXCELL;i++){
-+            stock_u+=u_s[i][j];
-+            stock_v+=v_s[i][j];
-+            stock_h+=h_s[i][j];
-+        }
-+    }
-+
-+    stock_u=stock_u/(NXCELL*NYCELL);
-+    stock_v=stock_v/(NXCELL*NYCELL);
-+    stock_h=stock_h/(NXCELL*NYCELL);
-+
-+    Fr=sqrt((stock_u*stock_u+stock_v*stock_v)/(GRAV*stock_h));
-+
-+    return Fr;
-+}
-+
-+
-+
-+
-+//-------Functon to allocate table------------------------
-+//------------------------------------------------------------------------- 
-+void Scheme::allocation(){
-+
-+
-+    //std::cout << "NXCELL " << NXCELL << " NYCELL " << NYCELL << std::endl;
-+	
-+	Rain.resize(NXCELL+2); // i : 0->NXCELL+1
-+
-+	z.resize(NXCELL+2); // i : 0->NXCELL+1
-+	h.resize(NXCELL+2); // i : 0->NXCELL+1
-+	u.resize(NXCELL+2); // i : 0->NXCELL+1
-+	v.resize(NXCELL+2); // i : 0->NXCELL+1
-+	q1.resize(NXCELL+1); // i : 1->NXCELL
-+	q2.resize(NXCELL+1); // i : 1->NXCELL
-+	
-+	Fric_tab.resize(NXCELL+2); // i : 0->NXCELL+1
-+
-+	Vin_tot.resize(NXCELL+1); // i : 1->NXCELL
-+	hs.resize(NXCELL+2); // i : 0->NXCELL+1
-+	us.resize(NXCELL+2); // i : 0->NXCELL+1
-+	vs.resize(NXCELL+2); // i : 0->NXCELL+1
-+	qs1.resize(NXCELL+1); // i : 1->NXCELL
-+	qs2.resize(NXCELL+1); // i : 1->NXCELL
-+	f1.resize(NXCELL+2); // i : 1->NXCELL+1
-+	f2.resize(NXCELL+2); // i : 1->NXCELL+1
-+	f3.resize(NXCELL+2); // i : 1->NXCELL+1
-+	g1.resize(NXCELL+1); // i : 1->NXCELL
-+	g2.resize(NXCELL+1); // i : 1->NXCELL
-+	g3.resize(NXCELL+1); // i : 1->NXCELL
-+	h1left.resize(NXCELL+2); // i : 1->NXCELL+1
-+	h1l.resize(NXCELL+2); // i : 1->NXCELL+1
-+	u1l.resize(NXCELL+2); // i : 1->NXCELL+1
-+	v1l.resize(NXCELL+2); // i : 1->NXCELL+1
-+	h1right.resize(NXCELL+1); // i : 0->NXCELL
-+	h1r.resize(NXCELL+1); // i : 0->NXCELL
-+	u1r.resize(NXCELL+1); // i : 0->NXCELL
-+	v1r.resize(NXCELL+1); // i : 0->NXCELL
-+	h2left.resize(NXCELL+1); // i : 1->NXCELL
-+	h2l.resize(NXCELL+1); // i : 1->NXCELL
-+	u2l.resize(NXCELL+1); // i : 1->NXCELL
-+	v2l.resize(NXCELL+1); // i : 1->NXCELL
-+	h2right.resize(NXCELL+1); // i : 1->NXCELL
-+	h2r.resize(NXCELL+1); // i : 1->NXCELL
-+	u2r.resize(NXCELL+1); // i : 1->NXCELL
-+	v2r.resize(NXCELL+1); // i : 1->NXCELL
-+	delz1.resize(NXCELL+1); // i : 0->NXCELL
-+	delz2.resize(NXCELL+1); // i : 1->NXCELL
-+	delzc1.resize(NXCELL+1); // i : 1->NXCELL
-+	delzc2.resize(NXCELL+1); // i : 1->NXCELL
-+
-+
-+	Rain[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+
-+	z[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+	h[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+	Fric_tab[0].resize(NYCELL+2); // i : 0->NYCELL+1
-+	//	Ks_soil[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+
-+	u[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+	v[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+	hs[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+	us[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+	vs[0].resize(NYCELL+2); // j : 0->NYCELL+1
-+	h1right[0].resize(NYCELL+1); // j : 1->NYCELL
-+	h1r[0].resize(NYCELL+1); // j : 1->NYCELL
-+	u1r[0].resize(NYCELL+1); // j : 1->NYCELL
-+	v1r[0].resize(NYCELL+1); // j : 1->NYCELL
-+	delz1[0].resize(NYCELL+1); // j : 1->NYCELL
-+
-+	for (int i=1 ; i<=NXCELL ; i++){
-+
-+	  Rain[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  
-+	  z[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  h[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  u[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  v[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  q1[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  q2[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  
-+	  Fric_tab[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  //	  Ks_soil[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  
-+	  Vin_tot[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  hs[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  us[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  vs[i].resize(NYCELL+2); // j : 0->NYCELL+1
-+	  qs1[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  qs2[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  f1[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  f2[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  f3[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  g1[i].resize(NYCELL+2); // j : 1->NYCELL+1
-+	  g2[i].resize(NYCELL+2); // j : 1->NYCELL+1
-+	  g3[i].resize(NYCELL+2); // j : 1->NYCELL+1
-+	  h1left[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  h1l[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  u1l[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  v1l[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  h1right[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  h1r[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  u1r[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  v1r[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  h2left[i].resize(NYCELL+2); // j : 1->NYCELL+1
-+	  h2l[i].resize(NYCELL+2); // j : 1->NYCELL+1
-+	  u2l[i].resize(NYCELL+2); // j : 1->NYCELL+1
-+	  v2l[i].resize(NYCELL+2); // j : 1->NYCELL+1
-+	  h2right[i].resize(NYCELL+1); // j : 0->NYCELL
-+	  h2r[i].resize(NYCELL+1); // j : 0->NYCELL
-+	  u2r[i].resize(NYCELL+1); // j : 0->NYCELL
-+	  v2r[i].resize(NYCELL+1); // j : 0->NYCELL
-+	  delz1[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  delz2[i].resize(NYCELL+1); // j : 0->NYCELL
-+	  delzc1[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  delzc2[i].resize(NYCELL+1); // j : 1->NYCELL
-+	  
-+	}
-+	
-+	Rain[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+
-+	z[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	h[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	Fric_tab[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	u[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	v[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	hs[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	us[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	vs[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	f1[NXCELL+1].resize(NYCELL+1); // j : 1->NYCELL
-+	f2[NXCELL+1].resize(NYCELL+1); // j : 1->NYCELL
-+	f3[NXCELL+1].resize(NYCELL+1); // j : 1->NYCELL
-+	h1left[NXCELL+1].resize(NYCELL+1); // j : 1->NYCELL
-+	h1l[NXCELL+1].resize(NYCELL+1); // j : 1->NYCELL
-+	u1l[NXCELL+1].resize(NYCELL+1); // j : 1->NYCELL
-+	v1l[NXCELL+1].resize(NYCELL+1); // j : 1->NYCELL
-+	//	Ks_soil[NXCELL+1].resize(NYCELL+2); // j : 0->NYCELL+1
-+	
-+}
-+
-+
-+//-------------------------------------------------------------------------
-+//-------Functon to deallocate table--------------------
-+//------------------------------------------------------------------------- 
-+void Scheme::deallocation(){
-+
-+delete Prain ;
-+delete topo;
-+delete huv_init;
-+delete flux_num;
-+delete fric;
-+delete I;
-+delete out;
-+delete Lbound;
-+delete Rbound;
-+delete Bbound;
-+delete Tbound;
-+
-+	Rain[0].clear();	
-+
-+	z[0].clear();
-+	h[0].clear();
-+	Fric_tab[0].clear(); // i : 0->NYCELL+1
-+	//	Ks_soil[0].clear();
-+
-+	u[0].clear();
-+	v[0].clear();
-+	hs[0].clear();
-+	us[0].clear();
-+	vs[0].clear();
-+	h1right[0].clear();
-+	h1r[0].clear();
-+	u1r[0].clear();
-+	v1r[0].clear();
-+	delz1[0].clear();
-+
-+	for (int i=1 ; i<=NXCELL ; i++){
-+		Fric_tab[i].clear();
-+		//		Ks_soil[i].clear();
-+
-+		Rain[i].clear();
-+
-+		z[i].clear();
-+		Vin_tot[i].clear();
-+		h[i].clear();
-+		u[i].clear();
-+		v[i].clear();
-+		q1[i].clear();
-+		q2[i].clear();
-+		hs[i].clear();
-+		us[i].clear();
-+		vs[i].clear();
-+		qs1[i].clear();
-+		qs2[i].clear();
-+		f1[i].clear();
-+		f2[i].clear();
-+		f3[i].clear();
-+		g1[i].clear();
-+		g2[i].clear();
-+		g3[i].clear();
-+		h1left[i].clear();
-+		h1l[i].clear();
-+		u1l[i].clear();
-+		v1l[i].clear();
-+		h1right[i].clear();
-+		h1r[i].clear();
-+		u1r[i].clear();
-+		v1r[i].clear();
-+		h2left[i].clear();
-+		h2l[i].clear();
-+		u2l[i].clear();
-+		v2l[i].clear();
-+		h2right[i].clear();
-+		h2r[i].clear();
-+		u2r[i].clear();
-+		v2r[i].clear();
-+		delz1[i].clear();
-+		delz2[i].clear();
-+		delzc1[i].clear();
-+		delzc2[i].clear();
-+	}
-+
-+	Rain[NXCELL+1].clear();
-+
-+	z[NXCELL+1].clear();
-+	h[NXCELL+1].clear();
-+	Fric_tab[NXCELL+1].clear(); 
-+	//	Ks_soil[NXCELL+1].clear();
-+
-+	u[NXCELL+1].clear();
-+	v[NXCELL+1].clear();
-+	hs[NXCELL+1].clear();
-+	us[NXCELL+1].clear();
-+	vs[NXCELL+1].clear();
-+	f1[NXCELL+1].clear();
-+	f2[NXCELL+1].clear();
-+	f3[NXCELL+1].clear();
-+	h1left[NXCELL+1].clear();
-+	h1l[NXCELL+1].clear();
-+	u1l[NXCELL+1].clear();
-+	v1l[NXCELL+1].clear();
-+
-+	z.clear();
-+	h.clear();
-+	u.clear();
-+	v.clear();
-+	q1.clear();
-+	q2.clear();
-+	hs.clear();
-+	us.clear();
-+	vs.clear();
-+	h1right.clear();
-+	h1r.clear();
-+
-+	h1left.clear();
-+	h1l.clear();
-+	u1l.clear();
-+	v1l.clear();
-+	u1r.clear();
-+	v1r.clear();
-+	h2left.clear();
-+	h2l.clear();
-+	u2l.clear();
-+	v2l.clear();
-+	h2right.clear();
-+	h2r.clear();
-+	u2r.clear();
-+	v2r.clear();
-+
-+	f1.clear();
-+	f2.clear();
-+	f3.clear();
-+	g1.clear();
-+	g2.clear();
-+	g3.clear();
-+	delz1.clear();
-+	delz2.clear();
-+	delzc1.clear();
-+	delzc2.clear();
-+
-+	qs1.clear();
-+	qs2.clear();
-+
-+	Fric_tab.clear();
-+	Vin_tot.clear();
-+	//	Ks_soil.clear();
-+
-+	
-+}
 +
 +// PEANOCLAW: extensions
 +void Scheme::resetTimings() {

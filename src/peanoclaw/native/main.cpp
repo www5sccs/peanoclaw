@@ -181,7 +181,7 @@ int main(int argc, char **argv) {
     tarch::tests::TestCaseRegistry::getInstance().getTestCaseCollection().run();
   }
 
-#if defined(PEANOCLAW_SWE) || defined(PEANOCLAW_FULLSWOF2D)
+#if defined(PEANOCLAW_SWE) || defined(PEANOCLAW_FULLSWOF2D) || defined(PEANOCLAW_EULER3D)
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
 
   bool usePeanoClaw;
@@ -207,6 +207,8 @@ int main(int argc, char **argv) {
   peanoclaw::Numerics* numerics = numericsFactory.createSWENumerics(*scenario);
   #elif defined(PEANOCLAW_FULLSWOF2D)
   peanoclaw::Numerics* numerics = numericsFactory.createFullSWOF2DNumerics(*scenario);
+  #elif defined(PEANOCLAW_EULER3D)
+  peanoclaw::Numerics* numerics = numericsFactory.createEuler3DNumerics(*scenario);
   #endif
 
   if(usePeanoClaw) {
@@ -217,12 +219,14 @@ int main(int argc, char **argv) {
       true
     );
   } else {
-  #ifdef PEANOCLAW_SWE
+  #if defined(PEANOCLAW_SWE)
   tarch::la::Vector<DIMENSIONS,int> numberOfCells = scenario->getSubdivisionFactor();
   peanoclaw::native::sweMain(*scenario, numberOfCells);
-  #else
+  #elif defined(PEANOCLAW_FULLSWOF2D)
   tarch::la::Vector<DIMENSIONS,int> numberOfCells = scenario->getSubdivisionFactor();
   peanoclaw::native::fullswof2DMain(*scenario, numberOfCells);
+  #elif defined(PEANOCLAW_EULER3D)
+
   #endif
   }
 

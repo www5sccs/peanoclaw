@@ -139,9 +139,31 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createFullSWOF2DNumerics(
 }
 #endif
 
-//peanoclaw::Numerics* peanoclaw::NumericsFactory::createNativeNumerics() {
-//  return new peanoclaw::native::NativeKernel;
-//}
+#if defined(PEANOCLAW_EULER3D)
+peanoclaw::Numerics* peanoclaw::NumericsFactory::createEuler3DNumerics(
+  peanoclaw::native::scenarios::SWEScenario& scenario
+) {
 
+  //Interpolation Callback
+  peanoclaw::interSubgridCommunication::Interpolation* interpolation;
+  interpolation = new peanoclaw::interSubgridCommunication::DefaultInterpolation();
+
+  //Restriction Callback
+  peanoclaw::interSubgridCommunication::Restriction* restriction;
+  restriction = new peanoclaw::interSubgridCommunication::DefaultRestriction();
+
+  //Flux Correction Callback
+  peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection;
+  fluxCorrection = new peanoclaw::interSubgridCommunication::DefaultFluxCorrection();
+
+  return new peanoclaw::solver::euler3d::Euler3DKernel(
+    scenario,
+    new peanoclaw::interSubgridCommunication::DefaultTransfer,
+    interpolation,
+    restriction,
+    fluxCorrection
+  );
+}
+#endif
 
 

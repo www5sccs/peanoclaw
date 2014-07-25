@@ -74,7 +74,7 @@ peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::PeanoClawConf
   _additionalLevelsForPredefinedRefinement(1),
   _disableDimensionalSplittingOptimization(false),
   _restrictStatistics(true),
-  _fluxCorrection(true)
+  _fluxCorrection(false)
   {
   std::string configFileName = "peanoclaw.config";
   std::ifstream configFile(configFileName.c_str());
@@ -128,6 +128,10 @@ bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::disableD
 
 bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::restrictStatistics() const {
   return _restrictStatistics;
+}
+
+bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::enableFluxCorrection() const {
+  return _fluxCorrection;
 }
 
 std::vector<peanoclaw::statistics::Probe> peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getProbeList() const {

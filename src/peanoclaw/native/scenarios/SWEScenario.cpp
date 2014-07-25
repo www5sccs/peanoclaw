@@ -94,9 +94,9 @@ peanoclaw::native::scenarios::SWEScenario* peanoclaw::native::scenarios::SWEScen
 }
 
 double peanoclaw::native::scenarios::SWEScenario::getInitialTimestepSize() const {
-#ifdef PEANOCLAW_SWE
+#if defined(PEANOCLAW_SWE) || defined(PEANOCLAW_EULER3D)
   return 0.1;
-#elif PEANOCLAW_FULLSWOF2D
+#elif defined(PEANOCLAW_FULLSWOF2D)
   return 1.0;
 #endif
 }

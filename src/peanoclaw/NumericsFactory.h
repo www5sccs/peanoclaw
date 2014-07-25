@@ -10,15 +10,19 @@
 
 #include "peanoclaw/pyclaw/PyClawCallbacks.h"
 
-#if defined(SWE)
+#if defined(PEANOCLAW_SWE)
   #include "peanoclaw/native/SWEKernel.h"
 #endif
 
 #if defined(PEANOCLAW_FULLSWOF2D)
-    #include "peanoclaw/native/FullSWOF2D.h" 
+  #include "peanoclaw/native/FullSWOF2D.h"
 #endif
 
-#if defined(PEANOCLAW_SWE) || defined(PEANOCLAW_FULLSWOF2D)
+#if defined(PEANOCLAW_EULER3D)
+  #include "peanoclaw/solver/euler3d/Euler3DKernel.h"
+#endif
+
+#if defined(PEANOCLAW_SWE) || defined(PEANOCLAW_FULLSWOF2D) || defined(PEANOCLAW_EULER3D)
   #include "peanoclaw/native/scenarios/SWEScenario.h"
 #endif
 
@@ -74,12 +78,11 @@ class peanoclaw::NumericsFactory {
     );
 #endif
 
-    /**
-     * Creates a new Numerics object on the heap that provides
-     * native functionality.
-     */
-//    peanoclaw::Numerics* createNativeNumerics(
-//    );
+#if defined(PEANOCLAW_EULER3D)
+    peanoclaw::Numerics* createEuler3DNumerics(
+      peanoclaw::native::scenarios::SWEScenario& scenario
+    );
+#endif
 };
 
 #endif /* NUMERICSFACTORY_H_ */
