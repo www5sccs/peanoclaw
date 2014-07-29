@@ -18,7 +18,7 @@ def addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver):
      ccflags.append('-march=native')
    
    if solver=='pyclaw':
-     buildtools.addPython()
+     buildtools.addPython(cppdefines, cpppath, libpath, libs)
      
    if(environment['PLATFORM'] == 'darwin'):
      ccflags.append('-flat_namespace')
