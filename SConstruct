@@ -358,6 +358,7 @@ if hdf5 == 'yes':
   libs.append('hdf5_hl')
   if os.environ['HDF5_INC'] != '':
     cpppath.append(os.environ['HDF5_INC'])
+    libpath.append(join(os.environ['HDF5_BASE'], 'lib'))
   
 ##### Determine VTU usage
 # 
