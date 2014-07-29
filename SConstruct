@@ -356,6 +356,8 @@ if hdf5 == 'yes':
   cppdefines.append('PEANOCLAW_USE_HDF5')
   libs.append('hdf5')
   libs.append('hdf5_hl')
+  if os.environ['HDF5_INC'] != '':
+    cpppath.append(os.environ['HDF5_INC'])
   
 ##### Determine VTU usage
 # 
