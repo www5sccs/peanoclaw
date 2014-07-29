@@ -379,7 +379,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::evolveToTime(
     _repository->getState().setPlotNumber(_plotNumber);
     iteratePlot();
     _plotNumber++;
-  } else if (!_configuration.plotAtOutputTimes() && !plotSubsteps) {
+  } else if (!_configuration.plotAtOutputTimes() && !plotSubsteps && !_configuration.plotAtEndTime()) {
     _plotNumber++;
   }
 
