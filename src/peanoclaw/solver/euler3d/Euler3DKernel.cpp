@@ -6,6 +6,9 @@
  */
 #include "peanoclaw/solver/euler3d/Euler3DKernel.h"
 
+#include "peanoclaw/grid/SubgridAccessor.h"
+#include "peanoclaw/Patch.h"
+
 tarch::logging::Log peanoclaw::solver::euler3d::Euler3DKernel::_log("peanoclaw::solver::euler3d::Euler3DKernel");
 
 peanoclaw::solver::euler3d::Euler3DKernel::Euler3DKernel(
@@ -35,6 +38,19 @@ void peanoclaw::solver::euler3d::Euler3DKernel::update(Patch& subgrid) {
 }
 
 void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
+  peanoclaw::grid::SubgridAccessor accessor = patch.getAccessor();
 
+  patch.getTimeIntervals().advanceInTime();
+  patch.getTimeIntervals().setTimestepSize(0.1);
+}
+
+tarch::la::Vector<DIMENSIONS, double> peanoclaw::solver::euler3d::Euler3DKernel::getDemandedMeshWidth(Patch& patch, bool isInitializing) {
+  return _scenario.computeDemandedMeshWidth(patch, isInitializing);
+}
+
+void peanoclaw::solver::euler3d::Euler3DKernel::addPatchToSolution(Patch& patch) {
+}
+
+void peanoclaw::solver::euler3d::Euler3DKernel::fillBoundaryLayer(Patch& patch, int dimension, bool setUpper) {
 }
 

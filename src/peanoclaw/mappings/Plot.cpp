@@ -410,7 +410,20 @@ void peanoclaw::mappings::Plot::enterCell(
       const tarch::la::Vector<DIMENSIONS,int>&                             fineGridPositionOfCell
 ) {
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
-  // @todo Insert your code here
+
+  //Integrate quantities
+  if(fineGridCell.isLeaf()) {
+    peanoclaw::Patch subgrid(fineGridCell);
+    peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
+    double subcellVolume = tarch::la::volume(subgrid.getSubcellSize());
+
+    dfor(subcellIndex, subgrid.getSubdivisionFactor()) {
+      for(int unknown = 0; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {
+        _integratedQuantities[unknown] += accessor.getValueUNew(subcellIndex, unknown) * subcellVolume;
+      }
+    }
+  }
+
   logTraceOutWith1Argument( "enterCell(...)", fineGridCell );
 }
 
@@ -483,6 +496,10 @@ void peanoclaw::mappings::Plot::beginIteration(
     true
   );
 
+  //Integrated quantities
+  _integratedQuantities.clear();
+  _integratedQuantities.resize(solverState.getUnknownsPerSubcell(), 0.0);
+
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
 
@@ -496,6 +513,10 @@ void peanoclaw::mappings::Plot::endIteration(
   _nextPlotNumber = solverState.getPlotNumber() + 1;
   
   delete _gridPlotter;
+
+  for(int unknown = 0; unknown < solverState.getUnknownsPerSubcell(); unknown++) {
+    logInfo("endIteration(State)", "Integral(q" << unknown << ") = " << _integratedQuantities[unknown]);
+  }
 
   // @todo Insert your code here
   logTraceOutWith1Argument( "endIteration(State)", solverState);

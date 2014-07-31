@@ -219,7 +219,7 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
 ) {
   logTraceInWith4Arguments( "createCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
- if(fineGridCell.isLeaf()) {
+  if(fineGridCell.isLeaf()) {
     Patch patch(
       fineGridCell
     );

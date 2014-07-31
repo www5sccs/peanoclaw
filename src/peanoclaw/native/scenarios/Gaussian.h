@@ -57,7 +57,9 @@ class peanoclaw::native::scenarios::GaussianSWEScenario
       virtual float getWaterHeight(float x, float y);
       virtual float waterHeightAtRest() { return getWaterHeight(0, 0); };
       virtual float endSimulation() { return (float)getEndTime(); };
+      #ifdef PEANOCLAW_SWE
       virtual BoundaryType getBoundaryType(BoundaryEdge edge) { return OUTFLOW; };
+      #endif
 };
 
 #endif // PEANOCLAW_NATIVE_SCENARIOS_BREAKINGDAM_H

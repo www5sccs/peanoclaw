@@ -18,7 +18,7 @@ namespace peanoclaw {
 
 #include "EulerEquations/Cell.hpp"
 
-class peanoclaw::solver::euler3d::Cell : EulerEquations::Cell {
+class peanoclaw::solver::euler3d::Cell : public EulerEquations::Cell<double,3> {
 
 };
 

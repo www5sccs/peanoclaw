@@ -20,6 +20,7 @@
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
 
+#include <vector>
 
 namespace peanoclaw {
   namespace mappings {
@@ -53,6 +54,8 @@ class peanoclaw::mappings::Plot {
     peanoclaw::grid::plotter::GridPlotter* _gridPlotter;
 
     int                                    _nextPlotNumber;
+
+    std::vector<double>                    _integratedQuantities;
 
   public:
     /**
