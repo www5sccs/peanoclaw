@@ -168,8 +168,8 @@ float peanoclaw::native::scenarios::BreakingDamSWEScenario::getWaterHeight(float
   const double y0=1/2.0;
   // Riemann states of the dam break problem
   const double radDam = 0.25;
-  const double hl = 2.;
-  const double hr = 1.;
+  const double hl = 3.;
+  const double hr = 2.;
 
   double r = sqrt((x-x0)*(x-x0) + (y-y0)*(y-y0));
   return hl*(r<=radDam) + hr*(r>radDam);
