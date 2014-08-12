@@ -197,36 +197,28 @@ void peanoclaw::native::FullSWOF2D::fillBoundaryLayer(Patch& patch, int dimensio
    //std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
    //std::cout << "||||||" << std::endl;
  
-#if 0
+#if 1
   int ghostlayerWidth = patch.getGhostlayerWidth();
-  int fullswofGhostlayerWidth = ghostlayerWidth-1;
-   // implement a wall boundary
-    tarch::la::Vector<DIMENSIONS, int> src_subcellIndex;
-    tarch::la::Vector<DIMENSIONS, int> dest_subcellIndex;
+  int fullswofGhostlayerWidth = ghostlayerWidth;
+  // implement a wall boundary
+  tarch::la::Vector<DIMENSIONS, int> src_subcellIndex;
+  tarch::la::Vector<DIMENSIONS, int> dest_subcellIndex;
+  peanoclaw::grid::SubgridAccessor accessor = patch.getAccessor();
 
-    if (dimension == 0) { // left and right boundary
-        for (int yi = -fullswofGhostlayerWidth; yi < patch.getSubdivisionFactor()(1)+fullswofGhostlayerWidth; yi++) {
-            int xi = setUpper ? patch.getSubdivisionFactor()(0)+fullswofGhostlayerWidth-1 : -fullswofGhostlayerWidth;
-            dest_subcellIndex(0) = xi;
-            dest_subcellIndex(1) = yi;
-            patch.setParameterWithGhostlayer(dest_subcellIndex, 0, 1000.0);
-
-            // only mirror orthogonal velocities
-            patch.getAccessor().setValueUOld(dest_subcellIndex, 1, -patch.getAccessor().getValueUOld(dest_subcellIndex, 1));
-            //patch.getAccessor().setValueUOld(dest_subcellIndex, 4, -patch.getAccessor().getValueUOld(dest_subcellIndex, 5));
-        }
-    } else { // top and bottom boundary
-        for (int xi = -fullswofGhostlayerWidth; xi < patch.getSubdivisionFactor()(0)+fullswofGhostlayerWidth; xi++) {
-            int yi = setUpper ? patch.getSubdivisionFactor()(1)+fullswofGhostlayerWidth-1 : -fullswofGhostlayerWidth;
-            dest_subcellIndex(0) = xi;
-            dest_subcellIndex(1) = yi;
-            patch.setParameterWithGhostlayer(dest_subcellIndex, 0, 1000.0);
-            
-            // only mirror orthogonal velocities
-            patch.getAccessor().setValueUOld(dest_subcellIndex, 2, -patch.getAccessor().getValueUOld(dest_subcellIndex, 2));
-            //patch.getAccessor().setValueUOld(dest_subcellIndex, 5, -patch.getAccessor().getValueUOld(dest_subcellIndex, 5));
-        }
+  for(int layer = 1; layer <= patch.getGhostlayerWidth(); layer++) {
+    for (int i = -fullswofGhostlayerWidth; i < patch.getSubdivisionFactor()(1-dimension)+fullswofGhostlayerWidth; i++) {
+      src_subcellIndex(dimension) = setUpper ? patch.getSubdivisionFactor()(dimension)-1 - layer : layer;
+      src_subcellIndex(1-dimension) = i;
+      dest_subcellIndex(dimension) = setUpper ? patch.getSubdivisionFactor()(dimension)-1 + layer : -layer;
+      dest_subcellIndex(1-dimension) = i;
+      accessor.setParameterWithGhostlayer(dest_subcellIndex, 0, accessor.getParameterWithGhostlayer(src_subcellIndex, 0));
+      for(int unknown = 0; unknown < patch.getUnknownsPerSubcell(); unknown++) {
+        accessor.setValueUOld(dest_subcellIndex, unknown, accessor.getValueUOld(src_subcellIndex, unknown));
+      }
+      //Invert impulse for dimension
+      //accessor.setValueUOld(dest_subcellIndex, 1+dimension, -accessor.getValueUOld(dest_subcellIndex, 1+dimension));
     }
+  }
 #endif
 
    //std::cout << "++++++" << std::endl;

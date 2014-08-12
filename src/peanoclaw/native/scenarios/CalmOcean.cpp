@@ -81,7 +81,7 @@ double peanoclaw::native::scenarios::CalmOcean::getGlobalTimestepSize() const {
   return _globalTimestepSize;
 }
 double peanoclaw::native::scenarios::CalmOcean::getEndTime() const {
-  return _globalTimestepSize;
+  return _endTime;
 }
 
 //pure SWE-Scenario
