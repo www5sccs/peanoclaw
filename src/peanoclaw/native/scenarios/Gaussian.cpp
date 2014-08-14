@@ -62,8 +62,8 @@ void peanoclaw::native::scenarios::GaussianSWEScenario::initializePatch(peanocla
             subcellIndex(0) = xi;
             subcellIndex(1) = yi;
  
-            double X = patchPosition(0) + xi*meshWidth(0);
-            double Y = patchPosition(1) + yi*meshWidth(1);
+            double X = patchPosition(0) + (xi+0.5)*meshWidth(0);
+            double Y = patchPosition(1) + (yi+0.5)*meshWidth(1);
 
             double q0 = getWaterHeight(X, Y);
             double q1 = 0.0; //hl*ul*(r<=radDam) + hr*ur*(r>radDam);
