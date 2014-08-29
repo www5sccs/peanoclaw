@@ -79,8 +79,6 @@ else:
    print "ERROR: dim must be either 2 or 3!"
    sys.exit(1)
 
-print 'dim=',dim
-
 ##### Add build parameter specific build variable settings:
 # This section only defines Peano-specific flags. It does not
 # set compiler specific stuff.
@@ -334,6 +332,7 @@ elif solver == 'euler3d':
   except ImportError:
     pass
   cpppath.append(join(euler3DPath, 'source'))
+  cpppath.append('/usr/include/eigen3')
   cppdefines.append('AssertForPositiveValues')
 else:
   raise Exception("ERROR: solver must be 'pyclaw', 'swe', 'fullswof2d', or 'euler3d'")
@@ -356,7 +355,7 @@ if hdf5 == 'yes':
   cppdefines.append('PEANOCLAW_USE_HDF5')
   libs.append('hdf5')
   libs.append('hdf5_hl')
-  if os.environ['HDF5_INC'] != '':
+  if 'HDF5_INC' in os.environ:
     cpppath.append(os.environ['HDF5_INC'])
     libpath.append(join(os.environ['HDF5_BASE'], 'lib'))
   
@@ -481,7 +480,8 @@ elif solver == 'fullswof2d':
      ]
 elif solver == 'euler3d':
   sourcesSolver = [
-     Glob(join(buildpath, 'euler3d/source/EulerEquation/*.cpp')),
+     Glob(join(buildpath, 'euler3d/source/EulerEquations/*.cpp')),
+     Glob(join(buildpath, 'euler3d/source/SimpleLogger.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/main.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/scenarios/*.cpp')),
      Glob(join(buildpath, 'peanoclaw/solver/euler3d/*.cpp'))
