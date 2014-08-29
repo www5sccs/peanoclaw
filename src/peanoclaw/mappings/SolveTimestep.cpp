@@ -12,7 +12,10 @@
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::CommunicationSpecification   peanoclaw::mappings::SolveTimestep::communicationSpecification() {
-  return peano::CommunicationSpecification(peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime);
+  return peano::CommunicationSpecification(
+    peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,
+    peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime
+  );
 }
 
 
@@ -20,7 +23,10 @@ peano::CommunicationSpecification   peanoclaw::mappings::SolveTimestep::communic
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::RunConcurrentlyOnFineGrid
+  );
 }
 
 
@@ -28,7 +34,10 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexLas
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::RunConcurrentlyOnFineGrid
+  );
 }
 
 
@@ -36,7 +45,10 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::touchVertexFir
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::RunConcurrentlyOnFineGrid
+  );
 }
 
 
@@ -44,7 +56,10 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::enterCellSpeci
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::RunConcurrentlyOnFineGrid
+  );
 }
 
 
@@ -52,7 +67,10 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::leaveCellSpeci
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::RunConcurrentlyOnFineGrid
+  );
 }
 
 
@@ -60,7 +78,10 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::ascendSpecific
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::RunConcurrentlyOnFineGrid
+  );
 }
 
 
@@ -135,11 +156,13 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
   _globalTimestepEndTime(masterThread._globalTimestepEndTime),
   _domainOffset(masterThread._domainOffset),
   _domainSize(masterThread._domainSize),
+  _subgridStatistics(masterThread._globalTimestepEndTime),
   _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
   _probeList(masterThread._probeList),
   _useDimensionalSplittingExtrapolation(masterThread._useDimensionalSplittingExtrapolation),
-  _subgridStatistics(masterThread._subgridStatistics),
   _collectSubgridStatistics(masterThread._collectSubgridStatistics),
+  _correctFluxes(masterThread._correctFluxes),
+  _estimatedRemainingIterationsUntilGlobalTimestep(masterThread._estimatedRemainingIterationsUntilGlobalTimestep),
   _workerIterations(masterThread._workerIterations)
 {
   logTraceIn( "SolveTimestep(SolveTimestep)" );
@@ -151,9 +174,9 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
 void peanoclaw::mappings::SolveTimestep::mergeWithWorkerThread(const SolveTimestep& workerThread) {
   logTraceIn( "mergeWithWorkerThread(SolveTimestep)" );
 
-  if(_collectSubgridStatistics) {
+//  if(_collectSubgridStatistics) {
     _subgridStatistics.merge(workerThread._subgridStatistics);
-  }
+//  }
 
   logTraceOut( "mergeWithWorkerThread(SolveTimestep)" );
 }
@@ -612,6 +635,13 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
           fineGridVertices,
           fineGridVerticesEnumerator
         );
+
+        //TODO unterweg
+//        if(tarch::la::equals(subgrid.getPosition(), tarch::la::Vector<DIMENSIONS,double>(0.0))
+//          || tarch::la::equals(subgrid.getPosition(), tarch::la::Vector<DIMENSIONS,double>(2.0/3.0))
+//        ) {
+//          std::cout << subgrid << std::endl << subgrid.toStringUOldWithGhostLayer() << std::endl;
+//        }
 
         // Do one timestep...
         _numerics->solveTimestep(

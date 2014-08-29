@@ -15,7 +15,7 @@ peano::CommunicationSpecification   peanoclaw::mappings::Plot::communicationSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -23,7 +23,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexLastTimeSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -31,7 +31,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::touchVertexFirstTimeSpe
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -39,7 +39,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::enterCellSpecification(
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -47,7 +47,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::leaveCellSpecification(
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -55,7 +55,7 @@ peano::MappingSpecification   peanoclaw::mappings::Plot::ascendSpecification() {
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Plot::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -77,11 +77,14 @@ peanoclaw::mappings::Plot::~Plot() {
 
 #if defined(SharedMemoryParallelisation)
 peanoclaw::mappings::Plot::Plot(const Plot&  masterThread)
- : _nextPlotNumber(masterThread._nextPlotNumber)
+ : _nextPlotNumber(masterThread._nextPlotNumber),
+   _gridPlotter(masterThread._gridPlotter)
 {
   logTraceIn( "Plot(Plot)" );
-  // @todo Insert your code here
-  assertionFail("Parallel Plotting not supported!");
+//  assertionFail("Parallel Plotting not supported!");
+
+  _integratedQuantities.resize(masterThread._integratedQuantities.size());
+
   logTraceOut( "Plot(Plot)" );
 }
 

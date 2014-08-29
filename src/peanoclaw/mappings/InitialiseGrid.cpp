@@ -34,7 +34,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::touchVertexFi
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -42,7 +42,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::enterCellSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidFineGridRaces);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -50,7 +50,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::leaveCellSpec
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -58,7 +58,7 @@ peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::ascendSpecifi
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::InitialiseGrid::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::AvoidCoarseGridRaces);
+  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::Serial);
 }
 
 
@@ -93,8 +93,8 @@ peanoclaw::mappings::InitialiseGrid::InitialiseGrid(const InitialiseGrid&  maste
    _defaultGhostLayerWidth(masterThread._defaultGhostLayerWidth),
    _initialTimestepSize(masterThread._initialTimestepSize),
    _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
-   _numerics(masterThread._numerics) //,
-//   _refinementTriggered(masterThread._refinementTriggered)
+   _numerics(masterThread._numerics),
+   _refinementCriterionEnabled(masterThread._refinementCriterionEnabled)
 {
   logTraceIn( "InitialiseGrid(InitialiseGrid)" );
   // @todo Insert your code here

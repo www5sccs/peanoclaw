@@ -19,6 +19,7 @@
 #include <iomanip>
 
 tarch::logging::Log peanoclaw::statistics::SubgridStatistics::_log("peanoclaw::statistics::SubgridStatistics");
+tarch::multicore::BooleanSemaphore peanoclaw::statistics::SubgridStatistics::_heapSemaphore;
 
 bool peanoclaw::statistics::smaller(
   const ProcessStatisticsEntry& entry1,
@@ -28,7 +29,7 @@ bool peanoclaw::statistics::smaller(
 }
 
 void peanoclaw::statistics::SubgridStatistics::initializeLevelAndProcessStatistics() {
-#if !defined(SharedTBB)
+  tarch::multicore::Lock lock(_heapSemaphore);
   _levelStatisticsIndex = LevelStatisticsHeap::getInstance().createData();
 
   _processStatisticsIndex = ProcessStatisticsHeap::getInstance().createData();
@@ -45,7 +46,6 @@ void peanoclaw::statistics::SubgridStatistics::initializeLevelAndProcessStatisti
 
   //TODO unterweg debug
 //  std::cout << "Initialized subgrid statistics levelStatisticsIndex=" << _levelStatisticsIndex << ", _processStatisticsIndex=" << _processStatisticsIndex << std::endl;
-#endif
 }
 
 void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
@@ -87,20 +87,17 @@ void peanoclaw::statistics::SubgridStatistics::logStatistics() const {
 }
 
 void peanoclaw::statistics::SubgridStatistics::addLevelToLevelStatistics(int level, std::vector<LevelStatistics>& levelStatistics) {
-#if !defined(SharedTBB)
   while(static_cast<int>(levelStatistics.size()) < level + 1) {
     LevelStatistics levelStatisticsEntry;
     memset(&levelStatisticsEntry, 0, sizeof(LevelStatistics));
     levelStatisticsEntry.setMinimalTimestepSize(std::numeric_limits<double>::max());
     levelStatistics.push_back(levelStatisticsEntry);
   }
-#endif
 }
 
 void peanoclaw::statistics::SubgridStatistics::addSubgridToLevelStatistics(
   const Patch& subgrid
 ) {
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   addLevelToLevelStatistics(subgrid.getLevel(), levelStatistics);
 
@@ -114,7 +111,6 @@ void peanoclaw::statistics::SubgridStatistics::addSubgridToLevelStatistics(
                 estimateRemainingIterationsUntilGlobalSubgrid(subgrid))
     );
   }
-#endif
 }
 
 int peanoclaw::statistics::SubgridStatistics::estimateRemainingIterationsUntilGlobalSubgrid(Patch subgrid) const {
@@ -173,6 +169,28 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics()
 //  std::cout << "processindex=" << _processStatisticsIndex << " size=" << _processStatistics->size() << std::endl;
 }
 
+peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
+  double globalTimestepEndTime
+): _levelStatisticsIndex(-1),
+   _processStatisticsIndex(-1),
+   _minimalPatchIndex(-1),
+   _minimalPatchParentIndex(-1),
+   _minimalPatchTime(std::numeric_limits<double>::max()),
+   _startMaximumLocalTimeInterval(std::numeric_limits<double>::max()),
+   _endMaximumLocalTimeInterval(-std::numeric_limits<double>::max()),
+   _startMinimumLocalTimeInterval(-std::numeric_limits<double>::max()),
+   _endMinimumLocalTimeInterval(std::numeric_limits<double>::max()),
+   _minimalTimestep(std::numeric_limits<double>::max()),
+   _allPatchesEvolvedToGlobalTimestep(true),
+   _averageGlobalTimeInterval(0.0),
+   _globalTimestepEndTime(globalTimestepEndTime),
+   _minimalPatchBlockedDueToCoarsening(false),
+   _minimalPatchBlockedDueToGlobalTimestep(false),
+   _isFinalized(false) {
+    initializeLevelAndProcessStatistics();
+
+}
+
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics(const peanoclaw::State& state)
  : _levelStatisticsIndex(-1),
    //_levelStatistics(0),
@@ -218,12 +236,10 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
     _minimalPatchBlockedDueToGlobalTimestep(false),
     _isFinalized(false) {
   initializeLevelAndProcessStatistics();
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   for(std::vector<LevelStatistics>::const_iterator i = levelStatistics.begin(); i != levelStatistics.end(); i++) {
     levelStatistics.push_back(*i);
   }
-#endif
 
   //TODO unterweg debug
 //  std::cout << "  levelindex=" << _levelStatisticsIndex << " size=" << _levelStatistics->size() << std::endl;
@@ -250,11 +266,10 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
     _isFinalized(false) {
   _levelStatisticsIndex = LevelStatisticsHeap::getInstance().createData();
   _processStatisticsIndex = ProcessStatisticsHeap::getInstance().createData();
-#if !defined(SharedTBB)
+  tarch::multicore::Lock lock(_heapSemaphore);
   LevelStatisticsHeap::getInstance().receiveData(_levelStatisticsIndex, workerRank, 0, 0, peano::heap::MasterWorkerCommunication);
 
   ProcessStatisticsHeap::getInstance().receiveData(_processStatisticsIndex, workerRank, 0, 0, peano::heap::MasterWorkerCommunication);
-#endif
 }
 
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics(SubgridStatistics& other)
@@ -344,8 +359,7 @@ const peanoclaw::statistics::SubgridStatistics& peanoclaw::statistics::SubgridSt
 }
 
 peanoclaw::statistics::SubgridStatistics::~SubgridStatistics() {
-#if !defined(SharedTBB)
-
+  tarch::multicore::Lock lock(_heapSemaphore);
   //TODO unterweg debug
 //  std::cout << "delete   level index=" << _levelStatisticsIndex << " size=" << (_levelStatistics != 0 ? _levelStatistics->size() : -1) << std::endl;
 //  std::cout << "delete process index=" << _processStatisticsIndex << " size=" << (_processStatistics != 0 ? _processStatistics->size() : -1) << std::endl;
@@ -357,7 +371,6 @@ peanoclaw::statistics::SubgridStatistics::~SubgridStatistics() {
   if(_processStatisticsIndex != -1) {
     ProcessStatisticsHeap::getInstance().deleteData(_processStatisticsIndex);
   }
-#endif
 }
 
 void peanoclaw::statistics::SubgridStatistics::processSubgrid(
@@ -388,7 +401,6 @@ void peanoclaw::statistics::SubgridStatistics::processSubgridAfterUpdate(const p
 
   processSubgrid(patch, parentIndex);
  
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   LevelStatistics& level = levelStatistics[patch.getLevel()-1];
   level.setNumberOfCellUpdates(
@@ -407,7 +419,6 @@ void peanoclaw::statistics::SubgridStatistics::processSubgridAfterUpdate(const p
   //TODO unterweg debug
 //  std::cout << "index=" << _processStatisticsIndex << std::endl;
 //  std::cout << _processStatistics->at(0).getNumberOfCellUpdates() << std::endl;
-#endif
 }
 
 void peanoclaw::statistics::SubgridStatistics::updateMinimalSubgridBlockReason(
@@ -458,21 +469,16 @@ void peanoclaw::statistics::SubgridStatistics::finalizeIteration(peanoclaw::Stat
     i->setAverageTimestepSize(i->getAverageTimestepSize() / i->getNumberOfPatches() * i->getNumberOfCells() / i->getNumberOfCellUpdates());
   }
  
-#if !defined(SharedTBB)
   if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
     state.setSubgridStatisticsForLastGridIteration(*this);
   }
-#endif
 
   _isFinalized = true;
 
-#if !defined(SharedTBB)
   logStatistics();
-#endif
 }
 
 void peanoclaw::statistics::SubgridStatistics::logLevelStatistics(std::string description) const {
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   logInfo("logLevelStatistics", description << ": Spacetree height: " <<  levelStatistics.size());
 
@@ -510,12 +516,9 @@ void peanoclaw::statistics::SubgridStatistics::logLevelStatistics(std::string de
     << " Blocking: " << totalBlockedPatchesDueToNeighbors << ", " << totalBlockedPatchesDueToGlobalTimestep
     << ", " << totalSkippingPatches << ", " << totalCoarseningPatches
     );
-#endif
 }
 
 void peanoclaw::statistics::SubgridStatistics::logProcessStatistics(std::string description) const {
-#if !defined(SharedTBB)
-
   //TODO unterweg debug
 //  std::cout << "index=" << _processStatisticsIndex << std::endl;
 
@@ -543,35 +546,29 @@ void peanoclaw::statistics::SubgridStatistics::logProcessStatistics(std::string 
   double imbalance = maximumLocalCellUpdates / averageCellUpdates;
   logInfo("logProcessStatistics(...)", "Workers: " << numberOfWorkers << " Ignored: " << numberOfIgnoredProcesses
       << " Average: " << std::fixed << std::setprecision(2) << averageCellUpdates << " Imbalance: " << imbalance);
-#endif
 }
 
 void peanoclaw::statistics::SubgridStatistics::addBlockedPatchDueToGlobalTimestep(const Patch& subgrid) {
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   addLevelToLevelStatistics(subgrid.getLevel(), levelStatistics);
   levelStatistics[subgrid.getLevel() - 1].setPatchesBlockedDueToGlobalTimestep(
       levelStatistics[subgrid.getLevel() - 1].getPatchesBlockedDueToGlobalTimestep() + 1
   );
-#endif
 }
+
 void peanoclaw::statistics::SubgridStatistics::addBlockedPatchDueToNeighborTimeConstraint(const Patch& subgrid) {
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   addLevelToLevelStatistics(subgrid.getLevel(), levelStatistics);
   levelStatistics[subgrid.getLevel() - 1].setPatchesBlockedDueToNeighbors(
       levelStatistics[subgrid.getLevel() - 1].getPatchesBlockedDueToNeighbors() + 1
   );
-#endif
 }
 void peanoclaw::statistics::SubgridStatistics::addBlockedPatchDueToSkipIteration(const Patch& subgrid) {
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   addLevelToLevelStatistics(subgrid.getLevel(), levelStatistics);
   levelStatistics[subgrid.getLevel() - 1].setPatchesSkippingIteration(
       levelStatistics[subgrid.getLevel() - 1].getPatchesSkippingIteration() + 1
   );
-#endif
 }
 void peanoclaw::statistics::SubgridStatistics::addBlockedPatchDueToCoarsening(const Patch& subgrid) {
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
@@ -598,7 +595,6 @@ void peanoclaw::statistics::SubgridStatistics::merge(const SubgridStatistics& su
   _allPatchesEvolvedToGlobalTimestep &= subgridStatistics._allPatchesEvolvedToGlobalTimestep;
   _averageGlobalTimeInterval         = (_averageGlobalTimeInterval + subgridStatistics._averageGlobalTimeInterval) / 2.0;
 
-#if !defined(SharedTBB)
   //Level statistics
   std::vector<LevelStatistics>& otherLevelStatistics = LevelStatisticsHeap::getInstance().getData(subgridStatistics._levelStatisticsIndex);
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
@@ -662,11 +658,9 @@ void peanoclaw::statistics::SubgridStatistics::merge(const SubgridStatistics& su
 //    std::cout << own->getRank() << " ";
 //  }
 //  std::cout << std::endl;
-#endif
 }
 
 void peanoclaw::statistics::SubgridStatistics::averageTotalSimulationValues(int numberOfEntries) {
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   for(int i = 0; i < (int)levelStatistics.size(); i++) {
     LevelStatistics& level = levelStatistics[i];
@@ -674,12 +668,10 @@ void peanoclaw::statistics::SubgridStatistics::averageTotalSimulationValues(int 
     level.setNumberOfCells(level.getNumberOfCells() / numberOfEntries);
     level.setNumberOfPatches(level.getNumberOfPatches() / numberOfEntries);
   }
-#endif
 }
 
 #ifdef Parallel
 void peanoclaw::statistics::SubgridStatistics::sendToMaster(int masterRank) {
-#if !defined(SharedTBB)
   LevelStatisticsHeap::getInstance().sendData(
     _levelStatisticsIndex,
     masterRank,
@@ -694,17 +686,14 @@ void peanoclaw::statistics::SubgridStatistics::sendToMaster(int masterRank) {
     0,
     peano::heap::MasterWorkerCommunication
   );
-#endif
 }
 
 int peanoclaw::statistics::SubgridStatistics::getEstimatedIterationsUntilGlobalTimestep() const {
   int maximumEstimationOfLevels = 0;
-#if !defined(SharedTBB)
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   for(std::vector<LevelStatistics>::iterator i = levelStatistics.begin(); i != levelStatistics.end(); i++) {
     maximumEstimationOfLevels = std::max(maximumEstimationOfLevels, i->getEstimatedNumberOfRemainingIterationsToGlobalTimestep());
   }
-#endif
   return maximumEstimationOfLevels;
 }
 

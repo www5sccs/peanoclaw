@@ -16,6 +16,8 @@
 #include "peano/grid/VertexEnumerator.h"
 
 #include "tarch/logging/Log.h"
+#include "tarch/multicore/BooleanSemaphore.h"
+#include "tarch/multicore/Lock.h"
 
 namespace peanoclaw {
 
@@ -31,12 +33,22 @@ namespace peanoclaw {
   }
 }
 
+/**
+ *
+ * ! Shared-Memory Parallelization
+ * This class is used in the SolveTimestep Mapping. The parallelization idea is that every copy of
+ * the mapping creates an own copy of the SubgridStatistics and works soley on this.
+ * Finally, all these objects are merged together. Hence, only the creation of the heap data
+ * has to be synchronized. The work on a single heap entry can be done in parallel as only one
+ * mapping copy can access one entry at a time.
+ */
 class peanoclaw::statistics::SubgridStatistics {
   private:
     /**
      * Logging device.
      */
     static tarch::logging::Log _log;
+    static tarch::multicore::BooleanSemaphore _heapSemaphore;
     typedef peanoclaw::records::CellDescription CellDescription;
     typedef peanoclaw::statistics::LevelStatistics LevelStatistics;
     typedef peanoclaw::statistics::ProcessStatisticsEntry ProcessStatisticsEntry;
@@ -104,10 +116,16 @@ class peanoclaw::statistics::SubgridStatistics {
 
   public:
     /**
-     * Default destructor. Objects build with this constructor
+     * Default constructor. Objects build with this constructor
      * should not be used.
      */
     SubgridStatistics();
+
+    /**
+     * Constructor for creating copies of a SubgridStatistics object
+     * for shared-memory parallelization
+     */
+    SubgridStatistics(double globalTimestepEndTime);
 
     /**
      * Constructor to instantiate a new statistics object.
