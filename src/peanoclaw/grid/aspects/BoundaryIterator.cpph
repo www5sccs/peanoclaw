@@ -1,0 +1,45 @@
+/*
+ * BoundaryIterator.cpph
+ *
+ *  Created on: Aug 26, 2014
+ *      Author: kristof
+ */
+
+
+template<class BoundaryCondition>
+peanoclaw::grid::aspects::BoundaryIterator<BoundaryCondition>::BoundaryIterator(
+  BoundaryCondition& boundaryCondition
+) : _boundaryCondition(boundaryCondition) {
+}
+
+template<class BoundaryCondition>
+void peanoclaw::grid::aspects::BoundaryIterator<BoundaryCondition>::iterate(
+  peanoclaw::Patch& subgrid,
+  peanoclaw::grid::SubgridAccessor& accessor,
+  int dimension,
+  bool setUpper
+) {
+  tarch::la::Vector<2,int> faceSize;
+  tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = subgrid.getSubdivisionFactor();
+  int ghostlayerWidth = subgrid.getGhostlayerWidth();
+  assignList(faceSize) = subgrid.getSubdivisionFactor()[(dimension+1) % DIMENSIONS], subgrid.getSubdivisionFactor()[(dimension+2) % DIMENSIONS];
+
+  for(int i1 = -ghostlayerWidth; i1 < faceSize[1] + ghostlayerWidth; i1++) {
+    for(int i0 = -ghostlayerWidth; i0 < faceSize[0] + ghostlayerWidth; i0++) {
+      for(int g = 1; g <= ghostlayerWidth; g++) {
+        tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex;
+        tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex;
+        destinationSubcellIndex[dimension] = setUpper ? subgrid.getSubdivisionFactor()[dimension] - 1 + g : -g;
+        destinationSubcellIndex[(dimension+1) % DIMENSIONS] = i0;
+        destinationSubcellIndex[(dimension+2) % DIMENSIONS] = i1;
+        sourceSubcellIndex = destinationSubcellIndex;
+        sourceSubcellIndex[dimension] = setUpper ? subgrid.getSubdivisionFactor()[dimension] - g : g-1;
+
+        _boundaryCondition.setBoundaryCondition(subgrid, accessor, dimension, setUpper, sourceSubcellIndex, destinationSubcellIndex);
+      }
+    }
+  }
+}
+
+
+

@@ -82,7 +82,7 @@ void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(Patch& subgrid, do
   double cfl;
   double maximalCFL = 0.1;
   do {
-    logInfo("solveTimestep(...)", "Solving timestep with dt=" << estimatedDt);
+    logDebug("solveTimestep(...)", "Solving timestep with dt=" << estimatedDt);
     double maxLambda = computeTimestep(estimatedDt, subgrid, cellsUNew, cellsUOld);
     dt = estimatedDt;
     cfl = dt * maxLambda / tarch::la::min(subgrid.getSubcellSize());
@@ -90,7 +90,7 @@ void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(Patch& subgrid, do
     assertion(tarch::la::greaterEquals(dt, 0.0));
 
     //TODO unterweg debug
-    std::cout << "maxLambda=" << maxLambda << " cfl=" << cfl << std::endl;
+//    std::cout << "maxLambda=" << maxLambda << " cfl=" << cfl << std::endl;
   } while(tarch::la::greater(cfl, maximalCFL));
 
   //Copy changes back
@@ -159,7 +159,7 @@ double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
 //        peanoclaw::solver::euler3d::Cell& rightCell = cellsUOld[linearUOldIndex+xyPlane];
 
         //TODO unterweg debug
-        bool plot = (x > 3 && x < 6) && (y > 3 && y < 6) && (z > 3 && z < 6);
+        bool plot = false; //(x > 3 && x < 6) && (y > 3 && y < 6) && (z > 3 && z < 6);
         if(plot) {
           std::cout << x << ", " << y << ", " << z << std::endl;
           std::cout << "left: density=" << leftCell.density() << ", momentum=" << leftCell.velocity()(0) << "," << leftCell.velocity()(1) << "," << leftCell.velocity()(2) << ", energy=" << leftCell.energy() << std::endl;
@@ -206,10 +206,10 @@ double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
   }
 
   //TODO unterweg debug
-  assertionFail("");
+//  assertionFail("");
 
   //TODO unterweg debug
-  std::cout << "max soundspeed=" << maxSoundspeed << std::endl;
+//  std::cout << "max soundspeed=" << maxSoundspeed << std::endl;
 
   return maxLambda;
 }

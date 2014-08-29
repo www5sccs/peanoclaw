@@ -62,8 +62,6 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::CalmOcean::co
   return _demandedMeshWidth;
 }
 
-void update(peanoclaw::Patch& patch) {}
-
 //PeanoClaw-Scenario
 tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::CalmOcean::getDomainOffset() const {
   return 0;
