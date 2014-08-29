@@ -12,12 +12,16 @@ namespace peanoclaw {
   namespace solver {
     namespace euler3d {
       class Euler3DKernel;
+      class ExtrapolateBoundaryCondition;
     }
   }
 }
 
+#include "peanoclaw/solver/euler3d/Cell.h"
+
 #include "peanoclaw/Numerics.h"
 #include "peanoclaw/native/scenarios/SWEScenario.h"
+#include "peanoclaw/grid/SubgridAccessor.h"
 
 class peanoclaw::solver::euler3d::Euler3DKernel : public peanoclaw::Numerics {
   private:
@@ -78,7 +82,7 @@ class peanoclaw::solver::euler3d::Euler3DKernel : public peanoclaw::Numerics {
     /**
      * @see peanoclaw::Numerics
      */
-    int getNumberOfUnknownsPerCell() const { return 4; }
+    int getNumberOfUnknownsPerCell() const { return NUMBER_OF_EULER_UNKNOWNS; }
 
     int getNumberOfParameterFieldsWithoutGhostlayer() const { return 0; }
 
@@ -88,7 +92,25 @@ class peanoclaw::solver::euler3d::Euler3DKernel : public peanoclaw::Numerics {
      * @see peanoclaw::Numerics
      */
     int getGhostlayerWidth() const { return 1; }
+
+    double computeTimestep(
+      double dt,
+      peanoclaw::Patch& subgrid,
+      std::vector<peanoclaw::solver::euler3d::Cell>& cellsUNew,
+      std::vector<peanoclaw::solver::euler3d::Cell>& cellsUOld
+    );
 };
 
+class peanoclaw::solver::euler3d::ExtrapolateBoundaryCondition {
+  public:
+    void setBoundaryCondition(
+      peanoclaw::Patch& subgrid,
+      peanoclaw::grid::SubgridAccessor& accessor,
+      int dimension,
+      bool setUpper,
+      tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex,
+      tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex
+    );
+};
 
 #endif /* PEANOCLAW_SOLVER_EULER3D_EULER3DKERNEL_H_ */

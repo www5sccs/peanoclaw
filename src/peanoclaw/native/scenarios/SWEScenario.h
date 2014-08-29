@@ -19,6 +19,10 @@
 namespace peanoclaw {
   class Patch;
 
+  namespace grid {
+    class SubgridAccessor;
+  }
+
   namespace native {
     namespace scenarios {
       class SWEScenario;
@@ -47,6 +51,15 @@ public:
     virtual void initializePatch(Patch& patch) = 0;
     virtual tarch::la::Vector<DIMENSIONS,double> computeDemandedMeshWidth(Patch& patch, bool isInitializing) = 0;
     virtual void update(Patch& patch) = 0;
+
+    virtual void setBoundaryCondition(
+      peanoclaw::Patch& subgrid,
+      peanoclaw::grid::SubgridAccessor& accessor,
+      int dimension,
+      bool setUpper,
+      tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex,
+      tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex
+    ) {}
 
     virtual tarch::la::Vector<DIMENSIONS,double> getDomainOffset() const = 0;
     virtual tarch::la::Vector<DIMENSIONS,double> getDomainSize() const = 0;

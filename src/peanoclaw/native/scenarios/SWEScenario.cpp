@@ -14,6 +14,7 @@
 #include "peanoclaw/native/scenarios/ShockBubble.h"
 
 #include "peanoclaw/Patch.h"
+#include "peanoclaw/grid/SubgridAccessor.h"
 
 tarch::logging::Log peanoclaw::native::scenarios::SWEScenario::_log("peanoclaw::native::scenarios::SWEScenario");
 

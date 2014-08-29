@@ -30,6 +30,13 @@ private:
   double                                _globalTimestepSize;
   double                                _endTime;
 
+  static double _rhoOutside;
+  static double _rhoInside;
+  static double _gamma;
+  static double _bubbleRadius;
+  static double _shockX;
+  static double _pInflow;
+
 public:
     ShockBubble(
       const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
@@ -55,6 +62,15 @@ public:
     tarch::la::Vector<DIMENSIONS,int>    getSubdivisionFactor() const;
     double                               getGlobalTimestepSize() const;
     double                               getEndTime() const;
+
+    void setBoundaryCondition(
+      peanoclaw::Patch& subgrid,
+      peanoclaw::grid::SubgridAccessor& accessor,
+      int dimension,
+      bool setUpper,
+      tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex,
+      tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex
+    );
 
     //pure SWE-Scenario
 //    virtual float getWaterHeight(float x, float y);
