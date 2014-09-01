@@ -7,6 +7,9 @@
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 #include "tarch/parallel/Node.h"
+#include "tarch/multicore/Lock.h"
+
+#include <pthread.h>
 
 /**
  * @todo Please tailor the parameters to your mapping's properties.
@@ -592,6 +595,10 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
   logTraceInWith4Arguments( "enterCell(...)", fineGridCell, fineGridVerticesEnumerator.toString(), coarseGridCell, fineGridPositionOfCell );
 
   if(fineGridCell.isInside()) {
+    #ifdef SharedTBB
+    logInfo("enterCell(...)", "TBB: enterCell on thread " << pthread_self());
+    #endif
+
     //Create patch
     Patch subgrid (
       fineGridCell

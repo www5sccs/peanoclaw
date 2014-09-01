@@ -56,6 +56,12 @@ private:
     bool              absoluteToAboveSeaFloor
   ) const;
 
+  void advanceBlockInTime(
+    SWE_WavePropagationBlock_patch& block,
+    peanoclaw::Patch& subgrid,
+    double maximumTimestepSize
+  );
+
 public:
   SWEKernel(
     peanoclaw::native::scenarios::SWEScenario& scenario,

@@ -44,7 +44,12 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     std::vector<peanoclaw::statistics::Probe> _probes;
 
-    std::string getBoolValue(std::stringstream& s);
+    int _numberOfThreads;
+
+    //Utilities
+    bool getBoolValue(std::stringstream& s);
+
+    int getIntegerValue(std::stringstream& s);
 
     void addProbe(std::stringstream& values);
 
@@ -97,6 +102,11 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
      * Returns the list of probes.
      */
     std::vector<peanoclaw::statistics::Probe> getProbeList() const;
+
+    /**
+     * Returns the number of threads that should be used for shared memory parallelization.
+     */
+    int getNumberOfThreads() const;
 };
 
 

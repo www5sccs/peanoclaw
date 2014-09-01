@@ -46,6 +46,44 @@ void peanoclaw::native::SWEKernel::transformWaterHeight(
   }
 }
 
+void peanoclaw::native::SWEKernel::advanceBlockInTime(
+  SWE_WavePropagationBlock_patch& block,
+  peanoclaw::Patch& subgrid,
+  double maximumTimestepSize
+) {
+  block.setArrays(
+        subgrid,
+        reinterpret_cast<float*>(subgrid.getUOldWithGhostlayerArray(0)),
+        reinterpret_cast<float*>(subgrid.getUOldWithGhostlayerArray(1)),
+        reinterpret_cast<float*>(subgrid.getUOldWithGhostlayerArray(2)),
+        reinterpret_cast<float*>(subgrid.getParameterWithoutGhostlayerArray(0))
+      );
+
+  block.computeNumericalFluxes();
+
+  double dt = fmin(block.getMaxTimestep(), maximumTimestepSize);
+  double estimatedNextTimestepSize = block.getMaxTimestep();
+
+  block.updateUnknowns(dt);
+
+  peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
+  transfer.swapUNewAndUOld(subgrid);
+
+  assertion4(
+      tarch::la::greater(subgrid.getTimeIntervals().getTimestepSize(), 0.0)
+      || tarch::la::greater(estimatedNextTimestepSize, 0.0)
+      || tarch::la::equals(maximumTimestepSize, 0.0)
+      || tarch::la::equals(subgrid.getTimeIntervals().getEstimatedNextTimestepSize(), 0.0),
+      subgrid, maximumTimestepSize, estimatedNextTimestepSize, subgrid.toStringUNew());
+  assertion(subgrid.getTimeIntervals().getTimestepSize() < std::numeric_limits<double>::infinity());
+
+  if (tarch::la::greater(dt, 0.0)) {
+    subgrid.getTimeIntervals().advanceInTime();
+    subgrid.getTimeIntervals().setTimestepSize(dt);
+  }
+  subgrid.getTimeIntervals().setEstimatedNextTimestepSize(estimatedNextTimestepSize);
+}
+
 peanoclaw::native::SWEKernel::SWEKernel(
   peanoclaw::native::scenarios::SWEScenario& scenario,
   peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
@@ -86,49 +124,36 @@ void peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumTim
 
   assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getTimeIntervals().getMinimalNeighborTimeConstraint());
 
-  tarch::timing::Watch pyclawWatch("", "", false);
-  pyclawWatch.startTimer();
+  tarch::timing::Watch solverWatch("", "", false);
+  solverWatch.startTimer();
 
-  if(_cachedSubdivisionFactor != patch.getSubdivisionFactor() || _cachedGhostlayerWidth != patch.getGhostlayerWidth()) {
+  #ifdef SharedMemoryParallelisation
+  SWE_WavePropagationBlock_patch block(patch);
+  advanceBlockInTime(
+    block,
+    patch,
+    maximumTimestepSize
+  );
+  #else
+  if(
+    _cachedSubdivisionFactor != patch.getSubdivisionFactor()
+    || _cachedGhostlayerWidth != patch.getGhostlayerWidth()
+  ) {
     //SWE_WavePropagationBlock_patch swe(patch);
     _cachedBlock = std::auto_ptr<SWE_WavePropagationBlock_patch>(new SWE_WavePropagationBlock_patch(patch));
     _cachedSubdivisionFactor = patch.getSubdivisionFactor();
     _cachedGhostlayerWidth = patch.getGhostlayerWidth();
   }
-  _cachedBlock->setArrays(
-        patch,
-        reinterpret_cast<float*>(patch.getUOldWithGhostlayerArray(0)),
-        reinterpret_cast<float*>(patch.getUOldWithGhostlayerArray(1)),
-        reinterpret_cast<float*>(patch.getUOldWithGhostlayerArray(2)),
-        reinterpret_cast<float*>(patch.getParameterWithoutGhostlayerArray(0))
-      );
 
-  _cachedBlock->computeNumericalFluxes();
+  advanceBlockInTime(
+    *_cachedBlock,
+    patch,
+    maximumTimestepSize
+  );
+  #endif
 
-  double dt = fmin(_cachedBlock->getMaxTimestep(), maximumTimestepSize);
-  double estimatedNextTimestepSize = _cachedBlock->getMaxTimestep();
-
-  _cachedBlock->updateUnknowns(dt);
-
-  peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
-  transfer.swapUNewAndUOld(patch);
-
-  pyclawWatch.stopTimer();
-  _totalSolverCallbackTime += pyclawWatch.getCalendarTime();
-
-  assertion4(
-      tarch::la::greater(patch.getTimeIntervals().getTimestepSize(), 0.0)
-      || tarch::la::greater(estimatedNextTimestepSize, 0.0)
-      || tarch::la::equals(maximumTimestepSize, 0.0)
-      || tarch::la::equals(patch.getTimeIntervals().getEstimatedNextTimestepSize(), 0.0),
-      patch, maximumTimestepSize, estimatedNextTimestepSize, patch.toStringUNew());
-  assertion(patch.getTimeIntervals().getTimestepSize() < std::numeric_limits<double>::infinity());
-
-  if (tarch::la::greater(dt, 0.0)) {
-    patch.getTimeIntervals().advanceInTime();
-    patch.getTimeIntervals().setTimestepSize(dt);
-  }
-  patch.getTimeIntervals().setEstimatedNextTimestepSize(estimatedNextTimestepSize);
+  solverWatch.stopTimer();
+  _totalSolverCallbackTime += solverWatch.getCalendarTime();
 
   logTraceOut( "solveTimestep(...)");
 }

@@ -76,7 +76,9 @@ private:
   /**
    * Initializes the MPI environment
    */
-  void initializeParallelEnvironment();
+  void initializeParallelEnvironment(
+      int numberOfThreads
+  );
  
   void iterateRemesh();
 

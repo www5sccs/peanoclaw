@@ -16,10 +16,10 @@
 #include "peano/heap/Heap.h"
 #include "peano/utils/Loop.h"
 
+tarch::logging::Log peanoclaw::Patch::_log("peanoclaw::Patch");
+
 //#define PATCH_VALUE_FORMAT std::setprecision(2) << std::scientific
 #define PATCH_VALUE_FORMAT std::setprecision(3)
-
-tarch::logging::Log peanoclaw::Patch::_log("peanoclaw::Patch");
 
 void peanoclaw::Patch::fillCaches() {
   #ifdef PEANOCLAW_SWE
@@ -545,16 +545,16 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
           assignList(subcellIndex) = x, y, z;
           str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 0) << " ";
         }
-//        if (_cellDescription->getUnknownsPerSubcell() > 1) {
-//          str << "\t";
-//          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
-//            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-//            assignList(subcellIndex) = x, y, z;
-//            str << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 1) << ","
-//                << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 2) << ","
-//                << PATCH_VALUE_FORMAT << getValueUOld(subcellIndex, 3) << " ";
-//          }
-//        }
+        if (_cellDescription->getUnknownsPerSubcell() > 1) {
+          str << "\t";
+          for (int x = 0; x < getSubdivisionFactor()(0); x++) {
+            tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+            assignList(subcellIndex) = x, y, z;
+            str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 1) << ","
+                << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 2) << ","
+                << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 3) << " ";
+          }
+        }
         str << std::endl;
       }
       str << "\n" << "\n";

@@ -58,7 +58,9 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializePeano(
   assertionEquals(DataHeap::getInstance().getNumberOfAllocatedEntries(), 0);
 }
 
-void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment() {
+void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment(
+  int numberOfThreads
+) {
   //Distributed Memory
   #if defined(Parallel)
 //  tarch::parallel::Node::getInstance().setTimeOutWarning(4500);
@@ -81,8 +83,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment()
 
   //Shared Memory
   #ifdef SharedTBB
-  std::cout << "configuring multicore" << std::endl;
-  tarch::multicore::Core::getInstance().configure(8);
+//  std::cout << "configuring multicore" << std::endl;
+  tarch::multicore::Core::getInstance().configure(numberOfThreads);
   peano::datatraversal::autotuning::Oracle::getInstance().setOracle( new peano::datatraversal::autotuning::OracleForOnePhaseDummy(
     true, // multithreading
     false,
@@ -195,7 +197,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   userInterface.writeHeader();
 
   initializePeano(domainOffset, domainSize);
-  initializeParallelEnvironment();
+  initializeParallelEnvironment(_configuration.getNumberOfThreads());
 
   //Initialize pseudo geometry (Has to be done after initializeParallelEnvironment()
   _geometry =

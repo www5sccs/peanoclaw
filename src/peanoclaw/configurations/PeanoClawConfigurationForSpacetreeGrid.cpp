@@ -7,10 +7,16 @@
 
 tarch::logging::Log peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::_log("peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid");
 
-std::string peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getBoolValue(std::stringstream& s) {
+bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getBoolValue(std::stringstream& s) {
   std::string value;
   s >> value;
   assert(value == "yes" || value == "no");
+  return value == "yes";
+}
+
+int peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getIntegerValue(std::stringstream& s) {
+  int value;
+  s >> value;
   return value;
 }
 
@@ -34,17 +40,19 @@ void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::processE
 ) {
 
   if(name == "plot" || name == "plotAtOutputTimes") {
-    _plotAtOutputTimes = (getBoolValue(values) == "yes");
+    _plotAtOutputTimes = getBoolValue(values);
   } else if(name == "plotAtEnd") {
-    _plotAtEndTime = (getBoolValue(values) == "yes");
+    _plotAtEndTime = getBoolValue(values);
   } else if(name == "plotAtSubsteps") {
-    _plotSubsteps = (getBoolValue(values) == "yes");
+    _plotSubsteps = getBoolValue(values);
   } else if(name == "restrictStatistics") {
-    _restrictStatistics = (getBoolValue(values) == "yes");
+    _restrictStatistics = getBoolValue(values);
   } else if(name == "fluxCorrection") {
-    _fluxCorrection = (getBoolValue(values) == "yes");
+    _fluxCorrection = getBoolValue(values);
   } else if(name == "probe") {
     addProbe(values);
+  } else if(name == "numberOfThreads") {
+    _numberOfThreads = getIntegerValue(values);
   } else {
     _isValid = false;
     logError("processEntry(string,string)", "Invalid entry: '" << name << "' '" << values << "'");
@@ -74,7 +82,8 @@ peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::PeanoClawConf
   _additionalLevelsForPredefinedRefinement(1),
   _disableDimensionalSplittingOptimization(false),
   _restrictStatistics(true),
-  _fluxCorrection(false)
+  _fluxCorrection(false),
+  _numberOfThreads(1)
   {
   std::string configFileName = "peanoclaw.config";
   std::ifstream configFile(configFileName.c_str());
@@ -136,4 +145,8 @@ bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::enableFl
 
 std::vector<peanoclaw::statistics::Probe> peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getProbeList() const {
   return _probes;
+}
+
+int peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getNumberOfThreads() const {
+  return _numberOfThreads;
 }

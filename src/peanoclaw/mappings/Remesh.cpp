@@ -10,6 +10,7 @@
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
 
+#include "tarch/multicore/Lock.h"
 #include "tarch/parallel/Node.h"
 
 /**
@@ -28,7 +29,10 @@ tarch::timing::Watch peanoclaw::mappings::Remesh::_spacetreeCommunicationWaiting
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::AvoidFineGridRaces
+  );
 }
 
 
@@ -36,7 +40,10 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexLastTimeSp
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification() { 
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::AvoidFineGridRaces
+  );
 }
 
 
@@ -66,7 +73,10 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::leaveCellSpecificatio
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::ascendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::AvoidCoarseGridRaces
+  );
 }
 
 
@@ -74,7 +84,10 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::ascendSpecification()
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::MappingSpecification   peanoclaw::mappings::Remesh::descendSpecification() {
-  return peano::MappingSpecification(peano::MappingSpecification::WholeTree,peano::MappingSpecification::RunConcurrentlyOnFineGrid);
+  return peano::MappingSpecification(
+    peano::MappingSpecification::WholeTree,
+    peano::MappingSpecification::AvoidCoarseGridRaces
+  );
 }
 
 tarch::logging::Log                peanoclaw::mappings::Remesh::_log( "peanoclaw::mappings::Remesh" );
