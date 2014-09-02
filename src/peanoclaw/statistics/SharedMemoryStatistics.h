@@ -35,6 +35,11 @@ class peanoclaw::statistics::SharedMemoryStatistics {
 
     std::map<unsigned long int, double> _cellUpdatesPerThread;
 
+    void addCellUpdatesForThread(
+      double cellUpdates,
+      unsigned long int threadID
+    );
+
   public:
     SharedMemoryStatistics();
     ~SharedMemoryStatistics();
@@ -44,6 +49,11 @@ class peanoclaw::statistics::SharedMemoryStatistics {
     );
 
     void logStatistics() const;
+
+    /**
+     * Merge another statistics object into this.
+     */
+    void merge(const SharedMemoryStatistics& statistics);
 };
 
 

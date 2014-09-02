@@ -164,6 +164,7 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
   _collectSubgridStatistics(masterThread._collectSubgridStatistics),
   _correctFluxes(masterThread._correctFluxes),
   _estimatedRemainingIterationsUntilGlobalTimestep(masterThread._estimatedRemainingIterationsUntilGlobalTimestep),
+  _sharedMemoryStatistics(),
   _workerIterations(masterThread._workerIterations)
 {
   logTraceIn( "SolveTimestep(SolveTimestep)" );
@@ -175,9 +176,8 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
 void peanoclaw::mappings::SolveTimestep::mergeWithWorkerThread(const SolveTimestep& workerThread) {
   logTraceIn( "mergeWithWorkerThread(SolveTimestep)" );
 
-//  if(_collectSubgridStatistics) {
-    _subgridStatistics.merge(workerThread._subgridStatistics);
-//  }
+  _subgridStatistics.merge(workerThread._subgridStatistics);
+  _sharedMemoryStatistics.merge(workerThread._sharedMemoryStatistics);
 
   logTraceOut( "mergeWithWorkerThread(SolveTimestep)" );
 }
@@ -877,6 +877,7 @@ void peanoclaw::mappings::SolveTimestep::endIteration(
   logTraceInWith1Argument( "endIteration(State)", solverState );
  
   _subgridStatistics.finalizeIteration(solverState);
+  _sharedMemoryStatistics.logStatistics();
 
   LevelStatisticsHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
   TimeIntervalStatisticsHeap::getInstance().finishedToSendBoundaryData(solverState.isTraversalInverted());
