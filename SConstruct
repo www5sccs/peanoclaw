@@ -133,7 +133,14 @@ elif multicore == 'tbb':
    libs.append('pthread')
    libs.append('dl')
    # Determine tbb directory and architecture from environment variables:
-   tbbDir = os.getenv ('TBB_DIR')
+   tbbBase = os.getenv ('TBB_BASE')
+   if tbbBase == None:
+     tbbBase = '/usr'
+   cpppath.append(join(tbbBase, 'include'))
+   tbbLibDir = os.getenv('TBB_LIBDIR')
+   if tbbLibDir == None:
+     tbbLibDir = '/usr/lib'
+   libpath.append(tbbLibDir)
           
    libs.append ('tbb')
 
