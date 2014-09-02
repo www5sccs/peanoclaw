@@ -18,6 +18,7 @@
 #include "peanoclaw/State.h"
 #include "peanoclaw/statistics/LevelStatistics.h"
 #include "peanoclaw/statistics/SubgridStatistics.h"
+#include "peanoclaw/statistics/SharedMemoryStatistics.h"
 
 #include <map>
 
@@ -58,6 +59,8 @@ class peanoclaw::mappings::SolveTimestep {
     tarch::la::Vector<DIMENSIONS, double> _domainSize;
 
     peanoclaw::statistics::SubgridStatistics _subgridStatistics;
+
+    peanoclaw::statistics::SharedMemoryStatistics _sharedMemoryStatistics;
 
     tarch::la::Vector<DIMENSIONS, double> _initialMaximalSubgridSize;
 

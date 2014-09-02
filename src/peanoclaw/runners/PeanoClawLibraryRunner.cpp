@@ -175,6 +175,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
   double initialTimestepSize,
   bool useDimensionalSplittingExtrapolation,
+  int numberOfThreads,
   bool reduceReductions,
   int  forkLevelIncrement,
   const std::string& plotName
@@ -197,7 +198,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   userInterface.writeHeader();
 
   initializePeano(domainOffset, domainSize);
-  initializeParallelEnvironment(_configuration.getNumberOfThreads());
+  initializeParallelEnvironment(numberOfThreads > 0 ? numberOfThreads : _configuration.getNumberOfThreads());
 
   //Initialize pseudo geometry (Has to be done after initializeParallelEnvironment()
   _geometry =

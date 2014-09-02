@@ -12,6 +12,7 @@
 #include "peano/peano.h"
 
 #include <list>
+#include <vector>
 
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/Numerics.h"
@@ -69,32 +70,31 @@ void initializeLogFilter() {
   tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
 }
 
-int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string& plotName) {
-  //Optional arguments
+int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string& plotName, int& numberOfThreads) {
   int remaining = argc;
-  std::string defaultPlotName = "adaptive";
+
+  //Default values
   usePeanoClaw = false;
-  if (argc == 1) {
-    usePeanoClaw = true;
-    plotName = defaultPlotName;
-  } else if (argc == 2) {
-    if(std::string(argv[argc-1]) == "--usePeano") {
+  plotName = "adaptive";
+  numberOfThreads = -1;
+
+  for(int i = 0; i < argc; i++) {
+    std::string key(argv[i]);
+
+    if(key == "--usePeano") {
       usePeanoClaw = true;
-      remaining = argc-1;
+      remaining--;
+    } else if (key == "--plotName") {
+      plotName = argv[i+1];
+      remaining -= 2;
+    } else if (key == "--threads") {
+      std::stringstream s(argv[i+1]);
+      s >> numberOfThreads;
+      remaining -= 2;
     }
-    plotName = defaultPlotName;
-  } else if (argc >= 3) {
-    if(std::string(argv[argc-1]) == "--usePeano") {
-      usePeanoClaw = true;
-      remaining = argc-1;
-    }
-    if(std::string(argv[remaining-2]) == "--plotName") {
-      plotName = std::string(argv[remaining-1]);
-      remaining-=2;
-    } else {
-      plotName = defaultPlotName;
-    }
+
   }
+
   return remaining;
 }
 
@@ -102,7 +102,8 @@ void runSimulation(
   peanoclaw::native::scenarios::SWEScenario& scenario,
   peanoclaw::Numerics& numerics,
   std::string& plotName,
-  bool useCornerExtrapolation
+  bool useCornerExtrapolation,
+  int numberOfThreads
 ) {
   tarch::la::Vector<DIMENSIONS,double> domainOffset = scenario.getDomainOffset();
   tarch::la::Vector<DIMENSIONS,double> domainSize = scenario.getDomainSize();
@@ -129,6 +130,7 @@ void runSimulation(
     subdivisionFactor,
     scenario.getInitialTimestepSize(),
     useCornerExtrapolation,
+    numberOfThreads,
     true, //Reduce reductions
     1, //Fork level increment
     plotName
@@ -186,7 +188,8 @@ int main(int argc, char **argv) {
 
   bool usePeanoClaw;
   std::string plotName;
-  argc = readOptionalArguments(argc, argv, usePeanoClaw, plotName);
+  int numberOfThreads;
+  argc = readOptionalArguments(argc, argv, usePeanoClaw, plotName, numberOfThreads);
 
   //Create Scenario
   peanoclaw::native::scenarios::SWEScenario* scenario;
@@ -216,7 +219,8 @@ int main(int argc, char **argv) {
       *scenario,
       *numerics,
       plotName,
-      true
+      false,
+      numberOfThreads
     );
   } else {
   #if defined(PEANOCLAW_SWE)

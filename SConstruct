@@ -45,7 +45,8 @@ linkerflags = []
 libpath = []
 libs = []
 
-filenameSuffix = ''
+librarySuffix = ''
+executableSuffix = ''
 
 #Configure Peano 3
 p3Path = '../peano3'
@@ -288,6 +289,7 @@ elif solver == 'swe':
   cppdefines.append('SWE')
   cppdefines.append('PEANOCLAW_SWE')
   cppdefines.append('NDEBUG')
+  #WAVE_PROPAGATION_SOLVER = 2
   WAVE_PROPAGATION_SOLVER = 4
   cppdefines.append('WAVE_PROPAGATION_SOLVER=' + str(WAVE_PROPAGATION_SOLVER))
   cppdefines.append('VECTORIZE')
@@ -342,7 +344,7 @@ else:
 heapCompression = ARGUMENTS.get('heapCompression', 'yes')
 if heapCompression == 'no':
   cppdefines.append('noPackedEmptyHeapMessages')
-  filenameSuffix += '_noHeapCompression'
+  librarySuffix += '_noHeapCompression'
 elif heapCompression == 'yes':
   pass
 else:
@@ -371,14 +373,18 @@ build_offset = ARGUMENTS.get('buildoffset', 'build')
 buildpath = build_offset + '/' + str(build) + '/dim' + str(dim) + '/' 
 if multicore == 'tbb':
    buildpath = join(buildpath, 'tbb')
+   executableSuffix += '-tbb'
 elif multicore == 'openmp':
    buildpath = join(buildpath, 'openmp')
+   executableSuffix += '-openmp'
 elif multicore == 'opencl':
    buildpath = join(buildpath, 'openCL')
+   executableSuffix += '-opencl'
 else:
    buildpath = join(buildpath, 'multicore_no')
 if parallel == 'yes' or parallel == 'parallel_yes':
    buildpath = join(buildpath, 'parallel_yes')
+   executableSuffix += '-parallel'
 else:
    buildpath = join(buildpath, 'parallel_no')
 buildpath = join(buildpath, compiler)
@@ -509,7 +515,7 @@ else:
 ##### Build selected target
 #
 if solver == 'pyclaw':
-  targetfilename = 'libpeano-claw-' + str(dim) + 'd' + filenameSuffix
+  targetfilename = 'libpeano-claw-' + str(dim) + 'd' + librarySuffix
   target = buildpath + targetfilename
   library = env.SharedLibrary (
     target=target,
@@ -520,7 +526,7 @@ if solver == 'pyclaw':
   #
   installation = env.Alias('install', env.Install('src/python/peanoclaw', library))
 elif solver == 'swe':
-  targetfilename = 'peano-claw-swe'
+  targetfilename = 'peano-claw-swe' + executableSuffix
   target = buildpath + targetfilename
   executable = env.Program ( 
     target=target,
@@ -530,7 +536,7 @@ elif solver == 'swe':
   #
   installation = env.Alias('install', env.Install('bin', executable))    
 elif solver == 'fullswof2d':
-  targetfilename = 'peano-claw-fullswof2d'
+  targetfilename = 'peano-claw-fullswof2d' + executableSuffix
   target = buildpath + targetfilename
   executable = env.Program ( 
     target=target,
@@ -540,7 +546,7 @@ elif solver == 'fullswof2d':
   #
   installation = env.Alias('install', env.Install('bin', executable))
 elif solver == 'euler3d':
-  targetfilename = 'peano-claw-euler3d'
+  targetfilename = 'peano-claw-euler3d' + executableSuffix
   target = buildpath + targetfilename
   executable = env.Program ( 
     target=target,

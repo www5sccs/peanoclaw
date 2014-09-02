@@ -103,6 +103,7 @@ public:
     const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
     double initialTimestepSize,
     bool useCornerExtrapolation,
+    int numberOfThreads,
     bool reduceReductions = true,
     int  forkLevelIncrement = 1,
     const std::string& plotName = "adaptive"
