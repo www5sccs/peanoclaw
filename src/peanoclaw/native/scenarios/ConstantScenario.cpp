@@ -30,11 +30,17 @@ peanoclaw::native::scenarios::ConstantScenario::ConstantScenario(
 void peanoclaw::native::scenarios::ConstantScenario::initializePatch(peanoclaw::Patch& subgrid) {
   peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
 
+  //Setting Euler3D settings
   dfor(subcellIndex, subgrid.getSubdivisionFactor()) {
     accessor.setValueUNew(subcellIndex, 0, 1.0);
-    for(int unknown = 1; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {
-      accessor.setValueUNew(subcellIndex, unknown, 0.0);
-    }
+    accessor.setValueUNew(subcellIndex, 1, 0.0);
+    accessor.setValueUNew(subcellIndex, 2, 0.0);
+    accessor.setValueUNew(subcellIndex, 3, 0.0);
+    accessor.setValueUNew(subcellIndex, 4, 1.0);
+    accessor.setValueUNew(subcellIndex, 5, 1.0);
+//    for(int unknown = 1; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {
+//      accessor.setValueUNew(subcellIndex, unknown, 0.0);
+//    }
     for(int parameter = 0; parameter < subgrid.getNumberOfParametersWithGhostlayerPerSubcell(); parameter++) {
       accessor.setParameterWithGhostlayer(subcellIndex, parameter, 0.0);
     }

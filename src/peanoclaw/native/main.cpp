@@ -150,7 +150,7 @@ void runSimulation(
     do {
       time += scenario.getGlobalTimestepSize();
         peanoclaw::State& state = runner->getState();
-      runner->evolveToTime(time);
+      runner->evolveToTime(std::min(time, scenario.getEndTime()));
       //runner->gatherCurrentSolution();
       //std::cout << "time " << time << " numberOfCells " << state.getNumberOfInnerCells() << std::endl;
     } while(tarch::la::smaller(time, scenario.getEndTime()));

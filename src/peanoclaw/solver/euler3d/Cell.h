@@ -18,7 +18,7 @@ namespace peanoclaw {
 
 #define NUMBER_OF_EULER_UNKNOWNS 6
 
-#include "EulerEquations/Cell.hpp"
+#include "Uni/EulerEquations/Cell"
 
 
 #include "peanoclaw/records/Data.h"
@@ -27,7 +27,7 @@ namespace peanoclaw {
 
 #include <Eigen/Core>
 
-class peanoclaw::solver::euler3d::Cell : public EulerEquations::Cell<double,3> {
+class peanoclaw::solver::euler3d::Cell : public Uni::EulerEquations::Cell<double,3> {
 
   public:
     typedef peanoclaw::records::Data Data;
@@ -35,6 +35,7 @@ class peanoclaw::solver::euler3d::Cell : public EulerEquations::Cell<double,3> {
   private:
     tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double> _data;
     static const double ADIABATIC_CONSTANT;
+    typedef Uni::EulerEquations::Cell<double, 3> Base;
 
   public:
     /**
@@ -46,9 +47,9 @@ class peanoclaw::solver::euler3d::Cell : public EulerEquations::Cell<double,3> {
 
     void density(double const& value);
 
-    EulerEquations::Cell<double,3>::Vector velocity() const;
+    Uni::EulerEquations::Cell<double,3>::Vector velocity() const;
 
-    void velocity(EulerEquations::Cell<double,3>::Vector const& value);
+    void velocity(Uni::EulerEquations::Cell<double,3>::Vector const& value);
 
     void velocity(int const& index, double const& value);
 
@@ -61,6 +62,22 @@ class peanoclaw::solver::euler3d::Cell : public EulerEquations::Cell<double,3> {
     double marker() const;
 
     void marker(double const& value);
+
+    double temperature() const;
+
+    void temperature(double const& temperature);
+
+    double pressure() const;
+
+    void pressure(double const& pressure);
+
+    double enthalpy() const;
+
+    void enthalpy(double const& enthalpy);
+
+    virtual double soundSpeed() const;
+
+//    void soundSpeed(double const& soundSpeed);
 
     tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS, double> getUnknowns() const;
 };

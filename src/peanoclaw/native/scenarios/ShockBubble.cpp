@@ -8,12 +8,16 @@
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/native/scenarios/ShockBubble.h"
 
+#ifdef PEANOCLAW_EULER3D
+#include "Uni/EulerEquations/Cell"
+#endif
+
 double peanoclaw::native::scenarios::ShockBubble::_rhoOutside = 1.0;
 double peanoclaw::native::scenarios::ShockBubble::_rhoInside = 0.1;
 double peanoclaw::native::scenarios::ShockBubble::_gamma = 1.4;
 double peanoclaw::native::scenarios::ShockBubble::_bubbleRadius = 0.1; //0.2;
 double peanoclaw::native::scenarios::ShockBubble::_shockX = 0.2;
-double peanoclaw::native::scenarios::ShockBubble::_pInflow = 5.0;
+double peanoclaw::native::scenarios::ShockBubble::_pInflow = 500.0;
 
 peanoclaw::native::scenarios::ShockBubble::ShockBubble(
   const tarch::la::Vector<DIMENSIONS, double>& domainOffset,
@@ -99,12 +103,25 @@ void peanoclaw::native::scenarios::ShockBubble::initializePatch(peanoclaw::Patch
         double py = 0.0;
         double pz = 0.0;
 
+        #ifdef PEANOCLAW_EULER3D
+        Uni::EulerEquations::Cell<double,3>::Vector velocity;
+        velocity(0) = px;
+        velocity(1) = 0;
+        velocity(2) = 0;
+        e = Uni::EulerEquations::Cell<double,3>::computeEnergyFromDensityVelocityTemperature(
+            rho,
+            velocity,
+            273,
+            1.4,
+            8.3144621757575);
+        #endif
+
         accessor.setValueUNew(subcellIndex, 0, rho);
         accessor.setValueUNew(subcellIndex, 1, px);
         accessor.setValueUNew(subcellIndex, 2, py);
         accessor.setValueUNew(subcellIndex, 3, pz);
         accessor.setValueUNew(subcellIndex, 4, e); //Energy
-        accessor.setValueUNew(subcellIndex, 5, 0.0); //Marker
+        accessor.setValueUNew(subcellIndex, 5, 1.0); //Marker
 
         //assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 0), rho, 1e-5), accessor.getValueUNew(subcellIndex, 0), rho);
         assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 1), px, 1e-5), accessor.getValueUNew(subcellIndex, 1), px);
@@ -154,22 +171,31 @@ void peanoclaw::native::scenarios::ShockBubble::setBoundaryCondition(
   tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex,
   tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex
 ) {
-  if(dimension == 0 && !setUpper && false) {
-
+  if(dimension == 0 && !setUpper) {
     double gamma1 = _gamma - 1.0;
-//    rinf = (gamma1 + pinf * (gamma + 1.)) / ((gamma + 1.) + gamma1 * pinf)
     double rhoInflow = (gamma1 + _pInflow * (_gamma + 1.0)) / ((_gamma + 1.0) + gamma1 * _pInflow);
-//    vinf = 1. / np.sqrt(gamma) * (pinf - 1.) / np.sqrt(0.5 * ((gamma + 1.) / gamma) * pinf + 0.5 * gamma1 / gamma)
-    double mInflow = 0.0; //1.0 / sqrt(_gamma) * (_pInflow - 1.0) / sqrt(0.5 * ((_gamma + 1.) / _gamma) * _pInflow + 0.5 * gamma1 / _gamma);
-//    einf = 0.5 * rinf * vinf ** 2 + pinf / gamma1
-    double eInflow = 0.5 * rhoInflow * mInflow * mInflow + _pInflow / gamma1;
+    double vInflow = 1.0 / sqrt(_gamma) * (_pInflow - 1.0) / sqrt(0.5 * ((_gamma + 1.) / _gamma) * _pInflow + 0.5 * gamma1 / _gamma);
+    double eInflow = 0.5 * rhoInflow * vInflow * vInflow + _pInflow / gamma1;
+
+    #ifdef PEANOCLAW_EULER3D
+    Uni::EulerEquations::Cell<double,3>::Vector velocity;
+    velocity(0) = vInflow;
+    velocity(1) = 0;
+    velocity(2) = 0;
+    eInflow = Uni::EulerEquations::Cell<double,3>::computeEnergyFromDensityVelocityTemperature(
+        rhoInflow,
+        velocity,
+        273,
+        1.4,
+        8.3144621757575);
+    #endif
 
     accessor.setValueUOld(destinationSubcellIndex, 0, rhoInflow);
-    accessor.setValueUOld(destinationSubcellIndex, 1, mInflow);
+    accessor.setValueUOld(destinationSubcellIndex, 1, vInflow * rhoInflow);
     accessor.setValueUOld(destinationSubcellIndex, 2, 0.0);
     accessor.setValueUOld(destinationSubcellIndex, 3, 0.0);
     accessor.setValueUOld(destinationSubcellIndex, 4, eInflow);
-    accessor.setValueUOld(destinationSubcellIndex, 5, 0.0);
+    accessor.setValueUOld(destinationSubcellIndex, 5, 1.0);
   } else {
      //Copy
      for(int unknown = 0; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {

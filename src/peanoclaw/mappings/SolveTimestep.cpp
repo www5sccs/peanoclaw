@@ -70,7 +70,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::leaveCellSpeci
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::ascendSpecification() {
   return peano::MappingSpecification(
     peano::MappingSpecification::WholeTree,
-    peano::MappingSpecification::RunConcurrentlyOnFineGrid
+    peano::MappingSpecification::AvoidCoarseGridRaces
   );
 }
 
@@ -81,7 +81,7 @@ peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::ascendSpecific
 peano::MappingSpecification   peanoclaw::mappings::SolveTimestep::descendSpecification() {
   return peano::MappingSpecification(
     peano::MappingSpecification::WholeTree,
-    peano::MappingSpecification::RunConcurrentlyOnFineGrid
+    peano::MappingSpecification::AvoidCoarseGridRaces
   );
 }
 

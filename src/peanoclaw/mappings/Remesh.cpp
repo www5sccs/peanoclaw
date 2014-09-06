@@ -31,7 +31,7 @@ tarch::timing::Watch peanoclaw::mappings::Remesh::_spacetreeCommunicationWaiting
 peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexLastTimeSpecification() {
   return peano::MappingSpecification(
     peano::MappingSpecification::WholeTree,
-    peano::MappingSpecification::AvoidFineGridRaces
+    peano::MappingSpecification::AvoidCoarseGridRaces
   );
 }
 
@@ -42,7 +42,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexLastTimeSp
 peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexFirstTimeSpecification() { 
   return peano::MappingSpecification(
     peano::MappingSpecification::WholeTree,
-    peano::MappingSpecification::AvoidFineGridRaces
+    peano::MappingSpecification::AvoidCoarseGridRaces
   );
 }
 
@@ -53,7 +53,7 @@ peano::MappingSpecification   peanoclaw::mappings::Remesh::touchVertexFirstTimeS
 peano::MappingSpecification   peanoclaw::mappings::Remesh::enterCellSpecification() {
   return peano::MappingSpecification(
     peano::MappingSpecification::WholeTree,
-    peano::MappingSpecification::AvoidFineGridRaces
+    peano::MappingSpecification::AvoidCoarseGridRaces
   );
 }
 

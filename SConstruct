@@ -334,13 +334,17 @@ elif solver == 'euler3d':
   cppdefines.append('PEANOCLAW_EULER3D')
   if dim != 3:
     raise Exception("The Euler3D solver can only be used in 3D.")
-  euler3DPath = '../euler3d'
+  euler3DEulerEquationsPath = '../euler3DEulerEquations'
+  euler3DUniPath = '../euler3DUni'
   try:
     import euler3DConfiguration
-    euler3DPath = euler3DConfiguration.getEuler3DPath()
+    euler3DEulerEquationsPath = euler3DConfiguration.getEulerEquationsPath()
+    euler3DUniPath = euler3DConfiguration.getUniPath()
   except ImportError:
     pass
-  cpppath.append(join(euler3DPath, 'source'))
+  #cpppath.append(join(euler3DEulerEquationsPath, 'source'))
+  cpppath.append(join(euler3DUniPath, 'source'))
+  cpppath.append(join(euler3DUniPath, 'include'))
   cpppath.append('/usr/include/eigen3')
   cppdefines.append('AssertForPositiveValues')
 else:
@@ -425,7 +429,8 @@ if solver == 'swe':
 elif solver == 'fullswof2d':
   VariantDir (join(buildpath, 'fullswof2d'), fullSWOF2DPath, duplicate=0)  # Set build directory for FullSWOF2D sources
 elif solver == 'euler3d':
-  VariantDir (join(buildpath, 'euler3d'), euler3DPath, duplicate=0)  # Set build directory for SWE sources
+#   VariantDir (join(buildpath, 'euler3dEulerEquations'), euler3DEulerEquationsPath, duplicate=0)  # Set build directory for Euler3D sources
+  VariantDir (join(buildpath, 'euler3dUni'), euler3DUniPath, duplicate=0)  # Set build directory for Euler3D sources
   
   
 ##### Setup construction environment:
@@ -493,8 +498,8 @@ elif solver == 'fullswof2d':
      ]
 elif solver == 'euler3d':
   sourcesSolver = [
-     Glob(join(buildpath, 'euler3d/source/EulerEquations/*.cpp')),
-     Glob(join(buildpath, 'euler3d/source/SimpleLogger.cpp')),
+     Glob(join(buildpath, 'euler3dUni/source/EulerEquations/*.cpp')),
+     Glob(join(buildpath, 'euler3dUni/source/Logging/*.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/main.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/scenarios/*.cpp')),
      Glob(join(buildpath, 'peanoclaw/solver/euler3d/*.cpp'))

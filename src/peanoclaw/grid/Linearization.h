@@ -183,6 +183,8 @@ public:
 
 #if defined(PEANOCLAW_PYCLAW) || defined(PEANOCLAW_FULLSWOF2D) || defined(PEANOCLAW_SWE) || defined(PEANOCLAW_EULER3D)
 #include "peanoclaw/grid/LinearizationZYXQ.h"
+#elif defined(PEANOCLAW_EULER3D)
+#include "peanoclaw/grid/LinearizationQZYX.h"
 #else
 #error No Linearization defined
 #endif
