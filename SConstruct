@@ -296,8 +296,19 @@ elif solver == 'swe':
   cppdefines.append('SWE')
   cppdefines.append('PEANOCLAW_SWE')
   cppdefines.append('NDEBUG')
-  #WAVE_PROPAGATION_SOLVER = 2
-  WAVE_PROPAGATION_SOLVER = 4
+  
+  solverType = ARGUMENTS.get('solverType', 'none')
+  if solverType == 'f-wave':
+    WAVE_PROPAGATION_SOLVER = 1
+    executableSuffix += '-f-wave'
+  elif solverType == 'augmentedRiemann':
+    WAVE_PROPAGATION_SOLVER = 2
+    executableSuffix += '-augmentedRiemann'
+  elif solverType == 'f-wave-vectorized':
+    WAVE_PROPAGATION_SOLVER = 4
+    executableSuffix += ''
+  else:
+    raise Exception("Please specify solverType for SWE: f-wave, augmentedRiemann, or f-wave-vectorized")
   cppdefines.append('WAVE_PROPAGATION_SOLVER=' + str(WAVE_PROPAGATION_SOLVER))
   cppdefines.append('VECTORIZE')
   
