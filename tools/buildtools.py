@@ -35,6 +35,11 @@ def addPython(cppdefines, cpppath, libpath, libs):
    cpppath.append(os.getenv("HOME") + '/.local/lib/python' + pythonVersion + '/site-packages/numpy/core/include')
    libs.append('python' + pythonVersion)
 
+def addBoost(environment, cpppath, libpath):
+  if 'BOOST_INCDIR' in environment:
+    cpppath.append(environment['BOOST_INCDIR'])
+  if 'BOOST_LIBDIR' in environment:
+    libpath.append(environment['BOOST_LIBDIR'])
     
 def getPeanoSources(Glob, buildpath, multicore):
   sourcesTLa = [

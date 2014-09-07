@@ -347,6 +347,7 @@ elif solver == 'euler3d':
   cpppath.append(join(euler3DUniPath, 'include'))
   cpppath.append('/usr/include/eigen3')
   cppdefines.append('AssertForPositiveValues')
+  buildtools.addBoost(environment, cppath, libpath)
 else:
   raise Exception("ERROR: solver must be 'pyclaw', 'swe', 'fullswof2d', or 'euler3d'")
 
