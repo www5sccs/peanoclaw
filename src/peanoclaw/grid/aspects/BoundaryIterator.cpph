@@ -29,11 +29,11 @@ void peanoclaw::grid::aspects::BoundaryIterator<BoundaryCondition>::iterate(
       for(int g = 1; g <= ghostlayerWidth; g++) {
         tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex;
         tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex;
-        destinationSubcellIndex[dimension] = setUpper ? subgrid.getSubdivisionFactor()[dimension] - 1 + g : -g;
+        destinationSubcellIndex[dimension] = setUpper ? subdivisionFactor[dimension] - 1 + g : -g;
         destinationSubcellIndex[(dimension+1) % DIMENSIONS] = i0;
         destinationSubcellIndex[(dimension+2) % DIMENSIONS] = i1;
         sourceSubcellIndex = destinationSubcellIndex;
-        sourceSubcellIndex[dimension] = setUpper ? subgrid.getSubdivisionFactor()[dimension] - g : g-1;
+        sourceSubcellIndex[dimension] = setUpper ? subdivisionFactor[dimension] - g : g-1;
 
         _boundaryCondition.setBoundaryCondition(subgrid, accessor, dimension, setUpper, sourceSubcellIndex, destinationSubcellIndex);
       }

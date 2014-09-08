@@ -8,8 +8,14 @@
 
 const double peanoclaw::solver::euler3d::Cell::ADIABATIC_CONSTANT = 1.4;
 
-peanoclaw::solver::euler3d::Cell::Cell(const tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double>& data) : _data(data) {
-
+peanoclaw::solver::euler3d::Cell::Cell(
+  const tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double>& data,
+  const tarch::la::Vector<DIMENSIONS,int>& index
+) : _data(data)
+    #ifdef Asserts
+    ,_index(index)
+    #endif
+{
 }
 
 double peanoclaw::solver::euler3d::Cell::density() const {

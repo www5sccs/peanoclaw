@@ -12,6 +12,7 @@
 #include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 #include "peanoclaw/native/SWE_WavePropagationBlock_patch.hh"
 
+#include "tarch/multicore/MulticoreDefinitions.h"
 #include "tarch/timing/Watch.h"
 #include "tarch/parallel/Node.h"
 

@@ -37,6 +37,13 @@ private:
   static double _shockX;
   static double _pInflow;
 
+  void setCellValues(
+    peanoclaw::Patch& subgrid,
+    peanoclaw::grid::SubgridAccessor& accessor,
+    const tarch::la::Vector<DIMENSIONS, int>& subcellIndex,
+    bool setUNew
+  );
+
 public:
     ShockBubble(
       const tarch::la::Vector<DIMENSIONS, double>& domainOffset,

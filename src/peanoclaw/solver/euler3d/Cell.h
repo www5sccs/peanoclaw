@@ -31,6 +31,9 @@ class peanoclaw::solver::euler3d::Cell : public Uni::EulerEquations::Cell<double
 
   public:
     typedef peanoclaw::records::Data Data;
+    #ifdef Asserts
+    tarch::la::Vector<DIMENSIONS,int> _index;
+    #endif
 
   private:
     tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double> _data;
@@ -41,7 +44,10 @@ class peanoclaw::solver::euler3d::Cell : public Uni::EulerEquations::Cell<double
     /**
      * Constructs a Euler 3D cell from a given PeanoClaw cell data entry.
      */
-    Cell(const tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double>& data);
+    Cell(
+      const tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double>& data,
+      const tarch::la::Vector<DIMENSIONS,int>& index
+    );
 
     double density() const;
 
