@@ -213,14 +213,14 @@ double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
 
         //TODO unterweg debug
         bool plot =
-//            false;
+            false;
 //          (x > 3 && x < 6) && (y > 3 && y < 6) && (z > 3 && z < 6);
-            x == 1 && y == 2 && z == 2;
+//            x == 1 && y == 2 && z == 2;
 //            x < 3 && y == 0 && z == 0;
         if(plot) {
           std::cout << x << ", " << y << ", " << z << std::endl;
           std::cout << "dt=" << dt << std::endl;
-          std::cout << "left: density=" << std::setprecision(3) << leftCell.density() << ", momentum=" << leftCell.velocity()(0) << "," << leftCell.velocity()(1) << "," << leftCell.velocity()(2) << ", energy=" << leftCell.energy() << " index=" << leftCell._index << std::endl;
+          std::cout << "left: density=" << std::setprecision(3) << leftCell.density() << ", momentum=" << leftCell.velocity()(0) << "," << leftCell.velocity()(1) << "," << leftCell.velocity()(2) << ", energy=" << leftCell.energy() << std::endl;
           std::cout << "right: density=" << std::setprecision(3) << rightCell.density() << ", momentum=" << rightCell.velocity()(0) << "," << rightCell.velocity()(1) << "," << rightCell.velocity()(2) << ", energy=" << rightCell.energy() << std::endl;
           std::cout << "bottom: density=" << std::setprecision(3) << bottomCell.density() << ", momentum=" << bottomCell.velocity()(0) << "," << bottomCell.velocity()(1) << "," << bottomCell.velocity()(2) << ", energy=" << bottomCell.energy() << std::endl;
           std::cout << "top: density=" << std::setprecision(3) << topCell.density() << ", momentum=" << topCell.velocity()(0) << "," << topCell.velocity()(1) << "," << topCell.velocity()(2) << ", energy=" << topCell.energy() << std::endl;
