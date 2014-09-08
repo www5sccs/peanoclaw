@@ -77,10 +77,10 @@ void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(
   cellsUOld.reserve(numberOfCellsUOld);
 
   while(iteratorUNew.moveToNextCell()) {
-    cellsUNew.push_back(peanoclaw::solver::euler3d::Cell(iteratorUNew.getUnknownsUNew()));
+    cellsUNew.push_back(peanoclaw::solver::euler3d::Cell(iteratorUNew.getUnknownsUNew(), iteratorUNew.getCellIndex()));
   }
   while(iteratorUOld.moveToNextCell()) {
-    cellsUOld.push_back(peanoclaw::solver::euler3d::Cell(iteratorUOld.getUnknownsUOld()));
+    cellsUOld.push_back(peanoclaw::solver::euler3d::Cell(iteratorUOld.getUnknownsUOld(), iteratorUOld.getCellIndex()));
   }
 
   //Run update
@@ -146,9 +146,16 @@ double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
 ) {
   tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = subgrid.getSubdivisionFactor();
   int ghostlayerWidth = subgrid.getGhostlayerWidth();
-  int xRow = subdivisionFactor[0] + 2*ghostlayerWidth;
-  int xyPlane = (subdivisionFactor[0] + 2*ghostlayerWidth) * (subdivisionFactor[1] + 2*ghostlayerWidth);
+  int zRow = subdivisionFactor[2] + 2*ghostlayerWidth;
+  int yzPlane = (subdivisionFactor[1] + 2*ghostlayerWidth) * (subdivisionFactor[2] + 2*ghostlayerWidth);
   tarch::la::Vector<DIMENSIONS,double> cellSize = subgrid.getSubcellSize();
+
+  tarch::la::Vector<DIMENSIONS,int> unitX;
+  assignList(unitX) = 1, 0, 0;
+  tarch::la::Vector<DIMENSIONS,int> unitY;
+  assignList(unitY) = 0, 1, 0;
+  tarch::la::Vector<DIMENSIONS,int> unitZ;
+  assignList(unitZ) = 0, 0, 1;
 
   Uni::EulerEquations::RoeSolver solver;
   solver.courantNumber(dt, cellSize[0], cellSize[1], cellSize[2]);
@@ -159,7 +166,7 @@ double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
   double maxLambda = 0.0;
   double maxSoundspeed = 0.0;
   int linearUNewIndex = 0;
-  int linearUOldIndex = xyPlane*ghostlayerWidth + xRow*ghostlayerWidth + ghostlayerWidth;
+  int linearUOldIndex = yzPlane*ghostlayerWidth + zRow*ghostlayerWidth + ghostlayerWidth;
   for(int x = 0; x < subdivisionFactor[0]; x++) {
     for(int y = 0; y < subdivisionFactor[1]; y++) {
       for(int z = 0; z < subdivisionFactor[2]; z++) {
@@ -177,24 +184,43 @@ double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
 //        peanoclaw::solver::euler3d::Cell& topCell = cellsUOld[linearUOldIndex+xRow];
 //        peanoclaw::solver::euler3d::Cell& frontCell = cellsUOld[linearUOldIndex+xyPlane];
 
-        peanoclaw::solver::euler3d::Cell& leftCell = cellsUOld[linearUOldIndex-xyPlane];
-        peanoclaw::solver::euler3d::Cell& bottomCell = cellsUOld[linearUOldIndex-xRow];
+        //Left/Right: x
+        //Bottom/Top: y
+        //Back/Front: z
+        peanoclaw::solver::euler3d::Cell& leftCell = cellsUOld[linearUOldIndex-yzPlane];
+        peanoclaw::solver::euler3d::Cell& bottomCell = cellsUOld[linearUOldIndex-zRow];
         peanoclaw::solver::euler3d::Cell& backCell = cellsUOld[linearUOldIndex-1];
         peanoclaw::solver::euler3d::Cell& centerCell = cellsUOld[linearUOldIndex];
         peanoclaw::solver::euler3d::Cell& frontCell = cellsUOld[linearUOldIndex+1];
-        peanoclaw::solver::euler3d::Cell& topCell = cellsUOld[linearUOldIndex+xRow];
-        peanoclaw::solver::euler3d::Cell& rightCell = cellsUOld[linearUOldIndex+xyPlane];
+        peanoclaw::solver::euler3d::Cell& topCell = cellsUOld[linearUOldIndex+zRow];
+        peanoclaw::solver::euler3d::Cell& rightCell = cellsUOld[linearUOldIndex+yzPlane];
+
+        assertionEquals(leftCell._index, subcellIndex-unitX);
+        assertionEquals(bottomCell._index, subcellIndex-unitY);
+        assertionEquals(backCell._index, subcellIndex-unitZ);
+        assertionEquals(centerCell._index, subcellIndex);
+        assertionEquals(frontCell._index, subcellIndex+unitZ);
+        assertionEquals(topCell._index, subcellIndex+unitY);
+        assertionEquals(rightCell._index, subcellIndex+unitX);
+
+        assertionEquals2(linearUOldIndex-yzPlane, subgrid.getAccessor().getLinearIndexUOld(subcellIndex - unitX), subcellIndex, linearUOldIndex);
+        assertionEquals(linearUOldIndex-zRow, subgrid.getAccessor().getLinearIndexUOld(subcellIndex - unitY));
+        assertionEquals(linearUOldIndex-1, subgrid.getAccessor().getLinearIndexUOld(subcellIndex - unitZ));
+        assertionEquals(linearUOldIndex, subgrid.getAccessor().getLinearIndexUOld(subcellIndex));
+        assertionEquals(linearUOldIndex+1, subgrid.getAccessor().getLinearIndexUOld(subcellIndex + unitZ));
+        assertionEquals(linearUOldIndex+zRow, subgrid.getAccessor().getLinearIndexUOld(subcellIndex + unitY));
+        assertionEquals(linearUOldIndex+yzPlane, subgrid.getAccessor().getLinearIndexUOld(subcellIndex + unitX));
 
         //TODO unterweg debug
         bool plot =
 //            false;
 //          (x > 3 && x < 6) && (y > 3 && y < 6) && (z > 3 && z < 6);
-            x == 2 && y == 0 && z == 0;
+            x == 1 && y == 2 && z == 2;
 //            x < 3 && y == 0 && z == 0;
         if(plot) {
           std::cout << x << ", " << y << ", " << z << std::endl;
           std::cout << "dt=" << dt << std::endl;
-          std::cout << "left: density=" << std::setprecision(3) << leftCell.density() << ", momentum=" << leftCell.velocity()(0) << "," << leftCell.velocity()(1) << "," << leftCell.velocity()(2) << ", energy=" << leftCell.energy() << std::endl;
+          std::cout << "left: density=" << std::setprecision(3) << leftCell.density() << ", momentum=" << leftCell.velocity()(0) << "," << leftCell.velocity()(1) << "," << leftCell.velocity()(2) << ", energy=" << leftCell.energy() << " index=" << leftCell._index << std::endl;
           std::cout << "right: density=" << std::setprecision(3) << rightCell.density() << ", momentum=" << rightCell.velocity()(0) << "," << rightCell.velocity()(1) << "," << rightCell.velocity()(2) << ", energy=" << rightCell.energy() << std::endl;
           std::cout << "bottom: density=" << std::setprecision(3) << bottomCell.density() << ", momentum=" << bottomCell.velocity()(0) << "," << bottomCell.velocity()(1) << "," << bottomCell.velocity()(2) << ", energy=" << bottomCell.energy() << std::endl;
           std::cout << "top: density=" << std::setprecision(3) << topCell.density() << ", momentum=" << topCell.velocity()(0) << "," << topCell.velocity()(1) << "," << topCell.velocity()(2) << ", energy=" << topCell.energy() << std::endl;
@@ -234,7 +260,7 @@ double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
       }
       linearUOldIndex += 2*ghostlayerWidth;
     }
-    linearUOldIndex += 2*xRow;
+    linearUOldIndex += 2*zRow;
   }
 
   //TODO unterweg debug

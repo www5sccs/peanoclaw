@@ -51,12 +51,14 @@ void peanoclaw::native::scenarios::ShockBubble::setCellValues(
   velocity(0) = px;
   velocity(1) = 0;
   velocity(2) = 0;
-  e = Uni::EulerEquations::Cell<double,3>::computeEnergyFromDensityVelocityTemperature(
-      rho,
-      velocity,
-      273,
-      1.4,
-      8.3144621757575);
+  if(x < _shockX) {
+    e = Uni::EulerEquations::Cell<double,3>::computeEnergyFromDensityVelocityTemperature(
+        rho,
+        velocity,
+        273,
+        1.4,
+        8.3144621757575);
+  }
   #endif
 
   if(setUNew) {
