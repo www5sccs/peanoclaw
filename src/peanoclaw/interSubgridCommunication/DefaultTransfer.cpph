@@ -43,6 +43,7 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
       timeFactor = 1.0;
     }
   }
+  double inverseTimeFactor = 1.0-timeFactor;
 
   peanoclaw::grid::SubgridAccessor sourceAccessor = source.getAccessor();
   peanoclaw::grid::SubgridIterator<NumberOfUnknowns> sourceIterator
@@ -69,7 +70,7 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
     }
     #endif
 
-    destinationIterator.setUnknownsUOld(sourceUnknownsUNew * timeFactor + sourceUnknownsUOld * (1.0-timeFactor));
+    destinationIterator.setUnknownsUOld(sourceUnknownsUNew * timeFactor + sourceUnknownsUOld * inverseTimeFactor);
   }
   destinationIterator.moveToNextCell();
 
