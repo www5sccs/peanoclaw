@@ -221,8 +221,8 @@ elif compiler == 'icc':
      cxx = 'icpc'
    else:
      cxx = 'mpiCC'
-   linker = 'xild'
-   archive = 'xiar'
+#    linker = 'xild'
+#    archive = 'xiar'
    ccflags.append('-fstrict-aliasing')
    ccflags.append('-qpack_semantic=gnu')
    ccflags.append('-std=c++11')
