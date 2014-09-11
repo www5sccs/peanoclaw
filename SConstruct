@@ -15,6 +15,8 @@ from tools import buildtools
 #
 environment = Environment()
 cxx = ''
+linker = ''
+archive = ''
 cppdefines = []
 cpppath = ['./src']
 ccflags = []
@@ -219,6 +221,8 @@ elif compiler == 'icc':
      cxx = 'icpc'
    else:
      cxx = 'mpiCC'
+   linker = 'xild'
+   archive = 'xiar'
    ccflags.append('-fstrict-aliasing')
    ccflags.append('-qpack_semantic=gnu')
    ccflags.append('-std=c++11')
@@ -401,7 +405,7 @@ buildpath = buildpath + '/'
    
 ##### Specify build settings
 #
-buildtools.addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver)
+buildtools.addPeanoClawFlags(environment, build, libpath, libs, cpppath, cppdefines, ccflags, solver)
 
 ##### Print options used to build
 #
@@ -433,7 +437,8 @@ env = Environment (
    CCFLAGS=ccflags,
    LINKFLAGS=linkerflags,
    CXX=cxx,
-   LINK='asdljhasdlghdslgh',
+   LINK=linker if linker!='' else cxx,
+   AR=archive if archive!='' else 'ar',
    ENV=os.environ  # Makes environment variables visible to scons
    # tools      = compiler_tools
    )
