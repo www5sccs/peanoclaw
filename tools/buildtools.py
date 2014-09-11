@@ -3,14 +3,14 @@ from os.path import dirname
 import sys
 import os
 
-def addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver):
+def addPeanoClawFlags(environment, build, libpath, libs, cpppath, cppdefines, ccflags, solver):
    ccflags.append('-g3')
    ccflags.append('-g')
    if(environment['PLATFORM'] != 'darwin'):
      ccflags.append('-march=native')
    
    if solver=='pyclaw':
-     buildtools.addPython(cppdefines, cpppath, libpath, libs)
+     addPython(cppdefines, cpppath, libpath, libs)
      
    if(environment['PLATFORM'] == 'darwin'):
      ccflags.append('-flat_namespace')
