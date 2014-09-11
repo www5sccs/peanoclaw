@@ -22,7 +22,7 @@ def getMPILibrarypaths():
     for token in librariesString.split():
       if token.startswith('-L'):
         paths.append(re.sub('^\-L', '', token))
-    return includes
+    return paths
   else:
     raise Exception('No default MPI found!')
   
@@ -33,6 +33,6 @@ def getMPILibraries():
     for token in librariesString.split():
       if token.startswith('-l'):
         libraries.append(re.sub('^\-l', '', token))
-    return includes
+    return libraries
   else:
     raise Exception('No default MPI found!')
