@@ -8,29 +8,6 @@ import shutil
 from tools import buildtools
 
 #########################################################################
-##### FUNCTION DEFINITIONS
-#########################################################################
-
-def addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver):
-   ccflags.append('-g3')
-   ccflags.append('-g')
-   if(environment['PLATFORM'] != 'darwin'):
-     ccflags.append('-march=native')
-   
-   if solver=='pyclaw':
-     buildtools.addPython(cppdefines, cpppath, libpath, libs)
-     
-   if(environment['PLATFORM'] == 'darwin'):
-     ccflags.append('-flat_namespace')
-     linkerflags.append('-flat_namespace')
-   elif build == 'release':
-     #cppdefines.append('_GLIBCXX_DEBUG')
-     cppdefines.append('NDEBUG')
-     
-   if '-Werror' in ccflags:
-     ccflags.remove('-Werror')
-     
-#########################################################################
 ##### MAIN CODE
 #########################################################################
 
@@ -257,6 +234,7 @@ elif compiler == 'icc':
       ccflags.append('-align')
       ccflags.append('-ansi-alias')
       ccflags.append('-O3')
+      ccflags.append('-xSSE4_2')
    if multicore == 'openmp':
       ccflags.append('-openmp')
       linkerflags.append('-openmp')
@@ -423,7 +401,7 @@ buildpath = buildpath + '/'
    
 ##### Specify build settings
 #
-addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver)
+buildtools.addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver)
 
 ##### Print options used to build
 #
@@ -455,6 +433,7 @@ env = Environment (
    CCFLAGS=ccflags,
    LINKFLAGS=linkerflags,
    CXX=cxx,
+   LINK='asdljhasdlghdslgh',
    ENV=os.environ  # Makes environment variables visible to scons
    # tools      = compiler_tools
    )
@@ -526,15 +505,12 @@ source = [
 ################################################################################
 
 ##### Configure
-configure = Configure(env)
-#if configure.CheckCXXHeader('peano/parallel/MeshCommunication.h'):
 if os.path.isfile(join(p3SourcePath, 'peano/parallel/MeshCommunication.h')):
   print 'Using RMK'
   env['CPPDEFINES'].append('UseBlockedMeshCommunication')
 else:
   print 'Using Peano classic communication'
   env['CPPDEFINES'].append('DoNotUseBlockedMeshCommunication')
-#env = configure.Finish()
 
 ##### Build selected target
 #

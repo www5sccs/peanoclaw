@@ -2,6 +2,25 @@ from os.path import join
 from os.path import dirname
 import sys
 import os
+
+def addPeanoClawFlags(libpath, libs, cpppath, cppdefines, solver):
+   ccflags.append('-g3')
+   ccflags.append('-g')
+   if(environment['PLATFORM'] != 'darwin'):
+     ccflags.append('-march=native')
+   
+   if solver=='pyclaw':
+     buildtools.addPython(cppdefines, cpppath, libpath, libs)
+     
+   if(environment['PLATFORM'] == 'darwin'):
+     ccflags.append('-flat_namespace')
+     linkerflags.append('-flat_namespace')
+   elif build == 'release':
+     #cppdefines.append('_GLIBCXX_DEBUG')
+     cppdefines.append('NDEBUG')
+     
+   if '-Werror' in ccflags:
+     ccflags.remove('-Werror')
     
 def addPython(cppdefines, cpppath, libpath, libs):
    if sys.version_info[0] == 2 and sys.version_info[1] < 7:
