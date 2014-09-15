@@ -89,7 +89,7 @@ public:
   virtual ~LevelAwareRoundRobinNodePoolStrategy();
 
   virtual void setNodePoolTag(int tag);
-  virtual tarch::parallel::messages::WorkerRequestMessage extractElementFromRequestQueue(RequestQueue& queue);
+  virtual tarch::parallel::messages::WorkerRequestMessage extractElementFromRequestQueue(tarch::parallel::NodePoolStrategy::RequestQueue& queue);
   virtual void fillWorkerRequestQueue(RequestQueue& queue);
   virtual void addNode(const tarch::parallel::messages::RegisterAtNodePoolMessage& node );
   virtual void removeNode( int rank );

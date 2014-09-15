@@ -4,7 +4,6 @@
  *  Created on: Feb 7, 2012
  *      Author: Kristof Unterweger
  */
-
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 
 #include "peanoclaw/runners/Runner.h"
@@ -26,6 +25,8 @@
 #include "tarch/parallel/Node.h"
 
 #if defined(Parallel)
+#include "peanoclaw/parallel/LevelAwareRoundRobinNodePoolStrategy.h"
+
 #include "tarch/parallel/NodePool.h"
 #include "peano/parallel/SendReceiveBufferPool.h"
 #include "peano/parallel/JoinDataBufferPool.h"
@@ -67,7 +68,8 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment(
 //  tarch::parallel::Node::getInstance().setDeadlockTimeOut(9000);
 
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-    tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
+    //tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
+    tarch::parallel::NodePool::getInstance().setStrategy( new peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy() );
   }
   tarch::parallel::NodePool::getInstance().restart();
 
