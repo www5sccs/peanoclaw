@@ -162,7 +162,7 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::fillWorkerReques
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::addNode(
   const tarch::parallel::messages::RegisterAtNodePoolMessage& node
 ) {
-
+  #ifdef Parallel
   int levelIndex = getLevelIndexForRank(node.getSenderRank());
   logInfo("addNode(node)", "Adding node " << node.getSenderRank() << " to level " << levelIndex);
   Level& level = getLevel(levelIndex);
@@ -170,6 +170,7 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::addNode(
 
   _numberOfNodes++;
   _numberOfIdleNodes++;
+  #endif
 }
 
 
