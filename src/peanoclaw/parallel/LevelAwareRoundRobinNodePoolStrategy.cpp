@@ -101,11 +101,14 @@ std::string peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Level::to
 }
 
 int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::getLevelIndexForRank(int rank) const {
-  if(rank == 0) {
-    return 0;
+  int level = 0;
+  int ranksPerLevel = 1;
+  while(rank > 0) {
+    rank -= ranksPerLevel;
+    ranksPerLevel *= pow(3.0, DIMENSIONS);
+    level++;
   }
-
-  return (int)(std::ceil(pow(rank, 1.0 / (pow(3.0, DIMENSIONS)))));
+  return level;
 }
 
 peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Level&
@@ -202,7 +205,7 @@ int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::reserveNode(int f
   _numberOfIdleNodes--;
 
   //TODO unterweg debug
-//  std::cout << "Reserving node for master " << forMaster << ": " << rank << std::endl;
+  std::cout << "Reserving node for master " << forMaster << ": " << rank << std::endl;
   return rank;
 }
 

@@ -8,6 +8,8 @@
 
 #include "peanoclaw/Patch.h"
 
+#include "tarch/multicore/MulticoreDefinitions.h"
+
 #include <pthread.h>
 
 tarch::logging::Log peanoclaw::statistics::SharedMemoryStatistics::_log("peanoclaw::statistics::SharedMemoryStatistics");
@@ -43,6 +45,7 @@ void peanoclaw::statistics::SharedMemoryStatistics::addCellUpdatesForThread(
 }
 
 void peanoclaw::statistics::SharedMemoryStatistics::logStatistics() const {
+  #ifdef SharedMemoryParallelisation
   logInfo("logStatistics()", "#Threads=" << _cellUpdatesPerThread.size());
   int threadIndex = 0;
   for(std::map<unsigned long int, double>::const_iterator entry = _cellUpdatesPerThread.begin();
@@ -51,6 +54,7 @@ void peanoclaw::statistics::SharedMemoryStatistics::logStatistics() const {
     logInfo("logStatistics()", "CellUpdates on thread " << threadIndex << ": " << entry->second);
     threadIndex++;
   }
+  #endif
 }
 
 void peanoclaw::statistics::SharedMemoryStatistics::merge(const SharedMemoryStatistics& statistics) {
