@@ -68,7 +68,7 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment(
 //  tarch::parallel::Node::getInstance().setDeadlockTimeOut(9000);
 
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
-    //tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
+//    tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
     tarch::parallel::NodePool::getInstance().setStrategy( new peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy() );
   }
   tarch::parallel::NodePool::getInstance().restart();

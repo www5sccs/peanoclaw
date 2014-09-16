@@ -8,6 +8,8 @@
 
 #include "peano/utils/Dimensions.h"
 
+#include <sstream>
+
 tarch::logging::Log peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::_log("peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy");
 
 peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Node::Node()
@@ -85,12 +87,25 @@ int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Level::getIdleRan
   return -1;
 }
 
+std::string peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Level::toString() const {
+  std::stringstream s;
+  s << "Level: ";
+  for(std::map<int,Node>::const_iterator i = _nodes.begin(); i != _nodes.end(); i++) {
+    s << i->first << " ";
+    if(i->second.isIdle()) {
+      s << "(idle) ";
+    }
+  }
+  s << std::endl;
+  return s.str();
+}
+
 int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::getLevelIndexForRank(int rank) const {
   if(rank == 0) {
     return 0;
   }
 
-  return (int)(std::ceil(pow(rank, 1.0 / (pow(3.0, DIMENSIONS))))) + 1;
+  return (int)(std::ceil(pow(rank, 1.0 / (pow(3.0, DIMENSIONS)))));
 }
 
 peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Level&
@@ -121,13 +136,14 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::setNodePoolTag(i
   _tag = tag;
 }
 
-tarch::parallel::messages::WorkerRequestMessage extractElementFromRequestQueue(tarch::parallel::NodePoolStrategy::RequestQueue& queue) {
+tarch::parallel::messages::WorkerRequestMessage peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::extractElementFromRequestQueue(
+  tarch::parallel::NodePoolStrategy::RequestQueue& queue
+) {
   assertion( !queue.empty() );
   tarch::parallel::messages::WorkerRequestMessage result = queue.front();
   queue.pop_front();
   return result;
 }
-
 
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::fillWorkerRequestQueue(RequestQueue& queue) {
   #ifdef Parallel
@@ -143,7 +159,10 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::fillWorkerReques
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::addNode(
   const tarch::parallel::messages::RegisterAtNodePoolMessage& node
 ) {
-  Level& level = getLevel(getLevelIndexForRank(node.getSenderRank()));
+
+  int levelIndex = getLevelIndexForRank(node.getSenderRank());
+  logInfo("addNode(node)", "Adding node " << node.getSenderRank() << " to level " << levelIndex);
+  Level& level = getLevel(levelIndex);
   level.addNode(node.getSenderRank());
 
   _numberOfNodes++;
@@ -152,6 +171,8 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::addNode(
 
 
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::removeNode( int rank ) {
+  logInfo("removeNode(rank)", "Removing node " << rank);
+
   Level& level = getLevel(getLevelIndexForRank(rank));
   level.removeNode(rank);
 
@@ -179,6 +200,9 @@ int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::reserveNode(int f
   int rank = level.getIdleRank();
   level.setWorking(rank);
   _numberOfIdleNodes--;
+
+  //TODO unterweg debug
+//  std::cout << "Reserving node for master " << forMaster << ": " << rank << std::endl;
   return rank;
 }
 
@@ -187,6 +211,9 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::reserveParticula
   assertion(level.isIdle(rank));
   level.setWorking(rank);
   _numberOfIdleNodes--;
+
+  //TODO unterweg debug
+//  std::cout << "Reserving node " << rank << std::endl;
 }
 
 bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::isRegisteredNode(int rank) const {
@@ -196,6 +223,10 @@ bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::isRegisteredNode
   }
 
   const Level& level = _level[levelIndex];
+
+  //TODO unterweg debug
+//  std::cout << "Is registered node: " << rank << ": " << level.hasNode(rank) << std::endl;
+
   return level.hasNode(rank);
 }
 
@@ -205,6 +236,10 @@ bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::isIdleNode(int r
     return false;
   }
   const Level& level = _level[getLevelIndexForRank(rank)];
+
+  //TODO unterweg debug
+//  std::cout << "Is idle node: " << rank << ": " << level.isIdle(rank) << std::endl;
+
   return level.isIdle(rank);
 }
 
@@ -217,21 +252,40 @@ std::string peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::toString(
 }
 
 bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::hasIdleNode(int forMaster) const {
-  int levelIndex = getLevelIndexForRank(forMaster) + 1;
-  if(!hasLevel(levelIndex)) {
-    return false;
+  //During termination Peano asks forMaster=AnyMaster
+  if(forMaster == tarch::parallel::NodePoolStrategy::AnyMaster) {
+    return _numberOfNodes > 0;
+  } else {
+    int levelIndex = getLevelIndexForRank(forMaster) + 1;
+    if(!hasLevel(levelIndex)) {
+
+      //TODO unterweg debug
+//      std::cout << "hasIdleNode(" << forMaster << ")=false" << std::endl;
+      return false;
+    }
+
+    assertion3((int)_level.size() > levelIndex, _level.size(), levelIndex, forMaster);
+    const Level& level = _level[levelIndex];
+    bool levelHasIdleNode = level.hasIdleRank();
+
+    //TODO unterweg debug
+//    std::cout << "hasIdleNode(" << forMaster << ")=" << levelHasIdleNode << " (levelIndex=" << levelIndex << ")" << std::endl
+//        << level.toString() << std::endl;
+    return levelHasIdleNode;
   }
-  const Level& level = _level[levelIndex];
-  return level.hasIdleRank();
 }
 
 int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::removeNextIdleNode() {
   for(size_t levelIndex = 0; levelIndex < _level.size(); levelIndex++) {
     int rank = _level[levelIndex].removeNextIdleNode();
     if(rank > -1) {
+      logInfo("removeNextIdleNode", "Removing next idle node " << rank);
+      _numberOfNodes--;
       return rank;
     }
   }
+
+  assertionFail("No next idle node to remove... number of registered nodes=" << _numberOfNodes);
   return -1;
 }
 

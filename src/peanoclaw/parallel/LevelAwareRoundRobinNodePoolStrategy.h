@@ -55,6 +55,8 @@ class peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy : public tarch::
 
       bool hasIdleRank() const;
       int getIdleRank() const;
+
+      std::string toString() const;
   };
 
   /**
