@@ -8,6 +8,7 @@
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentSubgrids.h"
 #include "peanoclaw/parallel/NeighbourCommunicator.h"
+#include "peanoclaw/parallel/Process.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/VertexDescription.h"
 #include "peanoclaw/records/Data.h"
@@ -75,6 +76,8 @@ class peanoclaw::mappings::Remesh {
     int _defaultGhostLayerWidth;
 
     double _initialTimestepSize;
+
+    peanoclaw::parallel::Process _process;
 
     peanoclaw::Numerics* _numerics;
 
