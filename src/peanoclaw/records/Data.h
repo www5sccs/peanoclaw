@@ -15,8 +15,10 @@ namespace peanoclaw {
   namespace records {
     #ifdef PEANOCLAW_SWE
     typedef peanoclaw::records::FloatData Data;
+    typedef float FloatType;
     #else
     typedef peanoclaw::records::DoubleData Data;
+    typedef double FloatType;
     #endif
   }
 };

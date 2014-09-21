@@ -60,8 +60,14 @@ void peanoclaw::grid::plotter::HDF5SubgridPlotter::plotSubgrid(
   }
 
   //Dataset
-  double* data = subgrid.getUNewArray();
-  H5LTmake_dataset(_fileID, s.str().c_str(), DIMENSIONS, dimensions, H5T_NATIVE_DOUBLE, data);
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
+  std::vector<double> data;
+
+  dfor(subcellIndex, subgrid.getSubdivisionFactor()) {
+    data.push_back(accessor.getValueUNew(subcellIndex, 0));
+  }
+
+  H5LTmake_dataset(_fileID, s.str().c_str(), DIMENSIONS, dimensions, H5T_NATIVE_DOUBLE, data.data());
 
   //Attributes
   double position[DIMENSIONS];
