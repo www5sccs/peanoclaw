@@ -234,6 +234,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setUseDimensionalSplittingExtrapolation(useDimensionalSplittingExtrapolation && !_configuration.disableDimensionalSplittingOptimization());
   state.setReduceReductions(reduceReductions);
   state.enableFluxCorrection(configuration.enableFluxCorrection());
+  state.setRestrictStatistics(configuration.restrictStatistics());
 //  state.setEnforceGlobalTimestepping(true);
 //  state.updateMinimalEstimatedNextTimestepSize(1e-7);
   state.setPlotName(plotName);
