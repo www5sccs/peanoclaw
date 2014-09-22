@@ -114,6 +114,11 @@ class peanoclaw::statistics::SubgridStatistics {
      */
     void copy(const SubgridStatistics& other);
 
+    /**
+     * Computes a simple hash of the machine's name.
+     */
+    int computeProcessorHashCode();
+
   public:
     /**
      * Default constructor. Objects build with this constructor

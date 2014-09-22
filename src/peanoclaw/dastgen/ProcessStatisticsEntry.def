@@ -26,4 +26,9 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
    * restrictions and copy operations for cells.
    */
   //parallelise persistent int numberOfCellOperations;
+  
+  /**
+   * A hash that "identifies" the processor this process runs on.
+   */
+  parallelise persistent int processorHashCode;
 };

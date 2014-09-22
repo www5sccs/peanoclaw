@@ -5,9 +5,10 @@ peanoclaw::statistics::ProcessStatisticsEntry::PersistentRecords::PersistentReco
 }
 
 
-peanoclaw::statistics::ProcessStatisticsEntry::PersistentRecords::PersistentRecords(const int& rank, const int& numberOfCellUpdates):
+peanoclaw::statistics::ProcessStatisticsEntry::PersistentRecords::PersistentRecords(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode):
 _rank(rank),
-_numberOfCellUpdates(numberOfCellUpdates) {
+_numberOfCellUpdates(numberOfCellUpdates),
+_processorHashCode(processorHashCode) {
    
 }
 
@@ -17,13 +18,13 @@ peanoclaw::statistics::ProcessStatisticsEntry::ProcessStatisticsEntry() {
 
 
 peanoclaw::statistics::ProcessStatisticsEntry::ProcessStatisticsEntry(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._rank, persistentRecords._numberOfCellUpdates) {
+_persistentRecords(persistentRecords._rank, persistentRecords._numberOfCellUpdates, persistentRecords._processorHashCode) {
    
 }
 
 
-peanoclaw::statistics::ProcessStatisticsEntry::ProcessStatisticsEntry(const int& rank, const int& numberOfCellUpdates):
-_persistentRecords(rank, numberOfCellUpdates) {
+peanoclaw::statistics::ProcessStatisticsEntry::ProcessStatisticsEntry(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode):
+_persistentRecords(rank, numberOfCellUpdates, processorHashCode) {
    
 }
 
@@ -43,6 +44,8 @@ void peanoclaw::statistics::ProcessStatisticsEntry::toString (std::ostream& out)
    out << "rank:" << getRank();
    out << ",";
    out << "numberOfCellUpdates:" << getNumberOfCellUpdates();
+   out << ",";
+   out << "processorHashCode:" << getProcessorHashCode();
    out <<  ")";
 }
 
@@ -54,7 +57,8 @@ peanoclaw::statistics::ProcessStatisticsEntry::PersistentRecords peanoclaw::stat
 peanoclaw::statistics::ProcessStatisticsEntryPacked peanoclaw::statistics::ProcessStatisticsEntry::convert() const{
    return ProcessStatisticsEntryPacked(
       getRank(),
-      getNumberOfCellUpdates()
+      getNumberOfCellUpdates(),
+      getProcessorHashCode()
    );
 }
 
@@ -69,16 +73,18 @@ peanoclaw::statistics::ProcessStatisticsEntryPacked peanoclaw::statistics::Proce
       {
          ProcessStatisticsEntry dummyProcessStatisticsEntry[2];
          
-         const int Attributes = 3;
+         const int Attributes = 4;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //rank
             MPI_INT,		 //numberOfCellUpdates
+            MPI_INT,		 //processorHashCode
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             1,		 //rank
             1,		 //numberOfCellUpdates
+            1,		 //processorHashCode
             1		 // end/displacement flag
          };
          
@@ -88,7 +94,8 @@ peanoclaw::statistics::ProcessStatisticsEntryPacked peanoclaw::statistics::Proce
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[0]._persistentRecords._rank))), 		&disp[0] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[0]._persistentRecords._numberOfCellUpdates))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[1]._persistentRecords._rank))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[0]._persistentRecords._processorHashCode))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[1]._persistentRecords._rank))), 		&disp[3] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -103,16 +110,18 @@ peanoclaw::statistics::ProcessStatisticsEntryPacked peanoclaw::statistics::Proce
       {
          ProcessStatisticsEntry dummyProcessStatisticsEntry[2];
          
-         const int Attributes = 3;
+         const int Attributes = 4;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //rank
             MPI_INT,		 //numberOfCellUpdates
+            MPI_INT,		 //processorHashCode
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             1,		 //rank
             1,		 //numberOfCellUpdates
+            1,		 //processorHashCode
             1		 // end/displacement flag
          };
          
@@ -122,7 +131,8 @@ peanoclaw::statistics::ProcessStatisticsEntryPacked peanoclaw::statistics::Proce
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[0]._persistentRecords._rank))), 		&disp[0] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[0]._persistentRecords._numberOfCellUpdates))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[1]._persistentRecords._rank))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[0]._persistentRecords._processorHashCode))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntry[1]._persistentRecords._rank))), 		&disp[3] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -365,9 +375,10 @@ peanoclaw::statistics::ProcessStatisticsEntryPacked::PersistentRecords::Persiste
 }
 
 
-peanoclaw::statistics::ProcessStatisticsEntryPacked::PersistentRecords::PersistentRecords(const int& rank, const int& numberOfCellUpdates):
+peanoclaw::statistics::ProcessStatisticsEntryPacked::PersistentRecords::PersistentRecords(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode):
 _rank(rank),
-_numberOfCellUpdates(numberOfCellUpdates) {
+_numberOfCellUpdates(numberOfCellUpdates),
+_processorHashCode(processorHashCode) {
    
 }
 
@@ -377,13 +388,13 @@ peanoclaw::statistics::ProcessStatisticsEntryPacked::ProcessStatisticsEntryPacke
 
 
 peanoclaw::statistics::ProcessStatisticsEntryPacked::ProcessStatisticsEntryPacked(const PersistentRecords& persistentRecords):
-_persistentRecords(persistentRecords._rank, persistentRecords._numberOfCellUpdates) {
+_persistentRecords(persistentRecords._rank, persistentRecords._numberOfCellUpdates, persistentRecords._processorHashCode) {
    
 }
 
 
-peanoclaw::statistics::ProcessStatisticsEntryPacked::ProcessStatisticsEntryPacked(const int& rank, const int& numberOfCellUpdates):
-_persistentRecords(rank, numberOfCellUpdates) {
+peanoclaw::statistics::ProcessStatisticsEntryPacked::ProcessStatisticsEntryPacked(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode):
+_persistentRecords(rank, numberOfCellUpdates, processorHashCode) {
    
 }
 
@@ -403,6 +414,8 @@ void peanoclaw::statistics::ProcessStatisticsEntryPacked::toString (std::ostream
    out << "rank:" << getRank();
    out << ",";
    out << "numberOfCellUpdates:" << getNumberOfCellUpdates();
+   out << ",";
+   out << "processorHashCode:" << getProcessorHashCode();
    out <<  ")";
 }
 
@@ -414,7 +427,8 @@ peanoclaw::statistics::ProcessStatisticsEntryPacked::PersistentRecords peanoclaw
 peanoclaw::statistics::ProcessStatisticsEntry peanoclaw::statistics::ProcessStatisticsEntryPacked::convert() const{
    return ProcessStatisticsEntry(
       getRank(),
-      getNumberOfCellUpdates()
+      getNumberOfCellUpdates(),
+      getProcessorHashCode()
    );
 }
 
@@ -429,16 +443,18 @@ peanoclaw::statistics::ProcessStatisticsEntry peanoclaw::statistics::ProcessStat
       {
          ProcessStatisticsEntryPacked dummyProcessStatisticsEntryPacked[2];
          
-         const int Attributes = 3;
+         const int Attributes = 4;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //rank
             MPI_INT,		 //numberOfCellUpdates
+            MPI_INT,		 //processorHashCode
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             1,		 //rank
             1,		 //numberOfCellUpdates
+            1,		 //processorHashCode
             1		 // end/displacement flag
          };
          
@@ -448,7 +464,8 @@ peanoclaw::statistics::ProcessStatisticsEntry peanoclaw::statistics::ProcessStat
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[0]._persistentRecords._rank))), 		&disp[0] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[0]._persistentRecords._numberOfCellUpdates))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[1]._persistentRecords._rank))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[0]._persistentRecords._processorHashCode))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[1]._persistentRecords._rank))), 		&disp[3] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );
@@ -463,16 +480,18 @@ peanoclaw::statistics::ProcessStatisticsEntry peanoclaw::statistics::ProcessStat
       {
          ProcessStatisticsEntryPacked dummyProcessStatisticsEntryPacked[2];
          
-         const int Attributes = 3;
+         const int Attributes = 4;
          MPI_Datatype subtypes[Attributes] = {
             MPI_INT,		 //rank
             MPI_INT,		 //numberOfCellUpdates
+            MPI_INT,		 //processorHashCode
             MPI_UB		 // end/displacement flag
          };
          
          int blocklen[Attributes] = {
             1,		 //rank
             1,		 //numberOfCellUpdates
+            1,		 //processorHashCode
             1		 // end/displacement flag
          };
          
@@ -482,7 +501,8 @@ peanoclaw::statistics::ProcessStatisticsEntry peanoclaw::statistics::ProcessStat
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[0]))), &base);
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[0]._persistentRecords._rank))), 		&disp[0] );
          MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[0]._persistentRecords._numberOfCellUpdates))), 		&disp[1] );
-         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[1]._persistentRecords._rank))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[0]._persistentRecords._processorHashCode))), 		&disp[2] );
+         MPI_Address( const_cast<void*>(static_cast<const void*>(&(dummyProcessStatisticsEntryPacked[1]._persistentRecords._rank))), 		&disp[3] );
          
          for (int i=1; i<Attributes; i++) {
             assertion1( disp[i] > disp[i-1], i );

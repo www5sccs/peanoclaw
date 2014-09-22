@@ -18,8 +18,13 @@
 #include <limits>
 #include <iomanip>
 
+#ifdef Parallel
+#include "mpi.h"
+#endif
+
 tarch::logging::Log peanoclaw::statistics::SubgridStatistics::_log("peanoclaw::statistics::SubgridStatistics");
 tarch::multicore::BooleanSemaphore peanoclaw::statistics::SubgridStatistics::_heapSemaphore;
+
 
 bool peanoclaw::statistics::smaller(
   const ProcessStatisticsEntry& entry1,
@@ -41,6 +46,7 @@ void peanoclaw::statistics::SubgridStatistics::initializeLevelAndProcessStatisti
   #else
   processStatisticsEntry.setRank(0);
   #endif
+  processStatisticsEntry.setProcessorHashCode(computeProcessorHashCode());
   processStatisticsEntry.setNumberOfCellUpdates(0);
   processStatistics.push_back(processStatisticsEntry);
 
@@ -142,6 +148,21 @@ void peanoclaw::statistics::SubgridStatistics::copy(const SubgridStatistics& oth
   _minimalPatchBlockedDueToCoarsening = other._minimalPatchBlockedDueToCoarsening;
   _minimalPatchBlockedDueToGlobalTimestep = other._minimalPatchBlockedDueToGlobalTimestep;
   _isFinalized = other._isFinalized;
+}
+
+int peanoclaw::statistics::SubgridStatistics::computeProcessorHashCode() {
+  #ifdef Parallel
+  char processorName[MPI_MAX_PROCESSOR_NAME];
+  int nameLength;
+  MPI_Get_processor_name(processorName, &nameLength);
+  int hashCode = 0;
+  for(size_t i = 0; i < nameLength; i++) {
+      hashCode = 65599 * hashCode + processorName[i];
+  }
+  return hashCode ^ (hashCode >> 16);
+  #else
+  return 0;
+  #endif
 }
 
 peanoclaw::statistics::SubgridStatistics::SubgridStatistics()
@@ -538,7 +559,7 @@ void peanoclaw::statistics::SubgridStatistics::logProcessStatistics(std::string 
       numberOfIgnoredProcesses++;
     }
 
-    logInfo("logProcessStatistics(...)", "Rank " << i->getRank() << ": #cell updates=" << i->getNumberOfCellUpdates());
+    logInfo("logProcessStatistics(...)", "Rank " << i->getRank() << " (Processor: " << i->getProcessorHashCode() << "): #cell updates=" << i->getNumberOfCellUpdates());
   }
 
   double averageCellUpdates = (double)totalCellUpdates / numberOfWorkers;

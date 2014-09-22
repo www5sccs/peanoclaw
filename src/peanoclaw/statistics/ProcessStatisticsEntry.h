@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   15/07/2014 08:40
+ * @date   22/09/2014 15:44
  */
 class peanoclaw::statistics::ProcessStatisticsEntry { 
    
@@ -43,6 +43,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
       struct PersistentRecords {
          int _rank;
          int _numberOfCellUpdates;
+         int _processorHashCode;
          /**
           * Generated
           */
@@ -51,7 +52,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
          /**
           * Generated
           */
-         PersistentRecords(const int& rank, const int& numberOfCellUpdates);
+         PersistentRecords(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode);
          
          
          inline int getRank() const 
@@ -94,6 +95,26 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
          
          
          
+         inline int getProcessorHashCode() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _processorHashCode;
+         }
+         
+         
+         
+         inline void setProcessorHashCode(const int& processorHashCode) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _processorHashCode = processorHashCode;
+         }
+         
+         
+         
       };
       
    private: 
@@ -113,7 +134,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
       /**
        * Generated
        */
-      ProcessStatisticsEntry(const int& rank, const int& numberOfCellUpdates);
+      ProcessStatisticsEntry(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode);
       
       /**
        * Generated
@@ -157,6 +178,26 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
  #endif 
  {
          _persistentRecords._numberOfCellUpdates = numberOfCellUpdates;
+      }
+      
+      
+      
+      inline int getProcessorHashCode() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._processorHashCode;
+      }
+      
+      
+      
+      inline void setProcessorHashCode(const int& processorHashCode) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._processorHashCode = processorHashCode;
       }
       
       
@@ -218,7 +259,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   15/07/2014 08:40
+          * @date   22/09/2014 15:44
           */
          class peanoclaw::statistics::ProcessStatisticsEntryPacked { 
             
@@ -227,6 +268,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                struct PersistentRecords {
                   int _rank;
                   int _numberOfCellUpdates;
+                  int _processorHashCode;
                   /**
                    * Generated
                    */
@@ -235,7 +277,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const int& rank, const int& numberOfCellUpdates);
+                  PersistentRecords(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode);
                   
                   
                   inline int getRank() const 
@@ -278,6 +320,26 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                   
                   
                   
+                  inline int getProcessorHashCode() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _processorHashCode;
+                  }
+                  
+                  
+                  
+                  inline void setProcessorHashCode(const int& processorHashCode) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _processorHashCode = processorHashCode;
+                  }
+                  
+                  
+                  
                };
                
             private: 
@@ -297,7 +359,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                /**
                 * Generated
                 */
-               ProcessStatisticsEntryPacked(const int& rank, const int& numberOfCellUpdates);
+               ProcessStatisticsEntryPacked(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode);
                
                /**
                 * Generated
@@ -341,6 +403,26 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
  #endif 
  {
                   _persistentRecords._numberOfCellUpdates = numberOfCellUpdates;
+               }
+               
+               
+               
+               inline int getProcessorHashCode() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._processorHashCode;
+               }
+               
+               
+               
+               inline void setProcessorHashCode(const int& processorHashCode) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._processorHashCode = processorHashCode;
                }
                
                
