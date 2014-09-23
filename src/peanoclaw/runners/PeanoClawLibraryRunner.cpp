@@ -93,13 +93,13 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment(
     1, // splitTheThree
     false, // pipelineDescendProcessing
     false, // pipelineAscendProcessing
-    tarch::la::aPowI(DIMENSIONS,3*3*3*3/2), // smallestGrainSizeForAscendDescend
-    3, // grainSizeForAsendDescend
-    tarch::la::aPowI(DIMENSIONS,3), // smallestGrainSizeForEnterLeaveCell // (9 / 2) works good, 2 is good as well
-    2, // grainSizeForEnterLevelCell
-    tarch::la::aPowI(DIMENSIONS,3*3*3*3+1), // smallestGrainSizeForTouchFirstLast
+    1, // smallestGrainSizeForAscendDescend
+    1, // grainSizeForAsendDescend
+    1, // smallestGrainSizeForEnterLeaveCell // (9 / 2) works good, 2 is good as well
+    1, // grainSizeForEnterLevelCell
+    64, // smallestGrainSizeForTouchFirstLast
     64, // grainSizeForTouchFirstLast
-    tarch::la::aPowI(DIMENSIONS,3*3*3), // smallestGrainSizeForSplitLoadStore
+    8, // smallestGrainSizeForSplitLoadStore
     8, // grainSizeForSplitLoadStore
     -1, // adapterNumber
    peano::datatraversal::autotuning::NumberOfDifferentMethodsCalling // methodTrace*/
