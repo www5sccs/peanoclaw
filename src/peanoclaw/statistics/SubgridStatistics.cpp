@@ -457,6 +457,15 @@ void peanoclaw::statistics::SubgridStatistics::updateMinimalSubgridBlockReason(
   }
 }
 
+void peanoclaw::statistics::SubgridStatistics::setWallclockTimeForIteration(double wallclockTime) {
+  std::vector<ProcessStatisticsEntry>& processStatistics = ProcessStatisticsHeap::getInstance().getData(_processStatisticsIndex);
+  for(std::vector<ProcessStatisticsEntry>::iterator i = processStatistics.begin(); i != processStatistics.end(); i++) {
+    if(i->getRank() == tarch::parallel::Node::getInstance().getRank()) {
+      i->setWallclockTimeForIteration(wallclockTime);
+    }
+  }
+}
+
 void peanoclaw::statistics::SubgridStatistics::destroyedSubgrid(int cellDescriptionIndex) {
   if(_minimalPatchIndex == cellDescriptionIndex) {
     _minimalPatchIndex = -1;
@@ -559,7 +568,7 @@ void peanoclaw::statistics::SubgridStatistics::logProcessStatistics(std::string 
       numberOfIgnoredProcesses++;
     }
 
-    logInfo("logProcessStatistics(...)", "Rank " << i->getRank() << " (Processor: " << i->getProcessorHashCode() << "): #cell updates=" << i->getNumberOfCellUpdates());
+    logInfo("logProcessStatistics(...)", "Rank " << i->getRank() << " (Processor: " << i->getProcessorHashCode() << "): #cell updates=" << i->getNumberOfCellUpdates() << " time for iteration=" << i->getWallclockTimeForIteration() << "s");
   }
 
   double averageCellUpdates = (double)totalCellUpdates / numberOfWorkers;

@@ -137,7 +137,8 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep()
     _useDimensionalSplittingExtrapolation(true),
     _collectSubgridStatistics(true),
     _workerIterations(-1),
-    _correctFluxes(true) {
+    _correctFluxes(true),
+    _iterationWatch("", "", false) {
   logTraceIn( "SolveTimestep()" );
   // @todo Insert your code here
   logTraceOut( "SolveTimestep()" );
@@ -427,10 +428,10 @@ void peanoclaw::mappings::SolveTimestep::prepareSendToMaster(
 ) {
   logTraceInWith2Arguments( "prepareSendToMaster(...)", localCell, verticesEnumerator.toString() );
 
-
   //TODO unterweg debug
 //  std::cout << "Estimated on worker: " << _subgridStatistics.getEstimatedIterationsUntilGlobalTimestep() << std::endl;
 
+  _subgridStatistics.setWallclockTimeForIteration(_iterationWatch.getCalendarTime());
   if(_collectSubgridStatistics) {
     _subgridStatistics.sendToMaster(tarch::parallel::NodePool::getInstance().getMasterRank());
   }
@@ -866,6 +867,8 @@ void peanoclaw::mappings::SolveTimestep::beginIteration(
   ProcessStatisticsHeap::getInstance().startToSendSynchronousData();
   ProcessStatisticsHeap::getInstance().startToSendBoundaryData(solverState.isTraversalInverted());
   #endif
+
+  _iterationWatch.startTimer();
  
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }

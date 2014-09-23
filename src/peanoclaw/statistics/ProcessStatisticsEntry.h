@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   22/09/2014 15:44
+ * @date   23/09/2014 19:31
  */
 class peanoclaw::statistics::ProcessStatisticsEntry { 
    
@@ -44,6 +44,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
          int _rank;
          int _numberOfCellUpdates;
          int _processorHashCode;
+         double _wallclockTimeForIteration;
          /**
           * Generated
           */
@@ -52,7 +53,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
          /**
           * Generated
           */
-         PersistentRecords(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode);
+         PersistentRecords(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode, const double& wallclockTimeForIteration);
          
          
          inline int getRank() const 
@@ -115,6 +116,26 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
          
          
          
+         inline double getWallclockTimeForIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            return _wallclockTimeForIteration;
+         }
+         
+         
+         
+         inline void setWallclockTimeForIteration(const double& wallclockTimeForIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+            _wallclockTimeForIteration = wallclockTimeForIteration;
+         }
+         
+         
+         
       };
       
    private: 
@@ -134,7 +155,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
       /**
        * Generated
        */
-      ProcessStatisticsEntry(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode);
+      ProcessStatisticsEntry(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode, const double& wallclockTimeForIteration);
       
       /**
        * Generated
@@ -201,6 +222,26 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
       }
       
       
+      
+      inline double getWallclockTimeForIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         return _persistentRecords._wallclockTimeForIteration;
+      }
+      
+      
+      
+      inline void setWallclockTimeForIteration(const double& wallclockTimeForIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+         _persistentRecords._wallclockTimeForIteration = wallclockTimeForIteration;
+      }
+      
+      
       /**
        * Generated
        */
@@ -259,7 +300,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   22/09/2014 15:44
+          * @date   23/09/2014 19:31
           */
          class peanoclaw::statistics::ProcessStatisticsEntryPacked { 
             
@@ -269,6 +310,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                   int _rank;
                   int _numberOfCellUpdates;
                   int _processorHashCode;
+                  double _wallclockTimeForIteration;
                   /**
                    * Generated
                    */
@@ -277,7 +319,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode);
+                  PersistentRecords(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode, const double& wallclockTimeForIteration);
                   
                   
                   inline int getRank() const 
@@ -340,6 +382,26 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                   
                   
                   
+                  inline double getWallclockTimeForIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     return _wallclockTimeForIteration;
+                  }
+                  
+                  
+                  
+                  inline void setWallclockTimeForIteration(const double& wallclockTimeForIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                     _wallclockTimeForIteration = wallclockTimeForIteration;
+                  }
+                  
+                  
+                  
                };
                
             private: 
@@ -359,7 +421,7 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
                /**
                 * Generated
                 */
-               ProcessStatisticsEntryPacked(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode);
+               ProcessStatisticsEntryPacked(const int& rank, const int& numberOfCellUpdates, const int& processorHashCode, const double& wallclockTimeForIteration);
                
                /**
                 * Generated
@@ -423,6 +485,26 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
  #endif 
  {
                   _persistentRecords._processorHashCode = processorHashCode;
+               }
+               
+               
+               
+               inline double getWallclockTimeForIteration() const 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  return _persistentRecords._wallclockTimeForIteration;
+               }
+               
+               
+               
+               inline void setWallclockTimeForIteration(const double& wallclockTimeForIteration) 
+ #ifdef UseManualInlining
+ __attribute__((always_inline))
+ #endif 
+ {
+                  _persistentRecords._wallclockTimeForIteration = wallclockTimeForIteration;
                }
                
                

@@ -193,6 +193,11 @@ class peanoclaw::statistics::SubgridStatistics {
     );
 
     /**
+     * Sets the wallclock time this process took for the iteration.
+     */
+    void setWallclockTimeForIteration(double wallclockTime);
+
+    /**
      * Called after a subgrid got destroyed -> Check if it's one of the stored
      * patches and update.
      */

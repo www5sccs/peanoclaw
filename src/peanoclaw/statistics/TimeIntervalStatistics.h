@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   22/09/2014 15:44
+ * @date   23/09/2014 19:31
  */
 class peanoclaw::statistics::TimeIntervalStatistics { 
    
@@ -669,7 +669,7 @@ class peanoclaw::statistics::TimeIntervalStatistics {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   22/09/2014 15:44
+          * @date   23/09/2014 19:31
           */
          class peanoclaw::statistics::TimeIntervalStatisticsPacked { 
             

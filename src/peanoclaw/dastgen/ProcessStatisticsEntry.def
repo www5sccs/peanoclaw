@@ -31,4 +31,9 @@ class peanoclaw::statistics::ProcessStatisticsEntry {
    * A hash that "identifies" the processor this process runs on.
    */
   parallelise persistent int processorHashCode;
+  
+  /**
+   * The wallclock time this process took for one iteration.
+   */
+  parallelise persistent double wallclockTimeForIteration;
 };

@@ -74,6 +74,8 @@ class peanoclaw::mappings::SolveTimestep {
 
     std::map<int, int> _estimatedRemainingIterationsUntilGlobalTimestep;
 
+    tarch::timing::Watch _iterationWatch;
+
     /**
      * Counts the number of worker iterations. That means, if a worker
      * becomes idle and several grid-iterations later receives another
