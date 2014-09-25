@@ -24,12 +24,16 @@
 #include "peanoclaw/runners/PeanoClawLibraryRunner.h"
 #include "tarch/logging/LogFilterFileReader.h"
 #include "tarch/logging/Log.h"
+#include "tarch/multicore/MulticoreDefinitions.h"
+#include "tarch/multicore/tbb/Core.h"
 #include "tarch/tests/TestCaseRegistry.h"
 
 #ifdef PEANOCLAW_SWE
 #include "peanoclaw/native/sweMain.h"
 #elif PEANOCLAW_FULLSWOF2D
 #include "peanoclaw/native/fullswof2DMain.h"
+#elif PEANOCLAW_EULER3D
+#include <tbb/task_scheduler_init.h>
 #endif
 
 #if USE_VALGRIND
@@ -149,7 +153,7 @@ void runSimulation(
     double time = 0.0;
     do {
       time += scenario.getGlobalTimestepSize();
-        peanoclaw::State& state = runner->getState();
+//      peanoclaw::State& state = runner->getState();
       runner->evolveToTime(std::min(time, scenario.getEndTime()));
       //runner->gatherCurrentSolution();
       //std::cout << "time " << time << " numberOfCells " << state.getNumberOfInnerCells() << std::endl;
@@ -173,7 +177,6 @@ int main(int argc, char **argv) {
 
 #if defined(Parallel)
   int parallelSetup = peano::initParallelEnvironment(&argc,(char ***)&argv);
-  int sharedMemorySetup = peano::initSharedMemoryEnvironment();
 #endif
 
   initializeLogFilter();
@@ -190,6 +193,10 @@ int main(int argc, char **argv) {
   std::string plotName;
   int numberOfThreads;
   argc = readOptionalArguments(argc, argv, usePeanoClaw, plotName, numberOfThreads);
+
+  #if defined(SharedMemoryParallelisation) || defined(PEANOCLAW_EULER3D)
+  tbb::task_scheduler_init tbbInit(numberOfThreads);
+  #endif
 
   //Create Scenario
   peanoclaw::native::scenarios::SWEScenario* scenario;

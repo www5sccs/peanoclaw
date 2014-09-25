@@ -159,14 +159,15 @@ peanoclaw::mappings::SolveTimestep::SolveTimestep(const SolveTimestep&  masterTh
   _domainOffset(masterThread._domainOffset),
   _domainSize(masterThread._domainSize),
   _subgridStatistics(masterThread._globalTimestepEndTime),
+  _sharedMemoryStatistics(),
   _initialMaximalSubgridSize(masterThread._initialMaximalSubgridSize),
   _probeList(masterThread._probeList),
   _useDimensionalSplittingExtrapolation(masterThread._useDimensionalSplittingExtrapolation),
   _collectSubgridStatistics(masterThread._collectSubgridStatistics),
   _correctFluxes(masterThread._correctFluxes),
   _estimatedRemainingIterationsUntilGlobalTimestep(masterThread._estimatedRemainingIterationsUntilGlobalTimestep),
-  _sharedMemoryStatistics(),
-  _workerIterations(masterThread._workerIterations)
+  _workerIterations(masterThread._workerIterations),
+  _iterationWatch("", "", false)
 {
   logTraceIn( "SolveTimestep(SolveTimestep)" );
   // @todo Insert your code here

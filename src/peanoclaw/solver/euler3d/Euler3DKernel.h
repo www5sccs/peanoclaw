@@ -95,9 +95,9 @@ class peanoclaw::solver::euler3d::Euler3DKernel : public peanoclaw::Numerics {
 
     double computeTimestep(
       double dt,
-      peanoclaw::Patch& subgrid,
-      std::vector<peanoclaw::solver::euler3d::Cell>& cellsUNew,
-      std::vector<peanoclaw::solver::euler3d::Cell>& cellsUOld
+      peanoclaw::Patch& subgrid//,
+//      std::vector<peanoclaw::solver::euler3d::Cell>& cellsUNew,
+//      std::vector<peanoclaw::solver::euler3d::Cell>& cellsUOld
     );
 };
 

@@ -8,12 +8,18 @@
 
 #include "peanoclaw/grid/aspects/BoundaryIterator.h"
 #include "peanoclaw/solver/euler3d/Cell.h"
+#include "peanoclaw/solver/euler3d/SchemeExecutor.h"
 #include "peanoclaw/grid/SubgridAccessor.h"
 #include "peanoclaw/Patch.h"
 
 #include "Uni/EulerEquations/RoeSolver"
 
 #include <iomanip>
+
+#ifdef PEANOCLAW_EULER3D
+#include <tbb/parallel_reduce.h>
+#include <tbb/blocked_range.h>
+#endif
 
 tarch::logging::Log peanoclaw::solver::euler3d::Euler3DKernel::_log("peanoclaw::solver::euler3d::Euler3DKernel");
 
@@ -50,38 +56,7 @@ void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(
 ) {
   #ifdef Dim3
   double dt = std::min(subgrid.getTimeIntervals().getEstimatedNextTimestepSize(), maximumTimestepSize);
-  assertion(tarch::la::greaterEquals(dt, 0.0));
-
-  //TODO unterweg debug
-//  std::cout << subgrid.toStringUOldWithGhostLayer() << std::endl;
-
-  tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = subgrid.getSubdivisionFactor();
-  int ghostlayerWidth = subgrid.getGhostlayerWidth();
-  int numberOfCellsUNew = tarch::la::volume(subdivisionFactor);
-  int numberOfCellsUOld = tarch::la::volume(subdivisionFactor + 2*ghostlayerWidth);
-
-  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
-  peanoclaw::grid::SubgridIterator<NUMBER_OF_EULER_UNKNOWNS> iteratorUNew = accessor.getSubgridIterator<NUMBER_OF_EULER_UNKNOWNS>(
-    tarch::la::Vector<DIMENSIONS,int>(0),
-    subdivisionFactor
-  );
-  peanoclaw::grid::SubgridIterator<NUMBER_OF_EULER_UNKNOWNS> iteratorUOld = accessor.getSubgridIterator<NUMBER_OF_EULER_UNKNOWNS>(
-    tarch::la::Vector<DIMENSIONS,int>(-subgrid.getGhostlayerWidth()),
-    subdivisionFactor +  2*subgrid.getGhostlayerWidth()
-  );
-
-  //Create copy of subgrid
-  std::vector<peanoclaw::solver::euler3d::Cell> cellsUNew;
-  cellsUNew.reserve(numberOfCellsUNew);
-  std::vector<peanoclaw::solver::euler3d::Cell> cellsUOld;
-  cellsUOld.reserve(numberOfCellsUOld);
-
-  while(iteratorUNew.moveToNextCell()) {
-    cellsUNew.push_back(peanoclaw::solver::euler3d::Cell(iteratorUNew.getUnknownsUNew(), iteratorUNew.getCellIndex()));
-  }
-  while(iteratorUOld.moveToNextCell()) {
-    cellsUOld.push_back(peanoclaw::solver::euler3d::Cell(iteratorUOld.getUnknownsUOld(), iteratorUOld.getCellIndex()));
-  }
+  assertion2(tarch::la::greaterEquals(dt, 0.0), subgrid.getTimeIntervals().getEstimatedNextTimestepSize(), maximumTimestepSize);
 
   //Run update
   double estimatedDt = dt;
@@ -90,28 +65,24 @@ void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(
   int iterations = 0;
   do {
     logDebug("solveTimestep(...)", "Solving timestep with dt=" << estimatedDt);
-    double maxLambda = computeTimestep(estimatedDt, subgrid, cellsUNew, cellsUOld);
+    double maxLambda = computeTimestep(estimatedDt, subgrid);
     dt = estimatedDt;
     cfl = dt * maxLambda / tarch::la::min(subgrid.getSubcellSize());
     estimatedDt = estimatedDt * (maximalCFL / cfl) * 0.9;
+    assertion3(tarch::la::greater(cfl, 0.0), cfl, dt, maxLambda);
     assertion(tarch::la::greaterEquals(dt, 0.0));
     iterations++;
     assertion(iterations < 10);
   } while(tarch::la::greater(cfl, maximalCFL));
 
-  //Copy changes back
-  iteratorUNew.restart();
-  std::vector<peanoclaw::solver::euler3d::Cell>::iterator iterator = cellsUNew.begin();
-  while(iteratorUNew.moveToNextCell()) {
-    iteratorUNew.setUnknownsUNew(iterator->getUnknowns());
-    iterator++;
-  }
+  assertion2(tarch::la::greater(estimatedDt, 0.0), estimatedDt, cfl);
 
   subgrid.getTimeIntervals().advanceInTime();
   subgrid.getTimeIntervals().setEstimatedNextTimestepSize(estimatedDt);
   subgrid.getTimeIntervals().setTimestepSize(dt);
 
   #ifdef Asserts
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
   dfor(subcellIndex, subgrid.getSubdivisionFactor()) {
     assertion5(
       tarch::la::greater(accessor.getValueUNew(subcellIndex, 0), 0.0),
@@ -140,133 +111,34 @@ void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(
 
 double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
   double dt,
-  peanoclaw::Patch& subgrid,
-  std::vector<peanoclaw::solver::euler3d::Cell>& cellsUNew,
-  std::vector<peanoclaw::solver::euler3d::Cell>& cellsUOld
+  peanoclaw::Patch& subgrid
 ) {
+  SchemeExecutor schemeExecutor(
+    subgrid,
+    dt
+  );
+
+  #if defined(SharedTBB) or true
   tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = subgrid.getSubdivisionFactor();
-  int ghostlayerWidth = subgrid.getGhostlayerWidth();
-  int zRow = subdivisionFactor[2] + 2*ghostlayerWidth;
-  int yzPlane = (subdivisionFactor[1] + 2*ghostlayerWidth) * (subdivisionFactor[2] + 2*ghostlayerWidth);
-  tarch::la::Vector<DIMENSIONS,double> cellSize = subgrid.getSubcellSize();
-
-  tarch::la::Vector<DIMENSIONS,int> unitX;
-  assignList(unitX) = 1, 0, 0;
-  tarch::la::Vector<DIMENSIONS,int> unitY;
-  assignList(unitY) = 0, 1, 0;
-  tarch::la::Vector<DIMENSIONS,int> unitZ;
-  assignList(unitZ) = 0, 0, 1;
-
-  Uni::EulerEquations::RoeSolver solver;
-  solver.courantNumber(dt, cellSize[0], cellSize[1], cellSize[2]);
-
-  //TODO unterweg debug
-//  std::cout << subgrid.toStringUOldWithGhostLayer() << std::endl;
-
-  double maxLambda = 0.0;
-  double maxSoundspeed = 0.0;
-  int linearUNewIndex = 0;
-  int linearUOldIndex = yzPlane*ghostlayerWidth + zRow*ghostlayerWidth + ghostlayerWidth;
+  tbb::parallel_reduce(
+    tbb::blocked_range<int>(0, tarch::la::volume(subdivisionFactor)),
+    schemeExecutor
+  );
+  #else
+  tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = subgrid.getSubdivisionFactor();
   for(int x = 0; x < subdivisionFactor[0]; x++) {
     for(int y = 0; y < subdivisionFactor[1]; y++) {
       for(int z = 0; z < subdivisionFactor[2]; z++) {
         tarch::la::Vector<DIMENSIONS,int> subcellIndex;
         assignList(subcellIndex) = x, y, z;
 
-        //TODO unterweg debug
-        //std::cout << "back: " << (linearUOldIndex-xyPlane) << " bottom: " << (linearUOldIndex-xRow)
-
-//        peanoclaw::solver::euler3d::Cell& backCell = cellsUOld[linearUOldIndex-xyPlane];
-//        peanoclaw::solver::euler3d::Cell& bottomCell = cellsUOld[linearUOldIndex-xRow];
-//        peanoclaw::solver::euler3d::Cell& leftCell = cellsUOld[linearUOldIndex-1];
-//        peanoclaw::solver::euler3d::Cell& centerCell = cellsUOld[linearUOldIndex];
-//        peanoclaw::solver::euler3d::Cell& rightCell = cellsUOld[linearUOldIndex+1];
-//        peanoclaw::solver::euler3d::Cell& topCell = cellsUOld[linearUOldIndex+xRow];
-//        peanoclaw::solver::euler3d::Cell& frontCell = cellsUOld[linearUOldIndex+xyPlane];
-
-        //Left/Right: x
-        //Bottom/Top: y
-        //Back/Front: z
-        peanoclaw::solver::euler3d::Cell& leftCell = cellsUOld[linearUOldIndex-yzPlane];
-        peanoclaw::solver::euler3d::Cell& bottomCell = cellsUOld[linearUOldIndex-zRow];
-        peanoclaw::solver::euler3d::Cell& backCell = cellsUOld[linearUOldIndex-1];
-        peanoclaw::solver::euler3d::Cell& centerCell = cellsUOld[linearUOldIndex];
-        peanoclaw::solver::euler3d::Cell& frontCell = cellsUOld[linearUOldIndex+1];
-        peanoclaw::solver::euler3d::Cell& topCell = cellsUOld[linearUOldIndex+zRow];
-        peanoclaw::solver::euler3d::Cell& rightCell = cellsUOld[linearUOldIndex+yzPlane];
-
-        assertionEquals(leftCell._index, subcellIndex-unitX);
-        assertionEquals(bottomCell._index, subcellIndex-unitY);
-        assertionEquals(backCell._index, subcellIndex-unitZ);
-        assertionEquals(centerCell._index, subcellIndex);
-        assertionEquals(frontCell._index, subcellIndex+unitZ);
-        assertionEquals(topCell._index, subcellIndex+unitY);
-        assertionEquals(rightCell._index, subcellIndex+unitX);
-
-        assertionEquals2(linearUOldIndex-yzPlane, subgrid.getAccessor().getLinearIndexUOld(subcellIndex - unitX), subcellIndex, linearUOldIndex);
-        assertionEquals(linearUOldIndex-zRow, subgrid.getAccessor().getLinearIndexUOld(subcellIndex - unitY));
-        assertionEquals(linearUOldIndex-1, subgrid.getAccessor().getLinearIndexUOld(subcellIndex - unitZ));
-        assertionEquals(linearUOldIndex, subgrid.getAccessor().getLinearIndexUOld(subcellIndex));
-        assertionEquals(linearUOldIndex+1, subgrid.getAccessor().getLinearIndexUOld(subcellIndex + unitZ));
-        assertionEquals(linearUOldIndex+zRow, subgrid.getAccessor().getLinearIndexUOld(subcellIndex + unitY));
-        assertionEquals(linearUOldIndex+yzPlane, subgrid.getAccessor().getLinearIndexUOld(subcellIndex + unitX));
-
-        //TODO unterweg debug
-        bool plot =
-            false;
-//          (x > 3 && x < 6) && (y > 3 && y < 6) && (z > 3 && z < 6);
-//            x == 1 && y == 2 && z == 2;
-//            x < 3 && y == 0 && z == 0;
-        if(plot) {
-          std::cout << x << ", " << y << ", " << z << std::endl;
-          std::cout << "dt=" << dt << std::endl;
-          std::cout << "left: density=" << std::setprecision(3) << leftCell.density() << ", momentum=" << leftCell.velocity()(0) << "," << leftCell.velocity()(1) << "," << leftCell.velocity()(2) << ", energy=" << leftCell.energy() << std::endl;
-          std::cout << "right: density=" << std::setprecision(3) << rightCell.density() << ", momentum=" << rightCell.velocity()(0) << "," << rightCell.velocity()(1) << "," << rightCell.velocity()(2) << ", energy=" << rightCell.energy() << std::endl;
-          std::cout << "bottom: density=" << std::setprecision(3) << bottomCell.density() << ", momentum=" << bottomCell.velocity()(0) << "," << bottomCell.velocity()(1) << "," << bottomCell.velocity()(2) << ", energy=" << bottomCell.energy() << std::endl;
-          std::cout << "top: density=" << std::setprecision(3) << topCell.density() << ", momentum=" << topCell.velocity()(0) << "," << topCell.velocity()(1) << "," << topCell.velocity()(2) << ", energy=" << topCell.energy() << std::endl;
-          std::cout << "back: density=" << std::setprecision(3) << backCell.density() << ", momentum=" << backCell.velocity()(0) << "," << backCell.velocity()(1) << "," << backCell.velocity()(2) << ", energy=" << backCell.energy() << std::endl;
-          std::cout << "front: density=" << std::setprecision(3) << frontCell.density() << ", momentum=" << frontCell.velocity()(0) << "," << frontCell.velocity()(1) << "," << frontCell.velocity()(2) << ", energy=" << frontCell.energy() << std::endl;
-          std::cout << "center: density=" << std::setprecision(3) << centerCell.density() << ", momentum=" << centerCell.velocity()(0) << "," << centerCell.velocity()(1) << "," << centerCell.velocity()(2) << ", energy=" << centerCell.energy() << std::endl;
-        }
-
-        peanoclaw::solver::euler3d::Cell& newCell = cellsUNew[linearUNewIndex];
-
-        double localMaxLambda;
-        solver.apply(
-          leftCell,
-          rightCell,
-          bottomCell,
-          topCell,
-          backCell,
-          frontCell,
-          centerCell,
-          newCell,
-          localMaxLambda
-        );
-        maxLambda = std::max(maxLambda, localMaxLambda);
-
-        //TODO unterweg debug
-        if(plot) {
-          std::cout << "  new cell density=" << newCell.density() << ", momentum=" << newCell.velocity()(0) << "," << newCell.velocity()(1) << "," << newCell.velocity()(2) << ", energy=" << newCell.energy() << std::endl;
-        }
-
-        maxSoundspeed = std::max(maxSoundspeed, centerCell.soundSpeed());
-
-        //TODO unterweg debug
-//        std::cout << "Accessing uOld=" << linearUOldIndex << " uNew=" << linearUNewIndex << std::endl;
-
-        linearUOldIndex++;
-        linearUNewIndex++;
+        schemeExecutor(subcellIndex);
       }
-      linearUOldIndex += 2*ghostlayerWidth;
     }
-    linearUOldIndex += 2*zRow;
   }
+  #endif
 
-  //TODO unterweg debug
-//  std::cout << "max soundspeed=" << maxSoundspeed << std::endl;
-
-  return maxLambda;
+  return schemeExecutor.getMaximumLambda();
 }
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::solver::euler3d::Euler3DKernel::getDemandedMeshWidth(Patch& patch, bool isInitializing) {

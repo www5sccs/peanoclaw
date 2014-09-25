@@ -36,16 +36,22 @@ class peanoclaw::solver::euler3d::Cell : public Uni::EulerEquations::Cell<double
     #endif
 
   private:
-    tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double> _data;
+    //tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double> _data;
+    double* _data;
     static const double ADIABATIC_CONSTANT;
     typedef Uni::EulerEquations::Cell<double, 3> Base;
 
   public:
     /**
-     * Constructs a Euler 3D cell from a given PeanoClaw cell data entry.
+     * Constructs an Euler 3D cell from a given PeanoClaw cell data entry.
      */
+//    Cell(
+//      const tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double>& data,
+//      const tarch::la::Vector<DIMENSIONS,int>& index
+//    );
+
     Cell(
-      const tarch::la::Vector<NUMBER_OF_EULER_UNKNOWNS,double>& data,
+      double* data,
       const tarch::la::Vector<DIMENSIONS,int>& index
     );
 

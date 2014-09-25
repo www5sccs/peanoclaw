@@ -12,10 +12,10 @@
 #include "peano/utils/Dimensions.h"
 
 /**
- * Linearization for SWE. Fastest-running index is Q, while the grid is traversed column-major,
+ * Linearization for Euler3D. Fastest-running index is Q, while the grid is traversed column-major,
  * so Y is the second fastest index, X the slowest.
  *
- * SWE is only 2D. This linearization, however, should also work in 3D.
+ * Euler3D is only 3D. This linearization, however, should also work in 2D.
  *
  * Refers to Fortran-style arrays where each cell holds an array of unknowns.
  */
