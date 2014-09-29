@@ -62,6 +62,25 @@ def addBoost(environment, cpppath, libpath):
   if libraryDirectory != None:
     libpath.append(libraryDirectory)
     
+def addTBB(cppdefines, cpppath, libpath, libs, enablePeanoTBBSupport=True):
+   libs.append('pthread')
+   libs.append('dl')
+   # Determine tbb directory and architecture from environment variables:
+   tbbBase = os.getenv ('TBB_BASE')
+   if tbbBase == None:
+     tbbBase = '/usr'
+   cpppath.append(join(tbbBase, 'include'))
+   tbbLibDir = os.getenv('TBB_LIBDIR')
+   if tbbLibDir == None:
+     tbbLibDir = '/usr/lib'
+   libpath.append(tbbLibDir)
+          
+   libs.append ('tbb')
+
+   if enablePeanoTBBSupport:
+     cppdefines.append('SharedTBB')
+   cppdefines.append('TBB_USE_DEBUG=1')
+    
 def getPeanoSources(Glob, buildpath, multicore):
   sourcesTLa = [
      Glob(join(buildpath, 'kernel/tarch/la/*.cpp')),
