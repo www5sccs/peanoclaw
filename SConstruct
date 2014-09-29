@@ -311,6 +311,7 @@ elif solver == 'fullswof2d':
   libs.append('png') # for texture file
 elif solver == 'euler3d':
   cppdefines.append('PEANOCLAW_EULER3D')
+  cppdefines.append('EIGEN_DONT_VECTORIZE')
   if dim != 3:
     raise Exception("The Euler3D solver can only be used in 3D.")
   euler3DEulerEquationsPath = '../euler3DEulerEquations'
@@ -329,6 +330,15 @@ elif solver == 'euler3d':
   buildtools.addBoost(environment, cpppath, libpath)
   if multicore != 'tbb':
     buildtools.addTBB(cppdefines, cpppath, libpath, libs, enablePeanoTBBSupport=False)
+    
+  solverType = ARGUMENTS.get('solverType', 'vectorized')
+  if solverType == 'vectorized':
+    pass
+  elif solverType == 'non-vectorized':
+    executableSuffix += '-non-vectorized'
+    cppdefines.append('EIGEN_DONT_VECTORIZE')
+  else:
+    raise Exception("Please specify solverType for Euler3D: 'vectorized' or 'non-vectorized'")
 else:
   raise Exception("ERROR: solver must be 'pyclaw', 'swe', 'fullswof2d', or 'euler3d'")
 
