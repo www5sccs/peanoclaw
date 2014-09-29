@@ -879,6 +879,15 @@ void peanoclaw::mappings::SolveTimestep::endIteration(
   peanoclaw::State&  solverState
 ) {
   logTraceInWith1Argument( "endIteration(State)", solverState );
+
+  #ifdef Parallel
+  if(tarch::parallel::Node::getInstance().isGlobalMaster()) {
+    _subgridStatistics.setWallclockTimeForIteration(_iterationWatch.getCalendarTime());
+    if(_collectSubgridStatistics) {
+      _subgridStatistics.sendToMaster(tarch::parallel::NodePool::getInstance().getMasterRank());
+    }
+  }
+  #endif
  
   _subgridStatistics.finalizeIteration(solverState);
   _sharedMemoryStatistics.logStatistics();
