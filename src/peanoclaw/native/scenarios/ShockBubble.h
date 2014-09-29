@@ -36,6 +36,7 @@ private:
   static double _bubbleRadius;
   static double _shockX;
   static double _pInflow;
+  static double _shockVelocity;
 
   void setCellValues(
     peanoclaw::Patch& subgrid,

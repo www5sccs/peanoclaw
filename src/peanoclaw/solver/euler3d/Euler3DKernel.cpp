@@ -61,7 +61,7 @@ void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(
   //Run update
   double estimatedDt = dt;
   double cfl;
-  double maximalCFL = 0.9;
+  double maximalCFL = 0.3;
   int iterations = 0;
   do {
     logDebug("solveTimestep(...)", "Solving timestep with dt=" << estimatedDt);
@@ -105,6 +105,7 @@ void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(
 
   //TODO unterweg debug
 //  std::cout << "After: " << std::endl << subgrid.toStringUNew() << std::endl;
+//  std::cout << "After: " << std::endl << subgrid.toStringUOldWithGhostLayer() << std::endl;
 //  assertionFail("");
   #endif
 }

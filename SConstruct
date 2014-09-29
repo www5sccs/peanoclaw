@@ -109,21 +109,7 @@ elif multicore == 'openmp':
    cpppath.append(ompDir + '/include')   
    pass
 elif multicore == 'tbb':
-   libs.append('pthread')
-   libs.append('dl')
-   # Determine tbb directory and architecture from environment variables:
-   tbbBase = os.getenv ('TBB_BASE')
-   if tbbBase == None:
-     tbbBase = '/usr'
-   cpppath.append(join(tbbBase, 'include'))
-   tbbLibDir = os.getenv('TBB_LIBDIR')
-   if tbbLibDir == None:
-     tbbLibDir = '/usr/lib'
-   libpath.append(tbbLibDir)
-          
-   libs.append ('tbb')
-
-   cppdefines.append('SharedTBB')
+  buildtools.addTBB(cppdefines, cpppath, libpath, libs)
 elif multicore == 'opencl':
    libs.append('OpenCL')
    libs.append ('pthread')
@@ -341,6 +327,8 @@ elif solver == 'euler3d':
   cpppath.append('/usr/include/eigen3')
   cppdefines.append('AssertForPositiveValues')
   buildtools.addBoost(environment, cpppath, libpath)
+  if multicore != 'tbb':
+    buildtools.addTBB(cppdefines, cpppath, libpath, libs, enablePeanoTBBSupport=False)
 else:
   raise Exception("ERROR: solver must be 'pyclaw', 'swe', 'fullswof2d', or 'euler3d'")
 

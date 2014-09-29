@@ -76,7 +76,6 @@ class peanoclaw::solver::euler3d::SchemeExecutor {
 
     #ifdef PEANOCLAW_EULER3D
     void operator()(
-  //    tbb::blocked_range<Uni::StructuredGrid::GridIterator<Uni::StructuredGrid::Basic::GlobalMultiIndex<int> > > const& range
       tbb::blocked_range<int> const& range
     );
     #endif

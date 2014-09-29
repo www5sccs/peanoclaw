@@ -84,15 +84,15 @@ peanoclaw::solver::euler3d::SchemeExecutor::SchemeExecutor(
 
   _stride[DIMENSIONS-1] = 1;
   for(int d = DIMENSIONS-2; d >= 0; d--) {
-    _stride[d] = _stride[d+1] * _subgrid.getSubdivisionFactor()[d];
+    _stride[d] = _stride[d+1] * _subgrid.getSubdivisionFactor()[d+1];
   }
 }
 
 void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
     tbb::blocked_range<int> const& range
 ) {
-  for (auto it = range.begin(); it != range.end(); ++it) {
-    int linearIndex = it;
+  for (int iterator = range.begin(); iterator != range.end(); iterator++) {
+    int linearIndex = iterator;
     tarch::la::Vector<DIMENSIONS,int> subcellIndex;
     for(int d = 0; d < DIMENSIONS; d++) {
       subcellIndex[d] = linearIndex / _stride[d];
@@ -133,11 +133,23 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
     subcellIndex-unitX
     //cellsUOld[linearUOldIndex-yzPlane];
   );
+  assertion2(
+    (linearIndexUOld + _leftCellOffset) >= 0
+    && (linearIndexUOld + _leftCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    linearIndexUOld,
+    _leftCellOffset
+  );
 
   peanoclaw::solver::euler3d::Cell bottomCell(
     &_uOldArray[linearIndexUOld + _bottomCellOffset],
     subcellIndex-unitY
     //cellsUOld[linearUOldIndex-zRow];
+  );
+  assertion2(
+    (linearIndexUOld + _bottomCellOffset) >= 0
+    && (linearIndexUOld + _bottomCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    linearIndexUOld,
+    _bottomCellOffset
   );
 
   peanoclaw::solver::euler3d::Cell backCell(
@@ -145,11 +157,22 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
     subcellIndex-unitZ
     //cellsUOld[linearUOldIndex-1];
   );
+  assertion2(
+    (linearIndexUOld + _backCellOffset) >= 0
+    && (linearIndexUOld + _backCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    linearIndexUOld,
+    _backCellOffset
+  );
 
   peanoclaw::solver::euler3d::Cell centerCell(
     &_uOldArray[linearIndexUOld],
     subcellIndex
     //cellsUOld[linearUOldIndex];
+  );
+  assertion1(
+    linearIndexUOld >= 0
+    && linearIndexUOld < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    linearIndexUOld
   );
 
   peanoclaw::solver::euler3d::Cell frontCell(
@@ -157,17 +180,35 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
     subcellIndex+unitZ
     //cellsUOld[linearUOldIndex+1];
   );
+  assertion2(
+    (linearIndexUOld + _frontCellOffset) >= 0
+    && (linearIndexUOld + _frontCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    linearIndexUOld,
+    _frontCellOffset
+  );
 
   peanoclaw::solver::euler3d::Cell topCell(
     &_uOldArray[linearIndexUOld + _topCellOffset],
     subcellIndex+unitY
     //cellsUOld[linearUOldIndex+zRow];
   );
+  assertion2(
+    (linearIndexUOld + _topCellOffset) >= 0
+    && (linearIndexUOld + _topCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    linearIndexUOld,
+    _topCellOffset
+  );
 
   peanoclaw::solver::euler3d::Cell rightCell(
     &_uOldArray[linearIndexUOld + _rightCellOffset],
     subcellIndex+unitX
     //cellsUOld[linearUOldIndex+yzPlane];
+  );
+  assertion2(
+    (linearIndexUOld + _rightCellOffset) >= 0
+    && (linearIndexUOld + _rightCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    linearIndexUOld,
+    _rightCellOffset
   );
 
   assertionEquals(leftCell._index, subcellIndex-unitX);
@@ -207,12 +248,14 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
 
   //TODO unterweg debug
   bool plot =
-      false || newCell.density() < 0.0;
+      false;
 //          (x > 3 && x < 6) && (y > 3 && y < 6) && (z > 3 && z < 6);
 //            x == 1 && y == 2 && z == 2;
 //            x < 3 && y == 0 && z == 0;
+//      subcellIndex[0] == 7 && subcellIndex[1] == 12 && subcellIndex[2] == 6;
+
   if(plot) {
-    std::cout << subcellIndex << std::endl;
+    std::cout << subcellIndex << " linearIndexUNew=" << linearIndexUNew << std::endl;
     std::cout << "dt=" << _dt << std::endl;
     std::cout << "left: density=" << std::setprecision(3) << leftCell.density() << ", momentum=" << leftCell.velocity()(0) << "," << leftCell.velocity()(1) << "," << leftCell.velocity()(2) << ", energy=" << leftCell.energy() << std::endl;
     std::cout << "right: density=" << std::setprecision(3) << rightCell.density() << ", momentum=" << rightCell.velocity()(0) << "," << rightCell.velocity()(1) << "," << rightCell.velocity()(2) << ", energy=" << rightCell.energy() << std::endl;

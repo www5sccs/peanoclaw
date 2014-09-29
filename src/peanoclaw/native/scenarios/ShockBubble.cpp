@@ -17,7 +17,8 @@ double peanoclaw::native::scenarios::ShockBubble::_rhoInside = 0.1;
 double peanoclaw::native::scenarios::ShockBubble::_gamma = 1.4;
 double peanoclaw::native::scenarios::ShockBubble::_bubbleRadius = 0.1; //0.2;
 double peanoclaw::native::scenarios::ShockBubble::_shockX = 0.2;
-double peanoclaw::native::scenarios::ShockBubble::_pInflow = 5.0;
+double peanoclaw::native::scenarios::ShockBubble::_pInflow = 10.0;
+double peanoclaw::native::scenarios::ShockBubble::_shockVelocity = 500;
 
 void peanoclaw::native::scenarios::ShockBubble::setCellValues(
   peanoclaw::Patch& subgrid,
@@ -33,10 +34,18 @@ void peanoclaw::native::scenarios::ShockBubble::setCellValues(
   double pInside = 1.0;
   double pOutside = 1.0;
 
+  double soundSpeed = sqrt(_gamma * _pInflow / pOutside);
+
   double gamma1 = _gamma - 1.0;
-  double rhoInflow = (gamma1 + _pInflow * (_gamma + 1.0)) / ((_gamma + 1.0) + gamma1 * _pInflow);
-  double vInflow = 1.0 / sqrt(_gamma) * (_pInflow - 1.0) / sqrt(0.5 * ((_gamma + 1.) / _gamma) * _pInflow + 0.5 * gamma1 / _gamma);
+  double vInflow = 500;
+      //_shockVelocity - soundSpeed * sqrt(1 + (_gamma+1) / (2*_gamma) * (pOutside / _pInflow - 1));
+      //1.0 / sqrt(_gamma) * (_pInflow - 1.0) / sqrt(0.5 * ((_gamma + 1.) / _gamma) * _pInflow + 0.5 * gamma1 / _gamma);
+  double rhoInflow = 2.0; //4.5;
+      //-(_shockVelocity * (pOutside - _pInflow)) / vInflow;
+      //(gamma1 + _pInflow * (_gamma + 1.0)) / ((_gamma + 1.0) + gamma1 * _pInflow);
   double eInflow = 0.5 * rhoInflow * vInflow * vInflow + _pInflow / gamma1;
+  double tInflow = 273;
+  double t = 273;
 
   double r = sqrt((x-0.5)*(x-0.5) + (y-0.5)*(y-0.5) + (z-0.5)*(z-0.5));
 
@@ -51,14 +60,12 @@ void peanoclaw::native::scenarios::ShockBubble::setCellValues(
   velocity(0) = px;
   velocity(1) = 0;
   velocity(2) = 0;
-  if(x < _shockX) {
-    e = Uni::EulerEquations::Cell<double,3>::computeEnergyFromDensityVelocityTemperature(
-        rho,
-        velocity,
-        273,
-        1.4,
-        8.3144621757575);
-  }
+  e = Uni::EulerEquations::Cell<double,3>::computeEnergyFromDensityVelocityTemperature(
+      rho,
+      velocity,
+      (x < _shockX) ? tInflow : t,
+      1.4,
+      8.3144621757575);
   #endif
 
   if(setUNew) {
@@ -87,13 +94,16 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
   double                                       globalTimestepSize,
   double                                       endTime
 ) : _domainOffset(domainOffset),
-    _domainSize(domainSize),
+    _domainSize(),
     _minimalMeshWidth(-1),
     _maximalMeshWidth(-1),
     _subdivisionFactor(subdivisionFactor),
     _globalTimestepSize(globalTimestepSize),
     _endTime(endTime)
 {
+  tarch::la::assignList(_domainSize) = 2, 1, 1;
+  _subdivisionFactor[0] *= 2;
+
   _minimalMeshWidth
     = tarch::la::multiplyComponents(domainSize, tarch::la::invertEntries(finestSubgridTopology.convertScalar<double>()));
   _maximalMeshWidth
@@ -106,12 +116,14 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
 peanoclaw::native::scenarios::ShockBubble::ShockBubble(
   std::vector<std::string> arguments
 ) : _domainOffset(0),
-    _domainSize(1){
+    _domainSize(){
   if(arguments.size() != 5) {
     std::cerr << "Expected arguments for Scenario 'shockBubble': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize" << std::endl
         << "\tGot " << arguments.size() << " arguments." << std::endl;
     throw "";
   }
+
+  tarch::la::assignList(_domainSize) = 2, 1, 1;
 
   double finestSubgridTopologyPerDimension = atof(arguments[0].c_str());
   _minimalMeshWidth = _domainSize / finestSubgridTopologyPerDimension;
@@ -124,6 +136,8 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
   _endTime = atof(arguments[3].c_str());
 
   _globalTimestepSize = atof(arguments[4].c_str());
+
+  _subdivisionFactor[0] *= 2;
 }
 
 peanoclaw::native::scenarios::ShockBubble::~ShockBubble() {
@@ -147,11 +161,6 @@ void peanoclaw::native::scenarios::ShockBubble::initializePatch(peanoclaw::Patch
           subcellIndex,
           true
         );
-
-        //assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 0), rho, 1e-5), accessor.getValueUNew(subcellIndex, 0), rho);
-//        assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 1), px, 1e-5), accessor.getValueUNew(subcellIndex, 1), px);
-//        assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 2), py, 1e-5), accessor.getValueUNew(subcellIndex, 2), py);
-//        assertion2(tarch::la::equals(accessor.getValueUNew(subcellIndex, 3), pz, 1e-5), accessor.getValueUNew(subcellIndex, 2), pz);
       }
     }
   }
