@@ -13,14 +13,17 @@
 
 #include "Uni/EulerEquations/RoeSolver"
 #include "Uni/StructuredGrid/GridIterator"
-#include "Uni/StructuredGrid/Basic/GlobalMultiIndex"
 
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
+#include "tarch/logging/Log.h"
+
+#include <map>
 
 #ifdef PEANOCLAW_EULER3D
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
+#include <tbb/compat/thread>
 #endif
 
 namespace peanoclaw {
@@ -34,9 +37,18 @@ namespace peanoclaw {
 class peanoclaw::solver::euler3d::SchemeExecutor {
 
   private:
+    /**
+     * Logging device.
+     */
+    static tarch::logging::Log _log;
+
     peanoclaw::Patch& _subgrid;
     peanoclaw::grid::SubgridAccessor& _accessor;
     Uni::EulerEquations::RoeSolver _scheme;
+
+    #ifdef PEANOCLAW_EULER3D
+    std::map<tbb::tbb_thread::id, int> _cellUpdatesPerThread;
+    #endif
 
     double _dt;
 
@@ -90,6 +102,11 @@ class peanoclaw::solver::euler3d::SchemeExecutor {
      * Returns the maximum wave speed for the last timestep.
      */
     double getMaximumLambda() const;
+
+    /**
+     * Logs the statistics that have been assembled up to now.
+     */
+    void logStatistics() const;
 
 };
 

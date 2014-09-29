@@ -10,6 +10,8 @@
 
 #include <iomanip>
 
+tarch::logging::Log peanoclaw::solver::euler3d::SchemeExecutor::_log("peanoclaw::solver::euler3d::SchemeExecutor");
+
 #ifdef PEANOCLAW_EULER3D
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for_each.h>
@@ -20,6 +22,9 @@ peanoclaw::solver::euler3d::SchemeExecutor::SchemeExecutor(
 ) : _subgrid(other._subgrid),
     _accessor(other._accessor),
     _scheme(other._scheme),
+    #ifdef PEANOCLAW_EULER3D
+    _cellUpdatesPerThread(),
+    #endif
     _dt(other._dt),
     _leftCellOffset(other._leftCellOffset),
     _rightCellOffset(other._rightCellOffset),
@@ -91,6 +96,14 @@ peanoclaw::solver::euler3d::SchemeExecutor::SchemeExecutor(
 void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
     tbb::blocked_range<int> const& range
 ) {
+  tbb::tbb_thread::id threadID = tbb::this_tbb_thread::get_id();
+  std::map<tbb::tbb_thread::id, int>::iterator entry = _cellUpdatesPerThread.find(threadID);
+  if(entry == _cellUpdatesPerThread.end()) {
+    _cellUpdatesPerThread[threadID] = 0;
+    entry = _cellUpdatesPerThread.find(threadID);
+  }
+  entry->second += range.end() - range.begin();
+
   for (int iterator = range.begin(); iterator != range.end(); iterator++) {
     int linearIndex = iterator;
     tarch::la::Vector<DIMENSIONS,int> subcellIndex;
@@ -266,9 +279,6 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
     std::cout << "center: density=" << std::setprecision(3) << centerCell.density() << ", momentum=" << centerCell.velocity()(0) << "," << centerCell.velocity()(1) << "," << centerCell.velocity()(2) << ", energy=" << centerCell.energy() << std::endl;
     std::cout << "  new cell density=" << newCell.density() << ", momentum=" << newCell.velocity()(0) << "," << newCell.velocity()(1) << "," << newCell.velocity()(2) << ", energy=" << newCell.energy() << std::endl;
   }
-
-  //TODO unterweg debug
-//        std::cout << "Accessing uOld=" << linearUOldIndex << " uNew=" << linearUNewIndex << std::endl;
 }
 
 void peanoclaw::solver::euler3d::SchemeExecutor::join(
@@ -277,8 +287,37 @@ void peanoclaw::solver::euler3d::SchemeExecutor::join(
   _maxLambda = std::max(_maxLambda, other._maxLambda);
   _maxDensity     = std::max(_maxDensity, other._maxDensity);
   _minDensity     = std::min(_minDensity, other._minDensity);
+
+  //TODO unterweg debug
+//  std::cout << "Merging..." << std::endl;
+  for(std::map<tbb::tbb_thread::id, int>::const_iterator i = other._cellUpdatesPerThread.begin(); i != other._cellUpdatesPerThread.end(); i++) {
+    std::map<tbb::tbb_thread::id, int>::iterator entry = _cellUpdatesPerThread.find(i->first);
+    if(entry == _cellUpdatesPerThread.end()) {
+      //TODO unterweg debug
+//      std::cout << "\tadding thread " << i->first << ": " << i->second << std::endl;
+      _cellUpdatesPerThread[i->first] = i->second;
+    } else {
+//      throw "";
+      //TODO unterweg debug
+//      std::cout << "\tmerging thread " << i->first << ": " << i->second << std::endl;
+      _cellUpdatesPerThread[i->first] += i->second;
+    }
+  }
 }
 
 double peanoclaw::solver::euler3d::SchemeExecutor::getMaximumLambda() const {
   return _maxLambda;
 }
+
+void peanoclaw::solver::euler3d::SchemeExecutor::logStatistics() const {
+  logInfo("logStatistics()", "#Threads=" << _cellUpdatesPerThread.size());
+  int threadIndex = 0;
+  for(std::map<tbb::tbb_thread::id, int>::const_iterator entry = _cellUpdatesPerThread.begin();
+      entry != _cellUpdatesPerThread.end();
+      entry++) {
+    logInfo("logStatistics()", "CellUpdates on thread " << threadIndex << ": " << entry->second);
+    threadIndex++;
+  }
+}
+
+

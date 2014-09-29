@@ -125,6 +125,7 @@ double peanoclaw::solver::euler3d::Euler3DKernel::computeTimestep(
     tbb::blocked_range<int>(0, tarch::la::volume(subdivisionFactor)),
     schemeExecutor
   );
+  schemeExecutor.logStatistics();
   #else
   tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = subgrid.getSubdivisionFactor();
   for(int x = 0; x < subdivisionFactor[0]; x++) {
