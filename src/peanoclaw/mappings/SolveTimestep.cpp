@@ -432,6 +432,7 @@ void peanoclaw::mappings::SolveTimestep::prepareSendToMaster(
   //TODO unterweg debug
 //  std::cout << "Estimated on worker: " << _subgridStatistics.getEstimatedIterationsUntilGlobalTimestep() << std::endl;
 
+  _iterationWatch.stopTimer();
   _subgridStatistics.setWallclockTimeForIteration(_iterationWatch.getCalendarTime());
   if(_collectSubgridStatistics) {
     _subgridStatistics.sendToMaster(tarch::parallel::NodePool::getInstance().getMasterRank());
