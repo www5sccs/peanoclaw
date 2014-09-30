@@ -39,7 +39,7 @@ void peanoclaw::Numerics::transferGhostlayer(
   );
 }
 
-void peanoclaw::Numerics::interpolate(
+void peanoclaw::Numerics::interpolateSolution (
   const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
   const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
   peanoclaw::Patch& source,
@@ -48,7 +48,7 @@ void peanoclaw::Numerics::interpolate(
   bool interpolateToCurrentTime,
   bool useTimeUNewOrTimeUOld
 ) const {
-  _interpolation->interpolate(
+  _interpolation->interpolateSolution(
     destinationSize,
     destinationOffset,
     source,
@@ -59,12 +59,12 @@ void peanoclaw::Numerics::interpolate(
   );
 }
 
-void peanoclaw::Numerics::restrict (
+void peanoclaw::Numerics::restrictSolution (
   peanoclaw::Patch& source,
   peanoclaw::Patch& destination,
   bool              restrictOnlyOverlappedAreas
 ) const {
-  _restriction->restrict(
+  _restriction->restrictSolution(
     source,
     destination,
     restrictOnlyOverlappedAreas

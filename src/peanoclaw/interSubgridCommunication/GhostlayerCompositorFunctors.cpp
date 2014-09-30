@@ -58,7 +58,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerFaceFunctor::operator()
 
       _ghostlayerCompositor._numerics.transferGhostlayer(faceSize, sourceOffset, destinationOffset, source, destination);
     } else if(source.getLevel() < destination.getLevel() && destination.getLevel() == _ghostlayerCompositor._level && source.isLeaf()) {
-      _ghostlayerCompositor._numerics.interpolate(
+      _ghostlayerCompositor._numerics.interpolateSolution(
         faceSize,
         destinationOffset,
         source,
@@ -134,7 +134,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerEdgeFunctor::operator()
       //TODO unterweg debug
 //      std::cout << "Interpolating ghostlayer edge from " << sourceIndex << " to " << destinationIndex << std::endl;
 
-      _ghostlayerCompositor._numerics.interpolate(
+      _ghostlayerCompositor._numerics.interpolateSolution(
         edgeSize,
         destinationOffset,
         source,
@@ -203,7 +203,7 @@ void peanoclaw::interSubgridCommunication::FillGhostlayerCornerFunctor::operator
         destination
       );
     } else if(sourceLevel < destinationLevel && destinationLevel == _ghostlayerCompositor._level && source.isLeaf()) {
-      _ghostlayerCompositor._numerics.interpolate(
+      _ghostlayerCompositor._numerics.interpolateSolution(
         cornerSize,
         destinationOffset,
         source,

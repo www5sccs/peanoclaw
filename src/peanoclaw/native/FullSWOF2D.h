@@ -91,7 +91,7 @@ public:
    * by means of the interpolation method implemented in Python. I.e. this
    * method can only be called if providesInterpolation() returns <tt>true</tt>.
    */
-//  void interpolate(
+//  void interpolateSolution (
 //    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
 //    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
 //    const peanoclaw::Patch& source,

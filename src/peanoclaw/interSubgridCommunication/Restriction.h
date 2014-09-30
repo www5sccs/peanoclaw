@@ -21,11 +21,6 @@ namespace peanoclaw {
   }
 }
 
-#ifdef __xlC__
-#include "peanoclaw/Patch.h"
-#include "peanoclaw/Area.h"
-#endif
-
 class peanoclaw::interSubgridCommunication::Restriction {
   public:
 
@@ -34,7 +29,7 @@ class peanoclaw::interSubgridCommunication::Restriction {
     /**
      * Restricts data from a fine patch to a coarse patch.
      */
-    virtual void restrict (
+    virtual void restrictSolution (
       peanoclaw::Patch& source,
       peanoclaw::Patch& destination,
       bool              restrictOnlyOverlappedAreas

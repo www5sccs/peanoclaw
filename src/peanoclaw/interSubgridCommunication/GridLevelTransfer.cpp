@@ -195,7 +195,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::restrictToOverlapp
           && !tarch::la::oneGreater(subgrid.getPosition() + subgrid.getSize(), virtualSubgrid.getPosition() + virtualSubgrid.getSize()),
           subgrid.toString(), virtualSubgrid.toString());
 
-      _numerics.restrict(subgrid, virtualSubgrid, !virtualSubgrid.willCoarsen());
+      _numerics.restrictSolution(subgrid, virtualSubgrid, !virtualSubgrid.willCoarsen());
 
       virtualSubgrid.getTimeIntervals().setEstimatedNextTimestepSize(
         subgrid.getTimeIntervals().getEstimatedNextTimestepSize()

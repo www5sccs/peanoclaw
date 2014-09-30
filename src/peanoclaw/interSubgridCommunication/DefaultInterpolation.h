@@ -52,7 +52,7 @@ class peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate {
      * interval which becomes the new currentTime and timestepSize of the virtual
      * subgrid anyway.
      */
-    void interpolate (
+    void interpolateSolution (
       const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
       const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
       peanoclaw::Patch& source,
@@ -68,7 +68,7 @@ class peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate {
  */
 class peanoclaw::interSubgridCommunication::DefaultInterpolation : public peanoclaw::interSubgridCommunication::Interpolation {
   public:
-    void interpolate (
+    void interpolateSolution (
       const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
       const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
       peanoclaw::Patch& source,
@@ -81,61 +81,61 @@ class peanoclaw::interSubgridCommunication::DefaultInterpolation : public peanoc
         case 1:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<1> transfer1;
-            transfer1.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer1.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 2:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<2> transfer2;
-            transfer2.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer2.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 3:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<3> transfer3;
-            transfer3.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer3.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 4:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<4> transfer4;
-            transfer4.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer4.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 5:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<5> transfer5;
-            transfer5.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer5.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 6:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<6> transfer6;
-            transfer6.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer6.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 7:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<7> transfer7;
-            transfer7.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer7.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 8:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<8> transfer8;
-            transfer8.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer8.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 9:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<9> transfer9;
-            transfer9.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer9.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         case 10:
           {
             peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<10> transfer10;
-            transfer10.interpolate(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
+            transfer10.interpolateSolution(destinationSize, destinationOffset, source, destination, interpolateToUOld, interpolateToCurrentTime, useTimeUNewOrTimeUOld);
           }
           break;
         default:

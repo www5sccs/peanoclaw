@@ -30,7 +30,7 @@ class peanoclaw::pyclaw::InterpolationCallbackWrapper : public peanoclaw::interS
     /**
      * @see peanoclaw::interSubgridCommunication::Interpolation
      */
-    void interpolate (
+    void interpolateSolution (
       const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
       const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
       peanoclaw::Patch& source,

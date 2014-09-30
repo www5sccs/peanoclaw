@@ -27,7 +27,7 @@ peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOfUnkno
 }
 
 template<int NumberOfUnknowns>
-void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOfUnknowns>::interpolate(
+void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOfUnknowns>::interpolateSolution(
   const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
   const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
   peanoclaw::Patch& source,
@@ -164,12 +164,12 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
         double sourceUOld = sourceAccessor.getValueUOld(linearSourceUOldIndex, unknown);
         double sourceUNew = sourceAccessor.getValueUNew(linearSourceUNewIndex, unknown);
 
-        logDebug("interpolate(...)", "\tspatialFactorUNew=" << spatialFactor
+        logDebug("interpolateSolution(...)", "\tspatialFactorUNew=" << spatialFactor
             << ", spatialFactorUNew=" << spatialFactor
             << " due to destination position " << destination.getSubcellCenter(subcellIndexInDestinationPatch)
             << " and source position " << source.getSubcellCenter(neighborIndexInSourcePatch)
             << " and source.subcellsize=" << sourceSubcellSize << " and offset=" << offset);
-        logDebug("interpolate(...)", "\ttimeFactor=" << timeFactor
+        logDebug("interpolateSolution(...)", "\ttimeFactor=" << timeFactor
             << " due to destination time " << destination.getTimeIntervals().getCurrentTime()
             << " and destination timestep size " << destination.getTimeIntervals().getTimestepSize()
             << " and source time " << source.getTimeIntervals().getCurrentTime()
@@ -184,7 +184,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
               destinationAccessor.getValueUOld(linearDestinationIndex, unknown)
               + spatialFactor * (sourceUOld * (1.0-timeFactor) + sourceUNew * timeFactor));
         } else {
-          logDebug("interpolate(...)", "\tAdding UNew value " << sourceUNew << " and UOld value " << sourceUOld
+          logDebug("interpolateSolution(...)", "\tAdding UNew value " << sourceUNew << " and UOld value " << sourceUOld
               << " with spatialFactor " << spatialFactor << " and timeFactor " << timeFactor
               << " to value " << destination.getAccessor().getValueUNew(subcellIndexInDestinationPatch, unknown));
 
@@ -232,7 +232,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
 //      }
 
     }
-    logDebug("interpolate(...)", "For subcell " << destinationIterator.getCellIndex() << " interpolated value is " << destinationIterator.getUnknownUOld(0));
+    logDebug("interpolateSolution(...)", "For subcell " << destinationIterator.getCellIndex() << " interpolated value is " << destinationIterator.getUnknownUOld(0));
   }
 
   #ifdef Asserts
@@ -263,7 +263,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
       throw "";
     }
   }
-  #endif
+//  #endif
   #endif
 
   logTraceOut("");

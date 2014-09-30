@@ -61,7 +61,7 @@ class peanoclaw::interSubgridCommunication::Interpolation {
      *    using the time of UOld
      *
      */
-    virtual void interpolate (
+    virtual void interpolateSolution (
         const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
         const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
         peanoclaw::Patch& source,

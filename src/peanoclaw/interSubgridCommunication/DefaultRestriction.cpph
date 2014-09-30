@@ -99,7 +99,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
 }
 
 template<int NumberOfUnknowns>
-void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUnknowns>::restrict(
+void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUnknowns>::restrictSolution(
   peanoclaw::Patch& source,
   peanoclaw::Patch&       destination,
   bool restrictOnlyOverlappedAreas
@@ -123,12 +123,12 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
         areas
     );
 
-    logDebug("restrict", "Restriction from patch " << source << std::endl << " to patch " << destination);
+    logDebug("restrictSolution(...)", "Restriction from patch " << source << std::endl << " to patch " << destination);
     for( int i = 0; i < numberOfAreasToProcess; i++ ) {
 
       assertion1(tarch::la::allGreaterEquals(areas[i]._size, 0), areas[i]);
 
-      logDebug("restrict", "Restricting area [" << areas[i]._offset << "], [" << areas[i]._size << "]");
+      logDebug("restrictSolution(...)", "Restricting area [" << areas[i]._offset << "], [" << areas[i]._size << "]");
       if(tarch::la::allGreater(areas[i]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
         restrictArea(source, destination, sourceIterator, destinationIterator, areas[i]);
       }

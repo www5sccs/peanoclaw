@@ -392,7 +392,7 @@ void peanoclaw::mappings::Remesh::createCell(
         #endif
       ) {
         _numerics->update(fineGridPatch);
-        _numerics->interpolate(
+        _numerics->interpolateSolution(
           fineGridPatch.getSubdivisionFactor(),
           0,
           coarseGridPatch,
@@ -401,7 +401,7 @@ void peanoclaw::mappings::Remesh::createCell(
           false,
           false
         );
-        _numerics->interpolate(
+        _numerics->interpolateSolution(
           fineGridPatch.getSubdivisionFactor(),
           0,
           coarseGridPatch,

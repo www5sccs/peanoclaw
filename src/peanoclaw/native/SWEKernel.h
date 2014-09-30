@@ -129,7 +129,7 @@ public:
    * Modifies the source subgrid so that not the water height above
    * the seafloor is interpolated but the absolute water height.
    */
-  virtual void interpolate(
+  virtual void interpolateSolution (
     const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
     const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
     peanoclaw::Patch& source,
@@ -143,7 +143,7 @@ public:
    * Modifies the source subgrid so that not the water height above
    * the seafloor is restricted but the absolute water height.
    */
-  virtual void restrict (
+  virtual void restrictSolution (
     peanoclaw::Patch& source,
     peanoclaw::Patch& destination,
     bool              restrictOnlyOverlappedAreas
