@@ -195,8 +195,8 @@ elif compiler == 'xlc':
    elif build == 'asserts':
       ccflags.append('-qstrict')
       ccflags.append('-O2')
+      ccflags.append('-g')
    elif build == 'release':
-      ccflags.append('-g3')
       ccflags.append('-qstrict')
       ccflags.append('-O3')
    if multicore == 'openmp':
