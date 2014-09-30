@@ -21,6 +21,11 @@ namespace peanoclaw {
   }
 }
 
+#ifdef __xlC__
+#include "peanoclaw/Patch.h"
+#include "peanoclaw/Area.h"
+#endif
+
 class peanoclaw::interSubgridCommunication::Restriction {
   public:
 
