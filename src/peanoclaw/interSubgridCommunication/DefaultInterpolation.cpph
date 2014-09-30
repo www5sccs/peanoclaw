@@ -263,7 +263,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
       throw "";
     }
   }
-//  #endif
+  #endif
   #endif
 
   logTraceOut("");
