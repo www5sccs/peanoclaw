@@ -23,6 +23,10 @@ namespace peanoclaw {
   }
 }
 
+#ifdef __xlC__
+#include "peanoclaw/Patch.h"
+#endif
+
 /**
  * Interface for functionality provided by the coupled framework
  * (I.e. PyClaw).
