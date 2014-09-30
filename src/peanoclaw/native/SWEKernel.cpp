@@ -278,7 +278,7 @@ void peanoclaw::native::SWEKernel::interpolateSolution (
   transformWaterHeight(destination, destinationArea, interpolateToUOld, true);
 }
 
-void peanoclaw::native::SWEKernel::restrict (
+void peanoclaw::native::SWEKernel::restrictSolution (
   peanoclaw::Patch& source,
   peanoclaw::Patch& destination,
   bool              restrictOnlyOverlappedAreas
@@ -289,7 +289,7 @@ void peanoclaw::native::SWEKernel::restrict (
   transformWaterHeight(source, sourceArea, true, false); //UOld
   transformWaterHeight(source, sourceArea, false, false); //UNew
 
-  Numerics::restrict(
+  Numerics::restrictSolution(
     source,
     destination,
     restrictOnlyOverlappedAreas
