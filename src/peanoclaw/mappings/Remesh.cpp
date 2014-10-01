@@ -476,11 +476,7 @@ void peanoclaw::mappings::Remesh::destroyCell(
     fineGridVerticesEnumerator.getVertexPosition(0),
     fineGridVerticesEnumerator.getCellSize(),
     fineGridVerticesEnumerator.getLevel(),
-    #ifdef Parallel
     tarch::parallel::Node::getInstance().getRank()
-    #else
-    0
-    #endif
   );
 
   Patch finePatch(
