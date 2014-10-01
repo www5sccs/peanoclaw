@@ -190,6 +190,7 @@ elif compiler == 'xlc':
      cxx = 'xlc++'
    else:
      cxx = 'mpixlcxx'
+     ccflags.append('-cxx=xlc++')
    if build == 'debug':
       ccflags.append('-g3')
       ccflags.append('-O0')
