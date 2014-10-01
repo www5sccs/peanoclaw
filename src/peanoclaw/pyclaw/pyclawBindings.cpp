@@ -79,7 +79,7 @@ void configureLogFilter(bool enablePeanoLogging) {
   }
 
   std::ostringstream logFileName;
-  #ifdef Parallel
+  #if defined(Parallel) && defined(Asserts)
   logFileName << "rank-" << tarch::parallel::Node::getInstance().getRank() << "-trace.txt";
   #endif
   tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, true, true, false, true, logFileName.str() );

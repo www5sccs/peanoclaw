@@ -13,7 +13,7 @@
 #endif
 
 double peanoclaw::native::scenarios::ShockBubble::_rhoOutside = 1.0;
-double peanoclaw::native::scenarios::ShockBubble::_rhoInside = 0.1;
+//double peanoclaw::native::scenarios::ShockBubble::_rhoInside = 0.1;
 double peanoclaw::native::scenarios::ShockBubble::_gamma = 1.4;
 double peanoclaw::native::scenarios::ShockBubble::_bubbleRadius = 0.1; //0.2;
 double peanoclaw::native::scenarios::ShockBubble::_shockX = 0.2;
@@ -99,7 +99,8 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
     _maximalMeshWidth(-1),
     _subdivisionFactor(subdivisionFactor),
     _globalTimestepSize(globalTimestepSize),
-    _endTime(endTime)
+    _endTime(endTime),
+    _rhoInside(0.1)
 {
   tarch::la::assignList(_domainSize) = 2, 1, 1;
   _subdivisionFactor[0] *= 2;
@@ -117,8 +118,8 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
   std::vector<std::string> arguments
 ) : _domainOffset(0),
     _domainSize(){
-  if(arguments.size() != 5) {
-    std::cerr << "Expected arguments for Scenario 'shockBubble': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize" << std::endl
+  if(arguments.size() != 6) {
+    std::cerr << "Expected arguments for Scenario 'shockBubble': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize rhoInside" << std::endl
         << "\tGot " << arguments.size() << " arguments." << std::endl;
     throw "";
   }
@@ -136,6 +137,8 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
   _endTime = atof(arguments[3].c_str());
 
   _globalTimestepSize = atof(arguments[4].c_str());
+
+  _rhoInside = atof(arguments[5].c_str());
 
   _subdivisionFactor[0] *= 2;
 }

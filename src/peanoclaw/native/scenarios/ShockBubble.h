@@ -31,7 +31,7 @@ private:
   double                                _endTime;
 
   static double _rhoOutside;
-  static double _rhoInside;
+  double _rhoInside;
   static double _gamma;
   static double _bubbleRadius;
   static double _shockX;
