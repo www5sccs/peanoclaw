@@ -17,7 +17,10 @@
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::CommunicationSpecification   peanoclaw::mappings::Remesh::communicationSpecification() {
-  return peano::CommunicationSpecification(peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime);
+  return peano::CommunicationSpecification(
+            peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,
+            peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime
+         );
 }
 
 peanoclaw::interSubgridCommunication::aspects::AdjacentSubgrids::VertexMap peanoclaw::mappings::Remesh::_vertexPositionToIndexMap;

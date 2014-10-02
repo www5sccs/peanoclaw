@@ -231,6 +231,19 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
     peanoclaw::interSubgridCommunication::DefaultTransfer transfer;
     transfer.copyUNewToUOld(patch);
 
+    //Warm up solver
+    #ifdef Parallel
+    {
+      static bool wasWarmedUp = false;
+      if(!wasWarmedUp) {
+        _numerics->solveTimestep(patch, 1e-5, true);
+        transfer.swapUNewAndUOld(patch);
+        transfer.copyUNewToUOld(patch);
+        wasWarmedUp = true;
+      }
+    }
+    #endif
+
     if(_refinementCriterionEnabled) {
       #if defined(Asserts) && defined(AssertForPositiveValues)
       peanoclaw::grid::SubgridAccessor& subgridAccessor = patch.getAccessor();
