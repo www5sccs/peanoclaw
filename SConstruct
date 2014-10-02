@@ -186,6 +186,7 @@ if compiler == 'gcc':
       linkerflags.append('-fopenmp')
 elif compiler == 'xlc':
    ccflags.append('-qlanglvl=extended0x')
+   ccflags.append('-qnoeh')
    if(parallel == 'parallel_no' or parallel == 'no'):
      cxx = 'xlc++'
    else:
