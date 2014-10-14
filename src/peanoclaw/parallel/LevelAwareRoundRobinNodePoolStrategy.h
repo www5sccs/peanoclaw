@@ -97,19 +97,33 @@ public:
   virtual ~LevelAwareRoundRobinNodePoolStrategy();
 
   virtual void setNodePoolTag(int tag);
+
   virtual tarch::parallel::messages::WorkerRequestMessage extractElementFromRequestQueue(tarch::parallel::NodePoolStrategy::RequestQueue& queue);
+
   virtual void fillWorkerRequestQueue(RequestQueue& queue);
+
   virtual void addNode(const tarch::parallel::messages::RegisterAtNodePoolMessage& node );
+
   virtual void removeNode( int rank );
+
   virtual int getNumberOfIdleNodes() const;
+
   virtual void setNodeIdle( int rank );
+
   virtual int reserveNode(int forMaster);
+
   virtual void reserveParticularNode(int rank);
+
   virtual bool isRegisteredNode(int rank) const;
+
   virtual bool isIdleNode(int rank) const;
+
   virtual int getNumberOfRegisteredNodes() const;
+
   virtual std::string toString() const;
+
   virtual bool hasIdleNode(int forMaster) const;
+
   virtual int removeNextIdleNode();
 };
 

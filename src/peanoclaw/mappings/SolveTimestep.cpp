@@ -841,9 +841,9 @@ void peanoclaw::mappings::SolveTimestep::endIteration(
 #ifdef Parallel
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
     _subgridStatistics.setWallclockTimeForIteration(_iterationWatch.getCalendarTime());
-    if (_collectSubgridStatistics) {
-      _subgridStatistics.sendToMaster(tarch::parallel::NodePool::getInstance().getMasterRank());
-    }
+//    if (_collectSubgridStatistics) {
+//      _subgridStatistics.sendToMaster(tarch::parallel::NodePool::getInstance().getMasterRank());
+//    }
   }
 
   solverState.setEstimatedNumberOfIterationsToGlobalTimestep(_subgridStatistics.getEstimatedIterationsUntilGlobalTimestep());
