@@ -6,6 +6,7 @@
  */
 #include "peanoclaw/statistics/SubgridStatistics.h"
 
+#include "peanoclaw/Patch.h"
 #include "peanoclaw/Vertex.h"
 
 #include "peano/grid/aspects/VertexStateAnalysis.h"
@@ -122,7 +123,7 @@ void peanoclaw::statistics::SubgridStatistics::addSubgridToLevelStatistics(
   }
 }
 
-int peanoclaw::statistics::SubgridStatistics::estimateRemainingIterationsUntilGlobalSubgrid(Patch subgrid) const {
+int peanoclaw::statistics::SubgridStatistics::estimateRemainingIterationsUntilGlobalSubgrid(const Patch& subgrid) const {
   if(!tarch::la::equals(subgrid.getTimeIntervals().getTimestepSize(), 0.0)) {
     double timeToGlobalTimestep = _globalTimestepEndTime - (subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize());
     double numberOfRestrictingSubgrids = 1; //THREE_POWER_D-1;

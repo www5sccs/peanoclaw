@@ -10,6 +10,8 @@
 #include "peanoclaw/statistics/SubgridStatistics.h"
 #include "peanoclaw/statistics/SharedMemoryStatistics.h"
 
+#include "peanoclaw/records/Data.h"
+
 #include "tarch/logging/Log.h"
 #include "tarch/la/Vector.h"
 
