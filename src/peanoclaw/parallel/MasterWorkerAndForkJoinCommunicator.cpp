@@ -230,8 +230,8 @@ void peanoclaw::parallel::MasterWorkerAndForkJoinCommunicator::mergeWorkerStateI
       << " master.allPatchesEvolved=" << masterState.getAllPatchesEvolvedToGlobalTimestep()
       << " worker.allPatchesEvolved=" << workerState.getAllPatchesEvolvedToGlobalTimestep());
 
-  bool allPatchesEvolvedToGlobalTimestep = workerState.getAllPatchesEvolvedToGlobalTimestep();
-  allPatchesEvolvedToGlobalTimestep &= masterState.getAllPatchesEvolvedToGlobalTimestep();
+  bool allPatchesEvolvedToGlobalTimestep = workerState.getAllPatchesEvolvedToGlobalTimestep()
+                                        && masterState.getAllPatchesEvolvedToGlobalTimestep();
 
   masterState.setAllPatchesEvolvedToGlobalTimestep(allPatchesEvolvedToGlobalTimestep);
   #endif

@@ -112,20 +112,22 @@ void peanoclaw::statistics::SubgridStatistics::addSubgridToLevelStatistics(
     level.setNumberOfPatches(level.getNumberOfPatches() + 1);
     level.setNumberOfCells(level.getNumberOfCells() + (tarch::la::volume(subgrid.getSubdivisionFactor())));
     level.setArea(level.getArea() + tarch::la::volume(subgrid.getSize()));
-    level.setEstimatedNumberOfRemainingIterationsToGlobalTimestep(
-        std::max(level.getEstimatedNumberOfRemainingIterationsToGlobalTimestep(),
-                estimateRemainingIterationsUntilGlobalSubgrid(subgrid))
-    );
+    if(tarch::la::smaller(subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize(), _globalTimestepEndTime)) {
+      level.setEstimatedNumberOfRemainingIterationsToGlobalTimestep(
+          level.getEstimatedNumberOfRemainingIterationsToGlobalTimestep()
+          + estimateRemainingIterationsUntilGlobalSubgrid(subgrid) / (double)level.getNumberOfPatches()
+      );
+      _timeAveragedEstimatedIterationsToGlobalTimestep += estimateRemainingIterationsUntilGlobalSubgrid(subgrid);
+    }
   }
 }
 
 int peanoclaw::statistics::SubgridStatistics::estimateRemainingIterationsUntilGlobalSubgrid(Patch subgrid) const {
   if(!tarch::la::equals(subgrid.getTimeIntervals().getTimestepSize(), 0.0)) {
     double timeToGlobalTimestep = _globalTimestepEndTime - (subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize());
-    double numberOfRestrictingSubgrids = THREE_POWER_D-1;
-
+    double numberOfRestrictingSubgrids = 1; //THREE_POWER_D-1;
     assertion2(tarch::la::greaterEquals(timeToGlobalTimestep, 0.0), timeToGlobalTimestep, subgrid);
-    return (int)(std::ceil(timeToGlobalTimestep / subgrid.getTimeIntervals().getTimestepSize() * numberOfRestrictingSubgrids));
+    return (int)(std::ceil(timeToGlobalTimestep / subgrid.getTimeIntervals().getTimestepSize() * numberOfRestrictingSubgrids - 1e-10));
   } else {
     return 1;
   }
@@ -145,6 +147,7 @@ void peanoclaw::statistics::SubgridStatistics::copy(const SubgridStatistics& oth
   _allPatchesEvolvedToGlobalTimestep = other._allPatchesEvolvedToGlobalTimestep;
   _averageGlobalTimeInterval = other._averageGlobalTimeInterval;
   _globalTimestepEndTime = other._globalTimestepEndTime;
+  _timeAveragedEstimatedIterationsToGlobalTimestep = other._timeAveragedEstimatedIterationsToGlobalTimestep;
   _minimalPatchBlockedDueToCoarsening = other._minimalPatchBlockedDueToCoarsening;
   _minimalPatchBlockedDueToGlobalTimestep = other._minimalPatchBlockedDueToGlobalTimestep;
   _isFinalized = other._isFinalized;
@@ -156,7 +159,7 @@ int peanoclaw::statistics::SubgridStatistics::computeProcessorHashCode() {
   int nameLength;
   MPI_Get_processor_name(processorName, &nameLength);
   int hashCode = 0;
-  for(size_t i = 0; i < nameLength; i++) {
+  for(int i = 0; i < nameLength; i++) {
       hashCode = 65599 * hashCode + processorName[i];
   }
   return hashCode ^ (hashCode >> 16);
@@ -179,6 +182,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics()
   _allPatchesEvolvedToGlobalTimestep(true),
   _averageGlobalTimeInterval(0.0),
   _globalTimestepEndTime(-1.0),
+  _timeAveragedEstimatedIterationsToGlobalTimestep(0.0),
   _minimalPatchBlockedDueToCoarsening(false),
   _minimalPatchBlockedDueToGlobalTimestep(false),
   _isFinalized(false) {
@@ -202,6 +206,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
    _allPatchesEvolvedToGlobalTimestep(true),
    _averageGlobalTimeInterval(0.0),
    _globalTimestepEndTime(globalTimestepEndTime),
+   _timeAveragedEstimatedIterationsToGlobalTimestep(0.0),
    _minimalPatchBlockedDueToCoarsening(false),
    _minimalPatchBlockedDueToGlobalTimestep(false),
    _isFinalized(false) {
@@ -226,6 +231,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(const peanoclaw::Sta
    _allPatchesEvolvedToGlobalTimestep(state.getAllPatchesEvolvedToGlobalTimestep()),
    _averageGlobalTimeInterval(0.0),
    _globalTimestepEndTime(state.getGlobalTimestepEndTime()),
+   _timeAveragedEstimatedIterationsToGlobalTimestep(0.0),
    _minimalPatchBlockedDueToCoarsening(false),
    _minimalPatchBlockedDueToGlobalTimestep(false),
    _isFinalized(false) {
@@ -249,6 +255,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
     _allPatchesEvolvedToGlobalTimestep(true),
     _averageGlobalTimeInterval(0.0),
     _globalTimestepEndTime(0.0),
+    _timeAveragedEstimatedIterationsToGlobalTimestep(0.0),
     _minimalPatchBlockedDueToCoarsening(false),
     _minimalPatchBlockedDueToGlobalTimestep(false),
     _isFinalized(false) {
@@ -276,6 +283,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(
     _allPatchesEvolvedToGlobalTimestep(true),
     _averageGlobalTimeInterval(0.0),
     _globalTimestepEndTime(0.0),
+    _timeAveragedEstimatedIterationsToGlobalTimestep(0.0),
     _minimalPatchBlockedDueToCoarsening(false),
     _minimalPatchBlockedDueToGlobalTimestep(false),
     _isFinalized(false) {
@@ -303,6 +311,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(SubgridStatistics& o
   _allPatchesEvolvedToGlobalTimestep(other._allPatchesEvolvedToGlobalTimestep),
   _averageGlobalTimeInterval(other._averageGlobalTimeInterval),
   _globalTimestepEndTime(other._globalTimestepEndTime),
+  _timeAveragedEstimatedIterationsToGlobalTimestep(other._timeAveragedEstimatedIterationsToGlobalTimestep),
   _minimalPatchBlockedDueToCoarsening(other._minimalPatchBlockedDueToCoarsening),
   _minimalPatchBlockedDueToGlobalTimestep(other._minimalPatchBlockedDueToGlobalTimestep),
   _isFinalized(other._isFinalized)
@@ -325,6 +334,7 @@ peanoclaw::statistics::SubgridStatistics::SubgridStatistics(const SubgridStatist
   _allPatchesEvolvedToGlobalTimestep(other._allPatchesEvolvedToGlobalTimestep),
   _averageGlobalTimeInterval(other._averageGlobalTimeInterval),
   _globalTimestepEndTime(other._globalTimestepEndTime),
+  _timeAveragedEstimatedIterationsToGlobalTimestep(other._timeAveragedEstimatedIterationsToGlobalTimestep),
   _minimalPatchBlockedDueToCoarsening(other._minimalPatchBlockedDueToCoarsening),
   _minimalPatchBlockedDueToGlobalTimestep(other._minimalPatchBlockedDueToGlobalTimestep),
   _isFinalized(other._isFinalized)
@@ -520,7 +530,7 @@ void peanoclaw::statistics::SubgridStatistics::logLevelStatistics(std::string de
   double totalBlockedPatchesDueToGlobalTimestep = 0.0;
   double totalSkippingPatches = 0.0;
   double totalCoarseningPatches = 0.0;
-  int    totalEstimatedIterationsToGlobalTimestep = 0;
+  double totalEstimatedIterationsToGlobalTimestep = 0.0;
 
   for(size_t i = 0; i < levelStatistics.size(); i++) {
     const LevelStatistics& level = levelStatistics.at(i);
@@ -712,14 +722,17 @@ void peanoclaw::statistics::SubgridStatistics::sendToMaster(int masterRank) {
 }
 
 int peanoclaw::statistics::SubgridStatistics::getEstimatedIterationsUntilGlobalTimestep() const {
-  int maximumEstimationOfLevels = 0;
-  #ifndef SharedMemoryParallelisation
+  double numberOfSubgrids = 0;
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   for(std::vector<LevelStatistics>::iterator i = levelStatistics.begin(); i != levelStatistics.end(); i++) {
-    maximumEstimationOfLevels = std::max(maximumEstimationOfLevels, i->getEstimatedNumberOfRemainingIterationsToGlobalTimestep());
+    numberOfSubgrids += i->getNumberOfPatches();
   }
-  #endif
-  return maximumEstimationOfLevels;
+
+  if(numberOfSubgrids == 0) {
+    return 0;
+  } else {
+    return (int)(_timeAveragedEstimatedIterationsToGlobalTimestep / numberOfSubgrids);
+  }
 }
 
 void peanoclaw::statistics::SubgridStatistics::restrictionFromWorkerSkipped() {

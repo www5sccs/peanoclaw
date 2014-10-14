@@ -72,6 +72,8 @@ class peanoclaw::mappings::SolveTimestep {
 
     bool _correctFluxes;
 
+    bool _reduceReductions;
+
     std::map<int, int> _estimatedRemainingIterationsUntilGlobalTimestep;
 
     tarch::timing::Watch _iterationWatch;

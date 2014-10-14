@@ -42,6 +42,8 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     bool _fluxCorrection;
 
+    bool _reduceReductions;
+
     std::vector<peanoclaw::statistics::Probe> _probes;
 
     int _numberOfThreads;
@@ -89,14 +91,19 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
     bool disableDimensionalSplittingOptimization() const;
 
     /**
-     * Indicates whether statistics should be restricted in a parallel run.
+     * Indicates, whether statistics should be restricted in a parallel run.
      */
     bool restrictStatistics() const;
 
     /**
-     * Indicates whether the flux correction should be used.
+     * Indicates, whether the flux correction should be used.
      */
     bool enableFluxCorrection() const;
+
+    /**
+     * Indicates, whether parallel reductions should be avoided if possible.
+     */
+    bool shouldReduceReductions() const;
 
     /**
      * Returns the list of probes.

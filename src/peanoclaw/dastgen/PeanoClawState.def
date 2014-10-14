@@ -48,6 +48,7 @@ class peanoclaw::dastgen::State {
 	//persistent parallelise int globalHeightOfWorkerTreeDuringLastIteration;
 	persistent parallelise packed bool reduceReductions;
 	persistent parallelise packed bool restrictStatistics;
+	persistent parallelise int estimatedNumberOfIterationsToGlobalTimestep;
 	#endif
 };
 	

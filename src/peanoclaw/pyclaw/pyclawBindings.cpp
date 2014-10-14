@@ -215,6 +215,7 @@ peanoclaw::runners::PeanoClawLibraryRunner* pyclaw_peano_new (
     subdivisionFactor,
     initialTimestepSize,
     useDimensionalSplittingExtrapolation,
+    1, //Number of threads
     reduceReductions,
     forkLevelIncrement
   );

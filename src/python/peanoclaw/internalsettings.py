@@ -12,7 +12,7 @@ class InternalSettings(object):
                fixed_timestep_size=None, 
                plot_unknowns_filter=None, 
                fork_level_increment=1,
-               reduce_reductions=True,
+               reduce_reductions=False,
                use_dimensional_splitting_optimization=False,
                plot_name='adaptive'):
     self.use_heap_compression = use_heap_compression

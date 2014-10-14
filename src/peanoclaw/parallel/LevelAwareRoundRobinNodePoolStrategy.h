@@ -24,7 +24,13 @@ class peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy : public tarch::
 
   class Node {
     private:
-      bool  _isIdle;
+      enum State {
+        Registered,
+        Idle,
+        Working
+      };
+      State _state;
+
       int   _rank;
 
     public:

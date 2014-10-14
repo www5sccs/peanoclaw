@@ -390,3 +390,11 @@ void peanoclaw::State::enableFluxCorrection(bool enableFluxCorrection) {
 bool peanoclaw::State::isFluxCorrectionEnabled() const {
   return _stateData.getEnableFluxCorrection();
 }
+
+void peanoclaw::State::setEstimatedNumberOfIterationsToGlobalTimestep(int estimatedNumber) {
+  _stateData.setEstimatedNumberOfIterationsToGlobalTimestep(estimatedNumber);
+}
+
+int peanoclaw::State::getEstimatedNumberOfIterationsToGlobalTimestep() const {
+  return _stateData.getEstimatedNumberOfIterationsToGlobalTimestep();
+}

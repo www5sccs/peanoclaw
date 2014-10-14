@@ -13,27 +13,27 @@
 tarch::logging::Log peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::_log("peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy");
 
 peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Node::Node()
-  : _isIdle(true),
+  : _state(Registered),
     _rank(-1)
 {
 }
 
 peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Node::Node(int rank)
-  : _isIdle(true),
+  : _state(Registered),
     _rank(rank)
 {
 }
 
 bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Node::isIdle() const {
-  return _isIdle;
+  return _state == Idle;
 }
 
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Node::setIdle() {
-  _isIdle = true;
+  _state = Idle;
 }
 
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Node::setWorking() {
-  _isIdle = false;
+  _state = Working;
 }
 
 int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::Node::getRank() const {
@@ -169,7 +169,6 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::addNode(
   level.addNode(node.getSenderRank());
 
   _numberOfNodes++;
-  _numberOfIdleNodes++;
   #endif
 }
 
@@ -177,11 +176,14 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::addNode(
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::removeNode( int rank ) {
   logInfo("removeNode(rank)", "Removing node " << rank);
 
+  if(isIdleNode(rank)) {
+    _numberOfIdleNodes--;
+  }
+
   Level& level = getLevel(getLevelIndexForRank(rank));
   level.removeNode(rank);
 
   _numberOfNodes--;
-  _numberOfIdleNodes--;
 }
 
 
@@ -190,6 +192,7 @@ int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::getNumberOfIdleNo
 }
 
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::setNodeIdle( int rank ) {
+  logInfo("setNodeIdle(rank)", "Setting node " << rank << " idle");
   Level& level = getLevel(getLevelIndexForRank(rank));
   if(!level.isIdle(rank)) {
     _numberOfIdleNodes++;
@@ -199,25 +202,22 @@ void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::setNodeIdle( int
 
 
 int peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::reserveNode(int forMaster) {
+  logInfo("reserveNode(master)", "Reserving node for master " << forMaster);
   Level& level = getLevel(getLevelIndexForRank(forMaster) + 1);
 
   int rank = level.getIdleRank();
   level.setWorking(rank);
   _numberOfIdleNodes--;
 
-  //TODO unterweg debug
-  std::cout << "Reserving node for master " << forMaster << ": " << rank << std::endl;
   return rank;
 }
 
 void peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::reserveParticularNode(int rank) {
+  logInfo("reserveParticularNode(rank)", "Reserving node " << rank);
   Level& level = getLevel(getLevelIndexForRank(rank));
   assertion(level.isIdle(rank));
   level.setWorking(rank);
   _numberOfIdleNodes--;
-
-  //TODO unterweg debug
-//  std::cout << "Reserving node " << rank << std::endl;
 }
 
 bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::isRegisteredNode(int rank) const {
@@ -228,9 +228,6 @@ bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::isRegisteredNode
 
   const Level& level = _level[levelIndex];
 
-  //TODO unterweg debug
-//  std::cout << "Is registered node: " << rank << ": " << level.hasNode(rank) << std::endl;
-
   return level.hasNode(rank);
 }
 
@@ -240,9 +237,6 @@ bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::isIdleNode(int r
     return false;
   }
   const Level& level = _level[getLevelIndexForRank(rank)];
-
-  //TODO unterweg debug
-//  std::cout << "Is idle node: " << rank << ": " << level.isIdle(rank) << std::endl;
 
   return level.isIdle(rank);
 }
@@ -262,9 +256,6 @@ bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::hasIdleNode(int 
   } else {
     int levelIndex = getLevelIndexForRank(forMaster) + 1;
     if(!hasLevel(levelIndex)) {
-
-      //TODO unterweg debug
-//      std::cout << "hasIdleNode(" << forMaster << ")=false" << std::endl;
       return false;
     }
 
@@ -272,9 +263,6 @@ bool peanoclaw::parallel::LevelAwareRoundRobinNodePoolStrategy::hasIdleNode(int 
     const Level& level = _level[levelIndex];
     bool levelHasIdleNode = level.hasIdleRank();
 
-    //TODO unterweg debug
-//    std::cout << "hasIdleNode(" << forMaster << ")=" << levelHasIdleNode << " (levelIndex=" << levelIndex << ")" << std::endl
-//        << level.toString() << std::endl;
     return levelHasIdleNode;
   }
 }

@@ -71,6 +71,7 @@ class peanoclaw::statistics::SubgridStatistics {
     bool   _allPatchesEvolvedToGlobalTimestep;
     double _averageGlobalTimeInterval;
     double _globalTimestepEndTime;
+    double _timeAveragedEstimatedIterationsToGlobalTimestep;
 
     bool   _minimalPatchBlockedDueToCoarsening;
     bool   _minimalPatchBlockedDueToGlobalTimestep;

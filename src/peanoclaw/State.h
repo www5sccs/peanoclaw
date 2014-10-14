@@ -327,6 +327,18 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        * Returns whether the flux correction along patch boundaries is enabled.
        */
       bool isFluxCorrectionEnabled() const;
+
+      /**
+       * Sets the estimated number of iterations that the current worker (and all sub-workers)
+       * take to completely advance to the next global timestep.
+       */
+      void setEstimatedNumberOfIterationsToGlobalTimestep(int estimatedNumber);
+
+      /**
+       * Returns the estimated number of iterations that the current worker (and all sub-workers)
+       * take to completely advance to the next global timestep.
+       */
+      int getEstimatedNumberOfIterationsToGlobalTimestep() const;
 };
 
 

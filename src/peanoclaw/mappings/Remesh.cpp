@@ -19,7 +19,8 @@
 peano::CommunicationSpecification   peanoclaw::mappings::Remesh::communicationSpecification() {
   return peano::CommunicationSpecification(
             peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,
-            peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime
+            peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime,
+            false
          );
 }
 
@@ -737,8 +738,8 @@ bool peanoclaw::mappings::Remesh::prepareSendToWorker(
     );
     communicator.sendSubgridBetweenMasterAndWorker(subgrid);
 
-    //TODO unterweg dissertation: Subgitter m��ssen auch auf virtuell geschaltet werden, wenn sie
-    //von einer Ghostlayer ��berlappt werden und mit einem Worker geshared sind.
+    //TODO unterweg dissertation: Subgitter müssen auch auf virtuell geschaltet werden, wenn sie
+    //von einer Ghostlayer überlappt werden und mit einem Worker geshared sind.
     requiresReduction = subgrid.isVirtual();
   }
 

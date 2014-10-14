@@ -49,6 +49,8 @@ void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::processE
     _restrictStatistics = getBoolValue(values);
   } else if(name == "fluxCorrection") {
     _fluxCorrection = getBoolValue(values);
+  } else if(name == "reduceReductions") {
+    _reduceReductions = getBoolValue(values);
   } else if(name == "probe") {
     addProbe(values);
   } else if(name == "numberOfThreads") {
@@ -83,6 +85,7 @@ peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::PeanoClawConf
   _disableDimensionalSplittingOptimization(false),
   _restrictStatistics(true),
   _fluxCorrection(false),
+  _reduceReductions(false),
   _numberOfThreads(1)
   {
   std::string configFileName = "peanoclaw.config";
@@ -141,6 +144,10 @@ bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::restrict
 
 bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::enableFluxCorrection() const {
   return _fluxCorrection;
+}
+
+bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::shouldReduceReductions() const  {
+  return _reduceReductions;
 }
 
 std::vector<peanoclaw::statistics::Probe> peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::getProbeList() const {

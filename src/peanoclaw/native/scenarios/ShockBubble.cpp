@@ -13,7 +13,6 @@
 #endif
 
 double peanoclaw::native::scenarios::ShockBubble::_rhoOutside = 1.0;
-//double peanoclaw::native::scenarios::ShockBubble::_rhoInside = 0.1;
 double peanoclaw::native::scenarios::ShockBubble::_gamma = 1.4;
 double peanoclaw::native::scenarios::ShockBubble::_bubbleRadius = 0.1; //0.2;
 double peanoclaw::native::scenarios::ShockBubble::_shockX = 0.2;

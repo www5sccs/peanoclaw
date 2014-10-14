@@ -7,7 +7,11 @@
  * @todo Please tailor the parameters to your mapping's properties.
  */
 peano::CommunicationSpecification   peanoclaw::mappings::Plot::communicationSpecification() {
-  return peano::CommunicationSpecification(peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime);
+  return peano::CommunicationSpecification(
+      peano::CommunicationSpecification::SendDataAndStateBeforeFirstTouchVertexFirstTime,
+      peano::CommunicationSpecification::SendDataAndStateAfterLastTouchVertexLastTime,
+      false
+  );
 }
 
 
