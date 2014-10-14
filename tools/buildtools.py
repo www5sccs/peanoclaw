@@ -228,6 +228,7 @@ def getPeanoSources(Glob, buildpath, multicore):
       Glob(join(buildpath, 'kernel/peano/stacks/implementation/*.cpp'))
       ]
   sourcesHeap = [
+      Glob(join(buildpath, 'kernel/peano/heap/*.cpp')),
       Glob(join(buildpath, 'kernel/peano/heap/records/*.cpp'))
       ]
   sourcesPeanoKernel = [
