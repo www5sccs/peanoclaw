@@ -328,6 +328,7 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        */
       bool isFluxCorrectionEnabled() const;
 
+      #ifdef Parallel
       /**
        * Sets the estimated number of iterations that the current worker (and all sub-workers)
        * take to completely advance to the next global timestep.
@@ -339,6 +340,7 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        * take to completely advance to the next global timestep.
        */
       int getEstimatedNumberOfIterationsToGlobalTimestep() const;
+      #endif
 };
 
 
