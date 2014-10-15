@@ -141,7 +141,8 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createFullSWOF2DNumerics(
 
 #if defined(PEANOCLAW_EULER3D)
 peanoclaw::Numerics* peanoclaw::NumericsFactory::createEuler3DNumerics(
-  peanoclaw::native::scenarios::SWEScenario& scenario
+  peanoclaw::native::scenarios::SWEScenario& scenario,
+  int numberOfSolverThreads
 ) {
 
   //Interpolation Callback
@@ -161,7 +162,8 @@ peanoclaw::Numerics* peanoclaw::NumericsFactory::createEuler3DNumerics(
     new peanoclaw::interSubgridCommunication::DefaultTransfer,
     interpolation,
     restriction,
-    fluxCorrection
+    fluxCorrection,
+    numberOfSolverThreads
   );
 }
 #endif

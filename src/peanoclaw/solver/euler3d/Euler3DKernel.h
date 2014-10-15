@@ -23,6 +23,10 @@ namespace peanoclaw {
 #include "peanoclaw/native/scenarios/SWEScenario.h"
 #include "peanoclaw/grid/SubgridAccessor.h"
 
+#ifdef PEANOCLAW_EULER3D
+#include <tbb/task_scheduler_init.h>
+#endif
+
 class peanoclaw::solver::euler3d::Euler3DKernel : public peanoclaw::Numerics {
   private:
     /**
@@ -32,13 +36,18 @@ class peanoclaw::solver::euler3d::Euler3DKernel : public peanoclaw::Numerics {
 
     peanoclaw::native::scenarios::SWEScenario& _scenario;
 
+    #ifdef PEANOCLAW_EULER3D
+    tbb::task_scheduler_init _task_scheduler_init;
+    #endif
+
   public:
     Euler3DKernel(
       peanoclaw::native::scenarios::SWEScenario& scenario,
       peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
       peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
       peanoclaw::interSubgridCommunication::Restriction*     restriction,
-      peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
+      peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection,
+      int numberOfThreads
     );
 
     /**

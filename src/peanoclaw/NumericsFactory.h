@@ -80,7 +80,8 @@ class peanoclaw::NumericsFactory {
 
 #if defined(PEANOCLAW_EULER3D)
     peanoclaw::Numerics* createEuler3DNumerics(
-      peanoclaw::native::scenarios::SWEScenario& scenario
+      peanoclaw::native::scenarios::SWEScenario& scenario,
+      int numberOfSolverThreads
     );
 #endif
 };

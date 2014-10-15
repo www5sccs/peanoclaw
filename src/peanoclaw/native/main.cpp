@@ -74,7 +74,7 @@ void initializeLogFilter() {
   tarch::logging::CommandLineLogger::getInstance().setLogFormat( " ", false, false, true, false, true, logFileName.str() );
 }
 
-int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string& plotName, int& numberOfThreads) {
+int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string& plotName, int& numberOfThreads, int& numberOfSolverThreads) {
   int remaining = argc;
 
   //Default values
@@ -94,6 +94,10 @@ int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string
     } else if (key == "--threads") {
       std::stringstream s(argv[i+1]);
       s >> numberOfThreads;
+      remaining -= 2;
+    } else if (key == "--solver-threads") {
+      std::stringstream s(argv[i+1]);
+      s >> numberOfSolverThreads;
       remaining -= 2;
     }
 
@@ -192,9 +196,10 @@ int main(int argc, char **argv) {
   bool usePeanoClaw;
   std::string plotName;
   int numberOfThreads;
-  argc = readOptionalArguments(argc, argv, usePeanoClaw, plotName, numberOfThreads);
+  int numberOfSolverThreads;
+  argc = readOptionalArguments(argc, argv, usePeanoClaw, plotName, numberOfThreads, numberOfSolverThreads);
 
-  #if defined(SharedMemoryParallelisation) || defined(PEANOCLAW_EULER3D)
+  #if defined(SharedMemoryParallelisation)
   tbb::task_scheduler_init tbbInit(numberOfThreads);
   #endif
 
@@ -218,7 +223,7 @@ int main(int argc, char **argv) {
   #elif defined(PEANOCLAW_FULLSWOF2D)
   peanoclaw::Numerics* numerics = numericsFactory.createFullSWOF2DNumerics(*scenario);
   #elif defined(PEANOCLAW_EULER3D)
-  peanoclaw::Numerics* numerics = numericsFactory.createEuler3DNumerics(*scenario);
+  peanoclaw::Numerics* numerics = numericsFactory.createEuler3DNumerics(*scenario, numberOfSolverThreads);
   #endif
 
   if(usePeanoClaw) {

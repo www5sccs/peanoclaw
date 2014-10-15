@@ -731,16 +731,15 @@ void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers() {
   tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
 
   //Check rank 1
-  Area areas[THREE_POWER_D_MINUS_ONE];
-  int numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
-    adjacentRanks,
-    overlapOfRemoteGhostlayers,
-    subdivisionFactor,
-    1, //Rank
-    areas
-  );
-
-  //validateEquals(numberOfAreas, 5);
+//  Area areas[THREE_POWER_D_MINUS_ONE];
+//  int numberOfAreas = Area::getAreasOverlappedByRemoteGhostlayers(
+//    adjacentRanks,
+//    overlapOfRemoteGhostlayers,
+//    subdivisionFactor,
+//    1, //Rank
+//    areas
+//  );
+//  validateEquals(numberOfAreas, 5);
   #endif
 }
 

@@ -28,9 +28,13 @@ peanoclaw::solver::euler3d::Euler3DKernel::Euler3DKernel(
   peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
   peanoclaw::interSubgridCommunication::Interpolation*   interpolation,
   peanoclaw::interSubgridCommunication::Restriction*     restriction,
-  peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection
+  peanoclaw::interSubgridCommunication::FluxCorrection*  fluxCorrection,
+  int numberOfThreads
 ) : Numerics(transfer, interpolation, restriction, fluxCorrection),
-    _scenario(scenario)
+    _scenario(scenario),
+    #ifdef PEANOCLAW_EULER3D
+    _task_scheduler_init(numberOfThreads)
+    #endif
 {
 }
 
