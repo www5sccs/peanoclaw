@@ -23,6 +23,7 @@ ccflags = []
 linkerflags = []
 libpath = []
 libs = []
+environmentVariables = {}
 
 librarySuffix = ''
 executableSuffix = ''
@@ -206,6 +207,24 @@ elif compiler == 'xlc':
       ccflags.append('-qsmp=omp')
       linkerflags.append('-qsmp=omp')
       cxx = cxx + '_r'
+elif compiler == 'clang':
+   if(parallel == 'parallel_no' or parallel == 'no'):
+     cxx = 'clang'
+   else:
+     cxx = 'mpicxx'
+     environmentVariables['OMPI_CXX'] = 'clang++'
+   ccflags.append('-std=c++11')
+   if build == 'debug':
+     ccflags.append('-g3')
+     ccflags.append('-O0')
+   elif build == 'asserts"':
+     ccflags.append('-O2')
+     ccflags.append('-g3') 
+   elif build == 'release':
+     ccflags.append('-O3') 
+   #if multicore == 'openmp':
+   #  ccflags.append('-fopenmp')
+   #  linkerflags.append('-fopenmp')
 elif compiler == 'icc':
    if(parallel == 'parallel_no' or parallel == 'no'):
      cxx = 'icpc'
@@ -233,7 +252,7 @@ elif compiler == 'icc':
       ccflags.append('-openmp')
       linkerflags.append('-openmp')
 else:
-   print "ERROR: compiler must be = 'gcc', 'xlc' or 'icc'!"
+   print "ERROR: compiler must be = 'gcc', 'xlc', 'clang', or 'icc'!"
    sys.exit(1)
    
 ##### Determine Scalasca Usage
@@ -441,7 +460,7 @@ env = Environment (
    CXX=cxx,
    LINK=linker if linker!='' else cxx,
    AR=archive if archive!='' else 'ar',
-   ENV=os.environ  # Makes environment variables visible to scons
+   ENV=dict(os.environ.items() + environmentVariables.items())  # Makes environment variables visible to scons
    # tools      = compiler_tools
    )
 
