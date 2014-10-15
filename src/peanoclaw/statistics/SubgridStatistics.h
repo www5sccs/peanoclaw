@@ -20,6 +20,8 @@
 #include "tarch/multicore/BooleanSemaphore.h"
 #include "tarch/multicore/Lock.h"
 
+#include <vector>
+
 namespace peanoclaw {
 
   class Patch;
