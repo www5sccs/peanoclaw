@@ -10,6 +10,9 @@
 
 #include "peanoclaw/native/scenarios/SWEScenario.h"
 
+#include "peano/utils/Dimensions.h"
+#include "tarch/la/Vector.h"
+
 #include <vector>
 
 namespace peanoclaw {
@@ -41,8 +44,8 @@ namespace peanoclaw {
  */
 class peanoclaw::native::scenarios::swashes::ChannelPseudo2D : public peanoclaw::native::scenarios::SWEScenario {
 private:
+  const double BED_HEIGHT = 10.0;
 
-  const double g;
 
   tarch::la::Vector<DIMENSIONS,double>  _domainSize;
   tarch::la::Vector<DIMENSIONS,double>  _domainOffset;
@@ -60,22 +63,6 @@ private:
     Long
   };
   ChannelType _channelType;
-
-  /**
-   * Function for defining the bed width for the short channel cases.
-   */
-  double shortBedWidth(double x) const;
-
-  /**
-   * Function for defining the bed width for the long channel cases.
-   */
-  double longBedWidth(double x) const;
-
-  double bedWidth(double x) const;
-
-  double slope(double x, double bedWidth, double g, double q = 20) const;
-
-  double topography(double x, ) const;
 
 public:
   ChannelPseudo2D(

@@ -6,25 +6,11 @@
  */
 #include "peanoclaw/native/scenarios/swashes/ChannelPseudo2D.h"
 
-double peanoclaw::native::scenarios::swashes::ChannelPseudo2D::shortBedWidth(double x) const {
-  return 10.0 - 5.0 * exp(-10 * pow(x/200 - 0.5, 2.0));
-}
-
-double peanoclaw::native::scenarios::swashes::ChannelPseudo2D::longBedWidth(double x) const {
-  return 10.0 - 5.0 * exp(-50 * pow(x/400 - 1.0/3.0, 2.0)) - 5.0 * exp(-50 * pow(x/400 - 2.0/3.0, 2.0));
-}
-
-double peanoclaw::native::scenarios::swashes::ChannelPseudo2D::bedWidth(double x) const {
-  if(_channelType == Short) {
-    return shortBedWidth(x);
-  } else {
-    return longBedWidth(x);
-  }
-}
+#include "tarch/la/VectorAssignList.h"
 
 peanoclaw::native::scenarios::swashes::ChannelPseudo2D::ChannelPseudo2D(
   std::vector<std::string> arguments
-) : _domainSize(10),
+) : _domainSize(9.98067039818582),
     _discharge(20)
 {
   #ifdef Dim2
@@ -62,3 +48,58 @@ peanoclaw::native::scenarios::swashes::ChannelPseudo2D::ChannelPseudo2D(
   }
 }
 
+peanoclaw::native::scenarios::swashes::ChannelPseudo2D::~ChannelPseudo2D() {
+}
+
+void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(peanoclaw::Patch& patch) {
+  #ifdef Dim2
+  for(int y = 0; y < patch.getSubdivisionFactor()[1]; y++) {
+    for(int x = 0; x < patch.getSubdivisionFactor()[0]; x++) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+      assignList(subcellIndex) = x, y;
+      tarch::la::Vector<DIMENSIONS,double> position = patch.getSubcellPosition(subcellIndex);
+
+      double distanceFromCenterLine = abs(x - _domainSize[0] / 2.0);
+      double bedWidth =
+
+    }
+  }
+  #endif
+}
+
+
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::swashes::ChannelPseudo2D::computeDemandedMeshWidth(
+  peanoclaw::Patch& patch,
+  bool isInitializing
+) {
+
+}
+
+void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::update(peanoclaw::Patch& subgrid) {
+
+}
+
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getDomainOffset() const {
+  return _domainOffset;
+}
+
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getDomainSize() const {
+  return _domainSize;
+}
+
+tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getInitialMinimalMeshWidth() const {
+  return _maximalMeshWidth;
+}
+
+tarch::la::Vector<DIMENSIONS,int> peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getSubdivisionFactor() const {
+  return _subdivisionFactor;
+}
+
+
+double peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getGlobalTimestepSize() const {
+  return _globalTimestepSize;
+}
+
+double peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getEndTime() const {
+  return _endTime;
+}
