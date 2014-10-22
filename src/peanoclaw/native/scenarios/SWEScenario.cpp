@@ -9,6 +9,7 @@
 #include "peanoclaw/native/scenarios/BowlOcean.h"
 #include "peanoclaw/native/scenarios/BreakingDam.h"
 #include "peanoclaw/native/scenarios/CalmOcean.h"
+#include "peanoclaw/native/scenarios/swashes/ChannelPseudo2D.h"
 #include "peanoclaw/native/scenarios/ConstantScenario.h"
 #include "peanoclaw/native/scenarios/Gaussian.h"
 #include "peanoclaw/native/scenarios/MekkaFlood.h"
@@ -89,6 +90,8 @@ peanoclaw::native::scenarios::SWEScenario* peanoclaw::native::scenarios::SWEScen
       return new peanoclaw::native::scenarios::ConstantScenario(arguments);
     } else if(scenarioName == "calmOcean") {
       return new peanoclaw::native::scenarios::CalmOcean(arguments);
+    } else if(scenarioName == "channelPseudo2D") {
+      return new peanoclaw::native::scenarios::swashes::ChannelPseudo2D(arguments);
     } else if(scenarioName == "gaussian") {
       return new peanoclaw::native::scenarios::GaussianSWEScenario(arguments);
     } else if(scenarioName == "shockBubble") {

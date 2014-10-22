@@ -8,39 +8,50 @@
 
 #include <sstream>
 
-//char** peanoclaw::native::scenarios::swashes::SWASHESChannel::PARAMETER_STRINGS
-//  = (char *[]){
-//    "not used",
-//    "1", //dim
-//    "2", //type: MacDonald
-//    "2", //domain: short channel
-//    "1", //choice: subcritical flow
-//    "1000" //number of cells x
-//  };
-
-int peanoclaw::native::scenarios::swashes::SWASHESChannel::NUMBER_OF_CELLS_X = 1000;
-
-
-char** peanoclaw::native::scenarios::swashes::SWASHESChannel::getFilledParameterStrings() {
-  _parameterStrings = new std::string[6];
-  _parameterStrings[0] = new std::string("not used");
-  _parameterStrings[1] = new std::string("1"); //dim
-  _parameterStrings[2] = new std::string("2"); //type: MacDonald
-  _parameterStrings[3] = new std::string("2"); //domain: short channel
-  _parameterStrings[4] = new std::string("1"); //choice: subcritical flow
-  _parameterStrings[5] = new std::string(); //number of cells x
-
-  std::stringstream s;
-  _parameterStrings->append(s.str());
-
-  _parameterCStrings = new char*[6];
-  for(int i = 0; i < 6; i++) {
-    _parameterCStrings[i] = _parameterStrings[i].c_str();
-  }
-
-  return _parameterCStrings;
+void peanoclaw::native::scenarios::swashes::SWASHESChannel::setDomainWidth(double domainWidth) {
+  _domainWidth = domainWidth;
 }
 
+peanoclaw::native::scenarios::swashes::SWASHESChannel::SWASHESChannel()
+  : _domainWidth(-100)
+{
+}
+
+peanoclaw::native::scenarios::swashes::SWASHESChannel::~SWASHESChannel() {
+}
+
+double peanoclaw::native::scenarios::swashes::SWASHESChannel::getTopography(tarch::la::Vector<DIMENSIONS,double> position) const {
+  #ifdef PEANOCLAW_SWASHES
+  double distanceToCenter = position[1] - _domainWidth / 2.0;
+  double bedWidth = getBedWidth(position[0]);
+  double topography = getTopography(position[0]);
+  if(distanceToCenter < bedWidth / 2.0) {
+    topography += HEIGHT_OF_BED_WALLS;
+  }
+  return topography;
+  #else
+  return 0.0;
+  #endif
+}
+
+double peanoclaw::native::scenarios::swashes::SWASHESChannel::getInitialWaterHeight(tarch::la::Vector<DIMENSIONS,double> position) const {
+  #ifdef PEANOCLAW_SWASHES
+  return -1.0;
+  #else
+  return 0.0;
+  #endif
+}
+
+double peanoclaw::native::scenarios::swashes::SWASHESChannel::getExpectedWaterHeight(tarch::la::Vector<DIMENSIONS,double> position) const {
+  #ifdef PEANOCLAW_SWASHES
+  return -1.0;
+  #else
+  return 0.0;
+  #endif
+}
+
+
+//SHORT CHANNEL
 int peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getIndex(double x) const {
   #ifdef PEANOCLAW_SWASHES
   return (x / L) * NX_EX;
@@ -49,27 +60,18 @@ int peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getIndex(double 
   #endif
 }
 
-double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::shortBedWidth(double x) const {
+double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getBedWidth(double x) const {
   return 10.0 - 5.0 * exp(-10 * pow(x/200 - 0.5, 2.0));
 }
 
-double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::longBedWidth(double x) const {
-  return 10.0 - 5.0 * exp(-50 * pow(x/400 - 1.0/3.0, 2.0)) - 5.0 * exp(-50 * pow(x/400 - 2.0/3.0, 2.0));
-}
-
-peanoclaw::native::scenarios::swashes::SWASHESShortChannel::SWASHESShortChannel()
+peanoclaw::native::scenarios::swashes::SWASHESShortChannel::SWASHESShortChannel(SWASHES::Parameters& parameters)
 #ifdef PEANOCLAW_SWASHES
-  : MacDonaldB1(Parameters(6, getFilledParameterStrings()))
+  : SWASHES::MacDonaldB1(parameters)
 #endif
 {
 }
 
 peanoclaw::native::scenarios::swashes::SWASHESShortChannel::~SWASHESShortChannel() {
-  for(int i = 0; i < 6; i++) {
-    delete _parameterStrings[i];
-  }
-  delete[] _parameterStrings;
-  delete[] _parameterCStrings;
 }
 
 double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getTopography(double x) const {
@@ -82,7 +84,7 @@ double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getTopography
 
 double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getInitialWaterHeight(double x) const {
   #ifdef PEANOCLAW_SWASHES
-  return ;
+  return -1.0;
   #else
   return 0.0;
   #endif
@@ -96,6 +98,15 @@ double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getExpectedWa
   #endif
 }
 
-double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getBedWidth(double x) const {
-  return getBedWidth(x);
+void peanoclaw::native::scenarios::swashes::SWASHESShortChannel::initialize() {
+  compute();
+}
+
+//LONG CHANNEL
+double peanoclaw::native::scenarios::swashes::SWASHESLongChannel::getBedWidth(double x) const {
+  return 10.0 - 5.0 * exp(-50 * pow(x/400 - 1.0/3.0, 2.0)) - 5.0 * exp(-50 * pow(x/400 - 2.0/3.0, 2.0));
+}
+
+void peanoclaw::native::scenarios::swashes::SWASHESLongChannel::initialize() {
+  compute();
 }

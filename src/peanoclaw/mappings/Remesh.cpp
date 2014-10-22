@@ -417,6 +417,7 @@ void peanoclaw::mappings::Remesh::createCell(
       }
 
       fineGridPatch.setDemandedMeshWidth(_numerics->getDemandedMeshWidth(fineGridPatch, _isInitializing));
+      assertion(tarch::la::allGreater(fineGridPatch.getDemandedMeshWidth(), tarch::la::Vector<DIMENSIONS,double>(0)));
     }
   }
 

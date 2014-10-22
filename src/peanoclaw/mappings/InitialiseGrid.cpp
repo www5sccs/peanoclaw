@@ -275,6 +275,7 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
     }
 
     patch.setDemandedMeshWidth(demandedMeshWidth);
+    assertion(tarch::la::allGreater(patch.getDemandedMeshWidth(), tarch::la::Vector<DIMENSIONS,double>(0)));
 
     #if defined(AssertForPositiveValues)
     assertion2(!patch.containsNonPositiveNumberInUnknownInUNew(0),

@@ -9,11 +9,14 @@
 #define PEANOCLAW_NATIVE_SCENARIOS_SWASHES_CHANNELPSEUDO2D_H_
 
 #include "peanoclaw/native/scenarios/SWEScenario.h"
+#include "peanoclaw/native/scenarios/swashes/SWASHESChannel.h"
+#include "peanoclaw/native/scenarios/swashes/SWASHESParameters.h"
 
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
 
 #include <vector>
+#include <string>
 
 namespace peanoclaw {
   namespace native {
@@ -46,7 +49,6 @@ class peanoclaw::native::scenarios::swashes::ChannelPseudo2D : public peanoclaw:
 private:
   const double BED_HEIGHT = 10.0;
 
-
   tarch::la::Vector<DIMENSIONS,double>  _domainSize;
   tarch::la::Vector<DIMENSIONS,double>  _domainOffset;
   tarch::la::Vector<DIMENSIONS,double>  _demandedMeshWidth;
@@ -57,6 +59,8 @@ private:
   tarch::la::Vector<DIMENSIONS, double> _maximalMeshWidth;
 
   double                                _discharge;
+
+  SWASHESChannel*                       _swashesChannel;
 
   enum ChannelType {
     Short,
