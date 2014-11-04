@@ -82,7 +82,16 @@ peanoclaw::native::scenarios::SWEScenario* peanoclaw::native::scenarios::SWEScen
       arguments.push_back(std::string(argv[i]));
     }
 
-    if(scenarioName == "bowlOcean") {
+    if(scenarioName == "--help" || scenarioName == "?") {
+      std::cerr << "Available scenarios are:\n\t"
+          << "bowlOcean\n\t"
+          << "breakingDam\n\t"
+          << "constantScenario\n\t"
+          << "calmOcean\n\t"
+          << "channelPseudo2D\n\t"
+          << "gaussian\n\t"
+          << "shockBubble"<< std::endl;
+    } else if(scenarioName == "bowlOcean") {
       return new peanoclaw::native::scenarios::BowlOcean(arguments);
     } else if(scenarioName == "breakingDam") {
       return new peanoclaw::native::scenarios::BreakingDamSWEScenario(arguments);
