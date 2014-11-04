@@ -1,15 +1,17 @@
 /*
- * PyClaw.cpp
+ * FullSWOF2D.cpp
  *
  *  Created on: Feb 18, 2012
  *      Author: kristof
  */
 
+#include "peanoclaw/native/FullSWOF2D.h"
+
+#include "peanoclaw/grid/aspects/BoundaryIterator.h"
 #include "peanoclaw/Patch.h"
+
 #include "tarch/timing/Watch.h"
 #include "tarch/parallel/Node.h"
-
-#include "peanoclaw/native/FullSWOF2D.h"
 
 #ifndef CHOICE_SCHEME_HPP
 #include "choice_scheme.hpp"
@@ -49,11 +51,11 @@ void peanoclaw::native::FullSWOF2D::initializePatch(
 
 void peanoclaw::native::FullSWOF2D::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
-
+  #ifdef PEANOCLAW_FULLSWOF2D
   assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getTimeIntervals().getMinimalNeighborTimeConstraint());
 
-  tarch::timing::Watch pyclawWatch("", "", false);
-  pyclawWatch.startTimer();
+  tarch::timing::Watch fullswof2dWatch("", "", false);
+  fullswof2dWatch.startTimer();
 //  double dtAndEstimatedNextDt[2];
   tarch::la::Vector<DIMENSIONS,double> meshwidth = patch.getSubcellSize();
   tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = patch.getSubdivisionFactor();
@@ -71,7 +73,8 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(Patch& patch, double maximumTi
           subdivisionFactor(1),
           meshwidth(0),
           meshwidth(1),
-          1.0 //endTime
+          1.0, //endTime
+          _scenario.enableRain()
       );
       //std::cout << "parameters read (meshwidth): " << par.get_dx() << " vs " << meshwidth(0) << " and " << par.get_dy() << " vs " << meshwidth(1) << std::endl;
       //std::cout << "parameters read (cells): " << par.get_Nxcell() << " vs " << subdivisionFactor(0) << " and " << par.get_Nycell() << " vs " << subdivisionFactor(1) << std::endl;
@@ -159,8 +162,8 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(Patch& patch, double maximumTi
   }
 #endif
 
-  pyclawWatch.stopTimer();
-  _totalSolverCallbackTime += pyclawWatch.getCalendarTime();
+  fullswof2dWatch.stopTimer();
+  _totalSolverCallbackTime += fullswof2dWatch.getCalendarTime();
 
   assertion4(
       tarch::la::greater(patch.getTimeIntervals().getTimestepSize(), 0.0)
@@ -176,6 +179,11 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(Patch& patch, double maximumTi
   }
   patch.getTimeIntervals().setEstimatedNextTimestepSize(estimatedNextTimestepSize);
 
+  //TODO unterweg debug
+//  std::cout << "Timestep" << std::endl;
+//  std::cout << "UOld" << std::endl << patch.toStringUOldWithGhostLayer() << std::endl << "UNew" << std::endl << patch.toStringUNew() << std::endl;
+
+  #endif
   logTraceOut( "solveTimestep(...)");
 }
 
@@ -186,10 +194,10 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::native::FullSWOF2D::getDemanded
 void peanoclaw::native::FullSWOF2D::addPatchToSolution(Patch& patch) {
 }
 
-void peanoclaw::native::FullSWOF2D::fillBoundaryLayer(Patch& patch, int dimension, bool setUpper) {
-  logTraceInWith3Arguments("fillBoundaryLayerInPyClaw", patch, dimension, setUpper);
+void peanoclaw::native::FullSWOF2D::fillBoundaryLayer(Patch& subgrid, int dimension, bool setUpper) {
+  logTraceInWith3Arguments("fillBoundaryLayerInPyClaw", subgrid, dimension, setUpper);
 
-  logDebug("fillBoundaryLayerInPyClaw", "Setting left boundary for " << patch.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);
+  logDebug("fillBoundaryLayerInPyClaw", "Setting left boundary for " << subgrid.getPosition() << ", dim=" << dimension << ", setUpper=" << setUpper);
 
    //std::cout << "------ setUpper " << setUpper << " dimension " << dimension << std::endl;
    //std::cout << patch << std::endl;
@@ -198,21 +206,21 @@ void peanoclaw::native::FullSWOF2D::fillBoundaryLayer(Patch& patch, int dimensio
    //std::cout << "||||||" << std::endl;
  
 #if 1
-  int ghostlayerWidth = patch.getGhostlayerWidth();
+  int ghostlayerWidth = subgrid.getGhostlayerWidth();
   int fullswofGhostlayerWidth = ghostlayerWidth;
   // implement a wall boundary
   tarch::la::Vector<DIMENSIONS, int> src_subcellIndex;
   tarch::la::Vector<DIMENSIONS, int> dest_subcellIndex;
-  peanoclaw::grid::SubgridAccessor accessor = patch.getAccessor();
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
 
-  for(int layer = 1; layer <= patch.getGhostlayerWidth(); layer++) {
-    for (int i = -fullswofGhostlayerWidth; i < patch.getSubdivisionFactor()(1-dimension)+fullswofGhostlayerWidth; i++) {
-      src_subcellIndex(dimension) = setUpper ? patch.getSubdivisionFactor()(dimension)-1 - layer : layer;
+  for(int layer = 1; layer <= subgrid.getGhostlayerWidth(); layer++) {
+    for (int i = -fullswofGhostlayerWidth; i < subgrid.getSubdivisionFactor()(1-dimension)+fullswofGhostlayerWidth; i++) {
+      src_subcellIndex(dimension) = setUpper ? subgrid.getSubdivisionFactor()(dimension)-1 - layer : layer;
       src_subcellIndex(1-dimension) = i;
-      dest_subcellIndex(dimension) = setUpper ? patch.getSubdivisionFactor()(dimension)-1 + layer : -layer;
+      dest_subcellIndex(dimension) = setUpper ? subgrid.getSubdivisionFactor()(dimension)-1 + layer : -layer;
       dest_subcellIndex(1-dimension) = i;
       accessor.setParameterWithGhostlayer(dest_subcellIndex, 0, accessor.getParameterWithGhostlayer(src_subcellIndex, 0));
-      for(int unknown = 0; unknown < patch.getUnknownsPerSubcell(); unknown++) {
+      for(int unknown = 0; unknown < subgrid.getUnknownsPerSubcell(); unknown++) {
         accessor.setValueUOld(dest_subcellIndex, unknown, accessor.getValueUOld(src_subcellIndex, unknown));
       }
       //Invert impulse for dimension
@@ -225,7 +233,11 @@ void peanoclaw::native::FullSWOF2D::fillBoundaryLayer(Patch& patch, int dimensio
    //std::cout << patch.toStringUOldWithGhostLayer() << std::endl;
    //std::cout << "||||||" << std::endl;
 
-      logTraceOut("fillBoundaryLayerInPyClaw");
+  //Fill scenario boundary condition
+  peanoclaw::grid::aspects::BoundaryIterator<peanoclaw::native::scenarios::SWEScenario> scenarioBoundaryIterator(_scenario);
+  scenarioBoundaryIterator.iterate(subgrid, accessor, dimension, setUpper);
+
+  logTraceOut("fillBoundaryLayer");
 }
 
 void peanoclaw::native::FullSWOF2D::update(Patch& finePatch) {
@@ -656,6 +668,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   double meshwidth_x,
   double meshwidth_y,
   double endTime,
+  bool enableRain,
   int select_order,
   int select_rec
 ) : _endTime(endTime) {
@@ -709,11 +722,12 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
    lim = 1;
    topo = 2; // flat topogrophy, just prevent it from loading data as we will fill the data in later on
    huv_init = 2; // initialize h,v and u to 0
-   rain = 2; // 2: rain is generated, basically its just an auxillary array which is filled with time dependent data (we can couple this evolveToTime)
+   rain = enableRain ? 2 : 0; // 2: rain is generated, basically its just an auxillary array which is filled with time dependent data (we can couple this evolveToTime)
    amortENO = 0.25;
    modifENO = 0.9;
    //frotcoef is not actually used though it is existing in parameters
    friccoef = 0;
+   fric_init = 2;
 
   //for infiltration model
   Kc_init = 2;

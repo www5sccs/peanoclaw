@@ -36,7 +36,7 @@ double peanoclaw::native::scenarios::swashes::SWASHESChannel::getTopography(tarc
 
 double peanoclaw::native::scenarios::swashes::SWASHESChannel::getInitialWaterHeight(tarch::la::Vector<DIMENSIONS,double> position) const {
   #ifdef PEANOCLAW_SWASHES
-  return -1.0;
+  return getInitialWaterHeight(position[0]);
   #else
   return 0.0;
   #endif
@@ -44,7 +44,7 @@ double peanoclaw::native::scenarios::swashes::SWASHESChannel::getInitialWaterHei
 
 double peanoclaw::native::scenarios::swashes::SWASHESChannel::getExpectedWaterHeight(tarch::la::Vector<DIMENSIONS,double> position) const {
   #ifdef PEANOCLAW_SWASHES
-  return -1.0;
+  return getExpectedWaterHeight(position[0]);
   #else
   return 0.0;
   #endif
@@ -84,7 +84,7 @@ double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getTopography
 
 double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getInitialWaterHeight(double x) const {
   #ifdef PEANOCLAW_SWASHES
-  return -1.0;
+  return 0.0;
   #else
   return 0.0;
   #endif

@@ -47,7 +47,7 @@ namespace peanoclaw {
  */
 class peanoclaw::native::scenarios::swashes::ChannelPseudo2D : public peanoclaw::native::scenarios::SWEScenario {
 private:
-  const double BED_HEIGHT = 10.0;
+  const double BED_HEIGHT = 22.0;
 
   tarch::la::Vector<DIMENSIONS,double>  _domainSize;
   tarch::la::Vector<DIMENSIONS,double>  _domainOffset;
@@ -87,6 +87,17 @@ public:
   tarch::la::Vector<DIMENSIONS,int>    getSubdivisionFactor() const;
   double                               getGlobalTimestepSize() const;
   double                               getEndTime() const;
+
+  void setBoundaryCondition(
+    peanoclaw::Patch& subgrid,
+    peanoclaw::grid::SubgridAccessor& accessor,
+    int dimension,
+    bool setUpper,
+    tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex,
+    tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex
+  );
+
+  bool enableRain() const { return false; }
 };
 
 

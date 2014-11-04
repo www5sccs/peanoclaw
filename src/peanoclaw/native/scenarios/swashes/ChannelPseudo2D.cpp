@@ -8,6 +8,8 @@
 
 #include "peanoclaw/Patch.h"
 
+#include "peanoclaw/native/FullSWOF2D.h"
+
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
 #include "tarch/la/VectorAssignList.h"
@@ -65,15 +67,15 @@ peanoclaw::native::scenarios::swashes::ChannelPseudo2D::~ChannelPseudo2D() {
   delete _swashesChannel;
 }
 
-void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(peanoclaw::Patch& patch) {
+void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(peanoclaw::Patch& subgrid) {
   #ifdef Dim2
-  peanoclaw::grid::SubgridAccessor accessor = patch.getAccessor();
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
 
-  for(int y = 0; y < patch.getSubdivisionFactor()[1]; y++) {
-    for(int x = 0; x < patch.getSubdivisionFactor()[0]; x++) {
+  for(int y = -subgrid.getGhostlayerWidth(); y < subgrid.getSubdivisionFactor()[1] + subgrid.getGhostlayerWidth(); y++) {
+    for(int x = -subgrid.getGhostlayerWidth(); x < subgrid.getSubdivisionFactor()[0] + subgrid.getGhostlayerWidth(); x++) {
       tarch::la::Vector<DIMENSIONS,int> subcellIndex;
       assignList(subcellIndex) = x, y;
-      tarch::la::Vector<DIMENSIONS,double> position = patch.getSubcellCenter(subcellIndex);
+      tarch::la::Vector<DIMENSIONS,double> position = subgrid.getSubcellCenter(subcellIndex);
 
       double distanceFromCenterLine = abs(position[1]);
       double bedWidth = _swashesChannel->getBedWidth(position[0]);
@@ -84,13 +86,19 @@ void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(pea
       }
       accessor.setParameterWithGhostlayer(subcellIndex, 0, topography);
 
-      double waterheight = position[0] < 100 ? 1 : 0;
-      if(topography >= BED_HEIGHT) {
-        waterheight = 0;
+      if(x >= 0 && y >= 0 && x < subgrid.getSubdivisionFactor()[0] &&  y < subgrid.getSubdivisionFactor()[1]) {
+        double waterheight = 0.75; //_swashesChannel->getInitialWaterHeight(position);
+//        double waterheight = position[0] < 20 ? 0.5 : 0.1;
+        if(topography >= BED_HEIGHT) {
+          waterheight = 0;
+        }
+        accessor.setValueUNew(subcellIndex, 0, waterheight);
+        accessor.setValueUNew(subcellIndex, 1, 0);
+        accessor.setValueUNew(subcellIndex, 2, 0);
       }
-      accessor.setValueUNew(subcellIndex, 0, waterheight);
     }
   }
+
   #endif
 }
 
@@ -129,3 +137,80 @@ double peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getGlobalTimestep
 double peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getEndTime() const {
   return _endTime;
 }
+
+void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::setBoundaryCondition(
+  peanoclaw::Patch& subgrid,
+  peanoclaw::grid::SubgridAccessor& accessor,
+  int dimension,
+  bool setUpper,
+  tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex,
+  tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex
+) {
+  FullSWOF2D_Parameters parameters(
+    subgrid.getGhostlayerWidth(),
+    subgrid.getSubdivisionFactor()[0],
+    subgrid.getSubdivisionFactor()[1],
+    subgrid.getSubcellSize()[0],
+    subgrid.getSubcellSize()[1],
+    subgrid.getTimeIntervals().getCurrentTime() + 10000, //end Time just large enough
+    false
+  );
+
+  TAB z;
+
+  int n1 = 0;
+  int n2 = 0;
+  int conditionType;
+  int normalIndex;
+  int tangentialIndex;
+  double imposedWaterHeight = 0.0;
+
+  //Map dimension,setUpper to n1,n2
+  if(dimension == 0) {
+    normalIndex = 1;
+    tangentialIndex = 2;
+    if(setUpper) {
+      imposedWaterHeight = 0.902921;
+      conditionType = 1;
+      n2 = 1;
+    } else {
+      conditionType = 5;
+      n2 = -1;
+    }
+  } else if (dimension == 1) {
+    conditionType = 2;
+    normalIndex = 2;
+    tangentialIndex = 1;
+    n1 = setUpper ? 1 : -1;
+  }
+
+  Choice_condition boundaryCondition(conditionType, parameters, z, n1, n2);
+
+  double waterHeight = accessor.getValueUOld(sourceSubcellIndex, 0);
+  double normalVelocity = 0.0;
+  double tangentialVelocity = 0.0;
+
+  if(tarch::la::greater(waterHeight, 0.0)) {
+    normalVelocity = accessor.getValueUOld(sourceSubcellIndex, normalIndex) / waterHeight;
+    tangentialVelocity = accessor.getValueUOld(sourceSubcellIndex, tangentialIndex) / waterHeight;
+  }
+
+  boundaryCondition.calcul(
+    waterHeight,
+    normalVelocity,
+    tangentialVelocity,
+    imposedWaterHeight, //imposed water height
+    20, //imposed discharge
+    0, // unused
+    0, // unused
+    0, // unused
+    0, // unused
+    n1,
+    n2
+  );
+
+  accessor.setValueUOld(destinationSubcellIndex, 0, boundaryCondition.get_hbound());
+  accessor.setValueUOld(destinationSubcellIndex, normalIndex, boundaryCondition.get_unormbound());
+  accessor.setValueUOld(destinationSubcellIndex, tangentialIndex, boundaryCondition.get_utanbound());
+}
+

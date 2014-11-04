@@ -19,11 +19,26 @@ void peanoclaw::grid::aspects::BoundaryIterator<BoundaryCondition>::iterate(
   int dimension,
   bool setUpper
 ) {
-  tarch::la::Vector<2,int> faceSize;
   tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = subgrid.getSubdivisionFactor();
   int ghostlayerWidth = subgrid.getGhostlayerWidth();
-  assignList(faceSize) = subgrid.getSubdivisionFactor()[(dimension+1) % DIMENSIONS], subgrid.getSubdivisionFactor()[(dimension+2) % DIMENSIONS];
 
+  #ifdef Dim2
+  int faceSize = subgrid.getSubdivisionFactor()[(dimension+1) % DIMENSIONS];
+  for(int i0 = -ghostlayerWidth; i0 < faceSize + ghostlayerWidth; i0++) {
+    for(int g = 1; g <= ghostlayerWidth; g++) {
+      tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex;
+      tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex;
+      destinationSubcellIndex[dimension] = setUpper ? subdivisionFactor[dimension] - 1 + g : -g;
+      destinationSubcellIndex[(dimension+1) % DIMENSIONS] = i0;
+      sourceSubcellIndex = destinationSubcellIndex;
+      sourceSubcellIndex[dimension] = setUpper ? subdivisionFactor[dimension] - g : g-1;
+
+      _boundaryCondition.setBoundaryCondition(subgrid, accessor, dimension, setUpper, sourceSubcellIndex, destinationSubcellIndex);
+    }
+  }
+  #elif Dim3
+  tarch::la::Vector<2,int> faceSize;
+  assignList(faceSize) = subgrid.getSubdivisionFactor()[(dimension+1) % DIMENSIONS], subgrid.getSubdivisionFactor()[(dimension+2) % DIMENSIONS];
   for(int i1 = -ghostlayerWidth; i1 < faceSize[1] + ghostlayerWidth; i1++) {
     for(int i0 = -ghostlayerWidth; i0 < faceSize[0] + ghostlayerWidth; i0++) {
       for(int g = 1; g <= ghostlayerWidth; g++) {
@@ -39,6 +54,9 @@ void peanoclaw::grid::aspects::BoundaryIterator<BoundaryCondition>::iterate(
       }
     }
   }
+  #else
+  #error Only implemented for 2D and 3D
+  #endif
 }
 
 

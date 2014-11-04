@@ -112,8 +112,8 @@ class MekkaFlood_solver {
                 DX(dx),
                 DY(dy)
             {
-                GRAV = 9.81;
-                GRAV_DEM = 4.905;
+                GRAVITATION = 9.81;
+                GRAVITATION_DEM = 4.905;
                 CONST_CFL_X = 0.5;
                 CONST_CFL_Y = 0.5;
                 HE_CA = 1.e-12;
@@ -132,9 +132,9 @@ class MekkaFlood_solver {
                 CFL_FIX = 0.5;
             }
 
-            double GRAV; // 9.81
+            double GRAVITATION; // 9.81
 
-            double GRAV_DEM; // 4.905
+            double GRAVITATION_DEM; // 4.905
             double CONST_CFL_X; // 0.5
             double CONST_CFL_Y; // 0.5
             double HE_CA; //1e-12;

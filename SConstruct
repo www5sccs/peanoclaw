@@ -332,9 +332,23 @@ elif solver == 'fullswof2d':
   cpppath.append( join(fullSWOF2DPath, 'Headers/libboundaryconditions') )
   cpppath.append( join(fullSWOF2DPath, 'Headers/libparameters') )
   libs.append('png') # for texture file
+  
+  swashes = ARGUMENTS.get('swashes', 'swashes_no')
+  if swashes == 'yes' or swashes == 'swashes_yes':
+    cppdefines.append('PEANOCLAW_SWASHES')
+    swashesPath = '../swashes'
+    try:
+      import swashesConfiguration
+      swashesPath = swashesConfiguration.getSWEPath()
+    except ImportError:
+      pass
+    cpppath.append(join(swashesPath, 'Include'))
+  elif swashes == 'no' or swashes == 'swashes_no':
+    pass
+  else:
+    raise Exception("Please specify 'yes' or 'no' for parameter 'swashes'.")
 elif solver == 'euler3d':
   cppdefines.append('PEANOCLAW_EULER3D')
-  cppdefines.append('EIGEN_DONT_VECTORIZE')
   if dim != 3:
     raise Exception("The Euler3D solver can only be used in 3D.")
   euler3DEulerEquationsPath = '../euler3DEulerEquations'
@@ -443,8 +457,8 @@ if solver == 'swe':
   VariantDir (join(buildpath, 'swe'), swePath, duplicate=0)  # Set build directory for SWE sources
 elif solver == 'fullswof2d':
   VariantDir (join(buildpath, 'fullswof2d'), fullSWOF2DPath, duplicate=0)  # Set build directory for FullSWOF2D sources
+  VariantDir (join(buildpath, 'swashes'), swashesPath, duplicate=0)  # Set build directory for Euler3D sources
 elif solver == 'euler3d':
-#   VariantDir (join(buildpath, 'euler3dEulerEquations'), euler3DEulerEquationsPath, duplicate=0)  # Set build directory for Euler3D sources
   VariantDir (join(buildpath, 'euler3dUni'), euler3DUniPath, duplicate=0)  # Set build directory for Euler3D sources
   
   
@@ -513,6 +527,9 @@ elif solver == 'fullswof2d':
      Glob(join(buildpath, 'fullswof2d/Sources/libboundaryconditions/*.cpp')),
      Glob(join(buildpath, 'fullswof2d/Sources/libparameters/*.cpp'))
      ]
+  if swashes == 'yes' or swashes == 'swashes_yes':
+    sourcesSolver.append(Glob(join(buildpath, 'peanoclaw/native/scenarios/swashes/*.cpp')))
+    sourcesSolver.append(Glob(join(buildpath, 'swashes/Sources/*.cpp')))
 elif solver == 'euler3d':
   sourcesSolver = [
      Glob(join(buildpath, 'euler3dUni/source/EulerEquations/*.cpp')),

@@ -832,8 +832,8 @@ void MekkaFlood_solver::flux_hll(const Constants& constants, double h_L,double u
 		f3 = 0.;
 		cfl = 0.;
 	}else{
-		double grav_h_L = constants.GRAV*h_L;
-		double grav_h_R = constants.GRAV*h_R;
+		double grav_h_L = constants.GRAVITATION*h_L;
+		double grav_h_R = constants.GRAVITATION*h_R;
 		double q_R = u_R*h_R;
 		double q_L = u_L*h_L;
 		double c1 = std::min(u_L-sqrt(grav_h_L),u_R-sqrt(grav_h_R));
@@ -847,18 +847,18 @@ void MekkaFlood_solver::flux_hll(const Constants& constants, double h_L,double u
 			cfl=0.; //max(fabs(c1),fabs(c2))=0
 		}else if (c1>=constants.EPSILON){ //supercritical flow, from left to right : we have max(abs(c1),abs(c2))=c2>0 
 			f1=q_L;
-			f2=q_L*u_L+constants.GRAV*h_L*h_L*0.5;
+			f2=q_L*u_L+constants.GRAVITATION*h_L*h_L*0.5;
 			f3=q_L*v_L;
 			cfl=c2; //max(fabs(c1),fabs(c2))=c2>0
 		}else if (c2<=-constants.EPSILON){ //supercritical flow, from right to left : we have max(abs(c1),abs(c2))=-c1>0
 			f1=q_R;
-			f2=q_R*u_R+constants.GRAV*h_R*h_R*0.5;
+			f2=q_R*u_R+constants.GRAVITATION*h_R*h_R*0.5;
 			f3=q_R*v_R;
 			cfl=fabs(c1); //max(fabs(c1),fabs(c2))=fabs(c1)
 		}else{ //subcritical flow
 		        double tmp = 1./(c2-c1);
 			f1=(c2*q_L-c1*q_R)*tmp+c1*c2*(h_R-h_L)*tmp;
-			f2=(c2*(q_L*u_L+constants.GRAV*h_L*h_L*0.5)-c1*(q_R*u_R+constants.GRAV*h_R*h_R*0.5))*tmp+c1*c2*(q_R-q_L)*tmp;
+			f2=(c2*(q_L*u_L+constants.GRAVITATION*h_L*h_L*0.5)-c1*(q_R*u_R+constants.GRAVITATION*h_R*h_R*0.5))*tmp+c1*c2*(q_R-q_L)*tmp;
 			f3=(c2*(q_L*v_L)-c1*(q_R*v_R))*tmp+c1*c2*(h_R*v_R-h_L*v_L)*tmp;
 			cfl=std::max(fabs(c1),fabs(c2));
 		}
@@ -1096,13 +1096,13 @@ void MekkaFlood_solver::maincalcscheme(const int patchid, int dim, unsigned int*
        //Solution of the equation of momentum (Second and third equation of Saint-venant)
        
        output.q1[centerIndex] = input.h[centerIndex]*input.u[centerIndex]-tx*(temp.f2[rightIndex]-temp.f2[centerIndex]
-                                                        +constants.GRAV_DEM*((temp.h1left[centerIndex]-temp.h1l[centerIndex])*(temp.h1left[centerIndex]+temp.h1l[centerIndex])
+                                                        +constants.GRAVITATION_DEM*((temp.h1left[centerIndex]-temp.h1l[centerIndex])*(temp.h1left[centerIndex]+temp.h1l[centerIndex])
                                                                   +(temp.h1r[centerIndex]-temp.h1right[centerIndex])*(temp.h1r[centerIndex]+temp.h1right[centerIndex])
                                                                   +(temp.h1l[centerIndex]+temp.h1r[centerIndex])*temp.delzc1[centerIndex]))
                                                     -ty*(temp.g2[topIndex]-temp.g2[centerIndex]);
        output.q2[centerIndex] = input.h[centerIndex]*input.v[centerIndex]-tx*(temp.f3[rightIndex]-temp.f3[centerIndex])
                                                     -ty*(temp.g3[topIndex]-temp.g3[centerIndex]
-                                                        +constants.GRAV_DEM*((temp.h2left[centerIndex]-temp.h2l[centerIndex])*(temp.h2left[centerIndex]+temp.h2l[centerIndex])
+                                                        +constants.GRAVITATION_DEM*((temp.h2left[centerIndex]-temp.h2l[centerIndex])*(temp.h2left[centerIndex]+temp.h2l[centerIndex])
                                                                    +(temp.h2r[centerIndex]-temp.h2right[centerIndex])*(temp.h2r[centerIndex]+temp.h2right[centerIndex])
                                                                    +(temp.h2l[centerIndex]+temp.h2r[centerIndex])*temp.delzc2[centerIndex]));
        

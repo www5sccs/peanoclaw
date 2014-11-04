@@ -154,7 +154,7 @@ public:
   /*
    * @see peanoclaw::Numerics
    */
-  int getGhostlayerWidth() const { return 2; }
+  int getGhostlayerWidth() const { return 3; }
 };
 
 class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
@@ -169,6 +169,7 @@ class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
           double meshwidth_x,
           double meshwidth_y,
           double endTime,
+          bool enableRain,
           int select_order=2,
           int select_reconstruction=1
         );
