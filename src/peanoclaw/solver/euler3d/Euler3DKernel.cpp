@@ -56,7 +56,8 @@ void peanoclaw::solver::euler3d::Euler3DKernel::update(Patch& subgrid) {
 void peanoclaw::solver::euler3d::Euler3DKernel::solveTimestep(
   Patch& subgrid,
   double maximumTimestepSize,
-  bool useDimensionalSplitting
+  bool useDimensionalSplitting,
+  tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags
 ) {
   #ifdef Dim3
   double dt = std::min(subgrid.getTimeIntervals().getEstimatedNextTimestepSize(), maximumTimestepSize);

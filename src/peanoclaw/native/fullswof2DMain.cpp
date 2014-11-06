@@ -32,12 +32,17 @@ void peanoclaw::native::fullswof2DMain(
     numberOfCells[1],
     scenario.getInitialMinimalMeshWidth()[0],
     scenario.getInitialMinimalMeshWidth()[1],
+    scenario.getDomainSize(),
     scenario.getEndTime(),
     #ifdef PEANOCLAW_FULLSWOF2D
-    scenario.enableRain()
+    scenario.enableRain(),
     #else
-    true
+    true,
     #endif
+    scenario.getBoundaryCondition(0, false),
+    scenario.getBoundaryCondition(0, true),
+    scenario.getBoundaryCondition(1, false),
+    scenario.getBoundaryCondition(1, true)
   );
 
   Choice_scheme * schemeWrapper;

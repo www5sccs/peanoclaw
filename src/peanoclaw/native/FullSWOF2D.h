@@ -20,6 +20,7 @@
 
 #include "peanoclaw/native/SWEKernel.h"
 #include "peanoclaw/native/scenarios/SWEScenario.h"
+#include "peanoclaw/native/scenarios/FullSWOF2DBoundaryCondition.h"
 
 #include "peanoclaw/native/MekkaFlood_solver.h"
 
@@ -43,6 +44,8 @@ private:
    * Logging device
    */
   static tarch::logging::Log     _log;
+
+  static peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition _interSubgridBoundaryCondition;
 
   double _totalSolverCallbackTime;
 
@@ -72,8 +75,15 @@ public:
    *
    * @param patch The Patch object holding the grid data.
    * @param maximumTimestepSize The maximal timestep size with regard to the current global timestep.
+   * @param useDimensionalSplitting @see peanoclaw::Numerics
+   * @param domainBoundaryFlags @see peanoclaw::Numerics
    */
-  void solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting);
+  void solveTimestep(
+    Patch& subgrid,
+    double maximumTimestepSize,
+    bool useDimensionalSplitting,
+    tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags
+  );
 
   /**
    * Returns the demanded mesh width for the given patch.
@@ -130,8 +140,8 @@ public:
 
   void update(Patch& finePatch);
 
-  void copyPatchToScheme(Patch& patch, Scheme* scheme);
-  void copySchemeToPatch(Scheme* scheme, Patch& patch);
+  void copyPatchToScheme(Patch& patch, Scheme* scheme, tarch::la::Vector<DIMENSIONS_TIMES_TWO, int> margin);
+  void copySchemeToPatch(Scheme* scheme, Patch& patch, tarch::la::Vector<DIMENSIONS_TIMES_TWO, int> margin);
 
   void copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp);
   void copySetToPatch(unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp, Patch& patch);
@@ -154,7 +164,7 @@ public:
   /*
    * @see peanoclaw::Numerics
    */
-  int getGhostlayerWidth() const { return 3; }
+  int getGhostlayerWidth() const { return 2; }
 };
 
 class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
@@ -168,8 +178,13 @@ class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
           int ny,
           double meshwidth_x,
           double meshwidth_y,
+          tarch::la::Vector<DIMENSIONS,double> domainSize,
           double endTime,
           bool enableRain,
+          peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition leftBoundaryCondition,
+          peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition rightBoundaryCondition,
+          peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition bottomBoundaryCondition,
+          peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition topBoundaryCondition,
           int select_order=2,
           int select_reconstruction=1
         );

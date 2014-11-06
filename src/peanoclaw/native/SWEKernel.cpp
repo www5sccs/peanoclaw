@@ -120,7 +120,12 @@ void peanoclaw::native::SWEKernel::update(Patch& subgrid) {
   _scenario.update(subgrid);
 }
 
-void peanoclaw::native::SWEKernel::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
+void peanoclaw::native::SWEKernel::solveTimestep(
+  Patch& subgrid,
+  double maximumTimestepSize,
+  bool useDimensionalSplitting,
+  tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags
+) {
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
 
   assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getTimeIntervals().getMinimalNeighborTimeConstraint());

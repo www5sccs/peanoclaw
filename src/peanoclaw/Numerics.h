@@ -127,7 +127,7 @@ private:
      * of the boundary needs to be set.
      */
     virtual void fillBoundaryLayer(
-      Patch& patch,
+      Patch& subgrid,
       int dimension,
       bool setUpper
     ) = 0;
@@ -138,12 +138,15 @@ private:
      *
      * @param patch The Patch object holding the grid data.
      * @param maximumTimestepSize The maximal timestep size with regard to the current global timestep.
+     * @param useDimensionalSplitting Enables dimensional splitting for the solver if available.
+     * @param domainBoundaryFlags Specifies which boundaries of the subgrid are actual boundaries of the domain.
      *
      */
     virtual void solveTimestep(
-      Patch& patch,
+      Patch& subgrid,
       double maximumTimestepSize,
-      bool useDimensionalSplitting
+      bool useDimensionalSplitting,
+      tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags
     ) = 0;
 
     /**

@@ -82,11 +82,12 @@ peano::MappingSpecification peanoclaw::mappings::SolveTimestep::descendSpecifica
 
 tarch::logging::Log peanoclaw::mappings::SolveTimestep::_log("peanoclaw::mappings::SolveTimestep");
 
-void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
+tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
   peanoclaw::Patch& patch,
   peanoclaw::Vertex * const fineGridVertices,
   const peano::grid::VertexEnumerator& fineGridVerticesEnumerator
 ) {
+  tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags(false);
   // Set boundary conditions (For hanging nodes the isBoundary() is not valid. Therefore, we simulate it by checking for the domainoffset and -size.)
   if ((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary()
       || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset)
@@ -94,12 +95,14 @@ void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
       && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(1) == -1
   ) {
     _numerics->fillBoundaryLayer(patch, 0, false);
+    domainBoundaryFlags[0] = true;
   }
   if ((fineGridVertices[fineGridVerticesEnumerator(2)].isBoundary() || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(2), _domainOffset)
       || !tarch::la::allGreater(_domainOffset + _domainSize, fineGridVerticesEnumerator.getVertexPosition(2)))
       && fineGridVertices[fineGridVerticesEnumerator(2)].getAdjacentCellDescriptionIndex(0) == -1
   ) {
     _numerics->fillBoundaryLayer(patch, 1, true);
+    domainBoundaryFlags[3] = true;
   }
   #ifdef Dim3
   if ((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary() || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset)
@@ -107,6 +110,7 @@ void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
       && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(4) == -1
   ) {
     _numerics->fillBoundaryLayer(patch, 2, false);
+    domainBoundaryFlags[4] = true;
   }
   #endif
   if ((fineGridVertices[fineGridVerticesEnumerator(1)].isBoundary() || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(1), _domainOffset)
@@ -114,12 +118,14 @@ void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
       && fineGridVertices[fineGridVerticesEnumerator(1)].getAdjacentCellDescriptionIndex(0) == -1
   ) {
     _numerics->fillBoundaryLayer(patch, 0, true);
+    domainBoundaryFlags[1] = true;
   }
   if ((fineGridVertices[fineGridVerticesEnumerator(0)].isBoundary() || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(0), _domainOffset)
       || !tarch::la::allGreater(_domainOffset + _domainSize, fineGridVerticesEnumerator.getVertexPosition(0)))
       && fineGridVertices[fineGridVerticesEnumerator(0)].getAdjacentCellDescriptionIndex(2) == -1
   ) {
     _numerics->fillBoundaryLayer(patch, 1, false);
+    domainBoundaryFlags[2] = true;
   }
   #ifdef Dim3
   if ((fineGridVertices[fineGridVerticesEnumerator(4)].isBoundary() || !tarch::la::allGreater(fineGridVerticesEnumerator.getVertexPosition(4), _domainOffset)
@@ -127,8 +133,10 @@ void peanoclaw::mappings::SolveTimestep::fillBoundaryLayers(
       && fineGridVertices[fineGridVerticesEnumerator(4)].getAdjacentCellDescriptionIndex(0) == -1
   ) {
     _numerics->fillBoundaryLayer(patch, 2, true);
+    domainBoundaryFlags[5] = true;
   }
   #endif
+  return domainBoundaryFlags;
 }
 
 peanoclaw::mappings::SolveTimestep::SolveTimestep()
@@ -628,7 +636,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         transfer.copyUNewToUOld(subgrid);
 
         // Filling boundary layers for the given patch...
-        fillBoundaryLayers(subgrid, fineGridVertices,
+        tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags = fillBoundaryLayers(subgrid, fineGridVertices,
             fineGridVerticesEnumerator);
 
         //TODO unterweg
@@ -639,7 +647,7 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
 //        }
 
         // Do one timestep...
-        _numerics->solveTimestep(subgrid, maximumTimestepDueToGlobalTimestep, _useDimensionalSplittingExtrapolation);
+        _numerics->solveTimestep(subgrid, maximumTimestepDueToGlobalTimestep, _useDimensionalSplittingExtrapolation, domainBoundaryFlags);
         tarch::la::Vector<DIMENSIONS, double> requiredMeshWidth = _numerics->getDemandedMeshWidth(subgrid, false);
         subgrid.setDemandedMeshWidth(requiredMeshWidth);
 

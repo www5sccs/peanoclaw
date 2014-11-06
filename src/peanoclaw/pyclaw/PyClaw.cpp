@@ -101,7 +101,12 @@ void peanoclaw::pyclaw::PyClaw::initializePatch(
   logTraceOutWith1Argument( "initializePatch(...)", demandedMeshWidth);
 }
 
-void peanoclaw::pyclaw::PyClaw::solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting) {
+void peanoclaw::pyclaw::PyClaw::solveTimestep(
+  Patch& subgrid,
+  double maximumTimestepSize,
+  bool useDimensionalSplitting,
+  tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags
+) {
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
 
   tarch::multicore::Lock lock(_semaphore);

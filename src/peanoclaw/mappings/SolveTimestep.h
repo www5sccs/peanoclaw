@@ -102,7 +102,7 @@ class peanoclaw::mappings::SolveTimestep {
     /**
      * Fills the boundary layers of the given patch.
      */
-    void fillBoundaryLayers(
+    tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> fillBoundaryLayers(
       peanoclaw::Patch& patch,
       peanoclaw::Vertex * const                fineGridVertices,
       const peano::grid::VertexEnumerator&     fineGridVerticesEnumerator

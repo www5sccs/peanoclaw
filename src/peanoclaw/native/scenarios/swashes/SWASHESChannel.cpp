@@ -84,7 +84,7 @@ double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getTopography
 
 double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getInitialWaterHeight(double x) const {
   #ifdef PEANOCLAW_SWASHES
-  return 0.0;
+  return std::max(0.0, getOutflowHeight() + getTopography(200) - getTopography(x));
   #else
   return 0.0;
   #endif
@@ -102,6 +102,10 @@ void peanoclaw::native::scenarios::swashes::SWASHESShortChannel::initialize() {
   compute();
 }
 
+double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getOutflowHeight() const {
+  return 0.902921;
+}
+
 //LONG CHANNEL
 double peanoclaw::native::scenarios::swashes::SWASHESLongChannel::getBedWidth(double x) const {
   return 10.0 - 5.0 * exp(-50 * pow(x/400 - 1.0/3.0, 2.0)) - 5.0 * exp(-50 * pow(x/400 - 2.0/3.0, 2.0));
@@ -109,4 +113,8 @@ double peanoclaw::native::scenarios::swashes::SWASHESLongChannel::getBedWidth(do
 
 void peanoclaw::native::scenarios::swashes::SWASHESLongChannel::initialize() {
   compute();
+}
+
+double peanoclaw::native::scenarios::swashes::SWASHESLongChannel::getOutflowHeight() const {
+  return -1;
 }

@@ -32,9 +32,10 @@ class peanoclaw::tests::NumericsTestStump : public peanoclaw::Numerics {
     ){};
 
     void solveTimestep(
-      Patch& patch,
+      Patch& subgrid,
       double maximumTimestepSize,
-      bool useDimensionalSplitting
+      bool useDimensionalSplitting,
+      tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags
     ){};
 
     tarch::la::Vector<DIMENSIONS, double> getDemandedMeshWidth(

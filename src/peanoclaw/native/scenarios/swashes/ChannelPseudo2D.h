@@ -98,6 +98,8 @@ public:
   );
 
   bool enableRain() const { return false; }
+
+  FullSWOF2DBoundaryCondition getBoundaryCondition(int dimension, bool upper) const;
 };
 
 

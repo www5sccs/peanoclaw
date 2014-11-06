@@ -67,10 +67,15 @@ class peanoclaw::solver::euler3d::Euler3DKernel : public peanoclaw::Numerics {
      * Solves a timestep. All updates (e.g. change of grid values, taken timestep size, new cfl number)
      * are performed on the patch object
      *
-     * @param patch The Patch object holding the grid data.
+     * @param subgrid The Subgrid object holding the grid data.
      * @param maximumTimestepSize The maximal timestep size with regard to the current global timestep.
      */
-    void solveTimestep(Patch& patch, double maximumTimestepSize, bool useDimensionalSplitting);
+    void solveTimestep(
+      Patch& subgrid,
+      double maximumTimestepSize,
+      bool useDimensionalSplitting,
+      tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags
+    );
 
     /**
      * Returns the demanded mesh width for the given subgrid.

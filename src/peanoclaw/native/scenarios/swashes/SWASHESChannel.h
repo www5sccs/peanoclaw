@@ -62,6 +62,7 @@ class peanoclaw::native::scenarios::swashes::SWASHESChannel {
     double getExpectedWaterHeight(tarch::la::Vector<DIMENSIONS,double> position) const;
     virtual double getBedWidth(double x) const = 0;
     virtual void initialize() = 0;
+    virtual double getOutflowHeight() const = 0;
 };
 
 class peanoclaw::native::scenarios::swashes::SWASHESShortChannel
@@ -91,6 +92,8 @@ class peanoclaw::native::scenarios::swashes::SWASHESShortChannel
     double getBedWidth(double x) const;
 
     void initialize();
+
+    double getOutflowHeight() const;
 };
 
 class peanoclaw::native::scenarios::swashes::SWASHESLongChannel
@@ -103,6 +106,8 @@ class peanoclaw::native::scenarios::swashes::SWASHESLongChannel
   double getBedWidth(double x) const;
 
   void initialize();
+
+  double getOutflowHeight() const;
 };
 
 #endif /* PEANOCLAW_NATIVE_SCENARIOS_SWASHES_SWASHESCHANNEL_H_ */

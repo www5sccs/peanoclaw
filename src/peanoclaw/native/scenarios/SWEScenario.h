@@ -12,6 +12,10 @@
 #include "scenarios/SWE_Scenario.hh"
 #endif
 
+#if defined(PEANOCLAW_FULLSWOF2D)
+#include "peanoclaw/native/scenarios/FullSWOF2DBoundaryCondition.h"
+#endif
+
 #include "peano/utils/Dimensions.h"
 #include "tarch/la/Vector.h"
 #include "tarch/logging/Log.h"
@@ -78,6 +82,7 @@ public:
 
     #ifdef PEANOCLAW_FULLSWOF2D
     virtual bool enableRain() const { return true; }
+    virtual FullSWOF2DBoundaryCondition getBoundaryCondition(int dimension, bool upper) const { return FullSWOF2DBoundaryCondition(2, 0, 0); }
     #endif
 
     /**
