@@ -36,8 +36,10 @@ peanoclaw::native::scenarios::swashes::ChannelPseudo2D::ChannelPseudo2D(
   if(arguments[5] == "short") {
     _channelType = Short;
     _domainSize[0] = 200;
+    #ifdef PEANOCLAW_SWASHES
     SWASHESParameters parameters(finestSubgridTopologyPerDimension * _domainSize[0] / _domainSize[1]);
     _swashesChannel = new SWASHESShortChannel(parameters);
+    #endif
   } else if (arguments[6] == "long") {
     _channelType = Long;
     _domainSize[0] = 400;

@@ -64,10 +64,14 @@ double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getBedWidth(d
   return 10.0 - 5.0 * exp(-10 * pow(x/200 - 0.5, 2.0));
 }
 
-peanoclaw::native::scenarios::swashes::SWASHESShortChannel::SWASHESShortChannel(SWASHES::Parameters& parameters)
-#ifdef PEANOCLAW_SWASHES
+peanoclaw::native::scenarios::swashes::SWASHESShortChannel::SWASHESShortChannel(
+  #ifdef PEANOCLAW_SWASHES
+  SWASHES::Parameters& parameters
+  #endif
+)
+  #ifdef PEANOCLAW_SWASHES
   : SWASHES::MacDonaldB1(parameters)
-#endif
+  #endif
 {
 }
 

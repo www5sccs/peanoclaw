@@ -79,7 +79,11 @@ class peanoclaw::native::scenarios::swashes::SWASHESShortChannel
     int getIndex(double x) const;
 
   public:
-    SWASHESShortChannel(SWASHES::Parameters& parameters);
+    SWASHESShortChannel(
+      #ifdef PEANOCLAW_SWASHES
+      SWASHES::Parameters& parameters
+      #endif
+    );
 
     virtual ~SWASHESShortChannel();
 
