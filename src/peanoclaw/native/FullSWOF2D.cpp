@@ -668,6 +668,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   int select_order,
   int select_rec
 ) : _endTime(endTime) {
+  #ifdef PEANOCLAW_SWASHES
     // seed parameters based on Input file
     //setparameters("./fullswof2d_parameters.txt");
  
@@ -756,6 +757,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   top_imp_h = topBoundaryCondition.getImpliedHeight(); //0.1;
 
   output_format = 0; // disable all output
+  #endif
 }
 
 peanoclaw::native::FullSWOF2D_Parameters::~FullSWOF2D_Parameters() {
