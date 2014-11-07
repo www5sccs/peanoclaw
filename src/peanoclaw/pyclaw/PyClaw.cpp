@@ -111,10 +111,10 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(
 
   tarch::multicore::Lock lock(_semaphore);
 
-  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "max. Timestepsize == 0 should be checked outside.", patch.getTimeIntervals().getMinimalNeighborTimeConstraint());
-  assertion3(!patch.containsNaN(), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
+  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "max. Timestepsize == 0 should be checked outside.", subgrid.getTimeIntervals().getMinimalNeighborTimeConstraint());
+  assertion3(!subgrid.containsNaN(), subgrid, subgrid.toStringUNew(), subgrid.toStringUOldWithGhostLayer());
 
-  PyClawState state(patch);
+  PyClawState state(subgrid);
 
   tarch::timing::Watch pyclawWatch("", "", false);
   pyclawWatch.startTimer();
@@ -126,41 +126,41 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(
   bool doDummyTimestep = false;
   double requiredMeshWidth;
   if(doDummyTimestep) {
-    dtAndEstimatedNextDt[0] = std::min(maximumTimestepSize, patch.getTimeIntervals().getEstimatedNextTimestepSize());
-    dtAndEstimatedNextDt[1] = patch.getTimeIntervals().getEstimatedNextTimestepSize();
-    requiredMeshWidth = patch.getSubcellSize()(0);
+    dtAndEstimatedNextDt[0] = std::min(maximumTimestepSize, subgrid.getTimeIntervals().getEstimatedNextTimestepSize());
+    dtAndEstimatedNextDt[1] = subgrid.getTimeIntervals().getEstimatedNextTimestepSize();
+    requiredMeshWidth = subgrid.getSubcellSize()(0);
   } else {
     requiredMeshWidth = _solverCallback(
       dtAndEstimatedNextDt,
       state._q,
       state._qbc,
       state._aux,
-      patch.getSubdivisionFactor()(0),
-      patch.getSubdivisionFactor()(1),
+      subgrid.getSubdivisionFactor()(0),
+      subgrid.getSubdivisionFactor()(1),
       #ifdef Dim3
-      patch.getSubdivisionFactor()(2),
+      subgrid.getSubdivisionFactor()(2),
       #else
       0,
       #endif
-      patch.getUnknownsPerSubcell(),            // meqn = nvar
-      patch.getNumberOfParametersWithoutGhostlayerPerSubcell(),      // naux
-      patch.getSize()(0),
-      patch.getSize()(1),
+      subgrid.getUnknownsPerSubcell(),            // meqn = nvar
+      subgrid.getNumberOfParametersWithoutGhostlayerPerSubcell(),      // naux
+      subgrid.getSize()(0),
+      subgrid.getSize()(1),
       #ifdef Dim3
-      patch.getSize()(2),
+      subgrid.getSize()(2),
       #else
       0,
       #endif
-      patch.getPosition()(0),
-      patch.getPosition()(1),
+      subgrid.getPosition()(0),
+      subgrid.getPosition()(1),
       #ifdef Dim3
-      patch.getPosition()(2),
+      subgrid.getPosition()(2),
       #else
       0,
       #endif
-      patch.getTimeIntervals().getCurrentTime() + patch.getTimeIntervals().getTimestepSize(),
+      subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize(),
       maximumTimestepSize,
-      patch.getTimeIntervals().getEstimatedNextTimestepSize(),
+      subgrid.getTimeIntervals().getEstimatedNextTimestepSize(),
       useDimensionalSplitting
     );
   }
@@ -168,26 +168,26 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(
   pyclawWatch.stopTimer();
   _totalSolverCallbackTime += pyclawWatch.getCalendarTime();
 
-  assertion3(tarch::la::greater(dtAndEstimatedNextDt[0], 0.0), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
+  assertion3(tarch::la::greater(dtAndEstimatedNextDt[0], 0.0), subgrid, subgrid.toStringUNew(), subgrid.toStringUOldWithGhostLayer());
 
   assertion4(
-      tarch::la::greater(patch.getTimeIntervals().getTimestepSize(), 0.0)
+      tarch::la::greater(subgrid.getTimeIntervals().getTimestepSize(), 0.0)
       || tarch::la::greater(dtAndEstimatedNextDt[1], 0.0)
       || tarch::la::equals(maximumTimestepSize, 0.0)
-      || tarch::la::equals(patch.getTimeIntervals().getEstimatedNextTimestepSize(), 0.0),
-      patch, maximumTimestepSize, dtAndEstimatedNextDt[1], patch.toStringUNew());
-  assertion(patch.getTimeIntervals().getTimestepSize() < std::numeric_limits<double>::infinity());
+      || tarch::la::equals(subgrid.getTimeIntervals().getEstimatedNextTimestepSize(), 0.0),
+      subgrid, maximumTimestepSize, dtAndEstimatedNextDt[1], subgrid.toStringUNew());
+  assertion(subgrid.getTimeIntervals().getTimestepSize() < std::numeric_limits<double>::infinity());
 
   //Check for zeros in solution
-  assertion3(!patch.containsNonPositiveNumberInUnknownInUNew(0), patch, patch.toStringUNew(), patch.toStringUOldWithGhostLayer());
+  assertion3(!subgrid.containsNonPositiveNumberInUnknownInUNew(0), subgrid, subgrid.toStringUNew(), subgrid.toStringUOldWithGhostLayer());
 
-  patch.getTimeIntervals().advanceInTime();
-  patch.getTimeIntervals().setTimestepSize(dtAndEstimatedNextDt[0]);
-  patch.getTimeIntervals().setEstimatedNextTimestepSize(dtAndEstimatedNextDt[1]);
+  subgrid.getTimeIntervals().advanceInTime();
+  subgrid.getTimeIntervals().setTimestepSize(dtAndEstimatedNextDt[0]);
+  subgrid.getTimeIntervals().setEstimatedNextTimestepSize(dtAndEstimatedNextDt[1]);
 
   //Cache demanded mesh width
-  _cachedSubgridPosition = patch.getPosition();
-  _cachedSubgridLevel = patch.getLevel();
+  _cachedSubgridPosition = subgrid.getPosition();
+  _cachedSubgridLevel = subgrid.getLevel();
   _cachedDemandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(requiredMeshWidth);
 
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);

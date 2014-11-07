@@ -128,32 +128,32 @@ void peanoclaw::native::SWEKernel::solveTimestep(
 ) {
   logTraceInWith2Arguments( "solveTimestep(...)", maximumTimestepSize, useDimensionalSplitting);
 
-  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", patch.getTimeIntervals().getMinimalNeighborTimeConstraint());
+  assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "Timestepsize == 0 should be checked outside.", subgrid.getTimeIntervals().getMinimalNeighborTimeConstraint());
 
   tarch::timing::Watch solverWatch("", "", false);
   solverWatch.startTimer();
 
   #ifdef SharedMemoryParallelisation
-  SWE_WavePropagationBlock_patch block(patch);
+  SWE_WavePropagationBlock_patch block(subgrid);
   advanceBlockInTime(
     block,
-    patch,
+    subgrid,
     maximumTimestepSize
   );
   #else
   if(
-    _cachedSubdivisionFactor != patch.getSubdivisionFactor()
-    || _cachedGhostlayerWidth != patch.getGhostlayerWidth()
+    _cachedSubdivisionFactor != subgrid.getSubdivisionFactor()
+    || _cachedGhostlayerWidth != subgrid.getGhostlayerWidth()
   ) {
     //SWE_WavePropagationBlock_patch swe(patch);
-    _cachedBlock = std::auto_ptr<SWE_WavePropagationBlock_patch>(new SWE_WavePropagationBlock_patch(patch));
-    _cachedSubdivisionFactor = patch.getSubdivisionFactor();
-    _cachedGhostlayerWidth = patch.getGhostlayerWidth();
+    _cachedBlock = std::auto_ptr<SWE_WavePropagationBlock_patch>(new SWE_WavePropagationBlock_patch(subgrid));
+    _cachedSubdivisionFactor = subgrid.getSubdivisionFactor();
+    _cachedGhostlayerWidth = subgrid.getGhostlayerWidth();
   }
 
   advanceBlockInTime(
     *_cachedBlock,
-    patch,
+    subgrid,
     maximumTimestepSize
   );
   #endif
