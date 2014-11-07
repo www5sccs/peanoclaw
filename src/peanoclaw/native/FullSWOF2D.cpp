@@ -406,11 +406,11 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
       subcellIndex(1) = y - peanoClawGhostlayerWidth + margin[2];
       if(!tarch::la::allGreaterEquals(subcellIndex, 0) || tarch::la::oneGreaterEquals(subcellIndex, subdivisionFactor)) {
         /** Water height.*/
-        patch.getAccessor().setValueUOld(subcellIndex, 0, h[x][y]);
-        /** X Velocity.*/
-        patch.getAccessor().setValueUOld(subcellIndex, 1, u[x][y]);
-        /** Y Velocity.*/
-        patch.getAccessor().setValueUOld(subcellIndex, 2, v[x][y]);
+//        patch.getAccessor().setValueUOld(subcellIndex, 0, h[x][y]);
+//        /** X Velocity.*/
+//        patch.getAccessor().setValueUOld(subcellIndex, 1, u[x][y]);
+//        /** Y Velocity.*/
+//        patch.getAccessor().setValueUOld(subcellIndex, 2, v[x][y]);
       }
     }
   }

@@ -1,19 +1,19 @@
 /*
- * DefaultFluxCorrection.cpp
+ * VelocityFluxCorrection.cpp
  *
  *  Created on: Mar 7, 2013
  *      Author: kristof
  */
 
-#include "peanoclaw/interSubgridCommunication/DefaultFluxCorrection.h"
+#include "peanoclaw/interSubgridCommunication/VelocityFluxCorrection.h"
 
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
 
-tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultFluxCorrection::_log( "peanoclaw::interSubgridCommunication::DefaultFluxCorrection" ); 
+tarch::logging::Log peanoclaw::interSubgridCommunication::VelocityFluxCorrection::_log( "peanoclaw::interSubgridCommunication::VelocityFluxCorrection" );
 
-double peanoclaw::interSubgridCommunication::DefaultFluxCorrection::calculateOverlappingArea(
+double peanoclaw::interSubgridCommunication::VelocityFluxCorrection::calculateOverlappingArea(
     tarch::la::Vector<DIMENSIONS, double> position1,
     tarch::la::Vector<DIMENSIONS, double> size1,
     tarch::la::Vector<DIMENSIONS, double> position2,
@@ -38,7 +38,7 @@ double peanoclaw::interSubgridCommunication::DefaultFluxCorrection::calculateOve
   return area;
 }
 
-void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBetweenCells(
+void peanoclaw::interSubgridCommunication::VelocityFluxCorrection::correctFluxBetweenCells(
   int dimension,
   int direction,
   double timestepOverlap,
@@ -75,18 +75,18 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
 //    for(int unknown = 0; unknown < 1; unknown++) {
 
       double sourceDensityUOld = sourceAccessor.getValueUOld(subcellIndexInSourcePatch, 0);
-      double sourceVelocityUOld = direction * sourceAccessor.getValueUOld(subcellIndexInSourcePatch, dimension+1) / sourceDensityUOld;
+      double sourceVelocityUOld = direction * sourceAccessor.getValueUOld(subcellIndexInSourcePatch, dimension+1);
       double sourceDensityUNew = sourceAccessor.getValueUNew(subcellIndexInSourcePatch, 0);
-      double sourceVelocityUNew = direction * sourceAccessor.getValueUNew(subcellIndexInSourcePatch, dimension+1) / sourceDensityUNew;
+      double sourceVelocityUNew = direction * sourceAccessor.getValueUNew(subcellIndexInSourcePatch, dimension+1);
       double sourceDensityGhostCell = sourceAccessor.getValueUOld(ghostlayerSubcellIndexInSourcePatch, 0);
-      double sourceVelocityGhostCell = direction * sourceAccessor.getValueUOld(ghostlayerSubcellIndexInSourcePatch, dimension+1) / sourceDensityGhostCell;
+      double sourceVelocityGhostCell = direction * sourceAccessor.getValueUOld(ghostlayerSubcellIndexInSourcePatch, dimension+1);
 
       double destinationDensityUOld = destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 0);
-      double destinationVelocityUOld = direction * destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, dimension+1) / destinationDensityUOld;
+      double destinationVelocityUOld = direction * destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, dimension+1);
       double destinationDensityUNew = destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, 0);
-      double destinationVelocityUNew = direction * destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, dimension+1) / destinationDensityUNew;
+      double destinationVelocityUNew = direction * destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, dimension+1);
       double destinationDensityGhostCell = destinationAccessor.getValueUOld(ghostlayerSubcellIndexInDestinationPatch, 0);
-      double destinationVelocityGhostCell = direction * destinationAccessor.getValueUOld(ghostlayerSubcellIndexInDestinationPatch, dimension+1) / destinationDensityGhostCell;
+      double destinationVelocityGhostCell = direction * destinationAccessor.getValueUOld(ghostlayerSubcellIndexInDestinationPatch, dimension+1);
 
 
       //TODO This depends on the application, since we assume that variable 0 holds the water height of the shallow water
@@ -94,31 +94,21 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
       //Estimate the flux through the interface from fine to coarse grid, once from the point of view of the fine subcell and
       //once from the of the coarse subcell
       double sourceValue = sourceAccessor.getValueUOld(subcellIndexInSourcePatch, unknown);
+      if(unknown > 0) sourceValue *= sourceAccessor.getValueUOld(subcellIndexInSourcePatch, 0);
       double sourceValueGhostCell = sourceAccessor.getValueUOld(ghostlayerSubcellIndexInSourcePatch, unknown);
       double sourceFlux
-//            = sourceValue * sourceVelocityUNew * interfaceArea;
-//            = (sourceAccessor.getValueUOld(subcellIndexInSourcePatch, unknown) + sourceAccessor.getValueUOld(ghostlayerSubcellIndexInSourcePatch, unknown)) / 2.0
-//              * sourceAccessor.getValueUOld(subcellIndexInSourcePatch, 1 + dimension) * interfaceArea;
             = 0.5 * (sourceValue * sourceVelocityUOld + sourceValueGhostCell * sourceVelocityGhostCell) * interfaceArea;
 
       double destinationValueUOld = destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, unknown);
+      if(unknown > 0) destinationValueUOld *= destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 0);
       double destinationValueUNew = destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown);
+      if(unknown > 0) destinationValueUNew *= destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 0);
       double destinationValueGhostCell = destinationAccessor.getValueUOld(ghostlayerSubcellIndexInDestinationPatch, unknown);
-//      double destinationImpulseUOld = destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1+dimension);
-//      double destinationImpulseUNew = destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, 1+dimension);
       double timeFactor = 0.0; //(sourceTimeIntervals.getCurrentTime() - destinationTimeIntervals.getCurrentTime()) / destinationTimeIntervals.getTimestepSize();
       double destinationValue = destinationValueUOld * (1.0-timeFactor) + destinationValueUNew * timeFactor;
       double destinationVelocity = destinationVelocityUOld * (1.0-timeFactor) + destinationVelocityUNew * timeFactor;
       double destinationFlux
-//        = destinationValue * destinationVelocity * interfaceArea;
         = 0.5 * (destinationValue * destinationVelocityUOld + destinationValueGhostCell * destinationVelocityGhostCell) * interfaceArea;
-
-//      assertion1(tarch::la::greaterEquals(timeFactor, 0.0) && tarch::la::smallerEquals(timeFactor, 1.0), timeFactor);
-
-      //double destinationValue = destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, unknown);
-//      double destinationFlux = destinationValue * destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1 + dimension) / destinationValue * interfaceArea;
-//        = (destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, unknown) + destinationAccessor.getValueUOld(ghostlayerSubcellIndexInDestinationPatch, unknown)) / 2.0
-//          * destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1 + dimension) * interfaceArea;
 
       //Estimate the according transfered volume during the fine patch's timestep
       double transferedSourceVolume = sourceFlux * timestepOverlap;
@@ -143,11 +133,21 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
 //          << " h_s=" << sourceAccessor.getValueUOld(subcellIndexInSourcePatch, unknown) << " u_s=" << sourceAccessor.getValueUOld(subcellIndexInSourcePatch, 1 + dimension)
 //          << " h_d=" << destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, unknown) << " u_d=" << destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1 + dimension) << std::endl;
 
-      destinationAccessor.setValueUNew(adjacentSubcellIndexInDestinationPatch, unknown,
-          destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown) - delta / destinationSubcellVolume);
+      if(unknown == 0) {
+        destinationAccessor.setValueUNew(adjacentSubcellIndexInDestinationPatch, unknown,
+                  std::max(0.0, destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown) - delta / destinationSubcellVolume));
+      } else {
+        double height = destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, 0);
+        if(tarch::la::greater(height, 0)) {
+          destinationAccessor.setValueUNew(adjacentSubcellIndexInDestinationPatch, unknown,
+                    destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown) - delta / destinationSubcellVolume / height);
+        } else {
+          destinationAccessor.setValueUNew(adjacentSubcellIndexInDestinationPatch, unknown, 0.0);
+        }
+      }
 
       //TODO unterweg debug
-      assertion7(unknown!=0 || destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown) > 0,
+      assertion7(unknown!=0 || tarch::la::greaterEquals(destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown), 0),
           sourceSubgrid,
           destinationSubgrid,
           adjacentSubcellIndexInDestinationPatch,
@@ -160,10 +160,10 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
   }
 }
 
-peanoclaw::interSubgridCommunication::DefaultFluxCorrection::~DefaultFluxCorrection() {
+peanoclaw::interSubgridCommunication::VelocityFluxCorrection::~VelocityFluxCorrection() {
 }
 
-void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrection(
+void peanoclaw::interSubgridCommunication::VelocityFluxCorrection::applyCorrection(
     const Patch& sourceSubgrid,
     Patch& destinationSubgrid,
     int dimension,

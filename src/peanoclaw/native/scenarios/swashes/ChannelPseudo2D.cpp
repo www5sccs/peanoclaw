@@ -89,7 +89,6 @@ void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(pea
 
       if(x >= 0 && y >= 0 && x < subgrid.getSubdivisionFactor()[0] &&  y < subgrid.getSubdivisionFactor()[1]) {
         double waterheight = _swashesChannel->getInitialWaterHeight(position);
-//        double waterheight = position[0] < 20 ? 0.5 : 0.1;
         if(topography >= BED_HEIGHT) {
           waterheight = 0;
         }
