@@ -334,9 +334,9 @@ elif solver == 'fullswof2d':
   libs.append('png') # for texture file
   
   swashes = ARGUMENTS.get('swashes', 'swashes_no')
+  swashesPath = '../swashes'
   if swashes == 'yes' or swashes == 'swashes_yes':
     cppdefines.append('PEANOCLAW_SWASHES')
-    swashesPath = '../swashes'
     try:
       import swashesConfiguration
       swashesPath = swashesConfiguration.getSWEPath()
