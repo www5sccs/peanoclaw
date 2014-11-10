@@ -4,6 +4,7 @@ Created on Jan 29, 2013
 @author: kristof
 '''
 
+from ctypes import c_bool
 from ctypes import c_double
 from ctypes import c_int
 from ctypes import CFUNCTYPE
