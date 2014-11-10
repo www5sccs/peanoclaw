@@ -27,7 +27,8 @@ class InitializationCallback(object):
                                       c_int,     #unknowns per cell
                                       c_int,     #aux fields per cell
                                       c_double, c_double, c_double, #size
-                                      c_double, c_double, c_double) #position
+                                      c_double, c_double, c_double, #position
+                                      c_bool)    #skip q initialization
 
 
   def __init__(self, solver, refinement_criterion, q_initialization, aux_initialization, initial_minimal_mesh_width):
@@ -45,7 +46,7 @@ class InitializationCallback(object):
     r"""
     Creates a closure for initializing the grid
     """
-    def callback_initialization(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_subcell, aux_fields_per_subcell, size_x, size_y, size_z, position_x, position_y, position_z):
+    def callback_initialization(q, qbc, aux, subdivision_factor_x0, subdivision_factor_x1, subdivision_factor_x2, unknowns_per_subcell, aux_fields_per_subcell, size_x, size_y, size_z, position_x, position_y, position_z, skip_q_initialization):
         import clawpack.pyclaw as pyclaw
         
         dim = get_number_of_dimensions(q)
@@ -66,7 +67,8 @@ class InitializationCallback(object):
           subgrid_state.aux = aux
         subgrid_state.problem_data = self.solver.solution.state.problem_data
         
-        self.q_initialization(subgrid_state)
+        if not skip_q_initialization:
+          self.q_initialization(subgrid_state)
 
         if(self.aux_initialization != None and aux_fields_per_subcell > 0):
           self.aux_initialization(subgrid_state)

@@ -59,6 +59,8 @@ private:
   tarch::la::Vector<DIMENSIONS, double> _cachedSubgridPosition;
   int                                   _cachedSubgridLevel;
 
+  void initialize(Patch& subgrid, bool skipQInitialization);
+
 public:
   PyClaw(
     InitializationCallback                                 initializationCallback,
