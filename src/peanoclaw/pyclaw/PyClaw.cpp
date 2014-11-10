@@ -21,34 +21,34 @@
 
 tarch::logging::Log peanoclaw::pyclaw::PyClaw::_log("peanoclaw::pyclaw::PyClaw");
 
-peanoclaw::pyclaw::PyClaw::initialize(Patch& subgrid, bool skipQInitialization) {
+void peanoclaw::pyclaw::PyClaw::initialize(Patch& subgrid, bool skipQInitialization) {
   tarch::multicore::Lock lock(_semaphore);
 
-  PyClawState state(patch);
+  PyClawState state(subgrid);
   double demandedMeshWidth = _initializationCallback(
     state._q,
     state._qbc,
     state._aux,
-    patch.getSubdivisionFactor()(0),
-    patch.getSubdivisionFactor()(1),
+    subgrid.getSubdivisionFactor()(0),
+    subgrid.getSubdivisionFactor()(1),
     #ifdef Dim3
-    patch.getSubdivisionFactor()(2),
+    subgrid.getSubdivisionFactor()(2),
     #else
       0,
     #endif
-    patch.getUnknownsPerSubcell(),
-    patch.getNumberOfParametersWithoutGhostlayerPerSubcell(),
-    patch.getSize()(0),
-    patch.getSize()(1),
+    subgrid.getUnknownsPerSubcell(),
+    subgrid.getNumberOfParametersWithoutGhostlayerPerSubcell(),
+    subgrid.getSize()(0),
+    subgrid.getSize()(1),
     #ifdef Dim3
-    patch.getSize()(2),
+    subgrid.getSize()(2),
     #else
       0,
     #endif
-    patch.getPosition()(0),
-    patch.getPosition()(1),
+    subgrid.getPosition()(0),
+    subgrid.getPosition()(1),
     #ifdef Dim3
-    patch.getPosition()(2),
+    subgrid.getPosition()(2),
     #else
       0,
     #endif
@@ -56,8 +56,8 @@ peanoclaw::pyclaw::PyClaw::initialize(Patch& subgrid, bool skipQInitialization) 
   );
 
   //Cache demanded mesh width
-  _cachedSubgridPosition = patch.getPosition();
-  _cachedSubgridLevel = patch.getLevel();
+  _cachedSubgridPosition = subgrid.getPosition();
+  _cachedSubgridLevel = subgrid.getLevel();
   _cachedDemandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(demandedMeshWidth);
 }
 
@@ -286,7 +286,9 @@ void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, b
 }
 
 void peanoclaw::pyclaw::PyClaw::update(Patch& subgrid) {
-  initialize(subgrid, true);
+  if(subgrid.getNumberOfParametersWithGhostlayerPerSubcell() > 0 || subgrid.getNumberOfParametersWithoutGhostlayerPerSubcell() > 0) {
+    initialize(subgrid, true);
+  }
 }
 
 int peanoclaw::pyclaw::PyClaw::getNumberOfUnknownsPerCell() const {
