@@ -305,10 +305,6 @@ void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* sche
       v[x][y] = accessor.getValueUOld(subcellIndex, 2);
       /** Topography.*/
       z[x][y] = accessor.getParameterWithGhostlayer(subcellIndex, 0);
-
-      //TODO unterweg debug
-//      std::cout << "Copying " << subcellIndex << ":" << accessor.getValueUOld(subcellIndex, 0)
-//         << " to " << x << ", " << y << std::endl;
     }
   }
 
@@ -668,7 +664,6 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   int select_order,
   int select_rec
 ) : _endTime(endTime) {
-  #ifdef PEANOCLAW_SWASHES
     // seed parameters based on Input file
     //setparameters("./fullswof2d_parameters.txt");
  
@@ -757,7 +752,6 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   top_imp_h = topBoundaryCondition.getImpliedHeight(); //0.1;
 
   output_format = 0; // disable all output
-  #endif
 }
 
 peanoclaw::native::FullSWOF2D_Parameters::~FullSWOF2D_Parameters() {
