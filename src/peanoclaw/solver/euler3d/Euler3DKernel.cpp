@@ -33,7 +33,7 @@ peanoclaw::solver::euler3d::Euler3DKernel::Euler3DKernel(
 ) : Numerics(transfer, interpolation, restriction, fluxCorrection),
     _scenario(scenario),
     #ifdef PEANOCLAW_EULER3D
-    _task_scheduler_init(numberOfThreads)
+    _task_scheduler_init(std::max(1, numberOfThreads))
     #endif
 {
 }
