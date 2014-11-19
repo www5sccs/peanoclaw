@@ -127,6 +127,10 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
 
   tarch::la::assignList(_domainSize) = 2, 1, 1;
 
+  for(int d = 1; d < DIMENSIONS; d++) {
+    _subdivisionFactor[d] /= 2;
+  }
+
   double finestSubgridTopologyPerDimension = atof(arguments[0].c_str());
   _minimalMeshWidth = _domainSize / finestSubgridTopologyPerDimension;
 
@@ -140,10 +144,6 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
   _globalTimestepSize = atof(arguments[4].c_str());
 
   _rhoInside = atof(arguments[5].c_str());
-
-  for(int d = 1; d < DIMENSIONS; d++) {
-    _subdivisionFactor[d] /= 2;
-  }
 }
 
 peanoclaw::native::scenarios::ShockBubble::~ShockBubble() {
