@@ -141,7 +141,9 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
 
   _rhoInside = atof(arguments[5].c_str());
 
-  _subdivisionFactor[0] *= 2;
+  for(int d = 1; d < DIMENSIONS; d++) {
+    _subdivisionFactor[d] /= 2;
+  }
 }
 
 peanoclaw::native::scenarios::ShockBubble::~ShockBubble() {
