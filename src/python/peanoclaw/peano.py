@@ -186,3 +186,5 @@ class Peano(object):
     self.libpeano.pyclaw_peano_runWorker.argtypes = [c_void_p]
     self.libpeano.pyclaw_peano_runWorker(self.peano)
     #self.teardown()
+    
+    

@@ -19,7 +19,8 @@ typedef double  (*InitializationCallback)(PyObject* q,
                                          double sizeZ,
                                          double positionX,
                                          double positionY,
-                                         double positionZ);
+                                         double positionZ,
+                                         bool   skipQInitialization);
 
 typedef void (*BoundaryConditionCallback)(PyObject* q,
                                           PyObject* qbc,

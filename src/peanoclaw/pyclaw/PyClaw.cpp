@@ -21,6 +21,46 @@
 
 tarch::logging::Log peanoclaw::pyclaw::PyClaw::_log("peanoclaw::pyclaw::PyClaw");
 
+void peanoclaw::pyclaw::PyClaw::initialize(Patch& subgrid, bool skipQInitialization) {
+  tarch::multicore::Lock lock(_semaphore);
+
+  PyClawState state(subgrid);
+  double demandedMeshWidth = _initializationCallback(
+    state._q,
+    state._qbc,
+    state._aux,
+    subgrid.getSubdivisionFactor()(0),
+    subgrid.getSubdivisionFactor()(1),
+    #ifdef Dim3
+    subgrid.getSubdivisionFactor()(2),
+    #else
+      0,
+    #endif
+    subgrid.getUnknownsPerSubcell(),
+    subgrid.getNumberOfParametersWithoutGhostlayerPerSubcell(),
+    subgrid.getSize()(0),
+    subgrid.getSize()(1),
+    #ifdef Dim3
+    subgrid.getSize()(2),
+    #else
+      0,
+    #endif
+    subgrid.getPosition()(0),
+    subgrid.getPosition()(1),
+    #ifdef Dim3
+    subgrid.getPosition()(2),
+    #else
+      0,
+    #endif
+    skipQInitialization
+  );
+
+  //Cache demanded mesh width
+  _cachedSubgridPosition = subgrid.getPosition();
+  _cachedSubgridLevel = subgrid.getLevel();
+  _cachedDemandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(demandedMeshWidth);
+}
+
 peanoclaw::pyclaw::PyClaw::PyClaw(
   InitializationCallback                                 initializationCallback,
   BoundaryConditionCallback                              boundaryConditionCallback,
@@ -55,48 +95,12 @@ peanoclaw::pyclaw::PyClaw::~PyClaw()
 {
 }
 
-
 void peanoclaw::pyclaw::PyClaw::initializePatch(
-  Patch& patch
+  Patch& subgrid
 ) {
   logTraceIn( "initializePatch(...)");
 
-  tarch::multicore::Lock lock(_semaphore);
-
-  PyClawState state(patch);
-  double demandedMeshWidth = _initializationCallback(
-    state._q,
-    state._qbc,
-    state._aux,
-    patch.getSubdivisionFactor()(0),
-    patch.getSubdivisionFactor()(1),
-    #ifdef Dim3
-    patch.getSubdivisionFactor()(2),
-    #else
-      0,
-    #endif
-    patch.getUnknownsPerSubcell(),
-    patch.getNumberOfParametersWithoutGhostlayerPerSubcell(),
-    patch.getSize()(0),
-    patch.getSize()(1),
-    #ifdef Dim3
-    patch.getSize()(2),
-    #else
-      0,
-    #endif
-    patch.getPosition()(0),
-    patch.getPosition()(1),
-    #ifdef Dim3
-    patch.getPosition()(2)
-    #else
-      0
-    #endif
-  );
-
-  //Cache demanded mesh width
-  _cachedSubgridPosition = patch.getPosition();
-  _cachedSubgridLevel = patch.getLevel();
-  _cachedDemandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(demandedMeshWidth);
+  initialize(subgrid, false);
 
   logTraceOutWith1Argument( "initializePatch(...)", demandedMeshWidth);
 }
@@ -281,8 +285,10 @@ void peanoclaw::pyclaw::PyClaw::fillBoundaryLayer(Patch& patch, int dimension, b
   logTraceOut("fillBoundaryLayerInPyClaw");
 }
 
-void peanoclaw::pyclaw::PyClaw::update(Patch& finePatch) {
-
+void peanoclaw::pyclaw::PyClaw::update(Patch& subgrid) {
+  if(subgrid.getNumberOfParametersWithGhostlayerPerSubcell() > 0 || subgrid.getNumberOfParametersWithoutGhostlayerPerSubcell() > 0) {
+    initialize(subgrid, true);
+  }
 }
 
 int peanoclaw::pyclaw::PyClaw::getNumberOfUnknownsPerCell() const {
