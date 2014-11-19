@@ -81,6 +81,7 @@ int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string
   usePeanoClaw = false;
   plotName = "adaptive";
   numberOfThreads = -1;
+  numberOfSolverThreads = -1;
 
   for(int i = 0; i < argc; i++) {
     std::string key(argv[i]);
