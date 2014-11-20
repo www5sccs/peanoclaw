@@ -127,6 +127,7 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
 
   tarch::la::assignList(_domainSize) = 2, 1, 1;
 
+  _subdivisionFactor = tarch::la::Vector<DIMENSIONS,int>(atoi(arguments[2].c_str()));
   for(int d = 1; d < DIMENSIONS; d++) {
     _subdivisionFactor[d] /= 2;
   }
@@ -136,8 +137,6 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
 
   double coarsestSubgridTopologyPerDimension = atof(arguments[1].c_str());
   _maximalMeshWidth = _domainSize / coarsestSubgridTopologyPerDimension;
-
-  _subdivisionFactor = tarch::la::Vector<DIMENSIONS,int>(atoi(arguments[2].c_str()));
 
   _endTime = atof(arguments[3].c_str());
 
