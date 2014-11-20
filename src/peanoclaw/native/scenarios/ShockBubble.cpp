@@ -133,10 +133,10 @@ peanoclaw::native::scenarios::ShockBubble::ShockBubble(
   }
 
   double finestSubgridTopologyPerDimension = atof(arguments[0].c_str());
-  _minimalMeshWidth = _domainSize / finestSubgridTopologyPerDimension;
+  _minimalMeshWidth = _domainSize[0] / finestSubgridTopologyPerDimension;
 
   double coarsestSubgridTopologyPerDimension = atof(arguments[1].c_str());
-  _maximalMeshWidth = _domainSize / coarsestSubgridTopologyPerDimension;
+  _maximalMeshWidth = _domainSize[0] / coarsestSubgridTopologyPerDimension;
 
   _endTime = atof(arguments[3].c_str());
 
