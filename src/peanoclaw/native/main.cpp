@@ -200,9 +200,9 @@ int main(int argc, char **argv) {
   int numberOfSolverThreads;
   argc = readOptionalArguments(argc, argv, usePeanoClaw, plotName, numberOfThreads, numberOfSolverThreads);
 
-  #if defined(SharedMemoryParallelisation)
-  tbb::task_scheduler_init tbbInit(numberOfThreads);
-  #endif
+//  #if defined(SharedMemoryParallelisation)
+//  tbb::task_scheduler_init tbbInit(numberOfThreads);
+//  #endif
 
   //Create Scenario
   peanoclaw::native::scenarios::SWEScenario* scenario;
