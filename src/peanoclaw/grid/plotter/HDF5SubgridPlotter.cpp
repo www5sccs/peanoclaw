@@ -63,9 +63,25 @@ void peanoclaw::grid::plotter::HDF5SubgridPlotter::plotSubgrid(
   peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
   std::vector<double> data;
 
-  dfor(subcellIndex, subgrid.getSubdivisionFactor()) {
-    data.push_back(accessor.getValueUNew(subcellIndex, 0));
+  //dfor(subcellIndex, subgrid.getSubdivisionFactor()) {
+  #ifdef Dim3
+  for(int z = 0; z < subgrid.getSubdivisionFactor()[2]; z++) {
+  #endif
+    for(int y = 0; y < subgrid.getSubdivisionFactor()[1]; y++) {
+      for(int x = 0; x < subgrid.getSubdivisionFactor()[0]; x++) {
+        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+        assignList(subcellIndex) = x, y
+            #ifdef Dim3
+            , z
+            #endif
+            ;
+        data.push_back(accessor.getValueUNew(subcellIndex, 0));
+      }
+    }
+  #ifdef Dim3
   }
+  #endif
+  //}
 
   H5LTmake_dataset(_fileID, s.str().c_str(), DIMENSIONS, dimensions, H5T_NATIVE_DOUBLE, data.data());
 
