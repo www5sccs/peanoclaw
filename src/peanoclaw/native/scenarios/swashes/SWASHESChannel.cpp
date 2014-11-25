@@ -61,7 +61,8 @@ int peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getIndex(double 
 }
 
 double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getBedWidth(double x) const {
-  return 10.0 - 5.0 * exp(-10 * pow(x/200 - 0.5, 2.0));
+//  return 10.0 - 5.0 * exp(-10 * pow(x/200 - 0.5, 2.0));
+  return b[getIndex(x)];
 }
 
 peanoclaw::native::scenarios::swashes::SWASHESShortChannel::SWASHESShortChannel(
@@ -113,6 +114,7 @@ double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getOutflowHei
 //LONG CHANNEL
 double peanoclaw::native::scenarios::swashes::SWASHESLongChannel::getBedWidth(double x) const {
   return 10.0 - 5.0 * exp(-50 * pow(x/400 - 1.0/3.0, 2.0)) - 5.0 * exp(-50 * pow(x/400 - 2.0/3.0, 2.0));
+//  return b[getIndex(x)];
 }
 
 void peanoclaw::native::scenarios::swashes::SWASHESLongChannel::initialize() {

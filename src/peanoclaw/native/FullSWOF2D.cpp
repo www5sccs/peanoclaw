@@ -710,7 +710,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
    rec = select_rec; // 1 = MUSCL, 2 = ENO, 3 = ENO_mod
 
    // really interesting effects if enabled, makes the breaking dam collapse!
-   fric = 0; // Friction law (0=NoFriction 1=Manning 2=Darcy-Weisbach)  <fric>:: 0
+   fric = tarch::la::equals(friction, 0) ? 0 : 1; // Friction law (0=NoFriction 1=Manning 2=Darcy-Weisbach)  <fric>:: 0
    inf = 0; // Infiltration model (0=No Infiltration 1=Green-Ampt)
 
    lim = 1;
