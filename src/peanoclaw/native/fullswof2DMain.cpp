@@ -36,8 +36,10 @@ void peanoclaw::native::fullswof2DMain(
     scenario.getEndTime(),
     #ifdef PEANOCLAW_FULLSWOF2D
     scenario.enableRain(),
+    scenario.getFrictionCoefficient(),
     #else
     true,
+    0.0,
     #endif
     scenario.getBoundaryCondition(0, false),
     scenario.getBoundaryCondition(0, true),

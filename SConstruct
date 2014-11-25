@@ -153,10 +153,11 @@ else:
 compiler = ARGUMENTS.get('compiler', 'gcc')  # Read command line parameter
 if compiler == 'gcc':
    if(parallel == 'parallel_no' or parallel == 'no'):
-     cxx = 'g++'
+     cxx = 'g++-4.8'
    else:
      cxx = 'mpicxx'
      cppdefines.append('MPICH_SKIP_MPICXX')
+     environmentVariables['OMPI_CXX'] = 'g++-4.8'
    ccflags.append('-Wall')
    ccflags.append('-Wstrict-aliasing')
    ccflags.append('-fstrict-aliasing')
@@ -399,7 +400,9 @@ if hdf5 == 'yes':
   libs.append('hdf5_hl')
   if 'HDF5_INC' in os.environ:
     cpppath.append(os.environ['HDF5_INC'])
+    cpppath.insert(0,'/home/unterweg/.local/include')
     libpath.append(join(os.environ['HDF5_BASE'], 'lib'))
+    libpath.insert(0, '/home/unterweg/local/lib')
   
 ##### Determine VTU usage
 # 

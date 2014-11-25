@@ -99,6 +99,8 @@ public:
 
   bool enableRain() const { return false; }
 
+  double getFriction() const { return 0.03; }
+
   FullSWOF2DBoundaryCondition getBoundaryCondition(int dimension, bool upper) const;
 };
 

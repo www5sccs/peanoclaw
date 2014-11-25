@@ -91,6 +91,7 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
           _scenario.getDomainSize(),
           1.0, //endTime
           _scenario.enableRain(),
+          _scenario.getFrictionCoefficient(),
           domainBoundaryFlags[0] ? _scenario.getBoundaryCondition(0, false) : _interSubgridBoundaryCondition,
           domainBoundaryFlags[1] ? _scenario.getBoundaryCondition(0, true) : _interSubgridBoundaryCondition,
           domainBoundaryFlags[2] ? _scenario.getBoundaryCondition(1, false) : _interSubgridBoundaryCondition,
@@ -111,9 +112,9 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
       Scheme *scheme = wrapper_scheme->getInternalScheme();
 
       // kick off computation!
-      scheme->setTimestep(maximumTimestepSize);
+      scheme->setTimestep(std::min(0.028, maximumTimestepSize));
 //        scheme->setMaxTimestep(maximumTimestepSize); // TODO: maximumTimstepSize is ignored and the "real" maxTimestep is computed
-      scheme->setMaxTimestep(0.5);
+      scheme->setMaxTimestep(std::min(0.028,0.5));
 
       do {
         scheme->usePeanoClaw();
@@ -657,6 +658,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   tarch::la::Vector<DIMENSIONS,double> domainSize,
   double endTime,
   bool enableRain,
+  double friction,
   peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition leftBoundaryCondition,
   peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition rightBoundaryCondition,
   peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition bottomBoundaryCondition,
@@ -718,7 +720,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
    amortENO = 0.25;
    modifENO = 0.9;
    //frotcoef is not actually used though it is existing in parameters
-   friccoef = 0;
+   friccoef = friction;
    fric_init = 2;
 
   //for infiltration model

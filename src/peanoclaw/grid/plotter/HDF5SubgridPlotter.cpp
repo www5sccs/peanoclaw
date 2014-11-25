@@ -38,7 +38,7 @@ peanoclaw::grid::plotter::HDF5SubgridPlotter::~HDF5SubgridPlotter() {
   herr_t status = H5Fclose(_fileID);
 
   if(status < 0) {
-    H5Eprint(H5E_DEFAULT, stderr);
+    H5Eprint(stderr);
   }
   #endif
 }
@@ -94,6 +94,9 @@ void peanoclaw::grid::plotter::HDF5SubgridPlotter::plotSubgrid(
   }
   H5LTset_attribute_double(_fileID, s.str().c_str(), "position", position, DIMENSIONS);
   H5LTset_attribute_double(_fileID, s.str().c_str(), "size", size, DIMENSIONS);
+
+  //TODO unterweg debug
+  //std::cout << "Plotted subgrid: " << std::endl << subgrid.toStringUNew() << std::endl;
 
   #endif
 }

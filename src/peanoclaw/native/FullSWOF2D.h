@@ -181,6 +181,7 @@ class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
           tarch::la::Vector<DIMENSIONS,double> domainSize,
           double endTime,
           bool enableRain,
+          double friction,
           peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition leftBoundaryCondition,
           peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition rightBoundaryCondition,
           peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition bottomBoundaryCondition,
