@@ -32,7 +32,7 @@ peanoclaw::native::scenarios::swashes::ChannelPseudo2D::ChannelPseudo2D(
 
   double coarsestSubgridTopologyPerDimension = atof(arguments[1].c_str());
 
-  _domainSize[1] = 9;
+  _domainSize[1] = 9.589575006880507;
   if(arguments[5] == "short") {
     _channelType = Short;
     _domainSize[0] = 200;
