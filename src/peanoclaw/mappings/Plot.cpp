@@ -3,6 +3,8 @@
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/grid/plotter/GridPlotter.h"
 
+#include <iomanip>
+
 /**
  * @todo Please tailor the parameters to your mapping's properties.
  */
@@ -522,7 +524,7 @@ void peanoclaw::mappings::Plot::endIteration(
   delete _gridPlotter;
 
   for(int unknown = 0; unknown < solverState.getUnknownsPerSubcell(); unknown++) {
-    logInfo("endIteration(State)", "Integral(q" << unknown << ") = " << _integratedQuantities[unknown]);
+    logInfo("endIteration(State)", std::setprecision(10) << "Integral(q" << unknown << ") = " << _integratedQuantities[unknown]);
   }
 
   // @todo Insert your code here

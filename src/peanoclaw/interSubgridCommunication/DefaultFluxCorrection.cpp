@@ -171,85 +171,81 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
 ) const {
   logTraceInWith4Arguments("applyCoarseGridCorrection", finePatch.toString(), coarsePatch.toString(), dimension, direction);
 
-  peanoclaw::grid::SubgridAccessor sourceAccessor = sourceSubgrid.getAccessor();
-  peanoclaw::grid::SubgridAccessor destinationAccessor = destinationSubgrid.getAccessor();
+  if(tarch::la::smaller(destinationSubgrid.getTimeIntervals().getCurrentTime(), sourceSubgrid.getTimeIntervals().getCurrentTime())) {
+    peanoclaw::grid::SubgridAccessor sourceAccessor = sourceSubgrid.getAccessor();
+    peanoclaw::grid::SubgridAccessor destinationAccessor = destinationSubgrid.getAccessor();
 
-  //Create description of the fine patch's face to be traversed
-  tarch::la::Vector<DIMENSIONS, int> face = sourceSubgrid.getSubdivisionFactor();
-  face(dimension) = 1;
-  tarch::la::Vector<DIMENSIONS, int> offset(0);
-  if(direction == 1) {
-    offset(dimension) = sourceSubgrid.getSubdivisionFactor()(dimension) - 1;
-  }
+    //Create description of the fine patch's face to be traversed
+    tarch::la::Vector<DIMENSIONS, int> face = sourceSubgrid.getSubdivisionFactor();
+    face(dimension) = 1;
+    tarch::la::Vector<DIMENSIONS, int> offset(0);
+    if(direction == 1) {
+      offset(dimension) = sourceSubgrid.getSubdivisionFactor()(dimension) - 1;
+    }
 
-  //Create search area that needs to be considered around the neighboring cell in the coarse patch
-  tarch::la::Vector<DIMENSIONS, int> searchArea = tarch::la::Vector<DIMENSIONS, int>(2);
-  searchArea(dimension) = 1;
+    //Create search area that needs to be considered around the neighboring cell in the coarse patch
+    tarch::la::Vector<DIMENSIONS, int> searchArea = tarch::la::Vector<DIMENSIONS, int>(2);
+    searchArea(dimension) = 1;
 
-  logDebug("applyFluxCorrection", "face=" << face << ", offset=" << offset << ", searchArea=" << searchArea);
+    logDebug("applyFluxCorrection", "face=" << face << ", offset=" << offset << ", searchArea=" << searchArea);
 
-  tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = sourceSubgrid.getSubcellSize();
-  tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = destinationSubgrid.getSubcellSize();
+    tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = sourceSubgrid.getSubcellSize();
+    tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = destinationSubgrid.getSubcellSize();
 
-  const peanoclaw::grid::TimeIntervals& sourceTimeIntervals = sourceSubgrid.getTimeIntervals();
-  const peanoclaw::grid::TimeIntervals& destinationTimeIntervals = destinationSubgrid.getTimeIntervals();
-  double timestepOverlap
-    = std::max(0.0,   std::min(sourceTimeIntervals.getCurrentTime() + sourceTimeIntervals.getTimestepSize(), destinationTimeIntervals.getCurrentTime() + destinationTimeIntervals.getTimestepSize())
-                  - std::max(sourceTimeIntervals.getCurrentTime(), destinationTimeIntervals.getCurrentTime()));
+    const peanoclaw::grid::TimeIntervals& sourceTimeIntervals = sourceSubgrid.getTimeIntervals();
+    const peanoclaw::grid::TimeIntervals& destinationTimeIntervals = destinationSubgrid.getTimeIntervals();
+    double timestepOverlap
+      = std::max(0.0,   std::min(sourceTimeIntervals.getCurrentTime() + sourceTimeIntervals.getTimestepSize(), destinationTimeIntervals.getCurrentTime() + destinationTimeIntervals.getTimestepSize())
+                    - std::max(sourceTimeIntervals.getCurrentTime(), destinationTimeIntervals.getCurrentTime()));
 
-  if(tarch::la::equals(timestepOverlap, 0.0)) {
-    return;
-  }
+    if(tarch::la::equals(timestepOverlap, 0.0)) {
+      return;
+    }
 
-//  double refinementFactor = 1.0;
-//  for( int d = 0; d < DIMENSIONS; d++ ) {
-//    if( d != dimension ) {
-//      refinementFactor *= destinationSubcellSize(d) / sourceSubcellSize(d);
-//    }
-//  }
-  double sourceSubcellVolume = tarch::la::volume(sourceSubcellSize);
-  double destinationSubcellVolume = tarch::la::volume(destinationSubcellSize);
+    double sourceSubcellVolume = tarch::la::volume(sourceSubcellSize);
+    double destinationSubcellVolume = tarch::la::volume(destinationSubcellSize);
 
-  dfor(subcellIndexInFace, face) {
-    tarch::la::Vector<DIMENSIONS, int> subcellIndexInSourcePatch = subcellIndexInFace + offset;
-    tarch::la::Vector<DIMENSIONS, int> ghostlayerSubcellIndexInSourcePatch = subcellIndexInSourcePatch;
-    ghostlayerSubcellIndexInSourcePatch(dimension) += direction;
+    dfor(subcellIndexInFace, face) {
+      tarch::la::Vector<DIMENSIONS, int> subcellIndexInSourcePatch = subcellIndexInFace + offset;
+      tarch::la::Vector<DIMENSIONS, int> ghostlayerSubcellIndexInSourcePatch = subcellIndexInSourcePatch;
+      ghostlayerSubcellIndexInSourcePatch(dimension) += direction;
 
-    tarch::la::Vector<DIMENSIONS, double> subcellPositionInSourcePatch = sourceSubgrid.getSubcellPosition(subcellIndexInSourcePatch);
-    tarch::la::Vector<DIMENSIONS, double> neighboringSubcellCenterInDestinationPatch = subcellPositionInSourcePatch;
-    neighboringSubcellCenterInDestinationPatch(dimension) += destinationSubcellSize(dimension) * direction * 0.5;
+      tarch::la::Vector<DIMENSIONS, double> subcellPositionInSourcePatch = sourceSubgrid.getSubcellPosition(subcellIndexInSourcePatch);
+      tarch::la::Vector<DIMENSIONS, double> neighboringSubcellCenterInDestinationPatch = subcellPositionInSourcePatch;
+      neighboringSubcellCenterInDestinationPatch(dimension) += destinationSubcellSize(dimension) * direction * 0.5;
 
-    tarch::la::Vector<DIMENSIONS, int> neighboringSubcellIndexInDestinationPatch =
-        (tarch::la::multiplyComponents(
-             neighboringSubcellCenterInDestinationPatch - destinationSubgrid.getPosition(),
-             tarch::la::invertEntries(destinationSubcellSize)
-        )).convertScalar<int>();
-    tarch::la::Vector<DIMENSIONS, int> ghostlayerSubcellIndexInDestinationPatch = neighboringSubcellIndexInDestinationPatch;
-    ghostlayerSubcellIndexInDestinationPatch(dimension) -= direction;
+      tarch::la::Vector<DIMENSIONS, int> neighboringSubcellIndexInDestinationPatch =
+          (tarch::la::multiplyComponents(
+               neighboringSubcellCenterInDestinationPatch - destinationSubgrid.getPosition(),
+               tarch::la::invertEntries(destinationSubcellSize)
+          )).convertScalar<int>();
+      tarch::la::Vector<DIMENSIONS, int> ghostlayerSubcellIndexInDestinationPatch = neighboringSubcellIndexInDestinationPatch;
+      ghostlayerSubcellIndexInDestinationPatch(dimension) -= direction;
 
-    logDebug("applyFluxCorrection", "Correcting from cell " << subcellIndexInSourcePatch);
+      logDebug("applyFluxCorrection", "Correcting from cell " << subcellIndexInSourcePatch);
 
-    dfor(neighborOffset, searchArea) {
-      tarch::la::Vector<DIMENSIONS, int> adjacentSubcellIndexInDestinationPatch = neighboringSubcellIndexInDestinationPatch + neighborOffset;
+      dfor(neighborOffset, searchArea) {
+        tarch::la::Vector<DIMENSIONS, int> adjacentSubcellIndexInDestinationPatch = neighboringSubcellIndexInDestinationPatch + neighborOffset;
 
-      correctFluxBetweenCells(
-        dimension,
-        direction,
-        timestepOverlap,
-        sourceSubgrid,
-        destinationSubgrid,
-        sourceAccessor,
-        destinationAccessor,
-        sourceTimeIntervals,
-        destinationTimeIntervals,
-        destinationSubcellVolume,
-        sourceSubcellSize,
-        destinationSubcellSize,
-        subcellIndexInSourcePatch,
-        ghostlayerSubcellIndexInSourcePatch,
-        adjacentSubcellIndexInDestinationPatch,
-        ghostlayerSubcellIndexInDestinationPatch
-      );
+        correctFluxBetweenCells(
+          dimension,
+          direction,
+          timestepOverlap,
+          sourceSubgrid,
+          destinationSubgrid,
+          sourceAccessor,
+          destinationAccessor,
+          sourceTimeIntervals,
+          destinationTimeIntervals,
+          destinationSubcellVolume,
+          sourceSubcellSize,
+          destinationSubcellSize,
+          subcellIndexInSourcePatch,
+          ghostlayerSubcellIndexInSourcePatch,
+          adjacentSubcellIndexInDestinationPatch,
+          ghostlayerSubcellIndexInDestinationPatch
+        );
+      }
     }
   }
   logTraceOut("applyCoarseGridCorrection");
