@@ -79,7 +79,7 @@ def addTBB(cppdefines, cpppath, libpath, libs, enablePeanoTBBSupport=True):
 
    if enablePeanoTBBSupport:
      cppdefines.append('SharedTBB')
-   cppdefines.append('TBB_USE_DEBUG=1')
+   #cppdefines.append('TBB_USE_DEBUG=1')
     
 def getPeanoSources(Glob, buildpath, multicore):
   sourcesTLa = [
