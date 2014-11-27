@@ -78,10 +78,10 @@ int readOptionalArguments(int argc, char** argv, bool& usePeanoClaw, std::string
   int remaining = argc;
 
   //Default values
-  usePeanoClaw = false;
-  plotName = "adaptive";
-  numberOfThreads = -1;
-  numberOfSolverThreads = -1;
+  //usePeanoClaw = false;
+  //plotName = "adaptive";
+  //numberOfThreads = -1;
+  //numberOfSolverThreads = -1;
 
   for(int i = 0; i < argc; i++) {
     std::string key(argv[i]);
@@ -194,10 +194,10 @@ int main(int argc, char **argv) {
 #if defined(PEANOCLAW_SWE) || defined(PEANOCLAW_FULLSWOF2D) || defined(PEANOCLAW_EULER3D)
   _configuration = new peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid;
 
-  bool usePeanoClaw;
-  std::string plotName;
-  int numberOfThreads;
-  int numberOfSolverThreads;
+  bool usePeanoClaw = false;
+  std::string plotName = "adaptive";
+  int numberOfThreads = _configuration->getNumberOfThreads();
+  int numberOfSolverThreads = _configuration->getNumberOfThreads();
   argc = readOptionalArguments(argc, argv, usePeanoClaw, plotName, numberOfThreads, numberOfSolverThreads);
 
 //  #if defined(SharedMemoryParallelisation)
