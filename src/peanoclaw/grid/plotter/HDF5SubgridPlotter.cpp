@@ -38,7 +38,7 @@ peanoclaw::grid::plotter::HDF5SubgridPlotter::~HDF5SubgridPlotter() {
   herr_t status = H5Fclose(_fileID);
 
   if(status < 0) {
-    H5Eprint(stderr);
+    H5Eprint1(stderr);
   }
   #endif
 }
