@@ -36,7 +36,7 @@ namespace peanoclaw {
 class peanoclaw::native::scenarios::swashes::SWASHESChannel {
   protected:
     const int NUMBER_OF_CELLS_X = 1000;
-    const int HEIGHT_OF_BED_WALLS = 10;
+    const int HEIGHT_OF_BED_WALLS = 9;
 
     /**
      * Setter for the subclasses to set the domain width.

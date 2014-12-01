@@ -33,10 +33,10 @@ class peanoclaw::native::scenarios::swashes::SWASHESParameters
     char**       _parameterCStrings;
     std::string* _parameterStrings;
 
-    char** getFilledParameterStrings(int numberOfCellsX);
+    char** getFilledParameterStrings(int numberOfCellsX, int choice);
 
   public:
-    SWASHESParameters(int numberOfCellsX);
+    SWASHESParameters(int numberOfCellsX, int choice);
 
     virtual ~SWASHESParameters();
 };
