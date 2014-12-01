@@ -61,8 +61,8 @@ int peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getIndex(double 
 }
 
 double peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getBedWidth(double x) const {
-//  return 10.0 - 5.0 * exp(-10 * pow(x/200 - 0.5, 2.0));
-  return b[getIndex(x)];
+  return 10.0 - 5.0 * exp(-10 * pow(x/200 - 0.5, 2.0));
+//  return b[getIndex(x)];
 }
 
 peanoclaw::native::scenarios::swashes::SWASHESShortChannel::SWASHESShortChannel(

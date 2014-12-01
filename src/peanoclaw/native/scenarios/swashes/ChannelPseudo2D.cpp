@@ -20,11 +20,12 @@ peanoclaw::native::scenarios::swashes::ChannelPseudo2D::ChannelPseudo2D(
     _channelType(Short),
     _swashesChannel(0)
 {
-  if(arguments.size() != 6) {
-    std::cerr << "Expected arguments for Scenario 'ChannelPseudo2D': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize channelLength" << std::endl
+  if(arguments.size() != 7) {
+    std::cerr << "Expected arguments for Scenario 'ChannelPseudo2D': finestSubgridTopology coarsestSubgridTopology subdivisionFactor endTime globalTimestepSize channelLength criticality" << std::endl
         << "\tGot " << arguments.size() << " arguments." << std::endl
         << "Parameters:" << std::endl
-        << " - channelLength: 'short': 200m channel length, 'long': 400m channel length" << std::endl;
+        << " - channelLength: 'short': 200m channel length, 'long': 400m channel length" << std::endl
+        << " -criticality: 'sub' or 'super'" << std::endl;
     throw "";
   }
 
@@ -36,21 +37,28 @@ peanoclaw::native::scenarios::swashes::ChannelPseudo2D::ChannelPseudo2D(
   if(arguments[5] == "short") {
     _channelType = Short;
     _domainSize[0] = 200;
-    #ifdef PEANOCLAW_SWASHES
-    SWASHESParameters parameters(finestSubgridTopologyPerDimension * _domainSize[0] / _domainSize[1]);
-    _swashesChannel = new SWASHESShortChannel(parameters);
-    #endif
-  } else if (arguments[6] == "long") {
+  } else if (arguments[5] == "long") {
     _channelType = Long;
     _domainSize[0] = 400;
-//    _swashesChannel = new SWASHESLongChannel();
   } else {
     std::cerr << " Possible values for parameter channelLength are: 'short': 200m channel length, 'long': 400m channel length" << std::endl;
   }
+  if(arguments[6] == "sub") {
+    _criticality = Sub;
+  } else if (arguments[6] == "super") {
+    _criticality = Super;
+  } else {
+    std::cerr << " Possible values for parameter channelLength are: 'short': 200m channel length, 'long': 400m channel length" << std::endl;
+  }
+
+  #ifdef PEANOCLAW_SWASHES
+  SWASHESParameters parameters(finestSubgridTopologyPerDimension * _domainSize[0] / _domainSize[1], _criticality == Sub ? 1 : 2);
+  _swashesChannel = new SWASHESShortChannel(parameters);
+  #endif
   _swashesChannel->initialize();
 
   _subdivisionFactor[1] = atoi(arguments[2].c_str());
-  _subdivisionFactor[0] = _subdivisionFactor[1] * _domainSize[0] / _domainSize[1];
+  _subdivisionFactor[0] = _subdivisionFactor[1] * 10; //_domainSize[0] / _domainSize[1];
 
   _minimalMeshWidth = _domainSize / finestSubgridTopologyPerDimension;
 
@@ -84,13 +92,13 @@ void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(pea
       double topography = _swashesChannel->getTopography(position[0]);
 
       if(distanceFromCenterLine > bedWidth / 2) {
-        topography += BED_HEIGHT;
+        topography = BED_HEIGHT;
       }
 //      topography = 0.0;
       accessor.setParameterWithGhostlayer(subcellIndex, 0, topography);
 
       if(x >= 0 && y >= 0 && x < subgrid.getSubdivisionFactor()[0] &&  y < subgrid.getSubdivisionFactor()[1]) {
-        double waterheight = _swashesChannel->getInitialWaterHeight(position);
+        double waterheight = _criticality == Sub ? _swashesChannel->getInitialWaterHeight(position) : 0.0;
         if(topography >= BED_HEIGHT) {
           waterheight = 0;
         }
@@ -220,13 +228,27 @@ void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::setBoundaryConditio
 peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition
 peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getBoundaryCondition(int dimension, bool upper) const {
 
-  if(dimension == 0 && !upper) {
-    return FullSWOF2DBoundaryCondition(5, 20, 1);
+  if(_criticality == Sub) {
+    if(dimension == 0 && !upper) {
+      return FullSWOF2DBoundaryCondition(5, 20, 1); //Implied discharge
+    }
+
+    if(dimension == 0 && upper) {
+      return FullSWOF2DBoundaryCondition(1, 0, _swashesChannel->getOutflowHeight()); //Implied height
+    }
+  } else if (_criticality == Super) {
+    if(dimension == 0 && !upper) {
+      return FullSWOF2DBoundaryCondition(1, 20, 0.503369); //Implied height
+    }
+
+    if(dimension == 0 && upper) {
+      return FullSWOF2DBoundaryCondition(3, 0, 0); //Neumann
+    }
+  } else {
+    std::cerr << "Unknown Criticality!" << std::endl;
+    throw "";
   }
 
-  if(dimension == 0 && upper) {
-    return FullSWOF2DBoundaryCondition(1, 0, _swashesChannel->getOutflowHeight());
-  }
-
+  //All non-defined boundaries are walls
   return FullSWOF2DBoundaryCondition(2, 0, 0);
 }

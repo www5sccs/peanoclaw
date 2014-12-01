@@ -6,18 +6,20 @@
  */
 #include "peanoclaw/native/scenarios/swashes/SWASHESParameters.h"
 
-char** peanoclaw::native::scenarios::swashes::SWASHESParameters::getFilledParameterStrings(int numberOfCellsX) {
+char** peanoclaw::native::scenarios::swashes::SWASHESParameters::getFilledParameterStrings(int numberOfCellsX, int choice) {
   _parameterStrings = new std::string[6];
   _parameterStrings[0] = std::string("not used");
   _parameterStrings[1] = std::string("1"); //dim
   _parameterStrings[2] = std::string("2"); //type: MacDonald
   _parameterStrings[3] = std::string("2"); //domain: short channel
-  _parameterStrings[4] = std::string("1"); //choice: subcritical flow
-//  _parameterStrings[5] = std::string(); //number of cells x
 
-  std::stringstream s;
-  s << numberOfCellsX;
-  _parameterStrings[5] = s.str();
+  std::stringstream choiceStream;
+  choiceStream << choice;
+  _parameterStrings[4] = choiceStream.str(); //choice: 1: subcritical flow, 2: supercritical
+
+  std::stringstream cellStream;
+  cellStream << numberOfCellsX;
+  _parameterStrings[5] = cellStream.str();
 
   _parameterCStrings = new char*[6];
   for(int i = 0; i < 6; i++) {
@@ -27,8 +29,8 @@ char** peanoclaw::native::scenarios::swashes::SWASHESParameters::getFilledParame
   return _parameterCStrings;
 }
 
-peanoclaw::native::scenarios::swashes::SWASHESParameters::SWASHESParameters(int numberOfCellsX)
-: SWASHES::Parameters(6,  getFilledParameterStrings(numberOfCellsX))
+peanoclaw::native::scenarios::swashes::SWASHESParameters::SWASHESParameters(int numberOfCellsX, int choice)
+: SWASHES::Parameters(6,  getFilledParameterStrings(numberOfCellsX, choice))
 {
 }
 
