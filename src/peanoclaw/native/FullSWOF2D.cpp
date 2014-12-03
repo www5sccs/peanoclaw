@@ -112,9 +112,9 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
       Scheme *scheme = wrapper_scheme->getInternalScheme();
 
       // kick off computation!
-      scheme->setTimestep(std::min(0.028, maximumTimestepSize));
+      scheme->setTimestep(maximumTimestepSize);
 //        scheme->setMaxTimestep(maximumTimestepSize); // TODO: maximumTimstepSize is ignored and the "real" maxTimestep is computed
-      scheme->setMaxTimestep(std::min(0.028,0.5));
+      scheme->setMaxTimestep(std::min(maximumTimestepSize, 0.5));
 
       do {
         scheme->usePeanoClaw();
