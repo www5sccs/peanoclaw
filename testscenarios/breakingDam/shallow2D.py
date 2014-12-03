@@ -177,7 +177,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     # Set up controller and controller parameters
     #===========================================================================
     claw = pyclaw.Controller()
-    claw.tfinal = 0.5
+    claw.tfinal = 0.02
 
     if amr_type is not None:        
         if amr_type == 'peano':
@@ -204,7 +204,7 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
     claw.output_format = None
     claw.outdir = None
 
-    claw.num_output_times = 20
+    claw.num_output_times = 1
 
     #===========================================================================
     # Plot results
@@ -217,3 +217,5 @@ def shallow2D(use_petsc=False,iplot=0,htmlplot=False,outdir='./_output',solver_t
 if __name__=="__main__":
     from clawpack.pyclaw.util import run_app_from_main
     output = run_app_from_main(shallow2D)
+
+    output.solver.teardown()

@@ -172,10 +172,43 @@ void peanoclaw::native::scenarios::ShockBubble::initializePatch(peanoclaw::Patch
 }
 
 tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::ShockBubble::computeDemandedMeshWidth(
-  peanoclaw::Patch& patch,
+  peanoclaw::Patch& subgrid,
   bool isInitializing
 ) {
-  return _maximalMeshWidth;
+  if(tarch::la::equals(_maximalMeshWidth, _minimalMeshWidth)) {
+    return _maximalMeshWidth;
+  }
+
+  double maximalDifference = 0.0;
+  peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
+  tarch::la::Vector<DIMENSIONS, int> xIncrement;
+  assignList(xIncrement) = 1, 0, 0;
+  tarch::la::Vector<DIMENSIONS, int> yIncrement;
+  assignList(yIncrement) = 0, 1, 0;
+  tarch::la::Vector<DIMENSIONS, int> zIncrement;
+  assignList(zIncrement) = 0, 0, 1;
+  #ifdef Dim3
+  for(int z = 0; z < subgrid.getSubdivisionFactor()[2] - 1; z++) {
+    for(int y = 0; y < subgrid.getSubdivisionFactor()[1] - 1; y++) {
+      for(int x = 0; x < subgrid.getSubdivisionFactor()[0] - 1; x++) {
+        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+        assignList(subcellIndex) = x, y, z;
+
+        double localDensity = accessor.getValueUNew(subcellIndex, 0);
+        double differenceX = std::abs(accessor.getValueUNew(subcellIndex + xIncrement, 0) - localDensity);
+        double differenceY = std::abs(accessor.getValueUNew(subcellIndex + yIncrement, 0) - localDensity);
+        double differenceZ = std::abs(accessor.getValueUNew(subcellIndex + zIncrement, 0) - localDensity);
+        maximalDifference = std::max(maximalDifference, std::max(differenceX, std::max(differenceY, differenceZ)));
+      }
+    }
+  }
+  #endif
+
+  if(maximalDifference > 0.05) {
+    return _minimalMeshWidth;
+  } else {
+    return _maximalMeshWidth;
+  }
 }
 
 tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::ShockBubble::getDomainOffset() const {

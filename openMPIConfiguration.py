@@ -10,4 +10,5 @@ def getMPILibrarypaths():
   return ['/usr/lib/openmpi/lib']
   
 def getMPILibraries():
+  #return ['ompitrace', 'pthread']
   return ['mpi', 'pthread']

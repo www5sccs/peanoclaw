@@ -81,22 +81,22 @@ def qinit(state, rhoin=0.1):
     state.q[4, :, :] = einf * (X < xshock) + (pin * (r <= r0) + pout * (r > r0) * (X > xshock)) / gamma1
 
     # Now average for the cells on the edges of the bubble
-    d2 = np.linalg.norm(state.grid.delta) / 2.
-    dx = state.grid.delta[0]
-    dy = state.grid.delta[1]
-    dz = state.grid.delta[2]
-    dx2 = state.grid.delta[0] / 2.
-    dy2 = state.grid.delta[1] / 2.
-    dz2 = state.grid.delta[2] / 2.
-    for i in xrange(state.q.shape[1]):
-      xdown = x[i]-dz2
-      xup   = x[i]+dz2
-      for j in xrange(state.q.shape[2]):
-        cmin = (xdown,y[j]-dy2)
-        cmax = (xup,y[j]+dy2)
-        for k in xrange(state.q.shape[3]):
-          if abs(r[i,j,k]-r0)<d2:
-            pass
+#     d2 = np.linalg.norm(state.grid.delta) / 2.
+#     dx = state.grid.delta[0]
+#     dy = state.grid.delta[1]
+#     dz = state.grid.delta[2]
+#     dx2 = state.grid.delta[0] / 2.
+#     dy2 = state.grid.delta[1] / 2.
+#     dz2 = state.grid.delta[2] / 2.
+#     for i in xrange(state.q.shape[1]):
+#       xdown = x[i]-dz2
+#       xup   = x[i]+dz2
+#       for j in xrange(state.q.shape[2]):
+#         cmin = (xdown,y[j]-dy2)
+#         cmax = (xup,y[j]+dy2)
+#         for k in xrange(state.q.shape[3]):
+#           if abs(r[i,j,k]-r0)<d2:
+#             pass
             #infrac,abserr = integrate.quad(zsphere,z[k]-dz2,z[k]+dz2,args=(cmin,cmax),epsabs=1.e-8,epsrel=1.e-5)
             #integrate.dblquad(zsphere, z[k]-dz2, z[k]+dz2, xdown, xup, args=(cmin,cmax), epsabs=1.e-8, epsrel=1.e-5)
 #            infrac=infrac/(dx*dy*dz)
@@ -153,13 +153,13 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     solver.bc_upper[1]=pyclaw.BC.extrap
     solver.bc_lower[2]=pyclaw.BC.extrap
     solver.bc_upper[2]=pyclaw.BC.extrap
-    
+
     # Initialize domain
     factor = 1 #2.0/3.0+1e-10#1.5+1e-10 
     mx=int(12*factor); my=int(6*factor); mz=int(6*factor)
     
     # number of initial AMR grids in each dimension
-    msubgrid = 9
+    msubgrid = 3
     
     if amr_type is None:
         # number of Domain grid cells expressed as the product of
@@ -185,9 +185,10 @@ def shockbubble(use_petsc=False, iplot=False, htmlplot=False, outdir='./_output'
     solver.user_bc_lower = shockbc
     
     claw = pyclaw.Controller()
-    claw.tfinal = 0.01 #1
-    claw.num_output_times = 1 #50
+    claw.tfinal = 0.5 #1
+    claw.num_output_times = 10 #50
     claw.outdir = outdir
+    claw.output_format = None
     
     if amr_type is not None:        
       if amr_type == 'peano':

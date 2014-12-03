@@ -30,14 +30,20 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.159467953" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1047086821" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="Dim2"/>
-									<listOptionValue builtIn="false" value="Dim3"/>
-									<listOptionValue builtIn="false" value="SWE"/>
+									<listOptionValue builtIn="false" value="PEANOCLAW_SWASHES"/>
+									<listOptionValue builtIn="false" value="PEANOCLAW_USE_HDF5"/>
+									<listOptionValue builtIn="false" value="PEANOCLAW_EULER3D"/>
+									<listOptionValue builtIn="false" value="PEANOCLAW_SWE"/>
+									<listOptionValue builtIn="false" value="PEANOCLAW_FULLSWOF2D"/>
 									<listOptionValue builtIn="false" value="PYCLAW"/>
+									<listOptionValue builtIn="false" value="SharedTBB"/>
+									<listOptionValue builtIn="false" value="Dim3"/>
 									<listOptionValue builtIn="false" value="SharedMemoryParallelisation"/>
 									<listOptionValue builtIn="false" value="Asserts"/>
 									<listOptionValue builtIn="false" value="DIMENSIONS=2"/>
 									<listOptionValue builtIn="false" value="Parallel"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.dialect.std.1126463067" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1673110982" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.934801121" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
@@ -45,12 +51,16 @@
 								<option id="gnu.c.compiler.exe.debug.option.debugging.level.455416783" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.53750938" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="Dim2"/>
+									<listOptionValue builtIn="false" value="PEANOCLAW_EULER3D"/>
+									<listOptionValue builtIn="false" value="Dim3"/>
+									<listOptionValue builtIn="false" value="PEANOCLAW_SWE"/>
+									<listOptionValue builtIn="false" value="PEANOCLAW_FULLSWOF2D"/>
 									<listOptionValue builtIn="false" value="PYCLAW"/>
 									<listOptionValue builtIn="false" value="SharedMemoryParallelisation"/>
-									<listOptionValue builtIn="false" value="SharedTBB"/>
 									<listOptionValue builtIn="false" value="Asserts"/>
 									<listOptionValue builtIn="false" value="DIMENSIONS=2"/>
 									<listOptionValue builtIn="false" value="Parallel"/>
+									<listOptionValue builtIn="false" value="SharedTBB"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.560838774" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -68,8 +78,9 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="interSubgridCommunication|peano3|p3-src|pyclaw|python|peano3-src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="interSubgridCommunication|peano3|p3-src|pyclaw|python|plotter|peano3-src|aspects" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="peano3-src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="plotter"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -126,7 +137,9 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/python|interSubgridCommunication|pyclaw|python|src/interSubgridCommunication|src/pyclaw" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/peanoclaw/grid/aspects|aspects|plotter|src/python|interSubgridCommunication|pyclaw|python|src/interSubgridCommunication|src/pyclaw" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="plotter"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/peanoclaw/grid/aspects"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

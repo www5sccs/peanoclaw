@@ -19,7 +19,7 @@ peanoclaw::grid::plotter::VTUSubgridPlotter::VTUSubgridPlotter(
   bool plotMetainformation = true
 ) : _fileName(fileName),
     _vtuWriter(),
-    //_gap(0.015),
+//    _gap(0.015),
     _gap(0.0),
     _plotQ(plotQ),
     _plotParameterWithoutGhostlayer(plotParameterWithoutGhostlayer),

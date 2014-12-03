@@ -64,7 +64,8 @@ private:
 
   enum ChannelType {
     Short,
-    Long
+    Long,
+    CornerTest
   };
   ChannelType _channelType;
 
@@ -101,12 +102,12 @@ public:
     bool setUpper,
     tarch::la::Vector<DIMENSIONS,int> sourceSubcellIndex,
     tarch::la::Vector<DIMENSIONS,int> destinationSubcellIndex
-  );
+  ) {};
 
   bool enableRain() const { return false; }
 
   double getFrictionCoefficient() const { return 0.03; }
-  //double getFriction() const { return 0.0; }
+//  double getFrictionCoefficient() const { return 0.0; }
 
   FullSWOF2DBoundaryCondition getBoundaryCondition(int dimension, bool upper) const;
 };
