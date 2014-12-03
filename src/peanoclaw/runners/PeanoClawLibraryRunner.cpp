@@ -361,8 +361,11 @@ peanoclaw::runners::PeanoClawLibraryRunner::~PeanoClawLibraryRunner()
   tarch::parallel::NodePool::getInstance().terminate();
 
   peanoclaw::records::Data::shutdownDatatype();
+  peanoclaw::records::Data::Packed::shutdownDatatype();
   peanoclaw::records::CellDescription::shutdownDatatype();
+  peanoclaw::records::CellDescription::Packed::shutdownDatatype();
   peanoclaw::records::VertexDescription::shutdownDatatype();
+  peanoclaw::records::VertexDescription::Packed::shutdownDatatype();
   #endif
   peano::shutdownParallelEnvironment();
   peano::shutdownSharedMemoryEnvironment();
