@@ -69,6 +69,9 @@ void peanoclaw::runners::PeanoClawLibraryRunner::initializeParallelEnvironment(
   peanoclaw::records::Data::initDatatype();
   peanoclaw::records::CellDescription::initDatatype();
   peanoclaw::records::VertexDescription::initDatatype();
+  peanoclaw::records::Data::Packed::initDatatype();
+  peanoclaw::records::CellDescription::Packed::initDatatype();
+  peanoclaw::records::VertexDescription::Packed::initDatatype();
 
   if (tarch::parallel::Node::getInstance().isGlobalMaster()) {
 //    tarch::parallel::NodePool::getInstance().setStrategy( new tarch::parallel::FCFSNodePoolStrategy() );
