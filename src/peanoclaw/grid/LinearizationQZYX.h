@@ -58,6 +58,40 @@ peanoclaw::grid::Linearization::Linearization(
     stride *= subdivisionFactor[d] + 2 * ghostlayerWidth;
   }
 
+  //Fluxes
+  _faceOffset[0] = 0;
+  _qStrideFlux = tarch::la::Vector<DIMENSIONS, int>(1);
+  for(int d = 0; d < DIMENSIONS; d++) {
+    tarch::la::Vector<DIMENSIONS_MINUS_ONE, int> subgridDimensions;
+    int subgridDimension = 0;
+    for(int i = 0; i < DIMENSIONS-1; i++) {
+      if(d == i) {
+        subgridDimension++;
+      }
+      subgridDimensions[i] = subgridDimension;
+      subgridDimension++;
+    }
+
+    //Cell stride
+    _cellStrideFlux[DIMENSIONS_MINUS_ONE * d] = numberOfUnknowns;
+    for(int i = 1; i < DIMENSIONS-1; i++) {
+      _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + i]
+        = _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + i - 1] * subdivisionFactor[subgridDimensions(i-1)];
+    }
+
+    //Face offsets
+    if(d > 0) {
+      _faceOffset[2 * d] = _faceOffset[2 * d - 1]
+                              + _cellStrideFlux[DIMENSIONS_MINUS_ONE * (d - 1) + DIMENSIONS - 2] * subdivisionFactor[DIMENSIONS - 1];
+    }
+    _faceOffset[2 * d + 1] = _faceOffset[2 * d]
+                              + _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + DIMENSIONS - 2] * subdivisionFactor[subgridDimensions[DIMENSIONS - 2]];
+
+    //TODO unterweg debug
+    std::cout << "d=" << d << " subgridDimensions=" << subgridDimensions << " subdivisionFactor=" << subdivisionFactor << " unknowns=" << numberOfUnknowns << " faceOffset=" << _faceOffset << " cellStrideFlux=" << _cellStrideFlux
+        << " qStrideFlux=" << _qStrideFlux << std::endl;
+  }
+
   assertion3(tarch::la::allGreater(_cellStrideUNew, tarch::la::Vector<DIMENSIONS,int>(0)), _cellStrideUNew, subdivisionFactor, ghostlayerWidth);
   assertion3(tarch::la::allGreater(_cellStrideUOld, tarch::la::Vector<DIMENSIONS,int>(0)), _cellStrideUOld, subdivisionFactor, ghostlayerWidth);
   assertion2(_qStrideUNew > 0, subdivisionFactor, ghostlayerWidth);

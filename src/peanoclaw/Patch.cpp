@@ -9,9 +9,11 @@
 #include <iomanip>
 #include <limits>
 
-#include "Area.h"
+#include "Region.h"
 #include "Cell.h"
 #include "Heap.h"
+
+#include "tarch/la/AdditionalVectorOperations.h"
 
 #include "peano/heap/Heap.h"
 #include "peano/utils/Loop.h"
@@ -46,11 +48,11 @@ void peanoclaw::Patch::refreshAccessor() {
   );
 }
 
-void peanoclaw::Patch::switchAreaToMinimalFineGridTimeInterval(const Area& area,
+void peanoclaw::Patch::switchRegionToMinimalFineGridTimeInterval(const Region& region,
     double factorForUOld, double factorForUNew) {
-  dfor(subcellIndex, area._size){
-    int linearIndexUOld = _accessor.getLinearIndexUOld(subcellIndex + area._offset);
-    int linearIndexUNew = _accessor.getLinearIndexUNew(subcellIndex + area._offset);
+  dfor(subcellIndex, region._size){
+    int linearIndexUOld = _accessor.getLinearIndexUOld(subcellIndex + region._offset);
+    int linearIndexUNew = _accessor.getLinearIndexUNew(subcellIndex + region._offset);
 
     for(int unknown = 0; unknown < _cellDescription->getUnknownsPerSubcell(); unknown++) {
       double valueUOld = _accessor.getValueUOld(linearIndexUOld, unknown);
@@ -328,28 +330,28 @@ void peanoclaw::Patch::switchValuesAndTimeIntervalToMinimalFineGridTimeInterval(
 //    }
 //
 //    if (willCoarsen()) {
-//      Area area;
-//      area._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-//      area._size = getSubdivisionFactor();
-//      switchAreaToMinimalFineGridTimeInterval(area, factorForUOld, factorForUNew);
+//      Region region;
+//      region._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+//      region._size = getSubdivisionFactor();
+//      switchRegionToMinimalFineGridTimeInterval(region, factorForUOld, factorForUNew);
 //    }
 //    else if(isVirtual()) {
-//      Area areas[DIMENSIONS_TIMES_TWO];
-//      int numberOfAreas = peanoclaw::getAreasForRestriction(
+//      Region regions[DIMENSIONS_TIMES_TWO];
+//      int numberOfRegions = peanoclaw::getRegionsForRestriction(
 //        getLowerNeighboringGhostlayerBounds(),
 //        getUpperNeighboringGhostlayerBounds(),
 //        getPosition(),
 //        getSubcellSize(),
 //        getSubcellSize(),
 //        getSubdivisionFactor(),
-//        areas
+//        regions
 //      );
 //
-//      assertion1(numberOfAreas <= DIMENSIONS_TIMES_TWO, numberOfAreas);
+//      assertion1(numberOfRegions <= DIMENSIONS_TIMES_TWO, numberOfRegions);
 //
-//      for (int areaIndex = 0; areaIndex < numberOfAreas; areaIndex++) {
-//        if(tarch::la::allGreater(areas[areaIndex]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
-//          switchAreaToMinimalFineGridTimeInterval(areas[areaIndex], factorForUOld, factorForUNew);
+//      for (int regionIndex = 0; regionIndex < numberOfRegions; regionIndex++) {
+//        if(tarch::la::allGreater(regions[regionIndex]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
+//          switchRegionToMinimalFineGridTimeInterval(regions[regionIndex], factorForUOld, factorForUNew);
 //        }
 //      }
 //    }
@@ -731,8 +733,14 @@ void peanoclaw::Patch::switchToVirtual() {
             + 2 * _cellDescription->getGhostlayerWidth())
         * _cellDescription->getNumberOfParametersWithGhostlayerPerSubcell();
 
+    size_t fluxArraySize = 0;
+    for(int d = 0; d < DIMENSIONS; d++) {
+      fluxArraySize += 2 * _cellDescription->getUnknownsPerSubcell()
+                         * tarch::la::projectedArea(_cellDescription->getSubdivisionFactor(), d);
+    }
+
     virtualUNew.resize(
-      uNewArraySize + uOldWithGhostlayerArraySize + parameterWithoutGhostlayerArraySize + parameterWithGhostlayerArraySize,
+      uNewArraySize + uOldWithGhostlayerArraySize + parameterWithoutGhostlayerArraySize + parameterWithGhostlayerArraySize + fluxArraySize,
       0.0
     );
     _uNew = &virtualUNew;
@@ -778,10 +786,10 @@ void peanoclaw::Patch::switchToLeaf() {
         + _cellDescription->getTimestepSize() - time) / timestepSize;
   }
 
-  Area area;
-  area._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-  area._size = getSubdivisionFactor();
-  switchAreaToMinimalFineGridTimeInterval(area, factorForUOld, factorForUNew);
+  Region region;
+  region._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+  region._size = getSubdivisionFactor();
+  switchRegionToMinimalFineGridTimeInterval(region, factorForUOld, factorForUNew);
 
   refreshAccessor();
 

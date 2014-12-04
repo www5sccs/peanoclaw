@@ -33,7 +33,7 @@
 #define PATCH_INLINE_GETTERS_AND_SETTERS
 
 namespace peanoclaw {
-  class Area;
+  class Region;
   class Cell;
   class Patch;
 
@@ -207,10 +207,10 @@ private:
   void refreshAccessor();
 
   /**
-   * Switches the values in the given area to the minimal fine grid time interval.
+   * Switches the values in the given region to the minimal fine grid time interval.
    */
-  void switchAreaToMinimalFineGridTimeInterval(
-    const peanoclaw::Area& area,
+  void switchRegionToMinimalFineGridTimeInterval(
+    const peanoclaw::Region& region,
     double factorForUOld,
     double factorForUNew
   );

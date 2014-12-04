@@ -9,8 +9,12 @@
 #define PEANOCLAW_GRID_LINEARIZATION_H_
 
 #include "peano/utils/Dimensions.h"
+#include "peano/utils/Globals.h"
 
 #include "tarch/la/Vector.h"
+
+#define DIMENSIONS_MINUS_ONE (DIMENSIONS-1)
+#define DIMENSIONS_TIMES_DIMENSIONS_MINUS_ONE (DIMENSIONS*(DIMENSIONS-1))
 
 namespace peanoclaw {
   namespace grid {
@@ -40,6 +44,25 @@ private:
   tarch::la::Vector<DIMENSIONS,int> _cellStrideParameterWithoutGhostlayer;
   int _qStrideParameterWithGhostlayer;
   tarch::la::Vector<DIMENSIONS,int> _cellStrideParameterWithGhostlayer;
+
+  /**
+   * Holds the stride for the flux values when advancing to the next unknown
+   * within one cell.
+   */
+  tarch::la::Vector<DIMENSIONS,int> _qStrideFlux;
+  /**
+   * Holds the stride for the flux values when advancing to the next cell
+   * within one face.
+   * The first d-1 entries hold the strides for the dimensions of
+   * faces perpendicular to dimension 0. The second d-1 entries hold
+   * the strides for the dimensions of faces perpendicular to dimension 1,
+   * and so on.
+   */
+  tarch::la::Vector<DIMENSIONS_TIMES_DIMENSIONS_MINUS_ONE,int> _cellStrideFlux;
+  /**
+   * Holds the offset within the flux array for each of the 2d faces.
+   */
+  tarch::la::Vector<DIMENSIONS_TIMES_TWO,int> _faceOffset;
 
 public:
 
@@ -110,6 +133,25 @@ public:
       index += (subcellIndex(d) + _ghostlayerWidth) * _cellStrideParameterWithGhostlayer[d];
     }
     index += unknown * _qStrideParameterWithGhostlayer;
+    return index;
+  }
+
+  int linearizeFlux(
+    int unknown,
+    const tarch::la::Vector<DIMENSIONS_MINUS_ONE, int> subcellIndex,
+    int dimension,
+    int direction
+  ) const {
+    int index = _faceOffset[dimension + (1 + direction) / 2];
+    int subgridDimension = 0;
+    for(int faceDimension = 0; faceDimension < DIMENSIONS-1; faceDimension++) {
+      if(faceDimension == dimension) {
+        subgridDimension++;
+      }
+      index += subcellIndex[faceDimension] * _cellStrideFlux[DIMENSIONS_MINUS_ONE * dimension + subgridDimension];
+      subgridDimension++;
+    }
+    index += unknown * _qStrideFlux[dimension];
     return index;
   }
 

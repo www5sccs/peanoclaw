@@ -48,6 +48,36 @@ peanoclaw::grid::Linearization::Linearization(
   _qStrideParameterWithGhostlayer = _qStrideUOld;
   _cellStrideParameterWithGhostlayer = _cellStrideUOld;
 
+  //Fluxes
+  _faceOffset[0] = 0;
+  for(int d = 0; d < DIMENSIONS; d++) {
+    tarch::la::Vector<DIMENSIONS_MINUS_ONE, int> subgridDimensions;
+    int subgridDimension = 0;
+    for(int i = 0; i < DIMENSIONS-1; i++) {
+      if(d == i) {
+        subgridDimension++;
+      }
+      subgridDimensions[i] = subgridDimension;
+      subgridDimension++;
+    }
+
+    //Cell stride
+    _cellStrideFlux[DIMENSIONS_MINUS_ONE * d] = 1;
+    for(int i = 1; i < DIMENSIONS-1; i++) {
+      _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + i]
+        = _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + i - 1] * subdivisionFactor[subgridDimensions(i-1)];
+    }
+
+    //q stride
+    _qStrideFlux[d] = _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + DIMENSIONS - 2] * subdivisionFactor[subgridDimensions[DIMENSIONS - 2]];
+
+    //Face offsets
+    if(d > 0) {
+      _faceOffset[2 * d] = _faceOffset[2 * d - 1] + _qStrideFlux[d - 1] * numberOfUnknowns;
+    }
+    _faceOffset[2 * d + 1] = _faceOffset[2 * d] + _qStrideFlux[d] * numberOfUnknowns;
+  }
+
   assertion2(tarch::la::allGreater(_cellStrideUNew, tarch::la::Vector<DIMENSIONS,int>(0)), subdivisionFactor, ghostlayerWidth);
   assertion2(tarch::la::allGreater(_cellStrideUOld, tarch::la::Vector<DIMENSIONS,int>(0)), subdivisionFactor, ghostlayerWidth);
   assertion2(_qStrideUNew > 0, subdivisionFactor, ghostlayerWidth);
