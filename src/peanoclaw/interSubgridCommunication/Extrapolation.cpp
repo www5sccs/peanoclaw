@@ -57,12 +57,12 @@ double peanoclaw::interSubgridCommunication::ExtrapolationAxis::getMaximumLinear
 
 void peanoclaw::interSubgridCommunication::CornerExtrapolation::operator()(
   peanoclaw::Patch& subgrid,
-  const peanoclaw::Area& area,
+  const peanoclaw::Region& region,
   const tarch::la::Vector<DIMENSIONS,int> cornerIndex
 ) {
   peanoclaw::grid::SubgridAccessor& subgridAccessor = subgrid.getAccessor();
-  dfor(subcellIndexInArea, area._size) {
-    tarch::la::Vector<DIMENSIONS, int> subcellIndex = subcellIndexInArea + area._offset;
+  dfor(subcellIndexInRegion, region._size) {
+    tarch::la::Vector<DIMENSIONS, int> subcellIndex = subcellIndexInRegion + region._offset;
     int linearIndexSubcell = subgridAccessor.getLinearIndexUOld(subcellIndex);
     ExtrapolationAxis axis0(subcellIndex, subgrid, 0, cornerIndex(0));
     ExtrapolationAxis axis1(subcellIndex, subgrid, 1, cornerIndex(1));
@@ -99,7 +99,7 @@ peanoclaw::interSubgridCommunication::EdgeExtrapolation::EdgeExtrapolation()
 
 void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
   peanoclaw::Patch& subgrid,
-  const peanoclaw::Area& area,
+  const peanoclaw::Region& region,
   const tarch::la::Vector<DIMENSIONS,int>& direction
 ) {
   _maximumLinearError = 0.0;
@@ -119,10 +119,10 @@ void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
     }
   }
 
-  subgridAccessor.clearRegion(area._offset, area._size, true);
+  subgridAccessor.clearRegion(region._offset, region._size, true);
 
-  dfor(subcellIndexInArea, area._size) {
-    tarch::la::Vector<DIMENSIONS, int> subcellIndex = subcellIndexInArea + area._offset;
+  dfor(subcellIndexInRegion, region._size) {
+    tarch::la::Vector<DIMENSIONS, int> subcellIndex = subcellIndexInRegion + region._offset;
     int linearIndexSubcell = subgridAccessor.getLinearIndexUOld(subcellIndex);
 
     ExtrapolationAxis axis0(subcellIndex, subgrid, dimensionAxis0, direction(dimensionAxis0));

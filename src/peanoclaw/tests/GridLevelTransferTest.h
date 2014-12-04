@@ -78,25 +78,25 @@ class peanoclaw::tests::GridLevelTransferTest: public tarch::tests::TestCase {
     void testUpdateMinimalNeighborTime();
 
     /**
-     * Test of calculation of the overlap area between a patch at (0.5, 0.5) of
+     * Test of calculation of the overlap region between a patch at (0.5, 0.5) of
      * size (5, 5) and a patch at (1, 4) of size (1.5, 2).
      * The patches overlap along the x0 axis from 1 to 2.5 and along the x1 axis
-     * from 4 to 5. Therefore, the overlapping area is 1.5.
+     * from 4 to 5. Therefore, the overlapping region is 1.5.
      */
-    void testOverlappingAreaWithRealOverlap();
+    void testOverlappingRegionWithRealOverlap();
 
     /**
-     * Test of calculation of the overlap area between a patch at (1, 1) of size
+     * Test of calculation of the overlap region between a patch at (1, 1) of size
      * (1, 1) and a patch at (2, 1.5) of size (1, 1). The patches are touching
-     * each other and, therefore, the overlap area is zero.
+     * each other and, therefore, the overlap region is zero.
      */
-    void testOverlappingAreaWithTouchingPatches();
+    void testOverlappingRegionWithTouchingPatches();
 
     /**
-     * Test of calculation of the overlap area between a patch at (-1, -1) of size
-     * (3, 3) and a patch at (0, 3) of size (5, 5). The overlap area is zero.
+     * Test of calculation of the overlap region between a patch at (-1, -1) of size
+     * (3, 3) and a patch at (0, 3) of size (5, 5). The overlap region is zero.
      */
-    void testOverlappingAreaWithoutOverlap();
+    void testOverlappingRegionWithoutOverlap();
 
     /**
      * Tests the restriction functionality that transfers the patch data from a fine

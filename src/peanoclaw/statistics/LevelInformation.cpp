@@ -7,7 +7,7 @@
 #include "peanoclaw/statistics/LevelInformation.h"
 
 peanoclaw::statistics::LevelInformation::LevelInformation()
-: _area(0.0),
+: _region(0.0),
   _level(0),
   _numberOfPatches(0.0),
   _numberOfCells(0.0),

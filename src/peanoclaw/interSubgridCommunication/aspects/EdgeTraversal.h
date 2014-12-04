@@ -26,7 +26,7 @@ class peanoclaw::interSubgridCommunication::aspects::EdgeTraversal {
      * The LoopBody has to provide an operator() with the following parameters:
      *
      *  - peanoclaw::Patch: The subgrid on which the traversal is performed
-     *  - peanoclaw::Area: An area describing the ghostlayer edge of the subgrid.
+     *  - peanoclaw::Region: An region describing the ghostlayer edge of the subgrid.
      *  - tarch::la::Vector<DIMENSIONS, int>: Describing the direction of the edge.
      *              The dimension which axis is parallel to the edge is set to zero.
      */

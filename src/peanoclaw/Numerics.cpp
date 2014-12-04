@@ -62,18 +62,18 @@ void peanoclaw::Numerics::interpolateSolution (
 void peanoclaw::Numerics::restrictSolution (
   peanoclaw::Patch& source,
   peanoclaw::Patch& destination,
-  bool              restrictOnlyOverlappedAreas
+  bool              restrictOnlyOverlappedRegions
 ) const {
   _restriction->restrictSolution(
     source,
     destination,
-    restrictOnlyOverlappedAreas
+    restrictOnlyOverlappedRegions
   );
 }
 
 void peanoclaw::Numerics::postProcessRestriction(
   peanoclaw::Patch& destination,
-  bool              restrictOnlyOverlappedAreas
+  bool              restrictOnlyOverlappedRegions
 ) const {
 }
 

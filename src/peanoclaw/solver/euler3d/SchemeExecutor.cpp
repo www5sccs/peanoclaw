@@ -148,7 +148,7 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
   );
   assertion2(
     (linearIndexUOld + _leftCellOffset) >= 0
-    && (linearIndexUOld + _leftCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    && (linearIndexUOld + _leftCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2 * _subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
     linearIndexUOld,
     _leftCellOffset
   );
@@ -160,7 +160,7 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
   );
   assertion2(
     (linearIndexUOld + _bottomCellOffset) >= 0
-    && (linearIndexUOld + _bottomCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    && (linearIndexUOld + _bottomCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2 * _subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
     linearIndexUOld,
     _bottomCellOffset
   );
@@ -172,7 +172,7 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
   );
   assertion2(
     (linearIndexUOld + _backCellOffset) >= 0
-    && (linearIndexUOld + _backCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    && (linearIndexUOld + _backCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2 * _subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
     linearIndexUOld,
     _backCellOffset
   );
@@ -184,7 +184,7 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
   );
   assertion1(
     linearIndexUOld >= 0
-    && linearIndexUOld < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    && linearIndexUOld < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2 * _subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
     linearIndexUOld
   );
 
@@ -195,7 +195,7 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
   );
   assertion2(
     (linearIndexUOld + _frontCellOffset) >= 0
-    && (linearIndexUOld + _frontCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    && (linearIndexUOld + _frontCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2 * _subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
     linearIndexUOld,
     _frontCellOffset
   );
@@ -207,7 +207,7 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
   );
   assertion2(
     (linearIndexUOld + _topCellOffset) >= 0
-    && (linearIndexUOld + _topCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    && (linearIndexUOld + _topCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2 * _subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
     linearIndexUOld,
     _topCellOffset
   );
@@ -217,11 +217,14 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
     subcellIndex+unitX
     //cellsUOld[linearUOldIndex+yzPlane];
   );
-  assertion2(
+  assertion5(
     (linearIndexUOld + _rightCellOffset) >= 0
-    && (linearIndexUOld + _rightCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor()) * _subgrid.getUnknownsPerSubcell(),
+    && (linearIndexUOld + _rightCellOffset) < tarch::la::volume(_subgrid.getSubdivisionFactor() + 2 * _subgrid.getGhostlayerWidth()) * _subgrid.getUnknownsPerSubcell(),
+    subcellIndex,
     linearIndexUOld,
-    _rightCellOffset
+    _rightCellOffset,
+    _subgrid.getSubdivisionFactor(),
+    _subgrid.getUnknownsPerSubcell()
   );
 
   assertionEquals(leftCell._index, subcellIndex-unitX);

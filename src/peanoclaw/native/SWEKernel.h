@@ -51,7 +51,7 @@ private:
    */
   void transformWaterHeight(
     peanoclaw::Patch& subgrid,
-    const Area&       area,
+    const Region&       region,
     bool              modifyUOld,
     bool              absoluteToAboveSeaFloor
   ) const;
@@ -153,7 +153,7 @@ public:
   virtual void restrictSolution (
     peanoclaw::Patch& source,
     peanoclaw::Patch& destination,
-    bool              restrictOnlyOverlappedAreas
+    bool              restrictOnlyOverlappedRegions
   ) const;
 
   /**
@@ -162,7 +162,7 @@ public:
    */
   virtual void postProcessRestriction(
     peanoclaw::Patch& destination,
-    bool              restrictOnlyOverlappedAreas
+    bool              restrictOnlyOverlappedRegions
   ) const;
 };
 

@@ -9,7 +9,7 @@
 #include "peanoclaw/tests/NumericsTestStump.h"
 #include "peanoclaw/tests/Helper.h"
 
-#include "peanoclaw/Area.h"
+#include "peanoclaw/Region.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
 #include "peanoclaw/interSubgridCommunication/DefaultFluxCorrection.h"
@@ -49,8 +49,8 @@ void peanoclaw::tests::GhostLayerCompositorTest::run() {
   //TODO unterweg debug
 //  testMethod( testFluxCorrection );
   testMethod( testRestrictionWithOverlappingBounds );
-  testMethod( testPartialRestrictionAreas );
-  testMethod( testPartialRestrictionAreasWithInfiniteLowerBounds );
+  testMethod( testPartialRestrictionRegions );
+  testMethod( testPartialRestrictionRegionsWithInfiniteLowerBounds );
   testMethod( testFaceAdjacentPatchTraversal2D );
   testMethod( testEdgeAdjacentPatchTraversal2D );
   testMethod( testEdgeAdjacentPatchTraversal3D );
@@ -629,34 +629,34 @@ void peanoclaw::tests::GhostLayerCompositorTest::testRestrictionWithOverlappingB
   tarch::la::Vector<DIMENSIONS, double> sourceSize(2.2);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(20);
 
-  peanoclaw::Area areas[TWO_POWER_D];
-  Area::getAreasOverlappedByNeighboringGhostlayers(
+  peanoclaw::Region regions[TWO_POWER_D];
+  Region::getRegionsOverlappedByNeighboringGhostlayers(
     lowerNeighboringGhostlayerBounds,
     upperNeighboringGhostlayerBounds,
     sourcePosition,
     sourceSize,
     sourceSubcellSize,
     sourceSubdivisionFactor,
-    areas
+    regions
   );
 
   tarch::la::Vector<DIMENSIONS,int> zero(0);
 
   for(int d = 0; d < DIMENSIONS; d++) {
-    validateEqualsWithParams1(areas[2*d]._offset, zero, d);
-    validateEqualsWithParams1(areas[2*d + 1]._offset, zero, d);
+    validateEqualsWithParams1(regions[2*d]._offset, zero, d);
+    validateEqualsWithParams1(regions[2*d + 1]._offset, zero, d);
 
     if(d == 0) {
-      validateEqualsWithParams1(areas[2*d]._size, sourceSubdivisionFactor, d);
-      validateEqualsWithParams1(areas[2*d + 1]._size, zero, d);
+      validateEqualsWithParams1(regions[2*d]._size, sourceSubdivisionFactor, d);
+      validateEqualsWithParams1(regions[2*d + 1]._size, zero, d);
     } else {
-      validateEqualsWithParams1(areas[2*d]._size, zero, d);
-      validateEqualsWithParams1(areas[2*d + 1]._size, zero, d);
+      validateEqualsWithParams1(regions[2*d]._size, zero, d);
+      validateEqualsWithParams1(regions[2*d + 1]._size, zero, d);
     }
   }
 }
 
-void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreas() {
+void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionRegions() {
   #ifdef Dim2
   tarch::la::Vector<DIMENSIONS, double> lowerNeighboringGhostlayerBounds(1.8 + 1e-13);
   tarch::la::Vector<DIMENSIONS, double> upperNeighboringGhostlayerBounds(1.2);
@@ -665,15 +665,15 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreas() {
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(0.1);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(10);
 
-  peanoclaw::Area areas[TWO_POWER_D];
-  Area::getAreasOverlappedByNeighboringGhostlayers(
+  peanoclaw::Region regions[TWO_POWER_D];
+  Region::getRegionsOverlappedByNeighboringGhostlayers(
     lowerNeighboringGhostlayerBounds,
     upperNeighboringGhostlayerBounds,
     sourcePosition,
     sourceSize,
     sourceSubcellSize,
     sourceSubdivisionFactor,
-    areas
+    regions
   );
 
   tarch::la::Vector<DIMENSIONS,int> offset;
@@ -682,24 +682,24 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreas() {
   //Left and Right
   assignList(offset) = 0, 0;
   assignList(size) = 2, 10;
-  validateEquals(areas[0]._offset, offset);
-  validateEquals(areas[0]._size, size);
+  validateEquals(regions[0]._offset, offset);
+  validateEquals(regions[0]._size, size);
   assignList(offset) = 8, 0;
   assignList(size) = 2, 10;
-  validateEquals(areas[1]._offset, offset);
-  validateEquals(areas[1]._size, size);
+  validateEquals(regions[1]._offset, offset);
+  validateEquals(regions[1]._size, size);
   assignList(offset) = 2, 0;
   assignList(size) = 6, 2;
-  validateEquals(areas[2]._offset, offset);
-  validateEquals(areas[2]._size, size);
+  validateEquals(regions[2]._offset, offset);
+  validateEquals(regions[2]._size, size);
   assignList(offset) = 2, 8;
   assignList(size) = 6, 2;
-  validateEquals(areas[3]._offset, offset);
-  validateEquals(areas[3]._size, size);
+  validateEquals(regions[3]._offset, offset);
+  validateEquals(regions[3]._size, size);
   #endif
 }
 
-void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreasWithInfiniteLowerBounds() {
+void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionRegionsWithInfiniteLowerBounds() {
   #ifdef Dim2
   tarch::la::Vector<DIMENSIONS, double> lowerNeighboringGhostlayerBounds(std::numeric_limits<double>::max());
   tarch::la::Vector<DIMENSIONS, double> upperNeighboringGhostlayerBounds;
@@ -710,15 +710,15 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreasWith
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(1.0/27.0/6.0);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(6);
 
-  peanoclaw::Area areas[TWO_POWER_D];
-  Area::getAreasOverlappedByNeighboringGhostlayers(
+  peanoclaw::Region regions[TWO_POWER_D];
+  Region::getRegionsOverlappedByNeighboringGhostlayers(
       lowerNeighboringGhostlayerBounds,
       upperNeighboringGhostlayerBounds,
       sourcePosition,
       sourceSize,
       sourceSubcellSize,
       sourceSubdivisionFactor,
-      areas
+      regions
   );
 
   tarch::la::Vector<DIMENSIONS,int> offset;
@@ -727,20 +727,20 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionAreasWith
   //Left and Right
   assignList(offset) = 0, 0;
   assignList(size) = 0, 6;
-  validateEquals(areas[0]._offset, offset);
-  validateEquals(areas[0]._size, size);
+  validateEquals(regions[0]._offset, offset);
+  validateEquals(regions[0]._size, size);
   assignList(offset) = 6, 0;
   assignList(size) = 0, 6;
-  validateEquals(areas[1]._offset, offset);
-  validateEquals(areas[1]._size, size);
+  validateEquals(regions[1]._offset, offset);
+  validateEquals(regions[1]._size, size);
   assignList(offset) = 0, 0;
   assignList(size) = 6, 1;
-  validateEquals(areas[2]._offset, offset);
-  validateEquals(areas[2]._size, size);
+  validateEquals(regions[2]._offset, offset);
+  validateEquals(regions[2]._size, size);
   assignList(offset) = 0, 6;
   assignList(size) = 6, 0;
-  validateEquals(areas[3]._offset, offset);
-  validateEquals(areas[3]._size, size);
+  validateEquals(regions[3]._offset, offset);
+  validateEquals(regions[3]._size, size);
   #endif
 }
 

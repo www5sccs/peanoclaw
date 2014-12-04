@@ -231,7 +231,7 @@ private:
   /**
    * Restrict to a patch where the upper
    * and lower bounds of neighboring ghostlayers
-   * overlap. Thus, the first returned area holds
+   * overlap. Thus, the first returned region holds
    * the complete domain, while the rest is empty.
    */
   void testRestrictionWithOverlappingBounds();
@@ -240,7 +240,7 @@ private:
    * Restrict to a patch of size 1.0, where the upper
    * and lower ghostlayers overlap by a value of 0.2.
    * The patch holds 10 cells in each dimension. Hence,
-   * the areas should look like the following:
+   * the regions should look like the following:
    *
    * Number  Offset  Size
    * 0       [0, 0]  [2, 10]
@@ -248,14 +248,14 @@ private:
    * 2       [2, 0]  [6, 2]
    * 3       [2, 8]  [6, 2]
    */
-  void testPartialRestrictionAreas();
+  void testPartialRestrictionRegions();
 
   /**
    * Restrict to a patch of size 1/27 with a subdivision
    * factor of 6, where the upper bound overlap by 0 cells
    * in x0 direction and 1 cell in x1 direction and the
    * lower bounds are still set to double::max().
-   * The areas should look like:
+   * The regions should look like:
    *
    * Number  Offset  Size
    * 0       [0, 0]  [0, 6]
@@ -263,7 +263,7 @@ private:
    * 2       [0, 0]  [6, 1]
    * 3       [0, 6]  [6, 0]
    */
-  void testPartialRestrictionAreasWithInfiniteLowerBounds();
+  void testPartialRestrictionRegionsWithInfiniteLowerBounds();
 
   /**
    * Tests whether the correct patches are traversed in 2d

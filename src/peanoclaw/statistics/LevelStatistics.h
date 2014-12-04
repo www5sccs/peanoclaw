@@ -41,7 +41,7 @@ class peanoclaw::statistics::LevelStatistics {
       typedef peanoclaw::statistics::LevelStatisticsPacked Packed;
       
       struct PersistentRecords {
-         double _area;
+         double _region;
          int _level;
          double _numberOfPatches;
          double _numberOfCells;
@@ -63,25 +63,25 @@ class peanoclaw::statistics::LevelStatistics {
          /**
           * Generated
           */
-         PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
+         PersistentRecords(const double& region, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
          
          
-         inline double getArea() const 
+         inline double getRegion() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-            return _area;
+            return _region;
          }
          
          
          
-         inline void setArea(const double& area) 
+         inline void setRegion(const double& region) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-            _area = area;
+            _region = region;
          }
          
          
@@ -365,7 +365,7 @@ class peanoclaw::statistics::LevelStatistics {
       /**
        * Generated
        */
-      LevelStatistics(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
+      LevelStatistics(const double& region, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
       
       /**
        * Generated
@@ -373,22 +373,22 @@ class peanoclaw::statistics::LevelStatistics {
       ~LevelStatistics();
       
       
-      inline double getArea() const 
+      inline double getRegion() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-         return _persistentRecords._area;
+         return _persistentRecords._region;
       }
       
       
       
-      inline void setArea(const double& area) 
+      inline void setRegion(const double& region) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-         _persistentRecords._area = area;
+         _persistentRecords._region = region;
       }
       
       
@@ -717,7 +717,7 @@ class peanoclaw::statistics::LevelStatistics {
             public:
                
                struct PersistentRecords {
-                  double _area;
+                  double _region;
                   int _level;
                   double _numberOfPatches;
                   double _numberOfCells;
@@ -739,25 +739,25 @@ class peanoclaw::statistics::LevelStatistics {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
+                  PersistentRecords(const double& region, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
                   
                   
-                  inline double getArea() const 
+                  inline double getRegion() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     return _area;
+                     return _region;
                   }
                   
                   
                   
-                  inline void setArea(const double& area) 
+                  inline void setRegion(const double& region) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     _area = area;
+                     _region = region;
                   }
                   
                   
@@ -1041,7 +1041,7 @@ class peanoclaw::statistics::LevelStatistics {
                /**
                 * Generated
                 */
-               LevelStatisticsPacked(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
+               LevelStatisticsPacked(const double& region, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
                
                /**
                 * Generated
@@ -1049,22 +1049,22 @@ class peanoclaw::statistics::LevelStatistics {
                ~LevelStatisticsPacked();
                
                
-               inline double getArea() const 
+               inline double getRegion() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  return _persistentRecords._area;
+                  return _persistentRecords._region;
                }
                
                
                
-               inline void setArea(const double& area) 
+               inline void setRegion(const double& region) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  _persistentRecords._area = area;
+                  _persistentRecords._region = region;
                }
                
                

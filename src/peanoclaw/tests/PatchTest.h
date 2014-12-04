@@ -150,7 +150,7 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
     /**
      * Tests the determination of adjacent manifolds for a given
      * manifold of a given dimensionality. This operation is done
-     * in Area::getIndexOfAdjacentManifold(...)
+     * in Region::getIndexOfAdjacentManifold(...)
      *
      *  0|   0  |0
      * --|------|--
@@ -162,7 +162,7 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
     void testAdjacentManifolds();
 
     /**
-     * Tests the determination of the overlapped areas by remote
+     * Tests the determination of the overlapped regions by remote
      * ghostlayers.
      *
      * For 2D we test the following scenario, where the first
@@ -177,7 +177,7 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
      * 1/3|  1/2 |0/2
      *
      * The subdivision factor of the subgrid is 6. Hence, we expect
-     * the following areas for rank 1:
+     * the following regions for rank 1:
      *
      * offset, size
      * [0, 0], [3, 3]
@@ -194,7 +194,7 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
      * For 3D a similar setup is used, where the upper settings are mapped
      * to the x0/x2 plane. Additionally, all corners with x1==-1 have an overlap
      * of 3, while all corners with x1==1 have an overlap of 2.
-     * Hence, we expect the following areas for rank 1:
+     * Hence, we expect the following regions for rank 1:
      *
      * offset,    size
      * [0, 0, 0], [3, 3, 3]
@@ -213,7 +213,7 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
      * 1/0|  1/0 |2/2
      *
      * The subdivision factor is 18.
-     * For rank 2 there is only one area expected:
+     * For rank 2 there is only one region expected:
      *
      * offset,  size
      * [16, 0], [2, 18]
@@ -221,14 +221,14 @@ class peanoclaw::tests::PatchTest: public tarch::tests::TestCase {
     void testOverlapOfRemoteGhostlayers2();
 
     /**
-     * Tests the resulting areas if the overlap of a subgrid
+     * Tests the resulting regions if the overlap of a subgrid
      * with subdivision factor [6,3,3] on rank 1 is overlapped
      * by remote ghostlayers of width 2 from rank 2 with the
      * following pattern:
      *
      * [2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
      *
-     * The result should be a single area with
+     * The result should be a single region with
      *  offset=[0,0,0] and size=[6,3,2]
      */
     void testOverlapOfRemoteGhostlayers3D();

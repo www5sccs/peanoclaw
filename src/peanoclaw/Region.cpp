@@ -1,16 +1,16 @@
 /*
- * Area.cpp
+ * Region.cpp
  *
  *  Created on: Jan 28, 2013
  *      Author: kristof
  */
-#include "Area.h"
+#include "Region.h"
 
 #include "Patch.h"
 
-tarch::logging::Log peanoclaw::Area::_log("peanoclaw::Area");
+tarch::logging::Log peanoclaw::Region::_log("peanoclaw::Region");
 
-int peanoclaw::Area::factorial(int i) {
+int peanoclaw::Region::factorial(int i) {
   int f = 1;
   while(i > 1) {
     f *= i--;
@@ -18,7 +18,7 @@ int peanoclaw::Area::factorial(int i) {
   return f;
 }
 
-void peanoclaw::Area::incrementIndices(tarch::la::Vector<DIMENSIONS, int>& indices, int highestIndex, int upperBound) {
+void peanoclaw::Region::incrementIndices(tarch::la::Vector<DIMENSIONS, int>& indices, int highestIndex, int upperBound) {
   int i = highestIndex;
   do {
     indices(i)++;
@@ -29,7 +29,7 @@ void peanoclaw::Area::incrementIndices(tarch::la::Vector<DIMENSIONS, int>& indic
   } while(indices(i+1) >= upperBound && i>=0);
 }
 
-int peanoclaw::Area::getNumberOfManifolds(int dimensionality) {
+int peanoclaw::Region::getNumberOfManifolds(int dimensionality) {
   #ifdef Dim2
   return 4;
   #elif Dim3
@@ -38,7 +38,7 @@ int peanoclaw::Area::getNumberOfManifolds(int dimensionality) {
   #endif
 }
 
-tarch::la::Vector<DIMENSIONS, int> peanoclaw::Area::getManifold(int dimensionality, int index) {
+tarch::la::Vector<DIMENSIONS, int> peanoclaw::Region::getManifold(int dimensionality, int index) {
   tarch::la::Vector<DIMENSIONS, int> modifyIndices(0);
   for(int d = 0; d < DIMENSIONS; d++) {
     modifyIndices(d) = d;
@@ -59,7 +59,7 @@ tarch::la::Vector<DIMENSIONS, int> peanoclaw::Area::getManifold(int dimensionali
   return manifoldPosition;
 }
 
-int peanoclaw::Area::getNumberOfAdjacentManifolds(
+int peanoclaw::Region::getNumberOfAdjacentManifolds(
   const tarch::la::Vector<DIMENSIONS, int>& manifoldPosition,
   int dimensionality,
   int adjacentDimensionality
@@ -79,7 +79,7 @@ int peanoclaw::Area::getNumberOfAdjacentManifolds(
   }
 }
 
-tarch::la::Vector<DIMENSIONS, int> peanoclaw::Area::getIndexOfAdjacentManifold(
+tarch::la::Vector<DIMENSIONS, int> peanoclaw::Region::getIndexOfAdjacentManifold(
   tarch::la::Vector<DIMENSIONS, int> manifoldPosition,
   int dimensionality,
   int adjacentDimensionality,
@@ -126,7 +126,7 @@ tarch::la::Vector<DIMENSIONS, int> peanoclaw::Area::getIndexOfAdjacentManifold(
   }
 }
 
-bool peanoclaw::Area::checkHigherDimensionalManifoldForOverlap(
+bool peanoclaw::Region::checkHigherDimensionalManifoldForOverlap(
   const tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>& adjacentRanks,
   tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>&       overlapOfRemoteGhostlayers,
   const tarch::la::Vector<DIMENSIONS, int>& manifoldPosition,
@@ -150,16 +150,16 @@ bool peanoclaw::Area::checkHigherDimensionalManifoldForOverlap(
   return false;
 }
 
-peanoclaw::Area::Area() {
+peanoclaw::Region::Region() {
 }
 
-peanoclaw::Area::Area(
+peanoclaw::Region::Region(
   tarch::la::Vector<DIMENSIONS, int> offset,
   tarch::la::Vector<DIMENSIONS, int> size
 ) : _offset(offset), _size(size) {
 }
 
-int peanoclaw::Area::linearizeManifoldPosition(
+int peanoclaw::Region::linearizeManifoldPosition(
   const tarch::la::Vector<DIMENSIONS, int>& manifoldPosition
 ) {
   assertion1(tarch::la::allSmaller(manifoldPosition, 2), manifoldPosition);
@@ -171,12 +171,12 @@ int peanoclaw::Area::linearizeManifoldPosition(
   return entry;
 }
 
-peanoclaw::Area peanoclaw::Area::mapToPatch(
+peanoclaw::Region peanoclaw::Region::mapToPatch(
   const Patch& source,
   const Patch& destination,
   double epsilon
 ) const {
-  Area destinationArea;
+  Region destinationRegion;
 
   //Offset
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = source.getSubcellSize();
@@ -187,7 +187,7 @@ peanoclaw::Area peanoclaw::Area::mapToPatch(
   for (int i=0; i < DIMENSIONS; i++) {
     offsetTemp[i] /= destination.getSubcellSize()[i];
   }
-  destinationArea._offset = offsetTemp.convertScalar<int>();
+  destinationRegion._offset = offsetTemp.convertScalar<int>();
 
   //Size
   tarch::la::Vector<DIMENSIONS, double> size = tarch::la::multiplyComponents(sourceSubcellSize, (_offset + _size).convertScalar<double>());
@@ -198,14 +198,14 @@ peanoclaw::Area peanoclaw::Area::mapToPatch(
     sizeTemp(i) /= destination.getSubcellSize()(i);
   }
 
-  sizeTemp -= destinationArea._offset.convertScalar<double>();
+  sizeTemp -= destinationRegion._offset.convertScalar<double>();
   sizeTemp += 1.0;
-  destinationArea._size = sizeTemp.convertScalar<int>();
+  destinationRegion._size = sizeTemp.convertScalar<int>();
 
-  return destinationArea;
+  return destinationRegion;
 }
 
-peanoclaw::Area peanoclaw::Area::mapCellToPatch(
+peanoclaw::Region peanoclaw::Region::mapCellToPatch(
   const tarch::la::Vector<DIMENSIONS, double>& finePosition,
   const tarch::la::Vector<DIMENSIONS, double>& fineSubcellSize,
   const tarch::la::Vector<DIMENSIONS, double>& coarseSubcellSize,
@@ -213,61 +213,61 @@ peanoclaw::Area peanoclaw::Area::mapCellToPatch(
   const tarch::la::Vector<DIMENSIONS, double>& coarseSubcellPosition,
   const double& epsilon
 ) const {
-  Area cellArea;
+  Region cellRegion;
 
-  //cellArea._offset = ((coarseSubcellPosition - finePosition + epsilon) / fineSubcellSize).convertScalar<int>();
+  //cellRegion._offset = ((coarseSubcellPosition - finePosition + epsilon) / fineSubcellSize).convertScalar<int>();
   tarch::la::Vector<DIMENSIONS, double> offsetTemp = (coarseSubcellPosition - finePosition + epsilon);
   for (int d=0; d < DIMENSIONS; d++) {
     offsetTemp[d] /= fineSubcellSize[d];
   }
-  cellArea._offset = offsetTemp.convertScalar<int>();
+  cellRegion._offset = offsetTemp.convertScalar<int>();
 
  
-  //cellArea._size = ((coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon) / fineSubcellSize - cellArea._offset.convertScalar<double>() + 1.0).convertScalar<int>();
+  //cellRegion._size = ((coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon) / fineSubcellSize - cellRegion._offset.convertScalar<double>() + 1.0).convertScalar<int>();
   tarch::la::Vector<DIMENSIONS, double> sizeTemp = coarseSubcellPosition + coarseSubcellSize - finePosition - epsilon;
   for (int d=0; d < DIMENSIONS; d++) {
     sizeTemp[d] /= fineSubcellSize[d];
   }
   sizeTemp -= offsetTemp;
   sizeTemp += 1.0;
-  cellArea._size = sizeTemp.convertScalar<int>();
+  cellRegion._size = sizeTemp.convertScalar<int>();
 
-  tarch::la::Vector<DIMENSIONS, int> cellAreaUpperBound = cellArea._offset + cellArea._size;
-  tarch::la::Vector<DIMENSIONS, int> areaUpperBound = _offset + _size;
+  tarch::la::Vector<DIMENSIONS, int> cellRegionUpperBound = cellRegion._offset + cellRegion._size;
+  tarch::la::Vector<DIMENSIONS, int> regionUpperBound = _offset + _size;
   for(int d = 0; d < DIMENSIONS; d++) {
-    cellArea._offset(d) = std::max(cellArea._offset(d), _offset(d));
-    cellArea._size(d) = std::min(cellAreaUpperBound(d), areaUpperBound(d));
+    cellRegion._offset(d) = std::max(cellRegion._offset(d), _offset(d));
+    cellRegion._size(d) = std::min(cellRegionUpperBound(d), regionUpperBound(d));
   }
-  cellArea._size -= cellArea._offset;
+  cellRegion._size -= cellRegion._offset;
 
-  return cellArea;
+  return cellRegion;
 }
 
 
-int peanoclaw::Area::getAreasOverlappedByNeighboringGhostlayers (
+int peanoclaw::Region::getRegionsOverlappedByNeighboringGhostlayers (
   const tarch::la::Vector<DIMENSIONS, double>& lowerNeighboringGhostlayerBounds,
   const tarch::la::Vector<DIMENSIONS, double>& upperNeighboringGhostlayerBounds,
   const tarch::la::Vector<DIMENSIONS, double>& sourcePosition,
   const tarch::la::Vector<DIMENSIONS, double>& sourceSize,
   const tarch::la::Vector<DIMENSIONS, double>& sourceSubcellSize,
   const tarch::la::Vector<DIMENSIONS, int>& sourceSubdivisionFactor,
-  Area areas[DIMENSIONS_TIMES_TWO]
+  Region regions[DIMENSIONS_TIMES_TWO]
 ) {
 
   //Check if bounds overlap
   if(tarch::la::oneGreater(upperNeighboringGhostlayerBounds + sourceSubcellSize, lowerNeighboringGhostlayerBounds)
     || tarch::la::oneGreaterEquals(upperNeighboringGhostlayerBounds, sourcePosition + sourceSize)
     || !tarch::la::allGreater(lowerNeighboringGhostlayerBounds, sourcePosition)) {
-    //If whole patch is overlapped -> One area holds whole patch, others are empty
-    areas[0]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-    areas[0]._size = sourceSubdivisionFactor;
-    areas[1]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-    areas[1]._size = tarch::la::Vector<DIMENSIONS, int>(0);
+    //If whole patch is overlapped -> One region holds whole patch, others are empty
+    regions[0]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+    regions[0]._size = sourceSubdivisionFactor;
+    regions[1]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+    regions[1]._size = tarch::la::Vector<DIMENSIONS, int>(0);
     for(int d = 1; d < DIMENSIONS; d++) {
-      areas[2*d]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-      areas[2*d]._size = tarch::la::Vector<DIMENSIONS, int>(0);
-      areas[2*d + 1]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-      areas[2*d + 1]._size = tarch::la::Vector<DIMENSIONS, int>(0);
+      regions[2*d]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+      regions[2*d]._size = tarch::la::Vector<DIMENSIONS, int>(0);
+      regions[2*d + 1]._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+      regions[2*d + 1]._size = tarch::la::Vector<DIMENSIONS, int>(0);
     }
     return 1;
   } else {
@@ -286,44 +286,44 @@ int peanoclaw::Area::getAreasOverlappedByNeighboringGhostlayers (
     }
 
     for(int d = 0; d < DIMENSIONS; d++) {
-      areas[2*d]._size(d) = upperBoundsInSourcePatch(d) + 1;
-      areas[2*d]._offset(d) = 0;
-      areas[2*d+1]._size(d) = sourceSubdivisionFactor(d) - lowerBoundsInSourcePatch(d);
-      areas[2*d+1]._offset(d) = lowerBoundsInSourcePatch(d);
+      regions[2*d]._size(d) = upperBoundsInSourcePatch(d) + 1;
+      regions[2*d]._offset(d) = 0;
+      regions[2*d+1]._size(d) = sourceSubdivisionFactor(d) - lowerBoundsInSourcePatch(d);
+      regions[2*d+1]._offset(d) = lowerBoundsInSourcePatch(d);
 
       //Restricted on lower dimensions
       for(int i = 0; i < d; i++) {
-        areas[2*d]._size(i) = -upperBoundsInSourcePatch(i) - 1 + lowerBoundsInSourcePatch(i);
-        areas[2*d]._offset(i) = upperBoundsInSourcePatch(i) + 1;
-        areas[2*d+1]._size(i) = areas[2*d]._size(i);
-        areas[2*d+1]._offset(i) = areas[2*d]._offset(i);
+        regions[2*d]._size(i) = -upperBoundsInSourcePatch(i) - 1 + lowerBoundsInSourcePatch(i);
+        regions[2*d]._offset(i) = upperBoundsInSourcePatch(i) + 1;
+        regions[2*d+1]._size(i) = regions[2*d]._size(i);
+        regions[2*d+1]._offset(i) = regions[2*d]._offset(i);
       }
       //Spread over whole patch in higher dimensions
       for(int i = d + 1; i < DIMENSIONS; i++) {
-        areas[2*d]._size(i) = sourceSubdivisionFactor(i);
-        areas[2*d]._offset(i) = 0;
-        areas[2*d+1]._size(i) = sourceSubdivisionFactor(i);
-        areas[2*d+1]._offset(i) = 0;
+        regions[2*d]._size(i) = sourceSubdivisionFactor(i);
+        regions[2*d]._offset(i) = 0;
+        regions[2*d+1]._size(i) = sourceSubdivisionFactor(i);
+        regions[2*d+1]._offset(i) = 0;
       }
 
-      assertion1(tarch::la::allGreaterEquals(areas[2*d]._size, 0), areas[2*d]);
-      assertion1(tarch::la::allGreaterEquals(areas[2*d+1]._size, 0), areas[2*d+1]);
+      assertion1(tarch::la::allGreaterEquals(regions[2*d]._size, 0), regions[2*d]);
+      assertion1(tarch::la::allGreaterEquals(regions[2*d+1]._size, 0), regions[2*d+1]);
     }
 
     return DIMENSIONS_TIMES_TWO;
   }
 }
 
-int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
+int peanoclaw::Region::getRegionsOverlappedByRemoteGhostlayers(
   const tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>& adjacentRanks,
   tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>        overlapOfRemoteGhostlayers,
   const tarch::la::Vector<DIMENSIONS, int>&              subdivisionFactor,
   int                                                    rank,
-  Area                                                   areas[THREE_POWER_D_MINUS_ONE]
+  Region                                                 regions[THREE_POWER_D_MINUS_ONE]
 ) {
-  logTraceInWith2Arguments("getAreasOverlappedByRemoteGhostlayers(...)", adjacentRanks, overlapOfRemoteGhostlayers);
-  int  numberOfAreas = 0;
-  bool oneAreaCoversCompleteSubgrid = false;
+  logTraceInWith2Arguments("getRegionsOverlappedByRemoteGhostlayers(...)", adjacentRanks, overlapOfRemoteGhostlayers);
+  int  numberOfRegions = 0;
+  bool oneRegionCoversCompleteSubgrid = false;
 
   for(int dimensionality = 0; dimensionality < DIMENSIONS; dimensionality++) {
     int numberOfManifolds = getNumberOfManifolds(dimensionality);
@@ -331,7 +331,7 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
       tarch::la::Vector<DIMENSIONS, int> manifoldPosition = getManifold(dimensionality, manifoldIndex);
       int manifoldEntry = linearizeManifoldPosition(manifoldPosition);
 
-      logDebug("getAreasOverlappedByRemoteGhostlayers(...)", "Manifold " << manifoldPosition << " of dimensions " << dimensionality
+      logDebug("getRegionsOverlappedByRemoteGhostlayers(...)", "Manifold " << manifoldPosition << " of dimensions " << dimensionality
           << ": entry=" << manifoldEntry << ", rank=" << adjacentRanks[manifoldEntry] << ", overlap=" << overlapOfRemoteGhostlayers[manifoldEntry]);
 
       if(adjacentRanks[manifoldEntry] == rank && overlapOfRemoteGhostlayers[manifoldEntry] > 0) {
@@ -346,7 +346,7 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
         );
 
         //Restrict size and offset by higher-dimensional manifolds
-        logDebug("getAreasOverlappedByRemoteGhostlayers(...)","Testing manifold " << manifoldPosition << " of dimensions " << dimensionality
+        logDebug("getRegionsOverlappedByRemoteGhostlayers(...)","Testing manifold " << manifoldPosition << " of dimensions " << dimensionality
             << ": " << (canBeOmitted ? "omitting" : "consider"));
 
         if(!canBeOmitted) {
@@ -401,11 +401,11 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
             }
           }
 
-          logDebug("getAreasOverlappedByRemoteGhostlayers(...)", "offset: " << offset << ", size: " << size << ", dimensionality=" << dimensionality << ", manifoldIndex=" << manifoldIndex << ", manifoldEntry=" << manifoldEntry);
+          logDebug("getRegionsOverlappedByRemoteGhostlayers(...)", "offset: " << offset << ", size: " << size << ", dimensionality=" << dimensionality << ", manifoldIndex=" << manifoldIndex << ", manifoldEntry=" << manifoldEntry);
           if(tarch::la::allGreater(size, 0)) {
-            areas[numberOfAreas++] = Area(offset, size);
+            regions[numberOfRegions++] = Region(offset, size);
 
-            oneAreaCoversCompleteSubgrid |= (tarch::la::volume(size) >= tarch::la::volume(subdivisionFactor));
+            oneRegionCoversCompleteSubgrid |= (tarch::la::volume(size) >= tarch::la::volume(subdivisionFactor));
 
             assertion1(tarch::la::allGreaterEquals(offset, 0), offset);
             assertion3(tarch::la::allGreaterEquals(subdivisionFactor, offset + size), offset, size, subdivisionFactor);
@@ -415,18 +415,18 @@ int peanoclaw::Area::getAreasOverlappedByRemoteGhostlayers(
     }
   }
 
-  //Optimize areas
-  if(oneAreaCoversCompleteSubgrid) {
-    numberOfAreas = 1;
-    areas[0] = Area(0, subdivisionFactor);
+  //Optimize regions
+  if(oneRegionCoversCompleteSubgrid) {
+    numberOfRegions = 1;
+    regions[0] = Region(0, subdivisionFactor);
   }
 
-  logTraceOutWith2Arguments("getAreasOverlappedByRemoteGhostlayers(...)", numberOfAreas, areas);
-  return numberOfAreas;
+  logTraceOutWith2Arguments("getRegionsOverlappedByRemoteGhostlayers(...)", numberOfRegions, regions);
+  return numberOfRegions;
 }
 
-std::ostream& operator<<(std::ostream& out, const peanoclaw::Area& area){
-  out << "offset=[" << area._offset << "],size=[" << area._size << "]" << std::endl;
+std::ostream& operator<<(std::ostream& out, const peanoclaw::Region& region){
+  out << "offset=[" << region._offset << "],size=[" << region._size << "]" << std::endl;
   return out;
 }
 

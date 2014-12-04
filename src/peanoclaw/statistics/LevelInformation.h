@@ -8,7 +8,7 @@ namespace peanoclaw {
 }
 
 struct peanoclaw::statistics::LevelInformation {
-  double _area;
+  double _region;
   int _level;
   double _numberOfPatches;
   double _numberOfCells;

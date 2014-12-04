@@ -1,12 +1,12 @@
 /*
- * Area.h
+ * Region.h
  *
  *  Created on: Jan 28, 2013
  *      Author: kristof
  */
 
-#ifndef PENAO_APPLICATIONS_PEANOCLAW_AREA_H_
-#define PENAO_APPLICATIONS_PEANOCLAW_AREA_H_
+#ifndef PENAO_APPLICATIONS_PEANOCLAW_REGION_H_
+#define PENAO_APPLICATIONS_PEANOCLAW_REGION_H_
 
 #include "tarch/la/Vector.h"
 #include "tarch/logging/Log.h"
@@ -16,7 +16,7 @@ namespace peanoclaw {
   /**
    * Forward declaration
    */
-  class Area;
+  class Region;
 
   class Patch;
 
@@ -27,9 +27,9 @@ namespace peanoclaw {
 
 /**
  * This class describes a rectangular axis-aligned
- * area of a patch.
+ * region of a patch.
  */
-class peanoclaw::Area {
+class peanoclaw::Region {
 
   private:
     friend class peanoclaw::tests::PatchTest;
@@ -161,12 +161,12 @@ class peanoclaw::Area {
     /**
      * Default constructor.
      */
-    Area();
+    Region();
 
     /**
-     * Creates an area with the given offset and size.
+     * Creates an region with the given offset and size.
      */
-    Area(
+    Region(
       tarch::la::Vector<DIMENSIONS, int> offset,
       tarch::la::Vector<DIMENSIONS, int> size
     );
@@ -176,19 +176,19 @@ class peanoclaw::Area {
     );
 
     /**
-     * Maps the area of the source patch to the according area
+     * Maps the region of the source patch to the according region
      * of the destination patch.
      */
-    Area mapToPatch(
+    Region mapToPatch(
       const Patch& source,
       const Patch& destination,
       double epsilon = 1e-12
     ) const;
 
     /**
-     * Maps a cell of the coarse patch to an area in the destination patch.
+     * Maps a cell of the coarse patch to an region in the destination patch.
      */
-    Area mapCellToPatch(
+    Region mapCellToPatch(
       const tarch::la::Vector<DIMENSIONS, double>& finePosition,
       const tarch::la::Vector<DIMENSIONS, double>& fineSubcellSize,
       const tarch::la::Vector<DIMENSIONS, double>& coarseSubcellSize,
@@ -198,38 +198,38 @@ class peanoclaw::Area {
     ) const;
 
     /**
-     * Creates the data for the 2*d areas that are overlapped by ghostlayers of
+     * Creates the data for the 2*d regions that are overlapped by ghostlayers of
      * neighboring subgrids.
-     * Returns the number of areas that are required to represent the overlapped
+     * Returns the number of regions that are required to represent the overlapped
      * parts of the subgrid.
      */
-    static int getAreasOverlappedByNeighboringGhostlayers(
+    static int getRegionsOverlappedByNeighboringGhostlayers(
       const tarch::la::Vector<DIMENSIONS, double>& lowerNeighboringGhostlayerBounds,
       const tarch::la::Vector<DIMENSIONS, double>& upperNeighboringGhostlayerBounds,
       const tarch::la::Vector<DIMENSIONS, double>& sourcePosition,
       const tarch::la::Vector<DIMENSIONS, double>& sourceSize,
       const tarch::la::Vector<DIMENSIONS, double>& sourceSubcellSize,
       const tarch::la::Vector<DIMENSIONS, int>&    sourceSubdivisionFactor,
-      Area areas[DIMENSIONS_TIMES_TWO]
+      Region regions[DIMENSIONS_TIMES_TWO]
     );
 
     /**
-     * Determines the areas required to cover all cells of a subgrid that are
+     * Determines the regions required to cover all cells of a subgrid that are
      * overlapped by a remote ghostlayer belonging to the given rank.
      *
-     * Currently the resulting areas are neither necessarily optimal nor
+     * Currently the resulting regions are neither necessarily optimal nor
      * disjoint.
      */
-   static int getAreasOverlappedByRemoteGhostlayers(
+   static int getRegionsOverlappedByRemoteGhostlayers(
      const tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>& adjacentRanks,
      tarch::la::Vector<THREE_POWER_D_MINUS_ONE, int>        overlapOfRemoteGhostlayers,
      const tarch::la::Vector<DIMENSIONS, int>&              subdivisionFactor,
      int                                                    rank,
-     Area                                                   areas[THREE_POWER_D_MINUS_ONE]
+     Region                                                 regions[THREE_POWER_D_MINUS_ONE]
    );
 
 };
 
-std::ostream& operator<<(std::ostream& out, const peanoclaw::Area& area);
+std::ostream& operator<<(std::ostream& out, const peanoclaw::Region& region);
 
 #endif /* PENAO_APPLICATIONS_PEANOCLAW_AREA_H_ */

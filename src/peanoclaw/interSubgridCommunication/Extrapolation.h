@@ -86,7 +86,7 @@ class peanoclaw::interSubgridCommunication::CornerExtrapolation {
   public:
     void operator()(
       peanoclaw::Patch& subgrid,
-      const peanoclaw::Area& area,
+      const peanoclaw::Region& region,
       const tarch::la::Vector<DIMENSIONS,int> cornerIndex
     );
 
@@ -107,7 +107,7 @@ class peanoclaw::interSubgridCommunication::EdgeExtrapolation {
 
     void operator()(
       peanoclaw::Patch& subgrid,
-      const peanoclaw::Area& area,
+      const peanoclaw::Region& region,
       const tarch::la::Vector<DIMENSIONS,int>& direction
     );
 

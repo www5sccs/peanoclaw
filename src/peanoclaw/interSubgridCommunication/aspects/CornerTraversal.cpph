@@ -5,7 +5,7 @@
  *      Author: kristof
  */
 
-#include "peanoclaw/Area.h"
+#include "peanoclaw/Region.h"
 
 #include "peano/utils/Loop.h"
 
@@ -22,9 +22,9 @@ peanoclaw::interSubgridCommunication::aspects::CornerTraversal<LoopBody>::Corner
     tarch::la::Vector<DIMENSIONS,int> offset
       = tarch::la::multiplyComponents(cornerIndex, subgrid.getSubdivisionFactor() + ghostlayerWidth)
         - ghostlayerWidth;
-    Area area(offset, size);
+    Region region(offset, size);
 
-    loopBody(subgrid, area, 2*cornerIndex-1);
+    loopBody(subgrid, region, 2*cornerIndex-1);
   }
   #endif
 }

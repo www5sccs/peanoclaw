@@ -39,26 +39,26 @@ class peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate {
     friend class peanoclaw::tests::GridLevelTransferTest;
 
     /**
-     * Returns the area of the region where the two given patches overlap.
+     * Returns the region of the region where the two given patches overlap.
      */
-    inline double calculateOverlappingArea(
+    inline double calculateOverlappingRegion(
         const tarch::la::Vector<DIMENSIONS, double>& position1,
         const tarch::la::Vector<DIMENSIONS, double>& size1,
         const tarch::la::Vector<DIMENSIONS, double>& position2,
         const tarch::la::Vector<DIMENSIONS, double>& size2
     ) {
-      double area = 1.0;
+      double region = 1.0;
 
       for(int d = 0; d < DIMENSIONS; d++) {
         double overlappingInterval =
             std::min(position1(d)+size1(d), position2(d)+size2(d))
         - std::max(position1(d), position2(d));
-        area *= overlappingInterval;
+        region *= overlappingInterval;
 
-        area = std::max(area, 0.0);
+        region = std::max(region, 0.0);
       }
 
-      return area;
+      return region;
     }
 
     /**
@@ -71,19 +71,19 @@ class peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate {
      * time when interpolating in time
      * @param restrictToUOld Decides wether to restrict to UOld or to UNew
      */
-    void restrictArea (
+    void restrictRegion (
       peanoclaw::Patch&                                   source,
       peanoclaw::Patch&                                   destination,
       peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& sourceIterator,
       peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& destinationIterator,
-      const Area&                                         area
+      const Region&                                       region
     );
 
   public:
     void restrictSolution (
       peanoclaw::Patch& source,
       peanoclaw::Patch&       destination,
-      bool restrictOnlyOverlappedAreas
+      bool restrictOnlyOverlappedRegions
     );
 };
 
@@ -96,48 +96,48 @@ class peanoclaw::interSubgridCommunication::DefaultRestriction
     void restrictSolution (
       peanoclaw::Patch& source,
       peanoclaw::Patch&       destination,
-      bool restrictOnlyOverlappedAreas
+      bool restrictOnlyOverlappedRegions
     ) {
       switch(source.getUnknownsPerSubcell()) {
         case 1:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<1> transfer1;
-          transfer1.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer1.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 2:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<2> transfer2;
-          transfer2.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer2.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 3:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<3> transfer3;
-          transfer3.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer3.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 4:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<4> transfer4;
-          transfer4.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer4.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 5:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<5> transfer5;
-          transfer5.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer5.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 6:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<6> transfer6;
-          transfer6.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer6.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 7:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<7> transfer7;
-          transfer7.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer7.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 8:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<8> transfer8;
-          transfer8.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer8.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 9:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<9> transfer9;
-          transfer9.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer9.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         case 10:
           peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<10> transfer10;
-          transfer10.restrictSolution(source, destination, restrictOnlyOverlappedAreas);
+          transfer10.restrictSolution(source, destination, restrictOnlyOverlappedRegions);
           break;
         default:
           assertionFail("Number of unknowns " << source.getUnknownsPerSubcell() << " not supported!");

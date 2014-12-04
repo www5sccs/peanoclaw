@@ -42,7 +42,7 @@ class peanoclaw::interSubgridCommunication::VelocityFluxCorrection
     friend class peanoclaw::tests::GridLevelTransferTest;
 
     /**
-     * Returns the area of the region where the two given
+     * Returns the region of the region where the two given
      * patches overlap.
      * This overload projects the patches along the given projection axis
      * and just calculates the overlap in this projection.
@@ -50,7 +50,7 @@ class peanoclaw::interSubgridCommunication::VelocityFluxCorrection
      * In 2d this refers to a projection to one-dimensional intervals and
      * the intersection between these intervals.
      */
-    double calculateOverlappingArea(
+    double calculateOverlappingRegion(
       tarch::la::Vector<DIMENSIONS, double> position1,
       tarch::la::Vector<DIMENSIONS, double> size1,
       tarch::la::Vector<DIMENSIONS, double> position2,

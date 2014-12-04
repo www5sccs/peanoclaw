@@ -272,7 +272,7 @@ void peanoclaw::tests::GridLevelTransferTest::testUpdateMinimalNeighborTime() {
 }
 
 
-void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithRealOverlap() {
+void peanoclaw::tests::GridLevelTransferTest::testOverlappingRegionWithRealOverlap() {
 #ifdef Dim2
   tarch::la::Vector<DIMENSIONS, double> position1(0.5);
   tarch::la::Vector<DIMENSIONS, double> size1(5.0);
@@ -283,11 +283,11 @@ void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithRealOverlap
   size2(1) = 2.0;
 
   peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<1> defaultRestriction;
-  validateNumericalEquals( defaultRestriction.calculateOverlappingArea(position1, size1, position2, size2), 2.25);
+  validateNumericalEquals( defaultRestriction.calculateOverlappingRegion(position1, size1, position2, size2), 2.25);
 #endif
 }
 
-void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithTouchingPatches() {
+void peanoclaw::tests::GridLevelTransferTest::testOverlappingRegionWithTouchingPatches() {
 #ifdef Dim2
   tarch::la::Vector<DIMENSIONS, double> position1(1.0);
   tarch::la::Vector<DIMENSIONS, double> size1(1.0);
@@ -300,11 +300,11 @@ void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithTouchingPat
   peanoclaw::interSubgridCommunication::GridLevelTransfer gridLevelTransfer(false, numerics);
 
   peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<2> defaultRestriction;
-  validateNumericalEquals( defaultRestriction.calculateOverlappingArea(position1, size1, position2, size2), 0.0);
+  validateNumericalEquals( defaultRestriction.calculateOverlappingRegion(position1, size1, position2, size2), 0.0);
 #endif
 }
 
-void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithoutOverlap() {
+void peanoclaw::tests::GridLevelTransferTest::testOverlappingRegionWithoutOverlap() {
 #ifdef Dim2
   tarch::la::Vector<DIMENSIONS, double> position1(-1.0);
   tarch::la::Vector<DIMENSIONS, double> size1(3.0);
@@ -314,7 +314,7 @@ void peanoclaw::tests::GridLevelTransferTest::testOverlappingAreaWithoutOverlap(
   tarch::la::Vector<DIMENSIONS, double> size2(5.0);
 
   peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<3> defaultRestriction;
-  validateNumericalEquals( defaultRestriction.calculateOverlappingArea(position1, size1, position2, size2), 0.0);
+  validateNumericalEquals( defaultRestriction.calculateOverlappingRegion(position1, size1, position2, size2), 0.0);
 #endif
 }
 
@@ -490,15 +490,15 @@ void peanoclaw::tests::GridLevelTransferTest::testRestrictionToVirtualPatch() {
   logInfo("", "Neighbor: " << std::endl << neighboringCoarsePatch.toStringUOldWithGhostLayer());
 
   //Check results
-  double areaFraction = (1.0/9.0)*(1.0/9.0) / (1.0/2.0) / (1.0/2.0);
+  double regionFraction = (1.0/9.0)*(1.0/9.0) / (1.0/2.0) / (1.0/2.0);
   assignList(subcellIndex) = -2, 0;
-  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), areaFraction * (-1.0*9.0 + 1.0/2.0*(2.0 - 1.0*8.0) + 1.0/2.0*(2.0*3.0 - 1.0*6.0) + 1.0/4.0*(2.0*4.0 - 1.0*5.0)));
+  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), regionFraction * (-1.0*9.0 + 1.0/2.0*(2.0 - 1.0*8.0) + 1.0/2.0*(2.0*3.0 - 1.0*6.0) + 1.0/4.0*(2.0*4.0 - 1.0*5.0)));
   assignList(subcellIndex) = -2, 1;
-  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*2.0 - 1.0/3.0*7.0 + 1.0/2.0*(4.0/3.0 - 1.0/3.0*8.0) + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
+  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), regionFraction * (4.0/3.0*2.0 - 1.0/3.0*7.0 + 1.0/2.0*(4.0/3.0 - 1.0/3.0*8.0) + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
   assignList(subcellIndex) = -1, 0;
-  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*6.0 - 1.0/3.0*3.0 + 1.0/2.0*(4.0/3.0*3.0 - 1.0/3.0*6.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
+  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), regionFraction * (4.0/3.0*6.0 - 1.0/3.0*3.0 + 1.0/2.0*(4.0/3.0*3.0 - 1.0/3.0*6.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
   assignList(subcellIndex) = -1, 1;
-  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), areaFraction * (4.0/3.0*8.0 - 1.0/3.0 + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
+  validateNumericalEquals(neighboringCoarseAccessor.getValueUOld(subcellIndex, 0), regionFraction * (4.0/3.0*8.0 - 1.0/3.0 + 1.0/2.0*(4.0/3.0*5.0 - 1.0/3.0*4.0) + 1.0/2.0*(4.0/3.0*7.0 - 1.0/3.0*2.0) + 1.0/4.0*(4.0/3.0*4.0 - 1.0/3.0*5.0)));
 
   //Clean up
   CellDescriptionHeap::getInstance().deleteAllData();
@@ -513,9 +513,9 @@ peanoclaw::tests::GridLevelTransferTest::~GridLevelTransferTest(){
 
 void peanoclaw::tests::GridLevelTransferTest::run() {
   testMethod(testAdjacentPatchIndicesForSingleRefinedCell);
-  testMethod(testOverlappingAreaWithRealOverlap);
-  testMethod(testOverlappingAreaWithTouchingPatches);
-  testMethod(testOverlappingAreaWithoutOverlap);
+  testMethod(testOverlappingRegionWithRealOverlap);
+  testMethod(testOverlappingRegionWithTouchingPatches);
+  testMethod(testOverlappingRegionWithoutOverlap);
   testMethod(testRestrictionToVirtualPatch);
 }
 

@@ -13,29 +13,29 @@
 
 tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultFluxCorrection::_log( "peanoclaw::interSubgridCommunication::DefaultFluxCorrection" ); 
 
-double peanoclaw::interSubgridCommunication::DefaultFluxCorrection::calculateOverlappingArea(
+double peanoclaw::interSubgridCommunication::DefaultFluxCorrection::calculateOverlappingRegion(
     tarch::la::Vector<DIMENSIONS, double> position1,
     tarch::la::Vector<DIMENSIONS, double> size1,
     tarch::la::Vector<DIMENSIONS, double> position2,
     tarch::la::Vector<DIMENSIONS, double> size2,
     int projectionAxis
 ) const {
-  double area = 1.0;
+  double region = 1.0;
 
   for(int d = 0; d < DIMENSIONS; d++) {
     if(d != projectionAxis) {
       double overlappingInterval =
           std::min(position1(d)+size1(d), position2(d)+size2(d))
       - std::max(position1(d), position2(d));
-      area *= overlappingInterval;
+      region *= overlappingInterval;
 
-      if(area < 0.0) {
-        area = 0.0;
+      if(region < 0.0) {
+        region = 0.0;
       }
     }
   }
 
-  return area;
+  return region;
 }
 
 void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBetweenCells(
@@ -61,8 +61,8 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
       !tarch::la::oneGreater(tarch::la::Vector<DIMENSIONS, int>(0), adjacentSubcellIndexInDestinationPatch)
   && !tarch::la::oneGreaterEquals(adjacentSubcellIndexInDestinationPatch, destinationSubgrid.getSubdivisionFactor())
   ) {
-    //Get interface area
-    double interfaceArea = calculateOverlappingArea(
+    //Get interface region
+    double interfaceRegion = calculateOverlappingRegion(
         sourceSubgrid.getSubcellPosition(subcellIndexInSourcePatch),
         sourceSubcellSize,
         destinationSubgrid.getSubcellPosition(adjacentSubcellIndexInDestinationPatch),
@@ -96,10 +96,10 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
       double sourceValue = sourceAccessor.getValueUOld(subcellIndexInSourcePatch, unknown);
       double sourceValueGhostCell = sourceAccessor.getValueUOld(ghostlayerSubcellIndexInSourcePatch, unknown);
       double sourceFlux
-//            = sourceValue * sourceVelocityUNew * interfaceArea;
+//            = sourceValue * sourceVelocityUNew * interfaceRegion;
 //            = (sourceAccessor.getValueUOld(subcellIndexInSourcePatch, unknown) + sourceAccessor.getValueUOld(ghostlayerSubcellIndexInSourcePatch, unknown)) / 2.0
-//              * sourceAccessor.getValueUOld(subcellIndexInSourcePatch, 1 + dimension) * interfaceArea;
-            = 0.5 * (sourceValue * sourceVelocityUOld + sourceValueGhostCell * sourceVelocityGhostCell) * interfaceArea;
+//              * sourceAccessor.getValueUOld(subcellIndexInSourcePatch, 1 + dimension) * interfaceRegion;
+            = 0.5 * (sourceValue * sourceVelocityUOld + sourceValueGhostCell * sourceVelocityGhostCell) * interfaceRegion;
 
       double destinationValueUOld = destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, unknown);
       double destinationValueUNew = destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown);
@@ -110,22 +110,22 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
       double destinationValue = destinationValueUOld * (1.0-timeFactor) + destinationValueUNew * timeFactor;
       double destinationVelocity = destinationVelocityUOld * (1.0-timeFactor) + destinationVelocityUNew * timeFactor;
       double destinationFlux
-//        = destinationValue * destinationVelocity * interfaceArea;
-        = 0.5 * (destinationValue * destinationVelocityUOld + destinationValueGhostCell * destinationVelocityGhostCell) * interfaceArea;
+//        = destinationValue * destinationVelocity * interfaceRegion;
+        = 0.5 * (destinationValue * destinationVelocityUOld + destinationValueGhostCell * destinationVelocityGhostCell) * interfaceRegion;
 
 //      assertion1(tarch::la::greaterEquals(timeFactor, 0.0) && tarch::la::smallerEquals(timeFactor, 1.0), timeFactor);
 
       //double destinationValue = destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, unknown);
-//      double destinationFlux = destinationValue * destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1 + dimension) / destinationValue * interfaceArea;
+//      double destinationFlux = destinationValue * destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1 + dimension) / destinationValue * interfaceRegion;
 //        = (destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, unknown) + destinationAccessor.getValueUOld(ghostlayerSubcellIndexInDestinationPatch, unknown)) / 2.0
-//          * destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1 + dimension) * interfaceArea;
+//          * destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1 + dimension) * interfaceRegion;
 
       //Estimate the according transfered volume during the fine patch's timestep
       double transferedSourceVolume = sourceFlux * timestepOverlap;
       double transferedDestinationVolume = destinationFlux * timestepOverlap;
       double delta = transferedSourceVolume - transferedDestinationVolume;
 
-      logDebug("applyFluxCorrection", "Correcting neighbor cell " << adjacentSubcellIndexInDestinationPatch << " from cell " << subcellIndexInSourcePatch << " with interfaceArea=" << interfaceArea << std::endl
+      logDebug("applyFluxCorrection", "Correcting neighbor cell " << adjacentSubcellIndexInDestinationPatch << " from cell " << subcellIndexInSourcePatch << " with interfaceRegion=" << interfaceRegion << std::endl
           << "\tu0=" << sourceSubgrid.getAccessor().getValueUNew(subcellIndexInSourcePatch, 0) << " u1=" << sourceSubgrid.getAccessor().getValueUNew(subcellIndexInSourcePatch, 1) << " u2=" << sourceSubgrid.getAccessor().getValueUNew(subcellIndexInSourcePatch, 2) << std::endl
           << "\ttimestepOverlap=" << timestepOverlap << std::endl
           << "\tsourceFlux=" << sourceFlux << std::endl
@@ -139,7 +139,7 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
       //TODO unterweg debug
 //      std::cout << "sourceFlux=" << fineGridFlux << " destinationFlux=" << coarseGridFlux
 //          << " value=" << destinationAccessor.getValueUNew(adjacentSubcellIndexInDestinationPatch, unknown) << " delta=" << delta
-//          << " subcellVolume=" << sourceSubcellVolume << " interface=" << interfaceArea
+//          << " subcellVolume=" << sourceSubcellVolume << " interface=" << interfaceRegion
 //          << " h_s=" << sourceAccessor.getValueUOld(subcellIndexInSourcePatch, unknown) << " u_s=" << sourceAccessor.getValueUOld(subcellIndexInSourcePatch, 1 + dimension)
 //          << " h_d=" << destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, unknown) << " u_d=" << destinationAccessor.getValueUOld(adjacentSubcellIndexInDestinationPatch, 1 + dimension) << std::endl;
 
@@ -183,11 +183,11 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
       offset(dimension) = sourceSubgrid.getSubdivisionFactor()(dimension) - 1;
     }
 
-    //Create search area that needs to be considered around the neighboring cell in the coarse patch
-    tarch::la::Vector<DIMENSIONS, int> searchArea = tarch::la::Vector<DIMENSIONS, int>(2);
-    searchArea(dimension) = 1;
+    //Create search region that needs to be considered around the neighboring cell in the coarse patch
+    tarch::la::Vector<DIMENSIONS, int> searchRegion = tarch::la::Vector<DIMENSIONS, int>(2);
+    searchRegion(dimension) = 1;
 
-    logDebug("applyFluxCorrection", "face=" << face << ", offset=" << offset << ", searchArea=" << searchArea);
+    logDebug("applyFluxCorrection", "face=" << face << ", offset=" << offset << ", searchRegion=" << searchRegion);
 
     tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = sourceSubgrid.getSubcellSize();
     tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = destinationSubgrid.getSubcellSize();
@@ -224,7 +224,7 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
 
       logDebug("applyFluxCorrection", "Correcting from cell " << subcellIndexInSourcePatch);
 
-      dfor(neighborOffset, searchArea) {
+      dfor(neighborOffset, searchRegion) {
         tarch::la::Vector<DIMENSIONS, int> adjacentSubcellIndexInDestinationPatch = neighboringSubcellIndexInDestinationPatch + neighborOffset;
 
         correctFluxBetweenCells(

@@ -4,7 +4,7 @@
  *  Created on: Feb 10, 2014
  *      Author: kristof
  */
-#include "peanoclaw/Area.h"
+#include "peanoclaw/Region.h"
 
 #include "peano/utils/Loop.h"
 
@@ -21,9 +21,9 @@ peanoclaw::interSubgridCommunication::aspects::EdgeTraversal<LoopBody>::EdgeTrav
     tarch::la::Vector<DIMENSIONS,int> offset
       = tarch::la::multiplyComponents(edgeIndex, subgrid.getSubdivisionFactor() + ghostlayerWidth)
         - ghostlayerWidth;
-    Area area(offset, size);
+    Region region(offset, size);
 
-    loopBody(subgrid, area, 2*edgeIndex - 1);
+    loopBody(subgrid, region, 2*edgeIndex - 1);
   }
   #elif Dim3
   for(int d = 0; d < DIMENSIONS; d++) {
@@ -37,11 +37,11 @@ peanoclaw::interSubgridCommunication::aspects::EdgeTraversal<LoopBody>::EdgeTrav
           = tarch::la::multiplyComponents(edgeIndex, subgrid.getSubdivisionFactor() + ghostlayerWidth)
             - ghostlayerWidth;
         offset(d) = 0;
-        Area area(offset, size);
+        Region region(offset, size);
 
         tarch::la::Vector<DIMENSIONS,int> direction = 2*edgeIndex-1;
         direction(d) = 0;
-        loopBody(subgrid, area, direction);
+        loopBody(subgrid, region, direction);
       }
     }
   }

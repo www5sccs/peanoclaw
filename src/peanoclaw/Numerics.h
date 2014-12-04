@@ -92,7 +92,7 @@ private:
     virtual void restrictSolution (
       peanoclaw::Patch& source,
       peanoclaw::Patch& destination,
-      bool              restrictOnlyOverlappedAreas
+      bool              restrictOnlyOverlappedRegions
     ) const;
 
     /**
@@ -102,7 +102,7 @@ private:
      */
     virtual void postProcessRestriction(
       peanoclaw::Patch& destination,
-      bool              restrictOnlyOverlappedAreas
+      bool              restrictOnlyOverlappedRegions
     ) const;
 
     /**

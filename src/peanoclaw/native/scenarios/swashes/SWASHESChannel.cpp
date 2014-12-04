@@ -54,7 +54,7 @@ double peanoclaw::native::scenarios::swashes::SWASHESChannel::getExpectedWaterHe
 //SHORT CHANNEL
 int peanoclaw::native::scenarios::swashes::SWASHESShortChannel::getIndex(double x) const {
   #ifdef PEANOCLAW_SWASHES
-  return (x / L) * NX_EX;
+  return std::max(0.0, std::min((double)NX_EX, (x / L) * NX_EX));
   #else
   return 0;
   #endif

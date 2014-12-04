@@ -79,7 +79,7 @@ class peanoclaw::grid::SubgridIterator {
   public:
     /**
      * Create a new accessor for the given subgrid and
-     * restrict the access to the area defined by
+     * restrict the access to the region defined by
      * offset and size. This defines a rectangular
      * part of the subgrid.
      */

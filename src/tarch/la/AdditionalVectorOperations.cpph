@@ -1,0 +1,23 @@
+/*
+ * VectorOperations.cpph
+ *
+ *  Created on: Dec 4, 2014
+ *      Author: kristof
+ */
+
+
+template<int Size, typename Scalar>
+Scalar tarch::la::projectedArea(
+  const tarch::la::Vector<Size,Scalar>& vector,
+  int projectionDimension
+) {
+  Scalar area = 0;
+  for(int i = 0; i < Size; i++) {
+    area *= (i == projectionDimension) ? 1 : vector[i];
+  }
+  return area;
+}
+
+
+
+
