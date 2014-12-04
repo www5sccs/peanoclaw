@@ -172,16 +172,35 @@ void peanoclaw::grid::SubgridAccessor::setParameterWithGhostlayer(
   _u->at(_parameterWithGhostlayerArrayIndex + index).setU(value);
 }
 
-void peanoclaw::grid::SubgridAccessor::clearRegion(tarch::la::Vector<DIMENSIONS, int> offset,
-    tarch::la::Vector<DIMENSIONS, int> size, bool clearUOld) {
+double peanoclaw::grid::SubgridAccessor::getFlux(
+  const tarch::la::Vector<DIMENSIONS_MINUS_ONE,int>& subcellIndex,
+  int unknown,
+  int dimension,
+  int direction
+) const {
+  return _u->at(_linearization.linearizeFlux(unknown, subcellIndex, dimension, direction)).getU();
+}
+
+void peanoclaw::grid::SubgridAccessor::setFlux(
+  const tarch::la::Vector<DIMENSIONS_MINUS_ONE,int>& subcellIndex,
+  int unknown,
+  int dimension,
+  int direction,
+  double value
+) {
+  _u->at(_linearization.linearizeFlux(unknown, subcellIndex, dimension, direction)).setU(value);
+}
+
+
+void peanoclaw::grid::SubgridAccessor::clearRegion(const Region& region, bool clearUOld) {
 #if defined(Dim2) && false
 //  for(int x = 0; x < size(0); x++) {
 //    memset(_uOldWithGhostlayer[])
 //  }
 #else
   int unknownsPerSubcell = _cellDescription.getUnknownsPerSubcell();
-  dfor(subcellIndex, size){
-  int linearIndex = clearUOld ? getLinearIndexUOld(subcellIndex + offset) : getLinearIndexUNew(subcellIndex + offset);
+  dfor(subcellIndex, region._size){
+  int linearIndex = clearUOld ? getLinearIndexUOld(subcellIndex + region._offset) : getLinearIndexUNew(subcellIndex + region._offset);
   for(int unknown = 0; unknown < unknownsPerSubcell; unknown++) {
     if(clearUOld) {
       setValueUOld(linearIndex, unknown, 0.0);

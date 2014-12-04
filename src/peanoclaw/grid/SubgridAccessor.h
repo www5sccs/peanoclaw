@@ -8,6 +8,7 @@
 #ifndef PEANOCLAW_GRID_SUBGRIDACCESSOR_H_
 #define PEANOCLAW_GRID_SUBGRIDACCESSOR_H_
 
+#include "peanoclaw/Region.h"
 #include "peanoclaw/grid/Linearization.h"
 #include "peanoclaw/records/CellDescription.h"
 #include "peanoclaw/records/Data.h"
@@ -274,12 +275,25 @@ class peanoclaw::grid::SubgridAccessor {
     double getParameterWithGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter) const;
     void setParameterWithGhostlayer(const tarch::la::Vector<DIMENSIONS, int>& subcellIndex, int parameter, double value);
 
+    double getFlux(
+      const tarch::la::Vector<DIMENSIONS_MINUS_ONE,int>& subcellIndex,
+      int unknown,
+      int dimension,
+      int direction
+    ) const;
+    void setFlux(
+      const tarch::la::Vector<DIMENSIONS_MINUS_ONE,int>& subcellIndex,
+      int unknown,
+      int dimension,
+      int direction,
+      double value
+    );
+
     /**
      * Sets the specified region of the subgrid to zero.
      */
     void clearRegion(
-      tarch::la::Vector<DIMENSIONS, int> offset,
-      tarch::la::Vector<DIMENSIONS, int> size,
+      const Region& region,
       bool clearUOld
     );
 };

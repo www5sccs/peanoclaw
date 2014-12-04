@@ -119,7 +119,7 @@ void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
     }
   }
 
-  subgridAccessor.clearRegion(region._offset, region._size, true);
+  subgridAccessor.clearRegion(region, true);
 
   dfor(subcellIndexInRegion, region._size) {
     tarch::la::Vector<DIMENSIONS, int> subcellIndex = subcellIndexInRegion + region._offset;
