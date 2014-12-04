@@ -118,7 +118,7 @@ public:
 //  void restrict (
 //    const peanoclaw::Patch& source,
 //    peanoclaw::Patch&       destination,
-//    bool restrictOnlyOverlappedAreas
+//    bool restrictOnlyOverlappedRegions
 //  ) const;
 
   /**

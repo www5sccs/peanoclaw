@@ -108,15 +108,20 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
       //std::cout << "parameters read (meshwidth): " << par.get_dx() << " vs " << meshwidth(0) << " and " << par.get_dy() << " vs " << meshwidth(1) << std::endl;
       //std::cout << "parameters read (cells): " << par.get_Nxcell() << " vs " << subdivisionFactor(0) << " and " << par.get_Nycell() << " vs " << subdivisionFactor(1) << std::endl;
 
-      Choice_scheme *wrapper_scheme = new Choice_scheme(par);
-      Scheme *scheme = wrapper_scheme->getInternalScheme();
-
-      // kick off computation!
-      scheme->setTimestep(maximumTimestepSize);
-//        scheme->setMaxTimestep(maximumTimestepSize); // TODO: maximumTimstepSize is ignored and the "real" maxTimestep is computed
-      scheme->setMaxTimestep(std::min(maximumTimestepSize, 0.5));
+      Choice_scheme *wrapper_scheme = 0;
+      Scheme *scheme = 0;
 
       do {
+        if(wrapper_scheme != 0) {
+          delete wrapper_scheme;
+        }
+        wrapper_scheme = new Choice_scheme(par);
+        scheme = wrapper_scheme->getInternalScheme();
+
+        // kick off computation!
+        scheme->setTimestep(maximumTimestepSize);
+  //        scheme->setMaxTimestep(maximumTimestepSize); // TODO: maximumTimstepSize is ignored and the "real" maxTimestep is computed
+        scheme->setMaxTimestep(std::min(maximumTimestepSize, 0.5));
         scheme->usePeanoClaw();
 
         // overwrite internal values
@@ -128,6 +133,8 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
         struct timeval start;
         gettimeofday(&start, NULL);
 
+        //TODO unterweg debug
+        std::cout << subgrid.getPosition() << std::endl;
         wrapper_scheme->calcul();
 
         struct timeval stop;
@@ -140,6 +147,7 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
             std::cout << "scheme retry activated!" << std::endl;
 //            throw "";
             scheme->setMaxTimestep(scheme->getTimestep());
+            maximumTimestepSize = scheme->getTimestep();
         }
       } while (scheme->getVerif() == 0); // internal error detection of FullSWOF2D
 
