@@ -40,7 +40,7 @@ void peanoclaw::tests::GhostlayerExtrapolationTest::testEdgeExtrapolation2D() {
   peanoclaw::grid::SubgridAccessor& accessor = subgrid.getAccessor();
 
   //Set subgrid to zero
-  accessor.clearRegion(-ghostlayerWidth, 3 + 2*ghostlayerWidth, true);
+  accessor.clearRegion(Region(-ghostlayerWidth, 3 + 2*ghostlayerWidth), true);
 
   //Fill subgrid with test data
   tarch::la::Vector<DIMENSIONS, int> faceSize;
