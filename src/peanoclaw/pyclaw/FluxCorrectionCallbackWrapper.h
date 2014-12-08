@@ -38,6 +38,8 @@ class peanoclaw::pyclaw::FluxCorrectionCallbackWrapper : public peanoclaw::inter
       int dimension,
       int direction
     ) const;
+
+    void computeFluxes(Patch& subgrid) const;
 };
 
 #endif /* PEANOCLAW_PYCLAW_FLUXCORRECTIONCALLBACKWRAPPER_H_ */

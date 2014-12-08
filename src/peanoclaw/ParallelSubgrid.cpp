@@ -6,7 +6,7 @@
  */
 #include "peanoclaw/ParallelSubgrid.h"
 
-#include "peanoclaw/Region.h"
+#include "peanoclaw/geometry/Region.h"
 #include "peanoclaw/Heap.h"
 
 #include "peano/utils/Globals.h"

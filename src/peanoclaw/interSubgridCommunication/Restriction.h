@@ -13,8 +13,11 @@
 
 namespace peanoclaw {
 
-  class Region;
   class Patch;
+
+  namespace geometry {
+    class Region;
+  }
 
   namespace interSubgridCommunication {
     class Restriction;

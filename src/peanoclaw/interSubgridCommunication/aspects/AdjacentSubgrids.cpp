@@ -10,7 +10,7 @@
 #include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversal.h"
 #include "peanoclaw/interSubgridCommunication/aspects/FaceAdjacentPatchTraversal.h"
 
-#include "peanoclaw/Region.h"
+#include "peanoclaw/geometry/Region.h"
 #include "peanoclaw/Heap.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/ParallelSubgrid.h"
@@ -452,7 +452,7 @@ void peanoclaw::interSubgridCommunication::aspects::SetOverlapOfRemoteGhostlayer
       && patch2.isValid()
   ) {
     ParallelSubgrid parallelSubgrid2(patch2);
-    int entry = Region::linearizeManifoldPosition(-1 * direction);
+    int entry = peanoclaw::geometry::Region::linearizeManifoldPosition(-1 * direction);
 
     if(patch1.isValid()) {
       int patch1GhostlayerWidth = patch1.getGhostlayerWidth();

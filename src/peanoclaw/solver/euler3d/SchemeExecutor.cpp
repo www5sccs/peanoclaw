@@ -58,7 +58,7 @@ peanoclaw::solver::euler3d::SchemeExecutor::SchemeExecutor(
     _uOldOffset(0),
     _numberOfUnknowns(subgrid.getUnknownsPerSubcell()),
     _stride(0),
-    _uOldArray(subgrid.getUOldWithGhostlayerArray(0)),
+    _uOldArray(subgrid.getAccessor().getUOldWithGhostLayerArray(0)),
     _maxLambda(-1),
     _maxDensity(std::numeric_limits<double>::min()),
     _minDensity(std::numeric_limits<double>::max())

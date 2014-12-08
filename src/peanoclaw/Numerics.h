@@ -117,6 +117,8 @@ private:
       int direction
     ) const;
 
+    virtual void computeFluxes(Patch& subgrid) const;
+
     /**
      * Fills the specified boundary layer.
      *

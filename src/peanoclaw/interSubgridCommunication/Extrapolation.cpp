@@ -57,7 +57,7 @@ double peanoclaw::interSubgridCommunication::ExtrapolationAxis::getMaximumLinear
 
 void peanoclaw::interSubgridCommunication::CornerExtrapolation::operator()(
   peanoclaw::Patch& subgrid,
-  const peanoclaw::Region& region,
+  const peanoclaw::geometry::Region& region,
   const tarch::la::Vector<DIMENSIONS,int> cornerIndex
 ) {
   peanoclaw::grid::SubgridAccessor& subgridAccessor = subgrid.getAccessor();
@@ -99,7 +99,7 @@ peanoclaw::interSubgridCommunication::EdgeExtrapolation::EdgeExtrapolation()
 
 void peanoclaw::interSubgridCommunication::EdgeExtrapolation::operator ()(
   peanoclaw::Patch& subgrid,
-  const peanoclaw::Region& region,
+  const peanoclaw::geometry::Region& region,
   const tarch::la::Vector<DIMENSIONS,int>& direction
 ) {
   _maximumLinearError = 0.0;

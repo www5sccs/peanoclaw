@@ -42,6 +42,8 @@ class peanoclaw::interSubgridCommunication::FluxCorrection {
       int direction
     ) const = 0;
 
+    virtual void computeFluxes(Patch& subgrid) const = 0;
+
 };
 
 #endif /* PEANOCLAW_INTERSUBGRIDCOMMUNICATION_COARSEGRIDCORRECTION_H_ */

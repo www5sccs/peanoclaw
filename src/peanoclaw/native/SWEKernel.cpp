@@ -8,7 +8,7 @@
 #include "peanoclaw/native/SWEKernel.h"
 
 #include "peanoclaw/Patch.h"
-#include "peanoclaw/Region.h"
+#include "peanoclaw/geometry/Region.h"
 #include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 #include "peanoclaw/native/SWE_WavePropagationBlock_patch.hh"
 
@@ -20,7 +20,7 @@ tarch::logging::Log peanoclaw::native::SWEKernel::_log("peanoclaw::native::SWEKe
 
 void peanoclaw::native::SWEKernel::transformWaterHeight(
   peanoclaw::Patch& subgrid,
-  const Region&       region,
+  const peanoclaw::geometry::Region&       region,
   bool              modifyUOld,
   bool              absoluteToAboveSeaFloor
 ) const {
@@ -247,8 +247,8 @@ void peanoclaw::native::SWEKernel::interpolateSolution (
   peanoclaw::grid::SubgridAccessor destinationAccessor = destination.getAccessor();
   tarch::la::Vector<DIMENSIONS,int> sourceSubdivisionFactor = source.getSubdivisionFactor();
 
-  Region destinationRegion(destinationOffset, destinationSize);
-  Region sourceRegion = destinationRegion.mapToPatch(destination, source);
+  peanoclaw::geometry::Region destinationRegion(destinationOffset, destinationSize);
+  peanoclaw::geometry::Region sourceRegion = destinationRegion.mapToPatch(destination, source);
 
   //Increase sourceRegion by one cell in each direction.
   for(int d = 0; d < DIMENSIONS; d++) {
@@ -289,7 +289,7 @@ void peanoclaw::native::SWEKernel::restrictSolution (
   bool              restrictOnlyOverlappedRegions
 ) const {
 
-  Region sourceRegion(tarch::la::Vector<DIMENSIONS,int>(0), source.getSubdivisionFactor());
+  peanoclaw::geometry::Region sourceRegion(tarch::la::Vector<DIMENSIONS,int>(0), source.getSubdivisionFactor());
 
   transformWaterHeight(source, sourceRegion, true, false); //UOld
   transformWaterHeight(source, sourceRegion, false, false); //UNew
@@ -308,7 +308,7 @@ void peanoclaw::native::SWEKernel::postProcessRestriction(
   peanoclaw::Patch& destination,
   bool              restrictOnlyOverlappedRegions
 ) const {
-  Region destinationRegion(tarch::la::Vector<DIMENSIONS,int>(0), destination.getSubdivisionFactor());
+  peanoclaw::geometry::Region destinationRegion(tarch::la::Vector<DIMENSIONS,int>(0), destination.getSubdivisionFactor());
   transformWaterHeight(destination, destinationRegion, true, true); //UOld
   transformWaterHeight(destination, destinationRegion, false, true); //UNew
 }

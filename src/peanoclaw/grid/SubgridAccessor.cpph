@@ -39,30 +39,13 @@ void peanoclaw::grid::SubgridIterator<NumberOfUnknowns>::restart() {
   _unknown = -1;
   _indexUNew = _linearization.linearize(-1, _offset+_linearization.getInitialOffsetForIterator());
   _indexUOld = _linearization.linearizeWithGhostlayer(-1, _offset+_linearization.getInitialOffsetForIterator());
-//  _data = _subgrid.getUNewArray();
 
   //Prepare for first increment
   _position(DIMENSIONS-1)--;
-  //_indexUNew-=_linearization.getCellStrideUNew(DIMENSIONS-1); //for one step in x2-direction
-//  _indexUNew-=_linearization.getQStrideUNew(); //for one unknown increment
-  //_indexUOld-=_linearization.getCellStrideUOld(DIMENSIONS-1); //for one step in x2-direction
-//  _indexUOld-=_linearization.getQStrideUOld(); //for one unknown increment
-
   _offsetPlusSize = _offset + _size;
 
   _uNewAllUnknownsStride = NumberOfUnknowns*_linearization.getQStrideUNew();
   _uOldAllUnknownsStride = NumberOfUnknowns*_linearization.getQStrideUOld();
-
-  //TODO unterweg debug
-//  std::cout << "Initializing offset=" << _offset << " size=" << _size << " indexUNew=" << _indexUNew << " indexUOld=" << _indexUOld << " init=" << _linearization.linearizeWithGhostlayer(0, _offset) << std::endl;
-//  for(int i = 0; i < DIMENSIONS; i++) {
-//    std::cout << _linearization.getCellStrideUNew(i) << " ";
-//  }
-//  std::cout << std::endl;
-//  for(int i = 0; i < DIMENSIONS; i++) {
-//    std::cout << _linearization.getCellStrideUOld(i) << " ";
-//  }
-//  std::cout << std::endl;
 }
 
 template<int NumberOfUnknowns>
@@ -114,13 +97,13 @@ double peanoclaw::grid::SubgridIterator<NumberOfUnknowns>::getUnknownUOld() cons
     _position,
     _unknown
   );
-  return _u[_accessor._uOldWithGhostlayerArrayIndex + _indexUOld].getU();
+  return _u[_linearization.getUOldWithGhostlayerArrayIndex() + _indexUOld].getU();
 }
 
 template<int NumberOfUnknowns>
 tarch::la::Vector<NumberOfUnknowns, double> peanoclaw::grid::SubgridIterator<NumberOfUnknowns>::getUnknownsUOld() const {
   tarch::la::Vector<NumberOfUnknowns, double> unknowns;
-  int localIndexUOld = _accessor._uOldWithGhostlayerArrayIndex + _indexUOld + _linearization.getQStrideUOld();
+  int localIndexUOld = _linearization.getUOldWithGhostlayerArrayIndex() + _indexUOld + _linearization.getQStrideUOld();
   for(int i = 0; i < NumberOfUnknowns; i++) {
     unknowns[i] = _u[localIndexUOld].getU();
     localIndexUOld += _linearization.getQStrideUOld();
@@ -158,12 +141,12 @@ void peanoclaw::grid::SubgridIterator<NumberOfUnknowns>::setUnknownUOld(double v
       _position,
       _unknown
   );
-  _u[_accessor._uOldWithGhostlayerArrayIndex + _indexUOld].setU(value);
+  _u[_linearization.getUOldWithGhostlayerArrayIndex() + _indexUOld].setU(value);
 }
 
 template<int NumberOfUnknowns>
 void peanoclaw::grid::SubgridIterator<NumberOfUnknowns>::setUnknownsUOld(const tarch::la::Vector<NumberOfUnknowns, double>& unknowns) {
-  int localIndexUOld = _accessor._uOldWithGhostlayerArrayIndex + _indexUOld + _linearization.getQStrideUOld();
+  int localIndexUOld = _linearization.getUOldWithGhostlayerArrayIndex() + _indexUOld + _linearization.getQStrideUOld();
   for(int i = 0; i < NumberOfUnknowns; i++) {
     _u[localIndexUOld].setU(unknowns[i]);
     localIndexUOld += _linearization.getQStrideUOld();
@@ -254,5 +237,31 @@ peanoclaw::grid::SubgridIterator<NumberOfUnknowns> peanoclaw::grid::SubgridAcces
     *_u,
     offset,
     size
+  );
+}
+
+template<int NumberOfUnknowns>
+peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns> peanoclaw::grid::SubgridAccessor::getSubgridFaceIterator(
+  int dimension,
+  int direction
+) {
+  tarch::la::Vector<DIMENSIONS_MINUS_ONE,int> offset(0);
+  tarch::la::Vector<DIMENSIONS_MINUS_ONE,int> size;
+  for(int d = 0; d < DIMENSIONS-1; d++) {
+    size[d] = _cellDescription.getSubdivisionFactor(Linearization::getGlobalDimension(d, dimension));
+  }
+
+  //TODO unterweg debug
+  std::cout << "offset=" << offset << " size=" << size << " subdivisionFactor=" << _cellDescription.getSubdivisionFactor()
+      << " d0=" << Linearization::getGlobalDimension(0, dimension) << "d1=" << Linearization::getGlobalDimension(1, dimension)
+      << " dimension=" << dimension << std::endl;
+
+  return SubgridFaceIterator<NumberOfUnknowns>(
+    dimension,
+    direction,
+    _cellDescription,
+    _linearization,
+    *_u,
+    peanoclaw::geometry::HyperplaneRegion(offset, size)
   );
 }

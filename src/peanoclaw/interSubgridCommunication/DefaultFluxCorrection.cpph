@@ -1,0 +1,38 @@
+/*
+ * DefaultFluxCorrection.cpph
+ *
+ *  Created on: Dec 5, 2014
+ *      Author: kristof
+ */
+
+template<int NumberOfUnknowns>
+void peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberOfUnknowns>::computeFluxes(
+  Patch& subgrid
+) const {
+
+  for(int dimension = 0; dimension < DIMENSIONS; dimension++) {
+    double deltaTDeltaX = subgrid.getTimeIntervals().getTimestepSize() / (2 * subgrid.getSubcellSize()[dimension]);
+
+    for(int direction = -1; direction < 2; direction += 2) {
+      peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns> faceIterator
+        = subgrid.getAccessor().getSubgridFaceIterator<NumberOfUnknowns>(dimension, direction);
+
+      //TODO unterweg debug
+      std::cout << "dimension=" << dimension << " direction=" << direction << "ptr0=" << (&faceIterator) << std::endl;
+      while(faceIterator.moveToNextInterfaceCell()) {
+        faceIterator.moveToNextGhostCell(); //Move to first cell
+
+        tarch::la::Vector<NumberOfUnknowns,double> outerUnknowns = faceIterator.getGhostUnknowns();
+        tarch::la::Vector<NumberOfUnknowns,double> outerFluxes = outerUnknowns * outerUnknowns[1 + dimension];
+        tarch::la::Vector<NumberOfUnknowns,double> innerUnknowns = faceIterator.getUnknownsUOld();
+        tarch::la::Vector<NumberOfUnknowns,double> innerFluxes = innerUnknowns * innerUnknowns[1 + dimension];
+
+        tarch::la::Vector<NumberOfUnknowns,double> fluxes = 0.5 * (outerFluxes + innerFluxes)
+                + direction * deltaTDeltaX * (innerUnknowns - outerUnknowns);
+        faceIterator.setFluxes(fluxes);
+
+        faceIterator.skipRemainingGhostCells();
+      }
+    }
+  }
+}

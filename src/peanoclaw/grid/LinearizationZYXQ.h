@@ -51,25 +51,15 @@ peanoclaw::grid::Linearization::Linearization(
   //Fluxes
   _faceOffset[0] = 0;
   for(int d = 0; d < DIMENSIONS; d++) {
-    tarch::la::Vector<DIMENSIONS_MINUS_ONE, int> subgridDimensions;
-    int subgridDimension = 0;
-    for(int i = 0; i < DIMENSIONS-1; i++) {
-      if(d == i) {
-        subgridDimension++;
-      }
-      subgridDimensions[i] = subgridDimension;
-      subgridDimension++;
-    }
-
     //Cell stride
     _cellStrideFlux[DIMENSIONS_MINUS_ONE * d] = 1;
     for(int i = 1; i < DIMENSIONS-1; i++) {
       _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + i]
-        = _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + i - 1] * subdivisionFactor[subgridDimensions(i-1)];
+        = _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + i - 1] * subdivisionFactor[getGlobalDimension(i-1, d)];
     }
 
     //q stride
-    _qStrideFlux[d] = _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + DIMENSIONS - 2] * subdivisionFactor[subgridDimensions[DIMENSIONS - 2]];
+    _qStrideFlux[d] = _cellStrideFlux[DIMENSIONS_MINUS_ONE * d + DIMENSIONS - 2] * subdivisionFactor[getGlobalDimension(DIMENSIONS - 2, d)];
 
     //Face offsets
     if(d > 0) {
@@ -77,6 +67,19 @@ peanoclaw::grid::Linearization::Linearization(
     }
     _faceOffset[2 * d + 1] = _faceOffset[2 * d] + _qStrideFlux[d] * numberOfUnknowns;
   }
+
+  //TODO unterweg debug
+//  std::cout << " subdivisionFactor=" << subdivisionFactor << " unknowns=" << numberOfUnknowns << " faceOffset=" << _faceOffset << " cellStrideFlux=" << _cellStrideFlux
+//      << " qStrideFlux=" << _qStrideFlux << std::endl;
+
+  //Array indices
+  int volumeNew = tarch::la::volume(subdivisionFactor);
+  int volumeOld = tarch::la::volume(subdivisionFactor + 2*ghostlayerWidth);
+
+  _uOldWithGhostlayerArrayIndex = volumeNew * numberOfUnknowns;
+  _parameterWithoutGhostlayerArrayIndex = _uOldWithGhostlayerArrayIndex + volumeOld * numberOfUnknowns;
+  _parameterWithGhostlayerArrayIndex = _parameterWithoutGhostlayerArrayIndex + volumeNew * numberOfParameterFieldsWithoutGhostlayer;
+  _fluxArrayIndex = _parameterWithGhostlayerArrayIndex + volumeOld * numberOfParameterFieldsWithGhostlayer;
 
   assertion2(tarch::la::allGreater(_cellStrideUNew, tarch::la::Vector<DIMENSIONS,int>(0)), subdivisionFactor, ghostlayerWidth);
   assertion2(tarch::la::allGreater(_cellStrideUOld, tarch::la::Vector<DIMENSIONS,int>(0)), subdivisionFactor, ghostlayerWidth);

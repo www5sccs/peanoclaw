@@ -5,7 +5,7 @@
  *      Author: kristof
  */
 
-#include "peanoclaw/Region.h"
+#include "peanoclaw/geometry/Region.h"
 #include "peanoclaw/Patch.h"
 
 #include "peano/utils/Loop.h"
@@ -19,7 +19,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
   peanoclaw::Patch&                                   destination,
   peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& sourceIterator,
   peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& destinationIterator,
-  const Region&                                         region
+  const peanoclaw::geometry::Region&                  region
 ) {
   logTraceInWith2Arguments("restrictRegion", source.toString(), destination.toString());
   assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
@@ -50,7 +50,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
   assertion4(timeFactorUNew == timeFactorUNew, destinationTimeUOld, destinationTimeUNew, source.getTimeIntervals().getCurrentTime(), source.getTimeIntervals().getTimestepSize());
 
   //Destination region
-  Region destinationRegion = region.mapToPatch(source, destination, epsilon);
+  peanoclaw::geometry::Region destinationRegion = region.mapToPatch(source, destination, epsilon);
   destinationIterator.restart(destinationRegion._offset, destinationRegion._size);
 
   //Loop through region in destination
@@ -63,7 +63,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
               && tarch::la::allGreater(destination.getSubdivisionFactor(), destinationSubcellIndex), region, destinationRegion, destination, source);
 
     //Get region for single destination cell
-    Region subcellRegion = region.mapCellToPatch(sourcePosition, sourceSubcellSize, destinationSubcellSize, destinationSubcellIndex, destinationSubcellPosition, epsilon);
+    peanoclaw::geometry::Region subcellRegion = region.mapCellToPatch(sourcePosition, sourceSubcellSize, destinationSubcellSize, destinationSubcellIndex, destinationSubcellPosition, epsilon);
     sourceIterator.restart(subcellRegion._offset, subcellRegion._size);
     assertion7(tarch::la::allGreaterEquals(subcellRegion._size, 0), subcellRegion, sourcePosition, sourceSubcellSize, destinationSubcellSize, destinationSubcellPosition, source, destination);
 
@@ -112,8 +112,8 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
     = destinationAccessor.getSubgridIterator<NumberOfUnknowns>(tarch::la::Vector<DIMENSIONS, int>(0), destination.getSubdivisionFactor());
 
   if(restrictOnlyOverlappedRegions) {
-    Region regions[DIMENSIONS_TIMES_TWO];
-    int numberOfRegionsToProcess = Region::getRegionsOverlappedByNeighboringGhostlayers(
+    peanoclaw::geometry::Region regions[DIMENSIONS_TIMES_TWO];
+    int numberOfRegionsToProcess = peanoclaw::geometry::Region::getRegionsOverlappedByNeighboringGhostlayers(
         destination.getLowerNeighboringGhostlayerBounds(),
         destination.getUpperNeighboringGhostlayerBounds(),
         source.getPosition(),
@@ -135,7 +135,7 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
     }
   } else {
     //Restrict complete Patch
-    Region region;
+    peanoclaw::geometry::Region region;
     region._offset = tarch::la::Vector<DIMENSIONS, int>(0);
     region._size = source.getSubdivisionFactor();
     restrictRegion(source, destination, sourceIterator, destinationIterator, region);

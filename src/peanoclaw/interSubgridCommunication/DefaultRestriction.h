@@ -76,7 +76,7 @@ class peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate {
       peanoclaw::Patch&                                   destination,
       peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& sourceIterator,
       peanoclaw::grid::SubgridIterator<NumberOfUnknowns>& destinationIterator,
-      const Region&                                       region
+      const peanoclaw::geometry::Region&                  region
     );
 
   public:

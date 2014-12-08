@@ -21,10 +21,20 @@
 namespace peanoclaw {
   namespace interSubgridCommunication {
     class DefaultFluxCorrection;
+
+    template<int NumberOfUnknowns>
+    class DefaultFluxCorrectionTemplate;
   }
 
   class Patch;
 }
+
+template<int NumberOfUnknowns>
+class peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate {
+
+  public:
+    void computeFluxes(Patch& subgrid) const;
+};
 
 class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
     : public peanoclaw::interSubgridCommunication::FluxCorrection {
@@ -86,6 +96,10 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
       int dimension,
       int direction
     ) const;
+
+    void computeFluxes(Patch& subgrid) const;
 };
+
+#include "peanoclaw/interSubgridCommunication/DefaultFluxCorrection.cpph"
 
 #endif /* PEANOCLAW_INTERSUBGRIDCOMMUNICATION_DEFAULTFLUXCORRECTION_H_ */

@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <limits>
 
-#include "Region.h"
+#include "peanoclaw/geometry/Region.h"
 #include "Cell.h"
 #include "Heap.h"
 
@@ -48,8 +48,15 @@ void peanoclaw::Patch::refreshAccessor() {
   );
 }
 
-void peanoclaw::Patch::switchRegionToMinimalFineGridTimeInterval(const Region& region,
-    double factorForUOld, double factorForUNew) {
+void peanoclaw::Patch::resetAccessor() {
+  _accessor = peanoclaw::grid::SubgridAccessor();
+}
+
+void peanoclaw::Patch::switchRegionToMinimalFineGridTimeInterval(
+  const peanoclaw::geometry::Region& region,
+  double factorForUOld,
+  double factorForUNew
+) {
   dfor(subcellIndex, region._size){
     int linearIndexUOld = _accessor.getLinearIndexUOld(subcellIndex + region._offset);
     int linearIndexUNew = _accessor.getLinearIndexUNew(subcellIndex + region._offset);
@@ -217,9 +224,14 @@ peanoclaw::grid::TimeIntervals& peanoclaw::Patch::getTimeIntervals() {
 }
 
 const peanoclaw::grid::SubgridAccessor& peanoclaw::Patch::getAccessor() const {
+  assertion(_accessor.isInitialized());
   return _accessor;
 }
 peanoclaw::grid::SubgridAccessor& peanoclaw::Patch::getAccessor() {
+//  if(!_accessor.isInitialized()) {
+//    refreshAccessor();
+//    assertion(_accessor.isInitialized());
+//  }
   return _accessor;
 }
 
@@ -330,13 +342,13 @@ void peanoclaw::Patch::switchValuesAndTimeIntervalToMinimalFineGridTimeInterval(
 //    }
 //
 //    if (willCoarsen()) {
-//      Region region;
+//      peanoclaw::geometry::Region region;
 //      region._offset = tarch::la::Vector<DIMENSIONS, int>(0);
 //      region._size = getSubdivisionFactor();
 //      switchRegionToMinimalFineGridTimeInterval(region, factorForUOld, factorForUNew);
 //    }
 //    else if(isVirtual()) {
-//      Region regions[DIMENSIONS_TIMES_TWO];
+//      peanoclaw::geometry::Region regions[DIMENSIONS_TIMES_TWO];
 //      int numberOfRegions = peanoclaw::getRegionsForRestriction(
 //        getLowerNeighboringGhostlayerBounds(),
 //        getUpperNeighboringGhostlayerBounds(),
@@ -388,24 +400,6 @@ tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellPosition(
 
 tarch::la::Vector<DIMENSIONS, double> peanoclaw::Patch::getSubcellSize() const {
   return _subcellSize;
-}
-
-double* peanoclaw::Patch::getUOldWithGhostlayerArray(int unknown) const {
-  int index = _accessor._uOldWithGhostlayerArrayIndex
-      + tarch::la::volume(getSubdivisionFactor() + 2*getGhostlayerWidth()) * unknown;
-  return reinterpret_cast<double*>(&(_uNew->at(index)));
-}
-
-double* peanoclaw::Patch::getParameterWithoutGhostlayerArray(int parameter) const {
-  int index = _accessor._parameterWithoutGhostlayerArrayIndex
-      + tarch::la::volume(getSubdivisionFactor()) * parameter;
-  return reinterpret_cast<double*>(&(_uNew->at(index)));
-}
-
-double* peanoclaw::Patch::getParameterWithGhostlayerArray(int parameter) const {
-  int index = _accessor._parameterWithGhostlayerArrayIndex
-      + tarch::la::volume(getSubdivisionFactor() + 2*getGhostlayerWidth()) * parameter;
-  return reinterpret_cast<double*>(&(_uNew->at(index)));
 }
 
 int peanoclaw::Patch::getUIndex() const {
@@ -786,7 +780,7 @@ void peanoclaw::Patch::switchToLeaf() {
         + _cellDescription->getTimestepSize() - time) / timestepSize;
   }
 
-  Region region;
+  peanoclaw::geometry::Region region;
   region._offset = tarch::la::Vector<DIMENSIONS, int>(0);
   region._size = getSubdivisionFactor();
   switchRegionToMinimalFineGridTimeInterval(region, factorForUOld, factorForUNew);

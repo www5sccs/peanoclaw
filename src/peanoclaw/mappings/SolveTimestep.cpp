@@ -651,6 +651,8 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         tarch::la::Vector<DIMENSIONS, double> requiredMeshWidth = _numerics->getDemandedMeshWidth(subgrid, false);
         subgrid.setDemandedMeshWidth(requiredMeshWidth);
 
+        _numerics->computeFluxes(subgrid);
+
         #ifdef Parallel
         ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
         parallelSubgrid.markCurrentStateAsSent(false);

@@ -51,7 +51,7 @@ private:
    */
   void transformWaterHeight(
     peanoclaw::Patch& subgrid,
-    const Region&       region,
+    const peanoclaw::geometry::Region&       region,
     bool              modifyUOld,
     bool              absoluteToAboveSeaFloor
   ) const;

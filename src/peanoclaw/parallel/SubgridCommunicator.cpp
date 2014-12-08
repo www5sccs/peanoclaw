@@ -6,7 +6,7 @@
  */
 #include "peanoclaw/parallel/SubgridCommunicator.h"
 
-#include "peanoclaw/Region.h"
+#include "peanoclaw/geometry/Region.h"
 #include "peanoclaw/ParallelSubgrid.h"
 
 #include "tarch/Assertions.h"
@@ -234,8 +234,8 @@ void peanoclaw::parallel::SubgridCommunicator::sendOverlappedCells(
   ParallelSubgrid parallelSubgrid(subgrid);
   peanoclaw::grid::SubgridAccessor& subgridAccessor = subgrid.getAccessor();
 
-  Region regions[THREE_POWER_D_MINUS_ONE];
-  int numberOfRegions = Region::getRegionsOverlappedByRemoteGhostlayers(
+  peanoclaw::geometry::Region regions[THREE_POWER_D_MINUS_ONE];
+  int numberOfRegions = peanoclaw::geometry::Region::getRegionsOverlappedByRemoteGhostlayers(
     parallelSubgrid.getAdjacentRanks(),
     parallelSubgrid.getOverlapOfRemoteGhostlayers(),
     subgrid.getSubdivisionFactor(),
@@ -255,7 +255,7 @@ void peanoclaw::parallel::SubgridCommunicator::sendOverlappedCells(
 
   int entry = 0;
   for(int i = 0; i < numberOfRegions; i++) {
-    Region& region = regions[i];
+    peanoclaw::geometry::Region& region = regions[i];
 
     //U new
     dfor(subcellIndex, region._size) {
@@ -372,8 +372,8 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
   logTraceInWith1Argument("receiveOverlappedCells", subgrid);
   #ifdef Parallel
   peanoclaw::grid::SubgridAccessor& subgridAccessor = subgrid.getAccessor();
-  Region regions[THREE_POWER_D_MINUS_ONE];
-  int numberOfRegions = Region::getRegionsOverlappedByRemoteGhostlayers(
+  peanoclaw::geometry::Region regions[THREE_POWER_D_MINUS_ONE];
+  int numberOfRegions = peanoclaw::geometry::Region::getRegionsOverlappedByRemoteGhostlayers(
     remoteCellDescription.getAdjacentRanks(),
     remoteCellDescription.getOverlapByRemoteGhostlayer(),
     remoteCellDescription.getSubdivisionFactor(),
@@ -434,7 +434,7 @@ void peanoclaw::parallel::SubgridCommunicator::receiveOverlappedCells(
 
   int entry = 0;
   for(int i = 0; i < numberOfRegions; i++) {
-    Region& region = regions[i];
+    peanoclaw::geometry::Region& region = regions[i];
 
     //U new
     dfor(subcellIndex, region._size) {

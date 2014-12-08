@@ -91,6 +91,12 @@ void peanoclaw::Numerics::applyFluxCorrection (
   );
 }
 
+void peanoclaw::Numerics::computeFluxes(
+  Patch& subgrid
+) const {
+  _fluxCorrection->computeFluxes(subgrid);
+}
+
 void peanoclaw::Numerics::update (Patch& finePatch) {
 
 }

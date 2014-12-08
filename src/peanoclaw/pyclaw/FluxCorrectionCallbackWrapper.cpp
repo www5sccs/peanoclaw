@@ -85,5 +85,9 @@ void peanoclaw::pyclaw::FluxCorrectionCallbackWrapper::applyCorrection(
   );
 }
 
+void peanoclaw::pyclaw::FluxCorrectionCallbackWrapper::computeFluxes(Patch& subgrid) const {
+
+}
+
 
 

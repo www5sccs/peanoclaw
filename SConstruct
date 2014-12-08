@@ -153,7 +153,7 @@ else:
 compiler = ARGUMENTS.get('compiler', 'gcc')  # Read command line parameter
 if compiler == 'gcc':
    if(parallel == 'parallel_no' or parallel == 'no'):
-     cxx = 'g++-4.8'
+     cxx = 'g++'
    else:
      cxx = 'mpicxx'
      cppdefines.append('MPICH_SKIP_MPICXX')

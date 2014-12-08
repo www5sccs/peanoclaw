@@ -252,7 +252,50 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrectio
 }
 
 
-
+void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::computeFluxes(Patch& subgrid) const {
+  switch(subgrid.getUnknownsPerSubcell()) {
+    case 1:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<1> fluxCorrection1;
+      fluxCorrection1.computeFluxes(subgrid);
+      break;
+    case 2:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<2> fluxCorrection2;
+      fluxCorrection2.computeFluxes(subgrid);
+      break;
+    case 3:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<3> fluxCorrection3;
+      fluxCorrection3.computeFluxes(subgrid);
+      break;
+    case 4:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<4> fluxCorrection4;
+      fluxCorrection4.computeFluxes(subgrid);
+      break;
+    case 5:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<5> fluxCorrection5;
+      fluxCorrection5.computeFluxes(subgrid);
+      break;
+    case 6:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<6> fluxCorrection6;
+      fluxCorrection6.computeFluxes(subgrid);
+      break;
+    case 7:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<7> fluxCorrection7;
+      fluxCorrection7.computeFluxes(subgrid);
+      break;
+    case 8:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<8> fluxCorrection8;
+      fluxCorrection8.computeFluxes(subgrid);
+      break;
+    case 9:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<9> fluxCorrection9;
+      fluxCorrection9.computeFluxes(subgrid);
+      break;
+    case 10:
+      peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<10> fluxCorrection10;
+      fluxCorrection10.computeFluxes(subgrid);
+      break;
+  }
+}
 
 
 
