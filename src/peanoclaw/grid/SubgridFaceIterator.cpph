@@ -1,0 +1,173 @@
+/*
+ * SubgridFaceIterator.cpph
+ *
+ *  Created on: Dec 5, 2014
+ *      Author: kristof
+ */
+
+template<int NumberOfUnknowns>
+void peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::restart() {
+  _offsetPlusSize = _region._offset + _region._size;
+  _ghostCellDistance = -1;
+  _position = _region._offset;
+  _position[0]--;
+
+  _fluxIndex = -_linearization.getCellStrideFlux(_dimension, 0) - _linearization.getQStrideFlux(_dimension);
+  tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+  subcellIndex[_dimension] = -1; //Cell before first increment
+  subcellIndex[Linearization::getGlobalDimension(0, _dimension)] = _position[0];
+  subcellIndex[Linearization::getGlobalDimension(1, _dimension)] = _position[1];
+  _uNewIndex = _linearization.linearize(0, subcellIndex);
+  _uOldIndex = _linearization.linearizeWithGhostlayer(0, subcellIndex);
+  subcellIndex[_dimension] = 0; //Cell before first increment
+  _ghostCellIndex = _linearization.linearizeWithGhostlayer(0, subcellIndex);
+}
+
+template<int NumberOfUnknowns>
+void peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::changeGhostCellDistance(int increment) {
+  _uNewIndex += -_direction * increment * _linearization.getCellStrideUNew(_dimension);
+  _uOldIndex += -_direction * increment * _linearization.getCellStrideUOld(_dimension);
+  _ghostCellIndex -= -_direction * increment * _linearization.getCellStrideUOld(_dimension);
+}
+
+template<int NumberOfUnknowns>
+peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::SubgridFaceIterator(
+  int dimension,
+  int direction,
+  CellDescription& cellDescription,
+  Linearization& linearization,
+  std::vector<Data>& u,
+  const peanoclaw::geometry::HyperplaneRegion& region
+) : _dimension(dimension),
+    _direction(direction),
+    _region(region),
+    _cellDescription(cellDescription),
+    _linearization(linearization),
+    _u(u),
+    _fluxIndex(-1),
+    _uNewIndex(-1),
+    _uOldIndex(-1),
+    _ghostCellIndex(-1),
+    _ghostLayerWidth(cellDescription.getGhostlayerWidth()),
+    _position(-1),
+    _normal(0) {
+
+  _normal[dimension] = _direction;
+
+  restart();
+}
+
+template<int NumberOfUnknowns>
+bool peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::moveToNextInterfaceCell() {
+  assertionEquals(_ghostCellDistance, -1);
+
+  //TODO unterweg debug
+  std::cout << "moveToNextCell position=" << _position << " offsetPlusSize=" << _offsetPlusSize
+      << " _region=" << _region._offset << "," << _region._size << " ptr=" << this << std::endl;
+
+  _fluxIndex += _linearization.getCellStrideFlux(_dimension, 0);
+  for(int d = 0; d < DIMENSIONS_MINUS_ONE; d++) {
+    _position[d]++;
+
+    if(_position[d] < _offsetPlusSize[d]) {
+      return true;
+    } else {
+      _fluxIndex += _linearization.getCellStrideFlux(_dimension, 0)
+          * (_cellDescription.getSubdivisionFactor(Linearization::getGlobalDimension(_dimension, d)) - _region._size[d]);
+      _position[d] = _region._offset[d];
+    }
+
+    //TODO unterweg debug
+    std::cout << "\td=" << d << " position=" << _position << std::endl;
+  }
+
+  return false;
+}
+
+template<int NumberOfUnknowns>
+bool peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::moveToNextGhostCell() {
+  if(_ghostCellDistance == _ghostLayerWidth - 1) {
+    _ghostCellDistance = -1;
+    changeGhostCellDistance(-_ghostLayerWidth);
+    return false;
+  }
+  _ghostCellDistance++;
+  changeGhostCellDistance(_ghostLayerWidth);
+  return true;
+}
+
+template<int NumberOfUnknowns>
+void peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::skipRemainingGhostCells() {
+  changeGhostCellDistance(-_ghostCellDistance);
+  _ghostCellDistance = -1;
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<DIMENSIONS_MINUS_ONE,int> peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::getSubcellIndex() const {
+  return _position;
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<NumberOfUnknowns,double> peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::getFluxes() const {
+  tarch::la::Vector<NumberOfUnknowns, double> fluxes;
+  int localFluxIndex = _linearization.getFluxArrayIndex() + _fluxIndex;
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    fluxes[i] = _u[localFluxIndex].getU();
+    localFluxIndex += _linearization.getQStrideFlux(_dimension);
+  }
+  return fluxes;
+}
+
+template<int NumberOfUnknowns>
+void peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::setFluxes(const tarch::la::Vector<NumberOfUnknowns,double>& fluxes) {
+  int localFluxIndex = _linearization.getFluxArrayIndex() + _fluxIndex;
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    _u[localFluxIndex].setU(fluxes[i]);
+    localFluxIndex += _linearization.getQStrideFlux(_dimension);
+  }
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<NumberOfUnknowns,double> peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::getUnknownsUOld() const {
+  tarch::la::Vector<NumberOfUnknowns, double> unknowns;
+  int localIndexUOld = _linearization.getUOldWithGhostlayerArrayIndex() + _uOldIndex + _linearization.getQStrideUOld();
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    unknowns[i] = _u[localIndexUOld].getU();
+    localIndexUOld += _linearization.getQStrideUOld();
+  }
+  return unknowns;
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<NumberOfUnknowns,double> peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::getUnknownsUNew() const {
+  tarch::la::Vector<NumberOfUnknowns, double> unknowns;
+  int localIndexUNew = _uNewIndex + _linearization.getQStrideUNew();
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    unknowns[i] = _u[localIndexUNew].getU();
+    localIndexUNew += _linearization.getQStrideUNew();
+  }
+  return unknowns;
+}
+
+template<int NumberOfUnknowns>
+tarch::la::Vector<NumberOfUnknowns,double> peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::getGhostUnknowns() const {
+  tarch::la::Vector<NumberOfUnknowns, double> unknowns;
+  int localIndexGhostCell = _linearization.getUOldWithGhostlayerArrayIndex() + _ghostCellIndex + _linearization.getQStrideUOld();
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    unknowns[i] = _u[localIndexGhostCell].getU();
+    localIndexGhostCell += _linearization.getQStrideUOld();
+  }
+  return unknowns;
+}
+
+template<int NumberOfUnknowns>
+void peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::setUnknownsUNew(
+  const tarch::la::Vector<NumberOfUnknowns,double>& unknowns
+) {
+  int localIndexUNew = _uNewIndex + _linearization.getQStrideUNew();
+  for(int i = 0; i < NumberOfUnknowns; i++) {
+    _u[localIndexUNew].setU(unknowns[i]);
+    localIndexUNew += _linearization.getQStrideUNew();
+  }
+  return unknowns;
+}
