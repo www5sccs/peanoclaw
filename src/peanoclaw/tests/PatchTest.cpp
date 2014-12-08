@@ -7,7 +7,7 @@
 #include "peanoclaw/tests/PatchTest.h"
 
 #include "peanoclaw/ParallelSubgrid.h"
-#include "peanoclaw/Region.h"
+#include "peanoclaw/geometry/Region.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/Vertex.h"
 #include "peanoclaw/tests/Helper.h"
@@ -18,6 +18,8 @@
 
 #include "tarch/tests/TestCaseFactory.h"
 registerTest(peanoclaw::tests::PatchTest)
+
+using namespace peanoclaw::geometry;
 
 
 #ifdef UseTestSpecificCompilerSettings
@@ -670,8 +672,8 @@ void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers() {
   tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
 
   //Check rank 1
-  Region regions[THREE_POWER_D_MINUS_ONE];
-  int numberOfRegions = Region::getRegionsOverlappedByRemoteGhostlayers(
+  peanoclaw::geometry::Region regions[THREE_POWER_D_MINUS_ONE];
+  int numberOfRegions = peanoclaw::geometry::Region::getRegionsOverlappedByRemoteGhostlayers(
     adjacentRanks,
     overlapOfRemoteGhostlayers,
     subdivisionFactor,
@@ -700,7 +702,7 @@ void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers() {
   validateWithParams1(tarch::la::equals(regions[2]._size, expectedSize), regions[2]._size);
 
   //Check rank 2
-  numberOfRegions = Region::getRegionsOverlappedByRemoteGhostlayers(
+  numberOfRegions = peanoclaw::geometry::Region::getRegionsOverlappedByRemoteGhostlayers(
     adjacentRanks,
     overlapOfRemoteGhostlayers,
     subdivisionFactor,
@@ -731,8 +733,8 @@ void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers() {
   tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(6);
 
   //Check rank 1
-//  Region regions[THREE_POWER_D_MINUS_ONE];
-//  int numberOfRegions = Region::getRegionsOverlappedByRemoteGhostlayers(
+//  peanoclaw::geometry::Region regions[THREE_POWER_D_MINUS_ONE];
+//  int numberOfRegions = peanoclaw::geometry::Region::getRegionsOverlappedByRemoteGhostlayers(
 //    adjacentRanks,
 //    overlapOfRemoteGhostlayers,
 //    subdivisionFactor,
@@ -752,8 +754,8 @@ void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers2() {
   tarch::la::Vector<DIMENSIONS, int> subdivisionFactor(18);
 
   //Check rank 2
-  Region regions[THREE_POWER_D_MINUS_ONE];
-  int numberOfRegions = Region::getRegionsOverlappedByRemoteGhostlayers(
+  peanoclaw::geometry::Region regions[THREE_POWER_D_MINUS_ONE];
+  int numberOfRegions = peanoclaw::geometry::Region::getRegionsOverlappedByRemoteGhostlayers(
     adjacentRanks,
     overlapOfRemoteGhostlayers,
     subdivisionFactor,
@@ -783,8 +785,8 @@ void peanoclaw::tests::PatchTest::testOverlapOfRemoteGhostlayers3D() {
   assignList(subdivisionFactor) = 6, 3, 3;
 
   //Check rank 2
-  Region regions[THREE_POWER_D_MINUS_ONE];
-  int numberOfRegions = Region::getRegionsOverlappedByRemoteGhostlayers(
+  peanoclaw::geometry::Region regions[THREE_POWER_D_MINUS_ONE];
+  int numberOfRegions = peanoclaw::geometry::Region::getRegionsOverlappedByRemoteGhostlayers(
     adjacentRanks,
     overlapOfRemoteGhostlayers,
     subdivisionFactor,

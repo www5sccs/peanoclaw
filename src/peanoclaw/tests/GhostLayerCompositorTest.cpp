@@ -9,7 +9,7 @@
 #include "peanoclaw/tests/NumericsTestStump.h"
 #include "peanoclaw/tests/Helper.h"
 
-#include "peanoclaw/Region.h"
+#include "peanoclaw/geometry/Region.h"
 #include "peanoclaw/Patch.h"
 #include "peanoclaw/interSubgridCommunication/GhostLayerCompositor.h"
 #include "peanoclaw/interSubgridCommunication/DefaultFluxCorrection.h"
@@ -629,8 +629,8 @@ void peanoclaw::tests::GhostLayerCompositorTest::testRestrictionWithOverlappingB
   tarch::la::Vector<DIMENSIONS, double> sourceSize(2.2);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(20);
 
-  peanoclaw::Region regions[TWO_POWER_D];
-  Region::getRegionsOverlappedByNeighboringGhostlayers(
+  peanoclaw::geometry::Region regions[TWO_POWER_D];
+  peanoclaw::geometry::Region::getRegionsOverlappedByNeighboringGhostlayers(
     lowerNeighboringGhostlayerBounds,
     upperNeighboringGhostlayerBounds,
     sourcePosition,
@@ -665,8 +665,8 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionRegions()
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(0.1);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(10);
 
-  peanoclaw::Region regions[TWO_POWER_D];
-  Region::getRegionsOverlappedByNeighboringGhostlayers(
+  peanoclaw::geometry::Region regions[TWO_POWER_D];
+  peanoclaw::geometry::Region::getRegionsOverlappedByNeighboringGhostlayers(
     lowerNeighboringGhostlayerBounds,
     upperNeighboringGhostlayerBounds,
     sourcePosition,
@@ -710,8 +710,8 @@ void peanoclaw::tests::GhostLayerCompositorTest::testPartialRestrictionRegionsWi
   tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize(1.0/27.0/6.0);
   tarch::la::Vector<DIMENSIONS, int> sourceSubdivisionFactor(6);
 
-  peanoclaw::Region regions[TWO_POWER_D];
-  Region::getRegionsOverlappedByNeighboringGhostlayers(
+  peanoclaw::geometry::Region regions[TWO_POWER_D];
+  peanoclaw::geometry::Region::getRegionsOverlappedByNeighboringGhostlayers(
       lowerNeighboringGhostlayerBounds,
       upperNeighboringGhostlayerBounds,
       sourcePosition,
