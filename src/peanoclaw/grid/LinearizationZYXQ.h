@@ -18,7 +18,7 @@
  */
 
 peanoclaw::grid::Linearization::Linearization(
-    const tarch::la::Vector<DIMENSIONS, int> subdivisionFactor,
+    const tarch::la::Vector<DIMENSIONS, int>& subdivisionFactor,
     int numberOfUnknowns,
     int numberOfParameterFieldsWithoutGhostlayer,
     int numberOfParameterFieldsWithGhostlayer,
