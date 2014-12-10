@@ -244,7 +244,7 @@ void peanoclaw::solver::euler3d::SchemeExecutor::operator()(
   assertionEquals(linearIndexUOld+yzPlane, _accessor.getLinearIndexUOld(subcellIndex + unitX));
 
   peanoclaw::solver::euler3d::Cell newCell(
-    &_subgrid.getUNewArray()[linearIndexUNew],
+    &_accessor.getUNewArray()[linearIndexUNew],
     subcellIndex
   );
 

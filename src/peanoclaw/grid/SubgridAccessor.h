@@ -183,9 +183,6 @@ class peanoclaw::grid::SubgridAccessor {
     tarch::la::Vector<DIMENSIONS,int> _subdivisionFactor;
     int _ghostlayerWidth;
     std::vector<Data>* _u;
-//    int _uOldWithGhostlayerArrayIndex;
-//    int _parameterWithoutGhostlayerArrayIndex;
-//    int _parameterWithGhostlayerArrayIndex;
     Linearization      _linearization;
     bool _isInitialized;
 
@@ -226,6 +223,11 @@ class peanoclaw::grid::SubgridAccessor {
       int dimension,
       int direction
     );
+
+    /**
+     * Returns the uNew double array.
+     */
+    double* getUNewArray() const;
 
     double* getUOldWithGhostLayerArray(int unknown) const;
 

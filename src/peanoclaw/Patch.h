@@ -568,21 +568,6 @@ public:
   tarch::la::Vector<DIMENSIONS, double> getSubcellSize() const;
 
   /**
-   * Copies the data from uNew to uOld, i.e. this actually performs the
-   * transition to the next timestep by setting uOld(t) to uOld(t+1).
-   * The ghost layer stays unchanged.
-   */
-//  void copyUNewToUOld();
-
-  /**
-   * Returns the uNew double array.
-   */
-  double* getUNewArray() const {
-    assertion1(_uNew != 0, toString());
-    return reinterpret_cast<double*>(&(_uNew->at(0)));
-  }
-
-  /**
    * Returns the index for the uNew array.
    */
   int getUIndex() const;

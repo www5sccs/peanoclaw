@@ -251,17 +251,12 @@ peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns> peanoclaw::grid::SubgridA
     size[d] = _cellDescription.getSubdivisionFactor(Linearization::getGlobalDimension(d, dimension));
   }
 
-  //TODO unterweg debug
-  std::cout << "offset=" << offset << " size=" << size << " subdivisionFactor=" << _cellDescription.getSubdivisionFactor()
-      << " d0=" << Linearization::getGlobalDimension(0, dimension) << "d1=" << Linearization::getGlobalDimension(1, dimension)
-      << " dimension=" << dimension << std::endl;
-
   return SubgridFaceIterator<NumberOfUnknowns>(
     dimension,
     direction,
     _cellDescription,
     _linearization,
     *_u,
-    peanoclaw::geometry::HyperplaneRegion(offset, size)
+    peanoclaw::geometry::HyperplaneRegion(offset, size, dimension, direction)
   );
 }

@@ -11,7 +11,7 @@ Scalar tarch::la::projectedArea(
   const tarch::la::Vector<Size,Scalar>& vector,
   int projectionDimension
 ) {
-  Scalar area = 0;
+  Scalar area = 1;
   for(int i = 0; i < Size; i++) {
     area *= (i == projectionDimension) ? 1 : vector[i];
   }

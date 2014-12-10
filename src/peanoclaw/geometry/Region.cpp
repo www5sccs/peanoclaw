@@ -426,7 +426,7 @@ int peanoclaw::geometry::Region::getRegionsOverlappedByRemoteGhostlayers(
 }
 
 std::ostream& operator<<(std::ostream& out, const peanoclaw::geometry::Region& region){
-  out << "offset=[" << region._offset << "],size=[" << region._size << "]" << std::endl;
+  out << "offset=" << region._offset << ",size=" << region._size;
   return out;
 }
 

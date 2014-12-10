@@ -8,6 +8,11 @@
 
 #include "peano/utils/Loop.h"
 
+double* peanoclaw::grid::SubgridAccessor::getUNewArray() const {
+  assertion(_u != 0);
+  return reinterpret_cast<double*>(&(_u->at(0)));
+}
+
 double* peanoclaw::grid::SubgridAccessor::getUOldWithGhostLayerArray(int unknown) const {
   int index = _linearization.getUOldWithGhostlayerArrayIndex()
       + tarch::la::volume(_subdivisionFactor + 2*_ghostlayerWidth) * unknown;
