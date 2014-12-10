@@ -163,95 +163,6 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::correctFluxBet
 peanoclaw::interSubgridCommunication::DefaultFluxCorrection::~DefaultFluxCorrection() {
 }
 
-void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrection(
-    const Patch& sourceSubgrid,
-    Patch& destinationSubgrid,
-    int dimension,
-    int direction
-) const {
-  logTraceInWith4Arguments("applyCoarseGridCorrection", finePatch.toString(), coarsePatch.toString(), dimension, direction);
-
-  if(tarch::la::smaller(destinationSubgrid.getTimeIntervals().getCurrentTime(), sourceSubgrid.getTimeIntervals().getCurrentTime())) {
-    peanoclaw::grid::SubgridAccessor sourceAccessor = sourceSubgrid.getAccessor();
-    peanoclaw::grid::SubgridAccessor destinationAccessor = destinationSubgrid.getAccessor();
-
-    //Create description of the fine patch's face to be traversed
-    tarch::la::Vector<DIMENSIONS, int> face = sourceSubgrid.getSubdivisionFactor();
-    face(dimension) = 1;
-    tarch::la::Vector<DIMENSIONS, int> offset(0);
-    if(direction == 1) {
-      offset(dimension) = sourceSubgrid.getSubdivisionFactor()(dimension) - 1;
-    }
-
-    //Create search region that needs to be considered around the neighboring cell in the coarse patch
-    tarch::la::Vector<DIMENSIONS, int> searchRegion = tarch::la::Vector<DIMENSIONS, int>(2);
-    searchRegion(dimension) = 1;
-
-    logDebug("applyFluxCorrection", "face=" << face << ", offset=" << offset << ", searchRegion=" << searchRegion);
-
-    tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = sourceSubgrid.getSubcellSize();
-    tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = destinationSubgrid.getSubcellSize();
-
-    const peanoclaw::grid::TimeIntervals& sourceTimeIntervals = sourceSubgrid.getTimeIntervals();
-    const peanoclaw::grid::TimeIntervals& destinationTimeIntervals = destinationSubgrid.getTimeIntervals();
-    double timestepOverlap
-      = std::max(0.0,   std::min(sourceTimeIntervals.getCurrentTime() + sourceTimeIntervals.getTimestepSize(), destinationTimeIntervals.getCurrentTime() + destinationTimeIntervals.getTimestepSize())
-                    - std::max(sourceTimeIntervals.getCurrentTime(), destinationTimeIntervals.getCurrentTime()));
-
-    if(tarch::la::equals(timestepOverlap, 0.0)) {
-      return;
-    }
-
-    double sourceSubcellVolume = tarch::la::volume(sourceSubcellSize);
-    double destinationSubcellVolume = tarch::la::volume(destinationSubcellSize);
-
-    dfor(subcellIndexInFace, face) {
-      tarch::la::Vector<DIMENSIONS, int> subcellIndexInSourcePatch = subcellIndexInFace + offset;
-      tarch::la::Vector<DIMENSIONS, int> ghostlayerSubcellIndexInSourcePatch = subcellIndexInSourcePatch;
-      ghostlayerSubcellIndexInSourcePatch(dimension) += direction;
-
-      tarch::la::Vector<DIMENSIONS, double> subcellPositionInSourcePatch = sourceSubgrid.getSubcellPosition(subcellIndexInSourcePatch);
-      tarch::la::Vector<DIMENSIONS, double> neighboringSubcellCenterInDestinationPatch = subcellPositionInSourcePatch;
-      neighboringSubcellCenterInDestinationPatch(dimension) += destinationSubcellSize(dimension) * direction * 0.5;
-
-      tarch::la::Vector<DIMENSIONS, int> neighboringSubcellIndexInDestinationPatch =
-          (tarch::la::multiplyComponents(
-               neighboringSubcellCenterInDestinationPatch - destinationSubgrid.getPosition(),
-               tarch::la::invertEntries(destinationSubcellSize)
-          )).convertScalar<int>();
-      tarch::la::Vector<DIMENSIONS, int> ghostlayerSubcellIndexInDestinationPatch = neighboringSubcellIndexInDestinationPatch;
-      ghostlayerSubcellIndexInDestinationPatch(dimension) -= direction;
-
-      logDebug("applyFluxCorrection", "Correcting from cell " << subcellIndexInSourcePatch);
-
-      dfor(neighborOffset, searchRegion) {
-        tarch::la::Vector<DIMENSIONS, int> adjacentSubcellIndexInDestinationPatch = neighboringSubcellIndexInDestinationPatch + neighborOffset;
-
-        correctFluxBetweenCells(
-          dimension,
-          direction,
-          timestepOverlap,
-          sourceSubgrid,
-          destinationSubgrid,
-          sourceAccessor,
-          destinationAccessor,
-          sourceTimeIntervals,
-          destinationTimeIntervals,
-          destinationSubcellVolume,
-          sourceSubcellSize,
-          destinationSubcellSize,
-          subcellIndexInSourcePatch,
-          ghostlayerSubcellIndexInSourcePatch,
-          adjacentSubcellIndexInDestinationPatch,
-          ghostlayerSubcellIndexInDestinationPatch
-        );
-      }
-    }
-  }
-  logTraceOut("applyCoarseGridCorrection");
-}
-
-
 void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::computeFluxes(Patch& subgrid) const {
   switch(subgrid.getUnknownsPerSubcell()) {
     case 1:
@@ -297,6 +208,54 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::computeFluxes(
   }
 }
 
-
+void peanoclaw::interSubgridCommunication::DefaultFluxCorrection::applyCorrection(
+    Patch& sourceSubgrid,
+    Patch& destinationSubgrid,
+    int dimension,
+    int direction
+) const {
+  switch(sourceSubgrid.getUnknownsPerSubcell()) {
+      case 1:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<1> fluxCorrection1;
+        fluxCorrection1.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 2:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<2> fluxCorrection2;
+        fluxCorrection2.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 3:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<3> fluxCorrection3;
+        fluxCorrection3.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 4:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<4> fluxCorrection4;
+        fluxCorrection4.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 5:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<5> fluxCorrection5;
+        fluxCorrection5.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 6:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<6> fluxCorrection6;
+        fluxCorrection6.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 7:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<7> fluxCorrection7;
+        fluxCorrection7.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 8:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<8> fluxCorrection8;
+        fluxCorrection8.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 9:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<9> fluxCorrection9;
+        fluxCorrection9.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+      case 10:
+        peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<10> fluxCorrection10;
+        fluxCorrection10.applyCorrection(sourceSubgrid, destinationSubgrid, dimension, direction);
+        break;
+    }
+}
 
 

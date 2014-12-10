@@ -12,6 +12,7 @@
 #include "peanoclaw/interSubgridCommunication/Extrapolation.h"
 #include "peanoclaw/interSubgridCommunication/GhostlayerCompositorFunctors.h"
 #include "peanoclaw/interSubgridCommunication/aspects/FaceAdjacentPatchTraversal.h"
+#include "peanoclaw/interSubgridCommunication/aspects/MinimalFaceAdjacentSubgridTraversal.h"
 #include "peanoclaw/interSubgridCommunication/aspects/EdgeAdjacentPatchTraversal.h"
 #include "peanoclaw/interSubgridCommunication/aspects/CornerAdjacentPatchTraversal.h"
 #include "peanoclaw/Patch.h"
@@ -347,8 +348,9 @@ void peanoclaw::interSubgridCommunication::GhostLayerCompositor::applyFluxCorrec
   int sourceSubgridIndex
 ) {
   FluxCorrectionFunctor functor(_numerics, sourceSubgridIndex);
-  peanoclaw::interSubgridCommunication::aspects::FaceAdjacentPatchTraversal<FluxCorrectionFunctor>(
+  peanoclaw::interSubgridCommunication::aspects::MinimalFaceAdjacentSubgridTraversal<FluxCorrectionFunctor>(
     _patches,
+    sourceSubgridIndex,
     functor
   );
 }

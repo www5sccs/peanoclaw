@@ -651,16 +651,15 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         tarch::la::Vector<DIMENSIONS, double> requiredMeshWidth = _numerics->getDemandedMeshWidth(subgrid, false);
         subgrid.setDemandedMeshWidth(requiredMeshWidth);
 
-        _numerics->computeFluxes(subgrid);
-
         #ifdef Parallel
         ParallelSubgrid parallelSubgrid(fineGridCell.getCellDescriptionIndex());
         parallelSubgrid.markCurrentStateAsSent(false);
         #endif
         _sharedMemoryStatistics.addCellUpdatesForThread(subgrid);
 
-        // Coarse grid correction
+        // Flux correction
         if (_correctFluxes) {
+          _numerics->computeFluxes(subgrid);
           for (int i = 0; i < TWO_POWER_D; i++) {
             fineGridVertices[fineGridVerticesEnumerator(i)].applyFluxCorrection(*_numerics, i);
           }

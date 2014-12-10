@@ -78,7 +78,7 @@ void peanoclaw::Numerics::postProcessRestriction(
 }
 
 void peanoclaw::Numerics::applyFluxCorrection (
-  const Patch& sourceSubgrid,
+  Patch& sourceSubgrid,
   Patch& destinationSubgrid,
   int dimension,
   int direction

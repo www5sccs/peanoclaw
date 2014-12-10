@@ -1,0 +1,76 @@
+
+#include "peano/utils/Globals.h"
+#include "peano/utils/Loop.h"
+
+template<class LoopBody>
+peanoclaw::interSubgridCommunication::aspects::MinimalFaceAdjacentSubgridTraversal<LoopBody>::MinimalFaceAdjacentSubgridTraversal(
+  peanoclaw::Patch patches[TWO_POWER_D],
+  int vertexIndex,
+  LoopBody& loopBody
+) {
+  #ifdef Dim2
+  if(vertexIndex == 0) {
+    tarch::la::Vector<DIMENSIONS, int> direction0To1;
+    tarch::la::assignList(direction0To1) = -1, 0;
+    loopBody(patches[0], 0, patches[1], 1, direction0To1);
+    tarch::la::assignList(direction0To1) = 1, 0;
+    loopBody(patches[1], 1, patches[0], 0, direction0To1);
+
+    tarch::la::Vector<DIMENSIONS, int> direction0To2;
+    tarch::la::assignList(direction0To1) = 0, -1;
+    loopBody(patches[0], 0, patches[2], 2, direction0To1);
+    tarch::la::assignList(direction0To1) = 0, 1;
+    loopBody(patches[2], 2, patches[0], 0, direction0To1);
+  } else if(vertexIndex == 1) {
+    tarch::la::Vector<DIMENSIONS, int> direction1To0;
+    tarch::la::assignList(direction1To0) = 1, 0;
+    loopBody(patches[1], 1, patches[0], 0, direction1To0);
+    tarch::la::assignList(direction1To0) = -1, 0;
+    loopBody(patches[0], 0, patches[1], 1, direction1To0);
+  } else if(vertexIndex == 2) {
+    tarch::la::Vector<DIMENSIONS, int> direction2To0;
+    tarch::la::assignList(direction2To0) = 0, 1;
+    loopBody(patches[2], 2, patches[0], 0, direction2To0);
+    tarch::la::assignList(direction2To0) = 0, -1;
+    loopBody(patches[0], 0, patches[2], 2, direction2To0);
+  }
+  #elif defined(Dim3)
+  if(vertexIndex == 0) {
+    tarch::la::Vector<DIMENSIONS, int> direction0To1;
+    tarch::la::assignList(direction0To1) = -1, 0, 0;
+    loopBody(patches[0], 0, patches[1], 1, direction0To1);
+    tarch::la::assignList(direction0To1) = 1, 0, 0;
+    loopBody(patches[1], 1, patches[0], 0, direction0To1);
+
+    tarch::la::Vector<DIMENSIONS, int> direction0To2;
+    tarch::la::assignList(direction0To2) = 0, -1, 0;
+    loopBody(patches[0], 0, patches[2], 2, direction0To2);
+    tarch::la::assignList(direction0To2) = 0, 1, 0;
+    loopBody(patches[2], 2, patches[0], 0, direction0To2);
+
+    tarch::la::Vector<DIMENSIONS, int> direction0To4;
+    tarch::la::assignList(direction0To4) = 0, 0, -1;
+    loopBody(patches[0], 0, patches[4], 4, direction0To4);
+    tarch::la::assignList(direction0To4) = 0, 0, 1;
+    loopBody(patches[4], 4, patches[0], 0, direction0To4);
+  } else if(vertexIndex == 1) {
+    tarch::la::Vector<DIMENSIONS, int> direction1To0;
+    tarch::la::assignList(direction1To0) = 1, 0, 0;
+    loopBody(patches[1], 1, patches[0], 0, direction1To0);
+    tarch::la::assignList(direction1To0) = -1, 0, 0;
+    loopBody(patches[0], 0, patches[1], 1, direction1To0);
+  } else if(vertexIndex == 2) {
+    tarch::la::Vector<DIMENSIONS, int> direction2To0;
+    tarch::la::assignList(direction2To0) = 0, 1, 0;
+    loopBody(patches[2], 2, patches[0], 0, direction2To0);
+    tarch::la::assignList(direction2To0) = 0, -1, 0;
+    loopBody(patches[0], 0, patches[2], 2, direction2To0);
+  } else if(vertexIndex == 4) {
+    tarch::la::Vector<DIMENSIONS, int> direction4To0;
+    tarch::la::assignList(direction4To0) = 0, 0, 1;
+    loopBody(patches[4], 4, patches[0], 0, direction4To0);
+    tarch::la::assignList(direction4To0) = 0, 0, -1;
+    loopBody(patches[0], 0, patches[4], 4, direction4To0);
+  }
+  #endif
+}

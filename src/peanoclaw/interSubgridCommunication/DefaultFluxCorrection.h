@@ -34,6 +34,13 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate {
 
   public:
     void computeFluxes(Patch& subgrid) const;
+
+    void applyCorrection(
+      Patch& sourceSubgrid,
+      Patch& destinationSubgrid,
+      int dimension,
+      int direction
+    ) const;
 };
 
 class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
@@ -91,7 +98,7 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrection
      * Applying the default flux correction on the coarse patch.
      */
     void applyCorrection(
-      const Patch& sourcePatch,
+      Patch& sourcePatch,
       Patch& destinationPatch,
       int dimension,
       int direction

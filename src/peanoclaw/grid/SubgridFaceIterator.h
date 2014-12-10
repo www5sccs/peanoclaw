@@ -123,16 +123,24 @@ class peanoclaw::grid::SubgridFaceIterator {
     tarch::la::Vector<NumberOfUnknowns,double> getUnknownsUNew() const;
 
     /**
+     * Sets the uNew values for the current inner cell adjacent to the
+     * current interface cell.
+     */
+    void setUnknownsUNew(const tarch::la::Vector<NumberOfUnknowns,double>& unknowns);
+
+    /**
      * Returns the ghost values for the current inner cell adjacent to the
      * current interface cell.
      */
     tarch::la::Vector<NumberOfUnknowns,double> getGhostUnknowns() const;
 
     /**
-     * Sets the uNew values for the current innter cell adjacent to the
-     * current interface cell.
+     * Restarts the iterator for the dimension specified in
+     * the constructor with the given region.
      */
-    void setUnknownsUNew(const tarch::la::Vector<NumberOfUnknowns,double>& unknowns);
+    void restart(
+      const peanoclaw::geometry::HyperplaneRegion& region
+    );
 };
 
 #include "peanoclaw/grid/SubgridFaceIterator.cpph"

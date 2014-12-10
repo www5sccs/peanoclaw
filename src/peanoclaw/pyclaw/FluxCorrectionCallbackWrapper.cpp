@@ -18,7 +18,7 @@ peanoclaw::pyclaw::FluxCorrectionCallbackWrapper::~FluxCorrectionCallbackWrapper
 }
 
 void peanoclaw::pyclaw::FluxCorrectionCallbackWrapper::applyCorrection(
-  const Patch& finePatch,
+  Patch& finePatch,
   Patch& coarsePatch,
   int dimension,
   int direction

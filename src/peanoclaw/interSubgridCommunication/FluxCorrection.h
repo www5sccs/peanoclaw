@@ -36,7 +36,7 @@ class peanoclaw::interSubgridCommunication::FluxCorrection {
      * Applies the correction on the given coarse patch.
      */
     virtual void applyCorrection(
-      const Patch& finePatch,
+      Patch& finePatch,
       Patch& coarsePatch,
       int dimension,
       int direction

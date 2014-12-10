@@ -10,38 +10,39 @@
 #include "peanoclaw/Patch.h"
 #include <numpy/arrayobject.h>
 
-peanoclaw::pyclaw::PyClawState::PyClawState(const Patch& patch) {
+peanoclaw::pyclaw::PyClawState::PyClawState(const Patch& subgrid) {
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
 
   import_array();
 
   //Create uNew
   npy_intp sizeUNew[1 + DIMENSIONS];
-  sizeUNew[0] = patch.getUnknownsPerSubcell();
+  sizeUNew[0] = subgrid.getUnknownsPerSubcell();
   int elementsUNew = sizeUNew[0];
   for(int d = 0; d < DIMENSIONS; d++) {
-    sizeUNew[1 + d] = patch.getSubdivisionFactor()(d);
+    sizeUNew[1 + d] = subgrid.getSubdivisionFactor()(d);
     elementsUNew *= sizeUNew[1 + d];
   }
   npy_intp sizeUOldWithGhostlayer[1 + DIMENSIONS];
-  sizeUOldWithGhostlayer[0] = patch.getUnknownsPerSubcell();
+  sizeUOldWithGhostlayer[0] = subgrid.getUnknownsPerSubcell();
   int elementsUOldWithGhostlayer = sizeUOldWithGhostlayer[0];
   for(int d = 0; d < DIMENSIONS; d++) {
-    sizeUOldWithGhostlayer[1 + d] = patch.getSubdivisionFactor()(d) + 2*patch.getGhostlayerWidth();
+    sizeUOldWithGhostlayer[1 + d] = subgrid.getSubdivisionFactor()(d) + 2*subgrid.getGhostlayerWidth();
     elementsUOldWithGhostlayer *= sizeUOldWithGhostlayer[1 + d];
   }
 
-  _q = PyArray_SimpleNewFromData(1 + DIMENSIONS, sizeUNew, NPY_DOUBLE, patch.getUNewArray());
-  _qbc = PyArray_SimpleNewFromData(1 + DIMENSIONS, sizeUOldWithGhostlayer, NPY_DOUBLE, patch.getUOldWithGhostlayerArray(0));
+  _q = PyArray_SimpleNewFromData(1 + DIMENSIONS, sizeUNew, NPY_DOUBLE, accessor.getUNewArray());
+  _qbc = PyArray_SimpleNewFromData(1 + DIMENSIONS, sizeUOldWithGhostlayer, NPY_DOUBLE, accessor.getUOldWithGhostLayerArray(0));
 
   //Build auxArray
   double* auxArray = 0;
-  if(patch.getNumberOfParametersWithoutGhostlayerPerSubcell() > 0) {
-    auxArray = patch.getParameterWithoutGhostlayerArray(0);
+  if(subgrid.getNumberOfParametersWithoutGhostlayerPerSubcell() > 0) {
+    auxArray = accessor.getParameterWithoutGhostLayerArray(0);
     assertion(auxArray != 0);
     npy_intp sizeAux[1 + DIMENSIONS];
-    sizeAux[0] = patch.getNumberOfParametersWithoutGhostlayerPerSubcell();
+    sizeAux[0] = subgrid.getNumberOfParametersWithoutGhostlayerPerSubcell();
     for(int d = 0; d < DIMENSIONS; d++) {
-      sizeAux[1 + d] = patch.getSubdivisionFactor()(d);
+      sizeAux[1 + d] = subgrid.getSubdivisionFactor()(d);
     }
     _aux = PyArray_SimpleNewFromData(1 + DIMENSIONS, sizeAux, NPY_DOUBLE, auxArray);
     assertion(_aux != 0);
