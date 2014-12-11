@@ -56,10 +56,10 @@ void peanoclaw::native::SWEKernel::advanceBlockInTime(
 
   block.setArrays(
         subgrid,
-        reinterpret_cast<float*>(accessor.getUOldWithGhostlayerArray(0)),
-        reinterpret_cast<float*>(accessor.getUOldWithGhostlayerArray(1)),
-        reinterpret_cast<float*>(accessor.getUOldWithGhostlayerArray(2)),
-        reinterpret_cast<float*>(accessor.getParameterWithoutGhostlayerArray(0))
+        reinterpret_cast<float*>(accessor.getUOldWithGhostLayerArray(0)),
+        reinterpret_cast<float*>(accessor.getUOldWithGhostLayerArray(1)),
+        reinterpret_cast<float*>(accessor.getUOldWithGhostLayerArray(2)),
+        reinterpret_cast<float*>(accessor.getParameterWithoutGhostLayerArray(0))
       );
 
   block.computeNumericalFluxes();
