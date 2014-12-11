@@ -189,7 +189,7 @@ void peanoclaw::ParallelSubgrid::countNumberOfAdjacentParallelSubgrids (
       tarch::la::Vector<DIMENSIONS, int> subgridPosition = (2*vertexPosition + 2*peano::utils::dDelinearised(subgridIndex, 2)) / 2 - 1;
 
       if(!tarch::la::equals(subgridPosition, 0)) {
-        int entry = Region::linearizeManifoldPosition(subgridPosition);
+        int entry = peanoclaw::geometry::Region::linearizeManifoldPosition(subgridPosition);
         int adjacentRank = vertices[verticesEnumerator(vertexIndex)].getAdjacentRanks()(subgridIndex);
 
         _cellDescription->setAdjacentRanks(entry, adjacentRank);
