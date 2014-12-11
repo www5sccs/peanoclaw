@@ -52,12 +52,14 @@ void peanoclaw::native::SWEKernel::advanceBlockInTime(
   peanoclaw::Patch& subgrid,
   double maximumTimestepSize
 ) {
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
+
   block.setArrays(
         subgrid,
-        reinterpret_cast<float*>(subgrid.getUOldWithGhostlayerArray(0)),
-        reinterpret_cast<float*>(subgrid.getUOldWithGhostlayerArray(1)),
-        reinterpret_cast<float*>(subgrid.getUOldWithGhostlayerArray(2)),
-        reinterpret_cast<float*>(subgrid.getParameterWithoutGhostlayerArray(0))
+        reinterpret_cast<float*>(accessor.getUOldWithGhostlayerArray(0)),
+        reinterpret_cast<float*>(accessor.getUOldWithGhostlayerArray(1)),
+        reinterpret_cast<float*>(accessor.getUOldWithGhostlayerArray(2)),
+        reinterpret_cast<float*>(accessor.getParameterWithoutGhostlayerArray(0))
       );
 
   block.computeNumericalFluxes();
