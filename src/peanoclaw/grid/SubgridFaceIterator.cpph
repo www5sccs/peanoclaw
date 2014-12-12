@@ -209,6 +209,7 @@ tarch::la::Vector<NumberOfUnknowns,double> peanoclaw::grid::SubgridFaceIterator<
   tarch::la::Vector<NumberOfUnknowns, double> unknowns;
   int localIndexGhostCell = _linearization.getUOldWithGhostlayerArrayIndex() + _ghostCellIndex;
   for(int i = 0; i < NumberOfUnknowns; i++) {
+    assertion5(localIndexGhostCell >= _linearization.getUOldWithGhostlayerArrayIndex() && localIndexGhostCell < _linearization.getParameterWithGhostlayerArrayIndex(), _linearization.getUOldWithGhostlayerArrayIndex(), _linearization.getParameterWithGhostlayerArrayIndex(), localIndexGhostCell, _ghostCellIndex, _ghostCellDistance);
     unknowns[i] = _u[localIndexGhostCell].getU();
     localIndexGhostCell += _linearization.getQStrideUOld();
   }
