@@ -55,11 +55,7 @@ peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::SubgridFaceIterator(
     _uOldIndex(-1),
     _ghostCellIndex(-1),
     _ghostLayerWidth(cellDescription.getGhostlayerWidth()),
-    _position(-1),
-    _normal(0) {
-
-  _normal[dimension] = _direction;
-
+    _position(-1) {
   restart();
 }
 
@@ -123,7 +119,7 @@ bool peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::moveToNextGhostCell
     return false;
   }
   _ghostCellDistance++;
-  changeGhostCellDistance(_ghostLayerWidth);
+  changeGhostCellDistance(1);
 
   //TODO unterweg debug
 //  std::cout << " _dimension=" << _dimension << " uNew=" << _uNewIndex << " uNewStride=" <<_linearization.getCellStrideUNew(_dimension)

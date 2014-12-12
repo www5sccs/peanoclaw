@@ -44,11 +44,6 @@ class peanoclaw::grid::SubgridFaceIterator {
     tarch::la::Vector<DIMENSIONS_MINUS_ONE,int> _position;
     tarch::la::Vector<DIMENSIONS_MINUS_ONE,int> _offsetPlusSize;
 
-    /**
-     * Normal pointing outwards of the interface.
-     */
-    tarch::la::Vector<DIMENSIONS,int> _normal;
-
     void restart();
 
     /**
