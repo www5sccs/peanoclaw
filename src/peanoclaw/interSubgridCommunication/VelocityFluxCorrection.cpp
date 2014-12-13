@@ -255,7 +255,9 @@ void peanoclaw::interSubgridCommunication::VelocityFluxCorrection::applyCorrecti
   logTraceOut("applyCoarseGridCorrection");
 }
 
+void peanoclaw::interSubgridCommunication::VelocityFluxCorrection::computeFluxes(Patch& subgrid) const {
 
+}
 
 
 

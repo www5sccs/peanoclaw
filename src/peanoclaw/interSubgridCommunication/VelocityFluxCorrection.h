@@ -90,6 +90,8 @@ class peanoclaw::interSubgridCommunication::VelocityFluxCorrection
       int dimension,
       int direction
     ) const;
+
+    void computeFluxes(Patch& subgrid) const;
 };
 
 #endif /* PEANOCLAW_INTERSUBGRIDCOMMUNICATION_DEFAULTFLUXCORRECTION_H_ */
