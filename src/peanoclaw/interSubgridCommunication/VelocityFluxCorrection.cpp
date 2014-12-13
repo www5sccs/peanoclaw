@@ -164,7 +164,7 @@ peanoclaw::interSubgridCommunication::VelocityFluxCorrection::~VelocityFluxCorre
 }
 
 void peanoclaw::interSubgridCommunication::VelocityFluxCorrection::applyCorrection(
-    const Patch& sourceSubgrid,
+    Patch& sourceSubgrid,
     Patch& destinationSubgrid,
     int dimension,
     int direction

@@ -85,7 +85,7 @@ class peanoclaw::interSubgridCommunication::VelocityFluxCorrection
      * Applying the default flux correction on the coarse patch.
      */
     void applyCorrection(
-      const Patch& sourcePatch,
+      Patch& sourcePatch,
       Patch& destinationPatch,
       int dimension,
       int direction
