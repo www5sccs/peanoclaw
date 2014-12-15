@@ -220,6 +220,17 @@ class peanoclaw::grid::TimeIntervals {
      */
     bool shouldFineGridsSynchronize() const;
 
+    /**
+     * Sets the maximum timestep size that this subgrid can do with
+     * regard to neighboring subgrids.
+     */
+    void setNeighborInducedMaximumTimestepSize(double timestepSize);
+
+    /**
+     * Returns the maximum timestep size that this subgrid can do with
+     * regard to neighboring subgrids.
+     */
+    double getNeighborInducedMaximumTimestepSize() const;
 
     /**
      * Returns a string representation of the current object.

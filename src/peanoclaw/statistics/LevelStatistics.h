@@ -32,7 +32,7 @@ namespace peanoclaw {
  *
  * 		   build date: 09-02-2014 14:40
  *
- * @date   15/10/2014 11:14
+ * @date   14/12/2014 09:18
  */
 class peanoclaw::statistics::LevelStatistics { 
    
@@ -41,7 +41,7 @@ class peanoclaw::statistics::LevelStatistics {
       typedef peanoclaw::statistics::LevelStatisticsPacked Packed;
       
       struct PersistentRecords {
-         double _region;
+         double _area;
          int _level;
          double _numberOfPatches;
          double _numberOfCells;
@@ -63,25 +63,25 @@ class peanoclaw::statistics::LevelStatistics {
          /**
           * Generated
           */
-         PersistentRecords(const double& region, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
+         PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
          
          
-         inline double getRegion() const 
+         inline double getArea() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-            return _region;
+            return _area;
          }
          
          
          
-         inline void setRegion(const double& region) 
+         inline void setArea(const double& area) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-            _region = region;
+            _area = area;
          }
          
          
@@ -365,7 +365,7 @@ class peanoclaw::statistics::LevelStatistics {
       /**
        * Generated
        */
-      LevelStatistics(const double& region, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
+      LevelStatistics(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
       
       /**
        * Generated
@@ -373,22 +373,22 @@ class peanoclaw::statistics::LevelStatistics {
       ~LevelStatistics();
       
       
-      inline double getRegion() const 
+      inline double getArea() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-         return _persistentRecords._region;
+         return _persistentRecords._area;
       }
       
       
       
-      inline void setRegion(const double& region) 
+      inline void setArea(const double& area) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-         _persistentRecords._region = region;
+         _persistentRecords._area = area;
       }
       
       
@@ -710,14 +710,14 @@ class peanoclaw::statistics::LevelStatistics {
           *
           * 		   build date: 09-02-2014 14:40
           *
-          * @date   15/10/2014 11:14
+          * @date   14/12/2014 09:18
           */
          class peanoclaw::statistics::LevelStatisticsPacked { 
             
             public:
                
                struct PersistentRecords {
-                  double _region;
+                  double _area;
                   int _level;
                   double _numberOfPatches;
                   double _numberOfCells;
@@ -739,25 +739,25 @@ class peanoclaw::statistics::LevelStatistics {
                   /**
                    * Generated
                    */
-                  PersistentRecords(const double& region, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
+                  PersistentRecords(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
                   
                   
-                  inline double getRegion() const 
+                  inline double getArea() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     return _region;
+                     return _area;
                   }
                   
                   
                   
-                  inline void setRegion(const double& region) 
+                  inline void setArea(const double& area) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                     _region = region;
+                     _area = area;
                   }
                   
                   
@@ -1041,7 +1041,7 @@ class peanoclaw::statistics::LevelStatistics {
                /**
                 * Generated
                 */
-               LevelStatisticsPacked(const double& region, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
+               LevelStatisticsPacked(const double& area, const int& level, const double& numberOfPatches, const double& numberOfCells, const double& numberOfCellUpdates, const double& createdPatches, const double& destroyedPatches, const double& patchesBlockedDueToNeighbors, const double& patchesBlockedDueToGlobalTimestep, const double& patchesSkippingIteration, const double& patchesCoarsening, const double& estimatedNumberOfRemainingIterationsToGlobalTimestep, const double& averageTimestepSize, const double& minimalTimestepSize);
                
                /**
                 * Generated
@@ -1049,22 +1049,22 @@ class peanoclaw::statistics::LevelStatistics {
                ~LevelStatisticsPacked();
                
                
-               inline double getRegion() const 
+               inline double getArea() const 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  return _persistentRecords._region;
+                  return _persistentRecords._area;
                }
                
                
                
-               inline void setRegion(const double& region) 
+               inline void setArea(const double& area) 
  #ifdef UseManualInlining
  __attribute__((always_inline))
  #endif 
  {
-                  _persistentRecords._region = region;
+                  _persistentRecords._area = area;
                }
                
                

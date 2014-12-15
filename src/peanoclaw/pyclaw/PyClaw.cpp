@@ -115,13 +115,6 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(
 
   tarch::multicore::Lock lock(_semaphore);
 
-  //TODO unterweg debug
-  bool plot = (tarch::la::equals(subgrid.getPosition()(0), 5*3.0/9.0 - 2.5) || tarch::la::equals(subgrid.getPosition()(0), 5 * 5.0/9.0 - 2.5))
-              && tarch::la::equals(subgrid.getPosition()(1), 5 * 4.0/9.0 - 2.5);
-  if(plot) {
-    std::cout << "Before: " << subgrid << std::endl << subgrid.toStringUOldWithGhostLayer() << std::endl;
-  }
-
   assertion2(tarch::la::greater(maximumTimestepSize, 0.0), "max. Timestepsize == 0 should be checked outside.", subgrid.getTimeIntervals().getMinimalNeighborTimeConstraint());
   assertion3(!subgrid.containsNaN(), subgrid, subgrid.toStringUNew(), subgrid.toStringUOldWithGhostLayer());
 
@@ -200,11 +193,6 @@ void peanoclaw::pyclaw::PyClaw::solveTimestep(
   _cachedSubgridPosition = subgrid.getPosition();
   _cachedSubgridLevel = subgrid.getLevel();
   _cachedDemandedMeshWidth = tarch::la::Vector<DIMENSIONS,double>(requiredMeshWidth);
-
-  //TODO unterweg debug
-  if(plot) {
-    std::cout << "After: dt=" << subgrid.getTimeIntervals().getTimestepSize() << std::endl << subgrid.toStringUNew() << std::endl;
-  }
 
   logTraceOutWith1Argument( "solveTimestep(...)", requiredMeshWidth);
 }

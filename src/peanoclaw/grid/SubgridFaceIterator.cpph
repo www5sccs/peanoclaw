@@ -12,7 +12,7 @@ void peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns>::restart() {
   _position = _region._offset;
   _position[0]--;
 
-  _fluxIndex = -_linearization.getCellStrideFlux(_dimension, 0);
+  _fluxIndex = _linearization.getFaceOffsetFlux(_dimension, _direction) -_linearization.getCellStrideFlux(_dimension, 0);
   tarch::la::Vector<DIMENSIONS,int> subcellIndex;
   subcellIndex[_dimension] = (_direction == -1) ? -1 : _cellDescription.getSubdivisionFactor(_direction); //Cell before first increment
   subcellIndex[Linearization::getGlobalDimension(0, _dimension)] = _position[0];

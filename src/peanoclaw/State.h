@@ -341,6 +341,18 @@ class peanoclaw::State: public peano::grid::State< peanoclaw::records::State > {
        */
       int getEstimatedNumberOfIterationsToGlobalTimestep() const;
       #endif
+
+      /**
+       * Sets, whether PeanoClaw should estimate the maximum timestep size for
+       * a subgrid based on the neighboring subgrids.
+       */
+      void shouldEstimateNeighborInducedMaximumTimestep(bool shouldEstimate);
+
+      /**
+       * Returns, whether PeanoClaw should estimate the maximum timestep size for
+       * a subgrid based on the neighboring subgrids.
+       */
+      bool estimateNeighborInducedMaximumTimestep() const;
 };
 
 

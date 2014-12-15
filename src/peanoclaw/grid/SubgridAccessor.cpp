@@ -201,7 +201,7 @@ double peanoclaw::grid::SubgridAccessor::getFlux(
   int dimension,
   int direction
 ) const {
-  return _u->at(_linearization.linearizeFlux(unknown, subcellIndex, dimension, direction)).getU();
+  return _u->at(_linearization.getFluxArrayIndex() + _linearization.linearizeFlux(unknown, subcellIndex, dimension, direction)).getU();
 }
 
 void peanoclaw::grid::SubgridAccessor::setFlux(
@@ -211,7 +211,7 @@ void peanoclaw::grid::SubgridAccessor::setFlux(
   int direction,
   double value
 ) {
-  _u->at(_linearization.linearizeFlux(unknown, subcellIndex, dimension, direction)).setU(value);
+  _u->at(_linearization.getFluxArrayIndex() + _linearization.linearizeFlux(unknown, subcellIndex, dimension, direction)).setU(value);
 }
 
 

@@ -236,6 +236,14 @@ bool peanoclaw::grid::TimeIntervals::shouldFineGridsSynchronize() const {
   return _cellDescription->getSynchronizeFineGrids();
 }
 
+void peanoclaw::grid::TimeIntervals::setNeighborInducedMaximumTimestepSize(double timestepSize) {
+  _cellDescription->setNeighborInducedMaximumTimestepSize(timestepSize);
+}
+
+double peanoclaw::grid::TimeIntervals::getNeighborInducedMaximumTimestepSize() const {
+  return _cellDescription->getNeighborInducedMaximumTimestepSize();
+}
+
 std::string peanoclaw::grid::TimeIntervals::toString() const {
   std::stringstream str;
   if (_cellDescription != 0) {
@@ -244,7 +252,9 @@ std::string peanoclaw::grid::TimeIntervals::toString() const {
     << ",minimalNeighborTimeConstraint="
     << _cellDescription->getMinimalNeighborTimeConstraint()
     << ",minimalLeafNeighborTimeConstraint="
-    << _cellDescription->getMinimalLeafNeighborTimeConstraint();
+    << _cellDescription->getMinimalLeafNeighborTimeConstraint()
+    << ",neighborInducedMaximumTimestep="
+    << _cellDescription->getNeighborInducedMaximumTimestepSize();
   } else {
     str << "null";
   }

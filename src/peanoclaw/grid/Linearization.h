@@ -181,7 +181,7 @@ public:
     int dimension,
     int direction
   ) const {
-    int index = _faceOffset[dimension + (1 + direction) / 2];
+    int index = _faceOffset[2 * dimension + (1 + direction) / 2];
     int subgridDimension = 0;
     for(int faceDimension = 0; faceDimension < DIMENSIONS-1; faceDimension++) {
       if(faceDimension == dimension) {
@@ -250,6 +250,10 @@ public:
 
   inline int getCellStrideFlux(int projectionDimension, int dimension) const {
     return _cellStrideFlux[DIMENSIONS_MINUS_ONE * projectionDimension + dimension];
+  }
+
+  inline int getFaceOffsetFlux(int dimension, int direction) const {
+    return _faceOffset[2 * dimension + (1 + direction) / 2];
   }
 
   /**

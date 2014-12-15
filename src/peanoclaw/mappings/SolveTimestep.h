@@ -78,6 +78,8 @@ class peanoclaw::mappings::SolveTimestep {
 
     std::map<int, int> _estimatedRemainingIterationsUntilGlobalTimestep;
 
+    bool _estimateNeighborInducedMaximumTimestep;
+
     tarch::timing::Watch _iterationWatch;
 
     /**

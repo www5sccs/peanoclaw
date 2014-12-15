@@ -145,6 +145,12 @@ class peanoclaw::records::CellDescription {
   parallelise persistent double estimatedNextTimestepSize;
   
   /**
+   * The maximum timestep size induced by the stability criterion
+   * for neighboring subgrids.
+   */
+  parallelise persistent double neighborInducedMaximumTimestepSize;
+  
+  /**
    * Indicates that this patch should not be advanced during the next
    * grid iterations. This is due to the fact that the ghostlayer has
    * to be filled correctly first.

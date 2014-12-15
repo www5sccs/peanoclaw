@@ -4,6 +4,7 @@
 #include "peanoclaw/interSubgridCommunication/aspects/AdjacentVertices.h"
 #include "peanoclaw/interSubgridCommunication/DefaultTransfer.h"
 
+#include <limits>
 
 
 /**
@@ -585,6 +586,8 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 //  _refinementTriggered = solverState.getInitialRefinementTriggered();
 
   _refinementCriterionEnabled = solverState.isRefinementCriterionEnabled();
+
+  _estimateNeighborInducedMaximumTimestep = solverState.estimateNeighborInducedMaximumTimestep();
 
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }

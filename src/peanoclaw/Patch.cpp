@@ -21,7 +21,7 @@
 tarch::logging::Log peanoclaw::Patch::_log("peanoclaw::Patch");
 
 //#define PATCH_VALUE_FORMAT std::setprecision(2) << std::scientific
-#define PATCH_VALUE_FORMAT std::setprecision(7)
+#define PATCH_VALUE_FORMAT std::fixed << std::setprecision(5)
 
 void peanoclaw::Patch::fillCaches() {
   #ifdef PEANOCLAW_SWE
@@ -93,6 +93,69 @@ bool peanoclaw::Patch::isVirtual(const CellDescription* cellDescription) {
         cellDescription->getUIndex(),
         cellDescription->getCellDescriptionIndex());
   return cellDescription->getIsVirtual();
+}
+
+void peanoclaw::Patch::printUnknownWithGhostLayer(std::stringstream& str, int unkown) const {
+  #ifdef Dim2
+  //Upper ghostlayer
+  for(int g = 0; g < getGhostlayerWidth(); g++) {
+    for(int x = -getGhostlayerWidth(); x < getSubdivisionFactor()[0] + getGhostlayerWidth(); x++) {
+      tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+      assignList(subcellIndex) = x, getSubdivisionFactor()[1] + getGhostlayerWidth() - g - 1;
+      str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, unkown) << " ";
+      if(x == -1 || x == getSubdivisionFactor()[0]-1) {
+        str << "| ";
+      }
+    }
+    str << std::endl;
+  }
+  for(int i = 0; i < (2*getGhostlayerWidth() + getSubdivisionFactor()[0]) * (5+2+1) + 4 - 1; i++) {
+    str << "-";
+  }
+  str << std::endl;
+
+  for(int y = getSubdivisionFactor()[1]-1; y >= 0; y--) {
+    //Left ghostlayer
+    for(int g = 0; g < getGhostlayerWidth(); g++) {
+      tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+      assignList(subcellIndex) = -getGhostlayerWidth() + g, y;
+      str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, unkown) << " ";
+    }
+    str << "| ";
+
+    for(int x = 0; x < getSubdivisionFactor()[0]; x++) {
+      tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+      assignList(subcellIndex) = x, y;
+      str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, unkown) << " ";
+    }
+
+    //Right ghostlayer
+    str << "| ";
+    for(int g = 0; g < getGhostlayerWidth(); g++) {
+      tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+      assignList(subcellIndex) = getSubdivisionFactor()[0] + g, y;
+      str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, unkown) << " ";
+    }
+    str << std::endl;
+  }
+
+  for(int i = 0; i < (2*getGhostlayerWidth() + getSubdivisionFactor()[0]) * (5+2+1) + 4 - 1; i++) {
+    str << "-";
+  }
+  str << std::endl;
+  //Lower ghostlayer
+  for(int g = 0; g < getGhostlayerWidth(); g++) {
+    for(int x = -getGhostlayerWidth(); x < getSubdivisionFactor()[0] + getGhostlayerWidth(); x++) {
+      tarch::la::Vector<DIMENSIONS, int> subcellIndex;
+      assignList(subcellIndex) = x, - g - 1;
+      str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, unkown) << " ";
+      if(x == -1 || x == getSubdivisionFactor()[0]-1) {
+        str << "| ";
+      }
+    }
+    str << std::endl;
+  }
+  #endif
 }
 
 peanoclaw::Patch::Patch() :
@@ -174,6 +237,7 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setMaximumFineGridTime(-1.0);
   cellDescription.setMinimumFineGridTimestep(std::numeric_limits<double>::max());
   cellDescription.setMinimalLeafNeighborTimeConstraint(std::numeric_limits<double>::max());
+  cellDescription.setNeighborInducedMaximumTimestepSize(-std::numeric_limits<double>::max());
 
   //Numerics
   cellDescription.setUnknownsPerSubcell(unknownsPerSubcell);
@@ -493,41 +557,28 @@ std::string peanoclaw::Patch::toStringUOldWithGhostLayer() const {
   if (isValid() && (isLeaf() || isVirtual())) {
     std::stringstream str;
     #ifdef Dim2
-    for (int y = getSubdivisionFactor()(1) + getGhostlayerWidth() - 1;
-        y >= -getGhostlayerWidth(); y--) {
-      for (int x = -getGhostlayerWidth();
-          x < getSubdivisionFactor()(0) + getGhostlayerWidth(); x++) {
-        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-        subcellIndex(0) = x;
-        subcellIndex(1) = y;
-        str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 0) << " ";
+    str << "q0:" << std::endl;
+    printUnknownWithGhostLayer(str, 0);
+
+    str << "q1:" << std::endl;
+    printUnknownWithGhostLayer(str, 1);
+
+    str << "q2:" << std::endl;
+    printUnknownWithGhostLayer(str, 2);
+
+    //Fluxes
+    for(int d = 0; d < DIMENSIONS; d++) {
+      str << "dimension=" << d << std::endl;
+      for(int direction = -1; direction <=1; direction+=2) {
+        str << "\tdirection=" << direction << std::endl << "\t";
+        for(int i = 0; i < getSubdivisionFactor()[peanoclaw::grid::Linearization::getGlobalDimension(0, d)]; i++) {
+          tarch::la::Vector<DIMENSIONS_MINUS_ONE,int> interfaceIndex;
+          interfaceIndex[0] = i;
+          str << PATCH_VALUE_FORMAT << _accessor.getFlux(interfaceIndex, 0, d, direction) << " ";
+        }
+        str << std::endl;
       }
-//      if (_cellDescription->getUnknownsPerSubcell() > 1) {
-//        str << "\t";
-//        for (int x = -getGhostlayerWidth();
-//            x < getSubdivisionFactor()(0) + getGhostlayerWidth(); x++) {
-//          tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-//          subcellIndex(0) = x;
-//          subcellIndex(1) = y;
-//          str << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 1) << ","
-//              << PATCH_VALUE_FORMAT << _accessor.getValueUOld(subcellIndex, 2) << " ";
-//        }
-//      }
-      str << "\n";
     }
-    str << "\n";
-
-
-    //Plot Bathymetry
-//    for (int y = getSubdivisionFactor()(1)-1; y >= 0; y--) {
-//      for (int x = 0; x < getSubdivisionFactor()(0); x++) {
-//        tarch::la::Vector<DIMENSIONS, int> subcellIndex;
-//        assignList(subcellIndex) = x, y;
-//        str << std::setprecision(6) << getAccessor().getParameterWithoutGhostlayer(subcellIndex, 0) << " ";
-//      }
-//      str << std::endl;
-//    }
-//    str << std::endl;
 
     #elif Dim3
     //Plot patch

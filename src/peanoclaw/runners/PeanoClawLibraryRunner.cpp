@@ -142,18 +142,17 @@ void peanoclaw::runners::PeanoClawLibraryRunner::iteratePlot() {
 }
 
 void peanoclaw::runners::PeanoClawLibraryRunner::iterateSolveTimestep(bool plotSubsteps) {
-  if(plotSubsteps) {
-    _repository->getState().setPlotNumber(_plotNumber);
-    if(_validateGrid) {
-      _repository->switchToSolveTimestepAndPlotAndValidateGrid();
-    } else {
-      _repository->switchToSolveTimestepAndPlot();
-    }
-
-    updateOracle();
-    _repository->iterate();
-    _plotNumber++;
-  } else {
+//  if(plotSubsteps) {
+//    _repository->getState().setPlotNumber(_plotNumber);
+//    if(_validateGrid) {
+//      _repository->switchToSolveTimestepAndPlotAndValidateGrid();
+//    } else {
+//      _repository->switchToSolveTimestepAndPlot();
+//    }
+//    updateOracle();
+//    _repository->iterate();
+//    _plotNumber++;
+//  } else {
     if(_validateGrid) {
       _repository->switchToSolveTimestepAndValidateGrid();
     } else {
@@ -161,6 +160,18 @@ void peanoclaw::runners::PeanoClawLibraryRunner::iterateSolveTimestep(bool plotS
     }
     updateOracle();
     _repository->iterate();
+//  }
+
+  if(plotSubsteps) {
+    _repository->getState().setPlotNumber(_plotNumber);
+    if(_validateGrid) {
+      _repository->switchToPlotAndValidateGrid();
+    } else {
+      _repository->switchToPlot();
+    }
+    updateOracle();
+    _repository->iterate();
+    _plotNumber++;
   }
 }
 
@@ -243,6 +254,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setRestrictStatistics(configuration.restrictStatistics());
   state.setPlotName(plotName);
   state.setProbeList(configuration.getProbeList());
+  state.shouldEstimateNeighborInducedMaximumTimestep(configuration.estimateNeighborInducedMaximumTimestep());
 
   //Initialise Grid (two iterations needed to set the initial ghostlayers of patches neighboring refined patches)
   state.setIsInitializing(true);

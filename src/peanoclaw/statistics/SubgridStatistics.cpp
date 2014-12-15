@@ -112,7 +112,7 @@ void peanoclaw::statistics::SubgridStatistics::addSubgridToLevelStatistics(
   if(subgrid.isLeaf()) {
     level.setNumberOfPatches(level.getNumberOfPatches() + 1);
     level.setNumberOfCells(level.getNumberOfCells() + (tarch::la::volume(subgrid.getSubdivisionFactor())));
-    level.setRegion(level.getRegion() + tarch::la::volume(subgrid.getSize()));
+    level.setArea(level.getArea() + tarch::la::volume(subgrid.getSize()));
     if(tarch::la::smaller(subgrid.getTimeIntervals().getCurrentTime() + subgrid.getTimeIntervals().getTimestepSize(), _globalTimestepEndTime)) {
       level.setEstimatedNumberOfRemainingIterationsToGlobalTimestep(
           level.getEstimatedNumberOfRemainingIterationsToGlobalTimestep()
@@ -535,12 +535,12 @@ void peanoclaw::statistics::SubgridStatistics::logLevelStatistics(std::string de
 
   for(size_t i = 0; i < levelStatistics.size(); i++) {
     const LevelStatistics& level = levelStatistics.at(i);
-    logInfo("logLevelStatistics", "\tLevel " << i << ": " << level.getNumberOfPatches() << " patches (region=" << level.getRegion() <<  "), "
+    logInfo("logLevelStatistics", "\tLevel " << i << ": " << level.getNumberOfPatches() << " patches (region=" << level.getArea() <<  "), "
         << level.getNumberOfCells() << " cells, " << level.getNumberOfCellUpdates() << "cell updates, "
         << totalEstimatedIterationsToGlobalTimestep << " remaining iterations. "
         << "minDt=" << level.getMinimalTimestepSize() << " averageDt=" << level.getAverageTimestepSize());
 
-    totalRegion += level.getRegion();
+    totalRegion += level.getArea();
     totalNumberOfPatches += level.getNumberOfPatches();
     totalNumberOfCells += level.getNumberOfCells();
     totalNumberOfCellUpdates += level.getNumberOfCellUpdates();
@@ -654,7 +654,7 @@ void peanoclaw::statistics::SubgridStatistics::merge(const SubgridStatistics& su
     LevelStatistics& thisLevel = levelStatistics[level];
     LevelStatistics& otherLevel = otherLevelStatistics[level];
 
-    thisLevel.setRegion(thisLevel.getRegion() + otherLevel.getRegion());
+    thisLevel.setArea(thisLevel.getArea() + otherLevel.getArea());
     thisLevel.setCreatedPatches(thisLevel.getCreatedPatches() + otherLevel.getCreatedPatches());
     thisLevel.setDestroyedPatches(thisLevel.getDestroyedPatches() + otherLevel.getDestroyedPatches());
     thisLevel.setNumberOfCellUpdates(thisLevel.getNumberOfCellUpdates() + otherLevel.getNumberOfCellUpdates());
@@ -697,7 +697,7 @@ void peanoclaw::statistics::SubgridStatistics::averageTotalSimulationValues(int 
   std::vector<LevelStatistics>& levelStatistics = LevelStatisticsHeap::getInstance().getData(_levelStatisticsIndex);
   for(int i = 0; i < (int)levelStatistics.size(); i++) {
     LevelStatistics& level = levelStatistics[i];
-    level.setRegion(level.getRegion() / numberOfEntries);
+    level.setArea(level.getArea() / numberOfEntries);
     level.setNumberOfCells(level.getNumberOfCells() / numberOfEntries);
     level.setNumberOfPatches(level.getNumberOfPatches() / numberOfEntries);
   }

@@ -400,3 +400,11 @@ int peanoclaw::State::getEstimatedNumberOfIterationsToGlobalTimestep() const {
   return _stateData.getEstimatedNumberOfIterationsToGlobalTimestep();
 }
 #endif
+
+void peanoclaw::State::shouldEstimateNeighborInducedMaximumTimestep(bool shouldEstimate) {
+  _stateData.setEstimateNeighborInducedMaximumTimestep(shouldEstimate);
+}
+
+bool peanoclaw::State::estimateNeighborInducedMaximumTimestep() const {
+  return _stateData.getEstimateNeighborInducedMaximumTimestep();
+}

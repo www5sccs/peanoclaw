@@ -20,11 +20,12 @@ class peanoclaw::dastgen::State {
 	persistent parallelise double initialTimestepSize;
 	persistent parallelise packed bool useDimensionalSplittingExtrapolation;
 
-	//Global Timestepping	
+	//Timestepping	
 	persistent parallelise double globalTimestepEndTime;
 	persistent parallelise packed bool allPatchesEvolvedToGlobalTimestep;
 	//persistent parallelise packed bool enforceGlobalTimestepping;
 	persistent parallelise packed bool enableFluxCorrection;
+	persistent parallelise packed bool estimateNeighborInducedMaximumTimestep;
 	
 	//Domain
 	persistent parallelise double domainOffset[DIMENSIONS];

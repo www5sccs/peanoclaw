@@ -233,35 +233,36 @@ void peanoclaw::interSubgridCommunication::UpdateNeighborTimeFunctor::operator()
   const tarch::la::Vector<DIMENSIONS, int>& direction
 ) {
   if(updatedPatch.isValid() && neighborPatch.isValid()) {
-//    //TODO unterweg debug
-//    if(tarch::la::equals(updatedPatch.getPosition()(0), 1.0/9.0)
-//      &&tarch::la::equals(updatedPatch.getPosition()(1), 7.0/9.0)
-//      &&updatedPatch.getLevel() == 3) {
-//      std::cout << neighborPatchIndex << "->" << updatedPatchIndex << " updating neighbor time for subgrid " << updatedPatch << " from patch " << neighborPatch << std::endl;
-//    }
+    peanoclaw::grid::TimeIntervals updatedTimeIntervals = updatedPatch.getTimeIntervals();
+    peanoclaw::grid::TimeIntervals neighborTimeIntervals = neighborPatch.getTimeIntervals();
 
-    double neighborTimeConstraint = neighborPatch.getTimeIntervals().getTimeConstraint();
-    updatedPatch.getTimeIntervals().updateMinimalNeighborTimeConstraint(
+    double neighborTimeConstraint = neighborTimeIntervals.getTimeConstraint();
+    updatedTimeIntervals.updateMinimalNeighborTimeConstraint(
       neighborTimeConstraint,
       neighborPatch.getCellDescriptionIndex()
     );
-    updatedPatch.getTimeIntervals().updateMaximalNeighborTimeInterval(
-      neighborPatch.getTimeIntervals().getCurrentTime(),
-      neighborPatch.getTimeIntervals().getTimestepSize()
+    updatedTimeIntervals.updateMaximalNeighborTimeInterval(
+      neighborTimeIntervals.getCurrentTime(),
+      neighborTimeIntervals.getTimestepSize()
     );
 
     if(neighborPatch.isLeaf()) {
-      updatedPatch.getTimeIntervals().updateMinimalLeafNeighborTimeConstraint(
+      updatedTimeIntervals.updateMinimalLeafNeighborTimeConstraint(
         neighborTimeConstraint
       );
     }
 
-//    //TODO unterweg debug
-//    if(tarch::la::equals(updatedPatch.getPosition()(0), 1.0/9.0)
-//      &&tarch::la::equals(updatedPatch.getPosition()(1), 7.0/9.0)
-//      &&updatedPatch.getLevel() == 3) {
-//      std::cout << "After update: " << updatedPatch << std::endl;
-//    }
+    if(tarch::la::greaterEquals(neighborTimeIntervals.getNeighborInducedMaximumTimestepSize(), 0.0)) {
+      updatedTimeIntervals.setNeighborInducedMaximumTimestepSize(
+        std::min(
+          updatedTimeIntervals.getNeighborInducedMaximumTimestepSize(),
+          std::min(
+            neighborTimeIntervals.getNeighborInducedMaximumTimestepSize() * tarch::la::min(neighborPatch.getSubdivisionFactor()),
+            neighborTimeIntervals.getEstimatedNextTimestepSize()
+          )
+        )
+      );
+    }
   }
 }
 

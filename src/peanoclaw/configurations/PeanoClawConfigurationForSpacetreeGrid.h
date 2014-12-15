@@ -48,6 +48,8 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     int _numberOfThreads;
 
+    double _estimateNeighborInducedMaximumTimestep;
+
     //Utilities
     bool getBoolValue(std::stringstream& s);
 
@@ -114,6 +116,12 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
      * Returns the number of threads that should be used for shared memory parallelization.
      */
     int getNumberOfThreads() const;
+
+    /**
+     * Returns, whether PeanoClaw should estimate the maximum timestep for a subgrid based
+     * on the neighboring subgrids.
+     */
+    bool estimateNeighborInducedMaximumTimestep() const;
 };
 
 
