@@ -289,6 +289,7 @@ void peanoclaw::native::FullSWOF2D::update(Patch& finePatch) {
     _scenario.update(finePatch);
 }
 
+#ifdef PEANOCLAW_FULLSWOF2D
 void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* scheme, tarch::la::Vector<DIMENSIONS_TIMES_TWO, int> margin) {
   tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = patch.getSubdivisionFactor();
   tarch::la::Vector<DIMENSIONS,int> subcellIndex;
@@ -346,7 +347,6 @@ void peanoclaw::native::FullSWOF2D::copyPatchToScheme(Patch& patch, Scheme* sche
     }
   }
 #endif
-
 }
 
 void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& patch, tarch::la::Vector<DIMENSIONS_TIMES_TWO, int> margin) {
@@ -423,6 +423,7 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
   }
 
 }
+#endif
 
 //void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp) {
 //    const int patchid = 0; // TODO: make this generic
