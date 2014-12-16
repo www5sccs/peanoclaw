@@ -587,8 +587,6 @@ void peanoclaw::mappings::InitialiseGrid::beginIteration(
 
   _refinementCriterionEnabled = solverState.isRefinementCriterionEnabled();
 
-  _estimateNeighborInducedMaximumTimestep = solverState.estimateNeighborInducedMaximumTimestep();
-
   logTraceOutWith1Argument( "beginIteration(State)", solverState);
 }
 

@@ -638,6 +638,9 @@ void peanoclaw::mappings::SolveTimestep::enterCell(
         transfer.copyUNewToUOld(subgrid);
 
         // Filling boundary layers for the given patch...
+        if(_estimateNeighborInducedMaximumTimestep) {
+          subgrid.getTimeIntervals().setNeighborInducedMaximumTimestepSize(std::numeric_limits<double>::max());
+        }
         tarch::la::Vector<DIMENSIONS_TIMES_TWO, bool> domainBoundaryFlags = fillBoundaryLayers(subgrid, fineGridVertices,
             fineGridVerticesEnumerator);
 

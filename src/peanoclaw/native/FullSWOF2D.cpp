@@ -30,7 +30,8 @@ peanoclaw::native::FullSWOF2D::FullSWOF2D(
   peanoclaw::interSubgridCommunication::FluxCorrection* fluxCorrection
 ) : Numerics(transfer, interpolation, restriction, fluxCorrection),
 _totalSolverCallbackTime(0.0),
-_scenario(scenario)
+_scenario(scenario),
+_wrapperScheme(0)
 {
   //import_array();
 
@@ -108,15 +109,15 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
       //std::cout << "parameters read (meshwidth): " << par.get_dx() << " vs " << meshwidth(0) << " and " << par.get_dy() << " vs " << meshwidth(1) << std::endl;
       //std::cout << "parameters read (cells): " << par.get_Nxcell() << " vs " << subdivisionFactor(0) << " and " << par.get_Nycell() << " vs " << subdivisionFactor(1) << std::endl;
 
-      Choice_scheme *wrapper_scheme = 0;
+//      Choice_scheme *wrapper_scheme = 0;
       Scheme *scheme = 0;
 
       do {
-        if(wrapper_scheme != 0) {
-          delete wrapper_scheme;
+        if(_wrapperScheme != 0) {
+          delete _wrapperScheme;
         }
-        wrapper_scheme = new Choice_scheme(par);
-        scheme = wrapper_scheme->getInternalScheme();
+        _wrapperScheme = new Choice_scheme(par);
+        scheme = _wrapperScheme->getInternalScheme();
 
         // kick off computation!
         scheme->setTimestep(maximumTimestepSize);
@@ -135,7 +136,7 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
 
         //TODO unterweg debug
         std::cout << subgrid.getPosition() << std::endl;
-        wrapper_scheme->calcul();
+        _wrapperScheme->calcul();
 
         struct timeval stop;
         gettimeofday(&stop, NULL);
@@ -171,7 +172,8 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
       //estimatedNextTimestepSize = 0.00001;
 
       //std::cout << "\nComputation finished!" << endl;
-      delete wrapper_scheme;
+      delete _wrapperScheme;
+      _wrapperScheme = 0;
       // computation is done -> back to peanoclaw 
   }
 #endif
@@ -422,240 +424,240 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
 
 }
 
-void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp) {
-    const int patchid = 0; // TODO: make this generic
+//void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp) {
+//    const int patchid = 0; // TODO: make this generic
+//
+//  tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = patch.getSubdivisionFactor();
+//  tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+//
+//  // FullSWOF2D has a mixture of 0->nxcell+1 and 1->nxcell
+//  int ghostlayerWidth = patch.getGhostlayerWidth();
+//  int fullswofGhostlayerWidth = ghostlayerWidth;
+//
+//  /** Water height.*/
+//  double* h = input.h;
+//  for (int x = -ghostlayerWidth; x < subdivisionFactor(0)+ghostlayerWidth; x++) {
+//        for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//
+//            unsigned int index[3];
+//            index[0] = y+ghostlayerWidth;
+//            index[1] = x+ghostlayerWidth;
+//            index[2] = patchid;
+//            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//            h[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 0);
+//        }
+//  }
+//
+//  /** X Velocity.*/
+//  double* u = input.u;
+//  for (int x = -ghostlayerWidth; x < subdivisionFactor(0)+ghostlayerWidth; x++) {
+//        for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//
+//            unsigned int index[3];
+//            index[0] = y+ghostlayerWidth;
+//            index[1] = x+ghostlayerWidth;
+//            index[2] = patchid;
+//            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//            u[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 1);
+//        }
+//  }
+//
+//  /** Y Velocity.*/
+//  double* v = input.v;
+//  for (int x = -ghostlayerWidth; x < subdivisionFactor(0)+ghostlayerWidth; x++) {
+//        for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//
+//            unsigned int index[3];
+//            index[0] = y+ghostlayerWidth;
+//            index[1] = x+ghostlayerWidth;
+//            index[2] = patchid;
+//            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//            v[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 2);
+//        }
+//  }
+//
+//  /** Topography.*/
+//  double* z = input.z;
+//  for (int x = -ghostlayerWidth; x < subdivisionFactor(0)+ghostlayerWidth; x++) {
+//        for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//
+//            unsigned int index[3];
+//            index[0] = y+ghostlayerWidth;
+//            index[1] = x+ghostlayerWidth;
+//            index[2] = patchid;
+//            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//            z[centerIndex] = patch.getAccessor().getParameterWithGhostlayer(subcellIndex, 0);
+//        }
+//  }
+//
+//#if 1 // TODO: we probably need this
+//  /** compute Discharge. (1->nxcell) */
+//  double* q1 = temp.q1;
+//  for (int x = -1; x < subdivisionFactor(0)+1; x++) {
+//    for (int y = -1; y < subdivisionFactor(1)+1; y++) {
+//        subcellIndex(0) = x;
+//        subcellIndex(1) = y;
+//
+//        unsigned int index[3];
+//        index[0] = y+fullswofGhostlayerWidth;
+//        index[1] = x+fullswofGhostlayerWidth;
+//        index[2] = patchid;
+//        unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//        // we have to initialize this because the FullSWOF2D does not compute the momentum on the ghostlayer
+//        double q = patch.getAccessor().getValueUOld(subcellIndex, 0) * patch.getAccessor().getValueUOld(subcellIndex, 1);
+//        q1[centerIndex] = q;
+//
+//    }
+//  }
+//
+//  /** compute Discharge. (1->nycell)*/
+//  double* q2 = temp.q2;
+//  for (int x = -1; x < subdivisionFactor(0)+1; x++) {
+//    for (int y = -1; y < subdivisionFactor(1)+1; y++) {
+//        subcellIndex(0) = x;
+//        subcellIndex(1) = y;
+//
+//        unsigned int index[3];
+//        index[0] = y+fullswofGhostlayerWidth;
+//        index[1] = x+fullswofGhostlayerWidth;
+//        index[2] = patchid;
+//        unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//        double q = patch.getAccessor().getValueUOld(subcellIndex, 0) * patch.getAccessor().getValueUOld(subcellIndex, 2);
+//        // we have to initialize this because the FullSWOF2D does not compute the momentum on the ghostlayer
+//        q2[centerIndex] = q;
+//    }
+//  }
+//#endif
+//}
 
-  tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = patch.getSubdivisionFactor();
-  tarch::la::Vector<DIMENSIONS,int> subcellIndex;
-
-  // FullSWOF2D has a mixture of 0->nxcell+1 and 1->nxcell
-  int ghostlayerWidth = patch.getGhostlayerWidth();
-  int fullswofGhostlayerWidth = ghostlayerWidth;
-
-  /** Water height.*/
-  double* h = input.h;
-  for (int x = -ghostlayerWidth; x < subdivisionFactor(0)+ghostlayerWidth; x++) {
-        for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-
-            unsigned int index[3];
-            index[0] = y+ghostlayerWidth;
-            index[1] = x+ghostlayerWidth;
-            index[2] = patchid;
-            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-            h[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 0);
-        }
-  }
- 
-  /** X Velocity.*/
-  double* u = input.u;
-  for (int x = -ghostlayerWidth; x < subdivisionFactor(0)+ghostlayerWidth; x++) {
-        for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
- 
-            unsigned int index[3];
-            index[0] = y+ghostlayerWidth;
-            index[1] = x+ghostlayerWidth;
-            index[2] = patchid;
-            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-            u[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 1);
-        }
-  }
-
-  /** Y Velocity.*/
-  double* v = input.v;
-  for (int x = -ghostlayerWidth; x < subdivisionFactor(0)+ghostlayerWidth; x++) {
-        for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-
-            unsigned int index[3];
-            index[0] = y+ghostlayerWidth;
-            index[1] = x+ghostlayerWidth;
-            index[2] = patchid;
-            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-            v[centerIndex] = patch.getAccessor().getValueUOld(subcellIndex, 2);
-        }
-  }
- 
-  /** Topography.*/
-  double* z = input.z;
-  for (int x = -ghostlayerWidth; x < subdivisionFactor(0)+ghostlayerWidth; x++) {
-        for (int y = -ghostlayerWidth; y < subdivisionFactor(1)+ghostlayerWidth; y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-
-            unsigned int index[3];
-            index[0] = y+ghostlayerWidth;
-            index[1] = x+ghostlayerWidth;
-            index[2] = patchid;
-            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-            z[centerIndex] = patch.getAccessor().getParameterWithGhostlayer(subcellIndex, 0);
-        }
-  }
-
-#if 1 // TODO: we probably need this
-  /** compute Discharge. (1->nxcell) */
-  double* q1 = temp.q1;
-  for (int x = -1; x < subdivisionFactor(0)+1; x++) {
-    for (int y = -1; y < subdivisionFactor(1)+1; y++) {
-        subcellIndex(0) = x;
-        subcellIndex(1) = y;
-
-        unsigned int index[3];
-        index[0] = y+fullswofGhostlayerWidth;
-        index[1] = x+fullswofGhostlayerWidth;
-        index[2] = patchid;
-        unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-        // we have to initialize this because the FullSWOF2D does not compute the momentum on the ghostlayer
-        double q = patch.getAccessor().getValueUOld(subcellIndex, 0) * patch.getAccessor().getValueUOld(subcellIndex, 1);
-        q1[centerIndex] = q;
-
-    }
-  }
-
-  /** compute Discharge. (1->nycell)*/
-  double* q2 = temp.q2;
-  for (int x = -1; x < subdivisionFactor(0)+1; x++) {
-    for (int y = -1; y < subdivisionFactor(1)+1; y++) {
-        subcellIndex(0) = x;
-        subcellIndex(1) = y;
-
-        unsigned int index[3];
-        index[0] = y+fullswofGhostlayerWidth;
-        index[1] = x+fullswofGhostlayerWidth;
-        index[2] = patchid;
-        unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-        double q = patch.getAccessor().getValueUOld(subcellIndex, 0) * patch.getAccessor().getValueUOld(subcellIndex, 2);
-        // we have to initialize this because the FullSWOF2D does not compute the momentum on the ghostlayer
-        q2[centerIndex] = q;
-    }
-  }
-#endif
-}
-
-void peanoclaw::native::FullSWOF2D::copySetToPatch(unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp, Patch& patch) {
-  const int patchid = 0; // TODO: make this generic
-
-  tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = patch.getSubdivisionFactor();
-  tarch::la::Vector<DIMENSIONS,int> subcellIndex;
-
-  int ghostlayerWidth = patch.getGhostlayerWidth();
-  int fullswofGhostlayerWidth = ghostlayerWidth;
-
-  /** Water height after one step of the scheme.*/
-  double* h = input.h;
-  for (int x = 0; x < subdivisionFactor(0); x++) {
-        for (int y = 0; y < subdivisionFactor(1); y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
- 
-            unsigned int index[3];
-            index[0] = y+ghostlayerWidth;
-            index[1] = x+ghostlayerWidth;
-            index[2] = patchid;
-            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-            patch.getAccessor().setValueUNew(subcellIndex, 0, h[centerIndex]);
-        }
-  }
- 
-  /** X Velocity after one step of the scheme.*/
-  double* u = input.u;
-  for (int x = 0; x < subdivisionFactor(0); x++) {
-        for (int y = 0; y < subdivisionFactor(1); y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-
-            unsigned int index[3];
-            index[0] = y+ghostlayerWidth;
-            index[1] = x+ghostlayerWidth;
-            index[2] = patchid;
-            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-            patch.getAccessor().setValueUNew(subcellIndex, 1, u[centerIndex]);
-        }
-  }
-
-  /** Y Velocity after one step of the scheme.*/
-  double* v = input.v;
-  for (int x = 0; x < subdivisionFactor(0); x++) {
-        for (int y = 0; y < subdivisionFactor(1); y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-
-            unsigned int index[3];
-            index[0] = y+ghostlayerWidth;
-            index[1] = x+ghostlayerWidth;
-            index[2] = patchid;
-            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-            patch.getAccessor().setValueUNew(subcellIndex, 2, v[centerIndex]);
-        }
-  }
-
-  /** Topography.*/
-  double* z = input.z;
-  for (int x = 0; x < subdivisionFactor(0); x++) {
-        for (int y = 0; y < subdivisionFactor(1); y++) {
-            subcellIndex(0) = x;
-            subcellIndex(1) = y;
-
-            unsigned int index[3];
-            index[0] = y+ghostlayerWidth;
-            index[1] = x+ghostlayerWidth;
-            index[2] = patchid;
-            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-            patch.getAccessor().setParameterWithGhostlayer(subcellIndex, 3, z[centerIndex]);
-        }
-  }
- 
-#if 1 // TODO: we probably needs this
-  /** compute Discharge. (1->nxcell) */
-  double* q1 = temp.q1;
-  for (int x = 0; x < subdivisionFactor(0); x++) {
-    for (int y = 0; y < subdivisionFactor(1); y++) {
-        subcellIndex(0) = x;
-        subcellIndex(1) = y;
-
-        unsigned int index[3];
-        index[0] = y+fullswofGhostlayerWidth;
-        index[1] = x+fullswofGhostlayerWidth;
-        index[2] = patchid;
-        unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-        patch.getAccessor().setValueUNew(subcellIndex, 4, q1[centerIndex]);
-    }
-  }
-
-  /** compute Discharge. (1->nycell)*/
-  double* q2 = temp.q2;
-  for (int x = 0; x < subdivisionFactor(0); x++) {
-    for (int y = 0; y < subdivisionFactor(1); y++) {
-        subcellIndex(0) = x;
-        subcellIndex(1) = y;
- 
-        unsigned int index[3];
-        index[0] = y+fullswofGhostlayerWidth;
-        index[1] = x+fullswofGhostlayerWidth;
-        index[2] = patchid;
-        unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
-
-        patch.getAccessor().setValueUNew(subcellIndex, 5, q2[centerIndex]);
-    }
-  }
-#endif
-
-}
+//void peanoclaw::native::FullSWOF2D::copySetToPatch(unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp, Patch& patch) {
+//  const int patchid = 0; // TODO: make this generic
+//
+//  tarch::la::Vector<DIMENSIONS,int> subdivisionFactor = patch.getSubdivisionFactor();
+//  tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+//
+//  int ghostlayerWidth = patch.getGhostlayerWidth();
+//  int fullswofGhostlayerWidth = ghostlayerWidth;
+//
+//  /** Water height after one step of the scheme.*/
+//  double* h = input.h;
+//  for (int x = 0; x < subdivisionFactor(0); x++) {
+//        for (int y = 0; y < subdivisionFactor(1); y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//
+//            unsigned int index[3];
+//            index[0] = y+ghostlayerWidth;
+//            index[1] = x+ghostlayerWidth;
+//            index[2] = patchid;
+//            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//            patch.getAccessor().setValueUNew(subcellIndex, 0, h[centerIndex]);
+//        }
+//  }
+//
+//  /** X Velocity after one step of the scheme.*/
+//  double* u = input.u;
+//  for (int x = 0; x < subdivisionFactor(0); x++) {
+//        for (int y = 0; y < subdivisionFactor(1); y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//
+//            unsigned int index[3];
+//            index[0] = y+ghostlayerWidth;
+//            index[1] = x+ghostlayerWidth;
+//            index[2] = patchid;
+//            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//            patch.getAccessor().setValueUNew(subcellIndex, 1, u[centerIndex]);
+//        }
+//  }
+//
+//  /** Y Velocity after one step of the scheme.*/
+//  double* v = input.v;
+//  for (int x = 0; x < subdivisionFactor(0); x++) {
+//        for (int y = 0; y < subdivisionFactor(1); y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//
+//            unsigned int index[3];
+//            index[0] = y+ghostlayerWidth;
+//            index[1] = x+ghostlayerWidth;
+//            index[2] = patchid;
+//            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//            patch.getAccessor().setValueUNew(subcellIndex, 2, v[centerIndex]);
+//        }
+//  }
+//
+//  /** Topography.*/
+//  double* z = input.z;
+//  for (int x = 0; x < subdivisionFactor(0); x++) {
+//        for (int y = 0; y < subdivisionFactor(1); y++) {
+//            subcellIndex(0) = x;
+//            subcellIndex(1) = y;
+//
+//            unsigned int index[3];
+//            index[0] = y+ghostlayerWidth;
+//            index[1] = x+ghostlayerWidth;
+//            index[2] = patchid;
+//            unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//            patch.getAccessor().setParameterWithGhostlayer(subcellIndex, 3, z[centerIndex]);
+//        }
+//  }
+//
+//#if 1 // TODO: we probably needs this
+//  /** compute Discharge. (1->nxcell) */
+//  double* q1 = temp.q1;
+//  for (int x = 0; x < subdivisionFactor(0); x++) {
+//    for (int y = 0; y < subdivisionFactor(1); y++) {
+//        subcellIndex(0) = x;
+//        subcellIndex(1) = y;
+//
+//        unsigned int index[3];
+//        index[0] = y+fullswofGhostlayerWidth;
+//        index[1] = x+fullswofGhostlayerWidth;
+//        index[2] = patchid;
+//        unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//        patch.getAccessor().setValueUNew(subcellIndex, 4, q1[centerIndex]);
+//    }
+//  }
+//
+//  /** compute Discharge. (1->nycell)*/
+//  double* q2 = temp.q2;
+//  for (int x = 0; x < subdivisionFactor(0); x++) {
+//    for (int y = 0; y < subdivisionFactor(1); y++) {
+//        subcellIndex(0) = x;
+//        subcellIndex(1) = y;
+//
+//        unsigned int index[3];
+//        index[0] = y+fullswofGhostlayerWidth;
+//        index[1] = x+fullswofGhostlayerWidth;
+//        index[2] = patchid;
+//        unsigned int centerIndex = MekkaFlood_solver::linearizeIndex(3, index, strideinfo);
+//
+//        patch.getAccessor().setValueUNew(subcellIndex, 5, q2[centerIndex]);
+//    }
+//  }
+//#endif
+//
+//}
 
 peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   int ghostlayerWidth,
@@ -702,6 +704,7 @@ peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
     order = select_order; // order 1 or order 2
 
    cfl_fix = 0.5; // TODO: what is this actually good for? (working setting 0.5 with order 1, 0.8 got stuck with order 1 and 2)
+//   cfl_fix = 0.3857;
    dt_fix = 0.05; // TODO: what is this actually good for
    nbtimes = 1;
 

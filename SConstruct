@@ -193,14 +193,13 @@ elif compiler == 'xlc':
      cxx = 'xlc++'
    else:
      cxx = 'mpixlcxx'
-     ccflags.append('-cxx=xlc++')
    if build == 'debug':
       ccflags.append('-g3')
       ccflags.append('-O0')
    elif build == 'asserts':
       ccflags.append('-qstrict')
       ccflags.append('-O2')
-      ccflags.append('-g')
+      ccflags.append('-g3')
    elif build == 'release':
       ccflags.append('-qstrict')
       ccflags.append('-O3')
@@ -518,6 +517,7 @@ elif solver == 'fullswof2d':
      Glob(join(buildpath, 'peanoclaw/native/main.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/fullswof2DMain.cpp')),
      Glob(join(buildpath, 'peanoclaw/native/scenarios/*.cpp')),
+     Glob(join(buildpath, 'peanoclaw/solver/fullswof2D/*.cpp')),
      Glob(join(buildpath, 'fullswof2d/Sources/liblimitations/*.cpp')),
      Glob(join(buildpath, 'fullswof2d/Sources/libfrictions/*.cpp')),
      Glob(join(buildpath, 'fullswof2d/Sources/libparser/*.cpp')),

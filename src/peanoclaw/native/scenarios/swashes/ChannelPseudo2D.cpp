@@ -14,6 +14,8 @@
 #include "tarch/la/Vector.h"
 #include "tarch/la/VectorAssignList.h"
 
+#include <fstream>
+
 peanoclaw::native::scenarios::swashes::ChannelPseudo2D::ChannelPseudo2D(
   std::vector<std::string> arguments
 ) : _discharge(20),
@@ -108,6 +110,7 @@ void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(pea
 
       if(x >= 0 && y >= 0 && x < subgrid.getSubdivisionFactor()[0] &&  y < subgrid.getSubdivisionFactor()[1]) {
         double waterheight = _criticality == Sub ? _swashesChannel->getInitialWaterHeight(position) : 0.0;
+
         if(topography >= BED_HEIGHT) {
           waterheight = 0;
         }
@@ -118,6 +121,28 @@ void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(pea
       }
     }
   }
+
+  //Write topography
+  std::ofstream topographyFile("peanoclawTopography.dat");
+  for(int x = 0; x < subgrid.getSubdivisionFactor()[0]; x++) {
+    for(int y = 0; y < subgrid.getSubdivisionFactor()[1]; y++) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+      assignList(subcellIndex) = x, y;
+      tarch::la::Vector<DIMENSIONS,double> position = subgrid.getSubcellCenter(subcellIndex);
+      topographyFile << position[0] << " " << (position[1] - _domainOffset[1]) << " " << accessor.getParameterWithGhostlayer(subcellIndex, 0) << "\n";
+    }
+  }
+  topographyFile.close();
+  std::ofstream huvFile("peanoclawHUVInit.dat");
+  for(int y = 0; y < subgrid.getSubdivisionFactor()[1]; y++) {
+    for(int x = 0; x < subgrid.getSubdivisionFactor()[0]; x++) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+      assignList(subcellIndex) = x, y;
+      tarch::la::Vector<DIMENSIONS,double> position = subgrid.getSubcellCenter(subcellIndex);
+      huvFile << position[0] << " " << (position[1] - _domainOffset[1]) << " " << "0 0 0" << std::endl;
+    }
+  }
+  huvFile.close();
 
   #endif
 }

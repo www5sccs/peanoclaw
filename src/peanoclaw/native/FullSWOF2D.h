@@ -26,8 +26,9 @@
 
 #include "parameters.hpp"
 
-#if !defined(SCHEME_HPP)
+#ifdef PEANOCLAW_FULLSWOF2D
 #include "scheme.hpp"
+#include "choice_scheme.hpp"
 #endif
 
 namespace peanoclaw {
@@ -50,6 +51,8 @@ private:
   double _totalSolverCallbackTime;
 
   peanoclaw::native::scenarios::SWEScenario& _scenario;
+
+  Choice_scheme* _wrapperScheme;
 
 public:
   FullSWOF2D(
@@ -143,8 +146,8 @@ public:
   void copyPatchToScheme(Patch& patch, Scheme* scheme, tarch::la::Vector<DIMENSIONS_TIMES_TWO, int> margin);
   void copySchemeToPatch(Scheme* scheme, Patch& patch, tarch::la::Vector<DIMENSIONS_TIMES_TWO, int> margin);
 
-  void copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp);
-  void copySetToPatch(unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp, Patch& patch);
+//  void copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp);
+//  void copySetToPatch(unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp, Patch& patch);
 
   /*
    * @see peanoclaw::Numerics
@@ -164,7 +167,9 @@ public:
   /*
    * @see peanoclaw::Numerics
    */
-  int getGhostlayerWidth() const { return 2; }
+  int getGhostlayerWidth() const { return 3; }
+
+  Scheme* getScheme() const { return _wrapperScheme->getInternalScheme(); };
 };
 
 class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {

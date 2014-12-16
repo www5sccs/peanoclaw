@@ -1,13 +1,16 @@
 /*
- * DefaultFluxCorrection.cpph
+ * VelocityFluxCorrection.cpph
  *
- *  Created on: Dec 5, 2014
+ *  Created on: Dec 16, 2014
  *      Author: kristof
  */
 
+#ifdef PEANOCLAW_FULLSWOF2D
+#include "misc.hpp"
+#endif
 
 template<int NumberOfUnknowns>
-double peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberOfUnknowns>::calculateOverlappingRegion(
+double peanoclaw::solver::fullswof2D::FluxCorrectionTemplate<NumberOfUnknowns>::calculateOverlappingRegion(
     tarch::la::Vector<DIMENSIONS, double> position1,
     tarch::la::Vector<DIMENSIONS_MINUS_ONE, int> cellIndex1,
     tarch::la::Vector<DIMENSIONS, double> size1,
@@ -36,10 +39,19 @@ double peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<Numbe
   return region;
 }
 
+#ifdef PEANOCLAW_FULLSWOF2D
 template<int NumberOfUnknowns>
-void peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberOfUnknowns>::computeFluxes(
-  Patch& subgrid
+void peanoclaw::solver::fullswof2D::FluxCorrectionTemplate<NumberOfUnknowns>::computeFluxes(
+  Patch& subgrid,
+  peanoclaw::native::FullSWOF2D& fullswof2D
 ) const {
+
+  TAB& f0 = fullswof2D.getScheme()->getFluxXQ0();
+//  TAB& f1 = scheme.getFluxXQ1();
+//  TAB& f2 = scheme.getFluxXQ2();
+//  TAB& g0 = scheme.getFluxYQ0();
+//  TAB& g1 = scheme.getFluxYQ1();
+//  TAB& g2 = scheme.getFluxYQ2();
 
   for(int dimension = 0; dimension < DIMENSIONS; dimension++) {
     double deltaTDeltaX = subgrid.getTimeIntervals().getTimestepSize() / (2 * subgrid.getSubcellSize()[dimension]);
@@ -48,10 +60,9 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberO
       peanoclaw::grid::SubgridFaceIterator<NumberOfUnknowns> faceIterator
         = subgrid.getAccessor().getSubgridFaceIterator<NumberOfUnknowns>(dimension, direction);
 
-      //TODO unterweg debug
-//      std::cout << "dimension=" << dimension << " direction=" << direction << "ptr0=" << (&faceIterator) << std::endl;
       while(faceIterator.moveToNextInterfaceCell()) {
         faceIterator.moveToNextGhostCell(); //Move to first cell
+        faceIterator.moveToNextGhostCell(); //Move to second cell
 
         tarch::la::Vector<NumberOfUnknowns,double> outerUnknowns = faceIterator.getGhostUnknowns();
         tarch::la::Vector<NumberOfUnknowns,double> outerFluxes = outerUnknowns * outerUnknowns[1 + dimension] / outerUnknowns[0];
@@ -79,9 +90,10 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberO
     }
   }
 }
+#endif
 
 template<int NumberOfUnknowns>
-void peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberOfUnknowns>::applyCorrection(
+void peanoclaw::solver::fullswof2D::FluxCorrectionTemplate<NumberOfUnknowns>::applyCorrection(
     Patch& sourceSubgrid,
     Patch& destinationSubgrid,
     int dimension,
