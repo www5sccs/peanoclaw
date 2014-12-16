@@ -24,9 +24,8 @@
 
 #include "peanoclaw/native/MekkaFlood_solver.h"
 
-#include "parameters.hpp"
-
 #ifdef PEANOCLAW_FULLSWOF2D
+#include "parameters.hpp"
 #include "scheme.hpp"
 #include "choice_scheme.hpp"
 #endif
