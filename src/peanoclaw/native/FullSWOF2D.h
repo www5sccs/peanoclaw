@@ -51,7 +51,9 @@ private:
 
   peanoclaw::native::scenarios::SWEScenario& _scenario;
 
+  #ifdef PEANOCLAW_FULLSWOF2D
   Choice_scheme* _wrapperScheme;
+  #endif
 
 public:
   FullSWOF2D(
@@ -142,8 +144,10 @@ public:
 
   void update(Patch& finePatch);
 
+  #ifdef PEANOCLAW_FULLSWOF2D
   void copyPatchToScheme(Patch& patch, Scheme* scheme, tarch::la::Vector<DIMENSIONS_TIMES_TWO, int> margin);
   void copySchemeToPatch(Scheme* scheme, Patch& patch, tarch::la::Vector<DIMENSIONS_TIMES_TWO, int> margin);
+  #endif
 
 //  void copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp);
 //  void copySetToPatch(unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp, Patch& patch);
@@ -168,9 +172,12 @@ public:
    */
   int getGhostlayerWidth() const { return 3; }
 
+  #ifdef PEANOCLAW_FULLSWOF2D
   Scheme* getScheme() const { return _wrapperScheme->getInternalScheme(); };
+  #endif
 };
 
+#ifdef PEANOCLAW_FULLSWOF2D
 class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
     private:
         double _endTime;
@@ -198,6 +205,6 @@ class peanoclaw::native::FullSWOF2D_Parameters : public Parameters {
 
         double get_T() const;
 };
-
+#endif
 
 #endif /* PEANOCLAW_SWEKERNEL_NATIVE_H_ */
