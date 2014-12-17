@@ -152,7 +152,17 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::swashes::Chan
   peanoclaw::Patch& patch,
   bool isInitializing
 ) {
-  return _maximalMeshWidth;
+  double b = _swashesChannel->getBedWidth(patch.getPosition()[0]);
+  double center = _domainOffset[1] + _domainSize[1] / 2;
+  double distance = abs(b / 2 - abs(patch.getPosition()[1] + patch.getSize()[1] / 2 - center));
+
+  if(distance < patch.getSize()[1]) {
+    return _minimalMeshWidth;
+  } else if ((distance < 3 * patch.getSize()[1])){
+    return tarch::la::max(patch.getSubcellSize());
+  } else {
+    return _maximalMeshWidth;
+  }
 }
 
 void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::update(peanoclaw::Patch& subgrid) {
