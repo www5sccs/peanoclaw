@@ -34,6 +34,11 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate {
 
   private:
     /**
+     * Logging device.
+     */
+    static tarch::logging::Log _log;
+
+    /**
      * Returns the region of the region where the two given
      * patches overlap.
      * This overload projects the patches along the given projection axis

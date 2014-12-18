@@ -111,11 +111,11 @@ peanoclaw::native::SWEKernel::~SWEKernel()
 void peanoclaw::native::SWEKernel::initializePatch(
   Patch& patch
 ) {
-  logTraceIn( "initializePatch(...)");
+  logTraceIn( "initializePatch(...)" );
 
   _scenario.initializePatch(patch);
 
-  logTraceOutWith1Argument( "initializePatch(...)", demandedMeshWidth);
+  logTraceOut( "initializePatch(...)" );
 }
 
 void peanoclaw::native::SWEKernel::update(Patch& subgrid) {

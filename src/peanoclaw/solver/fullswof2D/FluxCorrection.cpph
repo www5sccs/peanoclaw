@@ -99,7 +99,7 @@ void peanoclaw::solver::fullswof2D::FluxCorrectionTemplate<NumberOfUnknowns>::ap
     int dimension,
     int direction
 ) const {
-  logTraceInWith4Arguments("applyCoarseGridCorrection", finePatch.toString(), coarsePatch.toString(), dimension, direction);
+  logTraceInWith4Arguments("applyCoarseGridCorrection", sourceSubgrid.toString(), destinationSubgrid.toString(), dimension, direction);
 
   double lowerTimeIntervalBound = std::max(sourceSubgrid.getTimeIntervals().getCurrentTime(), destinationSubgrid.getTimeIntervals().getCurrentTime());
   double upperTimeIntervalBound = std::min(sourceSubgrid.getTimeIntervals().getCurrentTime() + sourceSubgrid.getTimeIntervals().getTimestepSize(),

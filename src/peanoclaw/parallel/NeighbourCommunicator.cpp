@@ -70,7 +70,7 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
       isSingleTransferOfSubgridToRank
       || !_avoidMultipleTransferOfSubgridsIfPossible
     ) {
-      logDebug("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << localSubgrid << " for vertex " << _position);
+      logDebug("sendSubgridsForVertex", "Sending subgrid to rank " << _remoteRank << ": " << transferedSubgrid << " for vertex " << _position);
 
       #ifdef Asserts
       assertion3(tarch::la::allGreater(transferedSubgrid.getSubdivisionFactor(), 0), transferedSubgrid.toString(), _position, _level);
@@ -97,7 +97,7 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
 //      localParallelSubgrid.markCurrentStateAsSent(true);
       localParallelSubgrid.markCurrentStateAsSentInNextIteration();
     } else {
-      logDebug("sendSubgridsForVertex", "(Skipped) Sending subgrid to rank " << _remoteRank << ": " << localSubgrid
+      logDebug("sendSubgridsForVertex", "(Skipped) Sending subgrid to rank " << _remoteRank << ": " << transferedSubgrid
           << " for vertex " << _position << ", getNumberOfSharedAdjacentVertices=" << localParallelSubgrid.getNumberOfSharedAdjacentVertices());
     }
     localParallelSubgrid.decreaseNumberOfSharedAdjacentVertices(_remoteRank);
@@ -117,10 +117,10 @@ bool peanoclaw::parallel::NeighbourCommunicator::sendSubgrid(
 
 void peanoclaw::parallel::NeighbourCommunicator::receiveSubgrid(Patch& localSubgrid) {
   #ifdef Parallel
-  logTraceInWith3Arguments("receiveSubgrid(Subgrid)", localCellDescriptionIndex, _position, _level);
+  logTraceInWith1Argument("receiveSubgrid(Subgrid)", localSubgrid);
 
   std::vector<CellDescription> remoteCellDescriptionVector = _subgridCommunicator.receiveCellDescription();
-  logDebug("", "Receiving patch from " << _remoteRank << " at " << localCellDescription.getPosition() << " on level " << localCellDescription.getLevel());
+  logDebug("", "Receiving patch from " << _remoteRank << " at " << localSubgrid.getPosition() << " on level " << localSubgrid.getLevel());
 
   if(!_onlySendSubgridsAfterChange || remoteCellDescriptionVector.size() > 0) {
     assertionEquals4(remoteCellDescriptionVector.size(), 1, _position, _level, _remoteRank, localSubgrid);

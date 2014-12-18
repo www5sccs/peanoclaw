@@ -232,7 +232,7 @@ void peanoclaw::interSubgridCommunication::DefaultInterpolationTemplate<NumberOf
 //      }
 
     }
-    logDebug("interpolateSolution(...)", "For subcell " << destinationIterator.getCellIndex() << " interpolated value is " << destinationIterator.getUnknownUOld(0));
+//    logDebug("interpolateSolution(...)", "For subcell " << destinationIterator.getCellIndex() << " interpolated value is " << destinationIterator.getUnknownUOld(0));
   }
 
   #ifdef Asserts
