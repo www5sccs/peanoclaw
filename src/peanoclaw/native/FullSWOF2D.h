@@ -55,6 +55,23 @@ private:
   Choice_scheme* _wrapperScheme;
   #endif
 
+  /**
+   * Transforms the water height in the given subgrid from relative
+   * height above ground to absolute water height.
+   * Also it transforms velocities to momenta.
+   */
+  void transformToAbsoluteWaterHeightAndMomenta(
+    peanoclaw::Patch&                  subgrid,
+    const peanoclaw::geometry::Region& region,
+    bool                               modifyUOld
+  ) const;
+
+  void transformToRelativeWaterHeightAndVelocities(
+    peanoclaw::Patch&                  subgrid,
+    const peanoclaw::geometry::Region& region,
+    bool                               modifyUOld
+  ) const;
+
 public:
   FullSWOF2D(
     peanoclaw::native::scenarios::SWEScenario& scenario,
@@ -175,6 +192,40 @@ public:
   #ifdef PEANOCLAW_FULLSWOF2D
   Scheme* getScheme() const { return _wrapperScheme->getInternalScheme(); };
   #endif
+
+  /*
+   * Modifies the source subgrid so that not the water height above
+   * the seafloor is interpolated but the absolute water height. Also,
+   * the velocities are transformed to momenta.
+   */
+  virtual void interpolateSolution (
+    const tarch::la::Vector<DIMENSIONS, int>&    destinationSize,
+    const tarch::la::Vector<DIMENSIONS, int>&    destinationOffset,
+    peanoclaw::Patch& source,
+    peanoclaw::Patch&        destination,
+    bool interpolateToUOld,
+    bool interpolateToCurrentTime,
+    bool useTimeUNewOrTimeUOld
+  ) const;
+
+  /*
+   * Modifies the source subgrid so that not the water height above
+   * the seafloor is restricted but the absolute water height.
+   */
+  virtual void restrictSolution (
+    peanoclaw::Patch& source,
+    peanoclaw::Patch& destination,
+    bool              restrictOnlyOverlappedRegions
+  ) const;
+
+  /**
+   * Transforms the destination subgrid from absolute water height
+   * to water height above seafloor.
+   */
+  virtual void postProcessRestriction(
+    peanoclaw::Patch& destination,
+    bool              restrictOnlyOverlappedRegions
+  ) const;
 };
 
 #ifdef PEANOCLAW_FULLSWOF2D

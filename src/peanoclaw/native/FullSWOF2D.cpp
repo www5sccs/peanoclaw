@@ -22,6 +22,96 @@ tarch::logging::Log peanoclaw::native::FullSWOF2D::_log("peanoclaw::native::Full
 peanoclaw::native::scenarios::FullSWOF2DBoundaryCondition
   peanoclaw::native::FullSWOF2D::_interSubgridBoundaryCondition(0, 0, 0);
 
+void peanoclaw::native::FullSWOF2D::transformToAbsoluteWaterHeightAndMomenta(
+  peanoclaw::Patch&                  subgrid,
+  const peanoclaw::geometry::Region& region,
+  bool                               modifyUOld
+) const {
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
+  if(modifyUOld) {
+    dfor(internalSubcellIndex, region._size) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + region._offset;
+      double relativeWaterHeight = accessor.getValueUOld(subcellIndex, 0);
+      accessor.setValueUOld(subcellIndex, 0,
+        accessor.getValueUOld(subcellIndex, 0) + accessor.getParameterWithGhostlayer(subcellIndex, 0)
+      );
+      accessor.setValueUOld(subcellIndex, 1,
+        accessor.getValueUOld(subcellIndex, 1) * relativeWaterHeight
+      );
+      accessor.setValueUOld(subcellIndex, 2,
+        accessor.getValueUOld(subcellIndex, 2) * relativeWaterHeight
+      );
+    }
+  } else {
+    dfor(internalSubcellIndex, region._size) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + region._offset;
+      double relativeWaterHeight = accessor.getValueUNew(subcellIndex, 0);
+      accessor.setValueUNew(subcellIndex, 0,
+        accessor.getValueUNew(subcellIndex, 0) + accessor.getParameterWithGhostlayer(subcellIndex, 0)
+      );
+      accessor.setValueUNew(subcellIndex, 1,
+        accessor.getValueUNew(subcellIndex, 1) * relativeWaterHeight
+      );
+      accessor.setValueUNew(subcellIndex, 2,
+        accessor.getValueUNew(subcellIndex, 2) * relativeWaterHeight
+      );
+    }
+  }
+}
+
+void peanoclaw::native::FullSWOF2D::transformToRelativeWaterHeightAndVelocities(
+  peanoclaw::Patch&                  subgrid,
+  const peanoclaw::geometry::Region& region,
+  bool                               modifyUOld
+) const {
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
+  if(modifyUOld) {
+    dfor(internalSubcellIndex, region._size) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + region._offset;
+      accessor.setValueUOld(subcellIndex, 0,
+        std::max(0.0, accessor.getValueUOld(subcellIndex, 0) - accessor.getParameterWithGhostlayer(subcellIndex, 0))
+      );
+
+      //TODO unterweg debug
+//      if(tarch::la::smaller(accessor.getValueUOld(subcellIndex, 0), 0.0, 1e-8)) {
+//        std::cout << subgrid << std::endl << subgrid.toStringUOldWithGhostLayer() << std::endl;
+//        throw "";
+//      }
+
+      double relativeWaterHeight = accessor.getValueUOld(subcellIndex, 0);
+      relativeWaterHeight = tarch::la::greater(relativeWaterHeight, 0.0, 1e-8) ? relativeWaterHeight : std::numeric_limits<double>::infinity();
+      accessor.setValueUOld(subcellIndex, 1,
+        accessor.getValueUOld(subcellIndex, 1) / relativeWaterHeight
+      );
+      accessor.setValueUOld(subcellIndex, 2,
+        accessor.getValueUOld(subcellIndex, 2) / relativeWaterHeight
+      );
+    }
+  } else {
+    dfor(internalSubcellIndex, region._size) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + region._offset;
+      accessor.setValueUNew(subcellIndex, 0,
+        std::max(0.0, accessor.getValueUNew(subcellIndex, 0) - accessor.getParameterWithGhostlayer(subcellIndex, 0))
+      );
+
+      //TODO unterweg debug
+//      if(tarch::la::smaller(accessor.getValueUNew(subcellIndex, 0), 0.0, 1e-8)) {
+//        std::cout << subgrid << std::endl << subgrid.toStringUNew() << std::endl;
+//        throw "";
+//      }
+
+      double relativeWaterHeight = accessor.getValueUNew(subcellIndex, 0);
+      relativeWaterHeight = tarch::la::greater(relativeWaterHeight, 0.0, 1e-8) ? relativeWaterHeight : std::numeric_limits<double>::infinity();
+      accessor.setValueUNew(subcellIndex, 1,
+        accessor.getValueUNew(subcellIndex, 1) / relativeWaterHeight
+      );
+      accessor.setValueUNew(subcellIndex, 2,
+        accessor.getValueUNew(subcellIndex, 2) / relativeWaterHeight
+      );
+    }
+  }
+}
+
 peanoclaw::native::FullSWOF2D::FullSWOF2D(
   peanoclaw::native::scenarios::SWEScenario& scenario,
   peanoclaw::interSubgridCommunication::DefaultTransfer* transfer,
@@ -134,8 +224,6 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
         struct timeval start;
         gettimeofday(&start, NULL);
 
-        //TODO unterweg debug
-        std::cout << subgrid.getPosition() << std::endl;
         _wrapperScheme->calcul();
 
         struct timeval stop;
@@ -425,6 +513,8 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
 }
 #endif
 
+
+
 //void peanoclaw::native::FullSWOF2D::copyPatchToSet(Patch& patch, unsigned int *strideinfo, MekkaFlood_solver::InputArrays& input, MekkaFlood_solver::TempArrays& temp) {
 //    const int patchid = 0; // TODO: make this generic
 //
@@ -659,6 +749,88 @@ void peanoclaw::native::FullSWOF2D::copySchemeToPatch(Scheme* scheme, Patch& pat
 //#endif
 //
 //}
+
+
+void peanoclaw::native::FullSWOF2D::interpolateSolution (
+  const tarch::la::Vector<DIMENSIONS, int>& destinationSize,
+  const tarch::la::Vector<DIMENSIONS, int>& destinationOffset,
+  peanoclaw::Patch& source,
+  peanoclaw::Patch& destination,
+  bool interpolateToUOld,
+  bool interpolateToCurrentTime,
+  bool useTimeUNewOrTimeUOld
+) const {
+  peanoclaw::grid::SubgridAccessor sourceAccessor = source.getAccessor();
+  peanoclaw::grid::SubgridAccessor destinationAccessor = destination.getAccessor();
+  tarch::la::Vector<DIMENSIONS,int> sourceSubdivisionFactor = source.getSubdivisionFactor();
+
+  peanoclaw::geometry::Region destinationRegion(destinationOffset, destinationSize);
+  //TODO unterweg debug
+//  peanoclaw::geometry::Region sourceRegion = destinationRegion.mapToPatch(destination, source);
+  peanoclaw::geometry::Region sourceRegion(tarch::la::Vector<DIMENSIONS,int>(0), source.getSubdivisionFactor());
+
+  //TODO unterweg debug
+//  //Increase sourceRegion by one cell in each direction.
+//  for(int d = 0; d < DIMENSIONS; d++) {
+//    if(sourceRegion._offset[d] > 0) {
+//      sourceRegion._offset[d] = sourceRegion._offset[d]-1;
+//      sourceRegion._size[d] = std::min(sourceSubdivisionFactor[d], sourceRegion._size[d] + 2);
+//    } else {
+//      sourceRegion._size[d] = std::min(sourceSubdivisionFactor[d], sourceRegion._size[d] + 1);
+//    }
+//  }
+
+  //Source: Water Height above Sea Floor -> Absolute Water Height
+  transformToAbsoluteWaterHeightAndMomenta(source, sourceRegion, true); //UOld
+  transformToAbsoluteWaterHeightAndMomenta(source, sourceRegion, false); // UNew
+
+  //Interpolate
+  Numerics::interpolateSolution (
+    destinationSize,
+    destinationOffset,
+    source,
+    destination,
+    interpolateToUOld,
+    interpolateToCurrentTime,
+    useTimeUNewOrTimeUOld
+  );
+
+  //Source: Absolute Water Height -> Water Height above Sea Floor
+  transformToRelativeWaterHeightAndVelocities(source, sourceRegion, true); //UOld
+  transformToRelativeWaterHeightAndVelocities(source, sourceRegion, false); // UNew
+
+  //Destination: Absolute Water Height -> Water Height above Sea Floor
+  transformToRelativeWaterHeightAndVelocities(destination, destinationRegion, interpolateToUOld);
+}
+
+void peanoclaw::native::FullSWOF2D::restrictSolution (
+  peanoclaw::Patch& source,
+  peanoclaw::Patch& destination,
+  bool              restrictOnlyOverlappedRegions
+) const {
+//  peanoclaw::geometry::Region sourceRegion(tarch::la::Vector<DIMENSIONS,int>(0), source.getSubdivisionFactor());
+//
+//  transformToAbsoluteWaterHeightAndMomenta(source, sourceRegion, true); //UOld
+//  transformToAbsoluteWaterHeightAndMomenta(source, sourceRegion, false); //UNew
+
+  Numerics::restrictSolution(
+    source,
+    destination,
+    restrictOnlyOverlappedRegions
+  );
+
+//  transformToRelativeWaterHeightAndVelocities(source, sourceRegion, true); //UOld
+//  transformToRelativeWaterHeightAndVelocities(source, sourceRegion, false); //UNew
+}
+
+void peanoclaw::native::FullSWOF2D::postProcessRestriction(
+  peanoclaw::Patch& destination,
+  bool              restrictOnlyOverlappedRegions
+) const {
+//  peanoclaw::geometry::Region destinationRegion(tarch::la::Vector<DIMENSIONS,int>(0), destination.getSubdivisionFactor());
+//  transformToRelativeWaterHeightAndVelocities(destination, destinationRegion, true); //UOld
+//  transformToRelativeWaterHeightAndVelocities(destination, destinationRegion, false); //UNew
+}
 
 peanoclaw::native::FullSWOF2D_Parameters::FullSWOF2D_Parameters(
   int ghostlayerWidth,

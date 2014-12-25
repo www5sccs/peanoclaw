@@ -90,31 +90,23 @@ void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::initializePatch(pea
   #ifdef Dim2
   peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
 
+  update(subgrid);
+
   for(int y = -subgrid.getGhostlayerWidth(); y < subgrid.getSubdivisionFactor()[1] + subgrid.getGhostlayerWidth(); y++) {
     for(int x = -subgrid.getGhostlayerWidth(); x < subgrid.getSubdivisionFactor()[0] + subgrid.getGhostlayerWidth(); x++) {
       tarch::la::Vector<DIMENSIONS,int> subcellIndex;
       assignList(subcellIndex) = x, y;
       tarch::la::Vector<DIMENSIONS,double> position = subgrid.getSubcellCenter(subcellIndex);
 
-      double distanceFromCenterLine = abs(position[1]);
-      double bedWidth = _swashesChannel->getBedWidth(position[0]);
-      double topography = _swashesChannel->getTopography(position[0]);
-
-      if(distanceFromCenterLine > bedWidth / 2) {
-        topography = BED_HEIGHT;
-      }
-      if(_channelType == CornerTest) {
-        topography = (x == 3 && y == 5) ? 9.0 : 0.0;
-      }
-      accessor.setParameterWithGhostlayer(subcellIndex, 0, topography);
-
       if(x >= 0 && y >= 0 && x < subgrid.getSubdivisionFactor()[0] &&  y < subgrid.getSubdivisionFactor()[1]) {
         double waterheight = _criticality == Sub ? _swashesChannel->getInitialWaterHeight(position) : 0.0;
 
-        if(topography >= BED_HEIGHT) {
+        //TODO unterweg debug
+//        waterheight = std::max(0.1, waterheight);
+
+        if(accessor.getParameterWithGhostlayer(subcellIndex, 0) >= BED_HEIGHT) {
           waterheight = 0;
         }
-        topography = 0.0;
         accessor.setValueUNew(subcellIndex, 0, waterheight);
         accessor.setValueUNew(subcellIndex, 1, 0);
         accessor.setValueUNew(subcellIndex, 2, 0);
@@ -166,6 +158,26 @@ tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::swashes::Chan
 }
 
 void peanoclaw::native::scenarios::swashes::ChannelPseudo2D::update(peanoclaw::Patch& subgrid) {
+  peanoclaw::grid::SubgridAccessor accessor = subgrid.getAccessor();
+  for(int y = -subgrid.getGhostlayerWidth(); y < subgrid.getSubdivisionFactor()[1] + subgrid.getGhostlayerWidth(); y++) {
+    for(int x = -subgrid.getGhostlayerWidth(); x < subgrid.getSubdivisionFactor()[0] + subgrid.getGhostlayerWidth(); x++) {
+      tarch::la::Vector<DIMENSIONS,int> subcellIndex;
+      assignList(subcellIndex) = x, y;
+      tarch::la::Vector<DIMENSIONS,double> position = subgrid.getSubcellCenter(subcellIndex);
+
+      double distanceFromCenterLine = abs(position[1]);
+      double bedWidth = _swashesChannel->getBedWidth(position[0]);
+      double topography = _swashesChannel->getTopography(position[0]);
+
+      if(distanceFromCenterLine > bedWidth / 2) {
+        topography = BED_HEIGHT;
+      }
+      if(_channelType == CornerTest) {
+        topography = (x == 3 && y == 5) ? 9.0 : 0.0;
+      }
+      accessor.setParameterWithGhostlayer(subcellIndex, 0, topography);
+    }
+  }
 }
 
 tarch::la::Vector<DIMENSIONS,double> peanoclaw::native::scenarios::swashes::ChannelPseudo2D::getDomainOffset() const {
