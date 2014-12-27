@@ -65,6 +65,7 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   const tarch::la::Vector<DIMENSIONS, double>& position,
   int destinationPatch
 ) const {
+  assertionNumericalEquals(getX(), position);
 
   //Fill ghost layers of adjacent cells
   //Get adjacent cell descriptions
@@ -93,8 +94,10 @@ void peanoclaw::Vertex::fillAdjacentGhostLayers(
   #ifdef Asserts
   bool plotVertex = false;
 //  plotVertex =
-//      tarch::la::equals(position(0), 1.0/9.0)
+//      tarch::la::equals(position(0), 200.0/9.0)
 //      && tarch::la::equals(position(1), 1.0/9.0)
+//        && tarch::la::equals(position(1), -1.59826, 1e-4)
+//        && isHangingNode()
 //      //&& tarch::la::equals(position(2), 1.0/9.0)
 //      && level == 3
 //  ;

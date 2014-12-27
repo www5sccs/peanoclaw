@@ -1367,6 +1367,13 @@ void peanoclaw::mappings::Remesh::ascend(
     if(fineCell.getCellDescriptionIndex() > -1) {
       //Patch& fineSubgrid = fineCell.getSubgrid();
       Patch fineSubgrid(fineCell);
+
+      peano::grid::SingleLevelEnumerator localFineVerticesEnumerator(
+        coarseGridVerticesEnumerator.getCellSize(),
+        coarseGridVerticesEnumerator.getVertexPosition(),
+        coarseGridVerticesEnumerator.getLevel());
+      localFineVerticesEnumerator.setOffset(cellIndex);
+
       ParallelSubgrid fineParallelSubgrid(fineCell);
       _gridLevelTransfer->stepUp(
         coarseGridCell.holdsSubgrid() ? &coarseSubgrid : 0,
@@ -1374,7 +1381,7 @@ void peanoclaw::mappings::Remesh::ascend(
         fineParallelSubgrid,
         fineCell.isLeaf(),
         fineGridVertices,
-        fineGridVerticesEnumerator
+        localFineVerticesEnumerator
       );
 
       //TODO unterweg debug

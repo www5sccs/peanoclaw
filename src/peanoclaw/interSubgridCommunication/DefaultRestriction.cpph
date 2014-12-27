@@ -31,10 +31,6 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
   #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
   double destinationTimeUOld = destination.getTimeIntervals().getMinimalFineGridTime();
   double destinationTimeUNew = destinationTimeUOld + destination.getTimeIntervals().getMaximalFineGridTimestep();
-
-  assertionEquals(destinationTimeUOld, 0.0);
-  assertionEquals(destinationTimeUNew, 1.0);
-
   #else
   double destinationTimeUOld = 0.0;// destination.getTimeUOld();
   double destinationTimeUNew = 1.0;// destination.getTimeUNew();

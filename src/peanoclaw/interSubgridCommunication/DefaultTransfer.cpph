@@ -22,10 +22,6 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
 ) {
   logTraceInWith3Arguments("copyGhostLayerDataBlock", size, sourceOffset, destinationOffset);
 
-  //TODO unterweg debug
-  // std::cout << "Copying from " << source << std::endl << " to " << destination << std::endl
-  // << " size=" << size << " sourceOffset=" << sourceOffset << " destinationOffset=" << destinationOffset << std::endl;
-
   assertionEquals(source.getUnknownsPerSubcell(), destination.getUnknownsPerSubcell());
 
   double timeFactor;
@@ -38,8 +34,6 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
       timeFactor = (destinationTimeUNew - source.getTimeIntervals().getMinimalFineGridTime()) / source.getTimeIntervals().getMaximalFineGridTimestep();
       assertion3(timeFactor < std::numeric_limits<double>::max(), timeFactor, source.getTimeIntervals().getMinimalFineGridTime(), source.getTimeIntervals().getMaximalFineGridTimestep());
     }
-    assertionEquals(source.getTimeIntervals().getMinimalFineGridTime(), 0.0);
-    assertionEquals(1.0, source.getTimeIntervals().getMaximalFineGridTimestep());
     #else
     //TODO unterweg: Restricting to interval [0, 1]
     //timeFactor = (destination.getTimeIntervals().getTimeUNew() - 0.0) / (1.0 - source.getTimeIntervals().getTimeUOld());
