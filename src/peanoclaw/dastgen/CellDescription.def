@@ -94,6 +94,18 @@ class peanoclaw::records::CellDescription {
    * the minimum time interval of the overlapped fine grids.
    */
   parallelise persistent double minimumFineGridTimestep;
+
+  /**
+   * The maximum time of all child-patches.
+   */  
+  parallelise persistent double minimumFineGridTime;
+
+  /**
+   * The minimum timestep size so the 
+   * [maximumFineGridTime, minimumFineGridTimestepSize] spans
+   * the minimum time interval of the overlapped fine grids.
+   */  
+  parallelise persistent double maximumFineGridTimestep;
   
   /**
    * This field indicates whether the fine grids of this
@@ -137,7 +149,7 @@ class peanoclaw::records::CellDescription {
    * least covered by one neighbor.
    */
   parallelise persistent double maximalNeighborTimestep;
-
+  
   /**
    * The estimated timestep size for the next timestep is derived
    * from the cfl number of the current timestep.

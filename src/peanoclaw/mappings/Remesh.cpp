@@ -1108,9 +1108,15 @@ void peanoclaw::mappings::Remesh::leaveCell(
     fineGridCell
   );
 
+  #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
+  if(coarseGridCell.isRoot()) {
+  #endif
   Patch coarseSubgrid;
   if(coarseGridCell.holdsSubgrid()) {
     coarseSubgrid = Patch(coarseGridCell);
+
+    //TODO unterweg debug
+    coarseSubgrid.getTimeIntervals().resetMaximalFineGridTimeInterval();
   }
 
   _gridLevelTransfer->stepUp(
@@ -1126,6 +1132,9 @@ void peanoclaw::mappings::Remesh::leaveCell(
 
   assertionEquals1(fineSubgrid.isLeaf(), fineGridCell.isLeaf(), fineSubgrid);
   assertionEquals1(fineSubgrid.getLevel(), fineGridVerticesEnumerator.getLevel(), fineSubgrid.toString());
+  #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
+  }
+  #endif
 
   if(!fineGridCell.isAssignedToRemoteRank()) {
     //Count number of adjacent subgrids
@@ -1334,6 +1343,59 @@ void peanoclaw::mappings::Remesh::ascend(
 ) {
   logTraceInWith2Arguments( "ascend(...)", coarseGridCell.toString(), coarseGridVerticesEnumerator.toString() );
 
+  //Update fine grid time interval
+  #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
+  peanoclaw::Patch coarseSubgrid;
+  if(coarseGridCell.holdsSubgrid()) {
+    coarseSubgrid = Patch(coarseGridCell);
+    coarseSubgrid.getTimeIntervals().resetMaximalFineGridTimeInterval();
+    dfor3(cellIndex)
+      peanoclaw::Cell& fineCell = fineGridCells[fineGridVerticesEnumerator.cell(cellIndex)];
+      if(fineCell.getCellDescriptionIndex() > -1) {
+        //Patch& fineSubgrid = fineCell.getSubgrid();
+        Patch fineSubgrid(fineCell);
+        coarseSubgrid.getTimeIntervals().updateMaximalFineGridTimeInterval(
+          fineSubgrid.getTimeIntervals().getCurrentTime(),
+          fineSubgrid.getTimeIntervals().getTimestepSize()
+        );
+      }
+    enddforx
+  }
+
+  dfor3(cellIndex)
+    peanoclaw::Cell& fineCell = fineGridCells[fineGridVerticesEnumerator.cell(cellIndex)];
+    if(fineCell.getCellDescriptionIndex() > -1) {
+      //Patch& fineSubgrid = fineCell.getSubgrid();
+      Patch fineSubgrid(fineCell);
+      ParallelSubgrid fineParallelSubgrid(fineCell);
+      _gridLevelTransfer->stepUp(
+        coarseGridCell.holdsSubgrid() ? &coarseSubgrid : 0,
+        fineSubgrid,
+        fineParallelSubgrid,
+        fineCell.isLeaf(),
+        fineGridVertices,
+        fineGridVerticesEnumerator
+      );
+
+      //TODO unterweg debug
+//      if((fineSubgrid.getLevel() == 4 && tarch::la::equals(fineSubgrid.getPosition()[0], 0.0))
+//         || (fineSubgrid.getLevel() == 3 && fineSubgrid.isVirtual() && tarch::la::equals(fineSubgrid.getPosition()[0], 0.0))) {
+//        std::cout << "Restricting: " << fineSubgrid << std::endl << fineSubgrid.toStringUNew() << std::endl << fineSubgrid.toStringUOldWithGhostLayer() << std::endl
+//            << " to " << coarseSubgrid << std::endl << coarseSubgrid.toStringUNew() << std::endl << coarseSubgrid.toStringUOldWithGhostLayer() << std::endl;
+//      }
+
+      assertionEquals1(fineSubgrid.isLeaf(), fineCell.isLeaf(), fineSubgrid);
+      assertionEquals1(fineSubgrid.getLevel(), fineGridVerticesEnumerator.getLevel(), fineSubgrid.toString());
+    }
+  enddforx
+
+  if(coarseGridCell.holdsSubgrid() && coarseSubgrid.isVirtual()) {
+    #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
+    _numerics->postProcessRestriction(coarseSubgrid, !coarseSubgrid.willCoarsen());
+    #endif
+  }
+  #endif
+
   //TODO unterweg dissertation
   //Oscillation warning: If a subgrid got refined the new fine subgrids get annotated with a
   //certain demanded mesh width by the application. If this is so large for all $2^d$ fine
@@ -1343,7 +1405,6 @@ void peanoclaw::mappings::Remesh::ascend(
     //Patch& coarseSubgrid = coarseGridCell.getSubgrid();
     Patch coarseSubgrid(coarseGridCell);
     bool printOscillationWarning = tarch::la::oneGreater(coarseSubgrid.getSubcellSize(), coarseSubgrid.getDemandedMeshWidth());
-    //for(int i = 0; i < THREE_POWER_D; i++) {
     dfor3(cellIndex)
       peanoclaw::Cell& fineCell = fineGridCells[fineGridVerticesEnumerator.cell(cellIndex)];
       if(fineCell.getCellDescriptionIndex() > -1) {

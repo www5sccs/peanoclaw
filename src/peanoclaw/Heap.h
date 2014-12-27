@@ -20,6 +20,10 @@
 
 //#define noPackedEmptyHeapMessages
 
+#ifdef PEANOCLAW_SWASHES
+#define PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
+#endif
+
 #ifdef noPackedEmptyHeapMessages
 typedef peano::heap::PlainHeap<peanoclaw::records::CellDescription> CellDescriptionHeap;
 typedef peano::heap::PlainHeap<peanoclaw::records::Data> DataHeap;

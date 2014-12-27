@@ -132,6 +132,7 @@ double peanoclaw::grid::TimeIntervals::getTimestepSize() const {
 }
 
 void peanoclaw::grid::TimeIntervals::setTimestepSize(double timestepSize) {
+  assertion(timestepSize < std::numeric_limits<double>::max());
   _cellDescription->setTimestepSize(timestepSize);
 }
 
@@ -210,18 +211,47 @@ void peanoclaw::grid::TimeIntervals::resetMinimalFineGridTimeInterval() {
       std::numeric_limits<double>::max());
 }
 
-void peanoclaw::grid::TimeIntervals::updateMinimalFineGridTimeInterval(double fineGridTime,
-    double fineGridTimestepSize) {
-  if (fineGridTime > _cellDescription->getMaximumFineGridTime()) {
+void peanoclaw::grid::TimeIntervals::updateMinimalFineGridTimeInterval(
+  double fineGridTime,
+  double fineGridTimestepSize
+) {
+  if( fineGridTime > _cellDescription->getMaximumFineGridTime() ){
     _cellDescription->setMinimumFineGridTimestep(
         _cellDescription->getMinimumFineGridTimestep()
-            - (fineGridTime - _cellDescription->getMaximumFineGridTime()));
+        - (fineGridTime - _cellDescription->getMaximumFineGridTime())
+    );
     _cellDescription->setMaximumFineGridTime(fineGridTime);
   }
   _cellDescription->setMinimumFineGridTimestep(
       std::min(_cellDescription->getMinimumFineGridTimestep(),
           (fineGridTime + fineGridTimestepSize
               - _cellDescription->getMaximumFineGridTime())));
+}
+
+void peanoclaw::grid::TimeIntervals::resetMaximalFineGridTimeInterval() {
+  _cellDescription->setMinimumFineGridTime(std::numeric_limits<double>::max()-1);
+  _cellDescription->setMaximumFineGridTimestep(-std::numeric_limits<double>::max());
+}
+
+void peanoclaw::grid::TimeIntervals::updateMaximalFineGridTimeInterval(
+  double fineGridTime,
+  double fineGridTimestepSize
+) {
+  double nextTime = std::max(_cellDescription->getTime() + _cellDescription->getTimestepSize(), fineGridTime + fineGridTimestepSize);
+  double time = std::min(_cellDescription->getTime(), fineGridTime);
+
+  assertion6((nextTime - time) < std::numeric_limits<double>::max(), nextTime, time, _cellDescription->getTime(), _cellDescription->getTimestepSize(), fineGridTime, fineGridTimestepSize);
+
+  _cellDescription->setMinimumFineGridTime(time);
+  _cellDescription->setMaximumFineGridTimestep(nextTime - time);
+}
+
+double peanoclaw::grid::TimeIntervals::getMinimalFineGridTime() const {
+  return _cellDescription->getMinimumFineGridTime();
+}
+
+double peanoclaw::grid::TimeIntervals::getMaximalFineGridTimestep() const {
+  return _cellDescription->getMaximumFineGridTimestep();
 }
 
 double peanoclaw::grid::TimeIntervals::getTimeConstraint() const {

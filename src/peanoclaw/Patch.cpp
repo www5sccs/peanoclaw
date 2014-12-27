@@ -72,6 +72,7 @@ void peanoclaw::Patch::switchRegionToMinimalFineGridTimeInterval(
       _accessor.setValueUNew(linearIndexUNew, unknown, valueUOld * (1.0 - factorForUNew) + valueUNew * factorForUNew);
     }
   }
+  assertion3(!containsNaN(), toString(), toStringUNew(), toStringUOldWithGhostLayer());
 }
 
 bool peanoclaw::Patch::isLeaf(const CellDescription* cellDescription) {
@@ -236,6 +237,8 @@ peanoclaw::Patch::Patch(const tarch::la::Vector<DIMENSIONS, double>& position,
   cellDescription.setMaximalNeighborTimestep(-std::numeric_limits<double>::max());
   cellDescription.setMaximumFineGridTime(-1.0);
   cellDescription.setMinimumFineGridTimestep(std::numeric_limits<double>::max());
+  cellDescription.setMinimumFineGridTime(0.0);
+  cellDescription.setMaximumFineGridTimestep(0.0);
   cellDescription.setMinimalLeafNeighborTimeConstraint(std::numeric_limits<double>::max());
   cellDescription.setNeighborInducedMaximumTimestepSize(-std::numeric_limits<double>::max());
 
@@ -367,10 +370,6 @@ tarch::la::Vector<DIMENSIONS, int> peanoclaw::Patch::getSubdivisionFactor() cons
 }
 
 int peanoclaw::Patch::getGhostlayerWidth() const {
-
-  //TODO unterweg debug
-//  std::cout << "_cellDescription=" << _cellDescription << std::endl;
-
   return _cellDescription->getGhostlayerWidth();
 }
 
@@ -388,15 +387,17 @@ bool peanoclaw::Patch::willCoarsen() {
 
 void peanoclaw::Patch::switchValuesAndTimeIntervalToMinimalFineGridTimeInterval() {
   //TODO unterweg restricting to interval [0, 1]
-//  double time = 0.0; //_cellDescription->getTime();
-//  double timestepSize = 1.0; //_cellDescription->getTimestepSize();
+//  double time = _cellDescription->getTime();
+//  double timestepSize = _cellDescription->getTimestepSize();
 
   _cellDescription->setTime(_cellDescription->getMaximumFineGridTime());
   _cellDescription->setTimestepSize(
     _cellDescription->getMinimumFineGridTimestep()
   );
+  assertion(_cellDescription->getMinimumFineGridTimestep() < std::numeric_limits<double>::max());
 
-  //Interpolate patch values from former [time, time+timestepSize] to new [time, time+timestepSize]
+//  #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
+//  //Interpolate patch values from former [time, time+timestepSize] to new [time, time+timestepSize]
 //  if(isVirtual() || willCoarsen()) {
 //    double factorForUOld = 1.0;
 //    double factorForUNew = 1.0;
@@ -404,34 +405,12 @@ void peanoclaw::Patch::switchValuesAndTimeIntervalToMinimalFineGridTimeInterval(
 //      factorForUOld = (_cellDescription->getTime() - time) / timestepSize;
 //      factorForUNew = (_cellDescription->getTime() + _cellDescription->getTimestepSize() - time) / timestepSize;
 //    }
-//
-//    if (willCoarsen()) {
-//      peanoclaw::geometry::Region region;
-//      region._offset = tarch::la::Vector<DIMENSIONS, int>(0);
-//      region._size = getSubdivisionFactor();
-//      switchRegionToMinimalFineGridTimeInterval(region, factorForUOld, factorForUNew);
-//    }
-//    else if(isVirtual()) {
-//      peanoclaw::geometry::Region regions[DIMENSIONS_TIMES_TWO];
-//      int numberOfRegions = peanoclaw::getRegionsForRestriction(
-//        getLowerNeighboringGhostlayerBounds(),
-//        getUpperNeighboringGhostlayerBounds(),
-//        getPosition(),
-//        getSubcellSize(),
-//        getSubcellSize(),
-//        getSubdivisionFactor(),
-//        regions
-//      );
-//
-//      assertion1(numberOfRegions <= DIMENSIONS_TIMES_TWO, numberOfRegions);
-//
-//      for (int regionIndex = 0; regionIndex < numberOfRegions; regionIndex++) {
-//        if(tarch::la::allGreater(regions[regionIndex]._size, tarch::la::Vector<DIMENSIONS, int>(0))) {
-//          switchRegionToMinimalFineGridTimeInterval(regions[regionIndex], factorForUOld, factorForUNew);
-//        }
-//      }
-//    }
+//    peanoclaw::geometry::Region region;
+//    region._offset = tarch::la::Vector<DIMENSIONS, int>(0);
+//    region._size = getSubdivisionFactor();
+//    switchRegionToMinimalFineGridTimeInterval(region, factorForUOld, factorForUNew);
 //  }
+//  #endif
 }
 
 void peanoclaw::Patch::setSkipNextGridIteration(int numberOfIterationsToSkip) {

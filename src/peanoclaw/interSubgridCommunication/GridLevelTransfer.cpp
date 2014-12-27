@@ -233,7 +233,9 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::finalizeVirtualSub
   assertionEquals(subgrid.getUIndex(), virtualPatch.getUIndex());
 //    assertionEquals(finePatch.getUOldIndex(), virtualPatch.getUOldIndex());
 
+  #ifndef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
   _numerics.postProcessRestriction(subgrid, !subgrid.willCoarsen());
+  #endif
 
   //Fill ghostlayer
   for(int i = 0; i < TWO_POWER_D; i++) {

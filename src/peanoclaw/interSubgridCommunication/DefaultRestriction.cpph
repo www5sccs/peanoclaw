@@ -28,8 +28,17 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
   double epsilon = 1e-12;
 
   //TODO unterweg restricting to interval [0, 1]
+  #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
+  double destinationTimeUOld = destination.getTimeIntervals().getMinimalFineGridTime();
+  double destinationTimeUNew = destinationTimeUOld + destination.getTimeIntervals().getMaximalFineGridTimestep();
+
+  assertionEquals(destinationTimeUOld, 0.0);
+  assertionEquals(destinationTimeUNew, 1.0);
+
+  #else
   double destinationTimeUOld = 0.0;// destination.getTimeUOld();
   double destinationTimeUNew = 1.0;// destination.getTimeUNew();
+  #endif
 
   const tarch::la::Vector<DIMENSIONS, double> sourceSubcellSize = tarch::la::multiplyComponents(source.getSize(), tarch::la::invertEntries(source.getSubdivisionFactor().convertScalar<double>()));
   const tarch::la::Vector<DIMENSIONS, double> destinationSubcellSize = tarch::la::multiplyComponents(destination.getSize(), tarch::la::invertEntries(destination.getSubdivisionFactor().convertScalar<double>()));
@@ -94,6 +103,8 @@ void peanoclaw::interSubgridCommunication::DefaultRestrictionTemplate<NumberOfUn
       destinationIterator.setUnknownsUNew(destinationIterator.getUnknownsUNew() + deltaUNew);
     }
   }
+
+  assertion8(!destination.containsNaN(), timeFactorUNew, timeFactorUOld, destination, destination.toStringUNew(), destination.toStringUOldWithGhostLayer(), source, source.toStringUNew(), source.toStringUOldWithGhostLayer());
 
   logTraceOut("restrictRegion");
 }

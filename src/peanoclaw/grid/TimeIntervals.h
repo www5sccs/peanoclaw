@@ -196,6 +196,29 @@ class peanoclaw::grid::TimeIntervals {
     void updateMinimalFineGridTimeInterval(double fineGridTime, double fineGridTimestepSize);
 
     /**
+     * Resets the maximal fine grid time interval.
+     */
+    void resetMaximalFineGridTimeInterval();
+
+    /**
+     * Updates the values for the maximal
+     * time interval covered by all overlapped fine grids with the
+     * given fine grid time interval.
+     */
+    void updateMaximalFineGridTimeInterval(double fineGridTime, double fineGridTimestepSize);
+
+    /**
+     * Returns the minimal time of all overlapped finer subgrids.
+     */
+    double getMinimalFineGridTime() const;
+
+    /**
+     * Returns the timestep from the minimal to the maximal time
+     * of all overlapped finer subgrids.
+     */
+    double getMaximalFineGridTimestep() const;
+
+    /**
      * Returns the maximum time that is covered by this patch. This
      * time constrains the timestepping of theneighboring patches.
      * Usually this method returns $currentTime + timestepSize$, but

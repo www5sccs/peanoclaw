@@ -31,9 +31,20 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
   double timeFactor;
   double destinationTimeUNew = destination.getTimeIntervals().getTimeUNew();
   if(source.isVirtual()) {
+    #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
+    if(tarch::la::equals(source.getTimeIntervals().getMaximalFineGridTimestep(), 0.0)) {
+      timeFactor = 0.0;
+    } else {
+      timeFactor = (destinationTimeUNew - source.getTimeIntervals().getMinimalFineGridTime()) / source.getTimeIntervals().getMaximalFineGridTimestep();
+      assertion3(timeFactor < std::numeric_limits<double>::max(), timeFactor, source.getTimeIntervals().getMinimalFineGridTime(), source.getTimeIntervals().getMaximalFineGridTimestep());
+    }
+    assertionEquals(source.getTimeIntervals().getMinimalFineGridTime(), 0.0);
+    assertionEquals(1.0, source.getTimeIntervals().getMaximalFineGridTimestep());
+    #else
     //TODO unterweg: Restricting to interval [0, 1]
     //timeFactor = (destination.getTimeIntervals().getTimeUNew() - 0.0) / (1.0 - source.getTimeIntervals().getTimeUOld());
     timeFactor = (destinationTimeUNew - 0.0) / 1.0;
+    #endif
   } else {
     double sourceTimeUNew = source.getTimeIntervals().getTimeUNew();
     double sourceTimeUOld = source.getTimeIntervals().getTimeUOld();
@@ -44,7 +55,6 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
     }
   }
   double inverseTimeFactor = 1.0-timeFactor;
-
   peanoclaw::grid::SubgridAccessor sourceAccessor = source.getAccessor();
   peanoclaw::grid::SubgridIterator<NumberOfUnknowns> sourceIterator
     = sourceAccessor.getSubgridIterator<NumberOfUnknowns>(sourceOffset, size);
@@ -65,8 +75,8 @@ void peanoclaw::interSubgridCommunication::DefaultTransferTemplate<NumberOfUnkno
     //TODO unterweg debug
     #ifdef Asserts
     for(int i = 0; i < NumberOfUnknowns; i++) {
-      assertionEquals2(sourceAccessor.getValueUNew(sourceIterator.getCellIndex(), i), sourceUnknownsUNew[i], source.toStringUNew(), source.toStringUOldWithGhostLayer());
-      assertionEquals2(sourceAccessor.getValueUOld(sourceIterator.getCellIndex(), i), sourceUnknownsUOld[i], source.toStringUNew(), source.toStringUOldWithGhostLayer());
+      assertionEquals3(sourceAccessor.getValueUNew(sourceIterator.getCellIndex(), i), sourceUnknownsUNew[i], source, source.toStringUNew(), source.toStringUOldWithGhostLayer());
+      assertionEquals3(sourceAccessor.getValueUOld(sourceIterator.getCellIndex(), i), sourceUnknownsUOld[i], source, source.toStringUNew(), source.toStringUOldWithGhostLayer());
     }
     #endif
 
