@@ -452,7 +452,7 @@ void peanoclaw::interSubgridCommunication::GridLevelTransfer::stepUp(
           #ifdef PEANOCLAW_USE_ASCEND_FOR_RESTRICTION
           tarch::la::multiplyComponents(peano::utils::dDelinearised(i, 2).convertScalar<double>(), finePatch.getSize()) + finePatch.getPosition()
           #else
-          fineGridVerticesEnumerator.getVertexPosition(fineGridVerticesEnumerator(i))
+          fineGridVerticesEnumerator.getVertexPosition(i)
           #endif
         );
       }

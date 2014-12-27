@@ -66,8 +66,8 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberO
           innerFluxes = tarch::la::Vector<NumberOfUnknowns,double>(0.0);
         }
 
-        tarch::la::Vector<NumberOfUnknowns,double> fluxes = 0.5 * (outerFluxes + innerFluxes)
-                + direction * deltaTDeltaX * (innerUnknowns - outerUnknowns);
+        tarch::la::Vector<NumberOfUnknowns,double> fluxes = 0.5 * (outerFluxes + innerFluxes);
+                //+ direction * deltaTDeltaX * (innerUnknowns - outerUnknowns);
         faceIterator.setFluxes(fluxes);
 
         //TODO unterweg debug
