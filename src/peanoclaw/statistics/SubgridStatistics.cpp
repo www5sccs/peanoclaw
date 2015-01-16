@@ -535,7 +535,7 @@ void peanoclaw::statistics::SubgridStatistics::logLevelStatistics(std::string de
 
   for(size_t i = 0; i < levelStatistics.size(); i++) {
     const LevelStatistics& level = levelStatistics.at(i);
-    logInfo("logLevelStatistics", "\tLevel " << i << ": " << level.getNumberOfPatches() << " patches (region=" << level.getArea() <<  "), "
+    logInfo("logLevelStatistics", "\tLevel " << i << ": " << level.getNumberOfPatches() << " patches (area=" << level.getArea() <<  "), "
         << level.getNumberOfCells() << " cells, " << level.getNumberOfCellUpdates() << "cell updates, "
         << totalEstimatedIterationsToGlobalTimestep << " remaining iterations. "
         << "minDt=" << level.getMinimalTimestepSize() << " averageDt=" << level.getAverageTimestepSize());
@@ -551,7 +551,7 @@ void peanoclaw::statistics::SubgridStatistics::logLevelStatistics(std::string de
     totalEstimatedIterationsToGlobalTimestep = std::max(level.getEstimatedNumberOfRemainingIterationsToGlobalTimestep(), totalEstimatedIterationsToGlobalTimestep);
   }
   logInfo("logLevelStatistics",
-    "Sum: max. " << totalNumberOfPatches << " patches (region=" << totalRegion <<  "), max. "
+    "Sum: max. " << totalNumberOfPatches << " patches (area=" << totalRegion <<  "), max. "
     << totalNumberOfCells << " cells, " << totalNumberOfCellUpdates << " cell updates, "
     << totalEstimatedIterationsToGlobalTimestep << " remaining iterations. "
     << " Blocking: " << totalBlockedPatchesDueToNeighbors << ", " << totalBlockedPatchesDueToGlobalTimestep
