@@ -373,6 +373,7 @@ void peanoclaw::mappings::Remesh::createCell(
       coarseGridCell
     );
     assertion1(tarch::la::greaterEquals(coarseGridPatch.getTimeIntervals().getTimestepSize(), 0.0) || coarseGridPatch.isVirtual(), coarseGridPatch);
+    fineGridPatch.setDemandedMeshWidth(coarseGridPatch.getDemandedMeshWidth());
 
     if(!_isInitializing && (coarseGridPatch.isVirtual() || coarseGridPatch.isLeaf())) {
       //TODO unterweg dissertation: The grid is skipped directly after the creation in enterCell.
