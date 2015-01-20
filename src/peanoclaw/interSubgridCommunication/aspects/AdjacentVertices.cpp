@@ -12,8 +12,13 @@ tarch::logging::Log peanoclaw::interSubgridCommunication::aspects::AdjacentVerti
 
 peanoclaw::interSubgridCommunication::aspects::AdjacentVertices::AdjacentVertices(
   peanoclaw::Vertex* const             vertices,
-  const peano::grid::VertexEnumerator& verticesEnumerator
-) : _vertices(vertices), _verticesEnumerator(verticesEnumerator) {
+  const peano::grid::VertexEnumerator& verticesEnumerator,
+  peanoclaw::Vertex* const             coarseVertices,
+  const peano::grid::VertexEnumerator& coarseVerticesEnumerator
+) : _vertices(vertices),
+    _verticesEnumerator(verticesEnumerator),
+    _coarseVertices(coarseVertices),
+    _coarseVerticesEnumerator(coarseVerticesEnumerator) {
 }
 
 bool peanoclaw::interSubgridCommunication::aspects::AdjacentVertices::refineIfNecessary(
@@ -32,6 +37,13 @@ bool peanoclaw::interSubgridCommunication::aspects::AdjacentVertices::refineIfNe
       if (_vertices[_verticesEnumerator(i)].getRefinementControl() == Vertex::Records::Unrefined
           && !_vertices[_verticesEnumerator(i)].isHangingNode()) {
         _vertices[_verticesEnumerator(i)].refine();
+      }
+    }
+  } else if(tarch::la::oneGreater(patch.getSubcellSize() * 3.0, tarch::la::Vector<DIMENSIONS, double>(maximalMeshWidth))) {
+    for(int i = 0; i < TWO_POWER_D; i++) {
+      if(_vertices[_verticesEnumerator(i)].isHangingNode()
+                  && !_coarseVertices[_coarseVerticesEnumerator(i)].isHangingNode()) {
+        _coarseVertices[_coarseVerticesEnumerator(i)].refine();
       }
     }
   }

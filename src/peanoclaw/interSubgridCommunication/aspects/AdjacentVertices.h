@@ -49,11 +49,15 @@ class peanoclaw::interSubgridCommunication::aspects::AdjacentVertices {
 
     peanoclaw::Vertex* const             _vertices;
     const peano::grid::VertexEnumerator& _verticesEnumerator;
+    peanoclaw::Vertex* const             _coarseVertices;
+    const peano::grid::VertexEnumerator& _coarseVerticesEnumerator;
 
   public:
     AdjacentVertices(
       peanoclaw::Vertex* const             vertices,
-      const peano::grid::VertexEnumerator& verticesEnumerator
+      const peano::grid::VertexEnumerator& verticesEnumerator,
+      peanoclaw::Vertex* const             coarseVertices,
+      const peano::grid::VertexEnumerator& coarseVerticesEnumerator
     );
 
     /**

@@ -271,7 +271,9 @@ void peanoclaw::mappings::InitialiseGrid::createCell(
 
       peanoclaw::interSubgridCommunication::aspects::AdjacentVertices adjacentVertices(
         fineGridVertices,
-        fineGridVerticesEnumerator
+        fineGridVerticesEnumerator,
+        coarseGridVertices,
+        coarseGridVerticesEnumerator
       );
     }
 
@@ -536,7 +538,9 @@ void peanoclaw::mappings::InitialiseGrid::enterCell(
 
     peanoclaw::interSubgridCommunication::aspects::AdjacentVertices adjacentVertices(
       fineGridVertices,
-      fineGridVerticesEnumerator
+      fineGridVerticesEnumerator,
+      coarseGridVertices,
+      coarseGridVerticesEnumerator
     );
     //TODO unterweg dissertation: Restart of refinement in parallel case. Here we
     //refine up to a certain level and stop to fork the grid on other ranks and
