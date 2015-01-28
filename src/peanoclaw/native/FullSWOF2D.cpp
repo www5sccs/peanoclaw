@@ -32,9 +32,9 @@ void peanoclaw::native::FullSWOF2D::transformToAbsoluteWaterHeightAndMomenta(
     dfor(internalSubcellIndex, region._size) {
       tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + region._offset;
       double relativeWaterHeight = accessor.getValueUOld(subcellIndex, 0);
-      accessor.setValueUOld(subcellIndex, 0,
-        accessor.getValueUOld(subcellIndex, 0) + accessor.getParameterWithGhostlayer(subcellIndex, 0)
-      );
+//      accessor.setValueUOld(subcellIndex, 0,
+//        accessor.getValueUOld(subcellIndex, 0) + accessor.getParameterWithGhostlayer(subcellIndex, 0)
+//      );
       accessor.setValueUOld(subcellIndex, 1,
         accessor.getValueUOld(subcellIndex, 1) * relativeWaterHeight
       );
@@ -46,9 +46,9 @@ void peanoclaw::native::FullSWOF2D::transformToAbsoluteWaterHeightAndMomenta(
     dfor(internalSubcellIndex, region._size) {
       tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + region._offset;
       double relativeWaterHeight = accessor.getValueUNew(subcellIndex, 0);
-      accessor.setValueUNew(subcellIndex, 0,
-        accessor.getValueUNew(subcellIndex, 0) + accessor.getParameterWithGhostlayer(subcellIndex, 0)
-      );
+//      accessor.setValueUNew(subcellIndex, 0,
+//        accessor.getValueUNew(subcellIndex, 0) + accessor.getParameterWithGhostlayer(subcellIndex, 0)
+//      );
       accessor.setValueUNew(subcellIndex, 1,
         accessor.getValueUNew(subcellIndex, 1) * relativeWaterHeight
       );
@@ -68,9 +68,9 @@ void peanoclaw::native::FullSWOF2D::transformToRelativeWaterHeightAndVelocities(
   if(modifyUOld) {
     dfor(internalSubcellIndex, region._size) {
       tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + region._offset;
-      accessor.setValueUOld(subcellIndex, 0,
-        std::max(0.0, accessor.getValueUOld(subcellIndex, 0) - accessor.getParameterWithGhostlayer(subcellIndex, 0))
-      );
+//      accessor.setValueUOld(subcellIndex, 0,
+//        std::max(0.0, accessor.getValueUOld(subcellIndex, 0) - accessor.getParameterWithGhostlayer(subcellIndex, 0))
+//      );
 
       //TODO unterweg debug
 //      if(tarch::la::smaller(accessor.getValueUOld(subcellIndex, 0), 0.0, 1e-8)) {
@@ -91,9 +91,9 @@ void peanoclaw::native::FullSWOF2D::transformToRelativeWaterHeightAndVelocities(
   } else {
     dfor(internalSubcellIndex, region._size) {
       tarch::la::Vector<DIMENSIONS,int> subcellIndex = internalSubcellIndex + region._offset;
-      accessor.setValueUNew(subcellIndex, 0,
-        std::max(0.0, accessor.getValueUNew(subcellIndex, 0) - accessor.getParameterWithGhostlayer(subcellIndex, 0))
-      );
+//      accessor.setValueUNew(subcellIndex, 0,
+//        std::max(0.0, accessor.getValueUNew(subcellIndex, 0) - accessor.getParameterWithGhostlayer(subcellIndex, 0))
+//      );
 
       //TODO unterweg debug
 //      if(tarch::la::smaller(accessor.getValueUNew(subcellIndex, 0), 0.0, 1e-8)) {
@@ -201,15 +201,25 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
       //std::cout << "parameters read (meshwidth): " << par.get_dx() << " vs " << meshwidth(0) << " and " << par.get_dy() << " vs " << meshwidth(1) << std::endl;
       //std::cout << "parameters read (cells): " << par.get_Nxcell() << " vs " << subdivisionFactor(0) << " and " << par.get_Nycell() << " vs " << subdivisionFactor(1) << std::endl;
 
-//      Choice_scheme *wrapper_scheme = 0;
+      #define REUSE_SCHEME_FOR_ROLLBACK
+
+      #ifdef REUSE_SCHEME_FOR_ROLLBACK
+      //Reuse scheme for rollback
+      Choice_scheme* wrapperScheme = new Choice_scheme(par);
+      Scheme* scheme = wrapperScheme->getInternalScheme();
+      #else
+      //Recreate scheme for rollback
       Scheme *scheme = 0;
+      #endif
 
       do {
-        if(_wrapperScheme != 0) {
-          delete _wrapperScheme;
+        #ifndef REUSE_SCHEME_FOR_ROLLBACK
+        if(wrapperScheme != 0) {
+          delete wrapperScheme;
         }
-        _wrapperScheme = new Choice_scheme(par);
-        scheme = _wrapperScheme->getInternalScheme();
+        wrapperScheme = new Choice_scheme(par);
+        scheme = wrapperScheme->getInternalScheme();
+        #endif
 
         // kick off computation!
         scheme->setTimestep(maximumTimestepSize);
@@ -226,7 +236,7 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
         struct timeval start;
         gettimeofday(&start, NULL);
 
-        _wrapperScheme->calcul();
+        wrapperScheme->calcul();
 
         struct timeval stop;
         gettimeofday(&stop, NULL);
@@ -262,8 +272,8 @@ void peanoclaw::native::FullSWOF2D::solveTimestep(
       //estimatedNextTimestepSize = 0.00001;
 
       //std::cout << "\nComputation finished!" << endl;
-      delete _wrapperScheme;
-      _wrapperScheme = 0;
+      delete wrapperScheme;
+      wrapperScheme = 0;
       // computation is done -> back to peanoclaw 
   }
 #endif
