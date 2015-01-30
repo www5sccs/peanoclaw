@@ -57,11 +57,6 @@ class peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate {
       int projectionAxis
     ) const;
 
-    tarch::la::Vector<NumberOfUnknowns,double> computeShallowWaterFlux(
-      int dimension,
-      const tarch::la::Vector<NumberOfUnknowns,double>& unknowns
-    ) const;
-
   public:
     void computeFluxes(Patch& subgrid) const;
 

@@ -5,23 +5,10 @@
  *      Author: kristof
  */
 
-template<int NumberOfUnknowns>
-tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberOfUnknowns>::_log("peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate");
+#include "peanoclaw/Numerics.h"
 
 template<int NumberOfUnknowns>
-tarch::la::Vector<NumberOfUnknowns,double> peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberOfUnknowns>::computeShallowWaterFlux(
-  int dimension,
-  const tarch::la::Vector<NumberOfUnknowns,double>& unknowns
-) const {
-  tarch::la::Vector<NumberOfUnknowns,double> fluxes(unknowns * unknowns[1 + dimension]);
-  for(int i = 0; i < DIMENSIONS; i++) {
-    fluxes[i + 1] *= unknowns[0];
-  }
-  const double g = 1.0; //9.80665;
-  double p = 0.5 * g * unknowns[0] * unknowns[0];
-  fluxes[1 + dimension] += p;
-  return fluxes;
-}
+tarch::logging::Log peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberOfUnknowns>::_log("peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate");
 
 template<int NumberOfUnknowns>
 double peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberOfUnknowns>::calculateOverlappingRegion(
@@ -71,18 +58,18 @@ void peanoclaw::interSubgridCommunication::DefaultFluxCorrectionTemplate<NumberO
         faceIterator.moveToNextGhostCell(); //Move to first cell
 
         tarch::la::Vector<NumberOfUnknowns,double> outerUnknowns = faceIterator.getGhostUnknowns();
-        tarch::la::Vector<NumberOfUnknowns,double> outerFluxes = computeShallowWaterFlux(dimension, outerUnknowns);
-        if(tarch::la::smallerEquals(outerUnknowns[0], 0.0)) {
-          outerFluxes = tarch::la::Vector<NumberOfUnknowns,double>(0.0);
-        }
+        tarch::la::Vector<NumberOfUnknowns,double> outerFluxes = peanoclaw::Numerics::computeFlux(dimension, outerUnknowns);
+//        if(tarch::la::smallerEquals(outerUnknowns[0], 0.0)) {
+//          outerFluxes = tarch::la::Vector<NumberOfUnknowns,double>(0.0);
+//        }
         tarch::la::Vector<NumberOfUnknowns,double> innerUnknowns = faceIterator.getUnknownsUOld();
-        tarch::la::Vector<NumberOfUnknowns,double> innerFluxes = computeShallowWaterFlux(dimension, innerUnknowns);
-        if(tarch::la::smallerEquals(innerUnknowns[0], 0.0)) {
-          innerFluxes = tarch::la::Vector<NumberOfUnknowns,double>(0.0);
-        }
+        tarch::la::Vector<NumberOfUnknowns,double> innerFluxes = peanoclaw::Numerics::computeFlux(dimension, innerUnknowns);
+//        if(tarch::la::smallerEquals(innerUnknowns[0], 0.0)) {
+//          innerFluxes = tarch::la::Vector<NumberOfUnknowns,double>(0.0);
+//        }
 
         tarch::la::Vector<NumberOfUnknowns,double> fluxes = 0.5 * (outerFluxes + innerFluxes);
-                //+ direction * deltaTDeltaX * (innerUnknowns - outerUnknowns);
+                + direction * deltaTDeltaX * (innerUnknowns - outerUnknowns);
         faceIterator.setFluxes(fluxes);
 
         //TODO unterweg debug

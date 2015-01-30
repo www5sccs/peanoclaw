@@ -181,6 +181,26 @@ private:
      * Returns the ghostlayer width in cells that is required for the applied solver.
      */
     virtual int getGhostlayerWidth() const = 0;
+
+    //Default Implementations for fluxes
+    template<int NumberOfUnknowns>
+    static tarch::la::Vector<NumberOfUnknowns,double> computeFlux(
+      int dimension,
+      const tarch::la::Vector<NumberOfUnknowns,double>& unknowns
+    ) {
+      tarch::la::Vector<NumberOfUnknowns,double> fluxes(unknowns * unknowns[1 + dimension]);
+      for(int i = 0; i < DIMENSIONS; i++) {
+        fluxes[i + 1] *= unknowns[0];
+      }
+      #ifdef PEANOCLAW_EULER3D
+      #elif PEANOCLAW_FULLSWOF2D
+      #else
+      const double g = 1.0; //9.80665;
+      double p = 0.5 * g * unknowns[0] * unknowns[0];
+      fluxes[1 + dimension] += p;
+      #endif
+      return fluxes;
+    }
 };
 
 
