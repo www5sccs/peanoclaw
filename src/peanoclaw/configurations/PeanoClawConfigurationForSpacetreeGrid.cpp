@@ -57,6 +57,8 @@ void peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::processE
     _numberOfThreads = getIntegerValue(values);
   } else if(name == "neighborInducedMaximumTimesteps") {
     _estimateNeighborInducedMaximumTimestep = getBoolValue(values);
+  } else if(name == "useDimensionalSplittingOptimization") {
+    _useDimensionalSplittingOptimization = getBoolValue(values);
   } else {
     _isValid = false;
     logError("processEntry(string,string)", "Invalid entry: '" << name << "' '" << values << "'");
@@ -84,7 +86,7 @@ peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::PeanoClawConf
   _plotSubsteps(false),
   _plotSubstepsAfterOutputTime(-1),
   _additionalLevelsForPredefinedRefinement(1),
-  _disableDimensionalSplittingOptimization(false),
+  _useDimensionalSplittingOptimization(false),
   _restrictStatistics(true),
   _fluxCorrection(false),
   _reduceReductions(false),
@@ -137,8 +139,8 @@ int peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::plotSubst
   return _plotSubstepsAfterOutputTime;
 }
 
-bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::disableDimensionalSplittingOptimization() const {
-  return _disableDimensionalSplittingOptimization;
+bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::useDimensionalSplittingOptimization() const {
+  return _useDimensionalSplittingOptimization;
 }
 
 bool peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid::restrictStatistics() const {

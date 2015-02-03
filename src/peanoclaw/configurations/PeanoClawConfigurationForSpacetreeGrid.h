@@ -36,7 +36,7 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     int _additionalLevelsForPredefinedRefinement;
 
-    bool _disableDimensionalSplittingOptimization;
+    bool _useDimensionalSplittingOptimization;
 
     bool _restrictStatistics;
 
@@ -90,7 +90,7 @@ class peanoclaw::configurations::PeanoClawConfigurationForSpacetreeGrid {
 
     int getAdditionalLevelsForPredefinedRefinement() const;
 
-    bool disableDimensionalSplittingOptimization() const;
+    bool useDimensionalSplittingOptimization() const;
 
     /**
      * Indicates, whether statistics should be restricted in a parallel run.
