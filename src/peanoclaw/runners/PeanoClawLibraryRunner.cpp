@@ -248,7 +248,7 @@ peanoclaw::runners::PeanoClawLibraryRunner::PeanoClawLibraryRunner(
   state.setNumerics(numerics);
   state.setInitialTimestepSize(initialTimestepSize);
   state.setDomain(domainOffset, domainSize);
-  state.setUseDimensionalSplittingExtrapolation(useDimensionalSplittingExtrapolation && !_configuration.disableDimensionalSplittingOptimization());
+  state.setUseDimensionalSplittingExtrapolation(useDimensionalSplittingExtrapolation || _configuration.useDimensionalSplittingOptimization());
   state.setReduceReductions(reduceReductions || _configuration.shouldReduceReductions());
   state.enableFluxCorrection(configuration.enableFluxCorrection());
   state.setRestrictStatistics(configuration.restrictStatistics());
